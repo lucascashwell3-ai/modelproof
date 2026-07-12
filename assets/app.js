@@ -477,23 +477,39 @@ function renderFeed() {
 }
 
 // ---------- controls ----------
+// goal + priority controls appear in two places (hero picker + result panel);
+// keep every matching button in sync from one source of truth.
+function setActive(attr, val) {
+  document.querySelectorAll('[' + attr + ']').forEach((b) => {
+    const on = b.getAttribute(attr) === String(val);
+    b.classList.toggle('is-active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+}
+function setGoal(goal) {
+  state.goal = goal;
+  setActive('data-goal', goal);
+  const d = $('#goalDesc'); if (d) d.textContent = GOAL_DESC[goal] || '';
+  renderResult();          // table sort stays independent of goal (less surprising)
+}
+function setPriority(p) {
+  state.priority = +p;
+  setActive('data-p', p);
+  renderResult();
+}
 function wire() {
-  $('#goal').querySelectorAll('.seg').forEach((b) =>
+  document.querySelectorAll('[data-goal]').forEach((b) =>
     b.addEventListener('click', () => {
-      $('#goal .is-active')?.classList.remove('is-active');
-      b.classList.add('is-active');
-      state.goal = b.getAttribute('data-goal');
-      $('#goalDesc').textContent = GOAL_DESC[state.goal] || '';
-      renderResult();   // table sort stays independent of goal (less surprising)
+      setGoal(b.getAttribute('data-goal'));
+      // asked in the sunset, answered in the dark: hero picks scroll to the result
+      if (b.closest('.hero')) {
+        const eng = document.getElementById('engine');
+        if (eng) eng.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     })
   );
-  $('#priority').querySelectorAll('.seg').forEach((b) =>
-    b.addEventListener('click', () => {
-      $('#priority .is-active')?.classList.remove('is-active');
-      b.classList.add('is-active');
-      state.priority = +b.getAttribute('data-p');
-      renderResult();
-    })
+  document.querySelectorAll('[data-p]').forEach((b) =>
+    b.addEventListener('click', () => setPriority(b.getAttribute('data-p')))
   );
 
   document.querySelectorAll('.tbl thead th[data-sort]').forEach((th) =>
@@ -506,8 +522,159 @@ function wire() {
   );
 }
 
+// ---------- hero: living ASCII sunset (bounded to the hero; pauses off-screen) ----------
+// Brightness->glyph ramp + warm dusk->gold palette, mirrored into a calm sea with a
+// shimmering sun-reflection column. Adapted from design/hero-ascii-reference.html; sized to
+// the hero box (not the window) and paused when scrolled away so it never janks the page.
+function initScene() {
+  const cv = document.getElementById('heroScene');
+  const host = document.getElementById('hero');
+  if (!cv || !host) return;
+  const ctx = cv.getContext('2d', { alpha: false });
+  const rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const RAMP = [' ', '.', '.', "'", '`', ':', ':', '-', '~', '~', '=', '+', '+', '*', 'o', 'o', 'c', 'x', 'X', '&'];
+  const RMAX = RAMP.length - 1;
+  const STOPS = [
+    [0.00, 16, 24, 48], [0.16, 36, 36, 72], [0.32, 78, 62, 102], [0.48, 124, 94, 128],
+    [0.60, 158, 104, 116], [0.70, 182, 120, 116], [0.80, 210, 140, 104], [0.88, 226, 158, 104],
+    [0.94, 238, 182, 116], [0.98, 246, 206, 142], [1.00, 252, 228, 186],
+  ];
+  const NBUCK = 48;
+  const PAL = new Array(NBUCK);
+  for (let i = 0; i < NBUCK; i++) {
+    const t = i / (NBUCK - 1);
+    let k = 0; while (k < STOPS.length - 2 && t > STOPS[k + 1][0]) k++;
+    const a = STOPS[k], b = STOPS[k + 1];
+    const f = (b[0] - a[0]) ? (t - a[0]) / (b[0] - a[0]) : 0;
+    const r = (a[1] + (b[1] - a[1]) * f) | 0, g = (a[2] + (b[2] - a[2]) * f) | 0, bl = (a[3] + (b[3] - a[3]) * f) | 0;
+    PAL[i] = 'rgb(' + r + ',' + g + ',' + bl + ')';
+  }
+
+  const V_HOR = 0.55, SUN_U = 0.60, SUN_V = V_HOR - 0.03, SUN_R0 = 0.100, GSIG0 = 0.280;
+  let W, H, DPR, cols, rows, cw, ch, aspect, sunXh, bgGrad, sunR, gsig2;
+
+  function resize() {
+    const cssW = host.clientWidth || innerWidth;
+    const cssH = host.clientHeight || innerHeight;
+    DPR = Math.min(devicePixelRatio || 1, 2);
+    W = cv.width = Math.round(cssW * DPR);
+    H = cv.height = Math.round(cssH * DPR);
+    cv.style.width = cssW + 'px'; cv.style.height = cssH + 'px';
+    const cellCSS = cssW < 480 ? 10 : 11;
+    const fontPx = cellCSS * DPR;
+    ctx.font = fontPx + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.textBaseline = 'top';
+    cw = ctx.measureText('M').width || fontPx * 0.6;
+    ch = fontPx;
+    cols = Math.ceil(W / cw) + 1; rows = Math.ceil(H / ch) + 1;
+    aspect = cssW / cssH; sunXh = SUN_U * aspect;
+    const sunScale = Math.min(1, Math.max(0.62, aspect / 1.0));
+    sunR = SUN_R0 * sunScale;
+    const sig = GSIG0 * (0.72 + 0.28 * sunScale); gsig2 = sig * sig;
+    bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0.00, '#0a0812');
+    bgGrad.addColorStop(V_HOR, '#140d16');
+    bgGrad.addColorStop(1.00, '#080610');
+  }
+
+  function render(tSec) {
+    const breathe = rm ? 1 : (1 + 0.014 * Math.sin(tSec * 0.16));
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = 0.96;
+    let last = -1;
+    for (let row = 0; row < rows; row++) {
+      const v = row / (rows - 1);
+      const y = row * ch;
+      const dvh = v - SUN_V;
+      const below = v >= V_HOR;
+      const s = v / V_HOR;
+      let depth = 0, sm = 0;
+      if (below) {
+        depth = (v - V_HOR) / (1 - V_HOR);
+        const vm = 2 * V_HOR - v;
+        sm = vm > 0 ? vm / V_HOR : 0;
+      }
+      const wCol = 0.045 + depth * 0.30;
+      for (let col = 0; col < cols; col++) {
+        const u = col / (cols - 1);
+        const dxh = u * aspect - sunXh;
+        const dist = Math.sqrt(dxh * dxh + dvh * dvh);
+        const glow = Math.exp(-(dist * dist) / gsig2);
+        let b, temp;
+        if (!below) {
+          b = 0.09 + 0.46 * Math.pow(s, 1.9);
+          b += 0.30 * Math.exp(-Math.pow((v - V_HOR) / 0.14, 2));
+          b += 0.025 * Math.sin(u * 6.3 + v * 13 + 1.0);
+          temp = Math.pow(s, 1.2);
+        } else {
+          b = (0.02 + 0.42 * Math.pow(sm, 1.9)) * 0.62;
+          b += 0.12 * Math.exp(-Math.pow((v - V_HOR) / 0.11, 2));
+          b *= (1 - 0.42 * depth);
+          const colFall = Math.exp(-Math.pow(dxh / wCol, 2));
+          const band = 0.55 + 0.30 * Math.sin(Math.pow(depth, 0.6) * 16 - tSec * 0.34 + Math.sin(u * 18) * 0.6);
+          const refl = colFall * band * (0.92 * (1 - depth * 0.5));
+          b += refl;
+          temp = 0.9 * (1 - Math.pow(depth, 0.8)) + refl * 0.7;
+        }
+        b += 0.72 * glow;
+        temp += 0.8 * glow;
+        if (dist < sunR) { const c = 1 - dist / sunR; b += 0.4 * c; temp += 0.5 * c; }
+        b *= breathe;
+        b = 1 - Math.exp(-1.35 * b);
+        const mdx = (u - 0.5) * 4.7619;
+        const mdy = (v - 0.47) * 4.3478;
+        const mask = Math.exp(-(mdx * mdx + mdy * mdy));
+        b *= (1 - 0.12 * mask);   // gentle — legibility comes from the CSS scrim + text-shadow
+        if (b <= 0.01) continue;
+        if (b > 1) b = 1;
+        const chi = (b * RMAX + 0.5) | 0;
+        if (chi <= 0) continue;
+        if (temp > 1) temp = 1; else if (temp < 0) temp = 0;
+        const ci = (temp * (NBUCK - 1) + 0.5) | 0;
+        if (ci !== last) { ctx.fillStyle = PAL[ci]; last = ci; }
+        ctx.fillText(RAMP[chi], col * cw, y);
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  let lastT = 0, raf = 0, running = false, visible = true, scrolling = 0;
+  function loop(now) {
+    if (!running) return;
+    if (W < 4 || H < 4) { resize(); raf = requestAnimationFrame(loop); return; }
+    if (now - lastT >= 32) { lastT = now; render(now / 1000); }   // ~30fps, calm + battery-friendly
+    raf = requestAnimationFrame(loop);
+  }
+  function start() { if (running || rm) return; running = true; lastT = 0; raf = requestAnimationFrame(loop); }
+  function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
+  // Animate ONLY while parked at the very top. The moment the page scrolls at all, stop and
+  // stay stopped — repainting a big canvas mid-scroll is exactly what froze the software
+  // renderer before. It resumes when you settle back at the top. (NB: don't gate on
+  // document.hidden — some embedded/preview renderers report hidden permanently; the
+  // visibilitychange listener still pauses for real users who switch tabs.)
+  const atTop = () => (window.scrollY || document.documentElement.scrollTop || 0) < 40;
+  function maybeStart() { if (visible && !scrolling && atTop()) start(); }
+
+  addEventListener('resize', () => { resize(); if (rm) render(0); });
+  resize();
+  if (rm) { render(0); return; }                                 // one static frame, no rAF
+  addEventListener('scroll', () => {
+    stop();
+    clearTimeout(scrolling);
+    scrolling = setTimeout(() => { scrolling = 0; maybeStart(); }, 200);
+  }, { passive: true });
+  document.addEventListener('visibilitychange', () => (document.hidden ? stop() : maybeStart()));
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((es) => es.forEach((e) => { visible = e.isIntersecting; visible ? maybeStart() : stop(); }), { threshold: 0 }).observe(host);
+  } else { maybeStart(); }
+}
+
 // ---------- boot ----------
 async function boot() {
+  initScene();                     // paint the sunset immediately, independent of data
   try {
     const res = await fetch('data/models.json', { cache: 'no-store' });
     state.data = await res.json();

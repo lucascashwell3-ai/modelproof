@@ -7,6 +7,9 @@
   <meta name="description" content="A no-nonsense decision tool for AI models. Tell it your goal and budget; it tells you what to use — with sourced pricing, real usage, and what changed this week." />
   <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
   <link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=satoshi@400,500,700&f[]=jetbrains-mono@400,500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
 <body>
@@ -26,44 +29,88 @@
   </header>
 
   <main id="top">
-    <!-- HERO + decision engine -->
-    <section class="hero">
-      <div class="hero__intro">
-        <span class="tag">NEW · v1 — cut through the model noise</span>
-        <h1 class="hero__h1">Which AI model should<br />you <em>actually</em> use?</h1>
-        <p class="hero__sub">
-          New models drop every week and the hype is exhausting. Tell Modelproof what you're doing
-          and how much you care about cost — it gives you a straight answer, not a leaderboard.
+    <!-- ============ HERO: warm ASCII sunset + entry goal picker ============ -->
+    <section class="hero" id="hero">
+      <canvas class="hero__scene" id="heroScene" aria-hidden="true"></canvas>
+      <div class="hero__seam" aria-hidden="true"></div>
+      <div class="hero__scrim" aria-hidden="true"></div>
+      <div class="hero__content">
+        <span class="hero__eyebrow">Model selection, without the noise</span>
+        <h1 class="hero__wordmark">Modelproof</h1>
+        <p class="hero__promise">
+          Which AI model should you <em>actually</em> use? Tell it what you're working on —
+          get a straight answer, not a leaderboard.
         </p>
+        <div class="picker" role="group" aria-label="What are you working on?">
+          <span class="picker__lead">I'm working on</span>
+          <div class="segmented picker__goals goalctl" role="tablist" aria-label="Goal">
+            <button class="seg is-active" data-goal="coding" role="tab" aria-selected="true">Coding</button>
+            <button class="seg" data-goal="research" role="tab" aria-selected="false">Research &amp; strategy</button>
+            <button class="seg" data-goal="writing" role="tab" aria-selected="false">Writing</button>
+            <button class="seg" data-goal="cheap-bulk" role="tab" aria-selected="false">Cheap bulk</button>
+          </div>
+        </div>
+        <a class="hero__more" href="#engine">See my answer <span aria-hidden="true">↓</span></a>
       </div>
+    </section>
 
-      <!-- the one strong idea: the decision engine -->
-      <div class="engine" id="engine">
-        <div class="engine__controls">
-          <div class="ctl">
-            <label class="ctl__label" for="goal">I'm optimizing for</label>
-            <div class="segmented" id="goal" role="tablist" aria-label="Goal">
-              <button class="seg is-active" data-goal="coding" role="tab">Coding</button>
-              <button class="seg" data-goal="research" role="tab">Research &amp; strategy</button>
-              <button class="seg" data-goal="writing" role="tab">Writing</button>
-              <button class="seg" data-goal="cheap-bulk" role="tab">Cheap bulk</button>
-            </div>
-            <p class="ctl__desc" id="goalDesc"></p>
-          </div>
-          <div class="ctl">
-            <label class="ctl__label" for="priority">What matters more</label>
-            <div class="segmented segmented--prio" id="priority" role="tablist" aria-label="Cost vs quality priority">
-              <button class="seg" data-p="6" role="tab">Cheapest</button>
-              <button class="seg" data-p="28" role="tab">Value</button>
-              <button class="seg is-active" data-p="48" role="tab">Balanced</button>
-              <button class="seg" data-p="85" role="tab">Best</button>
-            </div>
+    <!-- ============ RESULT (dark) — the answer resolves here ============ -->
+    <section class="engine" id="engine">
+      <div class="engine__controls">
+        <div class="ctl">
+          <span class="ctl__label" id="goalCtlLabel">I'm working on</span>
+          <div class="segmented goalctl" role="tablist" aria-labelledby="goalCtlLabel">
+            <button class="seg is-active" data-goal="coding" role="tab" aria-selected="true">Coding</button>
+            <button class="seg" data-goal="research" role="tab" aria-selected="false">Research &amp; strategy</button>
+            <button class="seg" data-goal="writing" role="tab" aria-selected="false">Writing</button>
+            <button class="seg" data-goal="cheap-bulk" role="tab" aria-selected="false">Cheap bulk</button>
           </div>
         </div>
-
-        <div class="engine__result" id="result" aria-live="polite">
-          <!-- populated by app.js -->
+        <div class="ctl">
+          <span class="ctl__label" id="prioLabel">Prioritize</span>
+          <div class="segmented segmented--prio priorityctl" role="tablist" aria-labelledby="prioLabel">
+            <button class="seg" data-p="6" role="tab" aria-selected="false">Cheapest</button>
+            <button class="seg" data-p="28" role="tab" aria-selected="false">Value</button>
+            <button class="seg is-active" data-p="48" role="tab" aria-selected="true">Balanced</button>
+            <button class="seg" data-p="85" role="tab" aria-selected="false">Best</button>
+          </div>
         </div>
+      </div>
+      <p class="ctl__desc" id="goalDesc"></p>
+
+      <div class="engine__result" id="result" aria-live="polite">
+        <!-- populated by app.js -->
+      </div>
+    </section>
+
+    <!-- ============ evidence divider — depth below, out of the way ============ -->
+    <div class="evidence-mark" id="evidence">
+      <span>the evidence — check the work</span>
+    </div>
+
+    <!-- COMPARE TABLE -->
+    <section class="panel" id="compare">
+      <div class="panel__head">
+        <div>
+          <h2 class="panel__title">Compare everything</h2>
+          <p class="panel__desc">Sort by any column. The <em>coding score</em> is 0–100 — SWE-bench where it exists, otherwise a sourced estimate (LMArena, AA Coding Index); the dot shows confidence. Click a row for the basis, verdict, and sources.</p>
+        </div>
+        <div class="filters" id="filters" aria-label="Filter by use case"></div>
+      </div>
+      <div class="table-wrap">
+        <table class="tbl" id="tbl">
+          <thead>
+            <tr>
+              <th data-sort="name" class="is-left col-model">Model</th>
+              <th data-sort="best" class="col-best">Best for</th>
+              <th data-sort="coding_score" class="num col-code">Coding<span class="th-sub">score /100</span></th>
+              <th data-sort="context" class="num col-ctx">Context</th>
+              <th data-sort="price_output" class="num col-price">Price<span class="th-sub">in / out · 1M</span></th>
+              <th class="is-right col-exp">&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody id="tblBody"></tbody>
+        </table>
       </div>
     </section>
 
@@ -95,32 +142,6 @@
       </div>
       <div class="lenses" id="lenses"></div>
       <p class="lenses__basis" id="lensesBasis"></p>
-    </section>
-
-    <!-- COMPARE TABLE -->
-    <section class="panel" id="compare">
-      <div class="panel__head">
-        <div>
-          <h2 class="panel__title">Compare everything</h2>
-          <p class="panel__desc">Sort by any column. The <em>coding score</em> is 0–100 — SWE-bench where it exists, otherwise a sourced estimate (LMArena, AA Coding Index); the dot shows confidence. Click a row for the basis, verdict, and sources.</p>
-        </div>
-        <div class="filters" id="filters" aria-label="Filter by use case"></div>
-      </div>
-      <div class="table-wrap">
-        <table class="tbl" id="tbl">
-          <thead>
-            <tr>
-              <th data-sort="name" class="is-left col-model">Model</th>
-              <th data-sort="best" class="col-best">Best for</th>
-              <th data-sort="coding_score" class="num col-code">Coding<span class="th-sub">score /100</span></th>
-              <th data-sort="context" class="num col-ctx">Context</th>
-              <th data-sort="price_output" class="num col-price">Price<span class="th-sub">in / out · 1M</span></th>
-              <th class="is-right col-exp">&nbsp;</th>
-            </tr>
-          </thead>
-          <tbody id="tblBody"></tbody>
-        </table>
-      </div>
     </section>
 
     <!-- LATEST RELEASES -->
