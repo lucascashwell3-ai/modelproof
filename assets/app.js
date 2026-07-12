@@ -6,12 +6,24 @@
 
 const state = {
   data: null,
+  mode: 'task',          // 'task' = choose by what you're doing; 'lab' = choose by which lab you use
   goal: 'coding',
+  lab: null,             // a vendor string when mode === 'lab'
   priority: 48,          // 0 = cheapest, 100 = best (set by the discrete selector)
   filter: 'all',
   sort: { key: 'coding_score', dir: 'desc' },
   expanded: new Set(),
 };
+
+// vendor -> the brand people actually say ("I use Claude / ChatGPT / Grok…")
+const LAB_LABEL = {
+  'Anthropic': 'Claude', 'OpenAI': 'ChatGPT', 'Google': 'Gemini', 'xAI': 'Grok',
+  'DeepSeek': 'DeepSeek', 'Meta': 'Llama', 'Alibaba (Qwen)': 'Qwen', 'Moonshot AI': 'Kimi',
+  'Mistral AI': 'Mistral',
+};
+// order the lab chips by how commonly people reach for them (unknown vendors fall to the end)
+const LAB_ORDER = ['Anthropic', 'OpenAI', 'Google', 'xAI', 'DeepSeek', 'Meta', 'Alibaba (Qwen)', 'Moonshot AI', 'Mistral AI'];
+const PRIO_LABEL = { 6: 'cheapest', 28: 'value', 48: 'balanced', 85: 'best' };
 
 // which benchmark a goal cares about
 const GOAL_METRIC = {
@@ -149,6 +161,11 @@ function headlineStat(m, metric) {
 }
 
 function renderResult() {
+  if (state.mode === 'lab') return renderLabResult();
+  return renderTaskResult();
+}
+
+function renderTaskResult() {
   const box = $('#result');
   const ranked = score(state.data.models, state.goal, state.priority);
   if (!ranked.length) {
@@ -200,6 +217,66 @@ function renderResult() {
 
 function metricLabel(metric) {
   return { coding_score: 'Coding', swe_bench: 'SWE-bench', gpqa: 'GPQA', aime: 'AIME', lmarena_elo: 'LMArena Elo', mmlu_pro: 'MMLU-Pro' }[metric] || metric;
+}
+
+// ---------- by-lab result: the lab's own best model for each kind of work ----------
+const LAB_GOALS = [['coding', 'Coding'], ['research', 'Strategy'], ['writing', 'Writing'], ['cheap-bulk', 'Cheap bulk']];
+
+function renderLabResult() {
+  const box = $('#result');
+  const vendor = state.lab;
+  const brand = LAB_LABEL[vendor] || vendor || '—';
+  const models = state.data.models.filter((m) => m.vendor === vendor);
+  if (!models.length) { box.innerHTML = `<div class="empty">No ${brand} models in the data yet.</div>`; return; }
+  state.pickId = null;
+
+  const rows = LAB_GOALS.map(([g, label]) => {
+    const top = (score(models, g, state.priority)[0] || {}).m || null;
+    if (!top) return { label, name: null };
+    const meta = g === 'cheap-bulk'
+      ? `${fmtPrice(top.price_output)}/1M out · lowest-cost`
+      : (() => { const hv = headlineStat(top, GOAL_METRIC[g]); return `${hv.value} ${hv.label} · ${fmtPrice(top.price_output)}/1M out`; })();
+    return { label, name: top.name, meta };
+  });
+  const count = models.length;
+
+  box.innerHTML = `
+    <div class="pick pick--lab">
+      <span class="pick__flag">Your ${brand} kit</span>
+      <div class="pick__name">${brand}</div>
+      <div class="pick__vendor">${count} model${count > 1 ? 's' : ''} · the one to reach for per task, at your <b>${PRIO_LABEL[state.priority] || 'balanced'}</b> priority</div>
+      <div class="labkit">
+        ${rows.map((r) => r.name ? `
+          <div class="labkit__row">
+            <span class="labkit__goal">${r.label}</span>
+            <span class="labkit__model">${r.name}</span>
+            <span class="labkit__meta">${r.meta}</span>
+          </div>` : `
+          <div class="labkit__row labkit__row--none">
+            <span class="labkit__goal">${r.label}</span>
+            <span class="labkit__model na">—</span>
+            <span class="labkit__meta">no measured ${brand} model for this</span>
+          </div>`).join('')}
+      </div>
+    </div>
+    <p class="rec-caption">Only ${brand}'s own models, ranked among themselves — for when your lab is already decided. The whole field is in the table below.</p>`;
+  renderChart();
+}
+
+function renderLabChips() {
+  const vendors = [...new Set(state.data.models.map((m) => m.vendor))]
+    .sort((a, b) => (LAB_ORDER.indexOf(a) + 1 || 99) - (LAB_ORDER.indexOf(b) + 1 || 99));
+  if (!state.lab || !vendors.includes(state.lab)) state.lab = vendors[0];
+  const html = vendors.map((v) =>
+    `<button class="chip labchip ${v === state.lab ? 'is-active' : ''}" data-lab="${v}" role="tab" aria-selected="${v === state.lab}">${LAB_LABEL[v] || v}</button>`
+  ).join('');
+  document.querySelectorAll('.labctl').forEach((c) => { c.innerHTML = html; });
+  document.querySelectorAll('[data-lab]').forEach((b) =>
+    b.addEventListener('click', () => {
+      setLab(b.getAttribute('data-lab'));
+      if (b.closest('.hero')) { const e = document.getElementById('engine'); if (e) e.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    })
+  );
 }
 
 // ---------- cost vs capability chart ----------
@@ -497,7 +574,23 @@ function setPriority(p) {
   setActive('data-p', p);
   renderResult();
 }
+function setMode(mode) {
+  state.mode = mode;
+  setActive('data-mode', mode);
+  document.querySelectorAll('[data-for="task"]').forEach((el) => { el.hidden = mode !== 'task'; });
+  document.querySelectorAll('[data-for="lab"]').forEach((el) => { el.hidden = mode !== 'lab'; });
+  const gd = $('#goalDesc'); if (gd) gd.style.display = mode === 'task' ? '' : 'none';  // only meaningful in task mode
+  renderResult();
+}
+function setLab(v) {
+  state.lab = v;
+  setActive('data-lab', v);
+  renderResult();
+}
 function wire() {
+  document.querySelectorAll('[data-mode]').forEach((b) =>
+    b.addEventListener('click', () => setMode(b.getAttribute('data-mode')))
+  );
   document.querySelectorAll('[data-goal]').forEach((b) =>
     b.addEventListener('click', () => {
       setGoal(b.getAttribute('data-goal'));
@@ -690,6 +783,7 @@ async function boot() {
   wire();
   $('#goalDesc').textContent = GOAL_DESC[state.goal] || '';
   renderFilters();
+  renderLabChips();       // build the "which lab" chips from the data's vendors + wire them
   renderResult();
   renderTable();
   renderUsage();

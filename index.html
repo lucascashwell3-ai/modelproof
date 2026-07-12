@@ -37,17 +37,23 @@
       <div class="hero__content">
         <span class="hero__eyebrow">Model selection, without the noise</span>
         <h1 class="hero__wordmark">Modelproof</h1>
-        <p class="hero__promise">
-          Which AI model should you <em>actually</em> use? Tell it what you're working on —
-          get a straight answer, not a leaderboard.
-        </p>
-        <div class="picker" role="group" aria-label="What are you working on?">
-          <span class="picker__lead">I'm working on</span>
-          <div class="segmented picker__goals goalctl" role="tablist" aria-label="Goal">
-            <button class="seg is-active" data-goal="coding" role="tab" aria-selected="true">Coding</button>
-            <button class="seg" data-goal="research" role="tab" aria-selected="false">Research &amp; strategy</button>
-            <button class="seg" data-goal="writing" role="tab" aria-selected="false">Writing</button>
-            <button class="seg" data-goal="cheap-bulk" role="tab" aria-selected="false">Cheap bulk</button>
+        <div class="picker" role="group" aria-label="Get a recommendation">
+          <div class="modeswitch modectl" role="tablist" aria-label="Choose how to pick">
+            <button class="mode is-active" data-mode="task" role="tab" aria-selected="true">By task</button>
+            <button class="mode" data-mode="lab" role="tab" aria-selected="false">By lab</button>
+          </div>
+          <div class="picker__group" data-for="task">
+            <span class="picker__lead">I'm working on</span>
+            <div class="segmented segmented--goals goalctl" role="tablist" aria-label="Goal">
+              <button class="seg is-active" data-goal="coding" role="tab" aria-selected="true">Coding</button>
+              <button class="seg" data-goal="research" role="tab" aria-selected="false">Strategy</button>
+              <button class="seg" data-goal="writing" role="tab" aria-selected="false">Writing</button>
+              <button class="seg" data-goal="cheap-bulk" role="tab" aria-selected="false">Cheap bulk</button>
+            </div>
+          </div>
+          <div class="picker__group" data-for="lab" hidden>
+            <span class="picker__lead">I mainly use</span>
+            <div class="labchips labctl" role="tablist" aria-label="Lab"></div>
           </div>
         </div>
         <a class="hero__more" href="#engine">See my answer <span aria-hidden="true">↓</span></a>
@@ -58,13 +64,24 @@
     <section class="engine" id="engine">
       <div class="engine__controls">
         <div class="ctl">
+          <span class="ctl__label">Choose by</span>
+          <div class="modeswitch modectl" role="tablist" aria-label="Choose how to pick">
+            <button class="mode is-active" data-mode="task" role="tab" aria-selected="true">Task</button>
+            <button class="mode" data-mode="lab" role="tab" aria-selected="false">Lab</button>
+          </div>
+        </div>
+        <div class="ctl" data-for="task">
           <span class="ctl__label" id="goalCtlLabel">I'm working on</span>
-          <div class="segmented goalctl" role="tablist" aria-labelledby="goalCtlLabel">
+          <div class="segmented segmented--goals goalctl" role="tablist" aria-labelledby="goalCtlLabel">
             <button class="seg is-active" data-goal="coding" role="tab" aria-selected="true">Coding</button>
-            <button class="seg" data-goal="research" role="tab" aria-selected="false">Research &amp; strategy</button>
+            <button class="seg" data-goal="research" role="tab" aria-selected="false">Strategy</button>
             <button class="seg" data-goal="writing" role="tab" aria-selected="false">Writing</button>
             <button class="seg" data-goal="cheap-bulk" role="tab" aria-selected="false">Cheap bulk</button>
           </div>
+        </div>
+        <div class="ctl" data-for="lab" hidden>
+          <span class="ctl__label" id="labCtlLabel">I mainly use</span>
+          <div class="labchips labctl" role="tablist" aria-labelledby="labCtlLabel"></div>
         </div>
         <div class="ctl">
           <span class="ctl__label" id="prioLabel">Prioritize</span>

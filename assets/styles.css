@@ -42,6 +42,7 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }         /* mode-switch groups toggle via the hidden attribute */
 
 html { scroll-behavior: smooth; }
 
@@ -156,7 +157,24 @@ a { color: inherit; text-decoration: none; }
   box-shadow: 0 18px 50px -20px rgba(0,0,0,0.85);
 }
 .picker__lead { font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; }
-.picker__goals { background: var(--bg-2); }
+.picker__group { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+
+/* mode toggle — the two ways in: By task | By lab */
+.modeswitch { display: inline-flex; gap: 3px; background: var(--bg-2); border: 1px solid var(--line-soft);
+  padding: 3px; border-radius: 999px; }
+.mode { font-family: var(--font); font-size: 12.5px; font-weight: 600; color: var(--ink-3);
+  background: transparent; border: 0; padding: 6px 18px; border-radius: 999px; cursor: pointer;
+  transition: color .16s var(--ease), background .16s var(--ease); }
+.mode:hover { color: var(--ink); }
+.mode.is-active { background: var(--gold); color: #1a1405; }
+.mode:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* single-row task chips (double-class beats base .segmented regardless of source order) */
+.segmented.segmented--goals { grid-template-columns: repeat(4, 1fr); }
+.segmented.segmented--goals .seg { white-space: nowrap; padding: 9px 10px; }
+
+/* lab chips (wrap) */
+.labchips { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; max-width: 470px; }
 .hero__more {
   margin-top: 26px; font-size: 13.5px; color: #f4e7cb; padding: 9px 18px; border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.28); text-shadow: 0 1px 8px rgba(0,0,0,0.35);
@@ -219,6 +237,17 @@ a { color: inherit; text-decoration: none; }
 .runner__meta b { color: var(--gold-2); font-weight: 500; }
 .empty { color: var(--ink-3); font-size: 0.95rem; padding: 20px 0; text-align: center; }
 .rec-caption { color: var(--ink-4); font-size: 11.5px; margin-top: 12px; text-align: center; line-height: 1.4; }
+
+/* by-lab result: the lab's best model for each kind of work */
+.pick--lab .labkit { display: flex; flex-direction: column; margin-top: 16px; }
+.labkit__row { display: grid; grid-template-columns: 104px 1fr auto; gap: 14px; align-items: baseline;
+  padding: 12px 2px; border-top: 1px solid var(--line-soft); }
+.labkit__row:first-child { border-top: 0; }
+.labkit__goal { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); }
+.labkit__model { font-weight: 700; font-size: 1rem; color: var(--ink); }
+.labkit__meta { font-family: var(--mono); font-size: 12px; color: var(--gold-2); text-align: right; }
+.labkit__row--none .labkit__model { color: var(--ink-4); font-weight: 400; }
+.labkit__row--none .labkit__meta { color: var(--ink-4); }
 
 /* ---------- evidence divider ---------- */
 .evidence-mark {
@@ -416,6 +445,9 @@ a { color: inherit; text-decoration: none; }
   .col-best { display: none; }
   .col-model { width: 52%; } .col-price { width: 40%; }
   .panel__title { font-size: 1.4rem; }
+  .segmented--goals .seg { font-size: 11.5px; padding: 8px 3px; }
+  .labkit__row { grid-template-columns: 78px 1fr; }
+  .labkit__meta { grid-column: 2; text-align: left; margin-top: 2px; }
   .rel { grid-template-columns: 50px 1fr; gap: 14px; }
   .rel::before { left: 59px; } .rel::after { left: 54px; }
 }
