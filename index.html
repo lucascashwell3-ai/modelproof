@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Model Radar — which AI model should you actually use?</title>
-  <meta name="description" content="A no-nonsense decision tool for AI models. Tell it your goal and budget; it tells you what to use — and what changed this week." />
+  <title>Modelproof — which AI model should you actually use?</title>
+  <meta name="description" content="A no-nonsense decision tool for AI models. Tell it your goal and budget; it tells you what to use — with sourced pricing, real usage, and what changed this week." />
   <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
   <link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=satoshi@400,500,700&f[]=jetbrains-mono@400,500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/styles.css" />
@@ -14,14 +14,12 @@
 
   <!-- floating capsule nav -->
   <header class="nav" id="nav">
-    <a class="nav__brand" href="#top" aria-label="Model Radar home">
-      <svg class="nav__radar" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-        <circle cx="12" cy="12" r="9" class="r-ring" />
-        <circle cx="12" cy="12" r="5.5" class="r-ring" />
-        <line x1="12" y1="12" x2="12" y2="3" class="r-sweep" />
-        <circle cx="12" cy="12" r="1.4" class="r-dot" />
+    <a class="nav__brand" href="#top" aria-label="Modelproof home">
+      <svg class="nav__seal" viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">
+        <circle cx="12" cy="12" r="9.2" class="r-ring" />
+        <path d="M7.6 12.4l3 3 5.8-6.6" class="r-check" />
       </svg>
-      <span>Model&nbsp;Radar</span>
+      <span>Model<b>proof</b></span>
     </a>
     <span class="nav__asof" id="navAsof">loading…</span>
     <a class="nav__link" href="#sourcing">How it's sourced</a>
@@ -34,8 +32,8 @@
         <span class="tag">NEW · v1 — cut through the model noise</span>
         <h1 class="hero__h1">Which AI model should<br />you <em>actually</em> use?</h1>
         <p class="hero__sub">
-          New models drop every week and the hype is exhausting. Tell Radar what you're doing and
-          how much you care about cost — it gives you a straight answer, not a leaderboard.
+          New models drop every week and the hype is exhausting. Tell Modelproof what you're doing
+          and how much you care about cost — it gives you a straight answer, not a leaderboard.
         </p>
       </div>
 
@@ -46,11 +44,11 @@
             <label class="ctl__label" for="goal">I'm optimizing for</label>
             <div class="segmented" id="goal" role="tablist" aria-label="Goal">
               <button class="seg is-active" data-goal="coding" role="tab">Coding</button>
-              <button class="seg" data-goal="agentic" role="tab">Agentic</button>
-              <button class="seg" data-goal="reasoning" role="tab">Reasoning</button>
+              <button class="seg" data-goal="research" role="tab">Research &amp; strategy</button>
               <button class="seg" data-goal="writing" role="tab">Writing</button>
-              <button class="seg" data-goal="cheap-bulk" role="tab">Cheap&nbsp;bulk</button>
+              <button class="seg" data-goal="cheap-bulk" role="tab">Cheap bulk</button>
             </div>
+            <p class="ctl__desc" id="goalDesc"></p>
           </div>
           <div class="ctl">
             <label class="ctl__label" for="priority">
@@ -85,6 +83,21 @@
       <div class="chart" id="chart"></div>
     </section>
 
+    <!-- WHO'S USING WHAT -->
+    <section class="panel" id="usage">
+      <div class="panel__head">
+        <div>
+          <h2 class="panel__title">Who's actually using what</h2>
+          <p class="panel__desc">
+            There's no single "most used" — <em>it depends who you count.</em> Developers, the
+            preference crowd, and everyday consumers rank models completely differently.
+          </p>
+        </div>
+      </div>
+      <div class="lenses" id="lenses"></div>
+      <p class="lenses__basis" id="lensesBasis"></p>
+    </section>
+
     <!-- COMPARE TABLE -->
     <section class="panel" id="compare">
       <div class="panel__head">
@@ -98,13 +111,12 @@
         <table class="tbl" id="tbl">
           <thead>
             <tr>
-              <th data-sort="name" class="is-left">Model</th>
-              <th data-sort="best">Best for</th>
-              <th data-sort="swe_bench" class="num">Coding<span class="th-sub">SWE-bench</span></th>
-              <th data-sort="context" class="num">Context</th>
-              <th data-sort="price_input" class="num">$ in<span class="th-sub">/1M</span></th>
-              <th data-sort="price_output" class="num">$ out<span class="th-sub">/1M</span></th>
-              <th class="is-right">&nbsp;</th>
+              <th data-sort="name" class="is-left col-model">Model</th>
+              <th data-sort="best" class="col-best">Best for</th>
+              <th data-sort="swe_bench" class="num col-code">Coding<span class="th-sub">SWE-bench</span></th>
+              <th data-sort="context" class="num col-ctx">Context</th>
+              <th data-sort="price_output" class="num col-price">Price<span class="th-sub">in / out · 1M</span></th>
+              <th class="is-right col-exp">&nbsp;</th>
             </tr>
           </thead>
           <tbody id="tblBody"></tbody>
@@ -128,14 +140,13 @@
     <div class="foot__grid">
       <div>
         <div class="foot__brand">
-          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" class="r-ring" />
-            <line x1="12" y1="12" x2="12" y2="3" class="r-sweep" />
-            <circle cx="12" cy="12" r="1.4" class="r-dot" />
+          <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
+            <circle cx="12" cy="12" r="9.2" class="r-ring" />
+            <path d="M7.6 12.4l3 3 5.8-6.6" class="r-check" />
           </svg>
-          <span>Model Radar</span>
+          <span>Model<b>proof</b></span>
         </div>
-        <p class="foot__note">A decision tool, not a leaderboard. Part of Lucas Cashwell's <strong>Proof</strong> portfolio.</p>
+        <p class="foot__note">A decision tool, not a leaderboard. Sibling to <strong>DATproof</strong> in Lucas Cashwell's <strong>Proof</strong> portfolio.</p>
       </div>
       <div class="foot__col">
         <h3>How it's sourced</h3>

@@ -917,5 +917,71 @@
     "mmlu_pro": "MMLU-Pro — % on a harder, multi-discipline knowledge and reasoning benchmark.",
     "lmarena_elo": "LMArena text Elo — human head-to-head preference rating (higher = preferred more often)."
   },
-  "notes": "Data snapshot 2026-07-12. Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: most come from third-party aggregators (Artificial Analysis, Vellum, llm-stats, vals.ai), not primary vendor cards, and several 2026 models publish only agentic evals (SWE-bench Pro, Terminal-Bench) that don't map to SWE-bench Verified — those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Note: Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it."
+  "notes": "Data snapshot 2026-07-12. Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: most come from third-party aggregators (Artificial Analysis, Vellum, llm-stats, vals.ai), not primary vendor cards, and several 2026 models publish only agentic evals (SWE-bench Pro, Terminal-Bench) that don't map to SWE-bench Verified — those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Note: Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it.",
+  "usage": {
+    "as_of": "2026-06 → 07",
+    "basis": "No single \"most used\" exists — each lens measures a different population and ranks models differently. Figures are ~June–July 2026 and lag a couple of weeks, so the newest models (GPT-5.6, Grok 4.5, Sonnet 5) aren't ranked yet.",
+    "lenses": [
+      {
+        "label": "Developers",
+        "sub": "OpenRouter API token volume",
+        "note": "Cheap open-weight models win on raw volume; Anthropic & OpenAI win on dollars spent. Chinese labs are ~44–52% of all tokens.",
+        "top": [
+          {
+            "name": "DeepSeek V4-Flash",
+            "detail": "#1 model · ~6.4T tokens/mo"
+          },
+          {
+            "name": "DeepSeek",
+            "detail": "top lab · ~16% of all tokens"
+          },
+          {
+            "name": "Anthropic",
+            "detail": "#1 lab by $ spend"
+          }
+        ],
+        "source": "https://officechai.com/ai/these-are-the-most-popular-ai-model-companies-on-openrouter-june-2026/"
+      },
+      {
+        "label": "Preference",
+        "sub": "LMArena blind human votes",
+        "note": "A quality-preference signal, not usage. ~7.3M votes; the whole top tier sits within ~55 Elo — the tightest ever.",
+        "top": [
+          {
+            "name": "Claude Opus 4.8",
+            "detail": "#1 · ~1510 Elo"
+          },
+          {
+            "name": "GPT-5.5 Pro",
+            "detail": "#2"
+          },
+          {
+            "name": "Gemini 3.1 Pro",
+            "detail": "#3"
+          }
+        ],
+        "source": "https://lmarena.ai/leaderboard"
+      },
+      {
+        "label": "Consumers",
+        "sub": "AI-assistant web traffic",
+        "note": "Consumer web visits only (undercounts mobile & embedded) — a totally different crowd from the API developers.",
+        "top": [
+          {
+            "name": "ChatGPT",
+            "detail": "53.9%"
+          },
+          {
+            "name": "Gemini",
+            "detail": "27.9%"
+          },
+          {
+            "name": "Claude",
+            "detail": "9.2%"
+          }
+        ],
+        "source": "https://momenticmarketing.com/blog/top-ai-chatbots"
+      }
+    ]
+  }
 }

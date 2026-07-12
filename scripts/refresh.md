@@ -1,4 +1,4 @@
-# Refreshing Model Radar's data
+# Refreshing Modelproof's data
 
 All model data lives in one file: [`../data/models.json`](../data/models.json). Refreshing =
 regenerating that file with current, sourced figures. There is **no build step** — replace the
@@ -11,7 +11,7 @@ procedure. Fastest path: paste the prompt below into a Claude Code session with 
 ## Refresh prompt
 
 > Research current AI-model data as of TODAY and output a single JSON object matching the
-> schema in `model-radar/data/models.json`. Cover the frontier + mid + cheap/open tiers across
+> schema in `modelproof/data/models.json`. Cover the frontier + mid + cheap/open tiers across
 > Anthropic, OpenAI, Google, xAI, DeepSeek, Qwen, Moonshot/Kimi, Meta, Mistral (~15–22 models).
 >
 > **Strict sourcing rules (this ships to people making real spend decisions):**
@@ -56,7 +56,26 @@ procedure. Fastest path: paste the prompt below into a Claude Code session with 
 `coding`, `agentic`, `writing`, `reasoning`, `cheap-bulk`, `vision`, `long-context`, `speed`, `research`.
 
 Top level also needs: `as_of` (string), `releases` (array), `benchmarks_legend` (object of
-one-line descriptions per benchmark key), `notes` (honest global caveat shown in the footer).
+one-line descriptions per benchmark key), `notes` (honest global caveat shown in the footer),
+and `usage` (the "who's using what" lenses):
+
+```jsonc
+"usage": {
+  "as_of": "2026-06 → 07",
+  "basis": "one honest sentence: no single 'most used'; each lens is a different population",
+  "lenses": [
+    { "label": "Developers", "sub": "OpenRouter API token volume",
+      "note": "one-line caveat", "source": "https://…",
+      "top": [ { "name": "DeepSeek V4-Flash", "detail": "#1 model · ~6.4T tokens/mo" }, … ] },
+    { "label": "Preference", "sub": "LMArena blind human votes", … },
+    { "label": "Consumers", "sub": "AI-assistant web traffic", … }
+  ]
+}
+```
+
+Usage is a **proxy**, not market share — each lens measures a different population and they
+disagree. Newest models often have no usage yet (data lags a couple of weeks); that's expected.
+Re-run the usage/currency research pass to refresh it.
 
 ## After refreshing
 

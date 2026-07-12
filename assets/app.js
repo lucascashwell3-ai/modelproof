@@ -1,5 +1,5 @@
 /* ============================================================
-   Model Radar — client-side decision engine
+   Modelproof — client-side decision engine
    Loads data/models.json and renders: recommender, cost/capability
    chart, compare table, releases feed. Honest with missing data.
    ============================================================ */
@@ -16,10 +16,25 @@ const state = {
 // which benchmark a goal cares about
 const GOAL_METRIC = {
   coding: 'swe_bench',
-  agentic: 'swe_bench',
-  reasoning: 'gpqa',
+  research: 'gpqa',
   writing: 'lmarena_elo',
   'cheap-bulk': 'mmlu_pro',
+};
+
+// data still carries the finer-grained best_for tags; these map goals → tags
+// that satisfy them (agentic folds into coding; reasoning/research → research).
+const GOAL_TAGS = {
+  coding: ['coding', 'agentic'],
+  research: ['reasoning', 'research'],
+  writing: ['writing'],
+  'cheap-bulk': ['cheap-bulk'],
+};
+
+const GOAL_DESC = {
+  coding: 'Writing, fixing & refactoring code — including multi-step agent tasks. Ranked on SWE-bench.',
+  research: 'Deep thinking, analysis & planning. Ranked on graduate-level reasoning (GPQA).',
+  writing: 'Drafting prose, emails & content. Ranked on general ability + human preference — there is no clean writing benchmark.',
+  'cheap-bulk': 'High-volume simple work — classification, tagging, extraction. Cheapest capable option first.',
 };
 
 const TAG_LABEL = {
@@ -46,6 +61,10 @@ function fmtCtx(t) {
   return '' + t;
 }
 function fmtScore(v) { return num(v) ? '<span class="na">—</span>' : v + (v <= 100 ? '%' : ''); }
+function fmtPriceRange(m) {
+  if (num(m.price_input) && num(m.price_output)) return '<span class="na">—</span>';
+  return `${fmtPrice(m.price_input)}<span class="pslash">/</span>${fmtPrice(m.price_output)}`;
+}
 
 // normalize an array of {v} ignoring nulls → returns fn(v)->0..1
 function normalizer(values, { log = false } = {}) {
@@ -100,9 +119,10 @@ function score(models, goal, priority) {
   const f = scorer(models, goal);
   const w = priority / 100;                // weight on quality
   const bulk = goal === 'cheap-bulk';
+  const tags = GOAL_TAGS[goal] || [goal];
   return models
     .map((m) => {
-      const hasTag = (m.best_for || []).includes(goal);
+      const hasTag = (m.best_for || []).some((t) => tags.includes(t));
       const { cap, cheap, measured, via } = f(m);
       let s = bulk ? 0.30 * cap + 0.70 * cheap : w * cap + (1 - w) * cheap;
       if (hasTag) s += 0.03;               // small nudge for explicit fit
@@ -157,7 +177,7 @@ function renderResult() {
       ${runners.map((m) => { const rv = headlineStat(m, metric); return `
         <div class="runner" data-jump="${m.id}">
           <div class="runner__name">${m.name}</div>
-          <div class="runner__meta"><span>${m.vendor}</span><span><b>${rv.value}</b> · <b>${fmtPrice(m.price_output)}</b>/1M</span></div>
+          <div class="runner__meta"><b>${rv.value}</b> ${rv.label} · <b>${fmtPrice(m.price_output)}</b>/1M out</div>
         </div>`; }).join('')}
     </div>
     <p class="rec-caption">${caption}</p>`;
@@ -217,6 +237,9 @@ function renderChart() {
   const midX = padL + plotW / 2, midY = padT + plotH / 2;
   let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cost versus capability scatter plot">`;
 
+  // sweet-spot tint (top-left = cheap + capable)
+  svg += `<rect x="${padL}" y="${padT}" width="${plotW / 2}" height="${plotH / 2}" fill="var(--gold)" opacity="0.05"/>`;
+
   // quadrant guide lines
   svg += `<line class="grid-line" x1="${midX}" y1="${padT}" x2="${midX}" y2="${padT + plotH}"/>`;
   svg += `<line class="grid-line" x1="${padL}" y1="${midY}" x2="${padL + plotW}" y2="${midY}"/>`;
@@ -246,19 +269,20 @@ function renderChart() {
   svg += `<text class="axis-title" x="${padL + plotW / 2}" y="${H - 10}" text-anchor="middle">Price — $ per 1M output tokens (log scale)</text>`;
   svg += `<text class="axis-title" transform="translate(16 ${padT + plotH / 2}) rotate(-90)" text-anchor="middle">${metricLabel(metric)} score →</text>`;
 
-  // dots
+  // dots — big hit target + hover-scaled marks; label stays put
   pts.forEach((p) => {
     const cx = X(p.x), cy = Y(p.y);
     const isPick = p.m.id === state.pickId;
-    const r = isPick ? 8 : 6;
+    const r = isPick ? 9 : 7;
+    const nearRight = cx > padL + plotW * 0.7;   // keep labels inside the plot
+    const lx = nearRight ? -(r + 6) : (r + 6);
     svg += `<g class="dot ${isPick ? 'is-pick' : ''}" data-id="${p.m.id}" transform="translate(${cx} ${cy})">`;
-    if (isPick) svg += `<circle r="16" fill="var(--gold)" opacity="0.16"/>`;
-    svg += `<circle class="d-core" r="${r}" fill="${isPick ? 'var(--gold)' : 'none'}" stroke="var(--gold-line)" stroke-width="1.6"/>`;
-    if (isPick || pts.length <= 12) {
-      const nearRight = cx > padL + plotW * 0.7;   // keep labels inside the plot
-      const lx = nearRight ? -(r + 5) : (r + 5);
-      svg += `<text class="dot__label" x="${lx}" y="4" text-anchor="${nearRight ? 'end' : 'start'}">${p.m.name}</text>`;
-    }
+    svg += `<circle class="d-hit" r="26" fill="transparent"/>`;                 // easy hover/click target
+    svg += `<g class="dot__marks">`;
+    if (isPick) svg += `<circle class="d-halo" r="18" fill="var(--gold)" opacity="0.18"/>`;
+    svg += `<circle class="d-core" r="${r}" fill="${isPick ? 'var(--gold)' : 'var(--panel)'}" stroke="var(--gold-line)" stroke-width="1.8"/>`;
+    svg += `</g>`;
+    svg += `<text class="dot__label" x="${lx}" y="4" text-anchor="${nearRight ? 'end' : 'start'}">${p.m.name}</text>`;
     svg += `</g>`;
   });
 
@@ -271,6 +295,12 @@ function renderChart() {
     const m = state.data.models.find((x) => x.id === id);
     g.addEventListener('mousemove', (e) => showTip(e, m, metric));
     g.addEventListener('mouseleave', hideTip);
+    g.addEventListener('click', () => {
+      hideTip();
+      state.expanded.add(id);
+      renderTable();
+      document.getElementById('compare').scrollIntoView({ behavior: 'smooth' });
+    });
   });
 }
 
@@ -291,7 +321,7 @@ function hideTip() { $('#tooltip').classList.remove('show'); }
 
 // ---------- compare table ----------
 function renderFilters() {
-  const goals = ['all', 'coding', 'agentic', 'reasoning', 'writing', 'cheap-bulk', 'vision', 'long-context'];
+  const goals = ['all', 'coding', 'research', 'writing', 'cheap-bulk', 'vision', 'long-context', 'speed'];
   const box = $('#filters');
   box.innerHTML = goals.map((g) =>
     `<button class="chip ${state.filter === g ? 'is-active' : ''}" data-f="${g}">${g === 'all' ? 'All' : TAG_LABEL[g] || g}</button>`
@@ -303,7 +333,10 @@ function renderFilters() {
 
 function sortedModels() {
   let list = state.data.models.slice();
-  if (state.filter !== 'all') list = list.filter((m) => (m.best_for || []).includes(state.filter));
+  if (state.filter !== 'all') {
+    const syn = GOAL_TAGS[state.filter] || [state.filter];
+    list = list.filter((m) => (m.best_for || []).some((t) => syn.includes(t)));
+  }
   const { key, dir } = state.sort;
   const val = (m) => {
     if (key === 'name') return m.name.toLowerCase();
@@ -331,13 +364,12 @@ function renderTable() {
   list.forEach((m) => {
     const tr = el('tr');
     tr.innerHTML = `
-      <td class="cell-model"><b>${m.name}</b><span>${m.vendor}</span></td>
-      <td class="cell-best"><div class="tags">${(m.best_for || []).slice(0, 3).map((t) => `<span class="mini-tag">${TAG_LABEL[t] || t}</span>`).join('') || '<span class="na">—</span>'}</div></td>
-      <td class="num">${fmtScore(m.benchmarks?.swe_bench)}</td>
-      <td class="num">${fmtCtx(m.context_window)}</td>
-      <td class="num">${fmtPrice(m.price_input)}</td>
-      <td class="num">${fmtPrice(m.price_output)}<span class="conf conf-${m.confidence}" title="confidence: ${m.confidence}"></span></td>
-      <td class="is-right" style="text-align:right;color:var(--ink-4)">${state.expanded.has(m.id) ? '−' : '+'}</td>`;
+      <td class="cell-model col-model"><b>${m.name}</b><span>${m.vendor}</span></td>
+      <td class="cell-best col-best"><div class="tags">${(m.best_for || []).slice(0, 3).map((t) => `<span class="mini-tag">${TAG_LABEL[t] || t}</span>`).join('') || '<span class="na">—</span>'}</div></td>
+      <td class="num col-code">${fmtScore(m.benchmarks?.swe_bench)}</td>
+      <td class="num col-ctx">${fmtCtx(m.context_window)}</td>
+      <td class="num col-price">${fmtPriceRange(m)}<span class="conf conf-${m.confidence}" title="confidence: ${m.confidence}"></span></td>
+      <td class="is-right col-exp" style="text-align:right;color:var(--ink-4)">${state.expanded.has(m.id) ? '−' : '+'}</td>`;
     tr.addEventListener('click', () => {
       if (state.expanded.has(m.id)) state.expanded.delete(m.id); else state.expanded.add(m.id);
       renderTable();
@@ -346,7 +378,7 @@ function renderTable() {
 
     if (state.expanded.has(m.id)) {
       const mr = el('tr', 'row-more');
-      const td = el('td'); td.colSpan = 7;
+      const td = el('td'); td.colSpan = 6;
       td.innerHTML = `
         <div class="rm-grid">
           <div>
@@ -382,17 +414,57 @@ function renderTable() {
 
 function shortUrl(u) { try { return new URL(u).hostname.replace('www.', ''); } catch { return u.slice(0, 28); } }
 
+// ---------- who's using what ----------
+function renderUsage() {
+  const u = state.data.usage;
+  const section = $('#usage');
+  if (!u || !u.lenses || !u.lenses.length) { if (section) section.style.display = 'none'; return; }
+  $('#lenses').innerHTML = u.lenses.map((l) => `
+    <div class="lens">
+      <div class="lens__head">
+        <span class="lens__label">${l.label}</span>
+        <span class="lens__sub">${l.sub}</span>
+      </div>
+      <ol class="lens__top">
+        ${l.top.map((t, i) => `
+          <li>
+            <span class="lens__rank">${i + 1}</span>
+            <span class="lens__name">${t.name}</span>
+            <span class="lens__detail">${t.detail}</span>
+          </li>`).join('')}
+      </ol>
+      <p class="lens__note">${l.note}</p>
+      ${l.source ? `<a class="lens__src" href="${l.source}" target="_blank" rel="noopener">${shortUrl(l.source)}</a>` : ''}
+    </div>`).join('');
+  $('#lensesBasis').textContent = u.basis || '';
+}
+
 // ---------- releases ----------
+const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+function relWhen(d) {
+  const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?/.exec(d || '');
+  if (!m) return { mon: (d || '?').slice(5, 8).toUpperCase() || '·', day: '' };
+  return { mon: MONTHS[+m[2] - 1] || '', day: m[3] || ("'" + m[1].slice(2)) };
+}
 function renderFeed() {
   const feed = $('#feed');
   const rel = (state.data.releases || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
   if (!rel.length) { feed.innerHTML = '<li class="empty">No recent releases recorded.</li>'; return; }
-  feed.innerHTML = rel.map((r) => `
-    <li>
-      <div class="feed__date">${r.date || ''} ${r.vendor ? `· <span class="feed__vendor">${r.vendor}</span>` : ''}</div>
-      <div class="feed__title">${r.source ? `<a href="${r.source}" target="_blank" rel="noopener">${r.title}</a>` : r.title}</div>
-      <div class="feed__sum">${r.summary || ''}</div>
-    </li>`).join('');
+  feed.innerHTML = rel.map((r) => {
+    const w = relWhen(r.date);
+    const title = r.source
+      ? `<a href="${r.source}" target="_blank" rel="noopener">${r.title}<span class="rel__ext">↗</span></a>`
+      : r.title;
+    return `
+    <li class="rel">
+      <div class="rel__when"><span class="rel__mon">${w.mon}</span><span class="rel__day">${w.day}</span></div>
+      <div class="rel__card">
+        ${r.vendor ? `<span class="rel__vendor">${r.vendor}</span>` : ''}
+        <h3 class="rel__title">${title}</h3>
+        <p class="rel__sum">${r.summary || ''}</p>
+      </div>
+    </li>`;
+  }).join('');
 }
 
 // ---------- controls ----------
@@ -410,9 +482,8 @@ function wire() {
       $('#goal .is-active')?.classList.remove('is-active');
       b.classList.add('is-active');
       state.goal = b.getAttribute('data-goal');
-      state.sort = { key: GOAL_METRIC[state.goal] === 'lmarena_elo' ? 'lmarena_elo' : GOAL_METRIC[state.goal], dir: 'desc' };
-      if (state.sort.key === 'lmarena_elo') state.sort.key = 'swe_bench';
-      renderResult(); renderTable();
+      $('#goalDesc').textContent = GOAL_DESC[state.goal] || '';
+      renderResult();   // table sort stays independent of goal (less surprising)
     })
   );
   const slider = $('#priority');
@@ -448,9 +519,11 @@ async function boot() {
   $('#footNotes').textContent = state.data.notes || 'Pricing from official vendor pages; benchmarks from public leaderboards. Every figure carries a confidence flag; unsourced numbers are left blank rather than guessed.';
 
   wire();
+  $('#goalDesc').textContent = GOAL_DESC[state.goal] || '';
   renderFilters();
   renderResult();
   renderTable();
+  renderUsage();
   renderFeed();
 }
 document.addEventListener('DOMContentLoaded', boot);
