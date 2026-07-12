@@ -1,0 +1,921 @@
+{
+  "as_of": "2026-07-12",
+  "models": [
+    {
+      "id": "claude-fable-5",
+      "name": "Claude Fable 5",
+      "vendor": "Anthropic",
+      "released": "2026-07",
+      "context_window": 1000000,
+      "price_input": 10,
+      "price_output": 50,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": 95.5,
+        "gpqa": 91.3,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "reasoning",
+        "agentic",
+        "coding",
+        "research",
+        "long-context"
+      ],
+      "strengths": [
+        "Highest SWE-bench Verified on the board (~95.5% self-announced, ~95% independent)",
+        "Anthropic's most capable widely-available model; built for long-horizon autonomous agents",
+        "1M-token context at standard pricing",
+        "Always-on thinking; high-resolution vision"
+      ],
+      "weaknesses": [
+        "Most expensive model here: $10/$50 per M — exactly 2x Opus 4.8",
+        "Reported availability/export restrictions (was briefly pulled offline June 2026)",
+        "Requires 30-day data retention; not available under zero-data-retention",
+        "Overkill and overpriced for routine work"
+      ],
+      "verdict": "Use only for the hardest reasoning or overnight autonomous agent runs where its capability edge justifies paying 2x Opus.",
+      "confidence": "medium",
+      "sources": [
+        "https://platform.claude.com/docs/en/about-claude/pricing",
+        "https://www.vals.ai/benchmarks/swebench",
+        "https://www.vellum.ai/blog/claude-fable-5-and-mythos-5-benchmarks-explained",
+        "https://llm-stats.com/benchmarks/swe-bench-verified"
+      ]
+    },
+    {
+      "id": "claude-opus-4-8",
+      "name": "Claude Opus 4.8",
+      "vendor": "Anthropic",
+      "released": "2026-05",
+      "context_window": 1000000,
+      "price_input": 5,
+      "price_output": 25,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": 88.6,
+        "gpqa": 93.6,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "coding",
+        "agentic",
+        "reasoning",
+        "writing",
+        "long-context"
+      ],
+      "strengths": [
+        "Top generally-available coding model (88.6% SWE-bench Verified)",
+        "Flagship Opus intelligence at half Fable's price ($5/$25)",
+        "1M context at flat rate; optional Fast mode",
+        "GPQA Diamond 93.6% (third-party reported)"
+      ],
+      "weaknesses": [
+        "Premium-priced for high-volume/bulk workloads",
+        "Slower and pricier than Sonnet 5 for most production agents",
+        "Beaten on paper by the restricted Fable/Mythos tier"
+      ],
+      "verdict": "The default pick for demanding coding, agentic, and reasoning work when you want top-tier quality without Fable's premium.",
+      "confidence": "high",
+      "sources": [
+        "https://platform.claude.com/docs/en/about-claude/pricing",
+        "https://llm-stats.com/benchmarks/swe-bench-verified",
+        "https://www.vellum.ai/blog/claude-opus-4-8-benchmarks-explained"
+      ]
+    },
+    {
+      "id": "claude-sonnet-5",
+      "name": "Claude Sonnet 5",
+      "vendor": "Anthropic",
+      "released": "2026-06-30",
+      "context_window": 1000000,
+      "price_input": 2,
+      "price_output": 10,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": 85.2,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "coding",
+        "agentic",
+        "cheap-bulk",
+        "speed",
+        "long-context"
+      ],
+      "strengths": [
+        "~85% SWE-bench Verified at a fraction of Opus's price — best coding value right now",
+        "1M context; default model on Free/Pro plans",
+        "Intro pricing $2/$10 per M through Aug 31 2026",
+        "Built to run agents cheaply at scale"
+      ],
+      "weaknesses": [
+        "Intro price rises to standard $3/$15 on Sept 1 2026",
+        "Below Opus/Fable on the hardest coding and reasoning tasks",
+        "Some third-party benchmark figures for it are inconsistent across sources"
+      ],
+      "verdict": "The cost-efficient workhorse: most of Opus's coding ability at ~40% of the cost — the daily driver for personal projects.",
+      "confidence": "high",
+      "sources": [
+        "https://platform.claude.com/docs/en/about-claude/pricing",
+        "https://llm-stats.com/benchmarks/swe-bench-verified",
+        "https://techcrunch.com/2026/06/30/anthropic-launches-claude-sonnet-5-as-a-cheaper-way-to-run-agents/"
+      ]
+    },
+    {
+      "id": "gpt-5-5",
+      "name": "GPT-5.5",
+      "vendor": "OpenAI",
+      "released": "2026-04-23",
+      "context_window": 1000000,
+      "price_input": 5,
+      "price_output": 30,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": 81.9,
+        "gpqa": 93.6,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": 1475
+      },
+      "best_for": [
+        "coding",
+        "reasoning",
+        "agentic",
+        "research"
+      ],
+      "strengths": [
+        "Previous OpenAI flagship; still a strong all-rounder",
+        "SWE-bench Verified 81.9% (reported), GPQA Diamond 93.6%",
+        "LMArena text Elo 1475; 1M-token API context"
+      ],
+      "weaknesses": [
+        "Superseded by GPT-5.6 at the same price — usually no reason to pick over Sol/Terra now",
+        "Sources conflict on its coding metric (Verified 81.9% vs SWE-bench Pro 58.6%)",
+        "Weaker multimodal performance"
+      ],
+      "verdict": "Only choose over GPT-5.6 if you've already validated a pipeline on it; otherwise 5.6 dominates at equal cost.",
+      "confidence": "medium",
+      "sources": [
+        "https://benchlm.ai/models/gpt-5-5",
+        "https://openai.com/index/introducing-gpt-5-5/",
+        "https://felloai.com/the-ultimate-chatgpt-model-comparison/"
+      ]
+    },
+    {
+      "id": "gemini-3-1-pro",
+      "name": "Gemini 3.1 Pro (Preview)",
+      "vendor": "Google",
+      "released": "2026",
+      "context_window": 1000000,
+      "price_input": 2,
+      "price_output": 12,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": 80.6,
+        "gpqa": 94.3,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "reasoning",
+        "coding",
+        "agentic",
+        "research",
+        "vision",
+        "long-context"
+      ],
+      "strengths": [
+        "Current Gemini flagship; top-tier reasoning (GPQA 94.3), tied at the top of the AA Intelligence Index",
+        "Strong agentic coding (SWE-bench Verified 80.6)",
+        "Cheap for a frontier model ($2/$12 up to 200k tokens); 1M context, strong multimodal"
+      ],
+      "weaknesses": [
+        "Price doubles to $4/$18 above 200k-token prompts",
+        "Still a Preview SKU (may change)",
+        "Trails top Claude models on coding"
+      ],
+      "verdict": "The best-value frontier coder outside Anthropic — reach for it for hard reasoning, big multimodal context, or the Google ecosystem.",
+      "confidence": "high",
+      "sources": [
+        "https://ai.google.dev/gemini-api/docs/pricing",
+        "https://llm-stats.com/benchmarks/swe-bench-verified",
+        "https://smartchunks.com/gemini-3-1-pro-benchmarks-gpqa-hle-lmsys-frontiermath/"
+      ]
+    },
+    {
+      "id": "deepseek-v4-pro",
+      "name": "DeepSeek V4-Pro",
+      "vendor": "DeepSeek",
+      "released": "2026-04-24",
+      "context_window": 1000000,
+      "price_input": 0.435,
+      "price_output": 0.87,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": 80.6,
+        "gpqa": 90.1,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "coding",
+        "reasoning",
+        "long-context",
+        "agentic"
+      ],
+      "strengths": [
+        "Near-Opus coding quality (80.6% SWE-bench Verified) at a fraction of the price",
+        "Open weights (MIT); self-hostable",
+        "1M-token context; cache-hit input extraordinarily cheap (~$0.0036/M)"
+      ],
+      "weaknesses": [
+        "Top SWE-bench score is 'Think Max' mode (slower/pricier in tokens)",
+        "Benchmark figures from secondary aggregators, not a primary vendor card",
+        "Trails best closed models by ~8 pts on coding"
+      ],
+      "verdict": "The best-value open-weight coder — frontier-ish quality without frontier prices, and self-hostable to avoid lock-in.",
+      "confidence": "high",
+      "sources": [
+        "https://api-docs.deepseek.com/quick_start/pricing/",
+        "https://llm-stats.com/benchmarks/swe-bench-verified",
+        "https://benchlm.ai/models/deepseek-v4-pro-max"
+      ]
+    },
+    {
+      "id": "kimi-k2-6",
+      "name": "Kimi K2.6",
+      "vendor": "Moonshot AI",
+      "released": "2026-04-20",
+      "context_window": 262144,
+      "price_input": 0.95,
+      "price_output": 4,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": 80.2,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "coding",
+        "agentic",
+        "long-context"
+      ],
+      "strengths": [
+        "Elite agentic coding — 80.2% SWE-bench Verified; ties GPT-5.5 on SWE-bench Pro",
+        "1T-param MoE (32B active), open weights",
+        "Built for long-horizon multi-step agent tasks"
+      ],
+      "weaknesses": [
+        "Pricier output than the cheapest DeepSeek/Qwen tiers",
+        "Third-party host prices vary widely ($1.15-$2.15 blended)",
+        "262K context, below the 1M-token models"
+      ],
+      "verdict": "Reach for it when building coding agents that run long multi-step tasks and you want open weights that rival top closed models.",
+      "confidence": "high",
+      "sources": [
+        "https://platform.kimi.ai/docs/pricing/chat-k26",
+        "https://llm-stats.com/benchmarks/swe-bench-verified",
+        "https://aitoolsrecap.com/Blog/moonshot-ai-kimi-k2-6-release-coding-agent-benchmarks-2026"
+      ]
+    },
+    {
+      "id": "llama-4-maverick",
+      "name": "Llama 4 Maverick",
+      "vendor": "Meta",
+      "released": "2026-Q1",
+      "context_window": 1048576,
+      "price_input": 0.22,
+      "price_output": 0.88,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": 74.2,
+        "gpqa": 65.8,
+        "aime": null,
+        "mmlu_pro": 77.1,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "cheap-bulk",
+        "long-context",
+        "coding"
+      ],
+      "strengths": [
+        "Very cheap for its quality via hosts like Fireworks/Together/Groq",
+        "1M-token context; open weights, widely available",
+        "MMLU-Pro 77.1, SWE-bench 74.2 (secondary-sourced)"
+      ],
+      "weaknesses": [
+        "No single official Meta list price — cost varies 20%+ by host",
+        "Trails top open coders (DeepSeek/Kimi/Qwen) on SWE-bench",
+        "Benchmarks from secondary aggregators"
+      ],
+      "verdict": "A cheap open-weight generalist with huge context — good for bulk work and long documents on a widely-hosted model.",
+      "confidence": "medium",
+      "sources": [
+        "https://tokenmix.ai/blog/llama-4-maverick-review",
+        "https://benchlm.ai/models/llama-4-maverick"
+      ]
+    },
+    {
+      "id": "o4-mini",
+      "name": "o4-mini",
+      "vendor": "OpenAI",
+      "released": "unknown",
+      "context_window": null,
+      "price_input": 1.1,
+      "price_output": 4.4,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": 68.1,
+        "gpqa": 81.4,
+        "aime": 92.7,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "reasoning",
+        "cheap-bulk",
+        "vision",
+        "coding"
+      ],
+      "strengths": [
+        "Cheap reasoning model: AIME 2025 92.7% (beats o3), SWE-bench Verified 68.1%",
+        "GPQA 81.4%; reasons over images (multimodal)",
+        "~10x cheaper inference than o3 for near-o3 results"
+      ],
+      "weaknesses": [
+        "Retired from the ChatGPT UI (Feb 2026); API-only",
+        "Older o-series generation, overshadowed by the GPT-5.x reasoning line",
+        "GPQA figure may not be the Diamond subset"
+      ],
+      "verdict": "A cost-efficient math/reasoning pick via API, but the GPT-5.6 line is the modern default.",
+      "confidence": "medium",
+      "sources": [
+        "https://www.datacamp.com/blog/o4-mini",
+        "https://llm-stats.com/models/o4-mini",
+        "https://openrouter.ai/openai/o4-mini"
+      ]
+    },
+    {
+      "id": "claude-haiku-4-5",
+      "name": "Claude Haiku 4.5",
+      "vendor": "Anthropic",
+      "released": "2025-10-01",
+      "context_window": 200000,
+      "price_input": 1,
+      "price_output": 5,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "cheap-bulk",
+        "speed",
+        "coding"
+      ],
+      "strengths": [
+        "Cheapest Claude ($1/$5 per M)",
+        "Fastest tier; ideal for classification, routing, extraction, high-volume simple tasks",
+        "~$37 to process 10,000 support tickets (Anthropic's own example)"
+      ],
+      "weaknesses": [
+        "Smaller 200K context vs 1M on the larger models",
+        "Not for hard reasoning or long-horizon agentic work",
+        "No published SWE-bench/GPQA figures from reliable sources"
+      ],
+      "verdict": "Reach for it when volume and speed matter more than peak intelligence — cheap bulk classification, routing, and extraction.",
+      "confidence": "medium",
+      "sources": [
+        "https://platform.claude.com/docs/en/about-claude/pricing",
+        "https://www.anthropic.com/news/claude-haiku-4-5",
+        "https://openrouter.ai/anthropic/claude-haiku-4.5"
+      ]
+    },
+    {
+      "id": "gpt-5-6-sol",
+      "name": "GPT-5.6 Sol",
+      "vendor": "OpenAI",
+      "released": "2026-07-09",
+      "context_window": 1000000,
+      "price_input": 5,
+      "price_output": 30,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": 94.6,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "coding",
+        "agentic",
+        "reasoning",
+        "research",
+        "long-context"
+      ],
+      "strengths": [
+        "Flagship of the GPT-5.6 line; tops the Artificial Analysis Coding Index",
+        "SWE-bench Pro 64.6% and Terminal-Bench 2.1 88.8% (agentic-coding leader)",
+        "GPQA Diamond 94.6%; strong long-context recall (MRCR 91.5%)",
+        "Marketed as OpenAI's best model for cybersecurity/long-horizon tasks"
+      ],
+      "weaknesses": [
+        "OpenAI did NOT publish SWE-bench Verified, AIME, or MMLU-Pro for it",
+        "Chain-of-thought reasoning means higher latency and token usage",
+        "Higher output price ($30) than Claude Opus"
+      ],
+      "verdict": "Pick this if you're in the OpenAI/Codex ecosystem and want their strongest coding-agent and reasoning tier; cost is secondary.",
+      "confidence": "medium",
+      "sources": [
+        "https://developers.openai.com/api/docs/pricing",
+        "https://artificialanalysis.ai/articles/gpt-5-6-has-landed",
+        "https://benchlm.ai/models/gpt-5-6-sol",
+        "https://techcrunch.com/2026/07/09/openai-launches-its-new-family-of-models-with-gpt-5-6/"
+      ]
+    },
+    {
+      "id": "gpt-5-6-terra",
+      "name": "GPT-5.6 Terra",
+      "vendor": "OpenAI",
+      "released": "2026-07-09",
+      "context_window": 1000000,
+      "price_input": 2.5,
+      "price_output": 15,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "coding",
+        "agentic",
+        "reasoning",
+        "writing"
+      ],
+      "strengths": [
+        "Balanced mid-tier: half Sol's price with close performance",
+        "Terminal-Bench 2.1 87.4%, Coding Agent Index 77.4 (just under Sol)",
+        "Cost-per-task ~$0.55 vs Sol's ~$1.04; 1M context, strong long-context recall"
+      ],
+      "weaknesses": [
+        "OpenAI omitted GPQA, AIME, SWE-bench Verified, MMLU-Pro for this tier",
+        "Not as strong as Sol on the hardest agentic/security tasks"
+      ],
+      "verdict": "The default everyday GPT-5.6 pick: most of Sol's ability at half the price.",
+      "confidence": "medium",
+      "sources": [
+        "https://developers.openai.com/api/docs/pricing",
+        "https://www.vellum.ai/blog/gpt-5-6-benchmarks-explained",
+        "https://artificialanalysis.ai/articles/gpt-5-6-has-landed"
+      ]
+    },
+    {
+      "id": "gpt-5-6-luna",
+      "name": "GPT-5.6 Luna",
+      "vendor": "OpenAI",
+      "released": "2026-07-09",
+      "context_window": 1000000,
+      "price_input": 1,
+      "price_output": 6,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "cheap-bulk",
+        "coding",
+        "agentic",
+        "speed"
+      ],
+      "strengths": [
+        "Cheapest 5.6 tier at $1/$6; cost-per-task just ~$0.21",
+        "Still competitive: Terminal-Bench 2.1 84.7%, Coding Agent Index 74.6",
+        "1M context"
+      ],
+      "weaknesses": [
+        "Weak long-context recall (MRCR 41.3% vs Sol's 91.5%) — avoid for large-doc tasks",
+        "No published GPQA/AIME/SWE-bench Verified/MMLU-Pro"
+      ],
+      "verdict": "Use for high-volume or budget coding/agent work where you don't need deep long-context recall.",
+      "confidence": "medium",
+      "sources": [
+        "https://www.vellum.ai/blog/gpt-5-6-benchmarks-explained",
+        "https://artificialanalysis.ai/articles/gpt-5-6-has-landed"
+      ]
+    },
+    {
+      "id": "gemini-3-5-flash",
+      "name": "Gemini 3.5 Flash",
+      "vendor": "Google",
+      "released": "2026-05-19",
+      "context_window": 1000000,
+      "price_input": 1.5,
+      "price_output": 9,
+      "speed_tps": 278,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": 92.2,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "speed",
+        "coding",
+        "reasoning",
+        "long-context",
+        "vision"
+      ],
+      "strengths": [
+        "Near-Pro reasoning (GPQA 92.2 per Artificial Analysis) at Flash speed",
+        "Fast (~278 output tokens/sec); 1M context",
+        "High spot on the AA Intelligence Index for its price class"
+      ],
+      "weaknesses": [
+        "Output price ($9) is high for a Flash tier",
+        "Only SWE-bench Pro (55.1) published, not SWE-bench Verified",
+        "Audio input billed higher"
+      ],
+      "verdict": "Use when you want most of Pro's smarts but need it fast and cheaper for high-volume chat, coding, or long-context work.",
+      "confidence": "medium",
+      "sources": [
+        "https://ai.google.dev/gemini-api/docs/pricing",
+        "https://o-mega.ai/articles/gemini-3-5-flash-benchmarks-cost-and-guide"
+      ]
+    },
+    {
+      "id": "gemini-2-5-flash-lite",
+      "name": "Gemini 2.5 Flash-Lite",
+      "vendor": "Google",
+      "released": "2025",
+      "context_window": 1000000,
+      "price_input": 0.1,
+      "price_output": 0.4,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "cheap-bulk",
+        "speed"
+      ],
+      "strengths": [
+        "Cheapest Gemini ($0.10 in / $0.40 out)",
+        "1M-token context",
+        "Great for massive-scale simple tasks like classification and extraction"
+      ],
+      "weaknesses": [
+        "Lowest capability tier — not for reasoning or complex coding",
+        "Older 2.5 generation",
+        "Audio input billed higher"
+      ],
+      "verdict": "The rock-bottom-cost Gemini for huge-volume, low-complexity jobs.",
+      "confidence": "high",
+      "sources": [
+        "https://ai.google.dev/gemini-api/docs/pricing"
+      ]
+    },
+    {
+      "id": "grok-4-5",
+      "name": "Grok 4.5",
+      "vendor": "xAI",
+      "released": "2026-07-08",
+      "context_window": 500000,
+      "price_input": 2,
+      "price_output": 6,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "coding",
+        "agentic",
+        "reasoning"
+      ],
+      "strengths": [
+        "xAI's newest flagship, pitched as 'Opus-class'; very token-efficient (~4x fewer output tokens than Opus 4.8)",
+        "Cheap output ($6/M) vs frontier peers; strong agentic coding (SWE-bench Pro 64.7%, Terminal-Bench 2.1 83.3%)",
+        "75% cache discount ($0.50 cached input); bundled into Cursor"
+      ],
+      "weaknesses": [
+        "xAI did NOT publish classic academic benchmarks (GPQA/AIME/MMLU/SWE-bench Verified) at launch",
+        "500k context is smaller than Gemini/Claude's 1M",
+        "Not available in EU at launch; preview-era figures may shift"
+      ],
+      "verdict": "The cheap frontier-class coder: reach for it when you want strong agentic coding at low, token-efficient cost.",
+      "confidence": "medium",
+      "sources": [
+        "https://docs.x.ai/docs/models",
+        "https://x.ai/news/grok-4-5",
+        "https://apidog.com/blog/grok-4-5-benchmarks/",
+        "https://techcrunch.com/2026/07/08/spacexai-releases-grok-4-5-which-elon-describes-as-an-opus-class-model/"
+      ]
+    },
+    {
+      "id": "deepseek-v4-flash",
+      "name": "DeepSeek V4-Flash",
+      "vendor": "DeepSeek",
+      "released": "2026-04-24",
+      "context_window": 1000000,
+      "price_input": 0.14,
+      "price_output": 0.28,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "cheap-bulk",
+        "long-context",
+        "coding"
+      ],
+      "strengths": [
+        "Rock-bottom price for a frontier-lineage model ($0.14/$0.28)",
+        "1M-token context",
+        "Cache-hit input near-free (~$0.0028/M) for repeated-prefix / agent workloads"
+      ],
+      "weaknesses": [
+        "The 'flash' tier trades some reasoning depth vs V4-Pro",
+        "No cleanly-sourced benchmarks for the flash tier specifically"
+      ],
+      "verdict": "Reach for it to process huge volumes of text or code cheaply when you don't need the absolute top reasoning tier.",
+      "confidence": "medium",
+      "sources": [
+        "https://api-docs.deepseek.com/quick_start/pricing/"
+      ]
+    },
+    {
+      "id": "qwen3-max",
+      "name": "Qwen3-Max",
+      "vendor": "Alibaba (Qwen)",
+      "released": "unknown",
+      "context_window": 256000,
+      "price_input": 1.2,
+      "price_output": 6,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "reasoning",
+        "coding",
+        "agentic"
+      ],
+      "strengths": [
+        "Qwen's flagship general model; top-tier on several coding/agent benchmarks per Qwen",
+        "256K context; batch API halves the price",
+        "Large open ecosystem"
+      ],
+      "weaknesses": [
+        "Newer Max releases moving closed-weight",
+        "Input price tiers up to $3/M past 128K tokens",
+        "No clean primary SWE-bench Verified number for this SKU"
+      ],
+      "verdict": "Qwen's do-everything flagship — pick it for top Qwen quality across reasoning and code when you can pay flagship rates.",
+      "confidence": "medium",
+      "sources": [
+        "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
+      ]
+    },
+    {
+      "id": "qwen3-coder-plus",
+      "name": "Qwen3-Coder-Plus",
+      "vendor": "Alibaba (Qwen)",
+      "released": "unknown",
+      "context_window": 1000000,
+      "price_input": 1,
+      "price_output": 5,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "coding",
+        "agentic",
+        "long-context"
+      ],
+      "strengths": [
+        "Hosted, tuned coding model with up to 1M context",
+        "Context-caching discount available",
+        "Strong Qwen coding lineage"
+      ],
+      "weaknesses": [
+        "Tiered pricing climbs steeply past 32K tokens",
+        "Output at $5/M is not cheap-bulk territory",
+        "No clean primary SWE-bench figure for this exact SKU"
+      ],
+      "verdict": "Use for a managed Qwen coding endpoint with very long context when you don't want to self-host the open weights.",
+      "confidence": "medium",
+      "sources": [
+        "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
+      ]
+    },
+    {
+      "id": "qwen-turbo",
+      "name": "Qwen-Turbo",
+      "vendor": "Alibaba (Qwen)",
+      "released": "unknown",
+      "context_window": null,
+      "price_input": 0.05,
+      "price_output": 0.2,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "cheap-bulk",
+        "speed"
+      ],
+      "strengths": [
+        "Among the cheapest hosted models anywhere ($0.05/M input)",
+        "Thinking mode available at $0.5/M output"
+      ],
+      "weaknesses": [
+        "Small/fast model — not for hard reasoning or agentic coding",
+        "Context window not clearly documented in the pricing table"
+      ],
+      "verdict": "Use for massive-volume simple tasks — classification, tagging, extraction, cleanup — where cost per token matters most.",
+      "confidence": "medium",
+      "sources": [
+        "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
+      ]
+    },
+    {
+      "id": "mistral-medium-3-1",
+      "name": "Mistral Medium 3.1",
+      "vendor": "Mistral AI",
+      "released": "unknown",
+      "context_window": null,
+      "price_input": 0.4,
+      "price_output": 2,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "coding",
+        "cheap-bulk",
+        "writing"
+      ],
+      "strengths": [
+        "Strong price-to-quality mid-tier from a European (EU-hosted) vendor",
+        "Good all-round coding and text model"
+      ],
+      "weaknesses": [
+        "Not open-weight (Medium tier is commercial)",
+        "No cleanly-sourced benchmark for this version"
+      ],
+      "verdict": "A solid EU-based mid-tier — reach for it when data residency or a European provider matters and you want balanced cost/quality.",
+      "confidence": "medium",
+      "sources": [
+        "https://mistral.ai/pricing/",
+        "https://www.cloudzero.com/blog/mistral-api-pricing/"
+      ]
+    }
+  ],
+  "releases": [
+    {
+      "date": "2026-07-09",
+      "vendor": "OpenAI",
+      "title": "GPT-5.6 (Sol/Terra/Luna) reaches general availability",
+      "summary": "Three-tier family (Sol $5/$30, Terra $2.50/$15, Luna $1/$6) tops the Artificial Analysis Coding Index; previewed June 26 behind a US-government access list.",
+      "source": "https://techcrunch.com/2026/07/09/openai-launches-its-new-family-of-models-with-gpt-5-6/"
+    },
+    {
+      "date": "2026-07-08",
+      "vendor": "xAI",
+      "title": "xAI releases Grok 4.5",
+      "summary": "'Opus-class' token-efficient coding/agentic model at $2/$6 per M — far cheaper than Opus 4.8 — bundled into Cursor; not available in EU at launch.",
+      "source": "https://x.ai/news/grok-4-5"
+    },
+    {
+      "date": "2026-07-01",
+      "vendor": "Anthropic",
+      "title": "Anthropic redeploys Claude Fable 5",
+      "summary": "Fable 5 came back online after the US government lifted a June 12 export-control order that had pulled it offline — an AI-governance flashpoint.",
+      "source": "https://llm-stats.com/llm-updates"
+    },
+    {
+      "date": "2026-06-30",
+      "vendor": "Anthropic",
+      "title": "Anthropic launches Claude Sonnet 5",
+      "summary": "Cheaper agent-focused model, near-Opus quality; intro pricing $2/$10 per M through Aug 31 (then $3/$15), 1M context, default on Free/Pro.",
+      "source": "https://techcrunch.com/2026/06/30/anthropic-launches-claude-sonnet-5-as-a-cheaper-way-to-run-agents/"
+    },
+    {
+      "date": "2026-06-20",
+      "vendor": "DeepSeek / Z.ai / Alibaba",
+      "title": "Open-weight wave: DeepSeek V4 preview, GLM-5.2, Qwen3-Coder-Next",
+      "summary": "A cluster of 1M-token open-weight coding models landed, pressuring closed-model pricing — including the compact 80B/3B-active Qwen3-Coder-Next.",
+      "source": "https://kingy.ai/news/best-open-weight-ai-models-in-2026-glm-5-2-vs-deepseek-v4-vs-kimi-k2-6-vs-qwen-vs-mistral/"
+    },
+    {
+      "date": "2026-06-12",
+      "vendor": "Moonshot AI",
+      "title": "Moonshot ships Kimi K2.7 Code",
+      "summary": "Open-weight coding model claiming +21.8% over K2.6 on its own Kimi Code Bench v2 — continued fast iteration in Chinese open-weight coders.",
+      "source": "https://kingy.ai/news/best-open-weight-ai-models-in-2026-glm-5-2-vs-deepseek-v4-vs-kimi-k2-6-vs-qwen-vs-mistral/"
+    },
+    {
+      "date": "2026-05-19",
+      "vendor": "Google",
+      "title": "Google ships Gemini 3.5 Flash",
+      "summary": "Fast Flash-tier model with near-Pro reasoning (GPQA ~92%), 1M context, ~278 tok/s, at $1.50/$9 per M.",
+      "source": "https://ai.google.dev/gemini-api/docs/pricing"
+    },
+    {
+      "date": "2026-05",
+      "vendor": "Anthropic",
+      "title": "Claude Opus 4.8",
+      "summary": "Flagship Opus tier at $5/$25 per M, 1M context, 88.6% SWE-bench Verified — the strong coding/agentic default below Fable's price.",
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    {
+      "date": "2026-04-24",
+      "vendor": "DeepSeek",
+      "title": "DeepSeek V4-Flash and V4-Pro",
+      "summary": "Open-weight (MIT) 1M-context models at rock-bottom prices; V4-Pro hits ~80.6% SWE-bench Verified with near-free cache-hit input.",
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/"
+    },
+    {
+      "date": "2026-04-23",
+      "vendor": "OpenAI",
+      "title": "OpenAI introduces GPT-5.5",
+      "summary": "Prior flagship at $5/$30 per M, 1M context, 81.9% SWE-bench Verified and LMArena Elo 1475 — now largely superseded by GPT-5.6 at equal cost.",
+      "source": "https://openai.com/index/introducing-gpt-5-5/"
+    },
+    {
+      "date": "2026-04-20",
+      "vendor": "Moonshot AI",
+      "title": "Moonshot releases Kimi K2.6",
+      "summary": "1T-param MoE (32B active) open-weight agentic coder at 80.2% SWE-bench Verified, built for long-horizon multi-step tasks.",
+      "source": "https://platform.kimi.ai/docs/pricing/chat-k26"
+    },
+    {
+      "date": "2025-10-01",
+      "vendor": "Anthropic",
+      "title": "Claude Haiku 4.5",
+      "summary": "Cheapest/fastest Claude at $1/$5 per M, 200K context — built for high-volume classification, routing, and extraction.",
+      "source": "https://www.anthropic.com/news/claude-haiku-4-5"
+    }
+  ],
+  "benchmarks_legend": {
+    "swe_bench": "SWE-bench Verified — % of real-world GitHub issues resolved end-to-end (agentic coding). Note: several 2026 models published only SWE-bench Pro, a different/harder variant, so their Verified cell is null.",
+    "gpqa": "GPQA Diamond — % correct on graduate-level, Google-proof science reasoning questions.",
+    "aime": "AIME — % on advanced high-school competition math (American Invitational Mathematics Examination).",
+    "mmlu_pro": "MMLU-Pro — % on a harder, multi-discipline knowledge and reasoning benchmark.",
+    "lmarena_elo": "LMArena text Elo — human head-to-head preference rating (higher = preferred more often)."
+  },
+  "notes": "Data snapshot 2026-07-12. Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: most come from third-party aggregators (Artificial Analysis, Vellum, llm-stats, vals.ai), not primary vendor cards, and several 2026 models publish only agentic evals (SWE-bench Pro, Terminal-Bench) that don't map to SWE-bench Verified — those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Note: Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it."
+}

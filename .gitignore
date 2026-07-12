@@ -1,0 +1,16 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Syncthing
+.stfolder/
+.stversions/
+
+# Secrets (belt-and-suspenders; this is a static site with none today)
+.env
+*.env
+*.pem
+*.key

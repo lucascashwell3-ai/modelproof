@@ -1,0 +1,66 @@
+# Refreshing Model Radar's data
+
+All model data lives in one file: [`../data/models.json`](../data/models.json). Refreshing =
+regenerating that file with current, sourced figures. There is **no build step** — replace the
+JSON and reload the page.
+
+The v1 snapshot was gathered by a fan-out research pass (one agent per vendor + a benchmarks
+agent + a releases agent → consolidate → adversarial fact-check). To refresh, re-run that
+procedure. Fastest path: paste the prompt below into a Claude Code session with web search.
+
+## Refresh prompt
+
+> Research current AI-model data as of TODAY and output a single JSON object matching the
+> schema in `model-radar/data/models.json`. Cover the frontier + mid + cheap/open tiers across
+> Anthropic, OpenAI, Google, xAI, DeepSeek, Qwen, Moonshot/Kimi, Meta, Mistral (~15–22 models).
+>
+> **Strict sourcing rules (this ships to people making real spend decisions):**
+> - Report only numbers you can source; put the backing URL in `sources`. If you can't find a
+>   figure, set it to `null`. Never invent or estimate a benchmark/price and present it as fact.
+> - `price_input` / `price_output` = official API list price, USD per **1,000,000** tokens,
+>   standard tier (not batch/cached). Prefer the vendor's own pricing page.
+> - Benchmarks: prefer primary vendor cards; otherwise reputable aggregators (Artificial
+>   Analysis, LMArena, SWE-bench leaderboard, llm-stats, vals.ai). If a vendor published only
+>   an agentic eval (SWE-bench Pro, Terminal-Bench) with no SWE-bench Verified, leave
+>   `swe_bench` null — do NOT cross-file a different benchmark into it.
+> - `verdict` = one plain-English sentence: when to reach for this model.
+> - `confidence`: high (official pricing + ≥1 sourced benchmark), medium (some sourced), low.
+> - Also produce `releases`: 8–15 most notable recent releases, dated, newest first, sourced.
+> - Set `as_of` to today's date and write an honest `notes` caveat about freshness/uncertainty.
+> - Finally: run a skeptical fact-check pass. Flag any figure that's duplicated across vendors,
+>   near-benchmark-saturation, or unsourced-but-presented-as-fact, and null it out.
+
+## Schema (per model)
+
+```jsonc
+{
+  "id": "kebab-case-unique",
+  "name": "Display Name",
+  "vendor": "Vendor",
+  "released": "YYYY-MM | YYYY-MM-DD | unknown",
+  "context_window": 1000000,        // max input tokens, or null
+  "price_input": 2,                  // USD / 1M input tokens, or null
+  "price_output": 10,                // USD / 1M output tokens, or null
+  "speed_tps": null,                 // output tokens/sec, or null
+  "benchmarks": { "swe_bench": 85.2, "gpqa": null, "aime": null,
+                  "mmlu_pro": null, "lmarena_elo": null },  // % or Elo; null if unsourced
+  "best_for": ["coding","agentic","cheap-bulk"],  // controlled vocab (see below)
+  "strengths": ["…"], "weaknesses": ["…"],
+  "verdict": "One plain-English sentence.",
+  "sources": ["https://…"],
+  "confidence": "high | medium | low"
+}
+```
+
+`best_for` vocabulary (must match the UI filters/goals):
+`coding`, `agentic`, `writing`, `reasoning`, `cheap-bulk`, `vision`, `long-context`, `speed`, `research`.
+
+Top level also needs: `as_of` (string), `releases` (array), `benchmarks_legend` (object of
+one-line descriptions per benchmark key), `notes` (honest global caveat shown in the footer).
+
+## After refreshing
+
+1. Overwrite `data/models.json`.
+2. Reload the page — the recommender, chart, table, and feed all read from it.
+3. Sanity-check: for a **quality goal** (coding/agentic/reasoning), the top pick must be a
+   model with a sourced score for that goal — never a "—".
