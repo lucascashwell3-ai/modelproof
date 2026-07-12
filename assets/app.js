@@ -11,9 +11,14 @@ const state = {
   lab: null,             // a vendor string when mode === 'lab'
   priority: 48,          // 0 = cheapest, 100 = best (set by the discrete selector)
   filter: 'all',
+  showAll: false,        // compare table defaults to the common flagships; opt in to all 21
   sort: { key: 'coding_score', dir: 'desc' },
   expanded: new Set(),
 };
+
+// compare-table default: one flagship per major lab (neutral — no lab over-represented).
+// The full 21 (incl. cheap/specialized tiers) are one click away via "Show all".
+const COMMON_IDS = ['claude-opus-4-8', 'gpt-5-6-sol', 'gemini-3-1-pro', 'grok-4-5', 'deepseek-v4-pro', 'llama-4-maverick', 'qwen3-max'];
 
 // vendor -> the brand people actually say ("I use Claude / ChatGPT / Grok…")
 const LAB_LABEL = {
@@ -236,9 +241,12 @@ function renderLabResult() {
   const rows = LAB_GOALS.map(([g, label]) => {
     const top = (score(models, g, state.priority)[0] || {}).m || null;
     if (!top) return { label, name: null };
+    // writing has no dedicated benchmark, so don't show a misleading coding/GPQA number
     const meta = g === 'cheap-bulk'
       ? `${fmtPrice(top.price_output)}/1M out · lowest-cost`
-      : (() => { const hv = headlineStat(top, GOAL_METRIC[g]); return `${hv.value} ${hv.label} · ${fmtPrice(top.price_output)}/1M out`; })();
+      : g === 'writing'
+        ? `${fmtPrice(top.price_output)}/1M out · general-ability pick`
+        : (() => { const hv = headlineStat(top, GOAL_METRIC[g]); return `${hv.value} ${hv.label} · ${fmtPrice(top.price_output)}/1M out`; })();
     return { label, name: top.name, meta };
   });
   const count = models.length;
@@ -473,6 +481,8 @@ function sortedModels() {
   if (state.filter !== 'all') {
     const syn = GOAL_TAGS[state.filter] || [state.filter];
     list = list.filter((m) => (m.best_for || []).some((t) => syn.includes(t)));
+  } else if (!state.showAll) {
+    list = list.filter((m) => COMMON_IDS.includes(m.id));   // default: the common flagships only
   }
   const { key, dir } = state.sort;
   const val = (m) => {
@@ -551,6 +561,21 @@ function renderTable() {
     th.classList.remove('sorted-asc', 'sorted-desc');
     if (th.getAttribute('data-sort') === state.sort.key) th.classList.add(state.sort.dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
   });
+
+  // "show all 21" toggle — only when unfiltered (a filter is its own narrowing)
+  const more = $('#tblMore');
+  if (more) {
+    if (state.filter === 'all') {
+      const total = state.data.models.length;
+      more.innerHTML = state.showAll
+        ? `<button class="tbl-toggle" id="tblToggle">Show fewer</button>`
+        : `<span class="tbl-more__note">Showing one flagship from each major lab.</span> <button class="tbl-toggle" id="tblToggle">Show all ${total} models</button>`;
+      const t = $('#tblToggle');
+      if (t) t.addEventListener('click', () => { state.showAll = !state.showAll; renderTable(); });
+    } else {
+      more.innerHTML = '';
+    }
+  }
 }
 
 function shortUrl(u) { try { return new URL(u).hostname.replace('www.', ''); } catch { return u.slice(0, 28); } }
@@ -603,6 +628,7 @@ function renderFeed() {
         ${r.vendor ? `<span class="rel__vendor">${r.vendor}</span>` : ''}
         <h3 class="rel__title">${title}</h3>
         <p class="rel__sum">${r.summary || ''}</p>
+        ${r.why ? `<p class="rel__why"><span>Should you care?</span> ${r.why}</p>` : ''}
       </div>
     </li>`;
   }).join('');

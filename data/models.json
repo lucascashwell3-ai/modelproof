@@ -893,84 +893,96 @@
       "vendor": "OpenAI",
       "title": "GPT-5.6 (Sol/Terra/Luna) reaches general availability",
       "summary": "Three-tier family (Sol $5/$30, Terra $2.50/$15, Luna $1/$6) tops the Artificial Analysis Coding Index; previewed June 26 behind a US-government access list.",
-      "source": "https://techcrunch.com/2026/07/09/openai-launches-its-new-family-of-models-with-gpt-5-6/"
+      "source": "https://techcrunch.com/2026/07/09/openai-launches-its-new-family-of-models-with-gpt-5-6/",
+      "why": "If you're on ChatGPT/OpenAI: three tiers now — Sol (top), Terra (value, ~$2.50/$15), Luna (cheap). Terra is the sweet spot for most."
     },
     {
       "date": "2026-07-08",
       "vendor": "xAI",
       "title": "xAI releases Grok 4.5",
       "summary": "'Opus-class' token-efficient coding/agentic model at $2/$6 per M — far cheaper than Opus 4.8 — bundled into Cursor; not available in EU at launch.",
-      "source": "https://x.ai/news/grok-4-5"
+      "source": "https://x.ai/news/grok-4-5",
+      "why": "If you use Grok: the first version genuinely competitive for coding (86/100) at a low $2/$6."
     },
     {
       "date": "2026-07-01",
       "vendor": "Anthropic",
       "title": "Anthropic redeploys Claude Fable 5",
       "summary": "Fable 5 came back online after the US government lifted a June 12 export-control order that had pulled it offline — an AI-governance flashpoint.",
-      "source": "https://llm-stats.com/llm-updates"
+      "source": "https://llm-stats.com/llm-updates",
+      "why": "Only matters for the hardest agent/reasoning runs — it's premium ($10/$50) and access-restricted; most people are better served by Opus or Sonnet."
     },
     {
       "date": "2026-06-30",
       "vendor": "Anthropic",
       "title": "Anthropic launches Claude Sonnet 5",
       "summary": "Cheaper agent-focused model, near-Opus quality; intro pricing $2/$10 per M through Aug 31 (then $3/$15), 1M context, default on Free/Pro.",
-      "source": "https://techcrunch.com/2026/06/30/anthropic-launches-claude-sonnet-5-as-a-cheaper-way-to-run-agents/"
+      "source": "https://techcrunch.com/2026/06/30/anthropic-launches-claude-sonnet-5-as-a-cheaper-way-to-run-agents/",
+      "why": "Big one for coders: ~85 coding at $2/$10 — the best coding value right now. (Intro price; rises to $3/$15 on 2026-09-01.)"
     },
     {
       "date": "2026-06-20",
       "vendor": "DeepSeek / Z.ai / Alibaba",
       "title": "Open-weight wave: DeepSeek V4 preview, GLM-5.2, Qwen3-Coder-Next",
       "summary": "A cluster of 1M-token open-weight coding models landed, pressuring closed-model pricing — including the compact 80B/3B-active Qwen3-Coder-Next.",
-      "source": "https://kingy.ai/news/best-open-weight-ai-models-in-2026-glm-5-2-vs-deepseek-v4-vs-kimi-k2-6-vs-qwen-vs-mistral/"
+      "source": "https://kingy.ai/news/best-open-weight-ai-models-in-2026-glm-5-2-vs-deepseek-v4-vs-kimi-k2-6-vs-qwen-vs-mistral/",
+      "why": "Care if you self-host or want low cost: strong open-weight options (DeepSeek V4, Qwen3-Coder) at a fraction of frontier prices."
     },
     {
       "date": "2026-06-12",
       "vendor": "Moonshot AI",
       "title": "Moonshot ships Kimi K2.7 Code",
       "summary": "Open-weight coding model claiming +21.8% over K2.6 on its own Kimi Code Bench v2 — continued fast iteration in Chinese open-weight coders.",
-      "source": "https://kingy.ai/news/best-open-weight-ai-models-in-2026-glm-5-2-vs-deepseek-v4-vs-kimi-k2-6-vs-qwen-vs-mistral/"
+      "source": "https://kingy.ai/news/best-open-weight-ai-models-in-2026-glm-5-2-vs-deepseek-v4-vs-kimi-k2-6-vs-qwen-vs-mistral/",
+      "why": "Niche: a cheap, coding-focused open model — worth a look if you want low-cost agentic coding."
     },
     {
       "date": "2026-05-19",
       "vendor": "Google",
       "title": "Google ships Gemini 3.5 Flash",
       "summary": "Fast Flash-tier model with near-Pro reasoning (GPQA ~92%), 1M context, ~278 tok/s, at $1.50/$9 per M.",
-      "source": "https://ai.google.dev/gemini-api/docs/pricing"
+      "source": "https://ai.google.dev/gemini-api/docs/pricing",
+      "why": "If you use Gemini: a fast, cheap workhorse (coding 83 at ~$1.50/$9)."
     },
     {
       "date": "2026-05",
       "vendor": "Anthropic",
       "title": "Claude Opus 4.8",
       "summary": "Flagship Opus tier at $5/$25 per M, 1M context, 88.6% SWE-bench Verified — the strong coding/agentic default below Fable's price.",
-      "source": "https://platform.claude.com/docs/en/about-claude/pricing"
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "why": "Anthropic's flagship you'll actually reach for — top-tier coding and reasoning at $5/$25."
     },
     {
       "date": "2026-04-24",
       "vendor": "DeepSeek",
       "title": "DeepSeek V4-Flash and V4-Pro",
       "summary": "Open-weight (MIT) 1M-context models at rock-bottom prices; V4-Pro hits ~80.6% SWE-bench Verified with near-free cache-hit input.",
-      "source": "https://api-docs.deepseek.com/quick_start/pricing/"
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "why": "The value story: near-frontier coding at ~$0.43/$0.87 (Pro) — big savings when that quality is enough."
     },
     {
       "date": "2026-04-23",
       "vendor": "OpenAI",
       "title": "OpenAI introduces GPT-5.5",
       "summary": "Prior flagship at $5/$30 per M, 1M context, 81.9% SWE-bench Verified and LMArena Elo 1475 — now largely superseded by GPT-5.6 at equal cost.",
-      "source": "https://openai.com/index/introducing-gpt-5-5/"
+      "source": "https://openai.com/index/introducing-gpt-5-5/",
+      "why": "Superseded by GPT-5.6 — only relevant if something is still pinned to it."
     },
     {
       "date": "2026-04-20",
       "vendor": "Moonshot AI",
       "title": "Moonshot releases Kimi K2.6",
       "summary": "1T-param MoE (32B active) open-weight agentic coder at 80.2% SWE-bench Verified, built for long-horizon multi-step tasks.",
-      "source": "https://platform.kimi.ai/docs/pricing/chat-k26"
+      "source": "https://platform.kimi.ai/docs/pricing/chat-k26",
+      "why": "A cheap, long-context open model — niche unless you want low-cost bulk work."
     },
     {
       "date": "2025-10-01",
       "vendor": "Anthropic",
       "title": "Claude Haiku 4.5",
       "summary": "Cheapest/fastest Claude at $1/$5 per M, 200K context — built for high-volume classification, routing, and extraction.",
-      "source": "https://www.anthropic.com/news/claude-haiku-4-5"
+      "source": "https://www.anthropic.com/news/claude-haiku-4-5",
+      "why": "Anthropic's cheap/fast tier ($1/$5) — a good default for high-volume simple tasks."
     }
   ],
   "benchmarks_legend": {
