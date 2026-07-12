@@ -98,6 +98,24 @@
       <div class="engine__result" id="result" aria-live="polite">
         <!-- populated by app.js -->
       </div>
+
+      <!-- portable engine: turn this selection into a paste-in prompt for your own AI -->
+      <div class="promptgen">
+        <button class="promptgen__btn" id="genPrompt" type="button">
+          Get a prompt for your own AI <span aria-hidden="true">→</span>
+        </button>
+        <div class="promptgen__panel" id="promptPanel" hidden>
+          <p class="promptgen__hint">
+            Paste this into Claude or ChatGPT — as a custom instruction or your first message — and it
+            becomes your own ongoing model-picker, so you don't have to keep coming back to check.
+          </p>
+          <textarea class="promptgen__text" id="promptText" readonly rows="12" aria-label="Generated model-advisor prompt"></textarea>
+          <div class="promptgen__actions">
+            <button class="promptgen__copy" id="copyPrompt" type="button">Copy prompt</button>
+            <span class="promptgen__status" id="copyStatus" role="status" aria-live="polite"></span>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ============ evidence divider — depth below, out of the way ============ -->

@@ -249,6 +249,28 @@ a { color: inherit; text-decoration: none; }
 .labkit__row--none .labkit__model { color: var(--ink-4); font-weight: 400; }
 .labkit__row--none .labkit__meta { color: var(--ink-4); }
 
+/* prompt generator — turn a selection into a paste-in advisor prompt */
+.promptgen { margin-top: 22px; }
+.promptgen__btn { font-family: var(--font); font-size: 13.5px; font-weight: 600; color: var(--gold);
+  background: var(--gold-soft); border: 1px solid var(--gold-line); padding: 11px 20px; border-radius: 999px;
+  cursor: pointer; transition: background .16s var(--ease), transform .16s var(--ease); }
+.promptgen__btn:hover { background: rgba(242,193,78,0.20); transform: translateY(-1px); }
+.promptgen__btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.promptgen__panel { margin-top: 14px; border: 1px solid var(--line); border-radius: var(--r-md);
+  background: linear-gradient(180deg, var(--panel), var(--panel-2)); padding: 16px; }
+.promptgen__hint { color: var(--ink-2); font-size: 13px; line-height: 1.55; margin-bottom: 12px; max-width: 52rem; }
+.promptgen__text { width: 100%; resize: vertical; min-height: 210px; background: var(--bg-2);
+  color: var(--ink-2); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 13px 15px;
+  font-family: var(--mono); font-size: 12px; line-height: 1.6; }
+.promptgen__text:focus { outline: none; border-color: var(--gold-line); }
+.promptgen__actions { display: flex; align-items: center; gap: 14px; margin-top: 12px; }
+.promptgen__copy { font-family: var(--font); font-size: 13px; font-weight: 700; color: #1a1405;
+  background: var(--gold); border: 0; padding: 9px 20px; border-radius: 8px; cursor: pointer;
+  transition: background .16s var(--ease); }
+.promptgen__copy:hover { background: var(--gold-2); }
+.promptgen__copy:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.promptgen__status { font-size: 12.5px; color: var(--good); font-weight: 500; }
+
 /* ---------- evidence divider ---------- */
 .evidence-mark {
   width: min(1120px, calc(100% - 32px)); margin: 96px auto 0;

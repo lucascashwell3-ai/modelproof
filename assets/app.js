@@ -161,6 +161,9 @@ function headlineStat(m, metric) {
 }
 
 function renderResult() {
+  // a generated prompt reflects the selection at generation time — reset it when the selection changes
+  const pp = document.getElementById('promptPanel'); if (pp) pp.hidden = true;
+  const cs = document.getElementById('copyStatus'); if (cs) cs.textContent = '';
   if (state.mode === 'lab') return renderLabResult();
   return renderTaskResult();
 }
@@ -277,6 +280,58 @@ function renderLabChips() {
       if (b.closest('.hero')) { const e = document.getElementById('engine'); if (e) e.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
     })
   );
+}
+
+// ---------- prompt generator: a paste-in "model advisor" for the user's own AI ----------
+const GOAL_PLAIN = {
+  coding: 'writing, fixing and refactoring code (including multi-step agent tasks)',
+  research: 'research, analysis, reasoning and strategy',
+  writing: 'writing and drafting prose, emails and content',
+  'cheap-bulk': 'high-volume simple work like classification, tagging and extraction',
+};
+function numPlain(v, money) { if (num(v)) return 'n/a'; if (money) return '$' + (v < 10 ? v.toFixed(2) : String(Math.round(v))); return String(v); }
+function ctxPlain(t) { if (num(t)) return ''; if (t >= 1e6) return (t / 1e6).toFixed(t % 1e6 ? 1 : 0) + 'M'; if (t >= 1e3) return Math.round(t / 1e3) + 'K'; return '' + t; }
+
+function modelFactLine(m) {
+  const bits = [];
+  if (!num(m.coding_score)) bits.push(`coding ${m.coding_score}/100`);
+  if (!num(m.benchmarks?.gpqa)) bits.push(`GPQA ${m.benchmarks.gpqa}`);
+  bits.push((num(m.price_input) && num(m.price_output)) ? 'price n/a'
+    : `${numPlain(m.price_input, true)} in / ${numPlain(m.price_output, true)} out per 1M`);
+  const ctx = ctxPlain(m.context_window); if (ctx) bits.push(`${ctx} context`);
+  const good = (m.best_for || []).slice(0, 3).map((t) => TAG_LABEL[t] || t).join(', ');
+  return `- ${m.name} (${m.vendor}): ${bits.join('; ')}${good ? `; good for ${good}` : ''}.`;
+}
+
+function buildAdvisorPrompt() {
+  const asof = state.data.as_of || 'recently';
+  const prio = PRIO_LABEL[state.priority] || 'balanced';
+  let scope, list;
+  if (state.mode === 'lab') {
+    const brand = LAB_LABEL[state.lab] || state.lab;
+    list = state.data.models.filter((m) => m.vendor === state.lab);
+    scope = `I mainly use ${brand}, so recommend only from the ${brand} models listed below unless I explicitly ask about switching.`;
+  } else {
+    list = state.data.models.slice();
+    scope = `I mostly work on ${GOAL_PLAIN[state.goal] || state.goal}. You may recommend from any model listed below.`;
+  }
+  list = list.slice().sort((a, b) => (num(b.coding_score) ? -1 : b.coding_score) - (num(a.coding_score) ? -1 : a.coding_score));
+  const facts = list.map(modelFactLine).join('\n');
+
+  return `You are my AI model-selection advisor. When I describe a task, tell me which model to use and why — optimizing for a "${prio}" balance of cost versus quality, and always honest about cost.
+
+MY SETUP
+${scope}
+
+MODEL FACTS — a snapshot from Modelproof, dated ${asof}. Prices are in USD per 1M tokens. Benchmarks are directional (coding is a 0–100 blended score; GPQA is graduate-level reasoning). Verify anything cost-critical against the vendor's own pricing page.
+${facts}
+
+HOW TO ADVISE ME
+1. For any task I describe, recommend ONE model in a sentence, with the reason.
+2. If a cheaper model is nearly as good for that task, name it and let me choose.
+3. Call it out when I'm about to use a premium model for something a cheap one handles well — save me money.
+4. Recommend on merit and cost only. Stay neutral; do not favor any company.
+5. This snapshot is dated ${asof}. If it is now much later, remind me that AI prices and models change fast and tell me to re-check current figures (Modelproof keeps them updated).`;
 }
 
 // ---------- cost vs capability chart ----------
@@ -613,6 +668,23 @@ function wire() {
       renderTable();
     })
   );
+
+  // prompt generator
+  const gen = $('#genPrompt'), ta = $('#promptText'), panel = $('#promptPanel'), copyStatus = $('#copyStatus');
+  function copyPrompt() {
+    if (!ta) return;
+    const ok = () => { if (copyStatus) copyStatus.textContent = 'Copied ✓'; };
+    const manual = () => { ta.focus(); ta.select(); if (copyStatus) copyStatus.textContent = 'Select all + copy'; };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(ok).catch(manual);
+    else manual();
+  }
+  if (gen) gen.addEventListener('click', () => {
+    if (!ta || !panel) return;
+    ta.value = buildAdvisorPrompt();
+    panel.hidden = false;
+    copyPrompt();                              // auto-copy the moment it's generated
+  });
+  const copyBtn = $('#copyPrompt'); if (copyBtn) copyBtn.addEventListener('click', copyPrompt);
 }
 
 // ---------- hero: living ASCII sunset (bounded to the hero; pauses off-screen) ----------
