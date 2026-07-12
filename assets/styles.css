@@ -151,20 +151,7 @@ a { color: inherit; text-decoration: none; }
 .seg:hover { color: var(--ink); }
 .seg.is-active { background: var(--gold); color: #1a1405; font-weight: 700; }
 
-.slider { display: flex; align-items: center; gap: 12px; }
-.slider__end { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
-input[type="range"] {
-  -webkit-appearance: none; appearance: none; flex: 1; height: 5px; border-radius: 999px;
-  background: linear-gradient(90deg, var(--line) 0%, var(--gold) 100%); cursor: pointer;
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
-  background: var(--gold); border: 3px solid var(--bg-2);
-  box-shadow: 0 0 0 1px var(--gold-line); transition: transform .12s var(--ease);
-}
-input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.12); }
-input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%;
-  background: var(--gold); border: 3px solid var(--bg-2); }
+.segmented--prio { grid-template-columns: repeat(4, 1fr); }
 
 .engine__result { margin-top: 22px; }
 
@@ -173,14 +160,14 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
   border: 1px solid var(--gold-line); border-radius: var(--r-md);
   background: radial-gradient(120% 140% at 0% 0%, var(--gold-soft), transparent 55%), var(--bg-2);
   padding: 18px; position: relative; overflow: hidden;
-  animation: rise .3s var(--ease) both;
 }
 .pick__flag { position: absolute; top: 0; right: 0; font-size: 10.5px; letter-spacing: 0.08em;
   text-transform: uppercase; font-weight: 700; color: #1a1405; background: var(--gold);
   padding: 4px 11px; border-bottom-left-radius: 10px; }
 .pick__name { font-family: var(--display); font-weight: 600; font-size: 1.5rem; letter-spacing: -0.02em; }
 .pick__vendor { color: var(--ink-3); font-size: 13px; }
-.pick__verdict { color: var(--ink); margin: 12px 0 14px; font-size: 0.98rem; }
+/* reserve space for up to ~3 lines so switching picks doesn't jump the layout */
+.pick__verdict { color: var(--ink); margin: 12px 0 14px; font-size: 0.98rem; min-height: 3em; }
 .pick__stats { display: flex; gap: 20px; flex-wrap: wrap; }
 .stat { display: flex; flex-direction: column; }
 .stat__v { font-family: var(--mono); font-size: 1.05rem; color: var(--gold); font-weight: 500; }
@@ -230,10 +217,11 @@ input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius
 .dot:hover .dot__marks { transform: scale(1.5); }
 .d-core { transition: fill .15s var(--ease); }
 .dot:hover .d-core { fill: var(--gold); }
+/* only the pick is labelled by default; hovering any dot reveals its label (declutters 21 dots) */
 .dot__label { fill: var(--ink-2); font-size: 10.5px; font-family: var(--font); pointer-events: none;
-  transition: fill .15s var(--ease); }
-.dot:hover .dot__label { fill: var(--gold); font-weight: 500; }
-.dot.is-pick .dot__label { fill: var(--gold); font-weight: 500; }
+  opacity: 0; transition: fill .15s var(--ease), opacity .15s var(--ease); }
+.dot:hover .dot__label { fill: var(--gold); font-weight: 500; opacity: 1; }
+.dot.is-pick .dot__label { fill: var(--gold); font-weight: 500; opacity: 1; }
 
 /* ---------- filters + table ---------- */
 .filters { display: flex; gap: 7px; flex-wrap: wrap; }

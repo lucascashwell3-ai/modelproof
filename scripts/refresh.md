@@ -44,6 +44,9 @@ procedure. Fastest path: paste the prompt below into a Claude Code session with 
   "speed_tps": null,                 // output tokens/sec, or null
   "benchmarks": { "swe_bench": 85.2, "gpqa": null, "aime": null,
                   "mmlu_pro": null, "lmarena_elo": null },  // % or Elo; null if unsourced
+  "coding_score": 85,               // unified 0-100 coding ability (see below) — REQUIRED
+  "coding_basis": "SWE-bench Verified 85.2%",   // what the score rests on
+  "coding_confidence": "high",      // high (SWE-bench) | medium (alt signal) | low (consensus)
   "best_for": ["coding","agentic","cheap-bulk"],  // controlled vocab (see below)
   "strengths": ["…"], "weaknesses": ["…"],
   "verdict": "One plain-English sentence.",
@@ -51,6 +54,22 @@ procedure. Fastest path: paste the prompt below into a Claude Code session with 
   "confidence": "high | medium | low"
 }
 ```
+
+### coding_score (the coding-ability signal)
+
+The coding goal ranks on `coding_score` (0–100), NOT raw SWE-bench — because strong new models
+often ship before a formal SWE-bench Verified number exists. Build it per model:
+
+1. Has official **SWE-bench Verified %** → `coding_score` = that % (rounded); `coding_confidence`
+   = high (drop to medium if the number is uncorroborated or disagrees with other signals).
+2. No SWE-bench Verified → estimate from sourced alternatives — **Artificial Analysis Coding
+   Index**, **LMArena Code Elo** rank (arena.ai/leaderboard/code), **SWE-bench Pro**,
+   **LiveCodeBench** — calibrated against the benchmarked models; `coding_confidence` = medium.
+3. No coding benchmark at all → expert/community consensus; `coding_confidence` = low.
+
+Always set `coding_basis` to the human-readable signal(s) used. Also set the top-level
+`coding_score_note` (shown in the UI). These signals genuinely disagree — never stamp an estimate
+"high" confidence.
 
 `best_for` vocabulary (must match the UI filters/goals):
 `coding`, `agentic`, `writing`, `reasoning`, `cheap-bulk`, `vision`, `long-context`, `speed`, `research`.

@@ -43,7 +43,10 @@
         "https://www.vals.ai/benchmarks/swebench",
         "https://www.vellum.ai/blog/claude-fable-5-and-mythos-5-benchmarks-explained",
         "https://llm-stats.com/benchmarks/swe-bench-verified"
-      ]
+      ],
+      "coding_score": 95,
+      "coding_basis": "SWE-bench Verified 95.5% (LMArena Code Elo #1)",
+      "coding_confidence": "high"
     },
     {
       "id": "claude-opus-4-8",
@@ -85,7 +88,10 @@
         "https://platform.claude.com/docs/en/about-claude/pricing",
         "https://llm-stats.com/benchmarks/swe-bench-verified",
         "https://www.vellum.ai/blog/claude-opus-4-8-benchmarks-explained"
-      ]
+      ],
+      "coding_score": 89,
+      "coding_basis": "SWE-bench Verified 88.6% (AA Coding Index 74.3)",
+      "coding_confidence": "high"
     },
     {
       "id": "claude-sonnet-5",
@@ -127,7 +133,10 @@
         "https://platform.claude.com/docs/en/about-claude/pricing",
         "https://llm-stats.com/benchmarks/swe-bench-verified",
         "https://techcrunch.com/2026/06/30/anthropic-launches-claude-sonnet-5-as-a-cheaper-way-to-run-agents/"
-      ]
+      ],
+      "coding_score": 85,
+      "coding_basis": "SWE-bench Verified 85.2% (AA Coding Index 71.5)",
+      "coding_confidence": "high"
     },
     {
       "id": "gpt-5-5",
@@ -167,7 +176,10 @@
         "https://benchlm.ai/models/gpt-5-5",
         "https://openai.com/index/introducing-gpt-5-5/",
         "https://felloai.com/the-ultimate-chatgpt-model-comparison/"
-      ]
+      ],
+      "coding_score": 82,
+      "coding_basis": "SWE-bench Verified 81.9% + AA Coding Index 74.9",
+      "coding_confidence": "high"
     },
     {
       "id": "gemini-3-1-pro",
@@ -209,7 +221,10 @@
         "https://ai.google.dev/gemini-api/docs/pricing",
         "https://llm-stats.com/benchmarks/swe-bench-verified",
         "https://smartchunks.com/gemini-3-1-pro-benchmarks-gpqa-hle-lmsys-frontiermath/"
-      ]
+      ],
+      "coding_score": 81,
+      "coding_basis": "SWE-bench Verified 80.6% + AA Coding Index 68.8",
+      "coding_confidence": "high"
     },
     {
       "id": "deepseek-v4-pro",
@@ -249,7 +264,10 @@
         "https://api-docs.deepseek.com/quick_start/pricing/",
         "https://llm-stats.com/benchmarks/swe-bench-verified",
         "https://benchlm.ai/models/deepseek-v4-pro-max"
-      ]
+      ],
+      "coding_score": 81,
+      "coding_basis": "SWE-bench Verified 80.6% (AA Coding Index lower, 59.4)",
+      "coding_confidence": "medium"
     },
     {
       "id": "kimi-k2-6",
@@ -288,7 +306,10 @@
         "https://platform.kimi.ai/docs/pricing/chat-k26",
         "https://llm-stats.com/benchmarks/swe-bench-verified",
         "https://aitoolsrecap.com/Blog/moonshot-ai-kimi-k2-6-release-coding-agent-benchmarks-2026"
-      ]
+      ],
+      "coding_score": 80,
+      "coding_basis": "SWE-bench Verified 80.2% + LMArena Code Elo #17 (1513)",
+      "coding_confidence": "high"
     },
     {
       "id": "llama-4-maverick",
@@ -326,7 +347,10 @@
       "sources": [
         "https://tokenmix.ai/blog/llama-4-maverick-review",
         "https://benchlm.ai/models/llama-4-maverick"
-      ]
+      ],
+      "coding_score": 74,
+      "coding_basis": "SWE-bench Verified 74.2% (secondary source, uncorroborated)",
+      "coding_confidence": "medium"
     },
     {
       "id": "o4-mini",
@@ -366,7 +390,10 @@
         "https://www.datacamp.com/blog/o4-mini",
         "https://llm-stats.com/models/o4-mini",
         "https://openrouter.ai/openai/o4-mini"
-      ]
+      ],
+      "coding_score": 68,
+      "coding_basis": "SWE-bench Verified 68.1% (older gen, uncorroborated)",
+      "coding_confidence": "medium"
     },
     {
       "id": "claude-haiku-4-5",
@@ -405,7 +432,10 @@
         "https://platform.claude.com/docs/en/about-claude/pricing",
         "https://www.anthropic.com/news/claude-haiku-4-5",
         "https://openrouter.ai/anthropic/claude-haiku-4.5"
-      ]
+      ],
+      "coding_score": 66,
+      "coding_basis": "SWE-bench Pro 39.5% + LiveCodeBench 51.1% (small/fast tier)",
+      "coding_confidence": "medium"
     },
     {
       "id": "gpt-5-6-sol",
@@ -448,7 +478,10 @@
         "https://artificialanalysis.ai/articles/gpt-5-6-has-landed",
         "https://benchlm.ai/models/gpt-5-6-sol",
         "https://techcrunch.com/2026/07/09/openai-launches-its-new-family-of-models-with-gpt-5-6/"
-      ]
+      ],
+      "coding_score": 90,
+      "coding_basis": "AA Coding Index #1 (77.4) + LMArena Code Elo #2 (1636)",
+      "coding_confidence": "medium"
     },
     {
       "id": "gpt-5-6-terra",
@@ -487,7 +520,10 @@
         "https://developers.openai.com/api/docs/pricing",
         "https://www.vellum.ai/blog/gpt-5-6-benchmarks-explained",
         "https://artificialanalysis.ai/articles/gpt-5-6-has-landed"
-      ]
+      ],
+      "coding_score": 87,
+      "coding_basis": "AA Coding Index 76.7",
+      "coding_confidence": "medium"
     },
     {
       "id": "gpt-5-6-luna",
@@ -525,7 +561,10 @@
       "sources": [
         "https://www.vellum.ai/blog/gpt-5-6-benchmarks-explained",
         "https://artificialanalysis.ai/articles/gpt-5-6-has-landed"
-      ]
+      ],
+      "coding_score": 79,
+      "coding_basis": "vendor coding-agent index ~74.6; no third-party yet",
+      "coding_confidence": "low"
     },
     {
       "id": "gemini-3-5-flash",
@@ -565,7 +604,10 @@
       "sources": [
         "https://ai.google.dev/gemini-api/docs/pricing",
         "https://o-mega.ai/articles/gemini-3-5-flash-benchmarks-cost-and-guide"
-      ]
+      ],
+      "coding_score": 83,
+      "coding_basis": "AA Coding Index 70.1 + LMArena Code Elo #19 (1500)",
+      "coding_confidence": "medium"
     },
     {
       "id": "gemini-2-5-flash-lite",
@@ -601,7 +643,10 @@
       "confidence": "high",
       "sources": [
         "https://ai.google.dev/gemini-api/docs/pricing"
-      ]
+      ],
+      "coding_score": 52,
+      "coding_basis": "community consensus (budget tier; no coding benchmark)",
+      "coding_confidence": "low"
     },
     {
       "id": "grok-4-5",
@@ -641,7 +686,10 @@
         "https://x.ai/news/grok-4-5",
         "https://apidog.com/blog/grok-4-5-benchmarks/",
         "https://techcrunch.com/2026/07/08/spacexai-releases-grok-4-5-which-elon-describes-as-an-opus-class-model/"
-      ]
+      ],
+      "coding_score": 86,
+      "coding_basis": "AA Coding Index 72.5 + LMArena Code Elo #4 (1566)",
+      "coding_confidence": "medium"
     },
     {
       "id": "deepseek-v4-flash",
@@ -677,7 +725,10 @@
       "confidence": "medium",
       "sources": [
         "https://api-docs.deepseek.com/quick_start/pricing/"
-      ]
+      ],
+      "coding_score": 72,
+      "coding_basis": "estimated just below V4-Pro (cheaper tier); no direct benchmark",
+      "coding_confidence": "low"
     },
     {
       "id": "qwen3-max",
@@ -714,7 +765,10 @@
       "confidence": "medium",
       "sources": [
         "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
-      ]
+      ],
+      "coding_score": 74,
+      "coding_basis": "LiveCodeBench 76.7% (Qwen3 Max)",
+      "coding_confidence": "medium"
     },
     {
       "id": "qwen3-coder-plus",
@@ -751,7 +805,10 @@
       "confidence": "medium",
       "sources": [
         "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
-      ]
+      ],
+      "coding_score": 73,
+      "coding_basis": "Qwen coder line; estimated, no clean SKU benchmark",
+      "coding_confidence": "low"
     },
     {
       "id": "qwen-turbo",
@@ -785,7 +842,10 @@
       "confidence": "medium",
       "sources": [
         "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
-      ]
+      ],
+      "coding_score": 48,
+      "coding_basis": "community consensus (small/fast tier)",
+      "coding_confidence": "low"
     },
     {
       "id": "mistral-medium-3-1",
@@ -821,7 +881,10 @@
       "sources": [
         "https://mistral.ai/pricing/",
         "https://www.cloudzero.com/blog/mistral-api-pricing/"
-      ]
+      ],
+      "coding_score": 62,
+      "coding_basis": "community consensus (EU mid-tier; no coding benchmark surfaced)",
+      "coding_confidence": "low"
     }
   ],
   "releases": [
@@ -983,5 +1046,6 @@
         "source": "https://momenticmarketing.com/blog/top-ai-chatbots"
       }
     ]
-  }
+  },
+  "coding_score_note": "Coding score (0–100) is a unified, comparable coding-ability estimate. Where an official SWE-bench Verified % exists it IS that number (high confidence). Where it doesn't — several strong 2026 models ship before formal benchmarks — it's estimated from sourced signals (Artificial Analysis Coding Index, LMArena Code Elo, SWE-bench Pro, LiveCodeBench) calibrated against the benchmarked models (medium confidence), or expert consensus (low). Each row shows its basis and confidence. These signals sometimes disagree — treat medium/low scores as directional."
 }

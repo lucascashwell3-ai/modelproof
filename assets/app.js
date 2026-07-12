@@ -7,15 +7,15 @@
 const state = {
   data: null,
   goal: 'coding',
-  priority: 55,          // 0 = cheapest, 100 = best
+  priority: 48,          // 0 = cheapest, 100 = best (set by the discrete selector)
   filter: 'all',
-  sort: { key: 'swe_bench', dir: 'desc' },
+  sort: { key: 'coding_score', dir: 'desc' },
   expanded: new Set(),
 };
 
 // which benchmark a goal cares about
 const GOAL_METRIC = {
-  coding: 'swe_bench',
+  coding: 'coding_score',   // unified 0-100 coding score (blends SWE-bench + other sourced signals)
   research: 'gpqa',
   writing: 'lmarena_elo',
   'cheap-bulk': 'mmlu_pro',
@@ -31,7 +31,7 @@ const GOAL_TAGS = {
 };
 
 const GOAL_DESC = {
-  coding: 'Writing, fixing & refactoring code — including multi-step agent tasks. Ranked on SWE-bench.',
+  coding: 'Writing, fixing & refactoring code — including multi-step agent tasks. Ranked on a 0–100 coding score: SWE-bench where it exists, otherwise sourced signals (LMArena Code Elo, AA Coding Index) so new models aren\'t stuck at "—".',
   research: 'Deep thinking, analysis & planning. Ranked on graduate-level reasoning (GPQA).',
   writing: 'Drafting prose, emails & content. Ranked on general ability + human preference — there is no clean writing benchmark.',
   'cheap-bulk': 'High-volume simple work — classification, tagging, extraction. Cheapest capable option first.',
@@ -47,6 +47,8 @@ const TAG_LABEL = {
 const $ = (s, r = document) => r.querySelector(s);
 const el = (t, c) => { const e = document.createElement(t); if (c) e.className = c; return e; };
 const num = (v) => (v === null || v === undefined || Number.isNaN(v));
+// coding_score lives on the model root; other metrics live under benchmarks
+const capVal = (m, metric) => (metric === 'coding_score' ? m.coding_score : m.benchmarks?.[metric]);
 
 function fmtPrice(v) {
   if (num(v)) return '<span class="na">—</span>';
@@ -90,20 +92,20 @@ const PROXY_GOALS = new Set(['writing']);
 
 function scorer(models, goal) {
   const metric = GOAL_METRIC[goal];
-  const primaryNorm = normalizer(models.map((m) => m.benchmarks?.[metric]));
-  const sweNorm = normalizer(models.map((m) => m.benchmarks?.swe_bench));
+  const primaryNorm = normalizer(models.map((m) => capVal(m, metric)));
+  const sweNorm = normalizer(models.map((m) => m.coding_score));
   const gpqaNorm = normalizer(models.map((m) => m.benchmarks?.gpqa));
   const priceNorm = normalizer(models.map((m) => m.price_output), { log: true });
   const allowProxy = PROXY_GOALS.has(goal);
 
   return (m) => {
-    const primary = m.benchmarks?.[metric];
+    const primary = capVal(m, metric);
     let cap, measured, via;
     if (!num(primary)) {
       cap = primaryNorm(primary); measured = true; via = metric;
     } else if (allowProxy) {
       const parts = [];
-      if (!num(m.benchmarks?.swe_bench)) { parts.push(sweNorm(m.benchmarks.swe_bench)); via = via || 'swe_bench'; }
+      if (!num(m.coding_score)) { parts.push(sweNorm(m.coding_score)); via = via || 'coding'; }
       if (!num(m.benchmarks?.gpqa)) { parts.push(gpqaNorm(m.benchmarks.gpqa)); via = via || 'gpqa'; }
       if (parts.length) { cap = (parts.reduce((a, b) => a + b, 0) / parts.length) * 0.9; measured = true; }
       else { cap = 0.3; measured = false; via = null; }
@@ -117,7 +119,9 @@ function scorer(models, goal) {
 
 function score(models, goal, priority) {
   const f = scorer(models, goal);
-  const w = priority / 100;                // weight on quality
+  // capability floor: even "Cheapest" keeps ~22% weight on ability, so a weak model
+  // can't win a quality goal on price alone; "Best" tops out ~90%.
+  const w = 0.22 + 0.68 * (priority / 100);
   const bulk = goal === 'cheap-bulk';
   const tags = GOAL_TAGS[goal] || [goal];
   return models
@@ -137,9 +141,10 @@ function score(models, goal, priority) {
 // pick the most defensible headline number for a goal: the goal's own metric,
 // else a sourced proxy, else an honest dash.
 function headlineStat(m, metric) {
-  if (!num(m.benchmarks?.[metric])) return { value: fmtScore(m.benchmarks[metric]), label: metricLabel(metric) };
+  const v = capVal(m, metric);
+  if (!num(v)) return { value: fmtScore(v), label: metricLabel(metric) };
   if (!num(m.benchmarks?.gpqa)) return { value: fmtScore(m.benchmarks.gpqa), label: 'GPQA' };
-  if (!num(m.benchmarks?.swe_bench)) return { value: fmtScore(m.benchmarks.swe_bench), label: 'SWE-bench' };
+  if (!num(m.coding_score)) return { value: fmtScore(m.coding_score), label: 'Coding' };
   return { value: '<span class="na">—</span>', label: metricLabel(metric) };
 }
 
@@ -194,7 +199,7 @@ function renderResult() {
 }
 
 function metricLabel(metric) {
-  return { swe_bench: 'SWE-bench', gpqa: 'GPQA', aime: 'AIME', lmarena_elo: 'LMArena Elo', mmlu_pro: 'MMLU-Pro' }[metric] || metric;
+  return { coding_score: 'Coding', swe_bench: 'SWE-bench', gpqa: 'GPQA', aime: 'AIME', lmarena_elo: 'LMArena Elo', mmlu_pro: 'MMLU-Pro' }[metric] || metric;
 }
 
 // ---------- cost vs capability chart ----------
@@ -202,7 +207,7 @@ function renderChart() {
   const wrap = $('#chart');
   const metric = GOAL_METRIC[state.goal];
   const pts = state.data.models
-    .map((m) => ({ m, x: m.price_output, y: m.benchmarks?.[metric] }))
+    .map((m) => ({ m, x: m.price_output, y: capVal(m, metric) }))
     .filter((p) => !num(p.x) && !num(p.y));
 
   $('#mapLegend').innerHTML =
@@ -344,6 +349,7 @@ function sortedModels() {
     if (key === 'context') return m.context_window;
     if (key === 'price_input') return m.price_input;
     if (key === 'price_output') return m.price_output;
+    if (key === 'coding_score') return m.coding_score;
     return m.benchmarks?.[key];
   };
   list.sort((a, b) => {
@@ -366,7 +372,7 @@ function renderTable() {
     tr.innerHTML = `
       <td class="cell-model col-model"><b>${m.name}</b><span>${m.vendor}</span></td>
       <td class="cell-best col-best"><div class="tags">${(m.best_for || []).slice(0, 3).map((t) => `<span class="mini-tag">${TAG_LABEL[t] || t}</span>`).join('') || '<span class="na">—</span>'}</div></td>
-      <td class="num col-code">${fmtScore(m.benchmarks?.swe_bench)}</td>
+      <td class="num col-code">${num(m.coding_score) ? '<span class="na">—</span>' : m.coding_score}<span class="conf conf-${m.coding_confidence}" title="basis: ${m.coding_basis || '—'}"></span></td>
       <td class="num col-ctx">${fmtCtx(m.context_window)}</td>
       <td class="num col-price">${fmtPriceRange(m)}<span class="conf conf-${m.confidence}" title="confidence: ${m.confidence}"></span></td>
       <td class="is-right col-exp" style="text-align:right;color:var(--ink-4)">${state.expanded.has(m.id) ? '−' : '+'}</td>`;
@@ -390,8 +396,11 @@ function renderTable() {
           <div>
             <h4>Watch out for</h4>
             <ul>${(m.weaknesses || []).map((s) => `<li>${s}</li>`).join('') || '<li class="na">—</li>'}</ul>
+            <h4 style="margin-top:14px">Coding score: <span style="color:var(--ink)">${num(m.coding_score) ? '—' : m.coding_score}/100</span> <span style="color:var(--ink-4);font-weight:400;text-transform:none;letter-spacing:0">· ${m.coding_confidence || '—'} confidence</span></h4>
+            <p style="font-size:12.5px;color:var(--ink-3);margin-top:-4px">Basis: ${m.coding_basis || '—'}</p>
             <h4 style="margin-top:14px">Benchmarks</h4>
             <ul>
+              <li>SWE-bench Verified: ${fmtScore(m.benchmarks?.swe_bench)}</li>
               <li>GPQA (reasoning): ${fmtScore(m.benchmarks?.gpqa)}</li>
               <li>AIME (math): ${fmtScore(m.benchmarks?.aime)}</li>
               <li>LMArena Elo: ${num(m.benchmarks?.lmarena_elo) ? '<span class="na">—</span>' : m.benchmarks.lmarena_elo}</li>
@@ -468,14 +477,6 @@ function renderFeed() {
 }
 
 // ---------- controls ----------
-function hintFor(p) {
-  if (p <= 25) return 'cost-first';
-  if (p <= 45) return 'leans cheap';
-  if (p <= 62) return 'balanced';
-  if (p <= 82) return 'leans quality';
-  return 'quality-first';
-}
-
 function wire() {
   $('#goal').querySelectorAll('.seg').forEach((b) =>
     b.addEventListener('click', () => {
@@ -486,13 +487,14 @@ function wire() {
       renderResult();   // table sort stays independent of goal (less surprising)
     })
   );
-  const slider = $('#priority');
-  slider.addEventListener('input', () => {
-    state.priority = +slider.value;
-    $('#priorityHint').textContent = hintFor(state.priority);
-    renderResult();
-  });
-  $('#priorityHint').textContent = hintFor(state.priority);
+  $('#priority').querySelectorAll('.seg').forEach((b) =>
+    b.addEventListener('click', () => {
+      $('#priority .is-active')?.classList.remove('is-active');
+      b.classList.add('is-active');
+      state.priority = +b.getAttribute('data-p');
+      renderResult();
+    })
+  );
 
   document.querySelectorAll('.tbl thead th[data-sort]').forEach((th) =>
     th.addEventListener('click', () => {

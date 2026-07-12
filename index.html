@@ -51,13 +51,12 @@
             <p class="ctl__desc" id="goalDesc"></p>
           </div>
           <div class="ctl">
-            <label class="ctl__label" for="priority">
-              What matters more <span class="ctl__hint" id="priorityHint">balanced</span>
-            </label>
-            <div class="slider">
-              <span class="slider__end">Cheapest</span>
-              <input type="range" id="priority" min="0" max="100" value="55" step="1" aria-label="Cost vs quality priority" />
-              <span class="slider__end">Best</span>
+            <label class="ctl__label" for="priority">What matters more</label>
+            <div class="segmented segmented--prio" id="priority" role="tablist" aria-label="Cost vs quality priority">
+              <button class="seg" data-p="6" role="tab">Cheapest</button>
+              <button class="seg" data-p="28" role="tab">Value</button>
+              <button class="seg is-active" data-p="48" role="tab">Balanced</button>
+              <button class="seg" data-p="85" role="tab">Best</button>
             </div>
           </div>
         </div>
@@ -103,7 +102,7 @@
       <div class="panel__head">
         <div>
           <h2 class="panel__title">Compare everything</h2>
-          <p class="panel__desc">Sort by any column. Click a row for the verdict, sources, and how sure we are.</p>
+          <p class="panel__desc">Sort by any column. The <em>coding score</em> is 0–100 — SWE-bench where it exists, otherwise a sourced estimate (LMArena, AA Coding Index); the dot shows confidence. Click a row for the basis, verdict, and sources.</p>
         </div>
         <div class="filters" id="filters" aria-label="Filter by use case"></div>
       </div>
@@ -113,7 +112,7 @@
             <tr>
               <th data-sort="name" class="is-left col-model">Model</th>
               <th data-sort="best" class="col-best">Best for</th>
-              <th data-sort="swe_bench" class="num col-code">Coding<span class="th-sub">SWE-bench</span></th>
+              <th data-sort="coding_score" class="num col-code">Coding<span class="th-sub">score /100</span></th>
               <th data-sort="context" class="num col-ctx">Context</th>
               <th data-sort="price_output" class="num col-price">Price<span class="th-sub">in / out · 1M</span></th>
               <th class="is-right col-exp">&nbsp;</th>
