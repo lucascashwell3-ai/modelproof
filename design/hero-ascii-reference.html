@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Proof — ASCII sunset hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#FBF8F0; --ink-muted:#e8ddc9; --gold-hi:#f6c877; --gold-mid:#e0a860;
+  --serif:"Fraunces",Georgia,serif; --sans:"Inter",system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);color:var(--ink);overflow-x:hidden;min-height:100vh;background:#0d0f1e;-webkit-font-smoothing:antialiased}
+h1,h2{font-family:var(--serif);line-height:1}
+canvas#scene{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.06;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+.vig{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 32%,transparent 40%,rgba(8,6,14,.55) 100%)}
+/* soft dark radial scrim behind the centred wordmark so "Proof" + tagline read cleanly */
+.scrim{position:fixed;left:50%;top:47%;transform:translate(-50%,-50%);z-index:1;pointer-events:none;
+  width:min(780px,94vw);height:min(540px,62vh);
+  background:radial-gradient(ellipse at center,rgba(10,8,18,.5) 0%,rgba(10,8,18,.3) 42%,transparent 72%)}
+.layer{position:relative;z-index:2}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
+  padding:26px clamp(20px,5vw,56px)}
+nav .mk{display:flex;align-items:center;gap:9px;font-family:var(--serif);font-weight:500;font-size:1.1rem;
+  color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.4)}
+nav .mk svg{width:19px;height:19px;filter:drop-shadow(0 1px 6px rgba(0,0,0,.4))}
+nav .r{display:flex;align-items:center;gap:6px}
+nav .r a{font-size:.86rem;color:rgba(255,255,255,.82);padding:8px 14px;border-radius:999px;transition:.18s;text-shadow:0 1px 8px rgba(0,0,0,.35)}
+nav .r a:hover{color:#fff;background:rgba(255,255,255,.12)}
+nav .r a.cta{border:1px solid rgba(255,255,255,.4);color:#fff}
+nav .r a.cta:hover{background:rgba(255,255,255,.16)}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:110px 22px 90px}
+.eyebrow{font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;
+  color:#fff1d6;margin-bottom:20px;text-shadow:0 2px 20px rgba(70,26,12,.6),0 1px 3px rgba(0,0,0,.4)}
+.wordmark{font-family:var(--serif);font-weight:400;letter-spacing:-.015em;font-size:clamp(4.4rem,14vw,10.5rem);
+  line-height:.9;color:#fff;text-shadow:0 3px 44px rgba(20,10,30,.5),0 1px 3px rgba(0,0,0,.3)}
+.tagline{font-family:var(--serif);font-weight:300;font-style:italic;font-size:clamp(1.05rem,2.3vw,1.5rem);
+  color:#f7eeda;margin-top:20px;max-width:600px;line-height:1.5;text-shadow:0 2px 22px rgba(20,8,4,.6)}
+.tagline b{font-style:normal;font-weight:400;color:#fff}
+.cta-row{display:flex;gap:14px;justify-content:center;margin-top:40px;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:9px;padding:15px 32px;border-radius:999px;font-weight:600;font-size:.94rem;
+  color:#2a1a08;background:linear-gradient(135deg,#f6c877,#e0a860);box-shadow:0 10px 34px rgba(180,120,40,.4);transition:transform .2s,box-shadow .2s}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 44px rgba(180,120,40,.5)}
+.btn-ghost{display:inline-flex;align-items:center;gap:7px;padding:14px 26px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.42);color:#fff;font-size:.94rem;transition:.2s;backdrop-filter:blur(2px)}
+.btn-ghost:hover{background:rgba(255,255,255,.14)}
+
+.form-in{opacity:0;transform:translateY(22px);animation:up 1.1s cubic-bezier(.22,1,.36,1) forwards}
+.form-in.d1{animation-delay:.12s}.form-in.d2{animation-delay:.3s}.form-in.d3{animation-delay:.48s}.form-in.d4{animation-delay:.64s}
+@keyframes up{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.form-in{animation:none;opacity:1;transform:none}}
+@media (max-width:600px){nav .r a:not(.cta){display:none}}
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+<div class="grain"></div>
+<div class="vig"></div>
+<div class="scrim"></div>
+
+<nav class="layer">
+  <span class="mk"><svg viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe6b8"/><stop offset="1" stop-color="#e0a860"/></linearGradient></defs><path d="M50 3 C54 38 62 46 97 50 C62 54 54 62 50 97 C46 62 38 54 3 50 C38 46 46 38 50 3 Z" fill="url(#g)"/></svg>Proof</span>
+  <span class="r"><a href="#">Work</a><a href="#">About</a><a class="cta" href="#">Say hello</a></span>
+</nav>
+
+<header class="hero layer">
+  <span class="eyebrow form-in">Portfolio · Lucas Cashwell</span>
+  <h1 class="wordmark form-in d1">Proof</h1>
+  <p class="tagline form-in d2">Verifiable work, not vibes.<br><b>A record of what I've built — led by DATproof, my flagship.</b></p>
+  <div class="cta-row form-in d3">
+    <a class="btn-primary" href="#">See the proof <span aria-hidden="true">→</span></a>
+    <a class="btn-ghost" href="#">Say hello</a>
+  </div>
+</header>
+
+<script>
+/* ============================================================
+   Background layer: living ASCII sunset over a calm sea.
+   Full-viewport monospace grid on <canvas id="scene">.
+   Everything else on the page is the shared "Proof" shell.
+   ============================================================ */
+(function(){
+  const cv  = document.getElementById('scene');
+  const ctx = cv.getContext('2d', {alpha:false});
+  const rm  = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* --- brightness -> glyph ramp (dark .. light) ---
+     Gentle, evenly-weighted density steps. Mid glyphs are repeated so the
+     texture eases between levels instead of stepping hard, and the top ends
+     at a medium-weight glyph ('&') rather than a solid '@'/'%' blob so the
+     sun reads as a soft bright core, not a hard mass. */
+  const RAMP = [' ','.','.',"'",'`',':',':','-','~','~','=','+','+','*','o','o','c','x','X','&'];
+  const RMAX = RAMP.length - 1;                              // 19
+
+  /* --- warm sunset colour gradient, sampled by "temperature" [0..1] ---
+     indigo dusk -> violet -> mauve -> rose -> amber -> gold -> warm cream.
+     Highlights land on a creamy warm gold (never pure white) for a soft read. */
+  const STOPS = [
+    [0.00,  16, 24, 48],   // #101830 deep dusk indigo (top / deep water)
+    [0.16,  36, 36, 72],   // #242448 indigo
+    [0.32,  78, 62,102],   // #4e3e66 dusk violet
+    [0.48, 124, 94,128],   // #7c5e80 mauve
+    [0.60, 158,104,116],   // #9e6874 rose
+    [0.70, 182,120,116],   // #b67874 warm rose
+    [0.80, 210,140,104],   // #d28c68 rose-amber
+    [0.88, 226,158,104],   // #e29e68 amber
+    [0.94, 238,182,116],   // #eeb674 amber-gold
+    [0.98, 246,206,142],   // #f6ce8e soft gold (sun / reflection core)
+    [1.00, 252,228,186]    // #fce4ba warm cream highlight (no pure white)
+  ];
+  const NBUCK = 48;                                          // finer colour buckets = smoother temp transitions
+  const PAL = new Array(NBUCK);
+  for(let i=0;i<NBUCK;i++){
+    const t=i/(NBUCK-1);
+    let k=0; while(k<STOPS.length-2 && t>STOPS[k+1][0]) k++;
+    const a=STOPS[k], b=STOPS[k+1];
+    const f=(b[0]-a[0])?(t-a[0])/(b[0]-a[0]):0;
+    const r=(a[1]+(b[1]-a[1])*f)|0;
+    const g=(a[2]+(b[2]-a[2])*f)|0;
+    const bl=(a[3]+(b[3]-a[3])*f)|0;
+    PAL[i]='rgb('+r+','+g+','+bl+')';
+  }
+
+  /* --- scene constants --- */
+  const V_HOR   = 0.55;          // horizon (fraction of height)
+  const SUN_U   = 0.72;          // sun x (fraction of width)
+  const SUN_V   = V_HOR - 0.03;  // sun sits just above the horizon
+  const SUN_R0  = 0.060;         // base sun disc radius (screen-height units)
+  const GSIG0   = 0.180;         // base sun glow gaussian sigma
+
+  // resolved per-resize (sun is shrunk on tall narrow phones so it can't dominate)
+  let W,H,DPR, cols,rows, cw,ch, aspect, sunXh, bgGrad, sunR, gsig2;
+
+  function resize(){
+    DPR = Math.min(devicePixelRatio||1, 2);
+    W = cv.width  = Math.round(innerWidth  * DPR);
+    H = cv.height = Math.round(innerHeight * DPR);
+    cv.style.width  = innerWidth  + 'px';
+    cv.style.height = innerHeight + 'px';
+
+    // setting cv.width/height resets the 2d context -> re-apply state
+    const cellCSS = innerWidth < 480 ? 10 : 11;     // slightly tighter cells => finer, smoother texture
+    const fontPx  = cellCSS * DPR;
+    ctx.font = fontPx + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.textBaseline = 'top';
+    cw = ctx.measureText('M').width || fontPx*0.6;  // monospace advance (device px)
+    ch = fontPx;                                    // row height (device px)
+    cols = Math.ceil(W/cw) + 1;
+    rows = Math.ceil(H/ch) + 1;
+    aspect = innerWidth/innerHeight;                // keep sun glow round
+    sunXh  = SUN_U * aspect;
+
+    // On a tall narrow phone (aspect < 1) the sun's height-unit radius would
+    // swallow the frame, so shrink the disc + glow toward ~62% there.
+    const sunScale = Math.min(1, Math.max(0.62, aspect/1.0));
+    sunR  = SUN_R0 * sunScale;
+    const sig = GSIG0 * (0.72 + 0.28*sunScale);
+    gsig2 = sig*sig;
+
+    // cached near-black warm background (built once per resize, no per-frame alloc)
+    bgGrad = ctx.createLinearGradient(0,0,0,H);
+    bgGrad.addColorStop(0.00,'#0a0812');
+    bgGrad.addColorStop(V_HOR,'#140d16');
+    bgGrad.addColorStop(1.00,'#080610');
+  }
+
+  function render(tSec){
+    const breathe = rm ? 1 : (1 + 0.014*Math.sin(tSec*0.16));  // barely-there global swell
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0,0,W,H);
+    ctx.globalAlpha = 0.9;                                     // gentler, less-strobing per-glyph read
+
+    let last = -1;                                            // current palette bucket
+    for(let row=0; row<rows; row++){
+      const v  = row/(rows-1);
+      const y  = row*ch;
+      const dvh = v - SUN_V;
+      const below = v >= V_HOR;
+      const s  = v / V_HOR;                                   // sky vertical param
+      let depth=0, sm=0;
+      if(below){
+        depth = (v - V_HOR)/(1 - V_HOR);                      // 0 horizon .. 1 foreground
+        const vm = 2*V_HOR - v;                               // mirrored sky position
+        sm = vm > 0 ? vm/V_HOR : 0;
+      }
+      const wCol = 0.045 + depth*0.30;                        // reflection widens downward
+      for(let col=0; col<cols; col++){
+        const u   = col/(cols-1);
+        const dxh = u*aspect - sunXh;
+        const dist = Math.sqrt(dxh*dxh + dvh*dvh);
+        const glow = Math.exp(-(dist*dist)/gsig2);            // radial sun glow 0..1
+
+        let b, temp;
+        if(!below){
+          /* ---- SKY ---- */
+          b  = 0.05 + 0.38*Math.pow(s,1.9);                   // dark top -> bright horizon
+          b += 0.22*Math.exp(-Math.pow((v-V_HOR)/0.12,2));    // soft horizon band (wider, calmer)
+          b += 0.025*Math.sin(u*6.3 + v*13 + 1.0);            // faint deterministic atmosphere
+          temp = Math.pow(s,1.2);                             // cool up top -> warm at horizon
+        } else {
+          /* ---- WATER (mirror of sky, darker) ---- */
+          b  = (0.02 + 0.42*Math.pow(sm,1.9))*0.5;
+          b += 0.12*Math.exp(-Math.pow((v-V_HOR)/0.11,2));    // reflected horizon glow
+          b *= (1 - 0.42*depth);                              // darken toward foreground
+          /* ---- shimmering sun-reflection column (signature element) ----
+             Calmer than before: slower drift, lower frequency + amplitude, so it
+             gently undulates (meditative) instead of buzzing. */
+          const colFall = Math.exp(-Math.pow(dxh/wCol,2));    // horizontal falloff under sun
+          const band = 0.55 + 0.30*Math.sin(
+                          Math.pow(depth,0.6)*16              // fewer, softer bands
+                          - tSec*0.34                         // slow downward drift
+                          + Math.sin(u*18)*0.6 );             // gentle break-up, not glitter-buzz
+          const refl = colFall * band * (0.92*(1 - depth*0.5));
+          b   += refl;
+          temp = 0.9*(1 - Math.pow(depth,0.8)) + refl*0.7;    // gold along the reflected path
+        }
+
+        /* sun glow + disc affect both brightness and warmth (kept soft so the
+           core doesn't blow out into a hard blob) */
+        b    += 0.55*glow;
+        temp += 0.8*glow;
+        if(dist < sunR){ const c = 1 - dist/sunR; b += 0.4*c; temp += 0.5*c; }
+
+        b *= breathe;
+
+        /* soft tone-map: compress highlights so bright cells roll off gently
+           (asymptotes toward 1) instead of clipping into a stark '@#' cluster.
+           1-exp(-1.35 b): b=1 -> .74, b=2 -> .93, b=3 -> .98 */
+        b = 1 - Math.exp(-1.35*b);
+
+        /* gently lower contrast directly behind the centred wordmark (keeps "Proof" legible).
+           narrow in x so the sun (u~0.72) and its reflection stay bright */
+        const mdx = (u-0.5)*4.7619;                           // 1/0.21
+        const mdy = (v-0.47)*4.3478;                          // 1/0.23
+        const mask = Math.exp(-(mdx*mdx + mdy*mdy));
+        b *= (1 - 0.30*mask);
+
+        if(b <= 0.01) continue;                               // skip near-blank cells -> fast
+        if(b > 1) b = 1;
+        const chi = (b*RMAX + 0.5)|0;
+        if(chi <= 0) continue;                                // skip blanks (dark sky)
+
+        if(temp > 1) temp = 1; else if(temp < 0) temp = 0;
+        const ci = (temp*(NBUCK-1) + 0.5)|0;
+        if(ci !== last){ ctx.fillStyle = PAL[ci]; last = ci; }
+
+        ctx.fillText(RAMP[chi], col*cw, y);
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /* --- animation loop (throttled to ~30fps; calm + battery-friendly) --- */
+  let lastT = 0;
+  function loop(now){
+    if(W < 4 || H < 4){ resize(); requestAnimationFrame(loop); return; }  // guard zero-size layout
+    if(now - lastT >= 32){ lastT = now; render(now/1000); }
+    requestAnimationFrame(loop);
+  }
+
+  addEventListener('resize', resize);
+  resize();
+  if(rm) render(0);                                           // one static frame, no rAF
+  else   requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
