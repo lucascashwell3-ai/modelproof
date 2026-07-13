@@ -165,24 +165,22 @@ a { color: inherit; text-decoration: none; }
   text-shadow: 0 2px 22px rgba(20,8,4,0.6), 0 1px 2px rgba(0,0,0,0.35);
 }
 .hero__promise em { font-style: normal; font-weight: 600; color: #ffdf9e; }
-/* the ask — a typeset sentence, not a widget bolted onto the art */
-.ask { display: flex; flex-direction: column; align-items: center; gap: 13px; margin-top: 4px; }
-.ask__row { display: flex; align-items: center; justify-content: center; gap: 13px; flex-wrap: wrap; }
-.ask__lead {
-  font-family: var(--display); font-size: clamp(1.15rem, 2.2vw, 1.45rem); font-weight: 400;
-  color: #f7eeda; text-shadow: 0 2px 22px rgba(20,8,4,0.65), 0 1px 2px rgba(0,0,0,0.4);
-  white-space: nowrap;
-}
-
-/* mode toggle — the two ways in: By task | By lab */
-.modeswitch { display: inline-flex; gap: 3px; background: var(--bg-2); border: 1px solid var(--line-soft);
-  padding: 3px; border-radius: 999px; }
-.mode { font-family: var(--font); font-size: 12.5px; font-weight: 600; color: var(--ink-3);
-  background: transparent; border: 0; padding: 6px 18px; border-radius: 999px; cursor: pointer;
-  transition: color .16s var(--ease), background .16s var(--ease); }
-.mode:hover { color: var(--ink); }
-.mode.is-active { background: var(--gold-metal); color: var(--on-metal); box-shadow: var(--metal-sheen); }
-.mode:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+/* the console: task + budget + optional labs as labeled rows — no wrapping sentence to break */
+.console { width: 100%; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px;
+  border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--panel);
+  box-shadow: var(--shadow); padding: 20px 22px 16px; text-align: left; }
+.console__row { display: grid; grid-template-columns: 96px 1fr; align-items: center; gap: 16px; }
+.console__row--labs { align-items: start; }
+.console__label { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-3); }
+.console__label em { display: block; font-style: normal; font-size: 9.5px; letter-spacing: 0.04em;
+  color: var(--ink-4); margin-top: 3px; }
+.console__row--labs .console__label { padding-top: 7px; }
+.console .segmented { width: 100%; }
+.console .labchips { display: flex; flex-wrap: wrap; gap: 7px; }
+.console__echo { margin-top: 2px; padding-top: 13px; border-top: 1px dotted var(--line);
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--ink-3); text-align: center; }
+.console__echo b { color: var(--gold); font-weight: 500; }
 
 /* single-row task chips (double-class beats base .segmented regardless of source order) */
 .segmented.segmented--goals { grid-template-columns: repeat(4, 1fr); }
@@ -237,6 +235,10 @@ a { color: inherit; text-decoration: none; }
 .runner__meta b { color: var(--gold-2); font-weight: 500; }
 .empty { color: var(--ink-3); font-size: 0.95rem; padding: 20px 0; text-align: center; }
 .rec-caption { color: var(--ink-4); font-size: 11.5px; margin-top: 12px; text-align: center; line-height: 1.4; }
+/* neutral, cost-first "outside your labs…" note — a fact, never a nudge */
+.rec-footnote { margin-top: 12px; padding: 10px 13px; border: 1px dotted var(--gold-line); border-radius: var(--r-sm);
+  background: var(--gold-soft); color: var(--ink-2); font-size: 12.5px; line-height: 1.5; }
+.rec-footnote b { color: var(--gold); font-weight: 500; }
 
 /* by-lab result: the lab's best model for each kind of work */
 .pick--lab .labkit { display: flex; flex-direction: column; margin-top: 16px; }
@@ -531,6 +533,9 @@ a { color: inherit; text-decoration: none; }
   .segmented--goals .seg { font-size: 11.5px; padding: 8px 3px; }
   .labkit__row { grid-template-columns: 78px 1fr; }
   .labkit__meta { grid-column: 2; text-align: left; margin-top: 2px; }
+  .console { padding: 16px 16px 14px; }
+  .console__row { grid-template-columns: 1fr; gap: 8px; }
+  .console__row--labs .console__label { padding-top: 0; }
   .rel { grid-template-columns: 50px 1fr; gap: 14px; }
   .rel::before { left: 59px; } .rel::after { left: 54px; }
 }

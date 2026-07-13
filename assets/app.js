@@ -6,10 +6,10 @@
 
 const state = {
   data: null,
-  mode: 'task',          // 'task' = choose by what you're doing; 'lab' = choose by which lab you use
-  goal: 'coding',
-  lab: null,             // a vendor string when mode === 'lab'
-  priority: 48,          // 0 = cheapest, 100 = best (set by the discrete selector)
+  // faceted console: task + budget + optional labs COMPOSE (no more By-task/By-lab modes)
+  goal: 'coding',        // the task facet (single-select)
+  priority: 48,          // the budget facet: 0 = cheapest … 100 = best
+  labs: [],              // vendors the user pays for; [] = all labs. A filter layered on the task, not a mode.
   filter: 'all',
   showAll: false,        // compare table defaults to the common flagships; opt in to all 21
   sort: { key: 'coding_score', dir: 'desc' },
@@ -168,11 +168,24 @@ function headlineStat(m, metric) {
   return { value: '<span class="na">—</span>', label: metricLabel(metric) };
 }
 
+// the field the recommender ranks: all models, or (if labs are chosen) just those vendors
+function currentModels() {
+  return state.labs.length ? state.data.models.filter((m) => state.labs.includes(m.vendor)) : state.data.models;
+}
+const TASK_LABEL = { coding: 'Coding', research: 'Strategy', writing: 'Writing', 'cheap-bulk': 'Cheap bulk' };
+// the read-only sentence the console echoes back — the tool restating your query
+function queryText() {
+  const labs = state.labs.length ? state.labs.map((v) => LAB_LABEL[v] || v).join(' + ') : 'any lab';
+  return { task: TASK_LABEL[state.goal] || state.goal, budget: PRIO_LABEL[state.priority] || 'balanced', labs };
+}
+
 function renderResult() {
   // a generated prompt reflects the selection at generation time — reset it when the selection changes
   const pp = document.getElementById('promptPanel'); if (pp) pp.hidden = true;
   const cs = document.getElementById('copyStatus'); if (cs) cs.textContent = '';
-  if (state.mode === 'lab') renderLabResult(); else renderTaskResult();
+  const echo = $('#queryEcho');
+  if (echo) { const q = queryText(); echo.innerHTML = `${q.task} · ${q.budget} cost · <b>${q.labs}</b>`; }
+  renderVerdict();
   seedCompare();     // the side-by-side board follows the engine until the user hand-picks
 }
 
@@ -181,12 +194,12 @@ function renderResult() {
 // the user can hand-pick 2–5 models, which stops the auto-reseeding.
 function seedCompare() {
   if (!state.cmpCustom) {
-    let ids;
-    if (state.mode === 'lab' && state.lab) {
-      ids = state.data.models.filter((m) => m.vendor === state.lab)
-        .sort((a, b) => (b.coding_score || 0) - (a.coding_score || 0)).slice(0, 3).map((m) => m.id);
-    } else {
-      ids = score(state.data.models, state.goal, state.priority).slice(0, 3).map((r) => r.m.id);
+    let ids = score(currentModels(), state.goal, state.priority).slice(0, 3).map((r) => r.m.id);
+    if (ids.length < 2) {   // a narrow lab pick — top up from the whole field so there's something to compare
+      for (const r of score(state.data.models, state.goal, state.priority)) {
+        if (!ids.includes(r.m.id)) ids.push(r.m.id);
+        if (ids.length >= 3) break;
+      }
     }
     if (ids.length >= 2) state.compare = ids;
   }
@@ -230,11 +243,14 @@ function renderCompare() {
   ).join('');
 }
 
-function renderTaskResult() {
+function renderVerdict() {
   const box = $('#result');
-  const ranked = score(state.data.models, state.goal, state.priority);
+  if (!box) return;
+  const ranked = score(currentModels(), state.goal, state.priority);
   if (!ranked.length) {
-    box.innerHTML = '<div class="empty">No model has a sourced score for this goal yet — see the full table below.</div>';
+    const who = state.labs.length ? state.labs.map((v) => LAB_LABEL[v] || v).join(' + ') : 'this goal';
+    box.innerHTML = `<div class="empty">No sourced model for <b>${who}</b> on this task yet. Add another lab, or browse the full table below.</div>`;
+    renderChart();
     return;
   }
   const top = ranked[0].m;
@@ -245,11 +261,11 @@ function renderTaskResult() {
   const hv = headlineStat(top, metric);
   const caption = state.goal === 'cheap-bulk'
     ? 'Ranked mostly on price. Cheapest capable option first.'
-    : 'Ranked on sourced benchmarks + price. Models with no sourced score for this goal sit in the table below, not here.';
+    : 'Ranked on sourced benchmarks + price. Models with no sourced score for this task sit in the full table, not here.';
 
   box.innerHTML = `
     <div class="pick">
-      <span class="pick__flag">Top pick</span>
+      <span class="pick__flag">Your pick</span>
       <div class="pick__name">${top.name}</div>
       <div class="pick__vendor">${top.vendor}</div>
       <p class="pick__verdict">${top.verdict || 'A strong all-round choice for this goal.'}</p>
@@ -267,6 +283,7 @@ function renderTaskResult() {
           <div class="runner__meta"><b>${rv.value}</b> ${rv.label} · <b>${fmtPrice(m.price_output)}</b>/1M out</div>
         </div>`; }).join('')}
     </div>
+    ${labsFootnote(top, metric)}
     <p class="rec-caption">${caption}</p>`;
 
   box.querySelectorAll('[data-jump]').forEach((n) =>
@@ -280,70 +297,37 @@ function renderTaskResult() {
   renderChart();
 }
 
+// independence guardrail: when labs are constrained and a materially cheaper OR higher-scoring
+// model exists OUTSIDE them, state the fact — neutral, cost-first, never "switch to X".
+function labsFootnote(top, metric) {
+  if (!state.labs.length) return '';
+  const globalTop = (score(state.data.models, state.goal, state.priority)[0] || {}).m;
+  if (!globalTop || state.labs.includes(globalTop.vendor) || globalTop.id === top.id) return '';
+  const gp = globalTop.price_output, tp = top.price_output;
+  const gCap = capVal(globalTop, metric), tCap = capVal(top, metric);
+  const cheaper = !num(gp) && !num(tp) && gp <= tp * 0.8;
+  const better = !num(gCap) && !num(tCap) && gCap > tCap;
+  if (!cheaper && !better) return '';
+  const gv = headlineStat(globalTop, metric);
+  return `<p class="rec-footnote">Outside your labs, <b>${globalTop.name}</b> scores ${gv.value} ${gv.label} at ${fmtPrice(gp)}/1M out — vs your pick's ${headlineStat(top, metric).value} at ${fmtPrice(tp)}. Your call.</p>`;
+}
+
 function metricLabel(metric) {
   return { coding_score: 'Coding', swe_bench: 'SWE-bench', gpqa: 'GPQA', aime: 'AIME', lmarena_elo: 'LMArena Elo', mmlu_pro: 'MMLU-Pro' }[metric] || metric;
 }
 
-// ---------- by-lab result: the lab's own best model for each kind of work ----------
-const LAB_GOALS = [['coding', 'Coding'], ['research', 'Strategy'], ['writing', 'Writing'], ['cheap-bulk', 'Cheap bulk']];
-
-function renderLabResult() {
-  const box = $('#result');
-  const vendor = state.lab;
-  const brand = LAB_LABEL[vendor] || vendor || '—';
-  const models = state.data.models.filter((m) => m.vendor === vendor);
-  if (!models.length) { box.innerHTML = `<div class="empty">No ${brand} models in the data yet.</div>`; return; }
-  state.pickId = null;
-
-  const rows = LAB_GOALS.map(([g, label]) => {
-    const top = (score(models, g, state.priority)[0] || {}).m || null;
-    if (!top) return { label, name: null };
-    // writing has no dedicated benchmark, so don't show a misleading coding/GPQA number
-    const meta = g === 'cheap-bulk'
-      ? `${fmtPrice(top.price_output)}/1M out · lowest-cost`
-      : g === 'writing'
-        ? `${fmtPrice(top.price_output)}/1M out · general-ability pick`
-        : (() => { const hv = headlineStat(top, GOAL_METRIC[g]); return `${hv.value} ${hv.label} · ${fmtPrice(top.price_output)}/1M out`; })();
-    return { label, name: top.name, meta };
-  });
-  const count = models.length;
-
-  box.innerHTML = `
-    <div class="pick pick--lab">
-      <span class="pick__flag">Your ${brand} kit</span>
-      <div class="pick__name">${brand}</div>
-      <div class="pick__vendor">${count} model${count > 1 ? 's' : ''} · the one to reach for per task, at your <b>${PRIO_LABEL[state.priority] || 'balanced'}</b> priority</div>
-      <div class="labkit">
-        ${rows.map((r) => r.name ? `
-          <div class="labkit__row">
-            <span class="labkit__goal">${r.label}</span>
-            <span class="labkit__model">${r.name}</span>
-            <span class="labkit__meta">${r.meta}</span>
-          </div>` : `
-          <div class="labkit__row labkit__row--none">
-            <span class="labkit__goal">${r.label}</span>
-            <span class="labkit__model na">—</span>
-            <span class="labkit__meta">no measured ${brand} model for this</span>
-          </div>`).join('')}
-      </div>
-    </div>
-    <p class="rec-caption">Only ${brand}'s own models, ranked among themselves — for when your lab is already decided. The whole field is in the table below.</p>`;
-  renderChart();
-}
-
+// ---------- labs facet: multi-select vendor chips + an "All labs" default ----------
+const LAB_ALL = '__all__';
 function renderLabChips() {
+  if (!state.data) return;
   const vendors = [...new Set(state.data.models.map((m) => m.vendor))]
     .sort((a, b) => (LAB_ORDER.indexOf(a) + 1 || 99) - (LAB_ORDER.indexOf(b) + 1 || 99));
-  if (!state.lab || !vendors.includes(state.lab)) state.lab = vendors[0];
-  const html = vendors.map((v) =>
-    `<button class="chip labchip ${v === state.lab ? 'is-active' : ''}" data-lab="${v}" role="tab" aria-selected="${v === state.lab}">${LAB_LABEL[v] || v}</button>`
-  ).join('');
+  const allOn = state.labs.length === 0;
+  const chip = (v, label, on) => `<button class="chip labchip ${on ? 'is-active' : ''}" data-lab="${v}" role="button" aria-pressed="${on}">${label}</button>`;
+  const html = chip(LAB_ALL, 'All labs', allOn) + vendors.map((v) => chip(v, LAB_LABEL[v] || v, state.labs.includes(v))).join('');
   document.querySelectorAll('.labctl').forEach((c) => { c.innerHTML = html; });
   document.querySelectorAll('[data-lab]').forEach((b) =>
-    b.addEventListener('click', () => {
-      setLab(b.getAttribute('data-lab'));
-      if (b.closest('.hero')) { const e = document.getElementById('engine'); if (e) e.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-    })
+    b.addEventListener('click', () => setLabs(b.getAttribute('data-lab')))
   );
 }
 
@@ -368,19 +352,16 @@ function modelFactLine(m) {
   return `- ${m.name} (${m.vendor}): ${bits.join('; ')}${good ? `; good for ${good}` : ''}.`;
 }
 
+const DATA_URL = 'https://lucascashwell3-ai.github.io/modelproof/data/models.json';
 function buildAdvisorPrompt() {
   const asof = state.data.as_of || 'recently';
   const prio = PRIO_LABEL[state.priority] || 'balanced';
-  let scope, list;
-  if (state.mode === 'lab') {
-    const brand = LAB_LABEL[state.lab] || state.lab;
-    list = state.data.models.filter((m) => m.vendor === state.lab);
-    scope = `I mainly use ${brand}, so recommend only from the ${brand} models listed below unless I explicitly ask about switching.`;
-  } else {
-    list = state.data.models.slice();
-    scope = `I mostly work on ${GOAL_PLAIN[state.goal] || state.goal}. You may recommend from any model listed below.`;
-  }
-  list = list.slice().sort((a, b) => (num(b.coding_score) ? -1 : b.coding_score) - (num(a.coding_score) ? -1 : a.coding_score));
+  // facts list ALL models (so the advisor can name a cheaper option outside my labs), but MY SETUP
+  // states my labs as a soft preference — the same "task + optional lab filter" the site uses.
+  const scope = state.labs.length
+    ? `I mostly work on ${GOAL_PLAIN[state.goal] || state.goal}. I mainly pay for ${state.labs.map((v) => LAB_LABEL[v] || v).join(' + ')}, so prefer those — but if a model outside them is much cheaper or clearly better for a task, name it as an option and let me decide.`
+    : `I mostly work on ${GOAL_PLAIN[state.goal] || state.goal}. You may recommend from any model listed below.`;
+  const list = state.data.models.slice().sort((a, b) => (num(b.coding_score) ? -1 : b.coding_score) - (num(a.coding_score) ? -1 : a.coding_score));
   const facts = list.map(modelFactLine).join('\n');
 
   return `You are my AI model-selection advisor. When I describe a task, tell me which model to use and why — optimizing for a "${prio}" balance of cost versus quality, and always honest about cost.
@@ -388,7 +369,10 @@ function buildAdvisorPrompt() {
 MY SETUP
 ${scope}
 
-MODEL FACTS — a snapshot from Modelproof, dated ${asof}. Prices are in USD per 1M tokens. Benchmarks are directional (coding is a 0–100 blended score; GPQA is graduate-level reasoning). Verify anything cost-critical against the vendor's own pricing page.
+STAY CURRENT (do this first if you can)
+Before advising, fetch the live data at ${DATA_URL} and use those numbers — they are kept up to date. If you can't browse, use the dated snapshot below and warn me it may be stale.
+
+MODEL FACTS — a snapshot from MODELproof, dated ${asof}. Prices are USD per 1M tokens. Benchmarks are directional (coding is a 0–100 blended score; GPQA is graduate-level reasoning). "n/a" means the figure wasn't publicly sourced — treat it as unknown, never guess. Verify anything cost-critical against the vendor's own pricing page.
 ${facts}
 
 HOW TO ADVISE ME
@@ -396,7 +380,8 @@ HOW TO ADVISE ME
 2. If a cheaper model is nearly as good for that task, name it and let me choose.
 3. Call it out when I'm about to use a premium model for something a cheap one handles well — save me money.
 4. Recommend on merit and cost only. Stay neutral; do not favor any company.
-5. This snapshot is dated ${asof}. If it is now much later, remind me that AI prices and models change fast and tell me to re-check current figures (Modelproof keeps them updated).`;
+5. Never invent a price or benchmark. If a number is "n/a", say it's unknown rather than guessing.
+6. This snapshot is dated ${asof}. If it is now much later and you couldn't fetch live data, remind me that AI prices and models change fast and to re-check current figures at ${DATA_URL}.`;
 }
 
 // ---------- cost vs capability chart ----------
@@ -727,50 +712,33 @@ function setActive(attr, val) {
   document.querySelectorAll('[' + attr + ']').forEach((b) => {
     const on = b.getAttribute(attr) === String(val);
     b.classList.toggle('is-active', on);
-    b.setAttribute('aria-selected', on ? 'true' : 'false');
+    b.setAttribute(b.getAttribute('role') === 'radio' ? 'aria-checked' : 'aria-selected', on ? 'true' : 'false');
   });
 }
 function setGoal(goal) {
   state.goal = goal;
   setActive('data-goal', goal);
-  const d = $('#goalDesc'); if (d) d.textContent = GOAL_DESC[goal] || '';
-  renderResult();          // table sort stays independent of goal (less surprising)
+  renderResult();
 }
 function setPriority(p) {
   state.priority = +p;
   setActive('data-p', p);
   renderResult();
 }
-function setMode(mode) {
-  state.mode = mode;
-  setActive('data-mode', mode);
-  document.querySelectorAll('[data-for="task"]').forEach((el) => { el.hidden = mode !== 'task'; });
-  document.querySelectorAll('[data-for="lab"]').forEach((el) => { el.hidden = mode !== 'lab'; });
-  const gd = $('#goalDesc'); if (gd) gd.style.display = mode === 'task' ? '' : 'none';  // only meaningful in task mode
-  renderResult();
-}
-function setLab(v) {
-  state.lab = v;
-  setActive('data-lab', v);
+// labs are a multi-select filter: "All labs" clears the set; any vendor toggles in/out
+function setLabs(v) {
+  if (v === LAB_ALL) state.labs = [];
+  else { const i = state.labs.indexOf(v); if (i >= 0) state.labs.splice(i, 1); else state.labs.push(v); }
+  renderLabChips();     // refresh active states (All auto-toggles with the set)
   renderResult();
 }
 function wire() {
-  document.querySelectorAll('[data-mode]').forEach((b) =>
-    b.addEventListener('click', () => setMode(b.getAttribute('data-mode')))
-  );
   document.querySelectorAll('[data-goal]').forEach((b) =>
     b.addEventListener('click', () => setGoal(b.getAttribute('data-goal')))
   );
   document.querySelectorAll('[data-p]').forEach((b) =>
     b.addEventListener('click', () => setPriority(b.getAttribute('data-p')))
   );
-
-  // the full 21-model table is opt-in below the comparator
-  const ba = $('#browseAll'), tz = $('#tblZone');
-  if (ba && tz) ba.addEventListener('click', () => {
-    tz.hidden = !tz.hidden;
-    ba.textContent = tz.hidden ? 'Browse the full table — all 21 models ↓' : 'Hide the full table ↑';
-  });
 
   document.querySelectorAll('.tbl thead th[data-sort]').forEach((th) =>
     th.addEventListener('click', () => {
@@ -946,12 +914,10 @@ async function boot() {
 
   wire();
   initReveal();
-  setText('#goalDesc', GOAL_DESC[state.goal] || '');
   renderFilters();
   renderLabChips();          // build the "which lab" chips from the data's vendors + wire them
   if ($('#result')) renderResult();   // engine + comparator live on the home page only
   renderTable();             // full table lives on table.html; guarded no-op elsewhere
-  renderUsage();
   renderFeed();
 }
 // robust boot: fire once on whichever lifecycle signal arrives first — some embedded

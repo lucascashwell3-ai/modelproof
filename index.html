@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- same Fraunces cut as the Proof site (portfolio-v2) so the two wordmarks match -->
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=mk15" />
+  <link rel="stylesheet" href="assets/styles.css?v=mk16" />
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
@@ -54,36 +54,31 @@
 
       <!-- the tool sits below the scene, on clean dark -->
       <div class="hero__tool" id="engine">
-        <!-- the ask: pick, and the answer resolves in place -->
-        <div class="ask" role="group" aria-label="Get a recommendation">
-          <div class="modeswitch modectl" role="tablist" aria-label="Choose how to pick">
-            <button class="mode is-active" data-mode="task" role="tab" aria-selected="true">By task</button>
-            <button class="mode" data-mode="lab" role="tab" aria-selected="false">By lab</button>
-          </div>
-          <div class="ask__row" data-for="task">
-            <span class="ask__lead">I'm working on</span>
-            <div class="segmented segmented--goals goalctl" role="tablist" aria-label="Goal">
-              <button class="seg is-active" data-goal="coding" role="tab" aria-selected="true">Coding</button>
-              <button class="seg" data-goal="research" role="tab" aria-selected="false">Strategy</button>
-              <button class="seg" data-goal="writing" role="tab" aria-selected="false">Writing</button>
-              <button class="seg" data-goal="cheap-bulk" role="tab" aria-selected="false">Cheap bulk</button>
+        <!-- the console: pick task + budget + (optional) the labs you use → answer resolves below -->
+        <div class="console" role="group" aria-label="Get a model recommendation">
+          <div class="console__row">
+            <span class="console__label">Task</span>
+            <div class="segmented segmented--goals goalctl" role="radiogroup" aria-label="Task">
+              <button class="seg is-active" data-goal="coding" role="radio" aria-checked="true">Coding</button>
+              <button class="seg" data-goal="research" role="radio" aria-checked="false">Strategy</button>
+              <button class="seg" data-goal="writing" role="radio" aria-checked="false">Writing</button>
+              <button class="seg" data-goal="cheap-bulk" role="radio" aria-checked="false">Cheap bulk</button>
             </div>
           </div>
-          <div class="ask__row" data-for="task">
-            <span class="ask__lead">and I want</span>
-            <div class="segmented segmented--prio priorityctl" role="tablist" aria-label="Priority">
-              <button class="seg" data-p="6" role="tab" aria-selected="false">Cheapest</button>
-              <button class="seg" data-p="28" role="tab" aria-selected="false">Value</button>
-              <button class="seg is-active" data-p="48" role="tab" aria-selected="true">Balanced</button>
-              <button class="seg" data-p="85" role="tab" aria-selected="false">Best</button>
+          <div class="console__row">
+            <span class="console__label">Budget</span>
+            <div class="segmented segmented--prio priorityctl" role="radiogroup" aria-label="Budget">
+              <button class="seg" data-p="6" role="radio" aria-checked="false">Cheapest</button>
+              <button class="seg" data-p="28" role="radio" aria-checked="false">Value</button>
+              <button class="seg is-active" data-p="48" role="radio" aria-checked="true">Balanced</button>
+              <button class="seg" data-p="85" role="radio" aria-checked="false">Best</button>
             </div>
-            <span class="ask__lead">cost.</span>
           </div>
-          <div class="ask__row" data-for="lab" hidden>
-            <span class="ask__lead">I mainly use</span>
-            <div class="labchips labctl" role="tablist" aria-label="Lab"></div>
+          <div class="console__row console__row--labs">
+            <span class="console__label">Labs I use <em>optional</em></span>
+            <div class="labchips labctl" role="group" aria-label="Labs I use"></div>
           </div>
-          <p class="ctl__desc" id="goalDesc"></p>
+          <p class="console__echo" id="queryEcho" aria-hidden="true"></p>
         </div>
 
         <div class="engine__result" id="result" aria-live="polite">
@@ -149,26 +144,11 @@
       <div class="chart" id="chart"></div>
     </section>
 
-    <!-- WHO'S USING WHAT -->
-    <section class="panel" id="usage">
-      <div class="panel__head">
-        <div>
-          <h2 class="panel__title"><span class="panel__no">03</span>Who's actually using what</h2>
-          <p class="panel__desc">
-            There's no single "most used" — <em>it depends who you count.</em> Developers, the
-            preference crowd, and everyday consumers rank models completely differently.
-          </p>
-        </div>
-      </div>
-      <div class="lenses" id="lenses"></div>
-      <p class="lenses__basis" id="lensesBasis"></p>
-    </section>
-
     <!-- LATEST RELEASES -->
     <section class="panel" id="releases">
       <div class="panel__head">
         <div>
-          <h2 class="panel__title"><span class="panel__no">04</span>What changed lately</h2>
+          <h2 class="panel__title"><span class="panel__no">03</span>What changed lately</h2>
           <p class="panel__desc">The releases actually worth knowing about — newest first.</p>
         </div>
       </div>
@@ -210,6 +190,6 @@
 
   <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
 
-  <script src="assets/app.js?v=mk15"></script>
+  <script src="assets/app.js?v=mk16"></script>
 </body>
 </html>
