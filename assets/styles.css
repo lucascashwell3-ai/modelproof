@@ -457,6 +457,17 @@ a { color: inherit; text-decoration: none; }
 
 @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
+/* scroll-reveal: sections resolve in as you reach them (opacity/transform only — GPU-safe).
+   Only applied when JS tags the page (.js-reveal) so content is never hidden without it. */
+.js-reveal .panel, .js-reveal .evidence-mark { opacity: 0; transform: translateY(18px); }
+.js-reveal .panel.is-in, .js-reveal .evidence-mark.is-in {
+  opacity: 1; transform: none;
+  transition: opacity .6s var(--ease), transform .6s var(--ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal .panel, .js-reveal .evidence-mark { opacity: 1; transform: none; }
+}
+
 /* ---------- responsive ---------- */
 @media (max-width: 920px) {
   .lenses { grid-template-columns: 1fr; }

@@ -841,6 +841,19 @@ function initScene() {
   } else { maybeStart(); }
 }
 
+// ---------- scroll-reveal: sections resolve in on first sight ----------
+function initReveal() {
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.documentElement.classList.add('js-reveal');
+  const els = document.querySelectorAll('.panel, .evidence-mark');
+  const io = new IntersectionObserver((es) => es.forEach((e) => {
+    if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+  }), { threshold: 0.08 });
+  els.forEach((el2) => io.observe(el2));
+  // safety: if nothing has intersected shortly after load (odd embedded panes), show everything
+  setTimeout(() => els.forEach((el2) => el2.classList.add('is-in')), 2500);
+}
+
 // ---------- boot ----------
 async function boot() {
   try { initScene(); } catch (e) { /* the scene must never block the data */ }
@@ -857,6 +870,7 @@ async function boot() {
   $('#footNotes').textContent = state.data.notes || 'Pricing from official vendor pages; benchmarks from public leaderboards. Every figure carries a confidence flag; unsourced numbers are left blank rather than guessed.';
 
   wire();
+  initReveal();
   $('#goalDesc').textContent = GOAL_DESC[state.goal] || '';
   renderFilters();
   renderLabChips();       // build the "which lab" chips from the data's vendors + wire them
