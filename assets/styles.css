@@ -262,21 +262,28 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- evidence divider ---------- */
 .evidence-mark {
-  width: min(1120px, calc(100% - 32px)); margin: 96px auto 0;
+  width: min(1120px, calc(100% - 32px)); margin: 110px auto 0;
   display: flex; align-items: center; gap: 16px;
-  color: var(--ink-4); font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em;
+  color: var(--ink-4); font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
-.evidence-mark::before, .evidence-mark::after { content: ""; height: 1px; background: var(--line); flex: 1; }
+/* dithered rule — the texture carries through the whole sheet */
+.evidence-mark::before, .evidence-mark::after { content: ""; height: 3px; flex: 1;
+  background: repeating-linear-gradient(90deg, rgba(242,193,78,0.35) 0 2px, transparent 2px 7px);
+}
 .evidence-mark + .panel { margin-top: 30px; }
 
-/* ---------- panels ---------- */
+/* ---------- panels: numbered spec-sheet sections ---------- */
 .panel {
-  width: min(1120px, calc(100% - 32px)); margin: 74px auto 0;
+  width: min(1120px, calc(100% - 32px)); margin: 110px auto 0;
 }
 .panel__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px;
-  margin-bottom: 22px; flex-wrap: wrap; }
-.panel__title { font-family: var(--display); font-weight: 600; font-size: 1.7rem;
-  letter-spacing: -0.02em; }
+  margin-bottom: 30px; flex-wrap: wrap; padding-bottom: 16px;
+  border-bottom: 1px dotted rgba(233,230,223,0.22); }
+.panel__title { font-family: var(--display); font-weight: 500; font-size: 1.7rem;
+  letter-spacing: -0.01em; }
+.panel__no { font-family: var(--mono); font-size: 12.5px; color: var(--gold);
+  letter-spacing: 0.12em; margin-right: 16px; vertical-align: 7px; }
 .panel__desc { color: var(--ink-2); font-size: 0.98rem; max-width: 40rem; margin-top: 6px; }
 .panel__desc em { color: var(--gold); font-style: normal; }
 .dim { color: var(--ink-4); }
