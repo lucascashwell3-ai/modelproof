@@ -1,4 +1,4 @@
-# Modelproof
+# MODELproof
 
 **Which AI model should you actually use?** A calm, opinionated decision tool for people who
 don't have time to keep up with AI news. Tell it what you're working on — or which lab you already
@@ -14,7 +14,7 @@ Data snapshot **2026-07-12** · 21 models across 9 vendors.
 New models drop every week (Fable 5, GPT-5.6 Sol/Terra/Luna, Grok 4.5, Gemini 3.x, a wall of
 open-weight coders…). Keeping up is exhausting, and it's easy to overpay — running Fable 5
 ($10/$50 per M) for routine coding when Sonnet 5 or DeepSeek V4-Pro do most of the job for a
-fraction. Modelproof lowers the barrier to a good choice: *given what you're doing, here's what to
+fraction. MODELproof lowers the barrier to a good choice: *given what you're doing, here's what to
 use.*
 
 ## What it does

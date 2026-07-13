@@ -1,5 +1,5 @@
 /* ============================================================
-   Modelproof — client-side decision engine
+   MODELproof — client-side decision engine
    Loads data/models.json and renders: recommender, cost/capability
    chart, compare table, releases feed. Honest with missing data.
    ============================================================ */
@@ -673,14 +673,7 @@ function wire() {
     b.addEventListener('click', () => setMode(b.getAttribute('data-mode')))
   );
   document.querySelectorAll('[data-goal]').forEach((b) =>
-    b.addEventListener('click', () => {
-      setGoal(b.getAttribute('data-goal'));
-      // asked in the sunset, answered in the dark: hero picks scroll to the result
-      if (b.closest('.hero')) {
-        const eng = document.getElementById('engine');
-        if (eng) eng.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    })
+    b.addEventListener('click', () => setGoal(b.getAttribute('data-goal')))
   );
   document.querySelectorAll('[data-p]').forEach((b) =>
     b.addEventListener('click', () => setPriority(b.getAttribute('data-p')))
@@ -713,10 +706,11 @@ function wire() {
   const copyBtn = $('#copyPrompt'); if (copyBtn) copyBtn.addEventListener('click', copyPrompt);
 }
 
-// ---------- hero: living ASCII sunset (bounded to the hero; pauses off-screen) ----------
-// Brightness->glyph ramp + warm dusk->gold palette, mirrored into a calm sea with a
-// shimmering sun-reflection column. Adapted from design/hero-ascii-reference.html; sized to
-// the hero box (not the window) and paused when scrolled away so it never janks the page.
+// ---------- hero: animated dithered sunset (bounded to the hero; pauses off-screen) ----------
+// Ordered-dither (Bayer 4x4) golden-hour scene: near-black sky banking warm at the horizon,
+// a half-set dithered sun, and a shimmering reflection column in dark water. Rendered into a
+// low-res buffer and upscaled with smoothing off for chunky lofi pixels. Paused the moment
+// the page scrolls (same discipline as the ASCII scene it replaces — never janks the page).
 function initScene() {
   const cv = document.getElementById('heroScene');
   const host = document.getElementById('hero');
@@ -724,112 +718,67 @@ function initScene() {
   const ctx = cv.getContext('2d', { alpha: false });
   const rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const RAMP = [' ', '.', '.', "'", '`', ':', ':', '-', '~', '~', '=', '+', '+', '*', 'o', 'o', 'c', 'x', 'X', '&'];
-  const RMAX = RAMP.length - 1;
-  const STOPS = [
-    [0.00, 16, 24, 48], [0.16, 36, 36, 72], [0.32, 78, 62, 102], [0.48, 124, 94, 128],
-    [0.60, 158, 104, 116], [0.70, 182, 120, 116], [0.80, 210, 140, 104], [0.88, 226, 158, 104],
-    [0.94, 238, 182, 116], [0.98, 246, 206, 142], [1.00, 252, 228, 186],
-  ];
-  const NBUCK = 48;
-  const PAL = new Array(NBUCK);
-  for (let i = 0; i < NBUCK; i++) {
-    const t = i / (NBUCK - 1);
-    let k = 0; while (k < STOPS.length - 2 && t > STOPS[k + 1][0]) k++;
-    const a = STOPS[k], b = STOPS[k + 1];
-    const f = (b[0] - a[0]) ? (t - a[0]) / (b[0] - a[0]) : 0;
-    const r = (a[1] + (b[1] - a[1]) * f) | 0, g = (a[2] + (b[2] - a[2]) * f) | 0, bl = (a[3] + (b[3] - a[3]) * f) | 0;
-    PAL[i] = 'rgb(' + r + ',' + g + ',' + bl + ')';
-  }
+  const BAYER = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+  // warm ramp: ember -> rust -> gold -> cream, over a deep dusk base
+  const PAL = [[122, 48, 30], [196, 92, 44], [242, 193, 78], [255, 233, 196]];
+  const BASE = [12, 10, 18];
+  const CELL = 4;                       // css px per dither pixel (the lofi chunk size)
+  const V_HOR = 0.365, V_SUN = 0.38;    // horizon + sun centre (sun half-set just below the wordmark)
 
-  const V_HOR = 0.55, SUN_U = 0.60, SUN_V = V_HOR - 0.03, SUN_R0 = 0.100, GSIG0 = 0.280;
-  let W, H, DPR, cols, rows, cw, ch, aspect, sunXh, bgGrad, sunR, gsig2;
-
+  let W, H, bw, bh, off, octx, img;
   function resize() {
     const cssW = host.clientWidth || innerWidth;
-    const cssH = host.clientHeight || innerHeight;
-    DPR = Math.min(devicePixelRatio || 1, 2);
-    W = cv.width = Math.round(cssW * DPR);
-    H = cv.height = Math.round(cssH * DPR);
+    // the scene band pinned to the hero top — same formula as the CSS (min(96vh, 940px));
+    // computed here, not measured, so the inline size never feeds back into itself
+    const cssH = Math.min(Math.round(innerHeight * 0.96), 940);
+    W = cv.width = cssW; H = cv.height = cssH;
     cv.style.width = cssW + 'px'; cv.style.height = cssH + 'px';
-    const cellCSS = cssW < 480 ? 10 : 11;
-    const fontPx = cellCSS * DPR;
-    ctx.font = fontPx + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
-    ctx.textBaseline = 'top';
-    cw = ctx.measureText('M').width || fontPx * 0.6;
-    ch = fontPx;
-    cols = Math.ceil(W / cw) + 1; rows = Math.ceil(H / ch) + 1;
-    aspect = cssW / cssH; sunXh = SUN_U * aspect;
-    const sunScale = Math.min(1, Math.max(0.62, aspect / 1.0));
-    sunR = SUN_R0 * sunScale;
-    const sig = GSIG0 * (0.72 + 0.28 * sunScale); gsig2 = sig * sig;
-    bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-    bgGrad.addColorStop(0.00, '#0a0812');
-    bgGrad.addColorStop(V_HOR, '#140d16');
-    bgGrad.addColorStop(1.00, '#080610');
+    bw = Math.ceil(cssW / CELL); bh = Math.ceil(cssH / CELL);
+    off = document.createElement('canvas'); off.width = bw; off.height = bh;
+    octx = off.getContext('2d');
+    img = octx.createImageData(bw, bh);
+    ctx.imageSmoothingEnabled = false;
   }
 
   function render(tSec) {
-    const breathe = rm ? 1 : (1 + 0.014 * Math.sin(tSec * 0.16));
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, W, H);
-    ctx.globalAlpha = 0.96;
-    let last = -1;
-    for (let row = 0; row < rows; row++) {
-      const v = row / (rows - 1);
-      const y = row * ch;
-      const dvh = v - SUN_V;
-      const below = v >= V_HOR;
-      const s = v / V_HOR;
-      let depth = 0, sm = 0;
-      if (below) {
-        depth = (v - V_HOR) / (1 - V_HOR);
-        const vm = 2 * V_HOR - v;
-        sm = vm > 0 ? vm / V_HOR : 0;
-      }
-      const wCol = 0.045 + depth * 0.30;
-      for (let col = 0; col < cols; col++) {
-        const u = col / (cols - 1);
-        const dxh = u * aspect - sunXh;
-        const dist = Math.sqrt(dxh * dxh + dvh * dvh);
-        const glow = Math.exp(-(dist * dist) / gsig2);
-        let b, temp;
-        if (!below) {
-          b = 0.09 + 0.46 * Math.pow(s, 1.9);
-          b += 0.30 * Math.exp(-Math.pow((v - V_HOR) / 0.14, 2));
-          b += 0.025 * Math.sin(u * 6.3 + v * 13 + 1.0);
-          temp = Math.pow(s, 1.2);
+    const hy = bh * V_HOR, sunY = bh * V_SUN, cx = bw * 0.5;
+    const sunR = Math.max(10, Math.min(bh * 0.14, bw * 0.075));
+    const d8 = img.data;
+    let p = 0;
+    for (let j = 0; j < bh; j++) {
+      const isSky = j <= hy;
+      for (let i = 0; i < bw; i++, p += 4) {
+        let v;
+        if (isSky) {
+          const g = j / hy;
+          v = 0.03 + 0.24 * g * g * g;                                   // near-black -> warm at horizon
+          const d = Math.hypot(i - cx, (j - sunY) * 1.25);
+          v += Math.max(0, 1 - d / (sunR * 2.8)) * 0.7;                  // halo
+          if (d < sunR) v = 1.05 + 0.35 * (1 - d / sunR);                // disc bright enough to survive the scrim
+          v += 0.025 * Math.sin(i * 0.05 + j * 0.35 + tSec * 0.2);       // faint cloud drift
         } else {
-          b = (0.02 + 0.42 * Math.pow(sm, 1.9)) * 0.62;
-          b += 0.12 * Math.exp(-Math.pow((v - V_HOR) / 0.11, 2));
-          b *= (1 - 0.42 * depth);
-          const colFall = Math.exp(-Math.pow(dxh / wCol, 2));
-          const band = 0.55 + 0.30 * Math.sin(Math.pow(depth, 0.6) * 16 - tSec * 0.34 + Math.sin(u * 18) * 0.6);
-          const refl = colFall * band * (0.92 * (1 - depth * 0.5));
-          b += refl;
-          temp = 0.9 * (1 - Math.pow(depth, 0.8)) + refl * 0.7;
+          const jj = 2 * hy - j;
+          const ii = i + Math.sin(j * 0.7 + tSec * 1.6) * 2.5;
+          const d = Math.hypot(ii - cx, (jj - sunY) * 1.25);
+          const depth = Math.max(0, 1 - (j - hy) / (bh - hy) * 1.15);    // reflection fades with depth
+          v = 0.02 + Math.max(0, 1 - d / (sunR * 2.2)) * 0.62 * depth;
+          if (d < sunR) v = 0.85 * depth;
+          v *= 0.5 + 0.5 * Math.sin(j * 1.3 + tSec * 2);                 // wave glints
         }
-        b += 0.72 * glow;
-        temp += 0.8 * glow;
-        if (dist < sunR) { const c = 1 - dist / sunR; b += 0.4 * c; temp += 0.5 * c; }
-        b *= breathe;
-        b = 1 - Math.exp(-1.35 * b);
-        const mdx = (u - 0.5) * 4.7619;
-        const mdy = (v - 0.47) * 4.3478;
-        const mask = Math.exp(-(mdx * mdx + mdy * mdy));
-        b *= (1 - 0.12 * mask);   // gentle — legibility comes from the CSS scrim + text-shadow
-        if (b <= 0.01) continue;
-        if (b > 1) b = 1;
-        const chi = (b * RMAX + 0.5) | 0;
-        if (chi <= 0) continue;
-        if (temp > 1) temp = 1; else if (temp < 0) temp = 0;
-        const ci = (temp * (NBUCK - 1) + 0.5) | 0;
-        if (ci !== last) { ctx.fillStyle = PAL[ci]; last = ci; }
-        ctx.fillText(RAMP[chi], col * cw, y);
+        // dim the scene behind the wordmark/promise zone — lettering wins, always
+        const mdx = (i / bw - 0.5) * 2.6, mdy = (j / bh - 0.30) * 3.2;
+        v *= 1 - 0.45 * Math.exp(-(mdx * mdx + mdy * mdy));
+        if (v > ((BAYER[j & 3][i & 3] + 0.5) / 16) * 0.92) {
+          const c = PAL[Math.min(3, (v * 3.2) | 0)];
+          d8[p] = c[0]; d8[p + 1] = c[1]; d8[p + 2] = c[2];
+        } else {
+          d8[p] = BASE[0]; d8[p + 1] = BASE[1]; d8[p + 2] = BASE[2];
+        }
+        d8[p + 3] = 255;
       }
     }
-    ctx.globalAlpha = 1;
+    octx.putImageData(img, 0, 0);
+    ctx.drawImage(off, 0, 0, W, H);
   }
 
   let lastT = 0, raf = 0, running = false, visible = true, scrolling = 0;
@@ -849,9 +798,11 @@ function initScene() {
   const atTop = () => (window.scrollY || document.documentElement.scrollTop || 0) < 40;
   function maybeStart() { if (visible && !scrolling && atTop()) start(); }
 
-  addEventListener('resize', () => { resize(); if (rm) render(0); });
+  addEventListener('resize', () => { resize(); render(0); });
   resize();
-  if (rm) { render(0); return; }                                 // one static frame, no rAF
+  render(0);            // ALWAYS paint one static frame synchronously — rAF never fires in
+                        // hidden/embedded documents, and the scene must exist without it
+  if (rm) return;       // reduced motion: keep the static frame, no animation
   addEventListener('scroll', () => {
     stop();
     clearTimeout(scrolling);
@@ -874,7 +825,7 @@ async function boot() {
     return;
   }
   const asof = state.data.as_of || '—';
-  $('#navAsof').textContent = 'as of ' + asof;
+  $('#navAsof').textContent = '● snapshot ' + asof + ' · pricing verified';
   $('#footAsof').textContent = asof;
   $('#footNotes').textContent = state.data.notes || 'Pricing from official vendor pages; benchmarks from public leaderboards. Every figure carries a confidence flag; unsourced numbers are left blank rather than guessed.';
 
@@ -887,4 +838,21 @@ async function boot() {
   renderUsage();
   renderFeed();
 }
-document.addEventListener('DOMContentLoaded', boot);
+// robust boot: fire once on whichever lifecycle signal arrives first — some embedded
+// panes/bfcache restores swallow DOMContentLoaded, so belt-and-braces with load + a timer
+let _booted = false;
+function bootOnce() { if (_booted) return; _booted = true; boot(); }
+if (document.readyState !== 'loading') bootOnce();
+else {
+  document.addEventListener('DOMContentLoaded', bootOnce);
+  addEventListener('load', bootOnce);
+  setTimeout(bootOnce, 800);
+}
+// watchdog: if the initial fetch stalled (hidden/prerendered documents can suspend network),
+// re-run boot until the data actually lands. No-op in a normal browser: data loads first try.
+let _bootTries = 0;
+const _watch = setInterval(() => {
+  if (state.data) { clearInterval(_watch); return; }
+  if (++_bootTries > 6) { clearInterval(_watch); return; }
+  _booted = false; bootOnce();
+}, 1500);

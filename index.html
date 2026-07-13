@@ -3,35 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Modelproof — which AI model should you actually use?</title>
+  <title>MODELproof — which AI model should you actually use?</title>
   <meta name="description" content="A no-nonsense decision tool for AI models. Tell it your goal and budget; it tells you what to use — with sourced pricing, real usage, and what changed this week." />
   <meta name="theme-color" content="#0a0b0f" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%230a0b0f'/%3E%3Ccircle cx='12' cy='12' r='9.2' fill='none' stroke='%23f2c14e' stroke-opacity='0.5' stroke-width='1.4'/%3E%3Cpath d='M7.6 12.4l3 3 5.8-6.6' fill='none' stroke='%23f2c14e' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
   <!-- social preview -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Modelproof — which AI model should you actually use?" />
+  <meta property="og:title" content="MODELproof — which AI model should you actually use?" />
   <meta property="og:description" content="A calm, opinionated decision tool for AI models. Tell it your goal, or the lab you already use, and get a straight answer — sourced pricing, real usage, and what changed lately." />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Modelproof — which AI model should you actually use?" />
+  <meta name="twitter:title" content="MODELproof — which AI model should you actually use?" />
   <meta name="twitter:description" content="A calm decision tool for AI models. Your goal or your lab → a straight answer, not a leaderboard." />
   <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
-  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=satoshi@400,500,700&f[]=jetbrains-mono@400,500&display=swap" rel="stylesheet" />
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=jetbrains-mono@400,500&display=swap" rel="stylesheet" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css" />
+  <!-- same Fraunces cut as the Proof site (portfolio-v2) so the two wordmarks match -->
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css?v=mk7" />
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
 
   <!-- floating capsule nav -->
   <header class="nav" id="nav">
-    <a class="nav__brand" href="#top" aria-label="Modelproof home">
+    <a class="nav__brand" href="#top" aria-label="MODELproof home">
       <svg class="nav__seal" viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">
         <circle cx="12" cy="12" r="9.2" class="r-ring" />
         <path d="M7.6 12.4l3 3 5.8-6.6" class="r-check" />
       </svg>
-      <span>Model<b>proof</b></span>
+      <span>MODEL<b>proof</b></span>
     </a>
     <span class="nav__asof" id="navAsof">loading…</span>
     <a class="nav__link" href="#sourcing">How it's sourced</a>
@@ -43,16 +44,19 @@
       <canvas class="hero__scene" id="heroScene" aria-hidden="true"></canvas>
       <div class="hero__seam" aria-hidden="true"></div>
       <div class="hero__scrim" aria-hidden="true"></div>
-      <div class="hero__content">
+      <div class="hero__content" id="engine">
         <span class="hero__eyebrow">Model selection, without the noise</span>
-        <h1 class="hero__wordmark">Modelproof</h1>
-        <div class="picker" role="group" aria-label="Get a recommendation">
+        <h1 class="hero__wordmark">MODEL<em>proof</em></h1>
+        <p class="hero__promise">Which AI model should you actually use? Say what you're doing — get a straight answer, right here.</p>
+
+        <!-- the ask: hero and engine are ONE screen — pick, and the answer resolves in place -->
+        <div class="ask" role="group" aria-label="Get a recommendation">
           <div class="modeswitch modectl" role="tablist" aria-label="Choose how to pick">
             <button class="mode is-active" data-mode="task" role="tab" aria-selected="true">By task</button>
             <button class="mode" data-mode="lab" role="tab" aria-selected="false">By lab</button>
           </div>
-          <div class="picker__group" data-for="task">
-            <span class="picker__lead">I'm working on</span>
+          <div class="ask__row" data-for="task">
+            <span class="ask__lead">I'm working on</span>
             <div class="segmented segmented--goals goalctl" role="tablist" aria-label="Goal">
               <button class="seg is-active" data-goal="coding" role="tab" aria-selected="true">Coding</button>
               <button class="seg" data-goal="research" role="tab" aria-selected="false">Strategy</button>
@@ -60,56 +64,29 @@
               <button class="seg" data-goal="cheap-bulk" role="tab" aria-selected="false">Cheap bulk</button>
             </div>
           </div>
-          <div class="picker__group" data-for="lab" hidden>
-            <span class="picker__lead">I mainly use</span>
+          <div class="ask__row" data-for="task">
+            <span class="ask__lead">and I want</span>
+            <div class="segmented segmented--prio priorityctl" role="tablist" aria-label="Priority">
+              <button class="seg" data-p="6" role="tab" aria-selected="false">Cheapest</button>
+              <button class="seg" data-p="28" role="tab" aria-selected="false">Value</button>
+              <button class="seg is-active" data-p="48" role="tab" aria-selected="true">Balanced</button>
+              <button class="seg" data-p="85" role="tab" aria-selected="false">Best</button>
+            </div>
+            <span class="ask__lead">cost —</span>
+          </div>
+          <div class="ask__row" data-for="lab" hidden>
+            <span class="ask__lead">I mainly use</span>
             <div class="labchips labctl" role="tablist" aria-label="Lab"></div>
           </div>
+          <p class="ctl__desc" id="goalDesc"></p>
         </div>
-        <a class="hero__more" href="#engine">See my answer <span aria-hidden="true">↓</span></a>
-      </div>
-    </section>
 
-    <!-- ============ RESULT (dark) — the answer resolves here ============ -->
-    <section class="engine" id="engine">
-      <div class="engine__controls">
-        <div class="ctl">
-          <span class="ctl__label">Choose by</span>
-          <div class="modeswitch modectl" role="tablist" aria-label="Choose how to pick">
-            <button class="mode is-active" data-mode="task" role="tab" aria-selected="true">Task</button>
-            <button class="mode" data-mode="lab" role="tab" aria-selected="false">Lab</button>
-          </div>
+        <div class="engine__result" id="result" aria-live="polite">
+          <!-- populated by app.js -->
         </div>
-        <div class="ctl" data-for="task">
-          <span class="ctl__label" id="goalCtlLabel">I'm working on</span>
-          <div class="segmented segmented--goals goalctl" role="tablist" aria-labelledby="goalCtlLabel">
-            <button class="seg is-active" data-goal="coding" role="tab" aria-selected="true">Coding</button>
-            <button class="seg" data-goal="research" role="tab" aria-selected="false">Strategy</button>
-            <button class="seg" data-goal="writing" role="tab" aria-selected="false">Writing</button>
-            <button class="seg" data-goal="cheap-bulk" role="tab" aria-selected="false">Cheap bulk</button>
-          </div>
-        </div>
-        <div class="ctl" data-for="lab" hidden>
-          <span class="ctl__label" id="labCtlLabel">I mainly use</span>
-          <div class="labchips labctl" role="tablist" aria-labelledby="labCtlLabel"></div>
-        </div>
-        <div class="ctl">
-          <span class="ctl__label" id="prioLabel">Prioritize</span>
-          <div class="segmented segmented--prio priorityctl" role="tablist" aria-labelledby="prioLabel">
-            <button class="seg" data-p="6" role="tab" aria-selected="false">Cheapest</button>
-            <button class="seg" data-p="28" role="tab" aria-selected="false">Value</button>
-            <button class="seg is-active" data-p="48" role="tab" aria-selected="true">Balanced</button>
-            <button class="seg" data-p="85" role="tab" aria-selected="false">Best</button>
-          </div>
-        </div>
-      </div>
-      <p class="ctl__desc" id="goalDesc"></p>
 
-      <div class="engine__result" id="result" aria-live="polite">
-        <!-- populated by app.js -->
-      </div>
-
-      <!-- portable engine: turn this selection into a paste-in prompt for your own AI -->
-      <div class="promptgen">
+        <!-- portable engine: turn this selection into a paste-in prompt for your own AI -->
+        <div class="promptgen">
         <button class="promptgen__btn" id="genPrompt" type="button">
           Get a prompt for your own AI <span aria-hidden="true">→</span>
         </button>
@@ -125,6 +102,7 @@
           </div>
         </div>
       </div>
+      </div><!-- /hero__content -->
     </section>
 
     <!-- ============ evidence divider — depth below, out of the way ============ -->
@@ -209,7 +187,7 @@
             <circle cx="12" cy="12" r="9.2" class="r-ring" />
             <path d="M7.6 12.4l3 3 5.8-6.6" class="r-check" />
           </svg>
-          <span>Model<b>proof</b></span>
+          <span>MODEL<b>proof</b></span>
         </div>
         <p class="foot__note">A decision tool, not a leaderboard. Sibling to <strong>DATproof</strong> in Lucas Cashwell's <strong>Proof</strong> portfolio.</p>
       </div>
@@ -235,6 +213,6 @@
 
   <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
 
-  <script src="assets/app.js"></script>
+  <script src="assets/app.js?v=mk7"></script>
 </body>
 </html>

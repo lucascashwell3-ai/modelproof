@@ -35,7 +35,7 @@
 
   --shadow: 0 18px 50px -22px rgba(0,0,0,0.75);
   --font:   'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --display:'Clash Display', var(--font);
+  --display:'Fraunces', Georgia, serif;   /* same face as the Proof site wordmark */
   --mono:   'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -95,8 +95,8 @@ a { color: inherit; text-decoration: none; }
   box-shadow: var(--shadow);
 }
 .nav__brand { display: flex; align-items: center; gap: 9px; font-family: var(--display);
-  font-weight: 600; font-size: 16px; letter-spacing: -0.01em; }
-.nav__brand b, .foot__brand b { color: var(--gold); font-weight: 600; }
+  font-weight: 500; font-size: 16.5px; letter-spacing: 0.01em; }
+.nav__brand b, .foot__brand b { color: var(--gold); font-weight: 400; font-style: italic; }
 .nav__asof {
   margin-left: auto; font-family: var(--mono); font-size: 11.5px; color: var(--ink-3);
   padding: 4px 11px; border: 1px solid var(--line); border-radius: 999px;
@@ -108,31 +108,36 @@ a { color: inherit; text-decoration: none; }
 }
 .nav__link:hover { color: var(--ink); border-color: var(--line); }
 
-/* ---------- hero: warm ASCII sunset + entry goal picker ---------- */
+/* ---------- hero = the answer: dithered sunset + ask + verdict, one screen ---------- */
 .hero {
   position: relative;
-  min-height: 88vh;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; padding: 120px 22px 96px; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; padding: 108px 22px 72px; overflow: hidden;
   background: #0a0812;                       /* fallback under the canvas while it paints */
   contain: paint;                            /* isolate canvas repaints so scroll never repaints the page */
 }
-.hero__scene { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; }
-/* dusk seam: the sunset's near-black indigo base melts into the page dark (#0a0b0f) */
+/* the scene is a viewport-height band pinned to the top of the (taller) hero —
+   the verdict card below sits on plain page dark, not on the painting */
+.hero__scene { position: absolute; top: 0; left: 0; right: 0; width: 100%;
+  height: min(96vh, 940px); z-index: 0; display: block; image-rendering: pixelated; }
+/* dusk seam: the scene's dark water melts into the page dark (#0a0b0f) */
 .hero__seam {
-  position: absolute; left: 0; right: 0; bottom: 0; height: 34%; z-index: 1; pointer-events: none;
-  background: linear-gradient(180deg, transparent 0%, rgba(10,11,15,0.55) 58%, var(--bg) 100%);
+  position: absolute; left: 0; right: 0; top: calc(min(96vh, 940px) - 36vh); height: 36.5vh;
+  z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, transparent 0%, rgba(10,11,15,0.7) 55%, var(--bg) 96%, var(--bg) 100%);
 }
-/* soft radial scrim behind the centred text so the wordmark + promise read cleanly over the canvas */
+/* legibility is law: the lettering wins over the scene, always */
 .hero__scrim {
-  position: absolute; left: 50%; top: 48%; transform: translate(-50%, -50%);
-  z-index: 1; pointer-events: none; width: min(920px, 96vw); height: min(560px, 66vh);
-  background: radial-gradient(ellipse at center, rgba(9,8,15,0.62) 0%, rgba(9,8,15,0.34) 46%, transparent 74%);
+  position: absolute; left: 50%; top: 30%; transform: translate(-50%, -50%);
+  z-index: 1; pointer-events: none; width: min(1000px, 98vw); height: min(480px, 56vh);
+  background: radial-gradient(ellipse at center, rgba(9,8,15,0.42) 0%, rgba(9,8,15,0.22) 48%, transparent 74%);
 }
 .hero__content {
-  position: relative; z-index: 2; max-width: 680px;
+  position: relative; z-index: 2; max-width: 720px; width: 100%;
   display: flex; flex-direction: column; align-items: center;
 }
+.hero__wordmark em { font-style: italic; font-weight: 400; color: var(--gold);
+  text-shadow: 0 3px 44px rgba(20,10,30,0.55), 0 1px 3px rgba(0,0,0,0.4); }
 .hero__eyebrow {
   font-family: var(--font); font-size: 12px; font-weight: 600; letter-spacing: 0.26em;
   text-transform: uppercase; color: #ffe9c6; margin-bottom: 22px;
@@ -149,15 +154,14 @@ a { color: inherit; text-decoration: none; }
   text-shadow: 0 2px 22px rgba(20,8,4,0.6), 0 1px 2px rgba(0,0,0,0.35);
 }
 .hero__promise em { font-style: normal; font-weight: 600; color: #ffdf9e; }
-/* entry picker capsule — solid surface so it reads over the busy canvas (NO backdrop-filter) */
-.picker {
-  display: inline-flex; flex-direction: column; align-items: center; gap: 11px;
-  background: rgba(14, 15, 21, 0.9); border: 1px solid rgba(242,193,78,0.28);
-  padding: 14px; border-radius: 18px; max-width: 92vw;
-  box-shadow: 0 18px 50px -20px rgba(0,0,0,0.85);
+/* the ask — a typeset sentence, not a widget bolted onto the art */
+.ask { display: flex; flex-direction: column; align-items: center; gap: 13px; margin-top: 4px; }
+.ask__row { display: flex; align-items: center; justify-content: center; gap: 13px; flex-wrap: wrap; }
+.ask__lead {
+  font-family: var(--display); font-size: clamp(1.15rem, 2.2vw, 1.45rem); font-weight: 400;
+  color: #f7eeda; text-shadow: 0 2px 22px rgba(20,8,4,0.65), 0 1px 2px rgba(0,0,0,0.4);
+  white-space: nowrap;
 }
-.picker__lead { font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; }
-.picker__group { display: flex; flex-direction: column; align-items: center; gap: 10px; }
 
 /* mode toggle — the two ways in: By task | By lab */
 .modeswitch { display: inline-flex; gap: 3px; background: var(--bg-2); border: 1px solid var(--line-soft);
@@ -175,24 +179,8 @@ a { color: inherit; text-decoration: none; }
 
 /* lab chips (wrap) */
 .labchips { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; max-width: 470px; }
-.hero__more {
-  margin-top: 26px; font-size: 13.5px; color: #f4e7cb; padding: 9px 18px; border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.28); text-shadow: 0 1px 8px rgba(0,0,0,0.35);
-  transition: background .2s var(--ease), border-color .2s var(--ease);
-}
-.hero__more:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.5); }
-.hero__more:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
-
-/* ---------- engine: the answer resolves in the dark ---------- */
-.engine {
-  position: relative; z-index: 1;
-  width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding-top: 44px;
-}
-.engine__controls { display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start; }
-.ctl { display: flex; flex-direction: column; gap: 10px; }
-.ctl__label { font-size: 12px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; }
-.ctl__desc { color: var(--ink-3); font-size: 12.5px; margin-top: 14px; line-height: 1.45;
-  min-height: 2.5em; max-width: 46rem; }
+.ctl__desc { color: var(--ink-3); font-size: 12.5px; margin-top: 4px; line-height: 1.45;
+  min-height: 2.5em; max-width: 42rem; text-shadow: 0 1px 12px rgba(0,0,0,0.6); }
 
 .segmented { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; background: var(--bg-2);
   border: 1px solid var(--line-soft); padding: 4px; border-radius: 12px; }
@@ -206,7 +194,8 @@ a { color: inherit; text-decoration: none; }
 
 .segmented--prio { grid-template-columns: repeat(4, 1fr); }
 
-.engine__result { margin-top: 22px; }
+.engine__result { margin-top: 26px; width: 100%; max-width: 680px; text-align: left; }
+.promptgen { width: 100%; max-width: 680px; }
 
 /* winner card */
 .pick {
@@ -465,8 +454,8 @@ a { color: inherit; text-decoration: none; }
   .lenses { grid-template-columns: 1fr; }
 }
 @media (max-width: 860px) {
-  .hero { min-height: 82vh; padding: 104px 18px 84px; }
-  .engine__controls { gap: 22px; }
+  .hero { padding: 92px 16px 56px; }
+  .ask__row { gap: 9px; }
   .runners { grid-template-columns: 1fr; }
   .foot__grid { grid-template-columns: 1fr; gap: 26px; }
   .row-more .rm-grid { grid-template-columns: 1fr; }
