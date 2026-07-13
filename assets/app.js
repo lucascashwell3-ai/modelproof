@@ -343,6 +343,31 @@ HOW TO ADVISE ME
 }
 
 // ---------- cost vs capability chart ----------
+// bayer-dithered density field (bright top-left, dissolving toward bottom-right) as a
+// data-URI — the "sweet spot" shading, in the same dither language as the hero
+function ditherFieldURI(w, h) {
+  const B = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+  const cw = Math.max(2, Math.round(w / 4)), ch = Math.max(2, Math.round(h / 4));
+  const c = document.createElement('canvas'); c.width = cw; c.height = ch;
+  const x = c.getContext('2d'); x.fillStyle = 'rgba(242,193,78,0.34)';
+  for (let j = 0; j < ch; j++) for (let i = 0; i < cw; i++) {
+    const v = Math.max(0, 1 - (i / cw) * 1.5) * Math.max(0, 1 - (j / ch) * 1.5) * 0.6;
+    if (v > (B[j & 3][i & 3] + 0.5) / 16) x.fillRect(i, j, 1, 1);
+  }
+  return c.toDataURL();
+}
+
+// a model as a halftone dot-cluster (dense core dissolving outward) instead of a flat circle
+function ditherCluster(color, n) {
+  let s = '';
+  for (let a = 0; a < n; a++) {
+    const rr = Math.sqrt(a) * 2.7, t = a * 2.4;
+    const al = Math.max(0.25, 1 - a / n);
+    s += `<rect x="${(Math.cos(t) * rr - 1.5).toFixed(1)}" y="${(Math.sin(t) * rr - 1.5).toFixed(1)}" width="3" height="3" fill="${color}" opacity="${al.toFixed(2)}"/>`;
+  }
+  return s;
+}
+
 function renderChart() {
   const wrap = $('#chart');
   const metric = GOAL_METRIC[state.goal];
@@ -382,8 +407,8 @@ function renderChart() {
   const midX = padL + plotW / 2, midY = padT + plotH / 2;
   let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cost versus capability scatter plot">`;
 
-  // sweet-spot tint (top-left = cheap + capable)
-  svg += `<rect x="${padL}" y="${padT}" width="${plotW / 2}" height="${plotH / 2}" fill="var(--gold)" opacity="0.05"/>`;
+  // sweet-spot: dithered gold density field, solid near cheap+capable and dissolving away
+  svg += `<image href="${ditherFieldURI(plotW, plotH)}" x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" preserveAspectRatio="none" style="image-rendering:pixelated" opacity="0.8"/>`;
 
   // quadrant guide lines
   svg += `<line class="grid-line" x1="${midX}" y1="${padT}" x2="${midX}" y2="${padT + plotH}"/>`;
@@ -424,8 +449,8 @@ function renderChart() {
     svg += `<g class="dot ${isPick ? 'is-pick' : ''}" data-id="${p.m.id}" transform="translate(${cx} ${cy})">`;
     svg += `<circle class="d-hit" r="26" fill="transparent"/>`;                 // easy hover/click target
     svg += `<g class="dot__marks">`;
-    if (isPick) svg += `<circle class="d-halo" r="18" fill="var(--gold)" opacity="0.18"/>`;
-    svg += `<circle class="d-core" r="${r}" fill="${isPick ? 'var(--gold)' : 'var(--panel)'}" stroke="var(--gold-line)" stroke-width="1.8"/>`;
+    // halftone cluster: the pick burns gold and dense, everyone else pale and sparse
+    svg += ditherCluster(isPick ? '#f2c14e' : '#b9bdc7', isPick ? 46 : 22);
     svg += `</g>`;
     svg += `<text class="dot__label" x="${lx}" y="4" text-anchor="${nearRight ? 'end' : 'start'}">${p.m.name}</text>`;
     svg += `</g>`;
@@ -731,6 +756,7 @@ function initScene() {
     // the scene band pinned to the hero top — same formula as the CSS (min(96vh, 940px));
     // computed here, not measured, so the inline size never feeds back into itself
     const cssH = Math.min(Math.round(innerHeight * 0.96), 940);
+    if (cssW < 8 || cssH < 8) { W = H = 0; img = null; return; }   // zero-size viewport (prerender) — retry later
     W = cv.width = cssW; H = cv.height = cssH;
     cv.style.width = cssW + 'px'; cv.style.height = cssH + 'px';
     bw = Math.ceil(cssW / CELL); bh = Math.ceil(cssH / CELL);
@@ -741,6 +767,7 @@ function initScene() {
   }
 
   function render(tSec) {
+    if (!img) { resize(); if (!img) return; }   // buffer missing (zero-size viewport at init)
     const hy = bh * V_HOR, sunY = bh * V_SUN, cx = bw * 0.5;
     const sunR = Math.max(10, Math.min(bh * 0.14, bw * 0.075));
     const d8 = img.data;
@@ -816,7 +843,7 @@ function initScene() {
 
 // ---------- boot ----------
 async function boot() {
-  initScene();                     // paint the sunset immediately, independent of data
+  try { initScene(); } catch (e) { /* the scene must never block the data */ }
   try {
     const res = await fetch('data/models.json', { cache: 'no-store' });
     state.data = await res.json();
