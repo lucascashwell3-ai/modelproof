@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- same Fraunces cut as the Proof site (portfolio-v2) so the two wordmarks match -->
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=mk11" />
+  <link rel="stylesheet" href="assets/styles.css?v=mk14" />
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
@@ -41,15 +41,20 @@
   <main id="top">
     <!-- ============ HERO: warm ASCII sunset + entry goal picker ============ -->
     <section class="hero" id="hero">
-      <canvas class="hero__scene" id="heroScene" aria-hidden="true"></canvas>
-      <div class="hero__seam" aria-hidden="true"></div>
-      <div class="hero__scrim" aria-hidden="true"></div>
-      <div class="hero__content" id="engine">
-        <span class="hero__eyebrow">Model selection, without the noise</span>
-        <h1 class="hero__wordmark">MODEL<em>proof</em></h1>
-        <p class="hero__promise">Which AI model should you actually use? Say what you're doing — get a straight answer, right here.</p>
+      <!-- the scene band: wordmark alone on the sunset — nothing else competes with it -->
+      <div class="hero__band">
+        <canvas class="hero__scene" id="heroScene" aria-hidden="true"></canvas>
+        <div class="hero__seam" aria-hidden="true"></div>
+        <div class="hero__scrim" aria-hidden="true"></div>
+        <div class="hero__title">
+          <span class="hero__eyebrow">Model selection, without the noise</span>
+          <h1 class="hero__wordmark">MODEL<em>proof</em></h1>
+        </div>
+      </div>
 
-        <!-- the ask: hero and engine are ONE screen — pick, and the answer resolves in place -->
+      <!-- the tool sits below the scene, on clean dark -->
+      <div class="hero__tool" id="engine">
+        <!-- the ask: pick, and the answer resolves in place -->
         <div class="ask" role="group" aria-label="Get a recommendation">
           <div class="modeswitch modectl" role="tablist" aria-label="Choose how to pick">
             <button class="mode is-active" data-mode="task" role="tab" aria-selected="true">By task</button>
@@ -87,8 +92,13 @@
 
         <!-- portable engine: turn this selection into a paste-in prompt for your own AI -->
         <div class="promptgen">
+        <div class="promptgen__pitch">
+          <h3 class="promptgen__title">Take this advisor with you</h3>
+          <p class="promptgen__sub">One click turns your selection into a paste-in prompt — your own AI
+          becomes the model-picker, so you never have to come back and check.</p>
+        </div>
         <button class="promptgen__btn" id="genPrompt" type="button">
-          Get a prompt for your own AI <span aria-hidden="true">→</span>
+          Get my advisor prompt <span aria-hidden="true">→</span>
         </button>
         <div class="promptgen__panel" id="promptPanel" hidden>
           <p class="promptgen__hint">
@@ -102,7 +112,7 @@
           </div>
         </div>
       </div>
-      </div><!-- /hero__content -->
+      </div><!-- /hero__tool -->
     </section>
 
     <!-- ============ evidence divider — depth below, out of the way ============ -->
@@ -114,11 +124,17 @@
     <section class="panel" id="compare">
       <div class="panel__head">
         <div>
-          <h2 class="panel__title"><span class="panel__no">01</span>Compare everything</h2>
-          <p class="panel__desc">Sort by any column. The <em>coding score</em> is 0–100 — SWE-bench where it exists, otherwise a sourced estimate (LMArena, AA Coding Index); the dot shows confidence. Click a row for the basis, verdict, and sources.</p>
+          <h2 class="panel__title"><span class="panel__no">01</span>Compare, side by side</h2>
+          <p class="panel__desc">Pick up to <em>five</em> models — pre-loaded from your answer above. The coding score is 0–100, SWE-bench where it exists; the dot shows confidence. <span class="dim">"—" means not publicly sourced. We don't guess.</span></p>
         </div>
-        <div class="filters" id="filters" aria-label="Filter by use case"></div>
       </div>
+      <div class="cmp-picker" id="cmpPicker" aria-label="Choose models to compare"></div>
+      <div class="cmp-board-wrap"><div class="cmp-board" id="cmpBoard" aria-live="polite"></div></div>
+      <div class="tbl-reveal">
+        <button class="tbl-toggle" id="browseAll" type="button">Browse the full table — all 21 models ↓</button>
+      </div>
+      <div class="tbl-zone" id="tblZone" hidden>
+      <div class="filters" id="filters" aria-label="Filter by use case"></div>
       <div class="table-wrap">
         <table class="tbl" id="tbl">
           <thead>
@@ -135,6 +151,7 @@
         </table>
       </div>
       <div class="tbl-more" id="tblMore"></div>
+      </div><!-- /tbl-zone -->
     </section>
 
     <!-- COST vs CAPABILITY quadrant -->
@@ -213,6 +230,6 @@
 
   <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
 
-  <script src="assets/app.js?v=mk11"></script>
+  <script src="assets/app.js?v=mk14"></script>
 </body>
 </html>

@@ -14,7 +14,10 @@ const state = {
   showAll: false,        // compare table defaults to the common flagships; opt in to all 21
   sort: { key: 'coding_score', dir: 'desc' },
   expanded: new Set(),
+  compare: [],           // model ids on the side-by-side board (2–5)
+  cmpCustom: false,      // true once the user hand-picks — stops auto-reseeding from the engine
 };
+const CMP_MAX = 5;
 
 // compare-table default: one flagship per major lab (neutral — no lab over-represented).
 // The full 21 (incl. cheap/specialized tiers) are one click away via "Show all".
@@ -169,8 +172,62 @@ function renderResult() {
   // a generated prompt reflects the selection at generation time — reset it when the selection changes
   const pp = document.getElementById('promptPanel'); if (pp) pp.hidden = true;
   const cs = document.getElementById('copyStatus'); if (cs) cs.textContent = '';
-  if (state.mode === 'lab') return renderLabResult();
-  return renderTaskResult();
+  if (state.mode === 'lab') renderLabResult(); else renderTaskResult();
+  seedCompare();     // the side-by-side board follows the engine until the user hand-picks
+}
+
+// ---------- side-by-side comparator ----------
+// Auto-seeded from the engine's answer (top pick + runners, or the chosen lab's best);
+// the user can hand-pick 2–5 models, which stops the auto-reseeding.
+function seedCompare() {
+  if (!state.cmpCustom) {
+    let ids;
+    if (state.mode === 'lab' && state.lab) {
+      ids = state.data.models.filter((m) => m.vendor === state.lab)
+        .sort((a, b) => (b.coding_score || 0) - (a.coding_score || 0)).slice(0, 3).map((m) => m.id);
+    } else {
+      ids = score(state.data.models, state.goal, state.priority).slice(0, 3).map((r) => r.m.id);
+    }
+    if (ids.length >= 2) state.compare = ids;
+  }
+  renderCompare();
+}
+
+function renderCompare() {
+  const all = state.data.models;
+  const pk = $('#cmpPicker'), bd = $('#cmpBoard');
+  if (!pk || !bd) return;
+
+  pk.innerHTML = all.map((m) => {
+    const on = state.compare.includes(m.id);
+    return `<button class="chip ${on ? 'is-active' : ''}" data-cmp="${m.id}" type="button">${m.name}</button>`;
+  }).join('');
+  pk.querySelectorAll('[data-cmp]').forEach((b) => b.addEventListener('click', () => {
+    const id = b.getAttribute('data-cmp');
+    const i = state.compare.indexOf(id);
+    if (i >= 0) { if (state.compare.length <= 2) return; state.compare.splice(i, 1); }
+    else { if (state.compare.length >= CMP_MAX) return; state.compare.push(id); }
+    state.cmpCustom = true;
+    renderCompare();
+  }));
+
+  const ms = state.compare.map((id) => all.find((m) => m.id === id)).filter(Boolean);
+  bd.style.setProperty('--n', ms.length);
+  const confDot = (m) => `<i class="conf conf-${m.confidence || 'low'}" title="confidence: ${m.confidence || 'low'}"></i>`;
+  const rows = [
+    ['', (m) => `<div class="cmp-model">${m.name}</div><div class="cmp-vendor">${m.vendor}</div>`],
+    ['Best for', (m) => (m.best_for || []).slice(0, 3).map((t) => `<span class="mini-tag">${TAG_LABEL[t] || t}</span>`).join(' ') || '<span class="na">—</span>'],
+    ['Coding /100', (m) => `<span class="cmp-num">${num(m.coding_score) ? '<span class="na">—</span>' : m.coding_score}</span>${num(m.coding_score) ? '' : confDot(m)}`],
+    ['GPQA', (m) => `<span class="cmp-num">${fmtScore(m.benchmarks?.gpqa)}</span>`],
+    ['Context', (m) => `<span class="cmp-num">${fmtCtx(m.context_window)}</span>`],
+    ['$ in / 1M', (m) => `<span class="cmp-num">${fmtPrice(m.price_input)}</span>`],
+    ['$ out / 1M', (m) => `<span class="cmp-num">${fmtPrice(m.price_output)}</span>`],
+    ['Verdict', (m) => `<span class="cmp-verdict">${m.verdict || '<span class="na">—</span>'}</span>`],
+  ];
+  bd.innerHTML = rows.map(([label, fn], ri) =>
+    `<div class="cmp-cell cmp-lbl${ri === 0 ? ' cmp-head' : ''}">${label}</div>` +
+    ms.map((m) => `<div class="cmp-cell${ri === 0 ? ' cmp-head' : ''}">${fn(m)}</div>`).join('')
+  ).join('');
 }
 
 function renderTaskResult() {
@@ -704,6 +761,13 @@ function wire() {
     b.addEventListener('click', () => setPriority(b.getAttribute('data-p')))
   );
 
+  // the full 21-model table is opt-in below the comparator
+  const ba = $('#browseAll'), tz = $('#tblZone');
+  if (ba && tz) ba.addEventListener('click', () => {
+    tz.hidden = !tz.hidden;
+    ba.textContent = tz.hidden ? 'Browse the full table — all 21 models ↓' : 'Hide the full table ↑';
+  });
+
   document.querySelectorAll('.tbl thead th[data-sort]').forEach((th) =>
     th.addEventListener('click', () => {
       const key = th.getAttribute('data-sort');
@@ -748,14 +812,14 @@ function initScene() {
   const PAL = [[122, 48, 30], [196, 92, 44], [242, 193, 78], [255, 233, 196]];
   const BASE = [12, 10, 18];
   const CELL = 4;                       // css px per dither pixel (the lofi chunk size)
-  const V_HOR = 0.365, V_SUN = 0.38;    // horizon + sun centre (sun half-set just below the wordmark)
+  const V_HOR = 0.66, V_SUN = 0.675;    // horizon + sun centre (sun half-set just below the wordmark)
 
   let W, H, bw, bh, off, octx, img;
   function resize() {
-    const cssW = host.clientWidth || innerWidth;
-    // the scene band pinned to the hero top — same formula as the CSS (min(96vh, 940px));
+    const cssW = (cv.parentElement ? cv.parentElement.clientWidth : 0) || host.clientWidth || innerWidth;
+    // the scene band — same formula as the CSS (min(58vh, 600px));
     // computed here, not measured, so the inline size never feeds back into itself
-    const cssH = Math.min(Math.round(innerHeight * 0.96), 940);
+    const cssH = Math.min(Math.round(innerHeight * 0.58), 600);   // matches .hero__band CSS
     if (cssW < 8 || cssH < 8) { W = H = 0; img = null; return; }   // zero-size viewport (prerender) — retry later
     W = cv.width = cssW; H = cv.height = cssH;
     cv.style.width = cssW + 'px'; cv.style.height = cssH + 'px';
@@ -793,7 +857,7 @@ function initScene() {
           v *= 0.5 + 0.5 * Math.sin(j * 1.3 + tSec * 2);                 // wave glints
         }
         // dim the scene behind the wordmark/promise zone — lettering wins, always
-        const mdx = (i / bw - 0.5) * 2.6, mdy = (j / bh - 0.30) * 3.2;
+        const mdx = (i / bw - 0.5) * 2.6, mdy = (j / bh - 0.44) * 3.2;
         v *= 1 - 0.45 * Math.exp(-(mdx * mdx + mdy * mdy));
         if (v > ((BAYER[j & 3][i & 3] + 0.5) / 16) * 0.92) {
           const c = PAL[Math.min(3, (v * 3.2) | 0)];
