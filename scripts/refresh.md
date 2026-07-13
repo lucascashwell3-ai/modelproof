@@ -1,4 +1,4 @@
-# Refreshing Modelproof's data
+# Refreshing MODELproof's data
 
 All model data lives in one file: [`../data/models.json`](../data/models.json). Refreshing =
 regenerating that file with current, sourced figures. There is **no build step** — replace the
@@ -102,3 +102,30 @@ Re-run the usage/currency research pass to refresh it.
 2. Reload the page — the recommender, chart, table, and feed all read from it.
 3. Sanity-check: for a **quality goal** (coding/agentic/reasoning), the top pick must be a
    model with a sourced score for that goal — never a "—".
+
+## Runbook: keeping it current (added 2026-07-12)
+
+Two cadences. Both end with bumping `as_of` and re-verifying the page loads.
+
+### A. Weekly currency pass (~10 min, no full regen)
+1. In a Claude Code session with web search, ask:
+   > "What changed in AI models since <as_of date in data/models.json>? New model releases,
+   > price changes, major benchmark updates — sourced links only."
+2. For each finding:
+   - New release → add to `releases[]` (date, title, summary, sourced URL, and a neutral
+     `why` line: "Should you care?"). If it's a rankable model, add a full model entry
+     per the schema rules above (nulls where unsourced).
+   - Price change → update `price_input`/`price_output` + the source URL. Never estimate.
+   - Benchmark update → same: only sourced, confidence-flagged.
+3. Bump `as_of`. Reload the page locally; confirm the nav stamp shows the new date.
+4. Commit + push on explicit go (public repo).
+
+### B. Full refresh (quarterly, or when the landscape shifts)
+Run the fan-out refresh prompt above (regenerates the whole file, then adversarial fact-check).
+
+### Known dated triggers
+- **2026-09-01**: Claude Sonnet 5 intro pricing ($2/$10) rises to $3/$15 — update on that day.
+
+### Non-negotiables (same as ever)
+- Blank beats guessed. Pricing traces to an official vendor page.
+- Neutral voice: a release entry must read as information, never promotion of a lab.
