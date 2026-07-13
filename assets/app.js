@@ -418,8 +418,8 @@ function renderChart() {
     .filter((p) => !num(p.x) && !num(p.y));
 
   $('#mapLegend').innerHTML =
-    `<span><i style="background:var(--gold)"></i>Your top pick</span>
-     <span><i style="background:var(--gold-line)"></i>Other models</span>
+    `<span><i style="background:var(--gold)"></i>On the value frontier — a smart buy</span>
+     <span><i style="background:rgba(233,230,223,0.45)"></i>Beaten on price + quality</span>
      <span class="dim">↑ ${metricLabel(metric)} &nbsp;·&nbsp; → $ / 1M out (log)</span>`;
 
   if (pts.length < 2) {
@@ -446,54 +446,66 @@ function renderChart() {
   const xticks = tickCandidates.filter((t) => t >= pMin * 0.9 && t <= pMax * 1.1);
   if (xticks.length < 2) { xticks.length = 0; xticks.push(pMin, pMax); }
 
-  const midX = padL + plotW / 2, midY = padT + plotH / 2;
-  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cost versus capability scatter plot">`;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Model map: cost versus capability, with the value frontier">`;
 
-  // sweet-spot: dithered gold density field, solid near cheap+capable and dissolving away
-  svg += `<image href="${ditherFieldURI(plotW, plotH)}" x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" preserveAspectRatio="none" style="image-rendering:pixelated" opacity="0.8"/>`;
+  // the value (Pareto) frontier: models nothing else beats on BOTH price and capability
+  const frontier = pts
+    .filter((p) => !pts.some((q) => q !== p && q.x <= p.x && q.y >= p.y && (q.x < p.x || q.y > p.y)))
+    .sort((a, b) => a.x - b.x || a.y - b.y);
+  const onFrontier = new Set(frontier.map((p) => p.m.id));
+  const drawFrontier = frontier.length >= 3 && pts.length >= 5;   // else a 2-step line looks thin — fall back to scatter
 
-  // quadrant guide lines
-  svg += `<line class="grid-line" x1="${midX}" y1="${padT}" x2="${midX}" y2="${padT + plotH}"/>`;
-  svg += `<line class="grid-line" x1="${padL}" y1="${midY}" x2="${padL + plotW}" y2="${midY}"/>`;
-
-  // quadrant labels
-  svg += `<text class="quad-lbl" x="${padL + 8}" y="${padT + 16}">sweet spot · cheap + capable</text>`;
-  svg += `<text class="quad-lbl" x="${padL + plotW - 8}" y="${padT + 16}" text-anchor="end">premium</text>`;
-  svg += `<text class="quad-lbl" x="${padL + 8}" y="${padT + plotH - 8}">budget</text>`;
-  svg += `<text class="quad-lbl" x="${padL + plotW - 8}" y="${padT + plotH - 8}" text-anchor="end">overpriced</text>`;
+  // dither fill of the strong region (above/left of the frontier) — the texture, made meaningful
+  if (drawFrontier) {
+    const fx = (p) => X(p.x).toFixed(1), fy = (p) => Y(p.y).toFixed(1);
+    const poly = [`${fx(frontier[0])},${padT}`, `${fx(frontier[0])},${fy(frontier[0])}`];
+    for (let i = 1; i < frontier.length; i++) { poly.push(`${fx(frontier[i])},${Y(frontier[i - 1].y).toFixed(1)}`); poly.push(`${fx(frontier[i])},${fy(frontier[i])}`); }
+    poly.push(`${fx(frontier[frontier.length - 1])},${padT}`);
+    svg += `<defs><clipPath id="froClip"><polygon points="${poly.join(' ')}"/></clipPath></defs>`;
+    svg += `<image href="${ditherFieldURI(plotW, plotH)}" x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" preserveAspectRatio="none" style="image-rendering:pixelated" opacity="0.5" clip-path="url(#froClip)"/>`;
+  }
 
   // axes
   svg += `<line class="axis-line" x1="${padL}" y1="${padT + plotH}" x2="${padL + plotW}" y2="${padT + plotH}"/>`;
   svg += `<line class="axis-line" x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + plotH}"/>`;
 
-  // x ticks
   xticks.forEach((t) => {
     const xx = X(t);
     svg += `<text class="axis-lbl" x="${xx}" y="${padT + plotH + 18}" text-anchor="middle">$${t < 1 ? t : t.toFixed(0)}</text>`;
-    svg += `<line class="grid-line" x1="${xx}" y1="${padT}" x2="${xx}" y2="${padT + plotH}" opacity="0.4"/>`;
+    svg += `<line class="grid-line" x1="${xx}" y1="${padT}" x2="${xx}" y2="${padT + plotH}" opacity="0.3"/>`;
   });
-  // y ticks (3)
   [y0, (y0 + y1) / 2, y1].forEach((v) => {
     const yy = Y(v);
     svg += `<text class="axis-lbl" x="${padL - 10}" y="${yy + 4}" text-anchor="end">${Math.round(v)}</text>`;
   });
+  svg += `<text class="axis-title" x="${padL + plotW / 2}" y="${H - 10}" text-anchor="middle">PRICE — $ / 1M OUTPUT TOKENS (LOG)</text>`;
+  svg += `<text class="axis-title" transform="translate(16 ${padT + plotH / 2}) rotate(-90)" text-anchor="middle">${metricLabel(metric).toUpperCase()} →</text>`;
 
-  svg += `<text class="axis-title" x="${padL + plotW / 2}" y="${H - 10}" text-anchor="middle">Price — $ per 1M output tokens (log scale)</text>`;
-  svg += `<text class="axis-title" transform="translate(16 ${padT + plotH / 2}) rotate(-90)" text-anchor="middle">${metricLabel(metric)} score →</text>`;
+  // the gold staircase — the best capability available at each price
+  if (drawFrontier) {
+    let d = `M ${X(frontier[0].x).toFixed(1)} ${Y(frontier[0].y).toFixed(1)}`;
+    for (let i = 1; i < frontier.length; i++) d += ` L ${X(frontier[i].x).toFixed(1)} ${Y(frontier[i - 1].y).toFixed(1)} L ${X(frontier[i].x).toFixed(1)} ${Y(frontier[i].y).toFixed(1)}`;
+    svg += `<path class="frontier-line" d="${d}" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>`;
+  }
 
-  // dots — big hit target + hover-scaled marks; label stays put
+  // teaching moment: if the pick sits BELOW the frontier, connect it to the model that beats it
+  const pickPt = pts.find((p) => p.m.id === state.pickId);
+  if (drawFrontier && pickPt && !onFrontier.has(pickPt.m.id)) {
+    const dom = frontier.filter((q) => q.x <= pickPt.x && q.y >= pickPt.y).sort((a, b) => (b.y - a.y) || (a.x - b.x))[0];
+    if (dom) svg += `<line x1="${X(pickPt.x).toFixed(1)}" y1="${Y(pickPt.y).toFixed(1)}" x2="${X(dom.x).toFixed(1)}" y2="${Y(dom.y).toFixed(1)}" stroke="var(--gold)" stroke-width="1.4" stroke-dasharray="3 3" opacity="0.55"/>`;
+  }
+
+  // dots: frontier + pick burn gold and labelled; dominated models recede to pale gray
   pts.forEach((p) => {
     const cx = X(p.x), cy = Y(p.y);
     const isPick = p.m.id === state.pickId;
-    const r = isPick ? 9 : 7;
-    const nearRight = cx > padL + plotW * 0.7;   // keep labels inside the plot
-    const lx = nearRight ? -(r + 6) : (r + 6);
-    svg += `<g class="dot ${isPick ? 'is-pick' : ''}" data-id="${p.m.id}" transform="translate(${cx} ${cy})">`;
-    svg += `<circle class="d-hit" r="26" fill="transparent"/>`;                 // easy hover/click target
-    svg += `<g class="dot__marks">`;
-    // halftone cluster: the pick burns gold and dense, everyone else pale and sparse
-    svg += ditherCluster(isPick ? '#f2c14e' : '#b9bdc7', isPick ? 46 : 22);
-    svg += `</g>`;
+    const fro = drawFrontier && onFrontier.has(p.m.id);
+    const hot = isPick || fro;
+    const nearRight = cx > padL + plotW * 0.72;
+    const lx = nearRight ? -12 : 12;
+    svg += `<g class="dot ${isPick ? 'is-pick' : ''} ${fro ? 'is-frontier' : ''}" data-id="${p.m.id}" transform="translate(${cx.toFixed(1)} ${cy.toFixed(1)})">`;
+    svg += `<circle class="d-hit" r="24" fill="transparent"/>`;
+    svg += `<g class="dot__marks">${ditherCluster(hot ? '#f2c14e' : 'rgba(233,230,223,0.42)', isPick ? 44 : hot ? 28 : 16)}</g>`;
     svg += `<text class="dot__label" x="${lx}" y="4" text-anchor="${nearRight ? 'end' : 'start'}">${p.m.name}</text>`;
     svg += `</g>`;
   });

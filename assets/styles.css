@@ -336,6 +336,9 @@ a { color: inherit; text-decoration: none; }
   opacity: 0; transition: fill .15s var(--ease), opacity .15s var(--ease); }
 .dot:hover .dot__label { fill: var(--gold); font-weight: 500; opacity: 1; }
 .dot.is-pick .dot__label { fill: var(--gold); font-weight: 500; opacity: 1; }
+/* frontier models are labelled by default — they're the buys worth naming */
+.dot.is-frontier .dot__label { fill: var(--gold-2); opacity: 0.92; }
+.dot.is-frontier:hover .dot__label { fill: var(--gold); opacity: 1; }
 
 /* ---------- side-by-side comparator ---------- */
 .cmp-picker { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 20px; }
