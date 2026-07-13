@@ -265,6 +265,8 @@ a { color: inherit; text-decoration: none; }
   transition: transform .16s var(--ease), filter .16s var(--ease); }
 .promptgen__btn:hover { transform: translateY(-1px); filter: brightness(1.06); }
 .promptgen__btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.promptgen__more { margin-top: 12px; font-size: 12.5px; color: var(--ink-4); }
+.promptgen__more a { color: var(--gold-2); text-decoration: underline; text-underline-offset: 2px; }
 .promptgen__panel { margin-top: 18px; text-align: left; border: 1px solid var(--line); border-radius: var(--r-md);
   background: linear-gradient(180deg, var(--panel), var(--panel-2)); padding: 16px; }
 .promptgen__hint { color: var(--ink-2); font-size: 13px; line-height: 1.55; margin-bottom: 12px; max-width: 52rem; }
