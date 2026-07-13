@@ -129,3 +129,9 @@ Run the fan-out refresh prompt above (regenerates the whole file, then adversari
 ### Non-negotiables (same as ever)
 - Blank beats guessed. Pricing traces to an official vendor page.
 - Neutral voice: a release entry must read as information, never promotion of a lab.
+
+### Wanted next (Lucas, 2026-07-12): per-model usage volumes
+In the weekly pass, also pull **per-model monthly token/request volumes from OpenRouter's
+public rankings** for as many of our 21 models as are listed. Add to each lens entry (or a
+new `usage.models[]` map) with the source URL. Where a model isn't listed, leave it blank —
+usage bars/figures only render for sourced numbers, never interpolated.
