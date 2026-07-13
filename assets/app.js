@@ -544,12 +544,13 @@ function showTip(e, m, metric) {
   if (x + 250 > window.innerWidth) x = e.clientX - 250;
   tip.style.left = x + 'px'; tip.style.top = y + 'px';
 }
-function hideTip() { $('#tooltip').classList.remove('show'); }
+function hideTip() { const t = $('#tooltip'); if (t) t.classList.remove('show'); }
 
 // ---------- compare table ----------
 function renderFilters() {
   const goals = ['all', 'coding', 'research', 'writing', 'cheap-bulk', 'vision', 'long-context', 'speed'];
   const box = $('#filters');
+  if (!box) return;
   box.innerHTML = goals.map((g) =>
     `<button class="chip ${state.filter === g ? 'is-active' : ''}" data-f="${g}">${g === 'all' ? 'All' : TAG_LABEL[g] || g}</button>`
   ).join('');
@@ -589,6 +590,7 @@ function sortedModels() {
 
 function renderTable() {
   const body = $('#tblBody');
+  if (!body) return;
   const list = sortedModels();
   body.innerHTML = '';
   list.forEach((m) => {
@@ -644,9 +646,10 @@ function renderTable() {
     if (th.getAttribute('data-sort') === state.sort.key) th.classList.add(state.sort.dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
   });
 
-  // "show all 21" toggle — only when unfiltered (a filter is its own narrowing)
+  // "show all 21" toggle — only when unfiltered (a filter is its own narrowing).
+  // The dedicated table page always shows all 21, so it has no toggle.
   const more = $('#tblMore');
-  if (more) {
+  if (more && document.body.dataset.page !== 'table') {
     if (state.filter === 'all') {
       const total = state.data.models.length;
       more.innerHTML = state.showAll
@@ -696,6 +699,7 @@ function relWhen(d) {
 }
 function renderFeed() {
   const feed = $('#feed');
+  if (!feed) return;
   const rel = (state.data.releases || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
   if (!rel.length) { feed.innerHTML = '<li class="empty">No recent releases recorded.</li>'; return; }
   feed.innerHTML = rel.map((r) => {
@@ -919,27 +923,34 @@ function initReveal() {
 }
 
 // ---------- boot ----------
+// set text on an element only if it exists (app.js runs on both index.html and table.html)
+function setText(sel, txt) { const e = $(sel); if (e) e.textContent = txt; }
+
 async function boot() {
   try { initScene(); } catch (e) { /* the scene must never block the data */ }
+  // the standalone full-table page (table.html) marks itself so we always show all 21
+  const isTablePage = document.body.dataset.page === 'table';
+  if (isTablePage) state.showAll = true;
   try {
     const res = await fetch('data/models.json', { cache: 'no-store' });
     state.data = await res.json();
   } catch (e) {
-    $('#result').innerHTML = '<div class="empty">Could not load data/models.json.</div>';
+    const r = $('#result') || $('#tblBody');
+    if (r) r.innerHTML = '<div class="empty">Could not load data/models.json.</div>';
     return;
   }
   const asof = state.data.as_of || '—';
-  $('#navAsof').textContent = '● snapshot ' + asof + ' · pricing verified';
-  $('#footAsof').textContent = asof;
-  $('#footNotes').textContent = state.data.notes || 'Pricing from official vendor pages; benchmarks from public leaderboards. Every figure carries a confidence flag; unsourced numbers are left blank rather than guessed.';
+  setText('#navAsof', '● snapshot ' + asof + ' · pricing verified');
+  setText('#footAsof', asof);
+  setText('#footNotes', state.data.notes || 'Pricing from official vendor pages; benchmarks from public leaderboards. Every figure carries a confidence flag; unsourced numbers are left blank rather than guessed.');
 
   wire();
   initReveal();
-  $('#goalDesc').textContent = GOAL_DESC[state.goal] || '';
+  setText('#goalDesc', GOAL_DESC[state.goal] || '');
   renderFilters();
-  renderLabChips();       // build the "which lab" chips from the data's vendors + wire them
-  renderResult();
-  renderTable();
+  renderLabChips();          // build the "which lab" chips from the data's vendors + wire them
+  if ($('#result')) renderResult();   // engine + comparator live on the home page only
+  renderTable();             // full table lives on table.html; guarded no-op elsewhere
   renderUsage();
   renderFeed();
 }

@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- same Fraunces cut as the Proof site (portfolio-v2) so the two wordmarks match -->
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=mk14" />
+  <link rel="stylesheet" href="assets/styles.css?v=mk15" />
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
@@ -77,7 +77,7 @@
               <button class="seg is-active" data-p="48" role="tab" aria-selected="true">Balanced</button>
               <button class="seg" data-p="85" role="tab" aria-selected="false">Best</button>
             </div>
-            <span class="ask__lead">cost —</span>
+            <span class="ask__lead">cost.</span>
           </div>
           <div class="ask__row" data-for="lab" hidden>
             <span class="ask__lead">I mainly use</span>
@@ -130,38 +130,18 @@
       </div>
       <div class="cmp-picker" id="cmpPicker" aria-label="Choose models to compare"></div>
       <div class="cmp-board-wrap"><div class="cmp-board" id="cmpBoard" aria-live="polite"></div></div>
-      <div class="tbl-reveal">
-        <button class="tbl-toggle" id="browseAll" type="button">Browse the full table — all 21 models ↓</button>
-      </div>
-      <div class="tbl-zone" id="tblZone" hidden>
-      <div class="filters" id="filters" aria-label="Filter by use case"></div>
-      <div class="table-wrap">
-        <table class="tbl" id="tbl">
-          <thead>
-            <tr>
-              <th data-sort="name" class="is-left col-model">Model</th>
-              <th data-sort="best" class="col-best">Best for</th>
-              <th data-sort="coding_score" class="num col-code">Coding<span class="th-sub">score /100</span></th>
-              <th data-sort="context" class="num col-ctx">Context</th>
-              <th data-sort="price_output" class="num col-price">Price<span class="th-sub">in / out · 1M</span></th>
-              <th class="is-right col-exp">&nbsp;</th>
-            </tr>
-          </thead>
-          <tbody id="tblBody"></tbody>
-        </table>
-      </div>
-      <div class="tbl-more" id="tblMore"></div>
-      </div><!-- /tbl-zone -->
+      <a class="browse-all" href="table.html">Browse the full table — all 21 models, sortable <span aria-hidden="true">→</span></a>
     </section>
 
     <!-- COST vs CAPABILITY quadrant -->
     <section class="panel" id="map">
       <div class="panel__head">
         <div>
-          <h2 class="panel__title"><span class="panel__no">02</span>The buy zone</h2>
+          <h2 class="panel__title"><span class="panel__no">02</span>The model map</h2>
           <p class="panel__desc">
-            Every model plotted: price you pay (→) against how good it is (↑). Top-left is the
-            sweet spot — capable <em>and</em> cheap. <span class="dim">Filtered by your goal above.</span>
+            Every model placed by <em>what it costs</em> (→) and <em>how capable it is</em> (↑).
+            The gold field, top-left, is where you want to be — strong <em>and</em> cheap.
+            <span class="dim">Reflects your goal above; hover any cluster for the numbers.</span>
           </p>
         </div>
         <div class="legend" id="mapLegend"></div>
@@ -230,6 +210,6 @@
 
   <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
 
-  <script src="assets/app.js?v=mk14"></script>
+  <script src="assets/app.js?v=mk15"></script>
 </body>
 </html>

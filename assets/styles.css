@@ -349,6 +349,11 @@ a { color: inherit; text-decoration: none; }
 .cmp-vendor { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
 .cmp-num { font-family: var(--mono); font-size: 13.5px; color: var(--ink); margin-right: 8px; }
 .cmp-verdict { font-size: 12.5px; line-height: 1.5; }
+.browse-all { display: inline-flex; align-items: center; gap: 8px; margin-top: 22px;
+  font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.03em; color: var(--ink-2);
+  border: 1px solid var(--line); border-radius: 999px; padding: 12px 22px;
+  transition: border-color .16s var(--ease), color .16s var(--ease), background .16s var(--ease); }
+.browse-all:hover { color: var(--ink); border-color: var(--gold-line); background: var(--gold-soft); }
 
 /* ---------- filters + table ---------- */
 .filters { display: flex; gap: 7px; flex-wrap: wrap; }

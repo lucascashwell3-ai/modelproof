@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MODELproof — the full model table</title>
+  <meta name="description" content="Every AI model in MODELproof, sortable and filterable — coding score, context, and sourced pricing. Unsourced figures are left blank, never guessed." />
+  <meta name="theme-color" content="#0a0b0f" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%230a0b0f'/%3E%3Ccircle cx='12' cy='12' r='9.2' fill='none' stroke='%23f2c14e' stroke-opacity='0.5' stroke-width='1.4'/%3E%3Cpath d='M7.6 12.4l3 3 5.8-6.6' fill='none' stroke='%23f2c14e' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=jetbrains-mono@400,500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css?v=mk15" />
+</head>
+<body data-page="table">
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="index.html" aria-label="MODELproof home">
+      <svg class="nav__seal" viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">
+        <circle cx="12" cy="12" r="9.2" class="r-ring" />
+        <path d="M7.6 12.4l3 3 5.8-6.6" class="r-check" />
+      </svg>
+      <span>MODEL<b>proof</b></span>
+    </a>
+    <span class="nav__asof" id="navAsof">loading…</span>
+    <a class="nav__link" href="index.html">← Back to the tool</a>
+  </header>
+
+  <main id="top">
+    <section class="panel" id="compare" style="margin-top:60px">
+      <div class="panel__head">
+        <div>
+          <h2 class="panel__title">All models</h2>
+          <p class="panel__desc">Every model, sortable by any column and filterable by use case. Coding score is 0–100 — SWE-bench where it exists, otherwise a sourced estimate; the dot shows confidence. Click a row for the basis, verdict, and sources. <span class="dim">"—" means the figure wasn't publicly sourced. We don't guess.</span></p>
+        </div>
+        <div class="filters" id="filters" aria-label="Filter by use case"></div>
+      </div>
+      <div class="table-wrap">
+        <table class="tbl" id="tbl">
+          <thead>
+            <tr>
+              <th data-sort="name" class="is-left col-model">Model</th>
+              <th data-sort="best" class="col-best">Best for</th>
+              <th data-sort="coding_score" class="num col-code">Coding<span class="th-sub">score /100</span></th>
+              <th data-sort="context" class="num col-ctx">Context</th>
+              <th data-sort="price_output" class="num col-price">Price<span class="th-sub">in / out · 1M</span></th>
+              <th class="is-right col-exp">&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody id="tblBody"></tbody>
+        </table>
+      </div>
+      <div class="tbl-more" id="tblMore"></div>
+    </section>
+  </main>
+
+  <footer class="foot" id="sourcing">
+    <div class="foot__grid">
+      <div>
+        <div class="foot__brand">
+          <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
+            <circle cx="12" cy="12" r="9.2" class="r-ring" />
+            <path d="M7.6 12.4l3 3 5.8-6.6" class="r-check" />
+          </svg>
+          <span>MODEL<b>proof</b></span>
+        </div>
+        <p class="foot__note">A decision tool, not a leaderboard. Sibling to <strong>DATproof</strong> in Lucas Cashwell's <strong>Proof</strong> portfolio.</p>
+      </div>
+      <div class="foot__col">
+        <h3>How it's sourced</h3>
+        <p id="footNotes">Loading data notes…</p>
+      </div>
+      <div class="foot__col">
+        <h3>Freshness</h3>
+        <p>
+          Data snapshot: <strong id="footAsof">—</strong>.
+          Numbers are pulled from official pricing pages and public benchmarks, with a confidence
+          flag on every model. A "—" means the figure wasn't publicly sourced (we don't guess).
+        </p>
+      </div>
+    </div>
+    <p class="foot__legal">
+      Independent project · not affiliated with any model vendor · benchmarks and prices change fast —
+      verify anything cost-critical against the vendor's own page before you commit spend.
+    </p>
+  </footer>
+
+  <script src="assets/app.js?v=mk15"></script>
+</body>
+</html>
