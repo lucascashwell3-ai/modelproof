@@ -1,0 +1,44 @@
+name: data-refresh
+# Weekly, propose-only. The bot NEVER writes prices/benchmarks and NEVER pushes to main —
+# it opens a PR with a verification checklist. Merging the PR (a human) is the only path to prod;
+# GitHub Pages redeploys from main on merge. Mirrors scripts/refresh.md's sourcing standard.
+on:
+  schedule:
+    - cron: '17 6 * * 1'   # Mondays 06:17 UTC — off-peak minute (avoid :00; GitHub drops top-of-hour runs). Best-effort, no SLA.
+  workflow_dispatch: {}      # run on demand for same-day drops
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+
+      # 1. Detect + flag (writes CHANGES.md + data/_auto_checked.json; NEVER prices/benchmarks/as_of)
+      - name: Detect changes (flag-first)
+        run: node scripts/refresh-auto.mjs
+
+      # 2. Honesty gate — blocks if any priced/benchmarked field lost its source, or an enum is illegal.
+      #    Runs here AND must be re-run as a required status check on the PR branch (see refresh.md),
+      #    because a GITHUB_TOKEN PR does not trigger `on: pull_request`.
+      - name: Honesty gate
+        run: node scripts/validate-data.mjs
+
+      # 3. Open / update ONE reusable review PR. Merge = the human gate.
+      - name: Open review PR
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: auto/data-refresh
+          commit-message: 'chore(data): weekly auto-check — review before merge'
+          title: 'chore(data): weekly auto-check — verify + merge'
+          body-path: CHANGES.md
+          labels: data-refresh
+# One-time enablement (Lucas): Settings → Actions → General → "Allow GitHub Actions to create and
+# approve pull requests"; add branch protection on main requiring 1 review so the bot can open but
+# never self-merge. Per-model usage volumes (OpenRouter rankings) additionally need an API key
+# secret — out of scope until the usage view returns.

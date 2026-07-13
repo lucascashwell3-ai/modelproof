@@ -135,3 +135,20 @@ In the weekly pass, also pull **per-model monthly token/request volumes from Ope
 public rankings** for as many of our 21 models as are listed. Add to each lens entry (or a
 new `usage.models[]` map) with the source URL. Where a model isn't listed, leave it blank —
 usage bars/figures only render for sourced numbers, never interpolated.
+
+## Automated weekly check (scaffolding — see .github/workflows/data-refresh.yml)
+A weekly GitHub Action runs **flag-first, propose-only** automation. It never writes prices or
+benchmarks and never pushes to `main`:
+- `scripts/refresh-auto.mjs` — fetches OpenRouter's public models API as a **price-drift alarm**
+  (OpenRouter is provider pass-through, not list price → it flags "verify against the official
+  page", never overwrites), checks dated triggers (Sonnet 5 → $3/$15 on 2026-09-01) and `as_of`
+  staleness, and writes a `CHANGES.md` verification checklist + a machine `auto_checked` date
+  (kept separate from the human-owned `as_of` so the site never overclaims freshness).
+- `scripts/validate-data.mjs` — the **honesty gate**: fails if any non-null price/benchmark lost
+  its `sources`, an enum is illegal, or a tag is off-vocab. Run it locally before committing data.
+- The Action opens a PR (`auto/data-refresh`); **a human verifies, edits by hand, bumps `as_of`,
+  and merges** — the only path to production.
+
+**One-time enablement (Lucas):** repo Settings → Actions → General → "Allow GitHub Actions to
+create and approve pull requests"; branch protection on `main` requiring 1 review. Per-model usage
+volumes (OpenRouter *rankings*) need an API-key secret — deferred with the usage view.
