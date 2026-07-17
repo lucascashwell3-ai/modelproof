@@ -11,7 +11,7 @@ const state = {
   priority: 48,          // the budget facet: 0 = cheapest … 100 = best
   labs: [],              // vendors the user pays for; [] = all labs. A filter layered on the task, not a mode.
   filter: 'all',
-  showAll: false,        // compare table defaults to the common flagships; opt in to all 21
+  showAll: false,        // compare table defaults to the common flagships; opt in to all 22
   sort: { key: 'coding_score', dir: 'desc' },
   expanded: new Set(),
   compare: [],           // model ids on the side-by-side board (2–5)
@@ -20,8 +20,8 @@ const state = {
 const CMP_MAX = 5;
 
 // compare-table default: one flagship per major lab (neutral — no lab over-represented).
-// The full 21 (incl. cheap/specialized tiers) are one click away via "Show all".
-const COMMON_IDS = ['claude-opus-4-8', 'gpt-5-6-sol', 'gemini-3-1-pro', 'grok-4-5', 'deepseek-v4-pro', 'llama-4-maverick', 'qwen3-max'];
+// The full 22 (incl. cheap/specialized tiers) are one click away via "Show all".
+const COMMON_IDS = ['claude-opus-4-8', 'gpt-5-6-sol', 'gemini-3-1-pro', 'grok-4-5', 'kimi-k3', 'deepseek-v4-pro', 'llama-4-maverick', 'qwen3-max'];
 
 // vendor -> the brand people actually say ("I use Claude / ChatGPT / Grok…")
 const LAB_LABEL = {
@@ -643,8 +643,8 @@ function renderTable() {
     if (th.getAttribute('data-sort') === state.sort.key) th.classList.add(state.sort.dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
   });
 
-  // "show all 21" toggle — only when unfiltered (a filter is its own narrowing).
-  // The dedicated table page always shows all 21, so it has no toggle.
+  // "show all 22" toggle — only when unfiltered (a filter is its own narrowing).
+  // The dedicated table page always shows all 22, so it has no toggle.
   const more = $('#tblMore');
   if (more && document.body.dataset.page !== 'table') {
     if (state.filter === 'all') {
@@ -908,7 +908,7 @@ function setText(sel, txt) { const e = $(sel); if (e) e.textContent = txt; }
 
 async function boot() {
   try { initScene(); } catch (e) { /* the scene must never block the data */ }
-  // the standalone full-table page (table.html) marks itself so we always show all 21
+  // the standalone full-table page (table.html) marks itself so we always show all 22
   const isTablePage = document.body.dataset.page === 'table';
   if (isTablePage) state.showAll = true;
   try {

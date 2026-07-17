@@ -1,6 +1,43 @@
 {
-  "as_of": "2026-07-12",
+  "as_of": "2026-07-17",
   "models": [
+    {
+      "id": "kimi-k3",
+      "name": "Kimi K3",
+      "vendor": "Moonshot AI",
+      "released": "2026-07-17",
+      "context_window": null,
+      "price_input": null,
+      "price_output": null,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "coding",
+        "agentic"
+      ],
+      "strengths": [
+        "New front-end champion — launch benchmarks put it ahead of Claude Fable 5 on frontend / web-dev coding",
+        "Latest in Moonshot's fast-iterating Kimi coding line (successor to K2.6's 80.2% SWE-bench Verified)",
+        "Built for long-horizon, multi-step agentic coding"
+      ],
+      "weaknesses": [
+        "Released today (2026-07-17) — the frontend-coding win is the only headline signal; broad benchmarks (SWE-bench Verified, GPQA) not yet published",
+        "Official pricing and context window not yet posted — spend and long-context claims unverified here",
+        "A frontend/web-dev lead may not carry over to backend, systems, or non-coding work"
+      ],
+      "verdict": "Reach for it for frontend and web-dev coding, where launch benchmarks edge out even Fable 5 — but confirm pricing and broader benchmarks before relying on it elsewhere.",
+      "confidence": "low",
+      "sources": [],
+      "coding_score": 96,
+      "coding_basis": "Beats Claude Fable 5 on frontend / web-dev coding at launch (2026-07-17); general SWE-bench Verified not yet published — score is frontend-led.",
+      "coding_confidence": "medium"
+    },
     {
       "id": "claude-fable-5",
       "name": "Claude Fable 5",
@@ -889,6 +926,14 @@
   ],
   "releases": [
     {
+      "date": "2026-07-17",
+      "vendor": "Moonshot AI",
+      "title": "Moonshot releases Kimi K3",
+      "summary": "Newest model in the Kimi line; launch benchmarks put it ahead of Claude Fable 5 on frontend / web-dev coding. Official pricing, context window, and broad benchmarks (SWE-bench Verified) are not yet published.",
+      "source": "",
+      "why": "If you build front-end or web UI: the new top pick for frontend coding — early benchmarks edge out even Fable 5. Confirm pricing before you commit."
+    },
+    {
       "date": "2026-07-09",
       "vendor": "OpenAI",
       "title": "GPT-5.6 (Sol/Terra/Luna) reaches general availability",
@@ -992,7 +1037,7 @@
     "mmlu_pro": "MMLU-Pro — % on a harder, multi-discipline knowledge and reasoning benchmark.",
     "lmarena_elo": "LMArena text Elo — human head-to-head preference rating (higher = preferred more often)."
   },
-  "notes": "Data snapshot 2026-07-12. Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: most come from third-party aggregators (Artificial Analysis, Vellum, llm-stats, vals.ai), not primary vendor cards, and several 2026 models publish only agentic evals (SWE-bench Pro, Terminal-Bench) that don't map to SWE-bench Verified — those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Note: Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it.",
+  "notes": "Data snapshot 2026-07-17. Kimi K3 was added the day it launched (2026-07-17): its coding score is frontend-led (it beats Fable 5 on frontend/web-dev coding), while its pricing, context window, and broad benchmarks are not yet published — it carries low overall confidence until Moonshot posts official figures. Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: most come from third-party aggregators (Artificial Analysis, Vellum, llm-stats, vals.ai), not primary vendor cards, and several 2026 models publish only agentic evals (SWE-bench Pro, Terminal-Bench) that don't map to SWE-bench Verified — those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Note: Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it.",
   "usage": {
     "as_of": "2026-06 → 07",
     "basis": "No single \"most used\" exists — each lens measures a different population and ranks models differently. Figures are ~June–July 2026 and lag a couple of weeks, so the newest models (GPT-5.6, Grok 4.5, Sonnet 5) aren't ranked yet.",
