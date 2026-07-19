@@ -779,114 +779,144 @@ function wire() {
   const copyBtn = $('#copyPrompt'); if (copyBtn) copyBtn.addEventListener('click', copyPrompt);
 }
 
-// ---------- hero: animated dithered sunset (bounded to the hero; pauses off-screen) ----------
-// Ordered-dither (Bayer 4x4) golden-hour scene: near-black sky banking warm at the horizon,
-// a half-set dithered sun, and a shimmering reflection column in dark water. Rendered into a
-// low-res buffer and upscaled with smoothing off for chunky lofi pixels. Paused the moment
-// the page scrolls (same discipline as the ASCII scene it replaces — never janks the page).
+// ---------- site-wide ASCII sunset (fixed, full-viewport background) ----------
+// A living monospace ASCII scene: a near-black dusk sky banking warm to a low sun on the
+// horizon, its light spilling down a shimmering column into flowing water. The water is a
+// sum of travelling sine waves (three incommensurate octaves), so it drifts smoothly and
+// never repeats — the "asciiwaves" quality. Fixed to the viewport, it sits behind every
+// section on every page as the house backdrop, yet stays cheap: the browser composites a
+// fixed canvas on its own layer, so scrolling never repaints it. ~30fps, blank cells
+// skipped, paused when the tab is backgrounded. Honors prefers-reduced-motion.
 function initScene() {
-  const cv = document.getElementById('heroScene');
-  const host = document.getElementById('hero');
-  if (!cv || !host) return;
+  const cv = document.getElementById('asciiScene');
+  if (!cv) return;
   const ctx = cv.getContext('2d', { alpha: false });
   const rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const BAYER = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
-  // warm ramp: ember -> rust -> gold -> cream, over a deep dusk base
-  const PAL = [[122, 48, 30], [196, 92, 44], [242, 193, 78], [255, 233, 196]];
-  const BASE = [12, 10, 18];
-  const CELL = 4;                       // css px per dither pixel (the lofi chunk size)
-  const V_HOR = 0.66, V_SUN = 0.675;    // horizon + sun centre (sun half-set just below the wordmark)
+  // brightness -> glyph ramp (dark .. light). Mid glyphs are doubled so the texture eases
+  // between levels; the top is a medium-weight '&', never a solid blob, so the sun reads as
+  // a soft bright core rather than a hard mass.
+  const RAMP = [' ', '.', '.', "'", '`', ':', ':', '-', '~', '~', '=', '+', '+', '*', 'o', 'o', 'c', 'x', 'X', '&'];
+  const RMAX = RAMP.length - 1;
 
-  let W, H, bw, bh, off, octx, img;
+  // warm sunset temperature ramp, sampled by "temp" [0..1]:
+  // indigo dusk -> violet -> mauve -> rose -> amber -> gold -> warm cream (never pure white).
+  const STOPS = [
+    [0.00, 16, 24, 48], [0.16, 36, 36, 72], [0.32, 78, 62, 102], [0.48, 124, 94, 128],
+    [0.60, 158, 104, 116], [0.70, 182, 120, 116], [0.80, 210, 140, 104], [0.88, 226, 158, 104],
+    [0.94, 238, 182, 116], [0.98, 246, 206, 142], [1.00, 252, 228, 186]
+  ];
+  const NBUCK = 48, PAL = new Array(NBUCK);
+  for (let i = 0; i < NBUCK; i++) {
+    const t = i / (NBUCK - 1);
+    let k = 0; while (k < STOPS.length - 2 && t > STOPS[k + 1][0]) k++;
+    const a = STOPS[k], b = STOPS[k + 1], f = (b[0] - a[0]) ? (t - a[0]) / (b[0] - a[0]) : 0;
+    PAL[i] = 'rgb(' + (a[1] + (b[1] - a[1]) * f | 0) + ',' + (a[2] + (b[2] - a[2]) * f | 0) + ',' + (a[3] + (b[3] - a[3]) * f | 0) + ')';
+  }
+
+  const V_HOR = 0.47;            // horizon (fraction of viewport height) — a touch high so the
+                                // busiest band sits behind the hero, leaving calmer water mid-scroll
+  const SUN_U = 0.64;            // sun x (fraction of width) — right of centre, clear of the wordmark
+  const SUN_V = V_HOR - 0.035;   // sun sits just above the horizon
+  const SUN_R0 = 0.056, GSIG0 = 0.20;
+
+  let W, H, DPR, cols, rows, cw, ch, aspect, sunXh, bgGrad, sunR, gsig2;
   function resize() {
-    const cssW = (cv.parentElement ? cv.parentElement.clientWidth : 0) || host.clientWidth || innerWidth;
-    // the scene band — same formula as the CSS (min(58vh, 600px));
-    // computed here, not measured, so the inline size never feeds back into itself
-    const cssH = Math.min(Math.round(innerHeight * 0.58), 600);   // matches .hero__band CSS
-    if (cssW < 8 || cssH < 8) { W = H = 0; img = null; return; }   // zero-size viewport (prerender) — retry later
-    W = cv.width = cssW; H = cv.height = cssH;
-    cv.style.width = cssW + 'px'; cv.style.height = cssH + 'px';
-    bw = Math.ceil(cssW / CELL); bh = Math.ceil(cssH / CELL);
-    off = document.createElement('canvas'); off.width = bw; off.height = bh;
-    octx = off.getContext('2d');
-    img = octx.createImageData(bw, bh);
-    ctx.imageSmoothingEnabled = false;
+    DPR = Math.min(devicePixelRatio || 1, 2);
+    W = cv.width = Math.round(innerWidth * DPR);
+    H = cv.height = Math.round(innerHeight * DPR);
+    if (W < 8 || H < 8) { W = H = 0; return; }          // zero-size (prerender) — retry later
+    cv.style.width = innerWidth + 'px'; cv.style.height = innerHeight + 'px';
+    const cellCSS = innerWidth < 480 ? 11 : 13;          // bg cells: calm + cheap
+    const fontPx = cellCSS * DPR;
+    ctx.font = fontPx + 'px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.textBaseline = 'top';
+    cw = ctx.measureText('M').width || fontPx * 0.6;     // monospace advance (device px)
+    ch = fontPx;                                         // row height (device px)
+    cols = Math.ceil(W / cw) + 1; rows = Math.ceil(H / ch) + 1;
+    aspect = innerWidth / innerHeight; sunXh = SUN_U * aspect;
+    const sunScale = Math.min(1, Math.max(0.6, aspect)); // shrink the disc on tall narrow phones
+    sunR = SUN_R0 * sunScale;
+    const sig = GSIG0 * (0.72 + 0.28 * sunScale); gsig2 = sig * sig;
+    bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#0a0812'); bgGrad.addColorStop(V_HOR, '#150d16'); bgGrad.addColorStop(1, '#07060e');
+  }
+
+  // travelling-wave field: three incommensurate octaves => organic, non-repeating flow
+  function waves(u, d, t) {
+    return 0.55 * Math.sin(u * 6.2 + t * 0.60 + d * 3.0)
+         + 0.30 * Math.sin(u * 11.7 - t * 0.42 + d * 6.4 + 1.7)
+         + 0.16 * Math.sin(u * 19.3 + t * 0.83 + d * 2.1 + 4.1);
   }
 
   function render(tSec) {
-    if (!img) { resize(); if (!img) return; }   // buffer missing (zero-size viewport at init)
-    const hy = bh * V_HOR, sunY = bh * V_SUN, cx = bw * 0.5;
-    const sunR = Math.max(10, Math.min(bh * 0.14, bw * 0.075));
-    const d8 = img.data;
-    let p = 0;
-    for (let j = 0; j < bh; j++) {
-      const isSky = j <= hy;
-      for (let i = 0; i < bw; i++, p += 4) {
-        let v;
-        if (isSky) {
-          const g = j / hy;
-          v = 0.03 + 0.24 * g * g * g;                                   // near-black -> warm at horizon
-          const d = Math.hypot(i - cx, (j - sunY) * 1.25);
-          v += Math.max(0, 1 - d / (sunR * 2.8)) * 0.7;                  // halo
-          if (d < sunR) v = 1.05 + 0.35 * (1 - d / sunR);                // disc bright enough to survive the scrim
-          v += 0.025 * Math.sin(i * 0.05 + j * 0.35 + tSec * 0.2);       // faint cloud drift
+    if (!W) { resize(); if (!W) return; }
+    const breathe = rm ? 1 : (1 + 0.012 * Math.sin(tSec * 0.15));  // barely-there global swell
+    ctx.globalAlpha = 1; ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = 0.85;                                        // gentler per-glyph read (text sits over this)
+    let last = -1;
+    for (let row = 0; row < rows; row++) {
+      const v = row / (rows - 1), y = row * ch, dvh = v - SUN_V, below = v >= V_HOR, s = v / V_HOR;
+      let depth = 0, sm = 0;
+      if (below) { depth = (v - V_HOR) / (1 - V_HOR); const vm = 2 * V_HOR - v; sm = vm > 0 ? vm / V_HOR : 0; }
+      const wCol = 0.05 + depth * 0.32;                            // reflection widens downward
+      for (let col = 0; col < cols; col++) {
+        const u = col / (cols - 1), dxh = u * aspect - sunXh, dist = Math.sqrt(dxh * dxh + dvh * dvh);
+        const glow = Math.exp(-(dist * dist) / gsig2);             // radial sun glow 0..1
+        let b, temp;
+        if (!below) {
+          /* ---- SKY: dark top -> warm horizon, with a slow flowing shimmer ---- */
+          b = 0.05 + 0.34 * Math.pow(s, 1.9);
+          b += 0.15 * Math.exp(-Math.pow((v - V_HOR) / 0.12, 2));  // soft horizon band
+          b += 0.020 * waves(u, s, tSec * 0.35);                   // gentle atmosphere drift
+          temp = Math.pow(s, 1.2);
         } else {
-          const jj = 2 * hy - j;
-          const ii = i + Math.sin(j * 0.7 + tSec * 1.6) * 2.5;
-          const d = Math.hypot(ii - cx, (jj - sunY) * 1.25);
-          const depth = Math.max(0, 1 - (j - hy) / (bh - hy) * 1.15);    // reflection fades with depth
-          v = 0.02 + Math.max(0, 1 - d / (sunR * 2.2)) * 0.62 * depth;
-          if (d < sunR) v = 0.85 * depth;
-          v *= 0.5 + 0.5 * Math.sin(j * 1.3 + tSec * 2);                 // wave glints
+          /* ---- WATER: mirror of the sky, darker, undulating on the wave field ---- */
+          const wf = waves(u, depth, tSec);                        // -1..1 flowing
+          b = (0.02 + 0.42 * Math.pow(sm, 1.9)) * 0.5;
+          b += 0.12 * Math.exp(-Math.pow((v - V_HOR) / 0.11, 2));  // reflected horizon glow
+          b *= (1 - 0.40 * depth);                                 // darken toward foreground
+          const colFall = Math.exp(-Math.pow(dxh / wCol, 2));      // reflection under the sun
+          const band = 0.55 + 0.30 * Math.sin(Math.pow(depth, 0.6) * 15 - tSec * 0.32 + wf * 1.1);
+          const refl = colFall * band * (0.78 * (1 - depth * 0.5));
+          b += refl + 0.012 * wf * (1 - depth * 0.3);              // column + faint field ripple
+          temp = 0.9 * (1 - Math.pow(depth, 0.8)) + refl * 0.7;    // gold along the reflected path
         }
-        // dim the scene behind the wordmark/promise zone — lettering wins, always
-        const mdx = (i / bw - 0.5) * 2.6, mdy = (j / bh - 0.44) * 3.2;
-        v *= 1 - 0.45 * Math.exp(-(mdx * mdx + mdy * mdy));
-        if (v > ((BAYER[j & 3][i & 3] + 0.5) / 16) * 0.92) {
-          const c = PAL[Math.min(3, (v * 3.2) | 0)];
-          d8[p] = c[0]; d8[p + 1] = c[1]; d8[p + 2] = c[2];
-        } else {
-          d8[p] = BASE[0]; d8[p + 1] = BASE[1]; d8[p + 2] = BASE[2];
-        }
-        d8[p + 3] = 255;
+        b += 0.48 * glow; temp += 0.78 * glow;                     // glow lifts brightness + warmth
+        if (dist < sunR) { const c = 1 - dist / sunR; b += 0.4 * c; temp += 0.5 * c; }  // the disc
+        b *= breathe;
+        b = 1 - Math.exp(-1.35 * b);                               // soft tone-map: roll off highlights
+        if (b <= 0.012) continue;                                  // skip near-blank cells -> fast
+        if (b > 1) b = 1;
+        const chi = (b * RMAX + 0.5) | 0; if (chi <= 0) continue;
+        if (temp > 1) temp = 1; else if (temp < 0) temp = 0;
+        const ci = (temp * (NBUCK - 1) + 0.5) | 0;
+        if (ci !== last) { ctx.fillStyle = PAL[ci]; last = ci; }
+        ctx.fillText(RAMP[chi], col * cw, y);
       }
     }
-    octx.putImageData(img, 0, 0);
-    ctx.drawImage(off, 0, 0, W, H);
+    ctx.globalAlpha = 1;
   }
 
-  let lastT = 0, raf = 0, running = false, visible = true, scrolling = 0;
+  let lastT = 0, raf = 0, running = false;
   function loop(now) {
     if (!running) return;
-    if (W < 4 || H < 4) { resize(); raf = requestAnimationFrame(loop); return; }
-    if (now - lastT >= 32) { lastT = now; render(now / 1000); }   // ~30fps, calm + battery-friendly
+    if (!W || !H) { resize(); raf = requestAnimationFrame(loop); return; }
+    if (now - lastT >= 32) { lastT = now; render(now / 1000); }    // ~30fps, calm + battery-friendly
     raf = requestAnimationFrame(loop);
   }
   function start() { if (running || rm) return; running = true; lastT = 0; raf = requestAnimationFrame(loop); }
   function stop() { running = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
-  // Animate ONLY while parked at the very top. The moment the page scrolls at all, stop and
-  // stay stopped — repainting a big canvas mid-scroll is exactly what froze the software
-  // renderer before. It resumes when you settle back at the top. (NB: don't gate on
-  // document.hidden — some embedded/preview renderers report hidden permanently; the
-  // visibilitychange listener still pauses for real users who switch tabs.)
-  const atTop = () => (window.scrollY || document.documentElement.scrollTop || 0) < 40;
-  function maybeStart() { if (visible && !scrolling && atTop()) start(); }
 
   addEventListener('resize', () => { resize(); render(0); });
   resize();
-  render(0);            // ALWAYS paint one static frame synchronously — rAF never fires in
-                        // hidden/embedded documents, and the scene must exist without it
-  if (rm) return;       // reduced motion: keep the static frame, no animation
-  addEventListener('scroll', () => {
-    stop();
-    clearTimeout(scrolling);
-    scrolling = setTimeout(() => { scrolling = 0; maybeStart(); }, 200);
-  }, { passive: true });
-  document.addEventListener('visibilitychange', () => (document.hidden ? stop() : maybeStart()));
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver((es) => es.forEach((e) => { visible = e.isIntersecting; visible ? maybeStart() : stop(); }), { threshold: 0 }).observe(host);
-  } else { maybeStart(); }
+  render(0);          // always paint one static frame synchronously — rAF never fires when hidden
+  if (rm) return;     // reduced motion: keep the static frame, no animation
+  // A fixed canvas is never repainted by scrolling, so we let it flow continuously and only
+  // pause when the tab is truly backgrounded. (Don't gate the initial start on document.hidden —
+  // some embedded/preview renderers report hidden permanently and would freeze the scene.)
+  document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+  start();
 }
 
 // ---------- scroll-reveal: sections resolve in on first sight ----------
