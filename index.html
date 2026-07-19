@@ -20,9 +20,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- same Fraunces cut as the Proof site (portfolio-v2) so the two wordmarks match -->
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=mk18" />
+  <link rel="stylesheet" href="assets/styles.css?v=mk19" />
 </head>
 <body>
+  <!-- the live ASCII sunset — one fixed, full-viewport canvas that carries the whole site -->
+  <canvas id="asciiScene" aria-hidden="true"></canvas>
   <div class="grain" aria-hidden="true"></div>
 
   <!-- floating capsule nav -->
@@ -41,10 +43,8 @@
   <main id="top">
     <!-- ============ HERO: warm ASCII sunset + entry goal picker ============ -->
     <section class="hero" id="hero">
-      <!-- the scene band: wordmark alone on the sunset — nothing else competes with it -->
+      <!-- the wordmark stands alone on the live ASCII sunset that carries the whole site -->
       <div class="hero__band">
-        <canvas class="hero__scene" id="heroScene" aria-hidden="true"></canvas>
-        <div class="hero__seam" aria-hidden="true"></div>
         <div class="hero__scrim" aria-hidden="true"></div>
         <div class="hero__title">
           <span class="hero__eyebrow">Model selection, without the noise</span>
@@ -192,6 +192,6 @@
 
   <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
 
-  <script src="assets/app.js?v=mk18"></script>
+  <script src="assets/app.js?v=mk19"></script>
 </body>
 </html>
