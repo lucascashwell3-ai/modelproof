@@ -31,7 +31,8 @@ const LAB_LABEL = {
 };
 // order the lab chips by how commonly people reach for them (unknown vendors fall to the end)
 const LAB_ORDER = ['Anthropic', 'OpenAI', 'Google', 'xAI', 'DeepSeek', 'Meta', 'Alibaba (Qwen)', 'Moonshot AI', 'Mistral AI'];
-const PRIO_LABEL = { 6: 'cheapest', 28: 'value', 48: 'balanced', 85: 'best' };
+// budget is a continuum (the spring slider) — words are derived, not buckets
+function prioLabel(p) { return p <= 16 ? 'cheapest' : p <= 38 ? 'value' : p <= 66 ? 'balanced' : 'best'; }
 
 // which benchmark a goal cares about
 const GOAL_METRIC = {
@@ -176,7 +177,7 @@ const TASK_LABEL = { coding: 'Coding', research: 'Strategy', writing: 'Writing',
 // the read-only sentence the console echoes back — the tool restating your query
 function queryText() {
   const labs = state.labs.length ? state.labs.map((v) => LAB_LABEL[v] || v).join(' + ') : 'any lab';
-  return { task: TASK_LABEL[state.goal] || state.goal, budget: PRIO_LABEL[state.priority] || 'balanced', labs };
+  return { task: TASK_LABEL[state.goal] || state.goal, budget: prioLabel(state.priority), labs };
 }
 
 function renderResult() {
@@ -263,6 +264,7 @@ function renderVerdict() {
     ? 'Ranked mostly on price. Cheapest capable option first.'
     : 'Ranked on sourced benchmarks + price. Models with no sourced score for this task sit in the full table, not here.';
 
+  const tips = (top.use_well || []).slice(0, 3);
   box.innerHTML = `
     <div class="pick">
       <span class="pick__flag">Your pick</span>
@@ -275,6 +277,7 @@ function renderVerdict() {
         <div class="stat"><span class="stat__v">${fmtPrice(top.price_input)}</span><span class="stat__l">in / 1M tok</span></div>
         <div class="stat"><span class="stat__v">${fmtCtx(top.context_window)}</span><span class="stat__l">context</span></div>
       </div>
+      ${tips.length ? `<div class="pick__use"><h4>Use it well</h4><ul>${tips.map((t) => `<li>${t}</li>`).join('')}</ul></div>` : ''}
     </div>
     <div class="runners">
       ${runners.map((m) => { const rv = headlineStat(m, metric); return `
@@ -283,8 +286,11 @@ function renderVerdict() {
           <div class="runner__meta"><b>${rv.value}</b> ${rv.label} · <b>${fmtPrice(m.price_output)}</b>/1M out</div>
         </div>`; }).join('')}
     </div>
-    ${labsFootnote(top, metric)}
+    ${labKitHTML()}
+    ${upgradeCheck(top, metric)}
     <p class="rec-caption">${caption}</p>`;
+
+  tickStats(box);   // odometer the numbers from the previous pick's values
 
   box.querySelectorAll('[data-jump]').forEach((n) =>
     n.addEventListener('click', () => {
@@ -297,19 +303,68 @@ function renderVerdict() {
   renderChart();
 }
 
-// independence guardrail: when labs are constrained and a materially cheaper OR higher-scoring
-// model exists OUTSIDE them, state the fact — neutral, cost-first, never "switch to X".
-function labsFootnote(top, metric) {
+// ---------- "make the most of what you have": the per-task kit from the user's labs ----------
+function labKitHTML() {
+  if (!state.labs.length || !state.data) return '';
+  const mine = currentModels();
+  const rows = Object.keys(GOAL_METRIC).map((goal) => {
+    const ranked = score(mine, goal, state.priority);
+    if (!ranked.length) {
+      return `<div class="labkit__row labkit__row--none"><span class="labkit__goal">${TASK_LABEL[goal]}</span><span class="labkit__model">No sourced pick yet</span><span class="labkit__meta"></span></div>`;
+    }
+    const m = ranked[0].m;
+    return `<div class="labkit__row" data-jump="${m.id}"><span class="labkit__goal">${TASK_LABEL[goal]}</span><span class="labkit__model">${m.name}</span><span class="labkit__meta">${fmtPrice(m.price_output)}/1M out</span></div>`;
+  }).join('');
+  const who = state.labs.map((v) => LAB_LABEL[v] || v).join(' + ');
+  return `<div class="kitpanel">
+    <span class="kit__title">Make the most of ${who}</span>
+    <p class="kit__how">Your best model for each kind of work — tap a row for its full card and "use it well" notes.</p>
+    <div class="labkit">${rows}</div>
+  </div>`;
+}
+
+// number odometer: when the pick swaps, prices/scores count to their new value instead of
+// jumping. Keyed by the stat's label so values track across re-renders; skips "—" and
+// respects prefers-reduced-motion (plus renders mid-drag retarget smoothly).
+const _statPrev = {};
+function tickStats(scope) {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  scope.querySelectorAll('.pick .stat').forEach((st) => {
+    const el = st.querySelector('.stat__v'), label = st.querySelector('.stat__l');
+    if (!el || !label) return;
+    const key = label.textContent;
+    const m = /^(\$?)(\d+(?:\.\d+)?)\s*([%MK]?)$/.exec(el.textContent.trim());
+    if (!m) { delete _statPrev[key]; return; }
+    const to = parseFloat(m[2]), from = _statPrev[key];
+    _statPrev[key] = to;
+    if (reduce || from === undefined || from === to) return;
+    const pre = m[1], suf = m[3], dec = (m[2].split('.')[1] || '').length;
+    const t0 = performance.now(), dur = 440;
+    cancelAnimationFrame(el._tick || 0);
+    const step = (now) => {
+      const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 4);   // ease-out-quart
+      el.textContent = pre + (from + (to - from) * e).toFixed(dec) + suf;
+      if (k < 1) el._tick = requestAnimationFrame(step);
+    };
+    el._tick = requestAnimationFrame(step);
+  });
+}
+
+// the upgrade check — independence made visible. When labs are constrained: either a
+// plain-spoken "you're set" (the answer most tools won't give), or a factual, COST-FIRST
+// delta for the one model outside their labs that's materially better/cheaper. Never a nudge.
+function upgradeCheck(top, metric) {
   if (!state.labs.length) return '';
+  const set = `<div class="upcheck upcheck--set"><span class="upcheck__k">Upgrade check</span>You're set — nothing outside your labs is meaningfully better than <b>${top.name}</b> for this task at this budget.</div>`;
   const globalTop = (score(state.data.models, state.goal, state.priority)[0] || {}).m;
-  if (!globalTop || state.labs.includes(globalTop.vendor) || globalTop.id === top.id) return '';
+  if (!globalTop || state.labs.includes(globalTop.vendor) || globalTop.id === top.id) return set;
   const gp = globalTop.price_output, tp = top.price_output;
   const gCap = capVal(globalTop, metric), tCap = capVal(top, metric);
   const cheaper = !num(gp) && !num(tp) && gp <= tp * 0.8;
   const better = !num(gCap) && !num(tCap) && gCap > tCap;
-  if (!cheaper && !better) return '';
-  const gv = headlineStat(globalTop, metric);
-  return `<p class="rec-footnote">Outside your labs, <b>${globalTop.name}</b> scores ${gv.value} ${gv.label} at ${fmtPrice(gp)}/1M out — vs your pick's ${headlineStat(top, metric).value} at ${fmtPrice(tp)}. Your call.</p>`;
+  if (!cheaper && !better) return set;
+  const gv = headlineStat(globalTop, metric), tv = headlineStat(top, metric);
+  return `<div class="upcheck"><span class="upcheck__k">Upgrade check</span>Outside your labs: <b>${globalTop.name}</b> at ${fmtPrice(gp)}/1M out vs your pick's ${fmtPrice(tp)} — ${gv.value} ${gv.label} vs ${tv.value}. A fact, not a pitch; your call.</div>`;
 }
 
 function metricLabel(metric) {
@@ -355,7 +410,7 @@ function modelFactLine(m) {
 const DATA_URL = 'https://lucascashwell3-ai.github.io/modelproof/data/models.json';
 function buildAdvisorPrompt() {
   const asof = state.data.as_of || 'recently';
-  const prio = PRIO_LABEL[state.priority] || 'balanced';
+  const prio = prioLabel(state.priority);
   // facts list ALL models (so the advisor can name a cheaper option outside my labs), but MY SETUP
   // states my labs as a soft preference — the same "task + optional lab filter" the site uses.
   const scope = state.labs.length
@@ -363,8 +418,16 @@ function buildAdvisorPrompt() {
     : `I mostly work on ${GOAL_PLAIN[state.goal] || state.goal}. You may recommend from any model listed below.`;
   const list = state.data.models.slice().sort((a, b) => (num(b.coding_score) ? -1 : b.coding_score) - (num(a.coding_score) ? -1 : a.coding_score));
   const facts = list.map(modelFactLine).join('\n');
+  // "use it well" tips ride along for MY models (or the common flagships when no labs picked)
+  const tipPool = state.labs.length
+    ? list.filter((m) => state.labs.includes(m.vendor))
+    : list.filter((m) => COMMON_IDS.includes(m.id));
+  const tipLines = tipPool
+    .filter((m) => (m.use_well || []).length)
+    .map((m) => `- ${m.name}: ${m.use_well.join(' ')}`)
+    .join('\n');
 
-  return `You are my AI model-selection advisor. When I describe a task, tell me which model to use and why — optimizing for a "${prio}" balance of cost versus quality, and always honest about cost.
+  return `You are my AI model-selection advisor. When I describe a task, tell me which model to use and why — optimizing for a "${prio}" balance of cost versus quality, and always honest about cost. Your first job is making the most of what I already have; suggesting something new comes second.
 
 MY SETUP
 ${scope}
@@ -375,13 +438,17 @@ Before advising, fetch the live data at ${DATA_URL} and use those numbers — th
 MODEL FACTS — a snapshot from MODELproof, dated ${asof}. Prices are USD per 1M tokens. Benchmarks are directional (coding is a 0–100 blended score; GPQA is graduate-level reasoning). "n/a" means the figure wasn't publicly sourced — treat it as unknown, never guess. Verify anything cost-critical against the vendor's own pricing page.
 ${facts}
 
+HOW TO USE MY MODELS WELL — practical notes per model (from the same sourced data):
+${tipLines || '- (pick labs on the MODELproof site to get per-model usage notes here)'}
+
 HOW TO ADVISE ME
-1. For any task I describe, recommend ONE model in a sentence, with the reason.
-2. If a cheaper model is nearly as good for that task, name it and let me choose.
-3. Call it out when I'm about to use a premium model for something a cheap one handles well — save me money.
-4. Recommend on merit and cost only. Stay neutral; do not favor any company.
-5. Never invent a price or benchmark. If a number is "n/a", say it's unknown rather than guessing.
-6. This snapshot is dated ${asof}. If it is now much later and you couldn't fetch live data, remind me that AI prices and models change fast and to re-check current figures at ${DATA_URL}.`;
+1. For any task I describe, recommend ONE model in a sentence, with the reason — from my own models first.
+2. Then tell me HOW to use it for this task, using the notes above: when a thinking/reasoning mode earns its cost, when my cheap tier handles it fine, context-length and cache tactics, pricing cliffs to avoid.
+3. If a cheaper model I already have is nearly as good, name it — saving me money inside my own subscriptions comes before anything else.
+4. Only after that: if a model outside my setup is meaningfully better or much cheaper for the task, state it as a neutral, cost-first fact ("X does this at $A vs your $B") and let me decide. If nothing outside is meaningfully better, tell me plainly that I'm set.
+5. Recommend on merit and cost only. Stay neutral; do not favor any company.
+6. Never invent a price or benchmark. If a number is "n/a", say it's unknown rather than guessing.
+7. This snapshot is dated ${asof}. If it is now much later and you couldn't fetch live data, remind me that AI prices and models change fast and to re-check current figures at ${DATA_URL}.`;
 }
 
 // ---------- cost vs capability chart ----------
@@ -699,13 +766,13 @@ function renderFeed() {
   if (!feed) return;
   const rel = (state.data.releases || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
   if (!rel.length) { feed.innerHTML = '<li class="empty">No recent releases recorded.</li>'; return; }
-  feed.innerHTML = rel.map((r) => {
+  feed.innerHTML = rel.map((r, i) => {
     const w = relWhen(r.date);
     const title = r.source
       ? `<a href="${r.source}" target="_blank" rel="noopener">${r.title}<span class="rel__ext">↗</span></a>`
       : r.title;
     return `
-    <li class="rel">
+    <li class="rel" style="--i:${Math.min(i, 6)}">
       <div class="rel__when"><span class="rel__mon">${w.mon}</span><span class="rel__day">${w.day}</span></div>
       <div class="rel__card">
         ${r.vendor ? `<span class="rel__vendor">${r.vendor}</span>` : ''}
@@ -715,6 +782,17 @@ function renderFeed() {
       </div>
     </li>`;
   }).join('');
+
+  // staggered reveal: entries resolve in one after another on first sight (same
+  // .js-reveal gate + safety timeout discipline as the section reveals)
+  if (document.documentElement.classList.contains('js-reveal')) {
+    const items = feed.querySelectorAll('.rel');
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+    }), { threshold: 0.06 });
+    items.forEach((el2) => io.observe(el2));
+    setTimeout(() => items.forEach((el2) => el2.classList.add('is-in')), 3000);
+  }
 }
 
 // ---------- controls ----------
@@ -730,12 +808,47 @@ function setActive(attr, val) {
 function setGoal(goal) {
   state.goal = goal;
   setActive('data-goal', goal);
+  movePill();
   renderResult();
+}
+// budget slider: keep the input, its gold fill (--p) and the scale words in sync
+function syncBudgetUI() {
+  const r = $('#budgetRange');
+  if (!r) return;
+  if (+r.value !== state.priority) r.value = state.priority;
+  r.style.setProperty('--p', state.priority + '%');
+  const word = prioLabel(state.priority);
+  document.querySelectorAll('.budget__word').forEach((b) =>
+    b.classList.toggle('is-on', prioLabel(+b.getAttribute('data-bp')) === word));
 }
 function setPriority(p) {
   state.priority = +p;
-  setActive('data-p', p);
+  syncBudgetUI();
   renderResult();
+}
+// live-updating recommendation while dragging: renders are rAF-throttled so the
+// answer tracks the thumb without flooding the main thread.
+let _budgetRaf = 0;
+function onBudgetInput() {
+  const r = $('#budgetRange');
+  state.priority = +r.value;
+  syncBudgetUI();
+  if (_budgetRaf) return;
+  _budgetRaf = requestAnimationFrame(() => { _budgetRaf = 0; renderResult(); });
+}
+
+// ---------- sliding-pill indicator on the task control ----------
+// one gold pill glides behind the active segment (spring-eased); buttons stay transparent.
+function movePill() {
+  document.querySelectorAll('.segmented--goals').forEach((group) => {
+    const pill = group.querySelector('.seg-pill');
+    const act = group.querySelector('.seg.is-active');
+    if (!pill || !act) return;
+    pill.style.width = act.offsetWidth + 'px';
+    pill.style.transform = `translateX(${act.offsetLeft}px)`;
+    // first placement is instant; every one after glides (avoids an entrance animation)
+    if (!pill.classList.contains('is-ready')) requestAnimationFrame(() => pill.classList.add('is-ready'));
+  });
 }
 // labs are a multi-select filter: "All labs" clears the set; any vendor toggles in/out
 function setLabs(v) {
@@ -748,9 +861,19 @@ function wire() {
   document.querySelectorAll('[data-goal]').forEach((b) =>
     b.addEventListener('click', () => setGoal(b.getAttribute('data-goal')))
   );
-  document.querySelectorAll('[data-p]').forEach((b) =>
-    b.addEventListener('click', () => setPriority(b.getAttribute('data-p')))
+  // budget: spring slider + tap-to-jump scale words
+  const range = $('#budgetRange');
+  if (range) {
+    range.addEventListener('input', onBudgetInput);
+    syncBudgetUI();
+  }
+  document.querySelectorAll('.budget__word').forEach((b) =>
+    b.addEventListener('click', () => setPriority(b.getAttribute('data-bp')))
   );
+
+  // task pill follows layout changes (font load shifts widths; resizes reflow the grid)
+  addEventListener('resize', movePill);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(movePill);
 
   document.querySelectorAll('.tbl thead th[data-sort]').forEach((th) =>
     th.addEventListener('click', () => {
@@ -961,6 +1084,7 @@ async function boot() {
   if ($('#result')) renderResult();   // engine + comparator live on the home page only
   renderTable();             // full table lives on table.html; guarded no-op elsewhere
   renderFeed();
+  movePill();                // place the task pill once the layout is real
 }
 // robust boot: fire once on whichever lifecycle signal arrives first — some embedded
 // panes/bfcache restores swallow DOMContentLoaded, so belt-and-braces with load + a timer
