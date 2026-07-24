@@ -1,6 +1,49 @@
 {
-  "as_of": "2026-07-12",
+  "as_of": "2026-07-19",
   "models": [
+    {
+      "id": "kimi-k3",
+      "name": "Kimi K3",
+      "vendor": "Moonshot AI",
+      "released": "2026-07-16",
+      "context_window": 1000000,
+      "price_input": 3,
+      "price_output": 15,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "coding",
+        "agentic",
+        "long-context",
+        "vision"
+      ],
+      "strengths": [
+        "Front-end champion — #1 in the Frontend Code Arena (1679 Elo), ahead of Claude Fable 5, winning 6 of 7 frontend categories in blind dev testing",
+        "2.8T-param MoE (~16 of 896 experts active per token) — the largest open-weight model to date; 1M-token context with native vision",
+        "Cheap for its tier at $3/$15 per M, with ~$0.30/M cache-hit input (90%+ cache-hit rates typical in coding loops)"
+      ],
+      "weaknesses": [
+        "Its headline win is frontend/web-dev coding; broad benchmarks (SWE-bench Verified, GPQA) not yet published, so overall coding is a frontend-led estimate",
+        "Open weights not released until ~2026-07-27 — 'open-weight' isn't yet self-hostable",
+        "Output at $15/M is well above the cheap open tiers (DeepSeek/Qwen) for bulk work"
+      ],
+      "verdict": "Reach for it for frontend and web-dev coding, where it tops the arena ahead of even Fable 5 at a fraction of the price — but treat its broader coding strength as unproven until SWE-bench lands.",
+      "confidence": "medium",
+      "sources": [
+        "https://www.tomshardware.com/tech-industry/artificial-intelligence/moonshot-releases-2-8-trillion-parameter-kimi-k3",
+        "https://openrouter.ai/moonshotai/kimi-k3",
+        "https://benchlm.ai/models/kimi-3"
+      ],
+      "coding_score": 96,
+      "coding_basis": "Frontend Code Arena #1 (1679 Elo), ahead of Fable 5, winning 6 of 7 frontend categories; general SWE-bench Verified not yet published — score is frontend-led.",
+      "coding_confidence": "medium"
+    },
     {
       "id": "claude-fable-5",
       "name": "Claude Fable 5",
@@ -889,6 +932,14 @@
   ],
   "releases": [
     {
+      "date": "2026-07-16",
+      "vendor": "Moonshot AI",
+      "title": "Moonshot releases Kimi K3",
+      "summary": "2.8T-param open-weight MoE (largest to date) at $3/$15 per M, 1M context, native vision. Tops the Frontend Code Arena (1679 Elo) ahead of Claude Fable 5, winning 6 of 7 frontend categories. Full weights due ~July 27; SWE-bench Verified not yet published.",
+      "source": "https://www.tomshardware.com/tech-industry/artificial-intelligence/moonshot-releases-2-8-trillion-parameter-kimi-k3",
+      "why": "If you build front-end or web UI: the new top pick for frontend coding — it edges out even Fable 5 in blind tests, at a fraction of the price ($3/$15)."
+    },
+    {
       "date": "2026-07-09",
       "vendor": "OpenAI",
       "title": "GPT-5.6 (Sol/Terra/Luna) reaches general availability",
@@ -992,7 +1043,7 @@
     "mmlu_pro": "MMLU-Pro — % on a harder, multi-discipline knowledge and reasoning benchmark.",
     "lmarena_elo": "LMArena text Elo — human head-to-head preference rating (higher = preferred more often)."
   },
-  "notes": "Data snapshot 2026-07-12. Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: most come from third-party aggregators (Artificial Analysis, Vellum, llm-stats, vals.ai), not primary vendor cards, and several 2026 models publish only agentic evals (SWE-bench Pro, Terminal-Bench) that don't map to SWE-bench Verified — those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Note: Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it.",
+  "notes": "Data snapshot 2026-07-19. Kimi K3 (released 2026-07-16) is scored on its frontend-coding lead — #1 in the Frontend Code Arena ahead of Fable 5; its $3/$15 pricing and 1M context are sourced, but SWE-bench Verified is not yet published and open weights are due ~2026-07-27, so it carries medium overall confidence. Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: most come from third-party aggregators (Artificial Analysis, Vellum, llm-stats, vals.ai), not primary vendor cards, and several 2026 models publish only agentic evals (SWE-bench Pro, Terminal-Bench) that don't map to SWE-bench Verified — those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Note: Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it.",
   "usage": {
     "as_of": "2026-06 → 07",
     "basis": "No single \"most used\" exists — each lens measures a different population and ranks models differently. Figures are ~June–July 2026 and lag a couple of weeks, so the newest models (GPT-5.6, Grok 4.5, Sonnet 5) aren't ranked yet.",

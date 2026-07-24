@@ -7,7 +7,7 @@ pay for — and it gives you a straight answer, not a leaderboard.
 Not another benchmark race. The point is the *decision*. Sibling to **DATproof** in the Proof
 portfolio.
 
-Data snapshot **2026-07-12** · 21 models across 9 vendors.
+Data snapshot **2026-07-19** · 22 models across 9 vendors.
 
 ## Why this exists
 
@@ -34,7 +34,7 @@ use.*
 - **Who's actually using what** — three honest lenses (developer API tokens, human-preference
   votes, consumer web traffic) that rank models *completely differently*. There's no single "most
   used" — it depends who you count.
-- **Compare everything** — a sortable table that defaults to one flagship per major lab (full 21
+- **Compare everything** — a sortable table that defaults to one flagship per major lab (full 22
   one click away), with per-model verdicts, strengths, weaknesses, benchmarks, sources, and a
   confidence flag.
 - **What changed lately** — a dated timeline of the releases worth knowing about, each with a
