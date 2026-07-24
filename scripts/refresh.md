@@ -96,6 +96,43 @@ Usage is a **proxy**, not market share — each lens measures a different popula
 disagree. Newest models often have no usage yet (data lags a couple of weeks); that's expected.
 Re-run the usage/currency research pass to refresh it.
 
+## Schema: `effort_ladders` (added 2026-07-24)
+
+A ladder is a **published** cost-vs-performance curve: one model run at several effort /
+reasoning settings, so a reader can see what extra spend actually buys. It powers panel 03.
+
+```jsonc
+{
+  "id": "frontier-bench-v0-1-agentic-coding",
+  "suite": "Frontier-Bench v0.1",      // benchmark name
+  "task": "Agentic coding",            // what it measures, in plain words
+  "x_label": "…", "y_label": "…",      // axis captions
+  "as_of": "2026-07-23",
+  "publisher": "Anthropic",            // WHO ran it
+  "source_kind": "vendor-reported",    // or "third-party"
+  "source": "https://…",               // the figure/page itself
+  "confidence": "low|medium|high",
+  "method":  "how the numbers were obtained + error bars",
+  "harness": "the run conditions the publisher stated (verbatim-ish)",
+  "caveat":  "who benefits from this benchmark looking the way it does",
+  "levels":  ["low","medium","high","xhigh","max"],
+  "series":  [{ "model_id": "claude-opus-5", "label": "Opus 5", "color": "#e05c3e",
+                "points": [{ "effort": "low", "cost": 5.63, "score": 25.8 }, …] }]
+}
+```
+
+Rules — `scripts/validate-data.mjs` enforces the first four and CI blocks on them:
+- `suite`, `source`, `publisher`, `method`, `confidence` are **mandatory**. A curve without
+  provenance doesn't ship; the panel renders all of it on screen under the chart.
+- Every `model_id` must exist in `models[]`. Every point needs a real `cost` **and** `score` —
+  drop an incomplete rung, never interpolate one.
+- **Never model a ladder from list prices.** Cost-per-attempt depends on token usage per run,
+  which pricing pages don't tell you. If the lab hasn't published the curve, there is no curve.
+- Digitising a published *figure* is allowed (that's how the Frontier-Bench one was built) but
+  say so in `method`, give the error bars, and anchor it to any numerically-quoted endpoints.
+- `caveat` is not optional politeness. A vendor benchmarking its own models against rivals is
+  the normal case here — say who ran it and what that means for reading it.
+
 ## After refreshing
 
 1. Overwrite `data/models.json`.
@@ -125,10 +162,14 @@ Run the fan-out refresh prompt above (regenerates the whole file, then adversari
 
 ### Known dated triggers
 - **2026-09-01**: Claude Sonnet 5 intro pricing ($2/$10) rises to $3/$15 — update on that day.
+- **Claude Opus 5 benchmarks**: added 2026-07-23 with blank SWE-bench/GPQA cells and a
+  medium-confidence, agentic-suite-led coding score. Re-check once third parties publish —
+  that's the trigger to promote it to `high`.
 
 ### Non-negotiables (same as ever)
 - Blank beats guessed. Pricing traces to an official vendor page.
 - Neutral voice: a release entry must read as information, never promotion of a lab.
+- An effort ladder ships with its publisher, harness, method and caveat, or it doesn't ship.
 
 ### Wanted next (Lucas, 2026-07-12): per-model usage volumes
 In the weekly pass, also pull **per-model monthly token/request volumes from OpenRouter's

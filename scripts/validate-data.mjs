@@ -36,10 +36,34 @@ for (const m of data.models) {
 }
 for (const r of data.releases || []) if (!r.source) W(`release "${r.title}": no source URL`);
 
+// 7. effort ladders: a published cost/performance curve must carry its provenance, and
+//    every plotted point must be a real number against a model we actually list.
+const modelIds = new Set(data.models.map((m) => m.id));
+for (const L of data.effort_ladders || []) {
+  const id = L.id || L.suite || '(unnamed ladder)';
+  for (const field of ['suite', 'source', 'publisher', 'method', 'confidence']) {
+    if (!L[field]) E(`ladder ${id}: missing ${field} — a ladder without provenance can't ship`);
+  }
+  if (L.confidence && !CONF.includes(L.confidence)) E(`ladder ${id}: bad confidence "${L.confidence}"`);
+  if (!Array.isArray(L.series) || !L.series.length) E(`ladder ${id}: no series[]`);
+  for (const s of L.series || []) {
+    if (!modelIds.has(s.model_id)) E(`ladder ${id}: series "${s.label || s.model_id}" points at unknown model_id "${s.model_id}"`);
+    if (!Array.isArray(s.points) || s.points.length < 2) { E(`ladder ${id}/${s.model_id}: needs at least 2 points to be a curve`); continue; }
+    for (const p of s.points) {
+      if (num(p.cost) || num(p.score)) E(`ladder ${id}/${s.model_id}: point "${p.effort}" has a blank cost or score — drop the point, don't guess it`);
+      if (p.cost <= 0) E(`ladder ${id}/${s.model_id}: point "${p.effort}" cost ${p.cost} must be > 0 (log axis)`);
+      if (Array.isArray(L.levels) && !L.levels.includes(p.effort)) W(`ladder ${id}/${s.model_id}: effort "${p.effort}" not in declared levels[]`);
+    }
+    const costs = s.points.map((p) => p.cost);
+    if (costs.some((c, i) => i && c < costs[i - 1])) W(`ladder ${id}/${s.model_id}: cost isn't rising with effort — check the reading`);
+  }
+}
+
 if (warnings.length) { console.log('⚠ warnings (non-blocking):'); warnings.forEach((w) => console.log('  - ' + w)); }
 if (errors.length) {
   console.error(`\n✗ ${errors.length} honesty-gate error(s) — blocking:`);
   errors.forEach((e) => console.error('  - ' + e));
   process.exit(1);
 }
-console.log(`\n✓ honesty gate passed: ${data.models.length} models, ${(data.releases || []).length} releases, 0 errors.`);
+const ladderPts = (data.effort_ladders || []).reduce((n, L) => n + (L.series || []).reduce((k, s) => k + (s.points || []).length, 0), 0);
+console.log(`\n✓ honesty gate passed: ${data.models.length} models, ${(data.releases || []).length} releases, ${(data.effort_ladders || []).length} effort ladder(s) / ${ladderPts} points, 0 errors.`);

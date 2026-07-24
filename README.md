@@ -7,7 +7,7 @@ pay for — and it gives you a straight answer, not a leaderboard.
 Not another benchmark race. The point is the *decision*. Sibling to **DATproof** in the Proof
 portfolio.
 
-Data snapshot **2026-07-24** · 22 models across 9 vendors.
+Data snapshot **2026-07-24** · 23 models across 9 vendors.
 
 ## Why this exists
 
@@ -31,10 +31,16 @@ use.*
   snapshot of the model facts + honest, neutral advice rules.
 - **The buy zone** — every model plotted, price (→) vs. capability (↑). Top-left = cheap *and*
   capable. Your pick is highlighted; hover any dot for detail.
+- **What more effort actually buys** — the newest models expose an *effort* dial that trades money
+  for accuracy per request. Each model becomes a curve, with a point at every setting from `low` to
+  `max`, on a log cost axis. The shape is the point: it shows where a model stops converting spend
+  into accuracy (Opus 5 peaks at `xhigh` — `max` costs 16% more and scores *lower*). Only ladders a
+  lab has actually published are plotted; the publisher, harness, method and caveat ride along under
+  the chart, and `scripts/validate-data.mjs` blocks any curve missing them.
 - **Who's actually using what** — three honest lenses (developer API tokens, human-preference
   votes, consumer web traffic) that rank models *completely differently*. There's no single "most
   used" — it depends who you count.
-- **Compare everything** — a sortable table that defaults to one flagship per major lab (full 22
+- **Compare everything** — a sortable table that defaults to one flagship per major lab (full 23
   one click away), with per-model verdicts, strengths, weaknesses, benchmarks, sources, and a
   confidence flag.
 - **What changed lately** — a dated timeline of the releases worth knowing about, each with a
