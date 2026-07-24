@@ -461,6 +461,55 @@ a { color: inherit; text-decoration: none; }
 .dot.is-frontier .dot__label { fill: var(--gold-2); opacity: 0.92; }
 .dot.is-frontier:hover .dot__label { fill: var(--gold); opacity: 1; }
 
+/* ---------- effort ladders ----------
+   One curve per model, one dot per effort setting. Series carry their own colour
+   (from the data), so this is the one place the single-gold rule bends — the whole
+   point is telling four curves apart. Everything else stays house. */
+.lad-suites { display: flex; gap: 7px; flex-wrap: wrap; }
+.lad-suite { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.03em; color: var(--ink-3);
+  background: var(--glass-2); border: 1px solid var(--glass-line); border-radius: 999px;
+  padding: 6px 12px; cursor: pointer; transition: color .18s var(--ease), border-color .18s var(--ease); }
+.lad-suite:hover { color: var(--ink); border-color: var(--gold-line); }
+.lad-suite.is-on { color: var(--on-metal); background: var(--gold-metal); box-shadow: var(--metal-sheen); border-color: transparent; }
+.lad-suite.is-static { cursor: default; }
+.lad-suite.is-static:hover { color: var(--ink-3); border-color: var(--glass-line); }
+
+.lad-legend { margin-bottom: 12px; }
+.lad-chip { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 12px;
+  color: var(--ink-2); background: none; border: 1px solid transparent; border-radius: 999px;
+  padding: 4px 10px; cursor: pointer; transition: opacity .18s var(--ease), border-color .18s var(--ease); }
+.lad-chip i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.lad-chip:hover { border-color: var(--glass-line); color: var(--ink); }
+.lad-chip.is-off { opacity: 0.38; text-decoration: line-through; }
+
+.lad-series { transition: opacity .2s var(--ease); }
+.chart.is-focus .lad-series { opacity: 0.26; }
+.chart.is-focus .lad-series.is-hot { opacity: 1; }
+.lad-line { transition: stroke-width .2s var(--ease); }
+.lad-series.is-hot .lad-line { stroke-width: 3.2; }
+.lad-pt { cursor: pointer; }
+.lad-dot { transition: r .25s var(--spring); }
+.lad-pt:hover .lad-dot { r: 7.4; }
+.lad-pt:hover .lad-ring { opacity: 0.55; }
+.lad-ring { transition: opacity .2s var(--ease); }
+.lad-name { font-family: var(--mono); font-size: 11.5px; font-weight: 500; pointer-events: none; }
+
+/* the derived read — what each curve says, computed from the points, not written by hand */
+.lad-read { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 9px;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); }
+.lad-read li { font-size: 0.9rem; color: var(--ink-2); line-height: 1.5;
+  background: var(--glass-2); border: 1px solid var(--glass-line); border-left-width: 2px;
+  border-radius: var(--r-sm); padding: 10px 13px; }
+.lad-read em { color: var(--ink); font-style: normal; font-family: var(--mono); font-size: 0.86em;
+  background: rgba(255,255,255,0.05); border-radius: 4px; padding: 1px 5px; }
+
+.lad-source { margin: 18px 0 0; font-size: 0.83rem; line-height: 1.6; color: var(--ink-3);
+  border-top: 1px solid var(--line-soft); padding-top: 13px; max-width: 62rem; }
+.lad-source b { color: var(--ink-2); font-weight: 500; }
+.lad-source a { color: var(--gold-2); }
+.lad-source__block { display: block; margin-top: 5px; }
+.lad-source__warn { color: var(--ink-4); }
+
 /* ---------- side-by-side comparator ---------- */
 .cmp-picker { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 20px; }
 .cmp-board-wrap { overflow-x: auto; border: 1px solid var(--glass-line); border-radius: var(--r-lg);
@@ -667,6 +716,15 @@ a { color: inherit; text-decoration: none; }
   .lenses { grid-template-columns: 1fr; }
 }
 @media (max-width: 860px) {
+  /* four labelled curves squeezed into a phone width turn into unreadable 4px type.
+     Pan instead of shrink — same answer the comparator board uses. */
+  #effortChart { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
+  #effortChart svg { min-width: 720px; }
+  #effortChart::after { content: 'swipe the chart →'; display: block; font-family: var(--mono);
+    font-size: 10.5px; color: var(--ink-4); text-align: right; padding: 2px 4px 0; }
+  .lad-read { grid-template-columns: 1fr; }
+  .panel__head { flex-direction: column; align-items: flex-start; }
+
   .hero { padding: 92px 16px 56px; }
   .ask__row { gap: 9px; }
   .runners { grid-template-columns: 1fr; }

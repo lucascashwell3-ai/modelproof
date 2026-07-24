@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- same Fraunces cut as the Proof site (portfolio-v2) so the two wordmarks match -->
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=mk20" />
+  <link rel="stylesheet" href="assets/styles.css?v=mk21" />
 </head>
 <body>
   <!-- the live ASCII sunset — one fixed, full-viewport canvas that carries the whole site -->
@@ -132,7 +132,7 @@
       </div>
       <div class="cmp-picker" id="cmpPicker" aria-label="Choose models to compare"></div>
       <div class="cmp-board-wrap"><div class="cmp-board" id="cmpBoard" aria-live="polite"></div></div>
-      <a class="browse-all" href="table.html">Browse the full table — all 22 models, sortable <span aria-hidden="true">→</span></a>
+      <a class="browse-all" href="table.html">Browse the full table — all <span id="allCount">23</span> models, sortable <span aria-hidden="true">→</span></a>
     </section>
 
     <!-- COST vs CAPABILITY quadrant -->
@@ -152,11 +152,31 @@
       <div class="chart" id="chart"></div>
     </section>
 
+    <!-- EFFORT LADDERS — cost vs performance at each effort level -->
+    <section class="panel" id="effort">
+      <div class="panel__head">
+        <div>
+          <h2 class="panel__title"><span class="panel__no">03</span>What more effort actually buys</h2>
+          <p class="panel__desc">
+            The newest models let you turn a dial — <em>effort</em> — that trades money for accuracy on
+            every request. Each line is one model; each dot is one setting of that dial, from
+            <em>low</em> to <em>max</em>. Flat line = you're paying more for nothing.
+            <span class="dim">Click a name to isolate it; hover any dot for the step-by-step cost.</span>
+          </p>
+        </div>
+        <div class="lad-suites" id="effortMeta"></div>
+      </div>
+      <div class="legend lad-legend" id="effortLegend"></div>
+      <div class="chart" id="effortChart"></div>
+      <ul class="lad-read" id="effortRead"></ul>
+      <p class="lad-source" id="effortSource"></p>
+    </section>
+
     <!-- LATEST RELEASES -->
     <section class="panel" id="releases">
       <div class="panel__head">
         <div>
-          <h2 class="panel__title"><span class="panel__no">03</span>What changed lately</h2>
+          <h2 class="panel__title"><span class="panel__no">04</span>What changed lately</h2>
           <p class="panel__desc">The releases actually worth knowing about — newest first.</p>
         </div>
       </div>
@@ -198,6 +218,6 @@
 
   <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
 
-  <script src="assets/app.js?v=mk20"></script>
+  <script src="assets/app.js?v=mk21"></script>
 </body>
 </html>

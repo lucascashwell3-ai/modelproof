@@ -2,6 +2,59 @@
   "as_of": "2026-07-24",
   "models": [
     {
+      "id": "claude-opus-5",
+      "name": "Claude Opus 5",
+      "vendor": "Anthropic",
+      "released": "2026-07-23",
+      "context_window": 1000000,
+      "price_input": 5,
+      "price_output": 25,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "coding",
+        "agentic",
+        "reasoning",
+        "long-context",
+        "research"
+      ],
+      "strengths": [
+        "Tops Anthropic's Frontier-Bench v0.1 agentic-coding run at 43.3% — above Claude Fable 5 (33.7%) and more than double Opus 4.8 (18.7%), at a lower cost per task",
+        "Fable-class coding at half Fable's price ($5/$25 vs $10/$50) — on CursorBench 3.2 at max effort it lands within 0.5% of Fable 5's peak score at about half the cost per task",
+        "Five-rung effort dial (low → max) so you can trade cost against capability per request; low/medium are unusually strong on this model",
+        "1M-token context as both default and maximum, 128K max output, and a 512-token prompt-cache minimum (half Opus 4.8's)"
+      ],
+      "weaknesses": [
+        "Per-benchmark public numbers are thin — released 2026-07-23, so SWE-bench Verified, GPQA and the rest aren't published or third-party-verified yet; the coding score is agentic-suite-led, not SWE-bench-anchored",
+        "The headline Frontier-Bench comparison is Anthropic's own internal run on its own harness — directional for cross-lab ranking, not settled",
+        "Still Opus-priced: $5/$25 is far above Sonnet 5 or the open tiers for bulk work",
+        "Thinking is now on by default, and disabling it is only allowed at 'high' effort or below — quiet cost and behaviour change if you're porting Opus 4.8 code across"
+      ],
+      "verdict": "The new default for hard coding and agent work: it matches or beats Fable 5 on the agentic suites its own lab publishes, at half the price — just treat the benchmark picture as early until third parties verify it.",
+      "confidence": "medium",
+      "sources": [
+        "https://www.anthropic.com/news/claude-opus-5",
+        "https://platform.claude.com/docs/en/about-claude/pricing",
+        "https://www.cnbc.com/2026/07/24/anthropic-claude-opus-5-ai-fable-5-cost.html",
+        "https://venturebeat.com/orchestration/anthropic-launches-claude-opus-5-a-cheaper-ai-model-for-coding-agents-and-enterprise-workflows"
+      ],
+      "coding_score": 95,
+      "coding_basis": "Frontier-Bench v0.1 43.3% (#1, ahead of Fable 5's 33.7%) and CursorBench 3.2 within 0.5% of Fable 5's peak at max effort — calibrated against Fable 5 (95). SWE-bench Verified not yet published, so this is an agentic-suite-led estimate, not a SWE-bench number.",
+      "coding_confidence": "medium",
+      "use_well": [
+        "Start at 'xhigh' effort for coding and agentic work, 'high' elsewhere — then sweep down. Low and medium punch well above their weight here, and effort is the main cost lever.",
+        "Give it the whole task spec in one first message and let it run — it's built for long autonomous sessions, and drip-feeding the task across turns costs more and works less well.",
+        "Thinking is ON by default now (it wasn't on Opus 4.8) — so re-check your max_tokens, or responses can truncate mid-answer.",
+        "It verifies its own work without being asked. Delete any 'double-check your answer' instructions you carried over — they now cause redundant work."
+      ]
+    },
+    {
       "id": "kimi-k3",
       "name": "Kimi K3",
       "vendor": "Moonshot AI",
@@ -1028,6 +1081,14 @@
   ],
   "releases": [
     {
+      "date": "2026-07-23",
+      "vendor": "Anthropic",
+      "title": "Anthropic releases Claude Opus 5",
+      "summary": "Opus-tier pricing ($5/$25 per M, same as Opus 4.8) with Fable-class coding: 43.3% on Anthropic's Frontier-Bench v0.1 agentic-coding run vs Fable 5's 33.7% and Opus 4.8's 18.7%, and within 0.5% of Fable 5's peak CursorBench 3.2 score at max effort — at roughly half Fable's cost per task. 1M context, 128K output, five effort levels (low → max). Per-benchmark public numbers (SWE-bench Verified, GPQA) not published yet.",
+      "source": "https://www.anthropic.com/news/claude-opus-5",
+      "why": "If you pay for Claude: this is the new default for hard coding and agent work — Fable-level results at half the price. If you were paying Fable's $10/$50 for coding, check whether Opus 5 covers it."
+    },
+    {
       "date": "2026-07-16",
       "vendor": "Moonshot AI",
       "title": "Moonshot releases Kimi K3",
@@ -1139,7 +1200,7 @@
     "mmlu_pro": "MMLU-Pro — % on a harder, multi-discipline knowledge and reasoning benchmark.",
     "lmarena_elo": "LMArena text Elo — human head-to-head preference rating (higher = preferred more often)."
   },
-  "notes": "Data snapshot 2026-07-24 (all vendor list prices re-verified 2026-07-24; the 2026-07-20 auto-check's six OpenRouter price flags were all confirmed to be provider pass-through, not list-price changes). Kimi K3 (released 2026-07-16) is scored on its frontend-coding lead — #1 in the Frontend Code Arena ahead of Fable 5; its $3/$15 pricing and 1M context are sourced, but SWE-bench Verified is not yet published and open weights are due ~2026-07-27, so it carries medium overall confidence. Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: most come from third-party aggregators (Artificial Analysis, Vellum, llm-stats, vals.ai), not primary vendor cards, and several 2026 models publish only agentic evals (SWE-bench Pro, Terminal-Bench) that don't map to SWE-bench Verified — those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Note: Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it.",
+  "notes": "Data snapshot 2026-07-24. Claude Opus 5 (released 2026-07-23) is added at Anthropic's published $5/$25 pricing, which multiple outlets corroborate as half Fable 5's rate; its per-benchmark numbers (SWE-bench Verified, GPQA) are not published or third-party-verified yet, so those cells are blank and its coding score is an agentic-suite-led estimate at medium confidence. Data snapshot 2026-07-24 (all vendor list prices re-verified 2026-07-24; the 2026-07-20 auto-check's six OpenRouter price flags were all confirmed to be provider pass-through, not list-price changes). Kimi K3 (released 2026-07-16) is scored on its frontend-coding lead — #1 in the Frontend Code Arena ahead of Fable 5; its $3/$15 pricing and 1M context are sourced, but SWE-bench Verified is not yet published and open weights are due ~2026-07-27, so it carries medium overall confidence. Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: most come from third-party aggregators (Artificial Analysis, Vellum, llm-stats, vals.ai), not primary vendor cards, and several 2026 models publish only agentic evals (SWE-bench Pro, Terminal-Bench) that don't map to SWE-bench Verified — those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Note: Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it.",
   "usage": {
     "as_of": "2026-06 → 07",
     "basis": "No single \"most used\" exists — each lens measures a different population and ranks models differently. Figures are ~June–July 2026 and lag a couple of weeks, so the newest models (GPT-5.6, Grok 4.5, Sonnet 5) aren't ranked yet.",
@@ -1207,5 +1268,161 @@
     ]
   },
   "coding_score_note": "Coding score (0–100) is a unified, comparable coding-ability estimate. Where an official SWE-bench Verified % exists it IS that number (high confidence). Where it doesn't — several strong 2026 models ship before formal benchmarks — it's estimated from sourced signals (Artificial Analysis Coding Index, LMArena Code Elo, SWE-bench Pro, LiveCodeBench) calibrated against the benchmarked models (medium confidence), or expert consensus (low). Each row shows its basis and confidence. These signals sometimes disagree — treat medium/low scores as directional.",
-  "use_well_note": "use_well = practical, plain-English guidance on getting the most from a model you already have. Derived from the model's sourced pricing, context, cache and mode facts above (plus vendor-documented features like Claude's adaptive thinking) — guidance, not benchmarks. Same independence rule: factual, cost-first, never promotional."
+  "use_well_note": "use_well = practical, plain-English guidance on getting the most from a model you already have. Derived from the model's sourced pricing, context, cache and mode facts above (plus vendor-documented features like Claude's adaptive thinking) — guidance, not benchmarks. Same independence rule: factual, cost-first, never promotional.",
+  "effort_ladders": [
+    {
+      "id": "frontier-bench-v0-1-agentic-coding",
+      "suite": "Frontier-Bench v0.1",
+      "task": "Agentic coding",
+      "x_label": "Cost per attempt (USD, log scale)",
+      "y_label": "Score (%)",
+      "as_of": "2026-07-23",
+      "publisher": "Anthropic",
+      "source_kind": "vendor-reported",
+      "source": "https://www.anthropic.com/news/claude-opus-5",
+      "confidence": "medium",
+      "method": "Values digitised from the published figure in Anthropic's Claude Opus 5 announcement — point positions read off the chart, so treat costs as ±~5% and scores as ±~0.5 points. The max-effort endpoints are exact: 43.3 / 33.7 / 18.7 are quoted numerically in the launch coverage and match the plotted points, which is what anchors the rest of the reading.",
+      "harness": "Internal run of Frontier-Bench v0.1 on the mini-SWE-agent harness with a GKE backend; mean reward over 5 attempts per task. Opus 4.8 served as fallback on safety-classifier refusals for Opus 5 and Fable 5.",
+      "caveat": "Anthropic's own benchmark, own harness, own run — and three of the four models plotted are its own. Read it for the SHAPE of each model's cost/quality curve (where extra spend stops buying accuracy), not as a settled cross-lab ranking. No third party has reproduced it.",
+      "levels": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "series": [
+        {
+          "model_id": "claude-opus-5",
+          "label": "Opus 5",
+          "color": "#e05c3e",
+          "points": [
+            {
+              "effort": "low",
+              "cost": 5.63,
+              "score": 25.8
+            },
+            {
+              "effort": "medium",
+              "cost": 8.2,
+              "score": 35.0
+            },
+            {
+              "effort": "high",
+              "cost": 11.14,
+              "score": 39.5
+            },
+            {
+              "effort": "xhigh",
+              "cost": 14.18,
+              "score": 44.3
+            },
+            {
+              "effort": "max",
+              "cost": 16.48,
+              "score": 43.3
+            }
+          ]
+        },
+        {
+          "model_id": "claude-fable-5",
+          "label": "Fable 5",
+          "color": "#e8a93a",
+          "points": [
+            {
+              "effort": "low",
+              "cost": 10.17,
+              "score": 18.1
+            },
+            {
+              "effort": "medium",
+              "cost": 11.5,
+              "score": 25.0
+            },
+            {
+              "effort": "high",
+              "cost": 14.18,
+              "score": 29.1
+            },
+            {
+              "effort": "xhigh",
+              "cost": 18.35,
+              "score": 31.6
+            },
+            {
+              "effort": "max",
+              "cost": 28.2,
+              "score": 33.7
+            }
+          ]
+        },
+        {
+          "model_id": "claude-opus-4-8",
+          "label": "Opus 4.8",
+          "color": "#3f7fe0",
+          "points": [
+            {
+              "effort": "low",
+              "cost": 4.74,
+              "score": 6.7
+            },
+            {
+              "effort": "medium",
+              "cost": 7.17,
+              "score": 9.7
+            },
+            {
+              "effort": "high",
+              "cost": 8.52,
+              "score": 12.9
+            },
+            {
+              "effort": "xhigh",
+              "cost": 11.02,
+              "score": 15.5
+            },
+            {
+              "effort": "max",
+              "cost": 15.62,
+              "score": 18.7
+            }
+          ]
+        },
+        {
+          "model_id": "gpt-5-6-sol",
+          "label": "GPT-5.6 Sol",
+          "color": "#9aa0ab",
+          "level_note": "OpenAI exposes its own reasoning-effort settings, not Anthropic's five names — these are the rungs as Anthropic plotted them, so the labels are positional rather than an exact setting-for-setting match.",
+          "points": [
+            {
+              "effort": "low",
+              "cost": 1.0,
+              "score": 2.1
+            },
+            {
+              "effort": "medium",
+              "cost": 2.52,
+              "score": 14.3
+            },
+            {
+              "effort": "high",
+              "cost": 3.35,
+              "score": 22.6
+            },
+            {
+              "effort": "xhigh",
+              "cost": 5.63,
+              "score": 29.2
+            },
+            {
+              "effort": "max",
+              "cost": 11.14,
+              "score": 37.3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "effort_ladder_note": "effort_ladders = published cost-vs-performance curves where a single model is run at several effort/reasoning settings, so you can see what extra spend actually buys. Each ladder carries its publisher, harness, method and confidence, and is shown with those attached — vendor-run benchmarks are directional, never a settled ranking. A ladder is only listed when the publisher has released the figure; nothing here is modelled or extrapolated from list prices."
 }

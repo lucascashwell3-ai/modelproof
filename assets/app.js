@@ -16,12 +16,14 @@ const state = {
   expanded: new Set(),
   compare: [],           // model ids on the side-by-side board (2–5)
   cmpCustom: false,      // true once the user hand-picks — stops auto-reseeding from the engine
+  ladder: 0,             // which published effort ladder is on screen
+  ladderOff: new Set(),  // model ids toggled off in the effort chart
 };
 const CMP_MAX = 5;
 
 // compare-table default: one flagship per major lab (neutral — no lab over-represented).
 // The full 22 (incl. cheap/specialized tiers) are one click away via "Show all".
-const COMMON_IDS = ['claude-opus-4-8', 'gpt-5-6-sol', 'gemini-3-1-pro', 'grok-4-5', 'kimi-k3', 'deepseek-v4-pro', 'llama-4-maverick', 'qwen3-max'];
+const COMMON_IDS = ['claude-opus-5', 'gpt-5-6-sol', 'gemini-3-1-pro', 'grok-4-5', 'kimi-k3', 'deepseek-v4-pro', 'llama-4-maverick', 'qwen3-max'];
 
 // vendor -> the brand people actually say ("I use Claude / ChatGPT / Grok…")
 const LAB_LABEL = {
@@ -610,6 +612,208 @@ function showTip(e, m, metric) {
 }
 function hideTip() { const t = $('#tooltip'); if (t) t.classList.remove('show'); }
 
+// ---------- effort ladders: what extra spend actually buys ----------
+// Same axes as the model map (cost →, capability ↑) but each model becomes a CURVE:
+// one point per effort/reasoning setting. The shape is the point — it shows where a
+// model stops converting money into accuracy. Data is whatever ladders the labs have
+// actually published; nothing here is modelled from list prices.
+
+const EFFORT_LBL = { low: 'low', medium: 'med', high: 'high', xhigh: 'xhigh', max: 'max' };
+
+function activeLadder() {
+  const list = state.data?.effort_ladders || [];
+  return list[Math.min(state.ladder, list.length - 1)] || null;
+}
+
+function money(v) { return '$' + (v >= 100 ? Math.round(v) : v.toFixed(2)); }
+
+// the honest read of one curve: where it peaks, and whether the top rung was worth it
+function ladderInsight(s) {
+  const p = s.points;
+  const peak = p.reduce((a, b) => (b.score > a.score ? b : a), p[0]);
+  const last = p[p.length - 1];
+  const overshoot = last !== peak && last.cost > peak.cost;
+  const pct = (n) => Math.round(n * 100);
+  const prev = p[p.length - 2];
+  let note;
+  if (overshoot) {
+    note = `Going on to <em>${EFFORT_LBL[last.effort]}</em> costs ${pct(last.cost / peak.cost - 1)}% more
+            and scores ${(peak.score - last.score).toFixed(1)} lower. Stop at <em>${EFFORT_LBL[peak.effort]}</em>.`;
+  } else {
+    note = `Still climbing at the top rung: the last step buys
+            +${(last.score - prev.score).toFixed(1)} pts for ${pct(last.cost / prev.cost - 1)}% more spend.`;
+  }
+  return { peak, last, note };
+}
+
+function renderEffort() {
+  const wrap = $('#effortChart');
+  if (!wrap) return;
+  const L = activeLadder();
+  const head = $('#effortMeta'), legend = $('#effortLegend'), read = $('#effortRead'), src = $('#effortSource');
+
+  // provenance travels with the chart — rendered from the data, never hand-written here,
+  // so a ladder can't end up on screen without its harness, method and caveat attached
+  if (src) {
+    src.innerHTML = L
+      ? `<b>Where this comes from.</b> ${L.publisher}, ${L.suite} (${L.source_kind}, ${L.as_of}) —
+         <a href="${L.source}" target="_blank" rel="noopener">source</a>.
+         <span class="lad-source__block">${L.harness}</span>
+         <span class="lad-source__block">${L.method}</span>
+         <span class="lad-source__block lad-source__warn">${L.caveat}</span>`
+      : '';
+  }
+
+  if (!L) {
+    wrap.innerHTML = `<div class="empty" style="padding:60px 0">No lab has published an effort ladder we can source yet.</div>`;
+    if (legend) legend.innerHTML = '';
+    if (read) read.innerHTML = '';
+    return;
+  }
+
+  const series = L.series.filter((s) => !state.ladderOff.has(s.model_id));
+
+  // suite picker only appears if there's more than one ladder to choose between
+  if (head) {
+    const suites = (state.data.effort_ladders || []);
+    head.innerHTML = suites.length > 1
+      ? suites.map((s, i) => `<button class="lad-suite ${i === state.ladder ? 'is-on' : ''}" data-lad="${i}">${s.suite} · ${s.task}</button>`).join('')
+      : `<span class="lad-suite is-static">${L.suite} · ${L.task}</span>`;
+  }
+
+  // legend doubles as the on/off control — click a lab to isolate its curve
+  if (legend) {
+    legend.innerHTML = L.series.map((s) => {
+      const off = state.ladderOff.has(s.model_id);
+      return `<button class="lad-chip ${off ? 'is-off' : ''}" data-mid="${s.model_id}"
+                aria-pressed="${!off}" title="Show or hide ${s.label}">
+                <i style="background:${s.color}"></i>${s.label}</button>`;
+    }).join('');
+  }
+
+  if (!series.length) {
+    wrap.innerHTML = `<div class="empty" style="padding:60px 0">Every curve is hidden — switch one back on.</div>`;
+    if (read) read.innerHTML = '';
+    wireEffortChips();
+    return;
+  }
+
+  const W = 920, H = 470, padL = 60, padR = 104, padT = 26, padB = 62;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+
+  const all = series.flatMap((s) => s.points);
+  const cMin = Math.min(...all.map((p) => p.cost)), cMax = Math.max(...all.map((p) => p.cost));
+  const lo = Math.log10(cMin * 0.82), hi = Math.log10(cMax * 1.18);
+  const X = (v) => padL + ((Math.log10(v) - lo) / (hi - lo)) * plotW;
+
+  const sMax = Math.max(...all.map((p) => p.score));
+  const yTop = Math.max(5, Math.ceil((sMax * 1.1) / 5) * 5);
+  const Y = (v) => padT + (1 - v / yTop) * plotH;
+
+  const TICKS = [0.5, 1, 1.5, 2, 3, 5, 7, 10, 15, 20, 30, 50, 70, 100, 150];
+  let xticks = TICKS.filter((t) => t >= cMin * 0.82 && t <= cMax * 1.18);
+  if (xticks.length < 2) xticks = [cMin, cMax];
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${L.task} score versus cost per attempt, one curve per model with a point at each effort level">`;
+
+  // grid first, so curves sit on top
+  const ystep = yTop > 40 ? 10 : 5;
+  for (let v = 0; v <= yTop; v += ystep) {
+    const yy = Y(v);
+    svg += `<line class="grid-line" x1="${padL}" y1="${yy.toFixed(1)}" x2="${padL + plotW}" y2="${yy.toFixed(1)}" opacity="${v === 0 ? 0 : 0.55}"/>`;
+    svg += `<text class="axis-lbl" x="${padL - 10}" y="${(yy + 4).toFixed(1)}" text-anchor="end">${v}</text>`;
+  }
+  xticks.forEach((t) => {
+    const xx = X(t);
+    svg += `<line class="grid-line" x1="${xx.toFixed(1)}" y1="${padT}" x2="${xx.toFixed(1)}" y2="${padT + plotH}" opacity="0.3"/>`;
+    svg += `<text class="axis-lbl" x="${xx.toFixed(1)}" y="${padT + plotH + 20}" text-anchor="middle">${money(t)}</text>`;
+  });
+
+  svg += `<line class="axis-line" x1="${padL}" y1="${padT + plotH}" x2="${padL + plotW}" y2="${padT + plotH}"/>`;
+  svg += `<line class="axis-line" x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + plotH}"/>`;
+  svg += `<text class="axis-title" x="${padL + plotW / 2}" y="${H - 16}" text-anchor="middle">${(L.x_label || 'COST PER ATTEMPT (LOG)').toUpperCase()}</text>`;
+  svg += `<text class="axis-title" transform="translate(15 ${padT + plotH / 2}) rotate(-90)" text-anchor="middle">${(L.y_label || 'SCORE').toUpperCase()} →</text>`;
+
+  // one curve per model: line, then a dot per effort rung, then the name at the last rung
+  series.forEach((s) => {
+    const pts = s.points.slice().sort((a, b) => a.cost - b.cost);
+    const d = pts.map((p, i) => `${i ? 'L' : 'M'} ${X(p.cost).toFixed(1)} ${Y(p.score).toFixed(1)}`).join(' ');
+    svg += `<g class="lad-series" data-mid="${s.model_id}">`;
+    svg += `<path class="lad-line" d="${d}" fill="none" stroke="${s.color}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>`;
+    pts.forEach((p, i) => {
+      const cx = X(p.cost), cy = Y(p.score);
+      svg += `<g class="lad-pt" data-mid="${s.model_id}" data-i="${i}">`;
+      svg += `<circle class="lad-hit" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="18" fill="transparent"/>`;
+      svg += `<circle class="lad-ring" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="9" fill="none" stroke="${s.color}" stroke-width="1.6" opacity="0"/>`;
+      svg += `<circle class="lad-dot" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="5.6" fill="${s.color}" stroke="var(--bg-2)" stroke-width="1.6"/>`;
+      svg += `</g>`;
+    });
+    const end = pts[pts.length - 1];
+    svg += `<text class="lad-name" x="${(X(end.cost) + 14).toFixed(1)}" y="${(Y(end.score) + 4).toFixed(1)}" fill="${s.color}">${s.label}</text>`;
+    svg += `</g>`;
+  });
+
+  svg += `</svg>`;
+  wrap.innerHTML = svg;
+
+  // narrow screens pan instead of shrinking (see the 860px breakpoint). Open centred —
+  // parked at the left edge a phone shows only the cheapest tail and the chart reads empty.
+  if (wrap.scrollWidth > wrap.clientWidth) wrap.scrollLeft = (wrap.scrollWidth - wrap.clientWidth) / 2;
+
+  // the "so what" — derived from the curve, not written by hand
+  if (read) {
+    read.innerHTML = series.map((s) => {
+      const { peak, note } = ladderInsight(s);
+      return `<li><b style="color:${s.color}">${s.label}</b> peaks at <b>${peak.score}%</b> on
+              <em>${EFFORT_LBL[peak.effort]}</em>, at ${money(peak.cost)} an attempt. ${note}</li>`;
+    }).join('');
+  }
+
+  // hover: raise the point, fade the other curves, show the rung-to-rung delta
+  wrap.querySelectorAll('.lad-pt').forEach((g) => {
+    const mid = g.getAttribute('data-mid');
+    const s = L.series.find((x) => x.model_id === mid);
+    const pts = s.points.slice().sort((a, b) => a.cost - b.cost);
+    const p = pts[+g.getAttribute('data-i')], prev = pts[+g.getAttribute('data-i') - 1];
+    g.addEventListener('mousemove', (e) => showLadderTip(e, s, p, prev, L));
+    g.addEventListener('click', (e) => showLadderTip(e, s, p, prev, L));   // touch: tap a dot for the same read
+    g.addEventListener('mouseenter', () => { wrap.classList.add('is-focus'); g.closest('.lad-series')?.classList.add('is-hot'); });
+    g.addEventListener('mouseleave', () => { wrap.classList.remove('is-focus'); g.closest('.lad-series')?.classList.remove('is-hot'); hideTip(); });
+  });
+
+  wireEffortChips();
+}
+
+function wireEffortChips() {
+  document.querySelectorAll('.lad-chip').forEach((b) => {
+    b.onclick = () => {
+      const id = b.getAttribute('data-mid');
+      if (state.ladderOff.has(id)) state.ladderOff.delete(id); else state.ladderOff.add(id);
+      renderEffort();
+    };
+  });
+  document.querySelectorAll('.lad-suite[data-lad]').forEach((b) => {
+    b.onclick = () => { state.ladder = +b.getAttribute('data-lad'); state.ladderOff.clear(); renderEffort(); };
+  });
+}
+
+function showLadderTip(e, s, p, prev, L) {
+  const tip = $('#tooltip');
+  const delta = prev
+    ? `<div class="tt-row"><span>vs ${EFFORT_LBL[prev.effort]}</span><span>${p.score >= prev.score ? '+' : ''}${(p.score - prev.score).toFixed(1)} pts · ${p.cost >= prev.cost ? '+' : ''}${Math.round((p.cost / prev.cost - 1) * 100)}% cost</span></div>`
+    : '';
+  tip.innerHTML =
+    `<b>${s.label}</b> <span style="color:var(--ink-3)">${EFFORT_LBL[p.effort]} effort</span>
+     <div class="tt-row"><span>${L.suite}</span><span>${p.score}%</span></div>
+     <div class="tt-row"><span>cost / attempt</span><span>${money(p.cost)}</span></div>
+     ${delta}`;
+  tip.classList.add('show');
+  const pad = 14;
+  let x = e.clientX + pad, y = e.clientY + pad;
+  if (x + 250 > window.innerWidth) x = e.clientX - 250;
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+}
+
 // ---------- compare table ----------
 function renderFilters() {
   const goals = ['all', 'coding', 'research', 'writing', 'cheap-bulk', 'vision', 'long-context', 'speed'];
@@ -1075,6 +1279,7 @@ async function boot() {
   const asof = state.data.as_of || '—';
   setText('#navAsof', '● snapshot ' + asof + ' · pricing verified');
   setText('#footAsof', asof);
+  setText('#allCount', String(state.data.models.length));   // never hand-count the roster again
   setText('#footNotes', state.data.notes || 'Pricing from official vendor pages; benchmarks from public leaderboards. Every figure carries a confidence flag; unsourced numbers are left blank rather than guessed.');
 
   wire();
@@ -1082,6 +1287,7 @@ async function boot() {
   renderFilters();
   renderLabChips();          // build the "which lab" chips from the data's vendors + wire them
   if ($('#result')) renderResult();   // engine + comparator live on the home page only
+  renderEffort();            // published effort ladders; guarded no-op on table.html
   renderTable();             // full table lives on table.html; guarded no-op elsewhere
   renderFeed();
   movePill();                // place the task pill once the layout is real
