@@ -51,6 +51,15 @@
   --glass-line:  rgba(255, 255, 255, 0.07);
 
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  /* kinetics-style spring compiled to pure-CSS linear(): tight stiffness, near-critical
+     damping, ~9% overshoot that settles fast. The house "physical" easing — used on the
+     budget thumb, the task pill, and chart dots. Falls back to --ease where unsupported. */
+  --spring: linear(0, 0.2178 2.1%, 0.6862 5.9%, 0.9066 8.5%, 1.0292 11.4%,
+    1.0805 14.4%, 1.0898 16.1%, 1.0782 19.4%, 1.0102 28.6%, 0.9906 34.2%,
+    0.9962 44.8%, 1.0006 60.6%, 1);
+}
+@supports not (transition-timing-function: linear(0, 1)) {
+  :root { --spring: var(--ease); }
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -210,8 +219,59 @@ a { color: inherit; text-decoration: none; }
 .console__echo b { color: var(--gold); font-weight: 500; }
 
 /* single-row task chips (double-class beats base .segmented regardless of source order) */
-.segmented.segmented--goals { grid-template-columns: repeat(4, 1fr); }
+.segmented.segmented--goals { grid-template-columns: repeat(4, 1fr); position: relative; }
 .segmented.segmented--goals .seg { white-space: nowrap; padding: 9px 10px; }
+
+/* sliding-pill indicator: one gold pill glides (spring) behind the active task */
+.seg-pill {
+  position: absolute; top: 4px; bottom: 4px; left: 0; width: 0;
+  border-radius: 999px; background: var(--gold-metal); box-shadow: var(--metal-sheen);
+  pointer-events: none; will-change: transform;
+}
+.seg-pill.is-ready { transition: transform .45s var(--spring), width .45s var(--spring); }
+.segmented--goals .seg { position: relative; z-index: 1; }
+/* with the pill behind it, the active button itself goes transparent */
+.segmented.segmented--goals .seg.is-active { background: transparent; box-shadow: none; color: var(--on-metal); font-weight: 700; }
+
+/* ---------- budget: a real spring slider (the page's signature functional animation) ---------- */
+.budget { display: flex; flex-direction: column; gap: 5px; }
+.budget input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 26px;
+  background: transparent; cursor: pointer; margin: 0; border-radius: 999px;
+}
+.budget input[type="range"]:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--gold); }
+/* track: gold fill up to the live value (--p, set by JS) */
+.budget input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px; border-radius: 999px; border: 1px solid var(--line-soft);
+  background: linear-gradient(90deg, rgba(242,193,78,0.52) var(--p, 48%), var(--bg-2) var(--p, 48%));
+}
+.budget input[type="range"]::-moz-range-track {
+  height: 8px; border-radius: 999px; border: 1px solid var(--line-soft); background: var(--bg-2);
+}
+.budget input[type="range"]::-moz-range-progress { height: 8px; border-radius: 999px; background: rgba(242,193,78,0.52); }
+/* thumb: satin-gold puck that springs up under the finger and settles back */
+.budget input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 21px; height: 21px; margin-top: -7.5px;
+  border-radius: 50%; border: 0; background: var(--gold-metal); box-shadow: var(--metal-sheen);
+  transition: transform .45s var(--spring);
+}
+.budget input[type="range"]:active::-webkit-slider-thumb,
+.budget input[type="range"]:focus-visible::-webkit-slider-thumb { transform: scale(1.25); }
+.budget input[type="range"]::-moz-range-thumb {
+  width: 21px; height: 21px; border-radius: 50%; border: 0;
+  background: var(--gold-metal); box-shadow: var(--metal-sheen);
+  transition: transform .45s var(--spring);
+}
+.budget input[type="range"]:active::-moz-range-thumb { transform: scale(1.25); }
+/* the scale words double as jump targets; the live one burns gold */
+.budget__scale { display: flex; justify-content: space-between; padding: 0 2px; }
+.budget__word {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--ink-4); background: none; border: 0; padding: 2px 0; cursor: pointer;
+  transition: color .2s var(--ease);
+}
+.budget__word:hover { color: var(--ink-2); }
+.budget__word.is-on { color: var(--gold); font-weight: 700; }
 
 /* lab chips (wrap) */
 .labchips { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; max-width: 470px; }
@@ -252,6 +312,13 @@ a { color: inherit; text-decoration: none; }
 .stat__v { font-family: var(--mono); font-size: 1.05rem; color: var(--gold); font-weight: 500; }
 .stat__l { font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
 
+/* "Use it well" — the practical how-to under the pick's verdict (the product's spine) */
+.pick__use { margin-top: 14px; padding-top: 12px; border-top: 1px dotted var(--line); }
+.pick__use h4 { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold-2); margin-bottom: 7px; }
+.pick__use ul { list-style: none; }
+.pick__use li { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; padding-left: 14px; position: relative; margin-bottom: 4px; }
+.pick__use li::before { content: "›"; position: absolute; left: 0; color: var(--gold); }
+
 .runners { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
 .runner {
   border: 1px solid var(--glass-line); border-radius: var(--r-sm); background: var(--glass-2);
@@ -264,10 +331,28 @@ a { color: inherit; text-decoration: none; }
 .runner__meta b { color: var(--gold-2); font-weight: 500; }
 .empty { color: var(--ink-3); font-size: 0.95rem; padding: 20px 0; text-align: center; }
 .rec-caption { color: var(--ink-4); font-size: 11.5px; margin-top: 12px; text-align: center; line-height: 1.4; }
-/* neutral, cost-first "outside your labs…" note — a fact, never a nudge */
-.rec-footnote { margin-top: 12px; padding: 10px 13px; border: 1px dotted var(--gold-line); border-radius: var(--r-sm);
-  background: var(--gold-soft); color: var(--ink-2); font-size: 12.5px; line-height: 1.5; }
-.rec-footnote b { color: var(--gold); font-weight: 500; }
+/* the upgrade check — neutral, cost-first; a fact, never a nudge. The green "you're set"
+   variant is the independence signal: this tool is happiest telling you not to spend more. */
+.upcheck { margin-top: 12px; padding: 11px 14px; border: 1px dotted var(--gold-line); border-radius: var(--r-sm);
+  background: linear-gradient(0deg, var(--gold-soft), var(--gold-soft)), var(--glass-solid);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  color: var(--ink-2); font-size: 12.5px; line-height: 1.5; }
+.upcheck b { color: var(--gold); font-weight: 500; }
+.upcheck__k { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--gold-2); margin-right: 8px; }
+.upcheck--set { border-color: rgba(111, 206, 154, 0.38);
+  background: linear-gradient(0deg, rgba(111, 206, 154, 0.08), rgba(111, 206, 154, 0.08)), var(--glass-solid); }
+.upcheck--set .upcheck__k, .upcheck--set b { color: var(--good); }
+
+/* "Make the most of <your labs>" — the per-task kit from what the user already pays for */
+.kitpanel { margin-top: 12px; border: 1px solid var(--glass-line); border-radius: var(--r-md);
+  background: var(--glass-2); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+  padding: 14px 16px 4px; }
+.kit__title { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--gold-2); margin-bottom: 2px; }
+.kit__how { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+.kitpanel .labkit__row[data-jump] { cursor: pointer; transition: background .15s var(--ease); border-radius: 6px; }
+.kitpanel .labkit__row[data-jump]:hover { background: rgba(242, 193, 78, 0.06); }
 
 /* by-lab result: the lab's best model for each kind of work */
 .pick--lab .labkit { display: flex; flex-direction: column; margin-top: 16px; }
@@ -363,7 +448,7 @@ a { color: inherit; text-decoration: none; }
   text-transform: uppercase; letter-spacing: 0.08em; }
 .quad-lbl { fill: var(--ink-4); font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.06em; }
 .dot { cursor: pointer; }
-.dot__marks { transition: transform .16s var(--ease); transform-box: fill-box; transform-origin: center; }
+.dot__marks { transition: transform .35s var(--spring); transform-box: fill-box; transform-origin: center; }
 .dot:hover .dot__marks { transform: scale(1.5); }
 .d-core { transition: fill .15s var(--ease); }
 .dot:hover .d-core { fill: var(--gold); }
@@ -551,7 +636,8 @@ a { color: inherit; text-decoration: none; }
   .chart { background: linear-gradient(180deg, var(--panel), var(--bg-2)); }
   .cmp-board-wrap, .table-wrap { background: var(--panel); }
   .lens, .promptgen__panel { background: linear-gradient(180deg, var(--panel), var(--panel-2)); }
-  .rel__card, .runner { background: var(--panel); }
+  .rel__card, .runner, .kitpanel { background: var(--panel); }
+  .upcheck { background: linear-gradient(0deg, var(--gold-soft), var(--gold-soft)), var(--panel); }
   .pick { background: radial-gradient(120% 140% at 0% 0%, var(--gold-soft), transparent 55%), var(--bg-2); }
   .foot { background: linear-gradient(180deg, rgba(10,11,15,0.6), rgba(7,8,12,0.94)); }
 }
@@ -565,8 +651,15 @@ a { color: inherit; text-decoration: none; }
   opacity: 1; transform: none;
   transition: opacity .6s var(--ease), transform .6s var(--ease);
 }
+/* "What changed lately": entries stagger in one after another (--i set by JS, capped) */
+.js-reveal .rel { opacity: 0; transform: translateY(14px); }
+.js-reveal .rel.is-in {
+  opacity: 1; transform: none;
+  transition: opacity .55s var(--ease), transform .55s var(--ease);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
 @media (prefers-reduced-motion: reduce) {
-  .js-reveal .panel, .js-reveal .evidence-mark { opacity: 1; transform: none; }
+  .js-reveal .panel, .js-reveal .evidence-mark, .js-reveal .rel { opacity: 1; transform: none; }
 }
 
 /* ---------- responsive ---------- */

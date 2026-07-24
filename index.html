@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- same Fraunces cut as the Proof site (portfolio-v2) so the two wordmarks match -->
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=mk19" />
+  <link rel="stylesheet" href="assets/styles.css?v=mk20" />
 </head>
 <body>
   <!-- the live ASCII sunset — one fixed, full-viewport canvas that carries the whole site -->
@@ -59,6 +59,7 @@
           <div class="console__row">
             <span class="console__label">Task</span>
             <div class="segmented segmented--goals goalctl" role="radiogroup" aria-label="Task">
+              <i class="seg-pill" aria-hidden="true"></i>
               <button class="seg is-active" data-goal="coding" role="radio" aria-checked="true">Coding</button>
               <button class="seg" data-goal="research" role="radio" aria-checked="false">Strategy</button>
               <button class="seg" data-goal="writing" role="radio" aria-checked="false">Writing</button>
@@ -67,11 +68,16 @@
           </div>
           <div class="console__row">
             <span class="console__label">Budget</span>
-            <div class="segmented segmented--prio priorityctl" role="radiogroup" aria-label="Budget">
-              <button class="seg" data-p="6" role="radio" aria-checked="false">Cheapest</button>
-              <button class="seg" data-p="28" role="radio" aria-checked="false">Value</button>
-              <button class="seg is-active" data-p="48" role="radio" aria-checked="true">Balanced</button>
-              <button class="seg" data-p="85" role="radio" aria-checked="false">Best</button>
+            <!-- budget is a continuum, not 4 buckets: a spring slider with a live-updating answer -->
+            <div class="budget">
+              <input type="range" id="budgetRange" min="0" max="100" step="1" value="48"
+                     aria-label="Budget — slide from cheapest to best quality" />
+              <div class="budget__scale" aria-hidden="true">
+                <button type="button" class="budget__word" data-bp="6" tabindex="-1">Cheapest</button>
+                <button type="button" class="budget__word" data-bp="28" tabindex="-1">Value</button>
+                <button type="button" class="budget__word is-on" data-bp="48" tabindex="-1">Balanced</button>
+                <button type="button" class="budget__word" data-bp="85" tabindex="-1">Best</button>
+              </div>
             </div>
           </div>
           <div class="console__row console__row--labs">
@@ -126,7 +132,7 @@
       </div>
       <div class="cmp-picker" id="cmpPicker" aria-label="Choose models to compare"></div>
       <div class="cmp-board-wrap"><div class="cmp-board" id="cmpBoard" aria-live="polite"></div></div>
-      <a class="browse-all" href="table.html">Browse the full table — all 21 models, sortable <span aria-hidden="true">→</span></a>
+      <a class="browse-all" href="table.html">Browse the full table — all 22 models, sortable <span aria-hidden="true">→</span></a>
     </section>
 
     <!-- COST vs CAPABILITY quadrant -->
@@ -192,6 +198,6 @@
 
   <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
 
-  <script src="assets/app.js?v=mk19"></script>
+  <script src="assets/app.js?v=mk20"></script>
 </body>
 </html>
