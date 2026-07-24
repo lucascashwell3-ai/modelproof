@@ -8,6 +8,10 @@ the site and stay current. Read-only, no auth, no side effects.
 
 - `recommend_model({ task_description?, task?, cost_attitude?, labs? })` — the pick + runners-up for a
   task and budget attitude, plus a neutral "outside your labs…" note when relevant.
+- `my_kit({ labs, cost_attitude? })` — **make the most of what you have**: your best model per task
+  (coding / research / writing / cheap-bulk) from the labs you already pay for, each with practical
+  `use_well` tips (when thinking modes earn their cost, when the cheap tier is enough, cache/context
+  tactics), plus a neutral cost-first note when something outside your labs is meaningfully better.
 - `compare_models({ names })` — sourced facts side by side.
 - `whats_new({ limit? })` — recent releases worth knowing about.
 - `list_models()` — every model with key facts.

@@ -93,6 +93,7 @@ const brief = (m) => ({
   confidence: m.confidence ?? null,
   best_for: m.best_for || [],
   verdict: m.verdict || null,
+  use_well: m.use_well || [],   // practical "get the most out of it" tips (sourced, plain English)
 });
 
 // ---- tools ----
@@ -108,6 +109,18 @@ const TOOLS = [
         cost_attitude: { type: 'string', enum: ['cheapest', 'value', 'balanced', 'best'], description: 'How much they weight price vs quality. Default balanced.' },
         labs: { type: 'array', items: { type: 'string' }, description: 'Optional: vendors/brands the user already pays for (e.g. ["Anthropic","Google"] or ["Claude","Gemini"]).' },
       },
+    },
+  },
+  {
+    name: 'my_kit',
+    description: 'Make the most of what the user already has: given the labs/AIs they pay for, return their best model per task (coding, research, writing, cheap-bulk) with practical use_well tips, plus a neutral cost-first note when a model outside their labs is meaningfully better or cheaper. Call when the user asks "what should I use from what I have", "am I using X right", or "should I add/upgrade".',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        labs: { type: 'array', items: { type: 'string' }, description: 'Vendors/brands the user pays for (e.g. ["Claude","Gemini"] or ["Anthropic","Google"]).' },
+        cost_attitude: { type: 'string', enum: ['cheapest', 'value', 'balanced', 'best'], description: 'Default balanced.' },
+      },
+      required: ['labs'],
     },
   },
   { name: 'compare_models', description: 'Compare specific models side by side (sourced facts only).', inputSchema: { type: 'object', properties: { names: { type: 'array', items: { type: 'string' } } }, required: ['names'] } },
@@ -144,6 +157,38 @@ async function handleTool(name, args = {}) {
     return { asOf, task: goal, cost_attitude: args.cost_attitude || 'balanced', pick: brief(top), runners_up: runnersUp, outside_labs_note: outsideLabsNote, disclaimer };
   }
 
+  if (name === 'my_kit') {
+    const labSet = (args.labs || []).map((s) => s.toLowerCase());
+    const inLabs = (m) => labSet.some((l) => m.vendor.toLowerCase().includes(l) || l.includes(m.vendor.toLowerCase())
+      || m.name.toLowerCase().includes(l));
+    const mine = models.filter(inLabs);
+    if (!mine.length) return { asOf, note: 'No models matched those labs — check spelling, or call list_models to see vendors.', disclaimer };
+    const priority = PRIO[args.cost_attitude] ?? PRIO.balanced;
+    const kit = {};
+    for (const goal of Object.keys(GOAL_METRIC)) {
+      const ranked = score(mine, goal, priority);
+      if (!ranked.length) { kit[goal] = null; continue; }
+      const top = ranked[0].m;
+      // the upgrade check: neutral, cost-first fact when the field beats their kit
+      const globalTop = score(models, goal, priority)[0]?.m;
+      let outside = null;
+      if (globalTop && !inLabs(globalTop) && globalTop.id !== top.id) {
+        const metric = GOAL_METRIC[goal];
+        const cheaper = !num(globalTop.price_output) && !num(top.price_output) && globalTop.price_output <= top.price_output * 0.8;
+        const better = !num(capVal(globalTop, metric)) && !num(capVal(top, metric)) && capVal(globalTop, metric) > capVal(top, metric);
+        if (cheaper || better) outside = `Outside these labs: ${globalTop.name} at $${globalTop.price_output}/1M out vs $${top.price_output} — stated as a fact, the user's call.`;
+      }
+      kit[goal] = { pick: brief(top), outside_labs_note: outside };
+    }
+    return {
+      asOf,
+      labs: args.labs,
+      kit,
+      how_to_answer: 'Lead with the user\'s own kit and the use_well tips (how to use what they have). Mention outside_labs_note only as a neutral, cost-first fact — never as "switch to X". If every outside_labs_note is null, tell the user plainly that they are set with what they have.',
+      disclaimer,
+    };
+  }
+
   if (name === 'compare_models') {
     const want = (args.names || []).map((s) => s.toLowerCase());
     const picked = models.filter((m) => want.some((w) => m.name.toLowerCase().includes(w)));
@@ -161,7 +206,7 @@ async function handleTool(name, args = {}) {
 }
 
 // ---- MCP wiring ----
-const server = new Server({ name: 'modelproof', version: '0.1.0' }, { capabilities: { tools: {} } });
+const server = new Server({ name: 'modelproof', version: '0.2.0' }, { capabilities: { tools: {} } });
 server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS }));
 server.setRequestHandler(CallToolRequestSchema, async (req) => {
   try {

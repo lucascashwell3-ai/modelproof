@@ -42,7 +42,12 @@
       ],
       "coding_score": 96,
       "coding_basis": "Frontend Code Arena #1 (1679 Elo), ahead of Fable 5, winning 6 of 7 frontend categories; general SWE-bench Verified not yet published — score is frontend-led.",
-      "coding_confidence": "medium"
+      "coding_confidence": "medium",
+      "use_well": [
+        "Reach for it on frontend and web-UI builds — that's where it tops the arena; treat broader coding as unproven until SWE-bench lands.",
+        "Coding loops hit ~$0.30/M cache-hit input — keep one long session going instead of restarting, and the real cost drops well below sticker.",
+        "Open weights aren't due until ~July 27 — don't plan a self-host around it yet."
+      ]
     },
     {
       "id": "claude-fable-5",
@@ -89,7 +94,12 @@
       ],
       "coding_score": 95,
       "coding_basis": "SWE-bench Verified 95.5% (LMArena Code Elo #1)",
-      "coding_confidence": "high"
+      "coding_confidence": "high",
+      "use_well": [
+        "Save it for the hardest overnight agent runs and deepest reasoning — for everyday coding, Opus 4.8 or Sonnet 5 do the job at a fraction of the price.",
+        "Thinking is always on — give it the complete task up front in one well-specified message and let it run; drip-feeding steps wastes its strength.",
+        "It's built for 1M-token context: paste whole codebases or document sets in rather than pre-summarizing."
+      ]
     },
     {
       "id": "claude-opus-4-8",
@@ -134,7 +144,12 @@
       ],
       "coding_score": 89,
       "coding_basis": "SWE-bench Verified 88.6% (AA Coding Index 74.3)",
-      "coding_confidence": "high"
+      "coding_confidence": "high",
+      "use_well": [
+        "The sensible Claude default for hard coding and agent work — step up to Fable only when Opus demonstrably falls short.",
+        "Leave adaptive thinking on for multi-step problems — the model decides when and how deeply to think; there's no budget to tune.",
+        "Re-sending the same big context (docs, a codebase)? Prompt caching serves it at ~10% of input price — put the stable part first in the prompt."
+      ]
     },
     {
       "id": "claude-sonnet-5",
@@ -179,7 +194,12 @@
       ],
       "coding_score": 85,
       "coding_basis": "SWE-bench Verified 85.2% (AA Coding Index 71.5)",
-      "coding_confidence": "high"
+      "coding_confidence": "high",
+      "use_well": [
+        "The daily driver: ~85 coding at $2/$10 — use it for routine coding and agents, and escalate to Opus only for the genuinely hard problems.",
+        "Intro pricing ends Aug 31, 2026 (then $3/$15) — budget for the increase if you're building on it.",
+        "Built to run agents cheaply at scale — a good default for CI bots and background automations."
+      ]
     },
     {
       "id": "gpt-5-5",
@@ -222,7 +242,11 @@
       ],
       "coding_score": 82,
       "coding_basis": "SWE-bench Verified 81.9% + AA Coding Index 74.9",
-      "coding_confidence": "high"
+      "coding_confidence": "high",
+      "use_well": [
+        "Superseded by GPT-5.6 at the same price — starting fresh on OpenAI, pick Terra (value) or Sol (peak) instead.",
+        "Only stay on it if a validated pipeline is already pinned to it."
+      ]
     },
     {
       "id": "gemini-3-1-pro",
@@ -267,7 +291,12 @@
       ],
       "coding_score": 81,
       "coding_basis": "SWE-bench Verified 80.6% + AA Coding Index 68.8",
-      "coding_confidence": "high"
+      "coding_confidence": "high",
+      "use_well": [
+        "Strongest budget pick for hard reasoning and big multimodal jobs (documents + images together).",
+        "Watch the 200K-token threshold — price doubles to $4/$18 above it, so chunk very long inputs when you can.",
+        "Still a Preview SKU — pin the version and re-test before production bets."
+      ]
     },
     {
       "id": "deepseek-v4-pro",
@@ -310,7 +339,12 @@
       ],
       "coding_score": 81,
       "coding_basis": "SWE-bench Verified 80.6% (AA Coding Index lower, 59.4)",
-      "coding_confidence": "medium"
+      "coding_confidence": "medium",
+      "use_well": [
+        "Near-frontier coding at a fraction of frontier price — try it first for cost-sensitive coding before paying frontier rates.",
+        "Cache-hit input is nearly free (~$0.0036/M) — agent loops that resend the same prefix cost almost nothing.",
+        "Its top benchmark scores use 'Think Max' mode — slower and token-hungry; save that mode for hard problems, not bulk."
+      ]
     },
     {
       "id": "kimi-k2-6",
@@ -352,7 +386,11 @@
       ],
       "coding_score": 80,
       "coding_basis": "SWE-bench Verified 80.2% + LMArena Code Elo #17 (1513)",
-      "coding_confidence": "high"
+      "coding_confidence": "high",
+      "use_well": [
+        "Best when you want an open-weight, long-horizon coding agent — 80% SWE-bench at open-model prices.",
+        "262K context sits below the 1M crowd — for very large codebases pick a 1M-context model instead."
+      ]
     },
     {
       "id": "llama-4-maverick",
@@ -393,7 +431,11 @@
       ],
       "coding_score": 74,
       "coding_basis": "SWE-bench Verified 74.2% (secondary source, uncorroborated)",
-      "coding_confidence": "medium"
+      "coding_confidence": "medium",
+      "use_well": [
+        "A cheap open generalist for bulk work and long documents — not the top open coder, so don't pick it for hard coding.",
+        "Prices vary 20%+ by host (Fireworks/Together/Groq) — compare hosts before committing volume."
+      ]
     },
     {
       "id": "o4-mini",
@@ -436,7 +478,11 @@
       ],
       "coding_score": 68,
       "coding_basis": "SWE-bench Verified 68.1% (older gen, uncorroborated)",
-      "coding_confidence": "medium"
+      "coding_confidence": "medium",
+      "use_well": [
+        "A cheap math/reasoning pick via API — strong competition-math scores at a fraction of o3-class cost.",
+        "API-only now (retired from the ChatGPT UI) and an older generation — the GPT-5.6 line is the modern default."
+      ]
     },
     {
       "id": "claude-haiku-4-5",
@@ -478,7 +524,12 @@
       ],
       "coding_score": 66,
       "coding_basis": "SWE-bench Pro 39.5% + LiveCodeBench 51.1% (small/fast tier)",
-      "coding_confidence": "medium"
+      "coding_confidence": "medium",
+      "use_well": [
+        "Use it when volume and speed beat peak intelligence: classification, routing, extraction.",
+        "Pair it as the cheap tier under a smarter model — let Haiku triage the easy 90%, escalate the hard 10%.",
+        "200K context — split very long documents rather than forcing them in."
+      ]
     },
     {
       "id": "gpt-5-6-sol",
@@ -524,7 +575,11 @@
       ],
       "coding_score": 90,
       "coding_basis": "AA Coding Index #1 (77.4) + LMArena Code Elo #2 (1636)",
-      "coding_confidence": "medium"
+      "coding_confidence": "medium",
+      "use_well": [
+        "OpenAI's top tier for the hardest agentic, coding, and security work — pay for it only when Terra falls short.",
+        "Its chain-of-thought reasoning means higher latency and token spend — budget for both."
+      ]
     },
     {
       "id": "gpt-5-6-terra",
@@ -566,7 +621,11 @@
       ],
       "coding_score": 87,
       "coding_basis": "AA Coding Index 76.7",
-      "coding_confidence": "medium"
+      "coding_confidence": "medium",
+      "use_well": [
+        "The everyday GPT-5.6 pick — most of Sol's ability at half the price (~$0.55 vs ~$1.04 per task).",
+        "Try Terra first and escalate to Sol only when a task provably needs it."
+      ]
     },
     {
       "id": "gpt-5-6-luna",
@@ -607,7 +666,11 @@
       ],
       "coding_score": 79,
       "coding_basis": "vendor coding-agent index ~74.6; no third-party yet",
-      "coding_confidence": "low"
+      "coding_confidence": "low",
+      "use_well": [
+        "Good for high-volume, budget coding and agent work at $1/$6.",
+        "Avoid it for long documents — its long-context recall (41.3%) is far below Sol's 91.5%."
+      ]
     },
     {
       "id": "gemini-3-5-flash",
@@ -650,7 +713,11 @@
       ],
       "coding_score": 83,
       "coding_basis": "AA Coding Index 70.1 + LMArena Code Elo #19 (1500)",
-      "coding_confidence": "medium"
+      "coding_confidence": "medium",
+      "use_well": [
+        "Most of Pro's smarts at speed (~278 tok/s) — good for high-volume chat and coding where latency matters.",
+        "$9/M output is high for a 'fast/cheap' tier — for true bulk work drop to Flash-Lite or a cheap open model."
+      ]
     },
     {
       "id": "gemini-2-5-flash-lite",
@@ -689,7 +756,11 @@
       ],
       "coding_score": 52,
       "coding_basis": "community consensus (budget tier; no coding benchmark)",
-      "coding_confidence": "low"
+      "coding_confidence": "low",
+      "use_well": [
+        "The rock-bottom Gemini for massive simple jobs — classification, extraction, cleanup at $0.10/$0.40.",
+        "Don't use it for reasoning or complex code — it's the lowest capability tier on the board."
+      ]
     },
     {
       "id": "grok-4-5",
@@ -732,7 +803,12 @@
       ],
       "coding_score": 86,
       "coding_basis": "AA Coding Index 72.5 + LMArena Code Elo #4 (1566)",
-      "coding_confidence": "medium"
+      "coding_confidence": "medium",
+      "use_well": [
+        "Cheap frontier-class coding — ~4x fewer output tokens than Opus-class peers means real costs run below the sticker price.",
+        "The 75% cache discount ($0.50 cached input) rewards repeated-context workloads like agents and long sessions.",
+        "No classic benchmarks published and not in the EU at launch — verify on your own tasks first."
+      ]
     },
     {
       "id": "deepseek-v4-flash",
@@ -771,7 +847,11 @@
       ],
       "coding_score": 72,
       "coding_basis": "estimated just below V4-Pro (cheaper tier); no direct benchmark",
-      "coding_confidence": "low"
+      "coding_confidence": "low",
+      "use_well": [
+        "The bulk-work machine: $0.14/$0.28 with near-free cache hits — process huge volumes of text or code for pennies.",
+        "Step up to V4-Pro the moment reasoning depth starts to matter."
+      ]
     },
     {
       "id": "qwen3-max",
@@ -811,7 +891,11 @@
       ],
       "coding_score": 74,
       "coding_basis": "LiveCodeBench 76.7% (Qwen3 Max)",
-      "coding_confidence": "medium"
+      "coding_confidence": "medium",
+      "use_well": [
+        "Qwen's flagship for reasoning + code; the batch API halves the price for anything that isn't time-critical.",
+        "Input pricing tiers up past 128K tokens — keep prompts under the tier break when cost matters."
+      ]
     },
     {
       "id": "qwen3-coder-plus",
@@ -851,7 +935,11 @@
       ],
       "coding_score": 73,
       "coding_basis": "Qwen coder line; estimated, no clean SKU benchmark",
-      "coding_confidence": "low"
+      "coding_confidence": "low",
+      "use_well": [
+        "A managed Qwen coding endpoint with up to 1M context when you don't want to self-host open weights.",
+        "Tiered pricing climbs steeply past 32K tokens — trim context or costs jump."
+      ]
     },
     {
       "id": "qwen-turbo",
@@ -888,7 +976,11 @@
       ],
       "coding_score": 48,
       "coding_basis": "community consensus (small/fast tier)",
-      "coding_confidence": "low"
+      "coding_confidence": "low",
+      "use_well": [
+        "Among the cheapest hosted models anywhere — massive-volume tagging and cleanup at $0.05/M input.",
+        "Its thinking mode ($0.5/M output) adds cheap reasoning for slightly harder bulk work."
+      ]
     },
     {
       "id": "mistral-medium-3-1",
@@ -927,7 +1019,11 @@
       ],
       "coding_score": 62,
       "coding_basis": "community consensus (EU mid-tier; no coding benchmark surfaced)",
-      "coding_confidence": "low"
+      "coding_confidence": "low",
+      "use_well": [
+        "Reach for it when EU hosting or data residency matters and you want balanced cost/quality.",
+        "No cleanly-sourced benchmarks for this version — validate on your own tasks before betting volume."
+      ]
     }
   ],
   "releases": [
@@ -1110,5 +1206,6 @@
       }
     ]
   },
-  "coding_score_note": "Coding score (0–100) is a unified, comparable coding-ability estimate. Where an official SWE-bench Verified % exists it IS that number (high confidence). Where it doesn't — several strong 2026 models ship before formal benchmarks — it's estimated from sourced signals (Artificial Analysis Coding Index, LMArena Code Elo, SWE-bench Pro, LiveCodeBench) calibrated against the benchmarked models (medium confidence), or expert consensus (low). Each row shows its basis and confidence. These signals sometimes disagree — treat medium/low scores as directional."
+  "coding_score_note": "Coding score (0–100) is a unified, comparable coding-ability estimate. Where an official SWE-bench Verified % exists it IS that number (high confidence). Where it doesn't — several strong 2026 models ship before formal benchmarks — it's estimated from sourced signals (Artificial Analysis Coding Index, LMArena Code Elo, SWE-bench Pro, LiveCodeBench) calibrated against the benchmarked models (medium confidence), or expert consensus (low). Each row shows its basis and confidence. These signals sometimes disagree — treat medium/low scores as directional.",
+  "use_well_note": "use_well = practical, plain-English guidance on getting the most from a model you already have. Derived from the model's sourced pricing, context, cache and mode facts above (plus vendor-documented features like Claude's adaptive thinking) — guidance, not benchmarks. Same independence rule: factual, cost-first, never promotional."
 }
