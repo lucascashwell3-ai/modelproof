@@ -7,7 +7,7 @@ pay for — and it gives you a straight answer, not a leaderboard.
 Not another benchmark race. The point is the *decision*. Sibling to **DATproof** in the Proof
 portfolio.
 
-Data snapshot **2026-07-19** · 22 models across 9 vendors.
+Data snapshot **2026-07-24** · 22 models across 9 vendors.
 
 ## Why this exists
 

@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-07-19",
+  "as_of": "2026-07-24",
   "models": [
     {
       "id": "kimi-k3",
@@ -1043,7 +1043,7 @@
     "mmlu_pro": "MMLU-Pro — % on a harder, multi-discipline knowledge and reasoning benchmark.",
     "lmarena_elo": "LMArena text Elo — human head-to-head preference rating (higher = preferred more often)."
   },
-  "notes": "Data snapshot 2026-07-19. Kimi K3 (released 2026-07-16) is scored on its frontend-coding lead — #1 in the Frontend Code Arena ahead of Fable 5; its $3/$15 pricing and 1M context are sourced, but SWE-bench Verified is not yet published and open weights are due ~2026-07-27, so it carries medium overall confidence. Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: most come from third-party aggregators (Artificial Analysis, Vellum, llm-stats, vals.ai), not primary vendor cards, and several 2026 models publish only agentic evals (SWE-bench Pro, Terminal-Bench) that don't map to SWE-bench Verified — those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Note: Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it.",
+  "notes": "Data snapshot 2026-07-24 (all vendor list prices re-verified 2026-07-24; the 2026-07-20 auto-check's six OpenRouter price flags were all confirmed to be provider pass-through, not list-price changes). Kimi K3 (released 2026-07-16) is scored on its frontend-coding lead — #1 in the Frontend Code Arena ahead of Fable 5; its $3/$15 pricing and 1M context are sourced, but SWE-bench Verified is not yet published and open weights are due ~2026-07-27, so it carries medium overall confidence. Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: most come from third-party aggregators (Artificial Analysis, Vellum, llm-stats, vals.ai), not primary vendor cards, and several 2026 models publish only agentic evals (SWE-bench Pro, Terminal-Bench) that don't map to SWE-bench Verified — those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Note: Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it.",
   "usage": {
     "as_of": "2026-06 → 07",
     "basis": "No single \"most used\" exists — each lens measures a different population and ranks models differently. Figures are ~June–July 2026 and lag a couple of weeks, so the newest models (GPT-5.6, Grok 4.5, Sonnet 5) aren't ranked yet.",
