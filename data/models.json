@@ -12,7 +12,7 @@
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": null,
-        "gpqa": null,
+        "gpqa": 93.9,
         "aime": null,
         "mmlu_pro": null,
         "lmarena_elo": null
@@ -42,7 +42,8 @@
         "https://www.anthropic.com/news/claude-opus-5",
         "https://platform.claude.com/docs/en/about-claude/pricing",
         "https://www.cnbc.com/2026/07/24/anthropic-claude-opus-5-ai-fable-5-cost.html",
-        "https://venturebeat.com/orchestration/anthropic-launches-claude-opus-5-a-cheaper-ai-model-for-coding-agents-and-enterprise-workflows"
+        "https://venturebeat.com/orchestration/anthropic-launches-claude-opus-5-a-cheaper-ai-model-for-coding-agents-and-enterprise-workflows",
+        "https://epoch.ai/benchmarks/gpqa-diamond"
       ],
       "coding_score": 95,
       "coding_basis": "Frontier-Bench v0.1 43.3% (#1, ahead of Fable 5's 33.7%) and CursorBench 3.2 within 0.5% of Fable 5's peak at max effort — calibrated against Fable 5 (95). SWE-bench Verified not yet published, so this is an agentic-suite-led estimate, not a SWE-bench number.",
@@ -65,7 +66,7 @@
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": null,
-        "gpqa": null,
+        "gpqa": 93.1,
         "aime": null,
         "mmlu_pro": null,
         "lmarena_elo": null
@@ -91,7 +92,8 @@
       "sources": [
         "https://www.tomshardware.com/tech-industry/artificial-intelligence/moonshot-releases-2-8-trillion-parameter-kimi-k3",
         "https://openrouter.ai/moonshotai/kimi-k3",
-        "https://benchlm.ai/models/kimi-3"
+        "https://benchlm.ai/models/kimi-3",
+        "https://epoch.ai/benchmarks/gpqa-diamond"
       ],
       "coding_score": 96,
       "coding_basis": "Frontend Code Arena #1 (1679 Elo), ahead of Fable 5, winning 6 of 7 frontend categories; general SWE-bench Verified not yet published — score is frontend-led.",
@@ -215,7 +217,7 @@
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": 85.2,
-        "gpqa": null,
+        "gpqa": 90.5,
         "aime": null,
         "mmlu_pro": null,
         "lmarena_elo": null
@@ -243,7 +245,8 @@
       "sources": [
         "https://platform.claude.com/docs/en/about-claude/pricing",
         "https://llm-stats.com/benchmarks/swe-bench-verified",
-        "https://techcrunch.com/2026/06/30/anthropic-launches-claude-sonnet-5-as-a-cheaper-way-to-run-agents/"
+        "https://techcrunch.com/2026/06/30/anthropic-launches-claude-sonnet-5-as-a-cheaper-way-to-run-agents/",
+        "https://epoch.ai/benchmarks/gpqa-diamond"
       ],
       "coding_score": 85,
       "coding_basis": "SWE-bench Verified 85.2% (AA Coding Index 71.5)",
@@ -410,7 +413,7 @@
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": 80.2,
-        "gpqa": null,
+        "gpqa": 90.8,
         "aime": null,
         "mmlu_pro": null,
         "lmarena_elo": null
@@ -435,7 +438,8 @@
       "sources": [
         "https://platform.kimi.ai/docs/pricing/chat-k26",
         "https://llm-stats.com/benchmarks/swe-bench-verified",
-        "https://aitoolsrecap.com/Blog/moonshot-ai-kimi-k2-6-release-coding-agent-benchmarks-2026"
+        "https://aitoolsrecap.com/Blog/moonshot-ai-kimi-k2-6-release-coding-agent-benchmarks-2026",
+        "https://epoch.ai/benchmarks/gpqa-diamond"
       ],
       "coding_score": 80,
       "coding_basis": "SWE-bench Verified 80.2% + LMArena Code Elo #17 (1513)",
@@ -645,7 +649,7 @@
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": null,
-        "gpqa": null,
+        "gpqa": 93.3,
         "aime": null,
         "mmlu_pro": null,
         "lmarena_elo": null
@@ -670,7 +674,8 @@
       "sources": [
         "https://developers.openai.com/api/docs/pricing",
         "https://www.vellum.ai/blog/gpt-5-6-benchmarks-explained",
-        "https://artificialanalysis.ai/articles/gpt-5-6-has-landed"
+        "https://artificialanalysis.ai/articles/gpt-5-6-has-landed",
+        "https://epoch.ai/benchmarks/gpqa-diamond"
       ],
       "coding_score": 87,
       "coding_basis": "AA Coding Index 76.7",
@@ -691,7 +696,7 @@
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": null,
-        "gpqa": null,
+        "gpqa": 91.6,
         "aime": null,
         "mmlu_pro": null,
         "lmarena_elo": null
@@ -715,7 +720,8 @@
       "confidence": "medium",
       "sources": [
         "https://www.vellum.ai/blog/gpt-5-6-benchmarks-explained",
-        "https://artificialanalysis.ai/articles/gpt-5-6-has-landed"
+        "https://artificialanalysis.ai/articles/gpt-5-6-has-landed",
+        "https://epoch.ai/benchmarks/gpqa-diamond"
       ],
       "coding_score": 79,
       "coding_basis": "vendor coding-agent index ~74.6; no third-party yet",
@@ -735,7 +741,7 @@
       "price_output": 9,
       "speed_tps": 278,
       "benchmarks": {
-        "swe_bench": null,
+        "swe_bench": 79.3,
         "gpqa": 92.2,
         "aime": null,
         "mmlu_pro": null,
@@ -762,11 +768,12 @@
       "confidence": "medium",
       "sources": [
         "https://ai.google.dev/gemini-api/docs/pricing",
-        "https://o-mega.ai/articles/gemini-3-5-flash-benchmarks-cost-and-guide"
+        "https://o-mega.ai/articles/gemini-3-5-flash-benchmarks-cost-and-guide",
+        "https://epoch.ai/benchmarks/swe-bench-verified"
       ],
-      "coding_score": 83,
-      "coding_basis": "AA Coding Index 70.1 + LMArena Code Elo #19 (1500)",
-      "coding_confidence": "medium",
+      "coding_score": 79,
+      "coding_basis": "SWE-bench Verified 79.3% (Epoch AI independent run, high reasoning effort)",
+      "coding_confidence": "high",
       "use_well": [
         "Most of Pro's smarts at speed (~278 tok/s) — good for high-volume chat and coding where latency matters.",
         "$9/M output is high for a 'fast/cheap' tier — for true bulk work drop to Flash-Lite or a cheap open model."
@@ -826,7 +833,7 @@
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": null,
-        "gpqa": null,
+        "gpqa": 93.4,
         "aime": null,
         "mmlu_pro": null,
         "lmarena_elo": null
@@ -852,7 +859,8 @@
         "https://docs.x.ai/docs/models",
         "https://x.ai/news/grok-4-5",
         "https://apidog.com/blog/grok-4-5-benchmarks/",
-        "https://techcrunch.com/2026/07/08/spacexai-releases-grok-4-5-which-elon-describes-as-an-opus-class-model/"
+        "https://techcrunch.com/2026/07/08/spacexai-releases-grok-4-5-which-elon-describes-as-an-opus-class-model/",
+        "https://epoch.ai/benchmarks/gpqa-diamond"
       ],
       "coding_score": 86,
       "coding_basis": "AA Coding Index 72.5 + LMArena Code Elo #4 (1566)",
@@ -1195,7 +1203,7 @@
   ],
   "benchmarks_legend": {
     "swe_bench": "SWE-bench Verified — % of real-world GitHub issues resolved end-to-end (agentic coding). Note: several 2026 models published only SWE-bench Pro, a different/harder variant, so their Verified cell is null.",
-    "gpqa": "GPQA Diamond — % correct on graduate-level, Google-proof science reasoning questions.",
+    "gpqa": "GPQA Diamond — % correct on graduate-level, Google-proof science reasoning questions. Figures sourced from Epoch AI are independently run and reported at the reasoning-effort setting Epoch used (max for Opus 5, Kimi K3, GPT-5.6 Terra and Luna; xhigh for Sonnet 5; high for Grok 4.5), so they are best-case settings rather than defaults.",
     "aime": "AIME — % on advanced high-school competition math (American Invitational Mathematics Examination).",
     "mmlu_pro": "MMLU-Pro — % on a harder, multi-discipline knowledge and reasoning benchmark.",
     "lmarena_elo": "LMArena text Elo — human head-to-head preference rating (higher = preferred more often)."
