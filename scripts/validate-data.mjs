@@ -54,6 +54,28 @@ for (const L of data.effort_ladders || []) {
       if (p.cost <= 0) E(`ladder ${id}/${s.model_id}: point "${p.effort}" cost ${p.cost} must be > 0 (log axis)`);
       if (Array.isArray(L.levels) && !L.levels.includes(p.effort)) W(`ladder ${id}/${s.model_id}: effort "${p.effort}" not in declared levels[]`);
     }
+    // Each rung may appear once. A repeated effort means the rungs were keyed on the wrong
+    // column upstream and collapsed together — Epoch's CursorBench export ships exactly this
+    // bug (all three Opus 5 rows carry the model version "claude-opus-5_max"), so a future
+    // refresh that trusts that field would silently plot three "max" dots and hand the
+    // takeaway generator a curve that peaks and still climbs at the same time.
+    const seen = new Set();
+    for (const p of s.points) {
+      if (seen.has(p.effort)) E(`ladder ${id}/${s.model_id}: effort "${p.effort}" appears more than once — the rungs were keyed on the wrong field; one point per effort level`);
+      seen.add(p.effort);
+    }
+
+    // Points must run low → max in the order levels[] declares. The chart and the takeaways
+    // both read the last point as "the top rung", so out-of-order points misreport what the
+    // most expensive setting actually buys.
+    if (Array.isArray(L.levels)) {
+      const rank = (e) => L.levels.indexOf(e);
+      const ranks = s.points.map((p) => rank(p.effort));
+      if (ranks.every((r) => r >= 0) && ranks.some((r, i) => i && r < ranks[i - 1])) {
+        E(`ladder ${id}/${s.model_id}: points are out of effort order — sort them to match levels[], the last point is read as the top rung`);
+      }
+    }
+
     const costs = s.points.map((p) => p.cost);
     if (costs.some((c, i) => i && c < costs[i - 1])) W(`ladder ${id}/${s.model_id}: cost isn't rising with effort — check the reading`);
   }
