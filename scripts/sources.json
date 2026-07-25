@@ -1,0 +1,184 @@
+{
+  "_readme": "Machine-readable source registry. Design + reasoning: scripts/data-sources.md. Tier A may be ingested by collectors; Tier B may only be cited in a model's sources[] and MUST NOT back a ladder; Tier C is vendor-primary. Each entry lists the hosts that identify it, so any URL in the data resolves to a tier and a licence; validate-data.mjs enforces the tier rules; collect-epoch.mjs reads the epoch-ai entry. Endpoints below were each fetched and confirmed live on 2026-07-25 — nothing here is aspirational.",
+  "as_of": "2026-07-25",
+  "sources": [
+    {
+      "id": "epoch-ai",
+      "name": "Epoch AI Benchmarking Hub",
+      "tier": "A",
+      "licence": "CC-BY-4.0",
+      "licence_url": "https://epoch.ai/benchmarks/use-this-data",
+      "attribution": "Epoch AI, 'AI Benchmarking Hub'. Published online at epoch.ai. Retrieved from https://epoch.ai/benchmarks/use-this-data",
+      "redistributable": true,
+      "endpoint": "https://epoch.ai/data/benchmark_data.zip",
+      "hosts": [
+        "epoch.ai"
+      ],
+      "endpoint_kind": "zip-of-csv",
+      "verified": "2026-07-25",
+      "gives": [
+        "per-effort cost-per-task ladders (cursorbench_external.csv)",
+        "independently-run benchmark scores with stderr (gpqa_diamond, swe_bench_verified, math_level_5, frontiermath, simpleqa_verified)",
+        "mirrored external leaderboards under their own licences"
+      ],
+      "conflicts": "Epoch mirrors CursorBench rather than re-running it, and CursorBench is published by Cursor, which ships its own coding model. Separately, OpenAI funded Epoch's FrontierMath benchmark with dataset access, disclosed only after the fact.",
+      "notes": "Derived files carry their origin licence: aider_polyglot_external and terminalbench_external are Apache-2.0, not CC-BY. Anything ingested from those must credit the original leaderboard."
+    },
+    {
+      "id": "terminal-bench",
+      "name": "Terminal-Bench 2.x",
+      "tier": "A",
+      "licence": "Apache-2.0",
+      "licence_url": "https://huggingface.co/datasets/harborframework/terminal-bench-2.0",
+      "attribution": "Terminal-Bench (Harbor Framework), Apache License 2.0",
+      "redistributable": true,
+      "endpoint": "https://huggingface.co/api/datasets/harborframework/terminal-bench-2.0",
+      "hosts": [
+        "tbench.ai",
+        "huggingface.co"
+      ],
+      "endpoint_kind": "hf-dataset-api",
+      "verified": "2026-07-25",
+      "gives": [
+        "cross-lab agentic scores with average cost per task in USD"
+      ],
+      "conflicts": "None known. Independent and audited, with public trajectories.",
+      "notes": "No per-model reasoning-effort rungs, so it cannot back an effort ladder — it is a candidate for a separate panel. tbench.ai/leaderboard 301-redirects; use the Hugging Face dataset as the machine endpoint."
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter models API",
+      "tier": "A",
+      "licence": "public-api",
+      "licence_url": "https://openrouter.ai/docs",
+      "attribution": "Pricing and model IDs via OpenRouter",
+      "redistributable": true,
+      "endpoint": "https://openrouter.ai/api/v1/models",
+      "hosts": [
+        "openrouter.ai"
+      ],
+      "endpoint_kind": "json",
+      "verified": "2026-07-25",
+      "gives": [
+        "live provider prices",
+        "model IDs at or near launch (the launch-detector signal)"
+      ],
+      "conflicts": "Provider pass-through pricing, NOT vendor list price — it may legitimately differ from the official page.",
+      "notes": "Never write an OpenRouter price into models.json. It is a drift alarm and a new-model detector only; list prices come from the vendor's own pricing page."
+    },
+    {
+      "id": "artificial-analysis",
+      "name": "Artificial Analysis",
+      "tier": "B",
+      "licence": "proprietary-commercial",
+      "licence_url": "https://artificialanalysis.ai/pricing",
+      "attribution": "Artificial Analysis",
+      "redistributable": false,
+      "endpoint": null,
+      "hosts": [
+        "artificialanalysis.ai"
+      ],
+      "verified": "2026-07-25",
+      "gives": [
+        "Intelligence Index vs cost per task, with separate per-effort entries"
+      ],
+      "conflicts": "Runs paid pre-release evaluations with the labs, including for Claude Opus 5 itself.",
+      "notes": "RULED OUT as a feed, 2026-07-25, by Lucas: the free tier is internal-use-only and a public site counts as redistribution, which needs a Commercial licence at an unpublished price. Decision was 'if we have to pay we're not using it'. Do not reopen and do not request a quote. Citing a figure in sources[] with a link is fine; ingesting is not."
+    },
+    {
+      "id": "llm-stats",
+      "name": "llm-stats.com",
+      "tier": "B",
+      "licence": "unpublished",
+      "licence_url": "https://llm-stats.com/developer",
+      "attribution": "llm-stats.com",
+      "redistributable": false,
+      "endpoint": null,
+      "hosts": [
+        "llm-stats.com"
+      ],
+      "verified": "2026-07-25",
+      "gives": [
+        "broad model coverage, useful for discovery only"
+      ],
+      "conflicts": "Aggregator — thinner provenance than whoever ran the eval.",
+      "notes": "Use to notice that a number exists somewhere, then go to the primary source for it."
+    },
+    {
+      "id": "lmarena",
+      "name": "LMArena",
+      "tier": "B",
+      "licence": "unpublished",
+      "licence_url": "https://lmarena.ai",
+      "attribution": "LMArena",
+      "redistributable": false,
+      "endpoint": null,
+      "hosts": [
+        "lmarena.ai",
+        "arena.ai"
+      ],
+      "verified": "2026-07-25",
+      "gives": [
+        "human-preference Elo"
+      ],
+      "conflicts": "Preference, not correctness. No cost axis and no effort rungs.",
+      "notes": "Already used as its own separate signal in usage.lenses. Keep it there."
+    },
+    {
+      "id": "vals-ai",
+      "name": "Vals AI",
+      "tier": "B",
+      "licence": "unpublished",
+      "licence_url": "https://www.vals.ai",
+      "attribution": "Vals AI",
+      "redistributable": false,
+      "endpoint": null,
+      "hosts": [
+        "vals.ai"
+      ],
+      "verified": "2026-07-25",
+      "gives": [
+        "independent domain evals reporting accuracy, cost and latency"
+      ],
+      "conflicts": "Sells private evaluation infrastructure to the labs — same conflict class as Artificial Analysis.",
+      "notes": "One effort setting per run, so it cannot back a ladder. Watch, don't ingest."
+    },
+    {
+      "id": "vendor-primary",
+      "name": "Vendor pricing pages, model cards and launch posts",
+      "tier": "C",
+      "licence": "vendor-terms",
+      "licence_url": null,
+      "attribution": "Per-vendor; cite the specific page",
+      "redistributable": true,
+      "endpoint": null,
+      "hosts": [
+        "anthropic.com",
+        "openai.com",
+        "ai.google.dev",
+        "deepmind.google",
+        "blog.google",
+        "x.ai",
+        "deepseek.com",
+        "moonshot.cn",
+        "moonshot.ai",
+        "qwen.ai",
+        "alibabacloud.com",
+        "mistral.ai",
+        "meta.com",
+        "llama.com",
+        "platform.openai.com",
+        "docs.claude.com",
+        "cloud.google.com"
+      ],
+      "verified": "2026-07-25",
+      "gives": [
+        "official list prices",
+        "context windows",
+        "launch-day benchmarks"
+      ],
+      "conflicts": "The most conflicted source class — a lab grading its own model. Fastest at launch, which is why it is allowed at all.",
+      "notes": "Always label source_kind 'vendor-reported'. Never the only source once a Tier-A number exists for the same field. List price is the one field where a vendor page outranks everything."
+    }
+  ]
+}

@@ -10,9 +10,22 @@ const BENCHES = ['swe_bench', 'gpqa', 'aime', 'mmlu_pro', 'lmarena_elo'];
 const num = (v) => v === null || v === undefined || Number.isNaN(v);
 
 const data = JSON.parse(readFileSync(new URL('../data/models.json', import.meta.url)));
+const registry = JSON.parse(readFileSync(new URL('./sources.json', import.meta.url)));
 const errors = [], warnings = [];
 const E = (m) => errors.push(m);
 const W = (m) => warnings.push(m);
+
+// Host → registry entry, so a URL anywhere in the data can be traced back to a licence and a tier.
+const byHost = new Map();
+for (const s of registry.sources) for (const h of s.hosts || []) byHost.set(h, s);
+// Subdomains resolve to their parent entry, so www.anthropic.com and docs.anthropic.com both land
+// on the vendor-primary tier without every host needing its own line.
+const sourceFor = (url) => {
+  let host;
+  try { host = new URL(url).hostname.replace(/^www\./, ''); } catch { return null; }
+  for (let h = host; h.includes('.'); h = h.slice(h.indexOf('.') + 1)) if (byHost.has(h)) return byHost.get(h);
+  return null;
+};
 
 for (const m of data.models) {
   const id = m.name || m.id || '(unnamed)';
@@ -79,6 +92,34 @@ for (const L of data.effort_ladders || []) {
     const costs = s.points.map((p) => p.cost);
     if (costs.some((c, i) => i && c < costs[i - 1])) W(`ladder ${id}/${s.model_id}: cost isn't rising with effort — check the reading`);
   }
+}
+
+// 8. source-registry gates (scripts/sources.json). The tier system only means something if the
+//    build enforces it: Tier B is licensed to be CITED, not ingested, so it must never be what a
+//    ladder rests on. Getting this wrong is a licensing problem, not a style problem.
+for (const L of data.effort_ladders || []) {
+  const id = L.id || L.suite || '(unnamed ladder)';
+  const reg = sourceFor(L.source);
+  if (!reg) {
+    W(`ladder ${id}: source host isn't in scripts/sources.json — add it to the registry with its tier and licence, or the page can't say what we're allowed to republish`);
+  } else if (reg.tier === 'B' || !reg.redistributable) {
+    // Tier B is licensed to be quoted, not reproduced. This is the licensing gate.
+    E(`ladder ${id}: backed by "${reg.name}" (tier ${reg.tier}, redistributable=${reg.redistributable}) — tier B may be cited in sources[], never used as a ladder feed. See scripts/data-sources.md.`);
+  } else if (reg.tier === 'C' && L.source_kind !== 'vendor-reported') {
+    // Tier C (a lab publishing about its own models) is allowed — it is often the only thing that
+    // exists at launch — but it has to be labelled as such, because the panel renders source_kind
+    // and a vendor curve reading as third-party is the exact failure this site exists to avoid.
+    E(`ladder ${id}: backed by vendor-primary source "${reg.name}" but source_kind is "${L.source_kind}" — a lab publishing about its own models must be labelled "vendor-reported"`);
+  }
+}
+
+// A stub is how a model appears on day 0 without anyone guessing: present, with visible blanks.
+// A stub carrying a score is a contradiction — it means a figure got in without verification.
+for (const m of data.models) {
+  if (m.confidence !== 'low') continue;
+  const scored = BENCHES.filter((b) => m.benchmarks?.[b] != null);
+  if (scored.length && !(Array.isArray(m.sources) && m.sources.length))
+    E(`${m.name}: confidence "low" with unsourced benchmark(s) [${scored.join(', ')}] — a day-0 stub must keep every benchmark null until a source publishes one`);
 }
 
 if (warnings.length) { console.log('⚠ warnings (non-blocking):'); warnings.forEach((w) => console.log('  - ' + w)); }

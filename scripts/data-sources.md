@@ -125,13 +125,37 @@ benchmarked this yet" is exactly what a buyer needs to know in week one.
 | Phase | What | Status |
 |---|---|---|
 | 0 | Source registry + ensemble rules (this file) | ✅ done |
-| 1 | `sources.json` — machine-readable registry (id, tier, licence, attribution string, endpoint) | blocked: needs network to verify endpoints |
-| 2 | `collect-epoch.mjs` — pull CC-BY CSV, map to our model ids, emit **proposed** ladder + cost/task | blocked |
-| 3 | Extend `refresh-auto.mjs` from price-drift-only to full launch-detector + backfill-watcher | blocked |
-| 4 | Extend `validate-data.mjs` with the registry/tier/stub gates above | not blocked |
-| 5 | Site credits line for CC-BY / Apache-2.0 attribution | not blocked |
+| 1 | `sources.json` — machine-readable registry (id, tier, licence, attribution, hosts, endpoint) | ✅ done 2026-07-25 |
+| 2 | `collect-epoch.mjs` — pull CC-BY export, map to our model ids, emit **proposed** ladder + backfill | ✅ done 2026-07-25 |
+| 3 | `refresh-auto.mjs` extended: launch detector + price drift + backfill watcher | ✅ done 2026-07-25 |
+| 4 | `validate-data.mjs` registry/tier/stub gates | ✅ done 2026-07-25 |
+| 5 | Site credits line for CC-BY / Apache-2.0 attribution | ✅ done 2026-07-25 |
 
-**Phases 1–3 cannot be written honestly without network access.** Parsing a feed whose real
-response shape you've never seen is guessing, and guessing is the one thing this project doesn't
-do. They need a session with outbound egress (see `status/modelproof.md` — the environment's
-network policy currently blocks all outbound fetches).
+Every endpoint in `sources.json` was fetched and confirmed live on 2026-07-25 before being written
+down, which is why phases 1–3 waited for network access rather than being guessed at.
+
+## How to run it
+
+```
+node scripts/collect-epoch.mjs          # what Epoch publishes vs what we ship — proposes, never writes
+node scripts/collect-epoch.mjs --json   # same, machine-readable
+node scripts/refresh-auto.mjs           # the full weekly pass; writes docs/auto-refresh-report.md
+node scripts/validate-data.mjs          # the honesty gate; exits non-zero on any error
+```
+
+Behind a proxy, prefix with `NODE_USE_ENV_PROXY=1` — Node does not read proxy env vars for `fetch`
+on its own. CI needs no such flag.
+
+## Two decisions worth knowing about
+
+**The launch detector proposes a stub, it does not write one.** The design allows the machine to
+record that a model *exists*. In practice OpenRouter's name and date fields are provider
+pass-through and are routinely wrong or placeholder in the first days after a launch — exactly when
+the detector fires. Auto-inserting them would put unverified strings on the page, so the report
+carries a paste-ready stub instead and a human confirms the name against the vendor's own page.
+Merging still requires a human either way, so this costs no time and removes the failure mode.
+Reversible if it proves too conservative.
+
+**The bot no longer writes `CHANGES.md`.** It used to overwrite that file wholesale on every run,
+which would have destroyed the human decision log one week at a time. Its report now goes to
+`docs/auto-refresh-report.md`, and the workflow reads the PR body from there.
