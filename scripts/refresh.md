@@ -1,4 +1,4 @@
-# Refreshing MODELproof's data
+# Refreshing Modelproof's data
 
 All model data lives in one file: [`../data/models.json`](../data/models.json). Refreshing =
 regenerating that file with current, sourced figures. There is **no build step** — replace the

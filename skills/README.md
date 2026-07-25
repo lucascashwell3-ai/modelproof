@@ -1,6 +1,6 @@
-# MODELproof — take the advisor with you
+# Modelproof — take the advisor with you
 
-Three ways to get MODELproof's neutral, cost-first model advice **inside your own AI workflow**,
+Three ways to get Modelproof's neutral, cost-first model advice **inside your own AI workflow**,
 from zero-effort to auto-invoked. All read the same live sourced data, so they stay current.
 
 The advisor answers two questions, in this order: **"what should I use from what I already
@@ -20,7 +20,7 @@ Drop the `modelproof-advisor/` folder into your Claude skills directory (Claude 
 `.claude/skills/` in a project or `~/.claude/skills/` for everywhere; Claude Desktop/claude.ai:
 Settings → Capabilities → Skills). Then, whenever you ask something like *"which model should I
 use for X?"*, *"what's the best model I have for this?"*, or *"am I overpaying for Opus?"*,
-Claude uses the skill: it **fetches the live MODELproof data** and answers your-kit-first — the
+Claude uses the skill: it **fetches the live Modelproof data** and answers your-kit-first — the
 best of what you already pay for plus how to use it well — then a neutral upgrade check, never
 favoring a lab.
 
