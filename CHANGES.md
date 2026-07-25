@@ -1,3 +1,82 @@
+# Second effort ladder: CursorBench via Epoch AI (CC-BY) — 2026-07-25
+
+Panel 03 shipped with one ladder, digitised from **Anthropic's own launch figure** — a vendor
+grading its own models, disclosed but not fixed. This adds a **second, independent ladder** so the
+panel stops resting on a single interested party. Pure data change: one new entry in
+`effort_ladders`. No chart code was touched; the suite picker appears on its own once there is
+more than one ladder.
+
+## Why this source
+
+Researched every candidate that publishes score *and* real cost per attempt (see
+`claude-universe/status/_modelproof-neutral-ladder-findings.md`). Two hard requirements: rungs at
+each reasoning-effort level, and a licence that permits republication on a public site.
+
+- **Artificial Analysis — rejected.** Best-shaped data anywhere, but its free tier is internal-use
+  only and a public site counts as redistribution, needing a Commercial licence at an unpublished
+  "contact us" price. Lucas's call, 2026-07-25: *"if we have to pay we're not using it."* AA stays
+  usable as an ordinary cited reference; it is not a feed.
+- **Epoch AI — adopted.** Data is **CC-BY**: free to use, distribute and reproduce with credit,
+  read off their own licensing page. Its `cursorbench_external.csv` export carries one row per
+  reasoning level with `Cost per task`, `Tokens per task` and `Steps per task` alongside the score.
+- Ruled out for having no cost-per-attempt at effort rungs: vals.ai (one effort setting per run),
+  LMArena, the SWE-bench leaderboard, llm-stats, OpenRouter. Using any of them would have meant
+  modelling cost from list prices, which this repo forbids outright.
+
+## What the numbers are
+
+Exact published values from Epoch's CC-BY export (updated 2026-07-25) — **not digitised from a
+picture**, unlike the Frontier-Bench ladder. Four series, 15 points:
+
+| Model | Rungs | Cost/score range |
+|---|---|---|
+| Opus 5 | high · xhigh · max | $3.91 / 66.7% → $8.23 / 70.0% |
+| Fable 5 | high · xhigh · max | $10.81 / 70.6% → $18.02 / 72.9% |
+| Opus 4.8 | low → max (all five) | $2.93 / 54.3% → $7.59 / 63.8% |
+| GPT-5.5 | low · medium · high · xhigh | $1.19 / 48.8% → $4.37 / 64.3% |
+
+GPT-5.6 Sol has only its `max` rung published, so it is **not plotted** — one point is not a
+ladder. Rungs missing a cost or a score are dropped, never interpolated, which is why the series
+have different lengths.
+
+**Upstream data quirk, recorded:** all three Opus 5 rows carry the model-version string
+`claude-opus-5_max`, which looks like a copy-paste error at the source. The `Reasoning level`
+column is correct and is what the rungs are keyed on. Worth reporting to Epoch.
+
+## The finding this surfaces
+
+**The two ladders disagree, and the panel now shows that.**
+
+- Frontier-Bench (Anthropic's own): Opus 5 **peaks at `xhigh`** — `max` costs more and scores lower.
+- CursorBench (Cursor's suite, via Epoch): Opus 5 is **still climbing at `max`** — the last step
+  buys +0.7 points for 12% more spend.
+
+Different suites measuring different tasks can legitimately disagree, and the repo rule is that
+disagreement gets shown rather than averaged away — never average across harnesses. A reader
+flipping between the two learns more than either curve claiming to settle it.
+
+## Honesty fields
+
+Independent of Anthropic is not the same as independent. The `caveat` that renders under the chart
+says all three of these plainly:
+
+1. **CursorBench is run and published by Cursor**, which ships its own coding model (Composer) — a
+   benchmark by a company with a horse in the coding race.
+2. **Epoch mirrors those numbers, it does not re-run them.**
+3. **Epoch has its own disclosed conflict**: OpenAI funded the FrontierMath benchmark with dataset
+   access, disclosed only after the fact.
+
+## Verification
+
+- `scripts/validate-data.mjs` passes: 23 models, 2 ladders, 35 points, 0 errors.
+- Rendered in a real browser at 1440px and 390px: suite picker switches curves, per-ladder
+  takeaways recompute from the points, provenance block renders all of the above, **no JS errors**,
+  no horizontal overflow on mobile.
+- `as_of` deliberately **not** bumped. It signals freshness of model prices and benchmarks, which
+  this change does not touch; the ladder carries its own `as_of`. Bumping it would overclaim.
+
+---
+
 # Claude Opus 5 added + effort-ladder chart — 2026-07-24
 
 ## 1. Claude Opus 5 (released 2026-07-23) added — 23 models
