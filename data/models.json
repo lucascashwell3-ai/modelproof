@@ -1422,6 +1422,133 @@
           ]
         }
       ]
+    },
+    {
+      "id": "cursorbench-agentic-coding",
+      "suite": "CursorBench",
+      "task": "Agentic coding",
+      "x_label": "Cost per task (USD, log scale)",
+      "y_label": "Score (%)",
+      "as_of": "2026-07-25",
+      "publisher": "Epoch AI (mirroring Cursor's CursorBench)",
+      "source_kind": "third-party",
+      "source": "https://epoch.ai/benchmarks/use-this-data",
+      "confidence": "high",
+      "method": "Exact published values, not digitised from a picture: taken from Epoch AI's CC-BY benchmark data export (cursorbench_external.csv, updated 2026-07-25), which mirrors Cursor's own CursorBench leaderboard. Score is the published fraction correct, rendered as a percentage; cost is Cursor's measured average spend per task, not a figure modelled from list prices. Rungs are keyed on the file's 'Reasoning level' column — note the three Opus 5 rows all carry the model-version string 'claude-opus-5_max' upstream, which looks like a copy-paste error at the source, so the reasoning-level column is what distinguishes them. Any model-and-rung missing a cost or a score is dropped rather than interpolated, which is why the ladders have different lengths.",
+      "harness": "Cursor's agent running CursorBench, one entry per reasoning-effort setting rather than one per model, because each setting trades score against spend. Alongside score, the source publishes average cost, token usage and agent steps per task. GPT-5.6 Sol currently has only its max rung published, so it is not plotted here.",
+      "caveat": "Independent of Anthropic, but not of everyone: CursorBench is run and published by Cursor, which ships its own coding model (Composer), so it is a benchmark by a company with a horse in the coding race. Epoch AI mirrors those numbers under CC-BY, it does not re-run them — and Epoch has its own disclosed conflict elsewhere, having had OpenAI fund the FrontierMath benchmark with dataset access, which it disclosed only after the fact. Read this as a second opinion measured on a different task by a different party, not as a neutral referee settling the question.",
+      "levels": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "series": [
+        {
+          "model_id": "claude-opus-5",
+          "label": "Opus 5",
+          "color": "#e05c3e",
+          "points": [
+            {
+              "effort": "high",
+              "cost": 3.91,
+              "score": 66.7
+            },
+            {
+              "effort": "xhigh",
+              "cost": 7.35,
+              "score": 69.3
+            },
+            {
+              "effort": "max",
+              "cost": 8.23,
+              "score": 70.0
+            }
+          ]
+        },
+        {
+          "model_id": "claude-fable-5",
+          "label": "Fable 5",
+          "color": "#e8a93a",
+          "points": [
+            {
+              "effort": "high",
+              "cost": 10.81,
+              "score": 70.6
+            },
+            {
+              "effort": "xhigh",
+              "cost": 13.74,
+              "score": 72.0
+            },
+            {
+              "effort": "max",
+              "cost": 18.02,
+              "score": 72.9
+            }
+          ]
+        },
+        {
+          "model_id": "claude-opus-4-8",
+          "label": "Opus 4.8",
+          "color": "#3f7fe0",
+          "points": [
+            {
+              "effort": "low",
+              "cost": 2.93,
+              "score": 54.3
+            },
+            {
+              "effort": "medium",
+              "cost": 3.83,
+              "score": 56.6
+            },
+            {
+              "effort": "high",
+              "cost": 4.41,
+              "score": 58.4
+            },
+            {
+              "effort": "xhigh",
+              "cost": 6.14,
+              "score": 62.1
+            },
+            {
+              "effort": "max",
+              "cost": 7.59,
+              "score": 63.8
+            }
+          ]
+        },
+        {
+          "model_id": "gpt-5-5",
+          "label": "GPT-5.5",
+          "color": "#9aa0ab",
+          "points": [
+            {
+              "effort": "low",
+              "cost": 1.19,
+              "score": 48.8
+            },
+            {
+              "effort": "medium",
+              "cost": 2.22,
+              "score": 59.2
+            },
+            {
+              "effort": "high",
+              "cost": 3.59,
+              "score": 62.6
+            },
+            {
+              "effort": "xhigh",
+              "cost": 4.37,
+              "score": 64.3
+            }
+          ]
+        }
+      ]
     }
   ],
   "effort_ladder_note": "effort_ladders = published cost-vs-performance curves where a single model is run at several effort/reasoning settings, so you can see what extra spend actually buys. Each ladder carries its publisher, harness, method and confidence, and is shown with those attached — vendor-run benchmarks are directional, never a settled ranking. A ladder is only listed when the publisher has released the figure; nothing here is modelled or extrapolated from list prices."
