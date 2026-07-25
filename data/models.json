@@ -412,7 +412,7 @@
       "price_output": 4,
       "speed_tps": null,
       "benchmarks": {
-        "swe_bench": 80.2,
+        "swe_bench": 76.7,
         "gpqa": 90.8,
         "aime": null,
         "mmlu_pro": null,
@@ -437,12 +437,12 @@
       "confidence": "high",
       "sources": [
         "https://platform.kimi.ai/docs/pricing/chat-k26",
-        "https://llm-stats.com/benchmarks/swe-bench-verified",
         "https://aitoolsrecap.com/Blog/moonshot-ai-kimi-k2-6-release-coding-agent-benchmarks-2026",
-        "https://epoch.ai/benchmarks/gpqa-diamond"
+        "https://epoch.ai/benchmarks/gpqa-diamond",
+        "https://epoch.ai/benchmarks/swe-bench-verified"
       ],
-      "coding_score": 80,
-      "coding_basis": "SWE-bench Verified 80.2% + LMArena Code Elo #17 (1513)",
+      "coding_score": 77,
+      "coding_basis": "SWE-bench Verified 76.7% (Epoch AI independent re-run, 2026-07-25) + LMArena Code Elo #17 (1513). Replaces an 80.2% figure that traced to llm-stats, an aggregator; the independent re-run outranks it.",
       "coding_confidence": "high",
       "use_well": [
         "Best when you want an open-weight, long-horizon coding agent — 80% SWE-bench at open-model prices.",
@@ -742,7 +742,7 @@
       "speed_tps": 278,
       "benchmarks": {
         "swe_bench": 79.3,
-        "gpqa": 92.2,
+        "gpqa": 92.8,
         "aime": null,
         "mmlu_pro": null,
         "lmarena_elo": null
@@ -769,7 +769,8 @@
       "sources": [
         "https://ai.google.dev/gemini-api/docs/pricing",
         "https://o-mega.ai/articles/gemini-3-5-flash-benchmarks-cost-and-guide",
-        "https://epoch.ai/benchmarks/swe-bench-verified"
+        "https://epoch.ai/benchmarks/swe-bench-verified",
+        "https://epoch.ai/benchmarks/gpqa-diamond"
       ],
       "coding_score": 79,
       "coding_basis": "SWE-bench Verified 79.3% (Epoch AI independent run, high reasoning effort)",

@@ -1,3 +1,34 @@
+# Adopting Epoch's independent figures over weaker sources — 2026-07-25
+
+Two shipped numbers were resting on thinner provenance than the free, independently-run data now
+available. Flagged in the previous entry, decided by Lucas the same day: take Epoch on both.
+
+| Model | Field | Was | Now | Why |
+|---|---|---|---|---|
+| Kimi K2.6 | SWE-bench Verified | 80.2% | **76.7% ±1.9** | Old figure traced to llm-stats, which `sources.json` classes Tier B — "aggregator, use for discovery, not as a cited authority". Epoch re-runs the benchmark itself. |
+| Gemini 3.5 Flash | GPQA Diamond | 92.2% | **92.8% ±1.6** | Old figure traced to a third-party blog that isn't in the source registry at all. |
+
+Precedence rule from `data-sources.md`: official vendor page → **independent re-run** → vendor-reported
+→ aggregator. Both changes move a figure up that ladder, not sideways.
+
+## Knock-on
+
+**Kimi K2.6 `coding_score` 80 → 77**, basis rewritten to name the Epoch re-run and to record what it
+replaced. Confidence stays `high` — it is still a real SWE-bench Verified number, just a better
+sourced one. It slips below Opus 4.8 and GPT-5.6 Terra in the coding order; that is the corrected
+picture, not a downgrade of the model.
+
+**The llm-stats URL was dropped from Kimi K2.6's `sources[]`** — it no longer backs any figure on
+that model, and leaving an aggregator listed as a source for numbers it doesn't support would be
+the same laundering the registry exists to prevent.
+
+## Not changed
+
+Gemini 3.5 Flash keeps its blog source: it may still back fields other than GPQA, and pruning it
+blind would strand them. Its GPQA now cites Epoch alongside.
+
+---
+
 # Backfill: independently-run GPQA + SWE-bench from Epoch AI — 2026-07-25
 
 The first data the new pipeline produced. `collect-epoch.mjs` flagged eight blank cells that Epoch
