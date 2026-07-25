@@ -1,3 +1,54 @@
+# Backfill: independently-run GPQA + SWE-bench from Epoch AI — 2026-07-25
+
+The first data the new pipeline produced. `collect-epoch.mjs` flagged eight blank cells that Epoch
+AI has since published; each was re-checked against the raw CSV by hand before being written, and
+the collector now reports zero backfill candidates, which closes the loop.
+
+## Filled (all previously blank — nothing was overwritten)
+
+| Model | Field | Value | Effort Epoch ran at |
+|---|---|---|---|
+| Claude Opus 5 | GPQA Diamond | 93.9% ±1.5 | max |
+| Grok 4.5 | GPQA Diamond | 93.4% ±1.4 | high |
+| GPT-5.6 Terra | GPQA Diamond | 93.3% ±1.5 | max |
+| Kimi K3 | GPQA Diamond | 93.1% ±1.5 | max |
+| GPT-5.6 Luna | GPQA Diamond | 91.6% ±1.7 | max |
+| Kimi K2.6 | GPQA Diamond | 90.8% ±1.7 | default |
+| Claude Sonnet 5 | GPQA Diamond | 90.5% ±1.8 | xhigh |
+| Gemini 3.5 Flash | SWE-bench Verified | 79.3% ±1.8 | high |
+
+Source on every one: Epoch AI's benchmarking hub, CC-BY, added to each model's `sources[]`.
+
+**These are best-case settings, not defaults**, and the site now says so — `benchmarks_legend.gpqa`
+names the effort level Epoch used per model. A GPQA number taken at `max` is not what a reader gets
+at default effort, and quietly presenting it as "the" score would repeat the exact sin this project
+exists to avoid.
+
+## One knock-on change
+
+**Gemini 3.5 Flash `coding_score` 83 → 79, confidence medium → high.** Its score rested on an
+Artificial Analysis coding index plus an LMArena rank — an estimate. It now has a real SWE-bench
+Verified number from an independent re-run, and both `refresh.md` rule 1 and the precedence rule in
+`data-sources.md` say the stronger signal wins. The score dropped, which is the point: it was
+flattered by the weaker evidence.
+
+## Two conflicts found and deliberately NOT changed
+
+The collector only proposes fills for blank cells, so it never touched these. Flagging rather than
+silently rewriting a shipped number:
+
+1. **Kimi K2.6 SWE-bench: we show 80.2%, Epoch's independent run says 76.7%.** Ours traces to
+   llm-stats.com, which our own registry classes Tier B — "aggregator, use for discovery, not as a
+   cited authority." By the precedence rule the independent re-run should win, which would also pull
+   its `coding_score` down from 80. **Lucas's call.**
+2. **Gemini 3.5 Flash GPQA: we show 92.2%, Epoch says 92.8%.** Ours traces to a third-party blog
+   that isn't in the source registry at all.
+
+Both are cases of a shipped figure resting on weaker provenance than something now available free.
+Neither is a guess, so neither is urgent — but the registry exists precisely to make this visible.
+
+---
+
 # Second effort ladder: CursorBench via Epoch AI (CC-BY) — 2026-07-25
 
 Panel 03 shipped with one ladder, digitised from **Anthropic's own launch figure** — a vendor

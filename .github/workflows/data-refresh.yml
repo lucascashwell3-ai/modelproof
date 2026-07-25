@@ -19,7 +19,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
 
-      # 1. Detect + flag (writes CHANGES.md + data/_auto_checked.json; NEVER prices/benchmarks/as_of)
+      # 1. Detect + flag (writes docs/auto-refresh-report.md + data/_auto_checked.json;
+      #    NEVER prices/benchmarks/as_of. CHANGES.md is the human decision log — the bot must not touch it.)
       - name: Detect changes (flag-first)
         run: node scripts/refresh-auto.mjs
 
@@ -36,9 +37,9 @@ jobs:
           branch: auto/data-refresh
           commit-message: 'chore(data): weekly auto-check — review before merge'
           title: 'chore(data): weekly auto-check — verify + merge'
-          body-path: CHANGES.md
+          body-path: docs/auto-refresh-report.md
           labels: data-refresh
-# One-time enablement (Lucas): Settings → Actions → General → "Allow GitHub Actions to create and
-# approve pull requests"; add branch protection on main requiring 1 review so the bot can open but
+# Enablement: "Allow GitHub Actions to create and approve pull requests" was turned on 2026-07-25.
+# Branch protection on main requiring 1 review is still worth adding so the bot can open but
 # never self-merge. Per-model usage volumes (OpenRouter rankings) additionally need an API key
 # secret — out of scope until the usage view returns.
