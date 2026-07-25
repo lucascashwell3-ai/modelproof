@@ -1,4 +1,4 @@
-# MODELproof MCP server
+# Modelproof MCP server
 
 A neutral, cost-first **AI-model advisor** that any MCP host (Claude Desktop, Cursor, …) can call
 mid-workflow. It reads the **same live `data/models.json`** the website renders, so its answers match
@@ -43,7 +43,7 @@ Restart Claude Desktop. Ask "which model should I use for cheap bulk classificat
 `recommend_model`. **Note:** MCP hosts gate the first tool call behind a user approval — the model
 *chooses* to call it, the host asks the user once. That's expected; it is not silent.
 
-Override the data source with `MODELPROOF_DATA_URL` if needed.
+Override the data source with `Modelproof_DATA_URL` if needed.
 
 ## Deploying as a remote connector (follow-up)
 

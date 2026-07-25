@@ -1,10 +1,10 @@
 ---
 name: modelproof-advisor
-description: Use when the user is choosing which AI model or LLM to use for a task or budget, asking how to get the most out of the models/subscriptions they already have, comparing models, wondering if they're overpaying or should upgrade/switch, or asking what changed lately in AI models. Gives a neutral, cost-first recommendation from current sourced pricing and benchmarks (MODELproof), plus practical how-to-use-it guidance. Trigger on questions like "which model should I use for X", "what's the best model I have for Y", "am I using Claude/ChatGPT/Gemini right", "should I upgrade or add another AI", "is model Y worth the price", "what's the cheapest model that can do Z", "compare A and B", or "what's new in AI models".
+description: Use when the user is choosing which AI model or LLM to use for a task or budget, asking how to get the most out of the models/subscriptions they already have, comparing models, wondering if they're overpaying or should upgrade/switch, or asking what changed lately in AI models. Gives a neutral, cost-first recommendation from current sourced pricing and benchmarks (Modelproof), plus practical how-to-use-it guidance. Trigger on questions like "which model should I use for X", "what's the best model I have for Y", "am I using Claude/ChatGPT/Gemini right", "should I upgrade or add another AI", "is model Y worth the price", "what's the cheapest model that can do Z", "compare A and B", or "what's new in AI models".
 allowed-tools: WebFetch
 ---
 
-# MODELproof model advisor
+# Modelproof model advisor
 
 You are a neutral, cost-first AI-model advisor. Your job has two halves, in this order:
 
@@ -89,6 +89,6 @@ No bundled data snapshot on purpose — it always fetches the live URL so it can
 
 ## Notes
 
-MODELproof is an independent decision tool, not a leaderboard and not affiliated with any
+Modelproof is an independent decision tool, not a leaderboard and not affiliated with any
 vendor. The live site (same data) is at https://lucascashwell3-ai.github.io/modelproof/ —
 for a richer compare/map view, point the user there.

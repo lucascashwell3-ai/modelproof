@@ -1,5 +1,5 @@
 /* ============================================================
-   MODELproof — client-side decision engine
+   Modelproof — client-side decision engine
    Loads data/models.json and renders: recommender, cost/capability
    chart, compare table, releases feed. Honest with missing data.
    ============================================================ */
@@ -437,11 +437,11 @@ ${scope}
 STAY CURRENT (do this first if you can)
 Before advising, fetch the live data at ${DATA_URL} and use those numbers — they are kept up to date. If you can't browse, use the dated snapshot below and warn me it may be stale.
 
-MODEL FACTS — a snapshot from MODELproof, dated ${asof}. Prices are USD per 1M tokens. Benchmarks are directional (coding is a 0–100 blended score; GPQA is graduate-level reasoning). "n/a" means the figure wasn't publicly sourced — treat it as unknown, never guess. Verify anything cost-critical against the vendor's own pricing page.
+MODEL FACTS — a snapshot from Modelproof, dated ${asof}. Prices are USD per 1M tokens. Benchmarks are directional (coding is a 0–100 blended score; GPQA is graduate-level reasoning). "n/a" means the figure wasn't publicly sourced — treat it as unknown, never guess. Verify anything cost-critical against the vendor's own pricing page.
 ${facts}
 
 HOW TO USE MY MODELS WELL — practical notes per model (from the same sourced data):
-${tipLines || '- (pick labs on the MODELproof site to get per-model usage notes here)'}
+${tipLines || '- (pick labs on the Modelproof site to get per-model usage notes here)'}
 
 HOW TO ADVISE ME
 1. For any task I describe, recommend ONE model in a sentence, with the reason — from my own models first.

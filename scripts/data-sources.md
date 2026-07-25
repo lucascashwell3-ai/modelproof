@@ -1,4 +1,4 @@
-# MODELproof — autonomous data sourcing: the source registry & ensemble design
+# Modelproof — autonomous data sourcing: the source registry & ensemble design
 
 _Added 2026-07-24. Companion to `refresh.md` (which covers the schema and the manual refresh).
 This file covers **where numbers come from, which ones a machine may collect on its own, and how
@@ -6,14 +6,14 @@ sources get combined.** Design only — the collectors are not built yet; see "B
 
 ## The goal
 
-Keep MODELproof carrying **accurate performance-vs-price data for the models people actually use,
+Keep Modelproof carrying **accurate performance-vs-price data for the models people actually use,
 at or shortly after the moment that data becomes public** — pulled automatically, from whatever
 mix of credible sources covers the ground, rather than from one vendor's launch chart.
 
 ## The rule that makes it worth reading
 
 **The machine collects. A human publishes.** This is not caution for its own sake — it is the
-entire product. MODELproof's value is that a number on the page is a number somebody checked, and
+entire product. Modelproof's value is that a number on the page is a number somebody checked, and
 a blank is an honest blank. A bot writing benchmark scores straight to the live site would make it
 one more scraped aggregator, which is the thing it exists not to be.
 

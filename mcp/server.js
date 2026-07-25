@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* ============================================================
-   MODELproof MCP server — a neutral, cost-first model advisor
+   Modelproof MCP server — a neutral, cost-first model advisor
    any MCP host (Claude Desktop, Cursor, …) can call.
    Read-only: fetches the SAME hosted data/models.json the site
    renders, so recommendations match the website and stay current.
@@ -11,7 +11,7 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 
-const DATA_URL = process.env.MODELPROOF_DATA_URL
+const DATA_URL = process.env.Modelproof_DATA_URL
   || 'https://lucascashwell3-ai.github.io/modelproof/data/models.json';
 
 // ---- data (fetch the live file the site renders; cache ~1h) ----
