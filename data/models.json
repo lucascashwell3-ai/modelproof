@@ -715,8 +715,8 @@
       "vendor": "OpenAI",
       "released": "2026-07-09",
       "context_window": 1000000,
-      "price_input": 2.5,
-      "price_output": 15,
+      "price_input": 2,
+      "price_output": 12,
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": null,
@@ -763,6 +763,13 @@
             "Show it two or three samples of your voice — it imitates provided style more reliably than described style."
           ]
         }
+      },
+      "price_checked": {
+        "url": "https://developers.openai.com/api/docs/pricing",
+        "date": "2026-07-30",
+        "input": 2,
+        "output": 12,
+        "aggregator_note": "20% price cut announced 2026-07-30 (was $2.50/$15); confirmed live on OpenAI's own pricing page."
       }
     },
     {
@@ -771,8 +778,8 @@
       "vendor": "OpenAI",
       "released": "2026-07-09",
       "context_window": 1000000,
-      "price_input": 1,
-      "price_output": 6,
+      "price_input": 0.2,
+      "price_output": 1.2,
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": null,
@@ -788,7 +795,7 @@
         "speed"
       ],
       "strengths": [
-        "Cheapest 5.6 tier at $1/$6; cost-per-task just ~$0.21",
+        "Cheapest 5.6 tier at $0.20/$1.20 (cut 80% from launch price of $1/$6)",
         "Still competitive: Terminal-Bench 2.1 84.7%, Coding Agent Index 74.6",
         "1M context"
       ],
@@ -799,6 +806,7 @@
       "verdict": "Use for high-volume or budget coding/agent work where you don't need deep long-context recall.",
       "confidence": "medium",
       "sources": [
+        "https://developers.openai.com/api/docs/pricing",
         "https://www.vellum.ai/blog/gpt-5-6-benchmarks-explained",
         "https://artificialanalysis.ai/articles/gpt-5-6-has-landed",
         "https://epoch.ai/benchmarks/gpqa-diamond"
@@ -807,9 +815,16 @@
       "coding_basis": "vendor coding-agent index ~74.6; no third-party yet",
       "coding_confidence": "low",
       "use_well": [
-        "Good for high-volume, budget coding and agent work at $1/$6.",
+        "Good for high-volume, budget coding and agent work at $0.20/$1.20.",
         "Avoid it for long documents — its long-context recall (41.3%) is far below Sol's 91.5%."
-      ]
+      ],
+      "price_checked": {
+        "url": "https://developers.openai.com/api/docs/pricing",
+        "date": "2026-07-30",
+        "input": 0.2,
+        "output": 1.2,
+        "aggregator_note": "80% price cut announced 2026-07-30 (was $1/$6); confirmed live on OpenAI's own pricing page."
+      }
     },
     {
       "id": "gemini-3-5-flash",

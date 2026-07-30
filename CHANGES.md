@@ -1,3 +1,30 @@
+# OpenAI GPT-5.6 Terra/Luna price cuts — 2026-07-30
+
+OpenAI announced price cuts today (Sam Altman, @sama). Verified directly against OpenAI's own
+pricing page (`developers.openai.com/api/docs/pricing`) before writing anything — the announcement
+also came with an Artificial Analysis chart, which was **not** used as a source; AA stays banned
+as a ladder/data feed (unpublished redistribution cost + undisclosed pre-release-eval conflicts,
+see `_modelproof-neutral-ladder-findings.md`).
+
+| Model | Field | Was | Now | Source |
+|---|---|---|---|---|
+| GPT-5.6 Terra | price_input / price_output | $2.50 / $15 | **$2.00 / $12** | OpenAI pricing page, confirmed live 2026-07-30 |
+| GPT-5.6 Luna | price_input / price_output | $1 / $6 | **$0.20 / $1.20** | OpenAI pricing page, confirmed live 2026-07-30 |
+| GPT-5.6 Sol | price_input / price_output | $5 / $30 | $5 / $30 (unchanged) | Confirmed live, no change needed |
+
+`price_checked` blocks added to Terra and Luna recording the URL, date, and figures. Copy in
+`strengths`/`use_well` that quoted Luna's old $1/$6 price updated to match; Luna's `sources[]` now
+also lists the OpenAI pricing page directly (it was missing before, despite backing the price
+field). No benchmark, score, or confidence field touched.
+
+## Not changed
+
+The 2026-07-09 GA-launch entry in `data/models.json`'s `news[]` ("Sol $5/$30, Terra $2.50/$15,
+Luna $1/$6") describes that date's announcement and is left as a historical record, not updated
+to reflect today's cuts.
+
+---
+
 # Adopting Epoch's independent figures over weaker sources — 2026-07-25
 
 Two shipped numbers were resting on thinner provenance than the free, independently-run data now
