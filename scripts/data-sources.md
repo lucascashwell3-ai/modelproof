@@ -26,12 +26,48 @@ What the machine **may** write autonomously (still via PR):
 - `releases[]` entries, with the source URL.
 - **List prices** scraped from the vendor's own official pricing page (deterministic, one known
   page per vendor). Prices are published facts with a single authoritative source.
+
+  **On aggregators — learned the hard way, 2026-07-29.** OpenRouter is Tier A for *model existence*
+  and useless for *list price*: it aggregates provider prices, which include fast tiers, priority
+  routing, regional endpoints and pass-throughs. The weekly drift check used to flag any gap > 20%
+  against it. On 2026-07-29 it fired 8 times and was **wrong 8 times out of 8** — every one of our
+  figures was already correct against the vendor's own page. That noise is why the PR went unread
+  for two days, which is worse than having no alarm at all. The check now keys off our own
+  `price_checked` record (vendor URL + date + the figures confirmed there) and stays silent for
+  anything verified inside 90 days, whatever OpenRouter says.
 - The `auto_checked` date, flags, and reviewer checklists.
 
 What it **may not**, ever:
-- Any benchmark score, any ladder point, any `coding_score`, any confidence upgrade, any `verdict`.
-- Any figure derived by inference — averaging suites, interpolating a rung, modelling cost from
-  list prices. Blank beats guessed stays absolute.
+- Any figure **derived by inference** — averaging suites, interpolating a rung, modelling cost from
+  list prices, reconciling two sources that disagree. Blank beats guessed stays absolute.
+- Any `coding_score`, `confidence` upgrade, or `verdict`. Those are judgements, not facts.
+- **Overwriting a figure that is already published.** See the fill-vs-change rule below.
+
+### The rule redrawn: provenance, not field type (2026-07-29)
+
+This file used to ban benchmark scores and ladder points *by field name*. That line was in the wrong
+place. Copying a rung verbatim out of Epoch's CC-BY export is the same kind of act as scraping a
+vendor's list price — one authoritative source, a stable identifier, no interpretation — and list
+prices were already allowed. Meanwhile the ban did nothing about the actual risk, which is
+**derivation**, and it forced a human to hand-transcribe numbers, which is the step most likely to
+introduce an error.
+
+So the test is no longer *which field* but **where the number came from and what was done to it**:
+
+> A machine may write a figure it copied **verbatim** from a **Tier-A source** with a **stable
+> identifier**, provided it attaches the source URL and the retrieval date. It may never compute,
+> average, interpolate, reconcile, or round one.
+
+**Fill vs. change — the guard that makes this safe.** These are not the same risk:
+- **Filling a blank** may land automatically. Nothing on the page changes meaning; a cell goes from
+  absent to sourced.
+- **Changing a number that already published** always stops for a human. An upstream methodology
+  revision, a re-run, or a renamed model id must never silently rewrite a figure a reader may
+  already have acted on. The PR states the old value, the new one, and why.
+
+`validate-data.mjs` was always doing the real work here — provenance per ladder, a licence tier per
+host, no blank points, no duplicate rungs, correct effort order. The field-name ban was
+belt-and-braces that cost more than it caught.
 
 ## Source registry
 
