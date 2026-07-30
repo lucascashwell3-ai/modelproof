@@ -53,7 +53,14 @@
         "Give it the whole task spec in one first message and let it run — it's built for long autonomous sessions, and drip-feeding the task across turns costs more and works less well.",
         "Thinking is ON by default now (it wasn't on Opus 4.8) — so re-check your max_tokens, or responses can truncate mid-answer.",
         "It verifies its own work without being asked. Delete any 'double-check your answer' instructions you carried over — they now cause redundant work."
-      ]
+      ],
+      "price_checked": {
+        "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+        "date": "2026-07-29",
+        "input": 5,
+        "output": 25,
+        "aggregator_note": "OpenRouter shows ~$50 — that's Fast mode ($10/$50), a labelled premium tier, not list."
+      }
     },
     {
       "id": "kimi-k3",
@@ -204,7 +211,14 @@
         "The sensible Claude default for hard coding and agent work — step up to Fable only when Opus demonstrably falls short.",
         "Leave adaptive thinking on for multi-step problems — the model decides when and how deeply to think; there's no budget to tune.",
         "Re-sending the same big context (docs, a codebase)? Prompt caching serves it at ~10% of input price — put the stable part first in the prompt."
-      ]
+      ],
+      "price_checked": {
+        "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+        "date": "2026-07-29",
+        "input": 5,
+        "output": 25,
+        "aggregator_note": "OpenRouter shows ~$50 — Fast mode ($10/$50), not list."
+      }
     },
     {
       "id": "claude-sonnet-5",
@@ -302,7 +316,14 @@
       "use_well": [
         "Superseded by GPT-5.6 at the same price — starting fresh on OpenAI, pick Terra (value) or Sol (peak) instead.",
         "Only stay on it if a validated pipeline is already pinned to it."
-      ]
+      ],
+      "price_checked": {
+        "url": "https://developers.openai.com/api/docs/pricing",
+        "date": "2026-07-29",
+        "input": 5,
+        "output": 30,
+        "aggregator_note": "OpenRouter shows ~$180 — matches no tier OpenAI publishes."
+      }
     },
     {
       "id": "gemini-3-1-pro",
@@ -447,7 +468,14 @@
       "use_well": [
         "Best when you want an open-weight, long-horizon coding agent — 80% SWE-bench at open-model prices.",
         "262K context sits below the 1M crowd — for very large codebases pick a 1M-context model instead."
-      ]
+      ],
+      "price_checked": {
+        "url": "https://platform.kimi.ai/docs/pricing/chat-k26",
+        "date": "2026-07-29",
+        "input": 0.95,
+        "output": 4,
+        "aggregator_note": "OpenRouter shows ~$2.72 — provider pass-through. Vendor input is cache-miss $0.95 / cache-hit $0.16."
+      }
     },
     {
       "id": "llama-4-maverick",
@@ -539,7 +567,14 @@
       "use_well": [
         "A cheap math/reasoning pick via API — strong competition-math scores at a fraction of o3-class cost.",
         "API-only now (retired from the ChatGPT UI) and an older generation — the GPT-5.6 line is the modern default."
-      ]
+      ],
+      "price_checked": {
+        "url": "https://developers.openai.com/api/docs/pricing",
+        "date": "2026-07-29",
+        "input": 1.1,
+        "output": 4.4,
+        "aggregator_note": "OpenRouter shows ~$8 — that's OpenAI's Priority tier ($2/$8), not standard."
+      }
     },
     {
       "id": "claude-haiku-4-5",
@@ -778,7 +813,14 @@
       "use_well": [
         "Most of Pro's smarts at speed (~278 tok/s) — good for high-volume chat and coding where latency matters.",
         "$9/M output is high for a 'fast/cheap' tier — for true bulk work drop to Flash-Lite or a cheap open model."
-      ]
+      ],
+      "price_checked": {
+        "url": "https://ai.google.dev/gemini-api/docs/pricing",
+        "date": "2026-07-29",
+        "input": 1.5,
+        "output": 9,
+        "aggregator_note": "OpenRouter shows ~$2.50 — not Google's published rate."
+      }
     },
     {
       "id": "gemini-2-5-flash-lite",
@@ -957,7 +999,14 @@
       "use_well": [
         "Qwen's flagship for reasoning + code; the batch API halves the price for anything that isn't time-critical.",
         "Input pricing tiers up past 128K tokens — keep prompts under the tier break when cost matters."
-      ]
+      ],
+      "price_checked": {
+        "url": "https://www.alibabacloud.com/help/en/model-studio/billing-for-model-studio",
+        "date": "2026-07-29",
+        "input": 1.2,
+        "output": 6,
+        "aggregator_note": "OpenRouter shows ~$3.90 — matches no Alibaba tier. Ours is the 0–32K Singapore tier."
+      }
     },
     {
       "id": "qwen3-coder-plus",
@@ -1001,7 +1050,14 @@
       "use_well": [
         "A managed Qwen coding endpoint with up to 1M context when you don't want to self-host open weights.",
         "Tiered pricing climbs steeply past 32K tokens — trim context or costs jump."
-      ]
+      ],
+      "price_checked": {
+        "url": "https://www.alibabacloud.com/help/en/model-studio/billing-for-model-studio",
+        "date": "2026-07-29",
+        "input": 1,
+        "output": 5,
+        "aggregator_note": "OpenRouter shows ~$3.25 — matches no Alibaba tier. Ours is the 0–32K Singapore tier."
+      }
     },
     {
       "id": "qwen-turbo",
@@ -1124,7 +1180,13 @@
       "coding_confidence": "low",
       "use_well": [
         "Cheaper per output token than Gemini 3.5 Flash. Until benchmarks publish, treat that as the only known difference."
-      ]
+      ],
+      "price_checked": {
+        "url": "https://ai.google.dev/gemini-api/docs/pricing",
+        "date": "2026-07-29",
+        "input": 1.5,
+        "output": 7.5
+      }
     },
     {
       "id": "glm-5-2",
@@ -1163,7 +1225,13 @@
       "coding_confidence": "low",
       "use_well": [
         "Open-weights, so self-hosting is an option the closed frontier models don’t offer. Verify quality yourself until independent figures land."
-      ]
+      ],
+      "price_checked": {
+        "url": "https://docs.z.ai/guides/overview/pricing",
+        "date": "2026-07-29",
+        "input": 1.4,
+        "output": 4.4
+      }
     }
   ],
   "releases": [

@@ -19,7 +19,8 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
 const OR_URL = 'https://openrouter.ai/api/v1/models';
-const DRIFT = 0.2;                       // flag a price gap > 20%
+const DRIFT = 0.2;                       // (retained for reference; no longer gates the price flag)
+const PRICE_RECHECK_DAYS = 90;           // how long a vendor-page check stays good for
 const STALE_DAYS = 14;
 const today = new Date().toISOString().slice(0, 10);
 const dataUrl = new URL('../data/models.json', import.meta.url);
@@ -71,15 +72,43 @@ if (or) {
     flags.push(`NEW MODEL — \`${f.id}\`${f.created ? ` (first seen ${f.created})` : ''} is on OpenRouter and not in our data. Verify on the vendor's own page, then paste a stub with **every benchmark null** and \`confidence: "low"\` so the site shows it as *present, figures pending* rather than absent or guessed.`);
   }
 
-  // 2. PRICE DRIFT. Never overwrites; only flags.
+  // 2. PRICE DRIFT.
+  //
+  // OpenRouter aggregates *provider* prices — fast tiers, priority routing, regional endpoints,
+  // pass-throughs. It cannot establish a list price, so a disagreement with it is not evidence our
+  // number is wrong. On 2026-07-29 this check fired 8 times and was wrong 8 times; every one of our
+  // figures was already correct against the vendor's own page. That noise is why the PR sat unread
+  // for two days, which is worse than no alarm at all.
+  //
+  // So the flag now keys off OUR verification record, not OpenRouter's opinion. A model carrying a
+  // fresh `price_checked` against the vendor's own page is silent no matter what OpenRouter says;
+  // the aggregator gap is recorded once, with its explanation, instead of re-raised weekly.
   for (const m of data.models) {
     if (m.price_output == null) continue;
-    const hit = or.find((o) => norm(o.name).includes(norm(m.name)) || norm(m.name).includes(norm(o.name)));
-    if (!hit || !hit.pricing) continue;
-    const orOut = parseFloat(hit.pricing.completion) * 1e6;   // OpenRouter is per-token; we store per-1M
-    if (!isFinite(orOut) || orOut <= 0) continue;
-    const gap = Math.abs(orOut - m.price_output) / m.price_output;
-    if (gap > DRIFT) flags.push(`PRICE — verify **${m.name}**: we list $${m.price_output}/1M out; OpenRouter shows ~$${orOut.toFixed(2)} (provider pass-through ≠ list price — confirm against the vendor's official pricing page before changing).`);
+
+    const pc = m.price_checked;
+    const verifiedAgainstStored =
+      pc && pc.url && pc.date && pc.output === m.price_output && pc.input === m.price_input;
+    const ageDays = verifiedAgainstStored
+      ? Math.floor((Date.now() - Date.parse(pc.date)) / 86400000)
+      : Infinity;
+
+    // Someone edited the price without re-checking it — the record no longer describes the data.
+    if (pc && !verifiedAgainstStored) {
+      flags.push(`PRICE — **${m.name}** was edited since its last vendor check: \`price_checked\` says $${pc.input}/$${pc.output} but the data now says $${m.price_input}/$${m.price_output}. Re-verify at ${pc.url} and update \`price_checked\`, or revert.`);
+      continue;
+    }
+    // Never checked against a vendor page at all.
+    if (!pc) {
+      flags.push(`PRICE — **${m.name}** has no \`price_checked\` record. Confirm $${m.price_input}/$${m.price_output} against the vendor's own pricing page, then add \`price_checked\` {url, date, input, output}.`);
+      continue;
+    }
+    // Verified, but the check has aged out.
+    if (ageDays > PRICE_RECHECK_DAYS) {
+      flags.push(`PRICE — **${m.name}** last verified ${ageDays} days ago (${pc.date}). Re-check ${pc.url} and refresh \`price_checked\`.`);
+      continue;
+    }
+    // Verified and fresh: OpenRouter disagreeing is expected and already explained. Stay quiet.
   }
 }
 
