@@ -65,7 +65,9 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 [hidden] { display: none !important; }         /* mode-switch groups toggle via the hidden attribute */
 
-html { scroll-behavior: smooth; }
+/* clip on BOTH roots: body's overflow-x alone still let overflowing children widen the
+   document and pan the page sideways on phones (cold review #14) */
+html { scroll-behavior: smooth; overflow-x: clip; }
 
 body {
   font-family: var(--font);
@@ -134,6 +136,7 @@ a { color: inherit; text-decoration: none; }
   margin-left: auto; font-family: var(--mono); font-size: 11.5px; color: var(--ink-3);
   padding: 4px 11px; border: 1px solid var(--line); border-radius: 999px;
   background: var(--bg-2); white-space: nowrap;
+  min-width: 0; overflow: hidden; text-overflow: ellipsis;   /* the badge shrinks, never widens the page */
 }
 .nav__link {
   font-size: 13.5px; color: var(--ink-2); padding: 7px 14px; border-radius: 999px;
@@ -312,6 +315,28 @@ a { color: inherit; text-decoration: none; }
 .stat__v { font-family: var(--mono); font-size: 1.05rem; color: var(--gold); font-weight: 500; }
 .stat__l { font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
 
+/* plain-words gloss under the stat row — the numbers must land for someone who has never
+   read a benchmark (cold review #12) */
+.pick__gloss { margin-top: 10px; font-size: 11px; color: var(--ink-3); line-height: 1.5; }
+
+/* basis & sources ON the pick card — the artifact people screenshot carries its own evidence
+   trail and a permalink (cold review #8) */
+.pick__basis { margin-top: 14px; padding-top: 12px; border-top: 1px dotted var(--line); }
+.pick__basis summary { cursor: pointer; font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--gold-2); list-style: none; }
+.pick__basis summary::-webkit-details-marker { display: none; }
+.pick__basis summary::before { content: "+ "; color: var(--gold); }
+.pick__basis[open] summary::before { content: "− "; }
+.pick__basis summary:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--gold); border-radius: 4px; }
+.pick__basis p { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; margin: 9px 0 8px; }
+.pick__basis .srcs a { color: var(--gold-2); text-decoration: underline; text-underline-offset: 2px; font-size: 12px; }
+.pick__link { margin-top: 10px; font-family: var(--font); font-size: 12px; font-weight: 600; color: var(--gold);
+  background: var(--gold-soft); border: 1px solid var(--gold-line); padding: 7px 14px; border-radius: 999px;
+  cursor: pointer; transition: background .16s var(--ease); }
+.pick__link:hover { background: rgba(242,193,78,0.18); }
+.pick__link:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.pick__linkstatus { margin-left: 10px; font-size: 12px; color: var(--good); word-break: break-all; }
+
 /* "Use it well" — the practical how-to under the pick's verdict (the product's spine) */
 .pick__use { margin-top: 14px; padding-top: 12px; border-top: 1px dotted var(--line); }
 .pick__use h4 { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold-2); margin-bottom: 7px; }
@@ -330,7 +355,14 @@ a { color: inherit; text-decoration: none; }
 .runner__meta { margin-top: 6px; font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); }
 .runner__meta b { color: var(--gold-2); font-weight: 500; }
 .empty { color: var(--ink-3); font-size: 0.95rem; padding: 20px 0; text-align: center; }
-.rec-caption { color: var(--ink-4); font-size: 11.5px; margin-top: 12px; text-align: center; line-height: 1.4; }
+/* a dead data fetch fails in plain words with a way back (cold review #15) */
+.loaderr { text-align: center; padding: 28px 24px; color: var(--ink); font-size: 0.95rem;
+  border: 1px solid var(--glass-line); border-radius: var(--r-md); background: var(--glass-solid);
+  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); }
+.loaderr p { margin-bottom: 14px; }
+.promptgen__btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.rec-caption { color: var(--ink-3); font-size: 11.5px; margin-top: 12px; text-align: center; line-height: 1.4;
+  text-shadow: 0 0 7px rgba(7,5,13,0.95), 0 1px 2px rgba(0,0,0,0.85); }
 /* the upgrade check — neutral, cost-first; a fact, never a nudge. The green "you're set"
    variant is the independence signal: this tool is happiest telling you not to spend more. */
 .upcheck { margin-top: 12px; padding: 11px 14px; border: 1px dotted var(--gold-line); border-radius: var(--r-sm);
@@ -402,8 +434,9 @@ a { color: inherit; text-decoration: none; }
 .evidence-mark {
   width: min(1120px, calc(100% - 32px)); margin: 110px auto 0;
   display: flex; align-items: center; gap: 16px;
-  color: var(--ink-4); font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.1em;
-  text-transform: uppercase; text-shadow: 0 1px 12px rgba(6,4,12,0.72);
+  color: var(--ink-3); font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 0 7px rgba(7,5,13,0.95), 0 1px 2px rgba(0,0,0,0.85), 0 1px 12px rgba(6,4,12,0.72);
 }
 /* dithered rule — the texture carries through the whole sheet */
 .evidence-mark::before, .evidence-mark::after { content: ""; height: 3px; flex: 1;
@@ -427,7 +460,9 @@ a { color: inherit; text-decoration: none; }
 .panel__desc { color: var(--ink-2); font-size: 0.98rem; max-width: 40rem; margin-top: 6px;
   text-shadow: 0 0 7px rgba(7,5,13,0.95), 0 0 7px rgba(7,5,13,0.92), 0 1px 2px rgba(0,0,0,0.85), 0 2px 22px rgba(6,4,12,0.5); }
 .panel__desc em { color: var(--gold); font-style: normal; }
-.dim { color: var(--ink-4); }
+/* the trust lines ("We don't guess.") were the least readable text on the site — they carry
+   the brand, so they read at body contrast, just quieter (cold review #17) */
+.dim { color: var(--ink-3); }
 
 /* ---------- chart ---------- */
 .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--ink-3);
@@ -580,6 +615,14 @@ a { color: inherit; text-decoration: none; }
 .conf-high { background: var(--good); }
 .conf-medium { background: var(--warn); }
 .conf-low { background: var(--low); }
+/* confidence is words, not just a colored dot — visible on touch, keyboard, and to
+   colorblind readers (cold review #16) */
+.conf-txt { font-family: var(--mono); font-size: 10px; color: var(--ink-3); margin-left: 4px;
+  text-transform: uppercase; letter-spacing: 0.05em; }
+/* the /100 unit + the est mark travel with the coding score everywhere it renders */
+.unit { font-size: 0.68em; color: var(--ink-3); margin-left: 1px; }
+sup.est { font-family: var(--mono); font-size: 9px; color: var(--warn); margin-left: 4px;
+  letter-spacing: 0.06em; text-transform: uppercase; }
 .tbl tbody tr.row-more td { text-align: left; background: rgba(12,14,19,0.6); font-family: var(--font); color: var(--ink-2);
   font-size: 13.5px; padding: 16px 20px; }
 .row-more .rm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
@@ -671,7 +714,7 @@ a { color: inherit; text-decoration: none; }
 .foot__credits code { font-size: 11.5px; }
 
 .foot__legal { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 14px 0 44px;
-  color: var(--ink-4); font-size: 12.5px; }
+  color: var(--ink-3); font-size: 12.5px; }
 
 /* ---------- tooltip ---------- */
 .tooltip {
@@ -743,6 +786,11 @@ a { color: inherit; text-decoration: none; }
   .panel { margin-top: 56px; }
   .col-ctx { display: none; }               /* hide context on small */
   .col-model { width: 30%; } .col-best { width: 34%; } .col-code { width: 14%; } .col-price { width: 22%; }
+}
+@media (max-width: 700px) {
+  /* the trust badge collapses to "● snapshot <date>" instead of clipping or widening the page */
+  .nav__asof-extra { display: none; }
+  .nav { gap: 10px; }
 }
 @media (max-width: 560px) {
   .col-code { display: none; }              /* hide coding col; still in the expand row */

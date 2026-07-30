@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- same Fraunces cut as the Proof site (portfolio-v2) so the two wordmarks match -->
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=mk21" />
+  <link rel="stylesheet" href="assets/styles.css?v=mk22" />
 </head>
 <body>
   <!-- the live ASCII sunset — one fixed, full-viewport canvas that carries the whole site -->
@@ -98,7 +98,7 @@
           <p class="promptgen__sub">One click turns your selection into a paste-in prompt — your own AI
           becomes the model-picker, so you never have to come back and check.</p>
         </div>
-        <button class="promptgen__btn" id="genPrompt" type="button">
+        <button class="promptgen__btn" id="genPrompt" type="button" disabled>
           Get my advisor prompt <span aria-hidden="true">→</span>
         </button>
         <p class="promptgen__more">Prefer it to work automatically in your AI? Also a <a href="https://github.com/lucascashwell3-ai/modelproof/tree/main/skills" target="_blank" rel="noopener">Claude skill + MCP</a>.</p>
@@ -127,12 +127,12 @@
       <div class="panel__head">
         <div>
           <h2 class="panel__title"><span class="panel__no">01</span>Compare, side by side</h2>
-          <p class="panel__desc">Pick up to <em>five</em> models — pre-loaded from your answer above. The coding score is 0–100, SWE-bench where it exists; the dot shows confidence. <span class="dim">"—" means not publicly sourced. We don't guess.</span></p>
+          <p class="panel__desc">Pick up to <em>five</em> models — pre-loaded from your answer above. Coding score is 0–100 — SWE-bench Verified where published, otherwise a sourced estimate (marked <em>est</em>); the dot + label show confidence. <span class="dim">"—" means not publicly sourced. We don't guess.</span></p>
         </div>
       </div>
       <div class="cmp-picker" id="cmpPicker" aria-label="Choose models to compare"></div>
       <div class="cmp-board-wrap"><div class="cmp-board" id="cmpBoard" aria-live="polite"></div></div>
-      <a class="browse-all" href="table.html">Browse the full table — all <span id="allCount">23</span> models, sortable <span aria-hidden="true">→</span></a>
+      <a class="browse-all" href="table.html">Browse the full table — <span id="allCount">all models</span>, sortable <span aria-hidden="true">→</span></a>
     </section>
 
     <!-- COST vs CAPABILITY quadrant -->
@@ -229,6 +229,6 @@
 
   <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
 
-  <script src="assets/app.js?v=mk21"></script>
+  <script src="assets/app.js?v=mk22"></script>
 </body>
 </html>

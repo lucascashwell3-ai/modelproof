@@ -31,7 +31,7 @@
         "1M-token context as both default and maximum, 128K max output, and a 512-token prompt-cache minimum (half Opus 4.8's)"
       ],
       "weaknesses": [
-        "Per-benchmark public numbers are thin — released 2026-07-23, so SWE-bench Verified, GPQA and the rest aren't published or third-party-verified yet; the coding score is agentic-suite-led, not SWE-bench-anchored",
+        "SWE-bench Verified isn't published yet, so the coding score is an agentic-suite-led estimate; GPQA (93.9) is Epoch's independent run at stated effort — best-case, not default",
         "The headline Frontier-Bench comparison is Anthropic's own internal run on its own harness — directional for cross-lab ranking, not settled",
         "Still Opus-priced: $5/$25 is far above Sonnet 5 or the open tiers for bulk work",
         "Thinking is now on by default, and disabling it is only allowed at 'high' effort or below — quiet cost and behaviour change if you're porting Opus 4.8 code across"
@@ -60,6 +60,15 @@
         "input": 5,
         "output": 25,
         "aggregator_note": "OpenRouter shows ~$50 — that's Fast mode ($10/$50), a labelled premium tier, not list."
+      },
+      "task_copy": {
+        "research": {
+          "verdict": "The strongest sourced reasoner in the data — 93.9 GPQA (Epoch-run) with 1M context — at half of Fable's price, though still premium per token.",
+          "tips": [
+            "Start at 'high' effort for analysis and escalate only if the answer is visibly incomplete — effort is the main cost lever.",
+            "Give it the full problem and source material in one message; it's built for long single-pass reasoning."
+          ]
+        }
       }
     },
     {
@@ -90,8 +99,8 @@
         "Cheap for its tier at $3/$15 per M, with ~$0.30/M cache-hit input (90%+ cache-hit rates typical in coding loops)"
       ],
       "weaknesses": [
-        "Its headline win is frontend/web-dev coding; broad benchmarks (SWE-bench Verified, GPQA) not yet published, so overall coding is a frontend-led estimate",
-        "Open weights not released until ~2026-07-27 — 'open-weight' isn't yet self-hostable",
+        "Its headline win is frontend/web-dev coding; SWE-bench Verified is not yet published, so overall coding is a frontend-led estimate (GPQA is now independently published by Epoch: 93.1)",
+        "Open weights were slated for ~2026-07-27 and haven't been re-verified as shipped here — treat self-hosting as unconfirmed until you check",
         "Output at $15/M is well above the cheap open tiers (DeepSeek/Qwen) for bulk work"
       ],
       "verdict": "Reach for it for frontend and web-dev coding, where it tops the arena ahead of even Fable 5 at a fraction of the price — but treat its broader coding strength as unproven until SWE-bench lands.",
@@ -108,8 +117,17 @@
       "use_well": [
         "Reach for it on frontend and web-UI builds — that's where it tops the arena; treat broader coding as unproven until SWE-bench lands.",
         "Coding loops hit ~$0.30/M cache-hit input — keep one long session going instead of restarting, and the real cost drops well below sticker.",
-        "Open weights aren't due until ~July 27 — don't plan a self-host around it yet."
-      ]
+        "Planning to self-host? Its open-weight release (slated 2026-07-27) hasn't been re-verified as shipped — confirm before you build around it."
+      ],
+      "task_copy": {
+        "research": {
+          "verdict": "A frontier-class reasoner on paper — 93.1 GPQA, independently run by Epoch — at mid-tier prices; its broader benchmark picture is still young.",
+          "tips": [
+            "Its GPQA figure is Epoch-run at stated effort — treat it as best-case and give hard reasoning a generous token budget.",
+            "1M context makes it a strong fit for reasoning across large document sets in one pass."
+          ]
+        }
+      }
     },
     {
       "id": "claude-fable-5",
@@ -218,6 +236,15 @@
         "input": 5,
         "output": 25,
         "aggregator_note": "OpenRouter shows ~$50 — Fast mode ($10/$50), not list."
+      },
+      "task_copy": {
+        "writing": {
+          "verdict": "The strongest general model the data tags for prose — long-form drafting, tone control, and editing at flagship quality, at flagship output prices.",
+          "tips": [
+            "Draft long-form in one pass: give it the full brief and structure up front rather than feeding it paragraph by paragraph.",
+            "For rewrites, paste the original plus one sentence of direction — it holds a voice well across long documents."
+          ]
+        }
       }
     },
     {
@@ -421,7 +448,16 @@
         "Near-frontier coding at a fraction of frontier price — try it first for cost-sensitive coding before paying frontier rates.",
         "Cache-hit input is nearly free (~$0.0036/M) — agent loops that resend the same prefix cost almost nothing.",
         "Its top benchmark scores use 'Think Max' mode — slower and token-hungry; save that mode for hard problems, not bulk."
-      ]
+      ],
+      "task_copy": {
+        "research": {
+          "verdict": "The value pick for strategy and analysis: 90.1 GPQA — within a few points of the frontier — at open-weight prices, and self-hostable to avoid lock-in.",
+          "tips": [
+            "Use its 'Think' mode for hard analysis and planning; standard mode handles routine synthesis at a fraction of the tokens.",
+            "Cache-hit input is nearly free (~$0.0036/M) — long research sessions that keep building on the same context cost almost nothing."
+          ]
+        }
+      }
     },
     {
       "id": "kimi-k2-6",
@@ -718,7 +754,16 @@
       "use_well": [
         "The everyday GPT-5.6 pick — most of Sol's ability at half the price (~$0.55 vs ~$1.04 per task).",
         "Try Terra first and escalate to Sol only when a task provably needs it."
-      ]
+      ],
+      "task_copy": {
+        "writing": {
+          "verdict": "The value writing pick — near-flagship prose at half Sol's price, suited to everyday drafts, emails, and content.",
+          "tips": [
+            "Everyday drafts and content are its lane; escalate to a flagship only for high-stakes long-form.",
+            "Show it two or three samples of your voice — it imitates provided style more reliably than described style."
+          ]
+        }
+      }
     },
     {
       "id": "gpt-5-6-luna",
@@ -1141,7 +1186,16 @@
       "use_well": [
         "Reach for it when EU hosting or data residency matters and you want balanced cost/quality.",
         "No cleanly-sourced benchmarks for this version — validate on your own tasks before betting volume."
-      ]
+      ],
+      "task_copy": {
+        "writing": {
+          "verdict": "The budget pick of the three the data tags for prose — capable everyday writing at $2/1M out, EU-hosted if residency matters.",
+          "tips": [
+            "Best for short-to-mid drafts, emails, and summaries; keep instructions tight for anything long-form.",
+            "It's cheap enough to iterate freely — generate variants and pick, rather than perfecting one draft."
+          ]
+        }
+      }
     },
     {
       "id": "gemini-3-6-flash",
@@ -1355,7 +1409,7 @@
     "mmlu_pro": "MMLU-Pro — % on a harder, multi-discipline knowledge and reasoning benchmark.",
     "lmarena_elo": "LMArena text Elo — human head-to-head preference rating (higher = preferred more often)."
   },
-  "notes": "Data snapshot 2026-07-24. Claude Opus 5 (released 2026-07-23) is added at Anthropic's published $5/$25 pricing, which multiple outlets corroborate as half Fable 5's rate; its per-benchmark numbers (SWE-bench Verified, GPQA) are not published or third-party-verified yet, so those cells are blank and its coding score is an agentic-suite-led estimate at medium confidence. Data snapshot 2026-07-24 (all vendor list prices re-verified 2026-07-24; the 2026-07-20 auto-check's six OpenRouter price flags were all confirmed to be provider pass-through, not list-price changes). Kimi K3 (released 2026-07-16) is scored on its frontend-coding lead — #1 in the Frontend Code Arena ahead of Fable 5; its $3/$15 pricing and 1M context are sourced, but SWE-bench Verified is not yet published and open weights are due ~2026-07-27, so it carries medium overall confidence. Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: most come from third-party aggregators (Artificial Analysis, Vellum, llm-stats, vals.ai), not primary vendor cards, and several 2026 models publish only agentic evals (SWE-bench Pro, Terminal-Bench) that don't map to SWE-bench Verified — those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Note: Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it.",
+  "notes": "Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: they mix primary leaderboards, Epoch AI's independently-run figures, and third-party aggregators, and a confidence flag rides on every model. Claude Opus 5 (released 2026-07-23) is priced at Anthropic's published $5/$25; its GPQA (93.9) is Epoch's independent run, but SWE-bench Verified is still unpublished, so its coding score remains an agentic-suite-led estimate at medium confidence. Kimi K3 is scored on its frontend-coding lead (#1 in the Frontend Code Arena); its GPQA (93.1) is Epoch-run, SWE-bench Verified is still unpublished, and its open-weight release (slated 2026-07-27) has not been re-verified as shipped here — treat self-hosting as unconfirmed. Several 2026 models publish only agentic evals that don't map to SWE-bench Verified; those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it.",
   "usage": {
     "as_of": "2026-06 → 07",
     "basis": "No single \"most used\" exists — each lens measures a different population and ranks models differently. Figures are ~June–July 2026 and lag a couple of weeks, so the newest models (GPT-5.6, Grok 4.5, Sonnet 5) aren't ranked yet.",
@@ -1460,7 +1514,7 @@
             {
               "effort": "medium",
               "cost": 8.2,
-              "score": 35.0
+              "score": 35
             },
             {
               "effort": "high",
@@ -1492,7 +1546,7 @@
             {
               "effort": "medium",
               "cost": 11.5,
-              "score": 25.0
+              "score": 25
             },
             {
               "effort": "high",
@@ -1551,7 +1605,7 @@
           "points": [
             {
               "effort": "low",
-              "cost": 1.0,
+              "cost": 1,
               "score": 2.1
             },
             {
@@ -1618,7 +1672,7 @@
             {
               "effort": "max",
               "cost": 8.23,
-              "score": 70.0
+              "score": 70
             }
           ]
         },
@@ -1635,7 +1689,7 @@
             {
               "effort": "xhigh",
               "cost": 13.74,
-              "score": 72.0
+              "score": 72
             },
             {
               "effort": "max",
