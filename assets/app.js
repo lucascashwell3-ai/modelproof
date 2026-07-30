@@ -56,7 +56,7 @@ const GOAL_TAGS = {
 const GOAL_DESC = {
   coding: 'Writing, fixing & refactoring code — including multi-step agent tasks. Ranked on a 0–100 coding score: SWE-bench where it exists, otherwise sourced signals (LMArena Code Elo, AA Coding Index) so new models aren\'t stuck at "—".',
   research: 'Deep thinking, analysis & planning. Ranked on graduate-level reasoning (GPQA).',
-  writing: 'Drafting prose, emails & content. Ranked on general ability + human preference — there is no clean writing benchmark.',
+  writing: 'Drafting prose, emails & content. No clean writing benchmark exists, so only models the data tags for prose are ranked — on general ability + price.',
   'cheap-bulk': 'High-volume simple work — classification, tagging, extraction. Cheapest capable option first.',
 };
 
@@ -86,6 +86,20 @@ function fmtCtx(t) {
   return '' + t;
 }
 function fmtScore(v) { return num(v) ? '<span class="na">—</span>' : v + (v <= 100 ? '%' : ''); }
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+// The coding score has ONE identity everywhere it appears — pick card, runner chips, board,
+// table, advisor prompt: "N/100, SWE-bench Verified where published, otherwise a sourced
+// estimate marked est". A score with no published SWE-bench is an estimate, and the est mark
+// travels with the number instead of hiding in a hover dot.
+const CODING_DEF = 'Coding score, 0–100 — SWE-bench Verified where published, otherwise a sourced estimate (marked est)';
+const isEst = (m) => num(m.benchmarks?.swe_bench);
+function fmtCoding(m, { unit = true } = {}) {
+  if (num(m.coding_score)) return '<span class="na">—</span>';
+  return m.coding_score + (unit ? '<span class="unit">/100</span>' : '') +
+    (isEst(m) ? `<sup class="est" title="estimate — SWE-bench Verified not published. Basis: ${esc(m.coding_basis || 'sourced signals')}">est</sup>` : '');
+}
+const CONF_TXT = { high: 'high', medium: 'med', low: 'low' };
+const confMark = (m, conf) => { const c = conf || m.confidence || 'low'; return `<i class="conf conf-${c}"></i><span class="conf-txt">${CONF_TXT[c] || c}</span>`; };
 function fmtPriceRange(m) {
   if (num(m.price_input) && num(m.price_output)) return '<span class="na">—</span>';
   return `${fmtPrice(m.price_input)}<span class="pslash">/</span>${fmtPrice(m.price_output)}`;
@@ -146,6 +160,10 @@ function score(models, goal, priority) {
   // can't win a quality goal on price alone; "Best" tops out ~90%.
   const w = 0.22 + 0.68 * (priority / 100);
   const bulk = goal === 'cheap-bulk';
+  // Writing has no clean benchmark (one Elo in the whole dataset), so ranking every model on
+  // the reasoning proxy just cloned the Strategy tab. Rank only the models the data actually
+  // tags for prose — the same set the full table's writing filter shows.
+  const strictTag = goal === 'writing';
   const tags = GOAL_TAGS[goal] || [goal];
   return models
     .map((m) => {
@@ -154,7 +172,7 @@ function score(models, goal, priority) {
       let s = bulk ? 0.30 * cap + 0.70 * cheap : w * cap + (1 - w) * cheap;
       if (hasTag) s += 0.03;               // small nudge for explicit fit
       // cheap-bulk is price-led (include everything); quality goals require a sourced score
-      const inRec = bulk ? true : measured;
+      const inRec = bulk ? true : strictTag ? (hasTag && measured) : measured;
       return { m, s, measured, via, inRec };
     })
     .filter((x) => x.inRec)
@@ -164,11 +182,70 @@ function score(models, goal, priority) {
 // pick the most defensible headline number for a goal: the goal's own metric,
 // else a sourced proxy, else an honest dash.
 function headlineStat(m, metric) {
-  const v = capVal(m, metric);
-  if (!num(v)) return { value: fmtScore(v), label: metricLabel(metric) };
+  if (metric === 'coding_score') {
+    if (!num(m.coding_score)) return { value: fmtCoding(m), label: 'coding score' };
+  } else {
+    const v = capVal(m, metric);
+    if (!num(v)) return { value: fmtScore(v), label: metricLabel(metric) };
+  }
   if (!num(m.benchmarks?.gpqa)) return { value: fmtScore(m.benchmarks.gpqa), label: 'GPQA' };
-  if (!num(m.coding_score)) return { value: fmtScore(m.coding_score), label: 'Coding' };
+  if (!num(m.coding_score)) return { value: fmtCoding(m), label: 'coding score' };
   return { value: '<span class="na">—</span>', label: metricLabel(metric) };
+}
+
+// stat-grounded fallback verdict for research/writing when no hand-written task copy exists —
+// never editorial, never borrowed from the coding pitch
+function genericTaskVerdict(m, metric) {
+  const v = capVal(m, metric);
+  const ev = !num(v)
+    ? (metric === 'gpqa' ? `GPQA ${v} (graduate-level reasoning)` : `${metricLabel(metric)} ${v}`)
+    : 'general ability — no direct benchmark is sourced for this task';
+  return `The ${(TASK_LABEL[state.goal] || state.goal).toLowerCase()} pick at this budget, ranked on ${ev} + price. Basis and sources below.`;
+}
+
+// the evidence trail ON the pick card (cold review #8): basis, confidence, sources, permalink —
+// so the one artifact people screenshot can survive a "says who?"
+function pickBasisHTML(m, metric, hvLabel) {
+  const conf = metric === 'coding_score' ? (m.coding_confidence || m.confidence) : m.confidence;
+  const basis = metric === 'coding_score'
+    ? (m.coding_basis || 'No basis recorded.')
+    : `${hvLabel || metricLabel(metric)} and pricing as sourced in the full table; every figure carries a confidence flag and unsourced cells stay blank.`;
+  const srcs = (m.sources || []).slice(0, 3).map((u) => `<a href="${u}" target="_blank" rel="noopener">${shortUrl(u)}</a>`).join(' · ');
+  return `<details class="pick__basis">
+    <summary>Basis &amp; sources — ${CONF_TXT[conf] || conf || 'low'} confidence</summary>
+    <p>${esc(basis)}</p>
+    <div class="srcs">${srcs || '<span class="na">no public source recorded</span>'}</div>
+    <button class="pick__link" type="button" data-copylink>Copy link to this pick</button>
+    <span class="pick__linkstatus" role="status" aria-live="polite"></span>
+  </details>`;
+}
+
+// ---------- shareable state: the pick lives in the URL (cold review #9) ----------
+// task/budget/labs mirror into query params so a selection can be sent to someone else;
+// replaceState is debounced — Safari rate-limits it, and the slider fires per-frame.
+let _urlT = 0;
+function syncURL() {
+  clearTimeout(_urlT);
+  _urlT = setTimeout(() => {
+    const p = new URLSearchParams();
+    if (state.goal !== 'coding') p.set('task', state.goal);
+    if (state.priority !== 48) p.set('budget', String(state.priority));
+    if (state.labs.length) p.set('labs', state.labs.map((v) => LAB_LABEL[v] || v).join(','));
+    const qs = p.toString();
+    try { history.replaceState(null, '', qs ? '?' + qs : location.pathname); } catch (e) { /* ignore */ }
+  }, 250);
+}
+function readURL() {
+  const p = new URLSearchParams(location.search);
+  const t = p.get('task');
+  if (t && GOAL_METRIC[t]) state.goal = t;
+  const b = parseInt(p.get('budget'), 10);
+  if (!Number.isNaN(b)) state.priority = Math.min(100, Math.max(0, b));
+  const byLabel = Object.fromEntries(Object.entries(LAB_LABEL).map(([v, l]) => [l.toLowerCase(), v]));
+  const vendors = new Set(state.data.models.map((m) => m.vendor));
+  state.labs = (p.get('labs') || '').split(',')
+    .map((s) => byLabel[s.trim().toLowerCase()] || s.trim())
+    .filter((v) => vendors.has(v));
 }
 
 // the field the recommender ranks: all models, or (if labs are chosen) just those vendors
@@ -188,6 +265,7 @@ function renderResult() {
   const cs = document.getElementById('copyStatus'); if (cs) cs.textContent = '';
   const echo = $('#queryEcho');
   if (echo) { const q = queryText(); echo.innerHTML = `${q.task} · ${q.budget} cost · <b>${q.labs}</b>`; }
+  syncURL();         // the selection is shareable — it lives in the query string
   renderVerdict();
   seedCompare();     // the side-by-side board follows the engine until the user hand-picks
 }
@@ -229,11 +307,10 @@ function renderCompare() {
 
   const ms = state.compare.map((id) => all.find((m) => m.id === id)).filter(Boolean);
   bd.style.setProperty('--n', ms.length);
-  const confDot = (m) => `<i class="conf conf-${m.confidence || 'low'}" title="confidence: ${m.confidence || 'low'}"></i>`;
   const rows = [
     ['', (m) => `<div class="cmp-model">${m.name}</div><div class="cmp-vendor">${m.vendor}</div>`],
     ['Best for', (m) => (m.best_for || []).slice(0, 3).map((t) => `<span class="mini-tag">${TAG_LABEL[t] || t}</span>`).join(' ') || '<span class="na">—</span>'],
-    ['Coding /100', (m) => `<span class="cmp-num">${num(m.coding_score) ? '<span class="na">—</span>' : m.coding_score}</span>${num(m.coding_score) ? '' : confDot(m)}`],
+    ['Coding', (m) => `<span class="cmp-num">${fmtCoding(m)}</span>${num(m.coding_score) ? '' : confMark(m, m.coding_confidence)}`],
     ['GPQA', (m) => `<span class="cmp-num">${fmtScore(m.benchmarks?.gpqa)}</span>`],
     ['Context', (m) => `<span class="cmp-num">${fmtCtx(m.context_window)}</span>`],
     ['$ in / 1M', (m) => `<span class="cmp-num">${fmtPrice(m.price_input)}</span>`],
@@ -262,24 +339,35 @@ function renderVerdict() {
 
   const metric = GOAL_METRIC[state.goal];
   const hv = headlineStat(top, metric);
-  const caption = state.goal === 'cheap-bulk'
-    ? 'Ranked mostly on price. Cheapest capable option first.'
-    : 'Ranked on sourced benchmarks + price. Models with no sourced score for this task sit in the full table, not here.';
+  const caption = {
+    coding: `Ranked on the coding score + price. ${CODING_DEF}. Models with no sourced score for this task sit in the full table, not here.`,
+    research: 'Ranked on GPQA (graduate-level reasoning) + price. Models with no sourced score for this task sit in the full table, not here.',
+    writing: 'No clean writing benchmark exists — these are the models the data tags for prose, ranked on general ability + price.',
+    'cheap-bulk': 'Ranked mostly on price. Cheapest capable option first.',
+  }[state.goal] || 'Ranked on sourced benchmarks + price.';
 
-  const tips = (top.use_well || []).slice(0, 3);
+  // The verdict and tips must argue THIS task. Hand-written per-task copy wins; for
+  // research/writing without it, a stat-grounded neutral line renders and coding tips are
+  // suppressed entirely — a strategy pick may never ship a coding sales pitch (cold review #1).
+  const tc = top.task_copy?.[state.goal];
+  const baseCopy = state.goal === 'coding' || state.goal === 'cheap-bulk';
+  const verdict = tc?.verdict || (baseCopy ? (top.verdict || 'A strong all-round choice for this goal.') : genericTaskVerdict(top, metric));
+  const tips = (tc?.tips || (baseCopy ? top.use_well : []) || []).slice(0, 3);
   box.innerHTML = `
     <div class="pick">
       <span class="pick__flag">Your pick</span>
       <div class="pick__name">${top.name}</div>
       <div class="pick__vendor">${top.vendor}</div>
-      <p class="pick__verdict">${top.verdict || 'A strong all-round choice for this goal.'}</p>
+      <p class="pick__verdict">${verdict}</p>
       <div class="pick__stats">
-        <div class="stat"><span class="stat__v">${hv.value}</span><span class="stat__l">${hv.label}</span></div>
-        <div class="stat"><span class="stat__v">${fmtPrice(top.price_output)}</span><span class="stat__l">out / 1M tok</span></div>
-        <div class="stat"><span class="stat__v">${fmtPrice(top.price_input)}</span><span class="stat__l">in / 1M tok</span></div>
-        <div class="stat"><span class="stat__v">${fmtCtx(top.context_window)}</span><span class="stat__l">context</span></div>
+        <div class="stat"><span class="stat__v">${hv.value}</span><span class="stat__l" title="${hv.label === 'GPQA' ? 'GPQA — PhD-level science questions; a proxy for reasoning' : esc(CODING_DEF)}">${hv.label}</span></div>
+        <div class="stat"><span class="stat__v">${fmtPrice(top.price_output)}</span><span class="stat__l" title="what 1M output tokens (≈ 750k words) costs">out / 1M tok</span></div>
+        <div class="stat"><span class="stat__v">${fmtPrice(top.price_input)}</span><span class="stat__l" title="what 1M input tokens (≈ 750k words read) costs">in / 1M tok</span></div>
+        <div class="stat"><span class="stat__v">${fmtCtx(top.context_window)}</span><span class="stat__l" title="how much it can hold in one conversation">context</span></div>
       </div>
+      <p class="pick__gloss">${hv.label === 'GPQA' ? 'GPQA = PhD-level science quiz, a reasoning proxy' : 'coding score = /100, SWE-bench where published, est = sourced estimate'} · 1M tokens ≈ 750k words</p>
       ${tips.length ? `<div class="pick__use"><h4>Use it well</h4><ul>${tips.map((t) => `<li>${t}</li>`).join('')}</ul></div>` : ''}
+      ${pickBasisHTML(top, metric, hv.label)}
     </div>
     <div class="runners">
       ${runners.map((m) => { const rv = headlineStat(m, metric); return `
@@ -293,6 +381,23 @@ function renderVerdict() {
     <p class="rec-caption">${caption}</p>`;
 
   tickStats(box);   // odometer the numbers from the previous pick's values
+
+  // permalink for the pick — flush the debounced URL write first so the copied link is current
+  const cl = box.querySelector('[data-copylink]');
+  if (cl) cl.addEventListener('click', () => {
+    clearTimeout(_urlT); _urlT = 0;
+    const p = new URLSearchParams();
+    if (state.goal !== 'coding') p.set('task', state.goal);
+    if (state.priority !== 48) p.set('budget', String(state.priority));
+    if (state.labs.length) p.set('labs', state.labs.map((v) => LAB_LABEL[v] || v).join(','));
+    const qs = p.toString();
+    try { history.replaceState(null, '', qs ? '?' + qs : location.pathname); } catch (e) { /* ignore */ }
+    const st = box.querySelector('.pick__linkstatus');
+    const done = () => { if (st) st.textContent = 'Link copied ✓'; };
+    const fail = () => { if (st) st.textContent = location.href; };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(location.href).then(done).catch(fail);
+    else fail();
+  });
 
   box.querySelectorAll('[data-jump]').forEach((n) =>
     n.addEventListener('click', () => {
@@ -400,7 +505,8 @@ function ctxPlain(t) { if (num(t)) return ''; if (t >= 1e6) return (t / 1e6).toF
 
 function modelFactLine(m) {
   const bits = [];
-  if (!num(m.coding_score)) bits.push(`coding ${m.coding_score}/100`);
+  // an estimate stays an estimate when it travels — the caveat rides in the export too
+  if (!num(m.coding_score)) bits.push(`coding ${m.coding_score}/100${isEst(m) ? ' (est — SWE-bench not published)' : ''}`);
   if (!num(m.benchmarks?.gpqa)) bits.push(`GPQA ${m.benchmarks.gpqa}`);
   bits.push((num(m.price_input) && num(m.price_output)) ? 'price n/a'
     : `${numPlain(m.price_input, true)} in / ${numPlain(m.price_output, true)} out per 1M`);
@@ -437,7 +543,7 @@ ${scope}
 STAY CURRENT (do this first if you can)
 Before advising, fetch the live data at ${DATA_URL} and use those numbers — they are kept up to date. If you can't browse, use the dated snapshot below and warn me it may be stale.
 
-MODEL FACTS — a snapshot from Modelproof, dated ${asof}. Prices are USD per 1M tokens. Benchmarks are directional (coding is a 0–100 blended score; GPQA is graduate-level reasoning). "n/a" means the figure wasn't publicly sourced — treat it as unknown, never guess. Verify anything cost-critical against the vendor's own pricing page.
+MODEL FACTS — a snapshot from Modelproof, dated ${asof}. Prices are USD per 1M tokens. Benchmarks are directional (coding is a 0–100 score — SWE-bench Verified where published, otherwise a sourced estimate marked "est"; GPQA is graduate-level reasoning). "n/a" means the figure wasn't publicly sourced — treat it as unknown, never guess. Verify anything cost-critical against the vendor's own pricing page.
 ${facts}
 
 HOW TO USE MY MODELS WELL — practical notes per model (from the same sourced data):
@@ -866,9 +972,9 @@ function renderTable() {
     tr.innerHTML = `
       <td class="cell-model col-model"><b>${m.name}</b><span>${m.vendor}</span></td>
       <td class="cell-best col-best"><div class="tags">${(m.best_for || []).slice(0, 3).map((t) => `<span class="mini-tag">${TAG_LABEL[t] || t}</span>`).join('') || '<span class="na">—</span>'}</div></td>
-      <td class="num col-code">${num(m.coding_score) ? '<span class="na">—</span>' : m.coding_score}<span class="conf conf-${m.coding_confidence}" title="basis: ${m.coding_basis || '—'}"></span></td>
+      <td class="num col-code">${fmtCoding(m, { unit: false })}${num(m.coding_score) ? '' : confMark(m, m.coding_confidence)}</td>
       <td class="num col-ctx">${fmtCtx(m.context_window)}</td>
-      <td class="num col-price">${fmtPriceRange(m)}<span class="conf conf-${m.confidence}" title="confidence: ${m.confidence}"></span></td>
+      <td class="num col-price">${fmtPriceRange(m)}${confMark(m)}</td>
       <td class="is-right col-exp" style="text-align:right;color:var(--ink-4)">${state.expanded.has(m.id) ? '−' : '+'}</td>`;
     tr.addEventListener('click', () => {
       if (state.expanded.has(m.id)) state.expanded.delete(m.id); else state.expanded.add(m.id);
@@ -1090,20 +1196,22 @@ function wire() {
 
   // prompt generator
   const gen = $('#genPrompt'), ta = $('#promptText'), panel = $('#promptPanel'), copyStatus = $('#copyStatus');
-  function copyPrompt() {
+  // the status says what actually happened: the generate button auto-copies and SAYS so;
+  // a bare "Copied ✓" next to an unclicked button read as a lie (cold review #18)
+  function copyPrompt(auto) {
     if (!ta) return;
-    const ok = () => { if (copyStatus) copyStatus.textContent = 'Copied ✓'; };
+    const ok = () => { if (copyStatus) copyStatus.textContent = auto ? 'Copied to your clipboard automatically ✓' : 'Copied ✓'; };
     const manual = () => { ta.focus(); ta.select(); if (copyStatus) copyStatus.textContent = 'Select all + copy'; };
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(ok).catch(manual);
     else manual();
   }
   if (gen) gen.addEventListener('click', () => {
-    if (!ta || !panel) return;
+    if (!ta || !panel || !state.data) return;   // no data, no prompt — the button stays disabled until data lands
     ta.value = buildAdvisorPrompt();
     panel.hidden = false;
-    copyPrompt();                              // auto-copy the moment it's generated
+    copyPrompt(true);                          // auto-copy the moment it's generated — and say so
   });
-  const copyBtn = $('#copyPrompt'); if (copyBtn) copyBtn.addEventListener('click', copyPrompt);
+  const copyBtn = $('#copyPrompt'); if (copyBtn) copyBtn.addEventListener('click', () => copyPrompt(false));
 }
 
 // ---------- site-wide ASCII sunset (fixed, full-viewport background) ----------
@@ -1263,26 +1371,55 @@ function initReveal() {
 // set text on an element only if it exists (app.js runs on both index.html and table.html)
 function setText(sel, txt) { const e = $(sel); if (e) e.textContent = txt; }
 
+// a broken fetch must fail like a product, not a stack trace: plain words, a retry,
+// and no live controls pretending there's data behind them (cold review #15)
+function renderLoadError() {
+  setText('#navAsof', '● data unavailable');
+  const msg = `<div class="loaderr" role="alert">
+      <p>Couldn't load the model data — the connection may have dropped.</p>
+      <button class="tbl-toggle" id="retryLoad" type="button">Try again</button>
+    </div>`;
+  const tb = $('#tblBody');
+  if (tb) tb.innerHTML = `<tr><td colspan="6">${msg}</td></tr>`;
+  const r = $('#result');
+  if (r) r.innerHTML = msg;
+  const gen = $('#genPrompt'); if (gen) gen.disabled = true;   // no data behind the CTA
+  const retry = $('#retryLoad');
+  if (retry) retry.addEventListener('click', () => {
+    retry.disabled = true; retry.textContent = 'Loading…';
+    _booted = false; bootOnce();
+  });
+}
+
 async function boot() {
   try { initScene(); } catch (e) { /* the scene must never block the data */ }
   // the standalone full-table page (table.html) marks itself so we always show all 22
   const isTablePage = document.body.dataset.page === 'table';
   if (isTablePage) state.showAll = true;
   try {
-    const res = await fetch('data/models.json', { cache: 'no-store' });
+    const ctl = new AbortController();
+    const kill = setTimeout(() => ctl.abort(), 8000);   // a hung fetch surfaces as the error state, not eternal "loading…"
+    const res = await fetch('data/models.json', { cache: 'no-store', signal: ctl.signal });
+    clearTimeout(kill);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     state.data = await res.json();
   } catch (e) {
-    const r = $('#result') || $('#tblBody');
-    if (r) r.innerHTML = '<div class="empty">Could not load data/models.json.</div>';
+    renderLoadError();
     return;
   }
+  readURL();                 // restore a shared selection before anything renders
   const asof = state.data.as_of || '—';
-  setText('#navAsof', '● snapshot ' + asof + ' · pricing verified');
+  const nav = $('#navAsof');
+  if (nav) nav.innerHTML = '● snapshot ' + asof + '<span class="nav__asof-extra"> · pricing verified</span>';
   setText('#footAsof', asof);
-  setText('#allCount', String(state.data.models.length));   // never hand-count the roster again
-  setText('#footNotes', state.data.notes || 'Pricing from official vendor pages; benchmarks from public leaderboards. Every figure carries a confidence flag; unsourced numbers are left blank rather than guessed.');
+  setText('#allCount', `all ${state.data.models.length} models`);   // never hand-count the roster again
+  // the snapshot date is injected from the same field as the badge — the sourcing note
+  // itself carries no hand-written dates, so the two can never disagree (cold review #3)
+  setText('#footNotes', 'Data snapshot ' + asof + '. ' + (state.data.notes || 'Pricing from official vendor pages; benchmarks from public leaderboards. Every figure carries a confidence flag; unsourced numbers are left blank rather than guessed.'));
+  const gen = $('#genPrompt'); if (gen) gen.disabled = false;   // data's here — the advisor can work now
 
   wire();
+  setActive('data-goal', state.goal);   // reflect a URL-restored task on the console
   initReveal();
   renderFilters();
   renderLabChips();          // build the "which lab" chips from the data's vendors + wire them
