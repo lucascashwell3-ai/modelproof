@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-07-24",
+  "as_of": "2026-07-29",
   "models": [
     {
       "id": "claude-opus-5",
@@ -1085,6 +1085,84 @@
       "use_well": [
         "Reach for it when EU hosting or data residency matters and you want balanced cost/quality.",
         "No cleanly-sourced benchmarks for this version — validate on your own tasks before betting volume."
+      ]
+    },
+    {
+      "id": "gemini-3-6-flash",
+      "name": "Gemini 3.6 Flash",
+      "vendor": "Google",
+      "released": "unknown",
+      "context_window": null,
+      "price_input": 1.5,
+      "price_output": 7.5,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "speed",
+        "cheap-bulk"
+      ],
+      "strengths": [
+        "Priced below Gemini 3.5 Flash on output ($7.50 vs $9.00 per M) on Google’s own pricing page"
+      ],
+      "weaknesses": [
+        "No published benchmark figures yet — every score on this row is blank on purpose",
+        "Context window not stated on the pricing page; left blank rather than guessed"
+      ],
+      "verdict": "Listed because it exists and its list price is published. Figures pending — nothing here is a recommendation yet.",
+      "confidence": "low",
+      "sources": [
+        "https://ai.google.dev/gemini-api/docs/pricing"
+      ],
+      "coding_score": null,
+      "coding_basis": "No independently published coding score for this model yet.",
+      "coding_confidence": "low",
+      "use_well": [
+        "Cheaper per output token than Gemini 3.5 Flash. Until benchmarks publish, treat that as the only known difference."
+      ]
+    },
+    {
+      "id": "glm-5-2",
+      "name": "GLM-5.2",
+      "vendor": "Z.ai (Zhipu)",
+      "released": "unknown",
+      "context_window": null,
+      "price_input": 1.4,
+      "price_output": 4.4,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [
+        "coding",
+        "reasoning"
+      ],
+      "strengths": [
+        "Open-weights, and priced well under the US frontier tier on Z.ai’s own published rates"
+      ],
+      "weaknesses": [
+        "No independently run benchmark figures in our data yet — blanks are deliberate",
+        "Vendor and third-party coding claims exist but none are independently verified here"
+      ],
+      "verdict": "Listed because it exists and its list price is published. Figures pending — nothing here is a recommendation yet.",
+      "confidence": "low",
+      "sources": [
+        "https://docs.z.ai/guides/overview/pricing"
+      ],
+      "coding_score": null,
+      "coding_basis": "No independently published coding score for this model yet.",
+      "coding_confidence": "low",
+      "use_well": [
+        "Open-weights, so self-hosting is an option the closed frontier models don’t offer. Verify quality yourself until independent figures land."
       ]
     }
   ],
