@@ -169,7 +169,13 @@
         "llama.com",
         "platform.openai.com",
         "docs.claude.com",
-        "cloud.google.com"
+        "cloud.google.com",
+        "z.ai",
+        "bigmodel.cn",
+        "kimi.ai",
+        "developers.openai.com",
+        "platform.claude.com",
+        "claude.com"
       ],
       "verified": "2026-07-25",
       "gives": [
