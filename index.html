@@ -20,7 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- same Fraunces cut as the Proof site (portfolio-v2) so the two wordmarks match -->
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=mk22" />
+  <link rel="stylesheet" href="assets/styles.css?v=mk23" />
+  <link rel="preload" as="image" href="assets/advisor-terrace.jpg" />
 </head>
 <body>
   <!-- the live ASCII sunset — one fixed, full-viewport canvas that carries the whole site -->
@@ -43,12 +44,21 @@
   <main id="top">
     <!-- ============ HERO: warm ASCII sunset + entry goal picker ============ -->
     <section class="hero" id="hero">
-      <!-- the wordmark stands alone on the live ASCII sunset that carries the whole site -->
+      <!-- the terrace: a palette-dithered painting, alive on a 15s loop (assets/hero.js) -->
       <div class="hero__band">
-        <div class="hero__scrim" aria-hidden="true"></div>
+        <div class="hero__plate" id="heroPlate">
+          <canvas id="heroCanvas" aria-hidden="true"></canvas>
+          <img src="assets/advisor-terrace.jpg" alt="" />
+        </div>
+        <div class="hero__veil" aria-hidden="true"></div>
         <div class="hero__title">
-          <span class="hero__eyebrow">Model selection, without the noise</span>
-          <h1 class="hero__wordmark">Model<em>proof</em></h1>
+          <h1 class="hero__wordmark">Model<em>proof</em> optimizes your AI work.</h1>
+          <p class="hero__promise">An advisor skill that integrates into your setup and advises
+            from the newest model data.</p>
+          <div class="hero__ctas">
+            <a class="hero__cta hero__cta--solid" href="https://github.com/lucascashwell3-ai/modelproof/tree/main/skills" target="_blank" rel="noopener">Install the advisor</a>
+            <a class="hero__cta hero__cta--ghost" href="#engine">Compare models</a>
+          </div>
         </div>
       </div>
 
@@ -229,6 +239,7 @@
 
   <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
 
-  <script src="assets/app.js?v=mk22"></script>
+  <script src="assets/app.js?v=mk23"></script>
+  <script src="assets/hero.js?v=mk23"></script>
 </body>
 </html>

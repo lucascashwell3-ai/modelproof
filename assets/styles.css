@@ -24,6 +24,15 @@
   --gold-soft: rgba(242, 193, 78, 0.14);
   --gold-line: rgba(242, 193, 78, 0.34);
   /* satin-metal active state: brushed gradient + inner sheen (pure CSS — no filters) */
+  /* terrace palette — the hero painting's own dither palette, so the site can echo it */
+  --paper:       #f6f2e7;
+  --marble:      #efe6d4;
+  --terrace-ink: #232019;
+  --gold-deep:   #8f6c1d;
+  --terracotta:  #a04a45;
+  --sea:         #2e6475;
+  --nav-space:   73px;          /* nav height (57) + its 16px top margin — main is pulled up by this */
+
   --gold-metal: linear-gradient(165deg, #f9dd94 0%, #efbc4f 34%, #cf9530 62%, #f0c565 100%);
   --metal-sheen: inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 2px rgba(90,50,0,0.4),
                  0 2px 8px rgba(0,0,0,0.35);
@@ -115,60 +124,90 @@ a { color: inherit; text-decoration: none; }
   animation: draw-check 0.7s var(--ease) 0.2s forwards; }
 @keyframes draw-check { to { stroke-dashoffset: 0; } }
 
-/* ---------- floating capsule nav ---------- */
+/* ---------- floating capsule nav — rides over the terrace, on paper ---------- */
+/* the nav overlays the hero rather than sitting in a band above it: main is pulled up by the
+   nav's own occupied height so the painting starts at the very top of the page. */
+main { margin-top: calc(-1 * var(--nav-space)); }
 .nav {
   position: sticky; top: 16px; z-index: 40;
   width: min(1120px, calc(100% - 32px));
   margin: 16px auto 0;
   display: flex; align-items: center; gap: 14px;
   padding: 9px 10px 9px 16px;
-  background: rgba(20, 22, 30, 0.78);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-line);
+  background: rgba(246, 242, 231, 0.82);
+  border: 1px solid rgba(35, 32, 25, 0.12);
   border-radius: 999px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 14px 34px -22px rgba(35, 32, 25, 0.6);
+  color: var(--terrace-ink);
 }
 .nav__brand { display: flex; align-items: center; gap: 9px; font-family: var(--display);
   font-weight: 500; font-size: 16.5px; letter-spacing: 0.01em; }
 .nav__brand b, .foot__brand b { color: var(--gold); font-weight: 400; font-style: italic; }
+.nav .nav__brand b { color: var(--gold-deep); }
+.nav .r-ring { stroke: rgba(143, 108, 29, 0.45); }
+.nav .r-check { stroke: var(--gold-deep); }
 .nav__asof {
-  margin-left: auto; font-family: var(--mono); font-size: 11.5px; color: var(--ink-3);
-  padding: 4px 11px; border: 1px solid var(--line); border-radius: 999px;
-  background: var(--bg-2); white-space: nowrap;
+  margin-left: auto; font-family: var(--mono); font-size: 11.5px; color: #6e6857;
+  padding: 4px 11px; border: 1px solid rgba(35, 32, 25, 0.14); border-radius: 999px;
+  background: rgba(255, 253, 246, 0.7); white-space: nowrap;
   min-width: 0; overflow: hidden; text-overflow: ellipsis;   /* the badge shrinks, never widens the page */
 }
 .nav__link {
-  font-size: 13.5px; color: var(--ink-2); padding: 7px 14px; border-radius: 999px;
+  font-size: 13.5px; color: #4a4538; padding: 7px 14px; border-radius: 999px;
   border: 1px solid transparent; transition: color .18s var(--ease), border-color .18s var(--ease);
 }
-.nav__link:hover { color: var(--ink); border-color: var(--line); }
+.nav__link:hover { color: var(--terrace-ink); border-color: rgba(35, 32, 25, 0.18); }
 
-/* ---------- hero: the scene band carries the wordmark; the tool sits below on clean dark ---------- */
+/* ---------- hero: the dithered terrace carries the copy; the tool sits below ---------- */
 .hero { position: relative; text-align: center; }
-/* the wordmark stage: a tall, transparent band so the fixed sunset shows through full-strength */
+/* the terrace stage: full-bleed, the painting behind, the copy on its synthesized sky band */
 .hero__band {
-  position: relative; min-height: min(74vh, 680px);
-  display: flex; align-items: center; justify-content: center;
+  position: relative; min-height: min(96vh, 900px); overflow: hidden;
+  display: flex; flex-direction: column; align-items: center;
+  padding-top: calc(var(--nav-space) + clamp(46px, 9vh, 96px));
+  background: var(--marble);
+  /* pull the band out to the viewport edges — it starts under the sticky capsule nav */
+  width: 100vw; margin-left: calc(50% - 50vw);
 }
-/* legibility is law: a soft radial scrim keeps the lettering winning over the scene */
-.hero__scrim {
-  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-  z-index: 0; pointer-events: none; width: min(1000px, 98vw); height: 78%;
-  background: radial-gradient(ellipse at center, rgba(9,8,15,0.52) 0%, rgba(9,8,15,0.26) 46%, transparent 72%);
+.hero__plate { position: absolute; inset: 0; z-index: 0; }
+.hero__plate canvas {
+  width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%;
+  image-rendering: pixelated; display: block;
+}
+.hero__plate img { display: none; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
+.hero__plate.is-fallback canvas { display: none; }
+.hero__plate.is-fallback img { display: block; }
+/* the sky headroom lives in the dithered plate itself; this is only a light lift for contrast */
+.hero__veil {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(246,242,231,.42) 0%, rgba(246,242,231,.18) 20%, rgba(246,242,231,0) 42%);
 }
 .hero__title {
-  position: relative; z-index: 1;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
   padding: 0 22px;
 }
+.hero__ctas { display: flex; gap: 12px; margin-top: 26px; justify-content: center; flex-wrap: wrap; }
+.hero__cta {
+  font-family: var(--font); font-weight: 500; font-size: 16px; border-radius: 999px;
+  padding: 14px 24px; border: 1.5px solid var(--terrace-ink); cursor: pointer;
+  transition: transform .16s var(--ease), box-shadow .16s var(--ease);
+}
+.hero__cta:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -14px rgba(35,32,25,.8); }
+.hero__cta--solid { background: var(--terrace-ink); color: var(--paper); }
+.hero__cta--ghost { background: rgba(246,242,231,.88); color: var(--terrace-ink); }
 /* table-page header — the wordmark's sibling: sits on the open sunset, above the dense table */
 .pagehead {
   position: relative; text-align: center; width: min(1120px, calc(100% - 32px));
   margin: 0 auto; padding: clamp(58px, 13vh, 132px) 22px clamp(30px, 6vh, 66px);
   display: flex; flex-direction: column; align-items: center;
 }
-.pagehead .hero__scrim { height: 150%; }
+/* legibility scrim — the table page's header still sits on the live ASCII sunset */
+.pagehead .hero__scrim {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  z-index: 0; pointer-events: none; width: min(1000px, 98vw); height: 150%;
+  background: radial-gradient(ellipse at center, rgba(9,8,15,0.52) 0%, rgba(9,8,15,0.26) 46%, transparent 72%);
+}
 .pagehead__title {
   position: relative; z-index: 1; font-family: 'Fraunces', Georgia, serif; font-weight: 400;
   font-optical-sizing: auto; font-size: clamp(2.2rem, 5.2vw, 3.4rem); line-height: 1;
@@ -185,24 +224,19 @@ a { color: inherit; text-decoration: none; }
   margin: 40px auto 0; padding-bottom: 8px;
   display: flex; flex-direction: column; align-items: center;
 }
-.hero__wordmark em { font-style: italic; font-weight: 400; color: var(--gold);
-  text-shadow: 0 3px 44px rgba(20,10,30,0.55), 0 1px 3px rgba(0,0,0,0.4); }
-.hero__eyebrow {
-  font-family: var(--font); font-size: 12px; font-weight: 600; letter-spacing: 0.26em;
-  text-transform: uppercase; color: #ffe9c6; margin-bottom: 22px;
-  text-shadow: 0 2px 18px rgba(70,26,12,0.55), 0 1px 3px rgba(0,0,0,0.4);
-}
+/* the headline sits on the plate's own sky band — dark ink, a paper glow instead of a scrim */
 .hero__wordmark {
   font-family: 'Fraunces', Georgia, serif; font-weight: 400; font-optical-sizing: auto;
-  font-size: clamp(3rem, 8vw, 5.5rem); line-height: 0.95; letter-spacing: -0.02em; color: #fff;
-  text-shadow: 0 3px 44px rgba(20,10,30,0.5), 0 1px 3px rgba(0,0,0,0.32); text-wrap: balance;
+  font-size: clamp(2.3rem, 5.2vw, 4rem); line-height: 1.04; letter-spacing: -0.025em;
+  color: var(--terrace-ink); max-width: 22ch; text-wrap: balance;
+  text-shadow: 0 0 16px rgba(246,242,231,.92), 0 0 38px rgba(246,242,231,.72);
 }
+.hero__wordmark em { font-style: italic; font-weight: 400; color: var(--gold-deep); }
 .hero__promise {
-  font-family: var(--font); font-size: clamp(1rem, 1.6vw, 1.18rem); color: #f7eeda;
-  line-height: 1.55; margin: 20px 0 30px; max-width: 34rem; text-wrap: pretty;
-  text-shadow: 0 2px 22px rgba(20,8,4,0.6), 0 1px 2px rgba(0,0,0,0.35);
+  font-family: var(--font); font-weight: 500; font-size: clamp(1rem, 1.5vw, 1.12rem);
+  color: #2f2a1f; line-height: 1.5; margin: 14px auto 0; max-width: 46ch; text-wrap: balance;
+  text-shadow: 0 0 10px rgba(246,242,231,.95), 0 0 24px rgba(246,242,231,.85), 0 0 42px rgba(246,242,231,.7);
 }
-.hero__promise em { font-style: normal; font-weight: 600; color: #ffdf9e; }
 /* the console: task + budget + optional labs as labeled rows — no wrapping sentence to break */
 .console { width: 100%; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px;
   border: 1px solid var(--glass-line); border-radius: var(--r-lg); background: var(--glass);
