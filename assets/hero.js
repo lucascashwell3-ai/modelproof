@@ -117,21 +117,28 @@
     var t0 = performance.now(), last = 0, lastTick = 0, running = true;
     window.__hero = { frames: 0, step: function (ms) { step(ms); }, scroll: SCROLL, FW: FW, FH: FH };
 
-    function nearest(r, g, b) {
-      var bi = 0, bd = 1e9;
-      for (var i = 0; i < PAL.length; i++) {
-        var dr = r - PAL[i][0], dg = g - PAL[i][1], db = b - PAL[i][2], d = dr * dr + dg * dg + db * db;
-        if (d < bd) { bd = d; bi = i; }
+    /* Nearest-palette lookup table, 5 bits per channel. Built once (32k entries, ~4ms), it
+       turns the per-pixel palette match from 7 distance computations into one array read —
+       the single hottest line in the loop, run 360,000 times a frame. */
+    var LUT = new Uint8Array(32768);
+    (function () {
+      for (var r = 0; r < 32; r++) for (var g = 0; g < 32; g++) for (var b = 0; b < 32; b++) {
+        var R = r << 3, G = g << 3, B2 = b << 3, bi = 0, bd = 1e9;
+        for (var i = 0; i < PAL.length; i++) {
+          var dr = R - PAL[i][0], dg = G - PAL[i][1], db = B2 - PAL[i][2];
+          var d = dr * dr + dg * dg + db * db;
+          if (d < bd) { bd = d; bi = i; }
+        }
+        LUT[(r << 10) | (g << 5) | b] = bi;
       }
-      return PAL[bi];
-    }
+    })();
+    function clamp5(v) { return v < 0 ? 0 : v > 255 ? 31 : v >> 3; }
     function hash(x, y, s) { var h = Math.sin(x * 127.1 + y * 311.7 + s * 74.7) * 43758.5453; return h - Math.floor(h); }
 
     function step(now) {
       lastTick = now;
       if (now - last < 33) return; last = now;
       window.__hero.frames++;
-      var dev = reduced ? 1 : Math.min(1, (now - t0) / 1900);   /* the dither develops in */
       var t = reduced ? 0.33 : ((now - t0) % LOOP) / LOOP;
       var epoch = Math.floor(t * 30);
       for (var y = 0; y < FH; y++) {
@@ -154,12 +161,14 @@
           if (sx < 0) sx = 0; if (sx >= FW) sx = FW - 1;
           if (sy < 0) sy = 0; if (sy >= FH) sy = FH - 1;
           var s = (sy * FW + sx) * 4;
-          var bay = (B[y & 7][x & 7] / 64 - .5) * 46;
-          var c = (x / FW > dev * 1.12) ? PAL[3] : nearest(src[s] + bay + d, src[s + 1] + bay + d, src[s + 2] + bay + d);
+          var bay = (B[y & 7][x & 7] / 64 - .5) * 46 + d;
+          var c = PAL[LUT[(clamp5(src[s] + bay) << 10) | (clamp5(src[s + 1] + bay) << 5) | clamp5(src[s + 2] + bay)]];
           o[idx * 4] = c[0]; o[idx * 4 + 1] = c[1]; o[idx * 4 + 2] = c[2]; o[idx * 4 + 3] = 255;
         }
       }
       ctx.putImageData(out, 0, 0);
+      /* first frame is on screen — cross-fade the dither over the plain painting */
+      if (window.__hero.frames === 1) plate.classList.add('is-ready');
     }
 
     function frame(now) {
