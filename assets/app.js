@@ -566,7 +566,7 @@ function ditherFieldURI(w, h) {
   const B = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
   const cw = Math.max(2, Math.round(w / 4)), ch = Math.max(2, Math.round(h / 4));
   const c = document.createElement('canvas'); c.width = cw; c.height = ch;
-  const x = c.getContext('2d'); x.fillStyle = 'rgba(242,193,78,0.34)';
+  const x = c.getContext('2d'); x.fillStyle = 'rgba(143,108,29,0.3)';
   for (let j = 0; j < ch; j++) for (let i = 0; i < cw; i++) {
     const v = Math.max(0, 1 - (i / cw) * 1.5) * Math.max(0, 1 - (j / ch) * 1.5) * 0.6;
     if (v > (B[j & 3][i & 3] + 0.5) / 16) x.fillRect(i, j, 1, 1);
@@ -594,7 +594,7 @@ function renderChart() {
 
   $('#mapLegend').innerHTML =
     `<span><i style="background:var(--gold)"></i>On the value frontier — a smart buy</span>
-     <span><i style="background:rgba(233,230,223,0.45)"></i>Beaten on price + quality</span>
+     <span><i style="background:rgba(35,32,25,0.28)"></i>Beaten on price + quality</span>
      <span class="dim">↑ ${metricLabel(metric)} &nbsp;·&nbsp; → $ / 1M out (log)</span>`;
 
   if (pts.length < 2) {
@@ -680,7 +680,7 @@ function renderChart() {
     const lx = nearRight ? -12 : 12;
     svg += `<g class="dot ${isPick ? 'is-pick' : ''} ${fro ? 'is-frontier' : ''}" data-id="${p.m.id}" transform="translate(${cx.toFixed(1)} ${cy.toFixed(1)})">`;
     svg += `<circle class="d-hit" r="24" fill="transparent"/>`;
-    svg += `<g class="dot__marks">${ditherCluster(hot ? '#f2c14e' : 'rgba(233,230,223,0.42)', isPick ? 44 : hot ? 28 : 16)}</g>`;
+    svg += `<g class="dot__marks">${ditherCluster(hot ? '#b08a2e' : 'rgba(35,32,25,0.3)', isPick ? 44 : hot ? 28 : 16)}</g>`;
     svg += `<text class="dot__label" x="${lx}" y="4" text-anchor="${nearRight ? 'end' : 'start'}">${p.m.name}</text>`;
     svg += `</g>`;
   });
@@ -698,7 +698,9 @@ function renderChart() {
       hideTip();
       state.expanded.add(id);
       renderTable();
-      document.getElementById('compare').scrollIntoView({ behavior: 'smooth' });
+      // the table now lives in #catalog (was #compare before the terrace restyle)
+      const target = document.getElementById('catalog') || document.getElementById('compare');
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
     });
   });
 }
@@ -725,6 +727,25 @@ function hideTip() { const t = $('#tooltip'); if (t) t.classList.remove('show');
 // actually published; nothing here is modelled from list prices.
 
 const EFFORT_LBL = { low: 'low', medium: 'med', high: 'high', xhigh: 'xhigh', max: 'max' };
+
+// the data's series colors were tuned for the old dark theme; on paper they get the
+// terrace palette instead. Any model not mapped keeps its data color.
+const LAD_COLOR = {
+  'claude-opus-5': '#a04a45',      // terracotta
+  'claude-fable-5': '#8f6c1d',     // deep gold
+  'claude-opus-4-8': '#8d8674',    // stone
+  'gpt-5-6-sol': '#2e6475',        // sea
+  'gpt-5-5': '#2e6475',
+};
+const ladColor = (s) => LAD_COLOR[s.model_id] || s.color;
+
+// one plain-words line per suite: what it is and who graded it
+function suiteModeLine(L) {
+  const who = L.source_kind === 'third-party'
+    ? `<b>${L.suite}</b> is an independent run — ${L.publisher} grades every model on the same tasks, no lab involved.`
+    : `<b>${L.suite}</b> is ${L.publisher}'s own benchmark, graded by ${L.publisher} itself — read the shape of each curve, not the ranking.`;
+  return who + ` Task: ${L.task.toLowerCase()}.`;
+}
 
 function activeLadder() {
   const list = state.data?.effort_ladders || [];
@@ -793,9 +814,13 @@ function renderEffort() {
       const off = state.ladderOff.has(s.model_id);
       return `<button class="lad-chip ${off ? 'is-off' : ''}" data-mid="${s.model_id}"
                 aria-pressed="${!off}" title="Show or hide ${s.label}">
-                <i style="background:${s.color}"></i>${s.label}</button>`;
+                <i style="background:${ladColor(s)}"></i>${s.label}</button>`;
     }).join('');
   }
+
+  // the plain-words line on what this suite is and who graded it
+  const modes = $('#effortModes');
+  if (modes) modes.innerHTML = suiteModeLine(L);
 
   if (!series.length) {
     wrap.innerHTML = `<div class="empty" style="padding:60px 0">Every curve is hidden — switch one back on.</div>`;
@@ -813,8 +838,13 @@ function renderEffort() {
   const X = (v) => padL + ((Math.log10(v) - lo) / (hi - lo)) * plotW;
 
   const sMax = Math.max(...all.map((p) => p.score));
-  const yTop = Math.max(5, Math.ceil((sMax * 1.1) / 5) * 5);
-  const Y = (v) => padT + (1 - v / yTop) * plotH;
+  const sMin = Math.min(...all.map((p) => p.score));
+  const yTop = Math.max(5, Math.ceil((sMax * 1.06) / 5) * 5);
+  // baseline follows the data: CursorBench's scores all sit between ~49 and 73, and a
+  // 0-based axis crushed those differences into a flat band. A tight range starts at a
+  // round number below the minimum; wide ranges (Frontier-Bench) keep the honest zero.
+  const yBase = sMin > yTop * 0.4 ? Math.max(0, Math.floor((sMin * 0.92) / 5) * 5) : 0;
+  const Y = (v) => padT + (1 - (v - yBase) / (yTop - yBase)) * plotH;
 
   const TICKS = [0.5, 1, 1.5, 2, 3, 5, 7, 10, 15, 20, 30, 50, 70, 100, 150];
   let xticks = TICKS.filter((t) => t >= cMin * 0.82 && t <= cMax * 1.18);
@@ -823,10 +853,10 @@ function renderEffort() {
   let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${L.task} score versus cost per attempt, one curve per model with a point at each effort level">`;
 
   // grid first, so curves sit on top
-  const ystep = yTop > 40 ? 10 : 5;
-  for (let v = 0; v <= yTop; v += ystep) {
+  const ystep = (yTop - yBase) > 40 ? 10 : 5;
+  for (let v = yBase; v <= yTop; v += ystep) {
     const yy = Y(v);
-    svg += `<line class="grid-line" x1="${padL}" y1="${yy.toFixed(1)}" x2="${padL + plotW}" y2="${yy.toFixed(1)}" opacity="${v === 0 ? 0 : 0.55}"/>`;
+    svg += `<line class="grid-line" x1="${padL}" y1="${yy.toFixed(1)}" x2="${padL + plotW}" y2="${yy.toFixed(1)}" opacity="${v === yBase ? 0 : 0.55}"/>`;
     svg += `<text class="axis-lbl" x="${padL - 10}" y="${(yy + 4).toFixed(1)}" text-anchor="end">${v}</text>`;
   }
   xticks.forEach((t) => {
@@ -842,20 +872,21 @@ function renderEffort() {
 
   // one curve per model: line, then a dot per effort rung, then the name at the last rung
   series.forEach((s) => {
+    const col = ladColor(s);
     const pts = s.points.slice().sort((a, b) => a.cost - b.cost);
     const d = pts.map((p, i) => `${i ? 'L' : 'M'} ${X(p.cost).toFixed(1)} ${Y(p.score).toFixed(1)}`).join(' ');
     svg += `<g class="lad-series" data-mid="${s.model_id}">`;
-    svg += `<path class="lad-line" d="${d}" fill="none" stroke="${s.color}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>`;
+    svg += `<path class="lad-line" d="${d}" fill="none" stroke="${col}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>`;
     pts.forEach((p, i) => {
       const cx = X(p.cost), cy = Y(p.score);
       svg += `<g class="lad-pt" data-mid="${s.model_id}" data-i="${i}">`;
       svg += `<circle class="lad-hit" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="18" fill="transparent"/>`;
-      svg += `<circle class="lad-ring" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="9" fill="none" stroke="${s.color}" stroke-width="1.6" opacity="0"/>`;
-      svg += `<circle class="lad-dot" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="5.6" fill="${s.color}" stroke="var(--bg-2)" stroke-width="1.6"/>`;
+      svg += `<circle class="lad-ring" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="9" fill="none" stroke="${col}" stroke-width="1.6" opacity="0"/>`;
+      svg += `<circle class="lad-dot" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="5.6" fill="${col}" stroke="var(--panel)" stroke-width="1.6"/>`;
       svg += `</g>`;
     });
     const end = pts[pts.length - 1];
-    svg += `<text class="lad-name" x="${(X(end.cost) + 14).toFixed(1)}" y="${(Y(end.score) + 4).toFixed(1)}" fill="${s.color}">${s.label}</text>`;
+    svg += `<text class="lad-name" x="${(X(end.cost) + 14).toFixed(1)}" y="${(Y(end.score) + 4).toFixed(1)}" fill="${col}">${s.label}</text>`;
     svg += `</g>`;
   });
 
@@ -870,7 +901,7 @@ function renderEffort() {
   if (read) {
     read.innerHTML = series.map((s) => {
       const { peak, note } = ladderInsight(s);
-      return `<li><b style="color:${s.color}">${s.label}</b> peaks at <b>${peak.score}%</b> on
+      return `<li><b style="color:${ladColor(s)}">${s.label}</b> peaks at <b>${peak.score}%</b> on
               <em>${EFFORT_LBL[peak.effort]}</em>, at ${money(peak.cost)} an attempt. ${note}</li>`;
     }).join('');
   }
@@ -1081,14 +1112,18 @@ function renderFeed() {
     const title = r.source
       ? `<a href="${r.source}" target="_blank" rel="noopener">${r.title}<span class="rel__ext">↗</span></a>`
       : r.title;
+    // the body is bullets, never a block of text: one point per sentence of the summary.
+    // No "should you care" verdict — the details are what tell you whether to care.
+    const pts = (r.summary || '')
+      .split(/(?<=\.)\s+(?=[A-Z0-9])/)
+      .map((s) => s.trim()).filter(Boolean);
     return `
     <li class="rel" style="--i:${Math.min(i, 6)}">
       <div class="rel__when"><span class="rel__mon">${w.mon}</span><span class="rel__day">${w.day}</span></div>
       <div class="rel__card">
         ${r.vendor ? `<span class="rel__vendor">${r.vendor}</span>` : ''}
         <h3 class="rel__title">${title}</h3>
-        <p class="rel__sum">${r.summary || ''}</p>
-        ${r.why ? `<p class="rel__why"><span>Should you care?</span> ${r.why}</p>` : ''}
+        <ul class="rel__pts">${pts.map((p) => `<li>${p}</li>`).join('')}</ul>
       </div>
     </li>`;
   }).join('');
@@ -1424,6 +1459,7 @@ async function boot() {
   renderFilters();
   renderLabChips();          // build the "which lab" chips from the data's vendors + wire them
   if ($('#result')) renderResult();   // engine + comparator live on the home page only
+  else if ($('#chart')) renderChart(); // no engine anymore — the model map renders on its own
   renderEffort();            // published effort ladders; guarded no-op on table.html
   renderTable();             // full table lives on table.html; guarded no-op elsewhere
   renderFeed();

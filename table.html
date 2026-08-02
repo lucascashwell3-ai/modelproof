@@ -5,37 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Modelproof — the full model table</title>
   <meta name="description" content="Every AI model in Modelproof, sortable and filterable — coding score, context, and sourced pricing. Unsourced figures are left blank, never guessed." />
-  <meta name="theme-color" content="#0a0b0f" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%230a0b0f'/%3E%3Ccircle cx='12' cy='12' r='9.2' fill='none' stroke='%23f2c14e' stroke-opacity='0.5' stroke-width='1.4'/%3E%3Cpath d='M7.6 12.4l3 3 5.8-6.6' fill='none' stroke='%23f2c14e' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
-  <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
-  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=jetbrains-mono@400,500&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#f6f2e7" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%23232019'/%3E%3Ccircle cx='12' cy='12' r='9.2' fill='none' stroke='%23e2c069' stroke-opacity='0.55' stroke-width='1.4'/%3E%3Cpath d='M7.6 12.4l3 3 5.8-6.6' fill='none' stroke='%23e2c069' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=mk22" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css?v=tr1" />
 </head>
 <body data-page="table">
-  <!-- same live ASCII sunset as the home page — the theme carries across every page -->
-  <canvas id="asciiScene" aria-hidden="true"></canvas>
-  <div class="grain" aria-hidden="true"></div>
-
-  <header class="nav" id="nav">
+  <header class="nav nav--paper" id="nav">
     <a class="nav__brand" href="index.html" aria-label="Modelproof home">
       <svg class="nav__seal" viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">
         <circle cx="12" cy="12" r="9.2" class="r-ring" />
         <path d="M7.6 12.4l3 3 5.8-6.6" class="r-check" />
-      </svg>
-      <span>Model<b>proof</b></span>
+      </svg>Model<b>proof</b>
     </a>
-    <span class="nav__asof" id="navAsof">loading…</span>
-    <a class="nav__link" href="index.html">← Back to the tool</a>
+    <div class="nav__links">
+      <span class="nav__asof" id="navAsof">loading…</span>
+      <a href="index.html">← Back to the tool</a>
+    </div>
   </header>
 
   <main id="top">
-    <!-- page header sits on the open sunset so the scene breathes above the dense table -->
     <section class="pagehead" aria-labelledby="phTitle">
-      <div class="hero__scrim" aria-hidden="true"></div>
-      <span class="hero__eyebrow">The full table</span>
       <h1 class="pagehead__title" id="phTitle">Every model, in the open</h1>
       <p class="pagehead__sub">Sortable by any column, filterable by use case — sourced or blank, never guessed.</p>
     </section>
@@ -98,6 +90,6 @@
     </p>
   </footer>
 
-  <script src="assets/app.js?v=mk22"></script>
+  <script src="assets/app.js?v=tr1"></script>
 </body>
 </html>

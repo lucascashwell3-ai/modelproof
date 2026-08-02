@@ -3,191 +3,185 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Modelproof — which AI model should you actually use?</title>
-  <meta name="description" content="A no-nonsense decision tool for AI models. Tell it your goal and budget; it tells you what to use — with sourced pricing, real usage, and what changed this week." />
-  <meta name="theme-color" content="#0a0b0f" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%230a0b0f'/%3E%3Ccircle cx='12' cy='12' r='9.2' fill='none' stroke='%23f2c14e' stroke-opacity='0.5' stroke-width='1.4'/%3E%3Cpath d='M7.6 12.4l3 3 5.8-6.6' fill='none' stroke='%23f2c14e' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <title>Modelproof — the advisor skill for model and effort selection</title>
+  <meta name="description" content="A free advisor skill that installs into your AI and recommends model + effort from live, sourced pricing and benchmarks — plus the effort ladders that show when more spend stops buying accuracy." />
+  <meta name="theme-color" content="#f6f2e7" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%23232019'/%3E%3Ccircle cx='12' cy='12' r='9.2' fill='none' stroke='%23e2c069' stroke-opacity='0.55' stroke-width='1.4'/%3E%3Cpath d='M7.6 12.4l3 3 5.8-6.6' fill='none' stroke='%23e2c069' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
   <!-- social preview -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Modelproof — which AI model should you actually use?" />
-  <meta property="og:description" content="A calm, opinionated decision tool for AI models. Tell it your goal, or the lab you already use, and get a straight answer — sourced pricing, real usage, and what changed lately." />
+  <meta property="og:title" content="Modelproof — the advisor skill for model and effort selection" />
+  <meta property="og:description" content="Install it once; your own AI answers 'which model, how much effort?' from live, sourced data. Free, lab-neutral, never a guessed number." />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Modelproof — which AI model should you actually use?" />
-  <meta name="twitter:description" content="A calm decision tool for AI models. Your goal or your lab → a straight answer, not a leaderboard." />
-  <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
-  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=jetbrains-mono@400,500&display=swap" rel="stylesheet" />
+  <meta name="twitter:title" content="Modelproof — the advisor skill for model and effort selection" />
+  <meta name="twitter:description" content="Install it once; your own AI answers 'which model, how much effort?' from live, sourced data." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=mk23" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css?v=tr1" />
   <link rel="preload" as="image" href="assets/advisor-terrace.jpg" />
 </head>
 <body>
-  <!-- the live ASCII sunset — one fixed, full-viewport canvas that carries the whole site -->
-  <canvas id="asciiScene" aria-hidden="true"></canvas>
-  <div class="grain" aria-hidden="true"></div>
-
-  <!-- floating capsule nav -->
-  <header class="nav" id="nav">
-    <a class="nav__brand" href="#top" aria-label="Modelproof home">
-      <svg class="nav__seal" viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">
-        <circle cx="12" cy="12" r="9.2" class="r-ring" />
-        <path d="M7.6 12.4l3 3 5.8-6.6" class="r-check" />
-      </svg>
-      <span>Model<b>proof</b></span>
-    </a>
-    <span class="nav__asof" id="navAsof">loading…</span>
-    <a class="nav__link" href="#sourcing">How it's sourced</a>
-  </header>
 
   <main id="top">
-    <!-- ============ HERO: warm ASCII sunset + entry goal picker ============ -->
+    <!-- ============ HERO: the living terrace ============ -->
     <section class="hero" id="hero">
-      <!-- the terrace: a palette-dithered painting, alive on a 15s loop (assets/hero.js) -->
-      <div class="hero__band">
-        <div class="hero__plate" id="heroPlate">
-          <canvas id="heroCanvas" aria-hidden="true"></canvas>
-          <img src="assets/advisor-terrace.jpg" alt="" decoding="async" fetchpriority="high" />
-        </div>
-        <div class="hero__veil" aria-hidden="true"></div>
-        <div class="hero__title">
-          <h1 class="hero__wordmark">Model<em>proof</em> optimizes your AI work.</h1>
-          <p class="hero__promise">An advisor skill that integrates into your setup and advises
-            from the newest model data.</p>
-          <div class="hero__ctas">
-            <a class="hero__cta hero__cta--solid" href="https://github.com/lucascashwell3-ai/modelproof/tree/main/skills" target="_blank" rel="noopener">Install the advisor</a>
-            <a class="hero__cta hero__cta--ghost" href="#engine">Compare models</a>
-          </div>
-        </div>
+      <div class="hero__plate" id="heroPlate">
+        <canvas id="heroCanvas" aria-hidden="true"></canvas>
+        <img src="assets/advisor-terrace.jpg" alt="" decoding="async" fetchpriority="high" />
       </div>
+      <div class="hero__veil" aria-hidden="true"></div>
 
-      <!-- the tool sits below the scene, on clean dark -->
-      <div class="hero__tool" id="engine">
-        <!-- the console: pick task + budget + (optional) the labs you use → answer resolves below -->
-        <div class="console" role="group" aria-label="Get a model recommendation">
-          <div class="console__row">
-            <span class="console__label">Task</span>
-            <div class="segmented segmented--goals goalctl" role="radiogroup" aria-label="Task">
-              <i class="seg-pill" aria-hidden="true"></i>
-              <button class="seg is-active" data-goal="coding" role="radio" aria-checked="true">Coding</button>
-              <button class="seg" data-goal="research" role="radio" aria-checked="false">Strategy</button>
-              <button class="seg" data-goal="writing" role="radio" aria-checked="false">Writing</button>
-              <button class="seg" data-goal="cheap-bulk" role="radio" aria-checked="false">Cheap bulk</button>
-            </div>
-          </div>
-          <div class="console__row">
-            <span class="console__label">Budget</span>
-            <!-- budget is a continuum, not 4 buckets: a spring slider with a live-updating answer -->
-            <div class="budget">
-              <input type="range" id="budgetRange" min="0" max="100" step="1" value="48"
-                     aria-label="Budget — slide from cheapest to best quality" />
-              <div class="budget__scale" aria-hidden="true">
-                <button type="button" class="budget__word" data-bp="6" tabindex="-1">Cheapest</button>
-                <button type="button" class="budget__word" data-bp="28" tabindex="-1">Value</button>
-                <button type="button" class="budget__word is-on" data-bp="48" tabindex="-1">Balanced</button>
-                <button type="button" class="budget__word" data-bp="85" tabindex="-1">Best</button>
-              </div>
-            </div>
-          </div>
-          <div class="console__row console__row--labs">
-            <span class="console__label">Labs I use <em>optional</em></span>
-            <div class="labchips labctl" role="group" aria-label="Labs I use"></div>
-          </div>
-          <p class="console__echo" id="queryEcho" aria-hidden="true"></p>
+      <!-- free-floating nav: lettering straight on the sky, no capsule -->
+      <nav class="nav">
+        <a class="nav__brand" href="#top">Model<em>proof</em></a>
+        <div class="nav__links">
+          <span class="nav__asof" id="navAsof">loading…</span>
+          <a href="#advisor">Advisor</a>
+          <a href="#effort">Effort ladders</a>
+          <a href="#catalog">Catalog</a>
+          <a href="#map">Map</a>
         </div>
+      </nav>
 
-        <div class="engine__result" id="result" aria-live="polite">
-          <!-- populated by app.js -->
+      <div class="hero__copy">
+        <h1 class="hero__h1">Stop guessing which model to&nbsp;use.</h1>
+        <p class="hero__sub">Modelproof is a free advisor skill: install it once and your AI picks
+          the model — and the effort — from live, sourced data.</p>
+        <div class="hero__ctas">
+          <a class="hero__cta hero__cta--solid" href="#advisor">Install the advisor</a>
+          <a class="hero__cta hero__cta--ghost" href="#effort">See what effort buys</a>
         </div>
-
-        <!-- portable engine: turn this selection into a paste-in prompt for your own AI -->
-        <div class="promptgen">
-        <div class="promptgen__pitch">
-          <h3 class="promptgen__title">Take this advisor with you</h3>
-          <p class="promptgen__sub">One click turns your selection into a paste-in prompt — your own AI
-          becomes the model-picker, so you never have to come back and check.</p>
-        </div>
-        <button class="promptgen__btn" id="genPrompt" type="button" disabled>
-          Get my advisor prompt <span aria-hidden="true">→</span>
+        <!-- the tell: this is a skill. One line, types itself, click to copy. -->
+        <button class="hero__cmd" id="heroCmd" type="button"
+                aria-label="Copy the install command">
+          <span class="hero__cmd-prompt">$</span>
+          <span class="hero__cmd-text" id="heroCmdText"></span><span class="hero__cmd-caret" aria-hidden="true"></span>
+          <span class="hero__cmd-copy" id="heroCmdCopy">copy</span>
         </button>
-        <p class="promptgen__more">Prefer it to work automatically in your AI? Also a <a href="https://github.com/lucascashwell3-ai/modelproof/tree/main/skills" target="_blank" rel="noopener">Claude skill + MCP</a>.</p>
-        <div class="promptgen__panel" id="promptPanel" hidden>
-          <p class="promptgen__hint">
-            Paste this into Claude or ChatGPT — as a custom instruction or your first message — and it
-            becomes your own ongoing model-picker, so you don't have to keep coming back to check.
-          </p>
-          <textarea class="promptgen__text" id="promptText" readonly rows="12" aria-label="Generated model-advisor prompt"></textarea>
-          <div class="promptgen__actions">
-            <button class="promptgen__copy" id="copyPrompt" type="button">Copy prompt</button>
-            <span class="promptgen__status" id="copyStatus" role="status" aria-live="polite"></span>
-          </div>
-        </div>
       </div>
-      </div><!-- /hero__tool -->
     </section>
 
-    <!-- ============ evidence divider — depth below, out of the way ============ -->
-    <div class="evidence-mark" id="evidence">
-      <span>the evidence — check the work</span>
-    </div>
-
-    <!-- COMPARE TABLE -->
-    <section class="panel" id="compare">
+    <!-- ============ 01 · THE ADVISOR ============ -->
+    <section class="panel" id="advisor">
       <div class="panel__head">
-        <div>
-          <h2 class="panel__title"><span class="panel__no">01</span>Compare, side by side</h2>
-          <p class="panel__desc">Pick up to <em>five</em> models — pre-loaded from your answer above. Coding score is 0–100 — SWE-bench Verified where published, otherwise a sourced estimate (marked <em>est</em>); the dot + label show confidence. <span class="dim">"—" means not publicly sourced. We don't guess.</span></p>
+        <h2 class="panel__title">An advisor that lives inside your AI</h2>
+        <p class="panel__desc">Modelproof isn't a page you come back to. Install it once and your
+          own assistant answers <em>"which model for this?"</em> from current sourced pricing and
+          benchmarks — and tells you when the answer changes.</p>
+      </div>
+
+      <!-- three doors in: skill · MCP · CLI. Tabs cycle on their own until touched. -->
+      <div class="doors" id="doors">
+        <div class="doors__tabs" role="tablist" aria-label="Ways to install">
+          <button class="doors__tab is-on" role="tab" aria-selected="true" data-door="skill">Claude skill</button>
+          <button class="doors__tab" role="tab" aria-selected="false" data-door="mcp">MCP server</button>
+          <button class="doors__tab" role="tab" aria-selected="false" data-door="cli">Terminal</button>
+        </div>
+        <div class="doors__stage">
+          <div class="door is-on" data-door="skill" role="tabpanel">
+            <p class="door__what">One command. After it, Claude answers model questions from live data on its own.</p>
+            <div class="door__cmd"><code>npx skills add <b>lucascashwell3-ai/modelproof</b></code>
+              <button class="door__copy" type="button" data-copy="npx skills add lucascashwell3-ai/modelproof">copy</button></div>
+            <p class="door__note">Works in Claude Code and Claude Desktop.</p>
+          </div>
+          <div class="door" data-door="mcp" role="tabpanel" hidden>
+            <p class="door__what">A tiny local server any MCP-aware client can call — Claude, Cursor, or your own agent.</p>
+            <div class="door__cmd"><code>claude mcp add modelproof -- npx <b>modelproof-mcp</b></code>
+              <button class="door__copy" type="button" data-copy="claude mcp add modelproof -- npx modelproof-mcp">copy</button></div>
+            <p class="door__note">Same data, exposed as tools: recommend, compare, what-changed.</p>
+          </div>
+          <div class="door" data-door="cli" role="tabpanel" hidden>
+            <p class="door__what">No install at all — pipe the live dataset straight into anything.</p>
+            <div class="door__cmd"><code>curl -s <b>lucascashwell3-ai.github.io/modelproof/data/models.json</b></code>
+              <button class="door__copy" type="button" data-copy="curl -s https://lucascashwell3-ai.github.io/modelproof/data/models.json">copy</button></div>
+            <p class="door__note">The JSON carries every price, benchmark, confidence flag and source.</p>
+          </div>
         </div>
       </div>
-      <div class="cmp-picker" id="cmpPicker" aria-label="Choose models to compare"></div>
-      <div class="cmp-board-wrap"><div class="cmp-board" id="cmpBoard" aria-live="polite"></div></div>
+
+      <div class="creed">
+        <div class="creed__item"><b>Cost-first.</b> Never the priciest model by default — and it says when the cheap one is enough.</div>
+        <div class="creed__item"><b>Lab-neutral.</b> No vendor gets a thumb on the scale. Facts, never an ad.</div>
+        <div class="creed__item"><b>Sourced or blank.</b> Every number traces to a vendor page or published benchmark. Unknown renders "—".</div>
+        <div class="creed__item"><b>Yours first.</b> It works the models you already pay for before suggesting anything new.</div>
+      </div>
+    </section>
+
+    <div class="rule" aria-hidden="true"></div>
+
+    <!-- ============ 02 · EFFORT LADDERS ============ -->
+    <section class="panel" id="effort">
+      <div class="panel__head">
+        <h2 class="panel__title">What more effort actually buys</h2>
+        <p class="panel__desc">The model sets the ceiling; <em>effort</em> sets how hard it thinks
+          on each request — and what you pay. More effort is not more quality: every curve here has
+          a point where the next rung buys nothing. The ladders show you where to stop.</p>
+      </div>
+      <div class="lad-suites" id="effortMeta"></div>
+      <p class="lad-modes" id="effortModes"></p>
+      <div class="legend lad-legend" id="effortLegend"></div>
+      <div class="chart chart--ladder" id="effortChart"></div>
+      <ul class="lad-read" id="effortRead"></ul>
+      <p class="lad-source" id="effortSource"></p>
+      <p class="lad-roster">Only four models appear because only two publishers have released
+        cost-per-effort figures. A curve is listed when its publisher publishes one — never
+        modelled from list prices.</p>
+    </section>
+
+    <div class="rule" aria-hidden="true"></div>
+
+    <!-- ============ 03 · CATALOG ============ -->
+    <section class="panel" id="catalog">
+      <div class="panel__head">
+        <h2 class="panel__title">The catalog</h2>
+        <p class="panel__desc">The common flagships below; every model on the
+          <a href="table.html">full table</a>. <em>Coding</em> is a 0–100 score — the model's
+          SWE-bench Verified result (real GitHub bugs, fixed autonomously) where published,
+          otherwise a sourced estimate marked <em>est</em>. <em>GPQA</em> is a PhD-level science
+          exam — a proxy for hard reasoning. "—" means not publicly sourced. We don't guess.</p>
+      </div>
+      <div class="filters" id="filters"></div>
+      <div class="tbl-wrap">
+        <table class="tbl" aria-label="Model comparison">
+          <thead>
+            <tr>
+              <th data-sort="name">Model</th>
+              <th>Best for</th>
+              <th class="num" data-sort="coding_score">Coding</th>
+              <th class="num" data-sort="context">Context</th>
+              <th class="num" data-sort="price_input">$ / 1M in–out</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tblBody"></tbody>
+        </table>
+      </div>
       <a class="browse-all" href="table.html">Browse the full table — <span id="allCount">all models</span>, sortable <span aria-hidden="true">→</span></a>
     </section>
 
-    <!-- COST vs CAPABILITY quadrant -->
+    <div class="rule" aria-hidden="true"></div>
+
+    <!-- ============ 04 · MODEL MAP ============ -->
     <section class="panel" id="map">
       <div class="panel__head">
-        <div>
-          <h2 class="panel__title"><span class="panel__no">02</span>The model map</h2>
-          <p class="panel__desc">
-            Every model placed by <em>what it costs</em> (→) and <em>how capable it is</em> (↑).
-            The gold line is the <em>value frontier</em> — the most capability you can buy at each price.
-            On the line is a smart buy; anything below it is beaten by something cheaper <em>and</em> better.
-            <span class="dim">Reflects your task above; hover any cluster for the numbers.</span>
-          </p>
-        </div>
+        <h2 class="panel__title">The model map</h2>
+        <p class="panel__desc">Every model placed by <em>what it costs</em> (→) and <em>how capable
+          it is</em> (↑), on the coding score. The gold line is the <em>value frontier</em> — the
+          most capability you can buy at each price. On the line is a smart buy; below it,
+          something cheaper is also better. <span class="dim">Hover any dot for the numbers.</span></p>
         <div class="legend" id="mapLegend"></div>
       </div>
       <div class="chart" id="chart"></div>
     </section>
 
-    <!-- EFFORT LADDERS — cost vs performance at each effort level -->
-    <section class="panel" id="effort">
-      <div class="panel__head">
-        <div>
-          <h2 class="panel__title"><span class="panel__no">03</span>What more effort actually buys</h2>
-          <p class="panel__desc">
-            The newest models let you turn a dial — <em>effort</em> — that trades money for accuracy on
-            every request. Each line is one model; each dot is one setting of that dial, from
-            <em>low</em> to <em>max</em>. Flat line = you're paying more for nothing.
-            <span class="dim">Click a name to isolate it; hover any dot for the step-by-step cost.</span>
-          </p>
-        </div>
-        <div class="lad-suites" id="effortMeta"></div>
-      </div>
-      <div class="legend lad-legend" id="effortLegend"></div>
-      <div class="chart" id="effortChart"></div>
-      <ul class="lad-read" id="effortRead"></ul>
-      <p class="lad-source" id="effortSource"></p>
-    </section>
+    <div class="rule" aria-hidden="true"></div>
 
-    <!-- LATEST RELEASES -->
+    <!-- ============ 05 · WHAT CHANGED LATELY ============ -->
     <section class="panel" id="releases">
       <div class="panel__head">
-        <div>
-          <h2 class="panel__title"><span class="panel__no">04</span>What changed lately</h2>
-          <p class="panel__desc">The releases actually worth knowing about — newest first.</p>
-        </div>
+        <h2 class="panel__title">What changed lately</h2>
+        <p class="panel__desc">The releases actually worth knowing about — newest first, every
+          headline linked to its source.</p>
       </div>
       <ol class="feed" id="feed"></ol>
     </section>
@@ -238,7 +232,8 @@
 
   <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
 
-  <script src="assets/app.js?v=mk23"></script>
-  <script src="assets/hero.js?v=mk23"></script>
+  <script src="assets/app.js?v=tr1"></script>
+  <script src="assets/hero.js?v=tr1"></script>
+  <script src="assets/site.js?v=tr1"></script>
 </body>
 </html>
