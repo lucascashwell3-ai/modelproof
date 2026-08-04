@@ -323,6 +323,42 @@ thing to know about a new model is which of your old habits it made useless.**
 ## Still to do
 
 - [x] Tier A sweep — all 10 vendors, complete
-- [ ] Schema + data written into `models.json`
-- [ ] Validator rule: no guidance entry without a source URL
+- [x] Schema + data written into `models.json` — 87 sourced tips across 19 models, 6 blank
+- [x] Validator rule: no guidance entry without a source URL (negative-tested)
 - [ ] Section design (later session, with Lucas at a screen)
+- [ ] Decide whether `use_well` collapses into `usage_guidance` — Lucas's call, not mine.
+      Both fields are live right now: `use_well` still feeds the advisor result and the MCP
+      server, `usage_guidance` is the new sourced one. Nothing was removed.
+
+## What shipped
+
+`data/models.json` — each model gains a `usage_guidance` array. Entry shape:
+
+```json
+{ "tip": "Delete your 'double-check your work' instructions",
+  "detail": "Anthropic: it \"verifies its own work without being told to\"…",
+  "tier": "lab",
+  "source": "https://platform.claude.com/docs/en/…/prompting-claude-opus-5",
+  "source_label": "Anthropic — Prompting Claude Opus 5" }
+```
+
+Filled (19): Opus 5 (8 tips), Fable 5 (8), Sonnet 5 (7), Opus 4.8 (7), Haiku 4.5 (2),
+GPT-5.6 Sol/Terra/Luna (6 each), Gemini 3.1 Pro / 3.5 Flash / 3.6 Flash (6 each),
+Grok 4.5 (4), DeepSeek V4-Pro / V4-Flash (2 each), Kimi K3 (3), Qwen3-Coder-Plus (2),
+Mistral Medium 3.1 (1), GLM-5.2 (4), Llama 4 Maverick (1).
+
+Blank on purpose (6) — nothing published that I could verify for that exact model:
+`gpt-5-5`, `o4-mini`, `kimi-k2-6`, `gemini-2-5-flash-lite`, `qwen3-max`, `qwen-turbo`.
+Two near-misses were deliberately NOT used: Mistral's published temperature figures are
+for Medium **3.5**, not 3.1; and Gemini 3 guidance does not apply to Gemini **2.5**
+Flash-Lite. Adjacent is not the same as sourced.
+
+`scripts/validate-data.mjs` — gate 9 blocks any guidance entry missing a source URL, a
+source label, or a valid tier, and blocks a `lab`-tier tip whose source isn't a lab
+publishing about its own models. Negative-tested: an unsourced tip fails the build.
+
+`scripts/sources.json` — registered the doc hosts, and fixed a real mis-resolution the new
+gate exposed: `huggingface.co` was mapped to the Terminal-Bench entry, so vendor model
+cards hosted there (Kimi, Qwen, GLM) resolved to a third-party benchmark source. Registry
+entries can now claim path prefixes on a shared host, so a card under a vendor's own org
+resolves to that vendor.

@@ -20,9 +20,16 @@ const byHost = new Map();
 for (const s of registry.sources) for (const h of s.hosts || []) byHost.set(h, s);
 // Subdomains resolve to their parent entry, so www.anthropic.com and docs.anthropic.com both land
 // on the vendor-primary tier without every host needing its own line.
+// Some hosts are shared: Hugging Face carries both third-party datasets and vendor-owned model
+// cards, so the bare host can't decide who published a page. A registry entry may claim specific
+// path prefixes on such a host, and those win over the host match.
 const sourceFor = (url) => {
-  let host;
-  try { host = new URL(url).hostname.replace(/^www\./, ''); } catch { return null; }
+  let host, path;
+  try { const u = new URL(url); host = u.hostname.replace(/^www\./, ''); path = u.pathname.replace(/^\//, ''); }
+  catch { return null; }
+  for (const s of registry.sources) {
+    for (const pre of (s.host_paths || {})[host] || []) if (path.startsWith(pre)) return s;
+  }
   for (let h = host; h.includes('.'); h = h.slice(h.indexOf('.') + 1)) if (byHost.has(h)) return byHost.get(h);
   return null;
 };
@@ -111,6 +118,31 @@ for (const L of data.effort_ladders || []) {
     // and a vendor curve reading as third-party is the exact failure this site exists to avoid.
     E(`ladder ${id}: backed by vendor-primary source "${reg.name}" but source_kind is "${L.source_kind}" — a lab publishing about its own models must be labelled "vendor-reported"`);
   }
+}
+
+// 9. usage guidance: the same rule the numbers live under. Guidance is the easiest thing on this
+//    site to write from memory and the hardest for a reader to check, so it does not ship without
+//    the page it came from. Tier 'lab' means the lab that makes the model said it; tier 'reported'
+//    means people using it said it, cited to where they said it, and labelled as such on the page.
+//    A tip with no URL is an opinion wearing a citation's clothes — block it.
+const G_TIERS = ['lab', 'reported'];
+for (const m of data.models) {
+  const g = m.usage_guidance;
+  if (g === undefined) continue;
+  if (!Array.isArray(g)) { E(`${m.name}: usage_guidance must be an array (blank is [], never a guess)`); continue; }
+  g.forEach((e, i) => {
+    const at = `${m.name} usage_guidance[${i}]`;
+    if (!e.tip) E(`${at}: missing tip`);
+    if (!e.source) E(`${at}: no source URL — guidance ships sourced or not at all`);
+    if (!e.source_label) E(`${at}: missing source_label — the reader has to see WHO said it, not just a bare link`);
+    if (!G_TIERS.includes(e.tier)) E(`${at}: tier must be one of ${G_TIERS.join(' | ')}, got "${e.tier}"`);
+    // A 'lab' tip must actually come from a lab publishing about its own models. Tier C in the
+    // registry is exactly that. Anything else claiming tier 'lab' is mislabelled.
+    const reg = e.source ? sourceFor(e.source) : null;
+    if (!reg) W(`${at}: source host isn't in scripts/sources.json — add it so the page can say what we're allowed to quote`);
+    else if (e.tier === 'lab' && reg.tier !== 'C')
+      E(`${at}: tier "lab" but the source is "${reg.name}" (tier ${reg.tier}) — only a lab publishing about its own models counts as lab guidance`);
+  });
 }
 
 // A stub is how a model appears on day 0 without anyone guessing: present, with visible blanks.

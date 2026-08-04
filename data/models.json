@@ -69,7 +69,65 @@
             "Give it the full problem and source material in one message; it's built for long single-pass reasoning."
           ]
         }
-      }
+      },
+      "usage_guidance": [
+        {
+          "tip": "Delete your 'double-check your work' instructions",
+          "detail": "Anthropic: it \"verifies its own work without being told to,\" and carried-over verification instructions \"cause over-verification… removing them reduces wasted tokens with no loss in quality.\" Same for 'use a subagent to verify' and 're-verify before responding.'",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5",
+          "source_label": "Anthropic — Prompting Claude Opus 5"
+        },
+        {
+          "tip": "Give it the whole task up front, then leave it alone",
+          "detail": "It \"performs best when given the complete task specification up front and left to run.\" Drip-feeding a task across turns costs more and works less well.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5",
+          "source_label": "Anthropic — Prompting Claude Opus 5"
+        },
+        {
+          "tip": "Effort is your cost dial — and the cheap rungs are unusually good",
+          "detail": "\"low and medium effort produce strong quality at a fraction of the tokens and latency.\" Start at the default (high), drop where quality holds, step up to xhigh for hard coding and agent work.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5",
+          "source_label": "Anthropic — Prompting Claude Opus 5"
+        },
+        {
+          "tip": "Thinking is on by default now — recheck your max output limit",
+          "detail": "A change from Opus 4.8. max_tokens caps thinking plus answer together, so a limit tuned on 4.8 can truncate replies mid-sentence.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/about-claude/models/whats-new-opus-5",
+          "source_label": "Anthropic — What's new in Claude Opus 5"
+        },
+        {
+          "tip": "Ask for short answers explicitly",
+          "detail": "Replies run longer than earlier Opus models. Effort controls how much it thinks, not how much it says — turning effort down will not reliably shorten the visible answer.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5",
+          "source_label": "Anthropic — Prompting Claude Opus 5"
+        },
+        {
+          "tip": "Don't tell a code review to 'only report high-severity issues'",
+          "detail": "It follows that literally and reports less. Ask for everything and filter in a second pass.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5",
+          "source_label": "Anthropic — Prompting Claude Opus 5"
+        },
+        {
+          "tip": "Rein in scope and subagents on small jobs",
+          "detail": "It expands task scope and delegates to subagents more readily than earlier models — great on big independent work, expensive on small tasks. Say so explicitly when the task is narrow.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5",
+          "source_label": "Anthropic — Prompting Claude Opus 5"
+        },
+        {
+          "tip": "Short prompts can be cached now",
+          "detail": "The prompt-cache minimum dropped to 512 tokens, from 1,024 on Opus 4.8 — prompts too short to cache before now qualify with no code change.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/about-claude/models/whats-new-opus-5",
+          "source_label": "Anthropic — What's new in Claude Opus 5"
+        }
+      ]
     },
     {
       "id": "kimi-k3",
@@ -127,7 +185,30 @@
             "1M context makes it a strong fit for reasoning across large document sets in one pass."
           ]
         }
-      }
+      },
+      "usage_guidance": [
+        {
+          "tip": "It fills in gaps you left — so state your limits",
+          "detail": "Moonshot's own card: \"the model may proactively decide details on ambiguous instructions, so you should explicitly enforce bounds in the system prompt if strict constraint-following is required.\"",
+          "tier": "lab",
+          "source": "https://huggingface.co/moonshotai/Kimi-K3",
+          "source_label": "Moonshot — Kimi K3 model card"
+        },
+        {
+          "tip": "Feed previous thinking tokens back in multi-turn work",
+          "detail": "\"Agent wrappers must feed back all previous thinking tokens in multi-turn completions to avoid context degradation.\"",
+          "tier": "lab",
+          "source": "https://huggingface.co/moonshotai/Kimi-K3",
+          "source_label": "Moonshot — Kimi K3 model card"
+        },
+        {
+          "tip": "Moonshot's own published settings",
+          "detail": "All K3 results use reasoning effort max and temperature 1.0, with top_p 0.95 for single-step tasks and 1.0 for agentic tasks.",
+          "tier": "lab",
+          "source": "https://huggingface.co/moonshotai/Kimi-K3",
+          "source_label": "Moonshot — Kimi K3 model card"
+        }
+      ]
     },
     {
       "id": "claude-fable-5",
@@ -179,6 +260,64 @@
         "Save it for the hardest overnight agent runs and deepest reasoning — for everyday coding, Opus 4.8 or Sonnet 5 do the job at a fraction of the price.",
         "Thinking is always on — give it the complete task up front in one well-specified message and let it run; drip-feeding steps wastes its strength.",
         "It's built for 1M-token context: paste whole codebases or document sets in rather than pre-summarizing."
+      ],
+      "usage_guidance": [
+        {
+          "tip": "Point it at your hardest problem, not your routine one",
+          "detail": "Anthropic: \"the teams seeing the best outcomes apply Claude Fable 5 to their hardest unsolved problems; testing it only on simpler workloads tends to undersell its capability range.\"",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5",
+          "source_label": "Anthropic — Prompting Claude Fable 5"
+        },
+        {
+          "tip": "Expect turns that run for minutes — or hours",
+          "detail": "\"Adjust client timeouts, streaming, and user-facing progress indicators before migrating.\" Check on long runs asynchronously instead of blocking on them.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5",
+          "source_label": "Anthropic — Prompting Claude Fable 5"
+        },
+        {
+          "tip": "Cut down the prompts you wrote for older models",
+          "detail": "\"Skills developed for prior models are often too prescriptive for Claude Fable 5 and can degrade output quality.\"",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5",
+          "source_label": "Anthropic — Prompting Claude Fable 5"
+        },
+        {
+          "tip": "Give it a notes file to remember lessons between runs",
+          "detail": "It performs \"particularly well when it can record lessons from previous runs and reference them\" — a plain Markdown file is enough.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5",
+          "source_label": "Anthropic — Prompting Claude Fable 5"
+        },
+        {
+          "tip": "Tell it why you're asking, not just what you want",
+          "detail": "It \"tends to perform better when it understands the intent behind a request.\"",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5",
+          "source_label": "Anthropic — Prompting Claude Fable 5"
+        },
+        {
+          "tip": "On long runs, make it check claims against real tool output",
+          "detail": "Anthropic's testing says this \"nearly eliminated fabricated status reports\" even on tasks designed to cause them.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5",
+          "source_label": "Anthropic — Prompting Claude Fable 5"
+        },
+        {
+          "tip": "Don't ask it to show its reasoning",
+          "detail": "Instructions to echo or explain internal reasoning can trigger a refusal and fall back to Opus 4.8. Read the structured thinking blocks instead.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5",
+          "source_label": "Anthropic — Prompting Claude Fable 5"
+        },
+        {
+          "tip": "Lower effort rungs still beat older models at their best",
+          "detail": "\"Lower effort settings on Claude Fable 5 still perform well and often exceed xhigh performance on prior models.\" Default is high.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5",
+          "source_label": "Anthropic — Prompting Claude Fable 5"
+        }
       ]
     },
     {
@@ -245,7 +384,58 @@
             "For rewrites, paste the original plus one sentence of direction — it holds a voice well across long documents."
           ]
         }
-      }
+      },
+      "usage_guidance": [
+        {
+          "tip": "Start at xhigh effort for coding and agent work",
+          "detail": "Minimum high for anything intelligence-sensitive. Anthropic: \"effort is likely to be more important for this model than for any prior Opus.\"",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8",
+          "source_label": "Anthropic — Prompting Claude Opus 4.8"
+        },
+        {
+          "tip": "Thinking is OFF unless you ask for it",
+          "detail": "The opposite of Opus 5. Set thinking to adaptive if you want it.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8",
+          "source_label": "Anthropic — Prompting Claude Opus 4.8"
+        },
+        {
+          "tip": "It reasons instead of reaching for tools — raise effort to change that",
+          "detail": "high or xhigh \"show substantially more tool usage in agentic search and coding.\"",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8",
+          "source_label": "Anthropic — Prompting Claude Opus 4.8"
+        },
+        {
+          "tip": "It spawns few subagents by default",
+          "detail": "Also the opposite of Opus 5, which over-delegates. Ask explicitly if you want work fanned out.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8",
+          "source_label": "Anthropic — Prompting Claude Opus 4.8"
+        },
+        {
+          "tip": "It has one documented default look on frontend work",
+          "detail": "Cream backgrounds (~#F4F1EA), serif display type (Georgia, Fraunces, Playfair), italic accents, terracotta/amber. Anthropic: \"this default is persistent.\" Specify a concrete alternative or ask for options first.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8",
+          "source_label": "Anthropic — Prompting Claude Opus 4.8"
+        },
+        {
+          "tip": "At max or xhigh, give it a big output budget",
+          "detail": "Anthropic suggests starting at 64k tokens so it has room to think and call tools.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8",
+          "source_label": "Anthropic — Prompting Claude Opus 4.8"
+        },
+        {
+          "tip": "Drop forced progress-update scaffolding",
+          "detail": "\"After every 3 tool calls, summarize progress\" is no longer needed — it does this itself.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8",
+          "source_label": "Anthropic — Prompting Claude Opus 4.8"
+        }
+      ]
     },
     {
       "id": "claude-sonnet-5",
@@ -296,6 +486,57 @@
         "The daily driver: ~85 coding at $2/$10 — use it for routine coding and agents, and escalate to Opus only for the genuinely hard problems.",
         "Intro pricing ends Aug 31, 2026 (then $3/$15) — budget for the increase if you're building on it.",
         "Built to run agents cheaply at scale — a good default for CI bots and background automations."
+      ],
+      "usage_guidance": [
+        {
+          "tip": "temperature, top_p and top_k are rejected — steer tone in the prompt",
+          "detail": "Setting any of them to a non-default value returns a 400 error. Anthropic calls this \"new for Sonnet-class models.\" Remove them when migrating.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5",
+          "source_label": "Anthropic — Prompting Claude Sonnet 5"
+        },
+        {
+          "tip": "New tokenizer counts ~30% more tokens for the same text",
+          "detail": "An output limit tuned on Sonnet 4.6 can truncate the equivalent answer on Sonnet 5.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5",
+          "source_label": "Anthropic — Prompting Claude Sonnet 5"
+        },
+        {
+          "tip": "You can probably drop an effort rung and save money",
+          "detail": "Anthropic's own mapping: Sonnet 5 at medium ≈ Sonnet 4.6 at high, and Sonnet 5 at high ≈ Sonnet 4.6 at max.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5",
+          "source_label": "Anthropic — Prompting Claude Sonnet 5"
+        },
+        {
+          "tip": "It reads instructions literally — state the scope",
+          "detail": "\"It does not silently generalize an instruction from one item to another.\" If you want a rule applied everywhere, say \"every section, not just the first one.\"",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5",
+          "source_label": "Anthropic — Prompting Claude Sonnet 5"
+        },
+        {
+          "tip": "Raise effort instead of prompting around shallow reasoning",
+          "detail": "If answers seem thin on hard problems, go to high or xhigh rather than adding think-harder wording.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5",
+          "source_label": "Anthropic — Prompting Claude Sonnet 5"
+        },
+        {
+          "tip": "On design work, ask for options before it builds",
+          "detail": "It settles into one default look, and generic pushback (\"make it minimal\") just swaps one fixed palette for another. Give a concrete spec, or ask for four directions and pick one.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5",
+          "source_label": "Anthropic — Prompting Claude Sonnet 5"
+        },
+        {
+          "tip": "Adaptive thinking is on by default; manual thinking budgets now error",
+          "detail": "A change from Sonnet 4.6. Revisit max_tokens for anything that used to run without thinking.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5",
+          "source_label": "Anthropic — Prompting Claude Sonnet 5"
+        }
       ]
     },
     {
@@ -350,7 +591,8 @@
         "input": 5,
         "output": 30,
         "aggregator_note": "OpenRouter shows ~$180 — matches no tier OpenAI publishes."
-      }
+      },
+      "usage_guidance": []
     },
     {
       "id": "gemini-3-1-pro",
@@ -400,6 +642,50 @@
         "Strongest budget pick for hard reasoning and big multimodal jobs (documents + images together).",
         "Watch the 200K-token threshold — price doubles to $4/$18 above it, so chunk very long inputs when you can.",
         "Still a Preview SKU — pin the version and re-test before production bets."
+      ],
+      "usage_guidance": [
+        {
+          "tip": "Leave temperature at 1.0",
+          "detail": "Google warns that setting it below 1.0 \"may lead to unexpected behavior, such as looping or degraded performance, particularly in complex mathematical or reasoning tasks.\" If you carried a low temperature over from Gemini 2.5 for consistent output, remove it.",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        },
+        {
+          "tip": "Stop hand-writing chain-of-thought",
+          "detail": "Google: if you used complex prompting \"to force Gemini 2.5 to reason, try Gemini 3 with thinking_level: 'high' and simplified prompts.\"",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        },
+        {
+          "tip": "Keep prompts short and direct",
+          "detail": "\"Gemini 3 responds best to direct, clear instructions. It may over-analyze verbose or overly complex prompt engineering techniques used for older models.\"",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        },
+        {
+          "tip": "Put your question after the data, not before it",
+          "detail": "With a whole book, codebase or long video in the prompt, \"place your specific instructions or questions at the end of the prompt, after the data context.\"",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        },
+        {
+          "tip": "thinking_level replaces thinking budgets",
+          "detail": "high is the default and the slowest to first token; low and minimal suit chat and high-volume work. Don't set thinking_level and the legacy thinking_budget together.",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/generate-content/thinking",
+          "source_label": "Google — Gemini thinking"
+        },
+        {
+          "tip": "Thought signatures are enforced now",
+          "detail": "Pass them back on later calls or the model loses its reasoning thread across the conversation.",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        }
       ]
     },
     {
@@ -457,7 +743,23 @@
             "Cache-hit input is nearly free (~$0.0036/M) — long research sessions that keep building on the same context cost almost nothing."
           ]
         }
-      }
+      },
+      "usage_guidance": [
+        {
+          "tip": "Thinking mode ignores your sampling settings — silently",
+          "detail": "DeepSeek: thinking mode \"does not support the temperature, top_p, presence_penalty, or frequency_penalty parameters, and while setting these parameters will not trigger an error, they will also have no effect.\" No warning, just no effect.",
+          "tier": "lab",
+          "source": "https://api-docs.deepseek.com/guides/thinking_mode/",
+          "source_label": "DeepSeek — Thinking Mode"
+        },
+        {
+          "tip": "Default temperature is 1.0",
+          "detail": "Change temperature or top_p — not both.",
+          "tier": "lab",
+          "source": "https://api-docs.deepseek.com/quick_start/parameter_settings/",
+          "source_label": "DeepSeek — The Temperature Parameter"
+        }
+      ]
     },
     {
       "id": "kimi-k2-6",
@@ -511,7 +813,8 @@
         "input": 0.95,
         "output": 4,
         "aggregator_note": "OpenRouter shows ~$2.72 — provider pass-through. Vendor input is cache-miss $0.95 / cache-hit $0.16."
-      }
+      },
+      "usage_guidance": []
     },
     {
       "id": "llama-4-maverick",
@@ -556,6 +859,15 @@
       "use_well": [
         "A cheap open generalist for bulk work and long documents — not the top open coder, so don't pick it for hard coding.",
         "Prices vary 20%+ by host (Fireworks/Together/Groq) — compare hosts before committing volume."
+      ],
+      "usage_guidance": [
+        {
+          "tip": "The system prompt is the main dial",
+          "detail": "Meta's model card: a system prompt \"can be effective in reducing false refusals and templated or 'preachy' language patterns,\" and improves conversationality and formatting.",
+          "tier": "lab",
+          "source": "https://github.com/meta-llama/llama-models/blob/main/models/llama4/MODEL_CARD.md",
+          "source_label": "Meta — Llama 4 model card"
+        }
       ]
     },
     {
@@ -610,7 +922,8 @@
         "input": 1.1,
         "output": 4.4,
         "aggregator_note": "OpenRouter shows ~$8 — that's OpenAI's Priority tier ($2/$8), not standard."
-      }
+      },
+      "usage_guidance": []
     },
     {
       "id": "claude-haiku-4-5",
@@ -657,6 +970,22 @@
         "Use it when volume and speed beat peak intelligence: classification, routing, extraction.",
         "Pair it as the cheap tier under a smarter model — let Haiku triage the easy 90%, escalate the hard 10%.",
         "200K context — split very long documents rather than forcing them in."
+      ],
+      "usage_guidance": [
+        {
+          "tip": "It's the odd one out on thinking",
+          "detail": "Haiku 4.5 supports classic extended thinking and does NOT support adaptive thinking — the reverse of every other current Claude model.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/about-claude/models/overview",
+          "source_label": "Anthropic — Models overview"
+        },
+        {
+          "tip": "Its knowledge is much older than the 5-series",
+          "detail": "Training data to Jul 2025, reliable knowledge to Feb 2025 — versus May 2026 on Opus 5. Give it current facts rather than assuming it has them.",
+          "tier": "lab",
+          "source": "https://platform.claude.com/docs/en/about-claude/models/overview",
+          "source_label": "Anthropic — Models overview"
+        }
       ]
     },
     {
@@ -707,6 +1036,50 @@
       "use_well": [
         "OpenAI's top tier for the hardest agentic, coding, and security work — pay for it only when Terra falls short.",
         "Its chain-of-thought reasoning means higher latency and token spend — budget for both."
+      ],
+      "usage_guidance": [
+        {
+          "tip": "Use Sol for frontier capability and complex production work",
+          "detail": "It's what the plain gpt-5.6 alias resolves to.",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Try deleting your 'be concise' instructions",
+          "detail": "OpenAI: \"GPT-5.6 tends to be more concise by default than GPT-5.5\" — brevity instructions written for older models may now be dead weight.",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Shorter prompts scored better in OpenAI's own testing",
+          "detail": "Removing repeated instructions improved scores \"by roughly 10–15% while reducing total tokens by 41–66%.\"",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Don't default to maximum reasoning effort",
+          "detail": "\"Preserve your current reasoning effort as the baseline, then compare one level lower.\" medium is the balanced default; \"reserve max for the hardest quality-first workloads.\"",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Reasoning now carries across turns by default",
+          "detail": "GPT-5.6 defaults to all_turns context, where earlier models used current_turn.",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Set detail with text.verbosity, not a blanket brevity line",
+          "detail": "low / medium / high sets the default, then say what each individual task needs.",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        }
       ]
     },
     {
@@ -770,7 +1143,51 @@
         "input": 2,
         "output": 12,
         "aggregator_note": "20% price cut announced 2026-07-30 (was $2.50/$15); confirmed live on OpenAI's own pricing page."
-      }
+      },
+      "usage_guidance": [
+        {
+          "tip": "The value pick in the family",
+          "detail": "OpenAI: \"use gpt-5.6-terra for strong performance at a lower price.\" Try Terra first and escalate to Sol only when a task provably needs it.",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Try deleting your 'be concise' instructions",
+          "detail": "OpenAI: \"GPT-5.6 tends to be more concise by default than GPT-5.5\" — brevity instructions written for older models may now be dead weight.",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Shorter prompts scored better in OpenAI's own testing",
+          "detail": "Removing repeated instructions improved scores \"by roughly 10–15% while reducing total tokens by 41–66%.\"",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Don't default to maximum reasoning effort",
+          "detail": "\"Preserve your current reasoning effort as the baseline, then compare one level lower.\" medium is the balanced default; \"reserve max for the hardest quality-first workloads.\"",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Reasoning now carries across turns by default",
+          "detail": "GPT-5.6 defaults to all_turns context, where earlier models used current_turn.",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Set detail with text.verbosity, not a blanket brevity line",
+          "detail": "low / medium / high sets the default, then say what each individual task needs.",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        }
+      ]
     },
     {
       "id": "gpt-5-6-luna",
@@ -824,7 +1241,51 @@
         "input": 0.2,
         "output": 1.2,
         "aggregator_note": "80% price cut announced 2026-07-30 (was $1/$6); confirmed live on OpenAI's own pricing page."
-      }
+      },
+      "usage_guidance": [
+        {
+          "tip": "Built for high-volume work",
+          "detail": "OpenAI: \"use gpt-5.6-luna for efficient, high-volume workloads\" — throughput over peak capability.",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Try deleting your 'be concise' instructions",
+          "detail": "OpenAI: \"GPT-5.6 tends to be more concise by default than GPT-5.5\" — brevity instructions written for older models may now be dead weight.",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Shorter prompts scored better in OpenAI's own testing",
+          "detail": "Removing repeated instructions improved scores \"by roughly 10–15% while reducing total tokens by 41–66%.\"",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Don't default to maximum reasoning effort",
+          "detail": "\"Preserve your current reasoning effort as the baseline, then compare one level lower.\" medium is the balanced default; \"reserve max for the hardest quality-first workloads.\"",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Reasoning now carries across turns by default",
+          "detail": "GPT-5.6 defaults to all_turns context, where earlier models used current_turn.",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        },
+        {
+          "tip": "Set detail with text.verbosity, not a blanket brevity line",
+          "detail": "low / medium / high sets the default, then say what each individual task needs.",
+          "tier": "lab",
+          "source": "https://developers.openai.com/api/docs/guides/prompt-guidance",
+          "source_label": "OpenAI — Model guidance"
+        }
+      ]
     },
     {
       "id": "gemini-3-5-flash",
@@ -880,7 +1341,51 @@
         "input": 1.5,
         "output": 9,
         "aggregator_note": "OpenRouter shows ~$2.50 — not Google's published rate."
-      }
+      },
+      "usage_guidance": [
+        {
+          "tip": "Leave temperature at 1.0",
+          "detail": "Google warns that setting it below 1.0 \"may lead to unexpected behavior, such as looping or degraded performance, particularly in complex mathematical or reasoning tasks.\" If you carried a low temperature over from Gemini 2.5 for consistent output, remove it.",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        },
+        {
+          "tip": "Stop hand-writing chain-of-thought",
+          "detail": "Google: if you used complex prompting \"to force Gemini 2.5 to reason, try Gemini 3 with thinking_level: 'high' and simplified prompts.\"",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        },
+        {
+          "tip": "Keep prompts short and direct",
+          "detail": "\"Gemini 3 responds best to direct, clear instructions. It may over-analyze verbose or overly complex prompt engineering techniques used for older models.\"",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        },
+        {
+          "tip": "Put your question after the data, not before it",
+          "detail": "With a whole book, codebase or long video in the prompt, \"place your specific instructions or questions at the end of the prompt, after the data context.\"",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        },
+        {
+          "tip": "thinking_level replaces thinking budgets",
+          "detail": "high is the default and the slowest to first token; low and minimal suit chat and high-volume work. Don't set thinking_level and the legacy thinking_budget together.",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/generate-content/thinking",
+          "source_label": "Google — Gemini thinking"
+        },
+        {
+          "tip": "Thought signatures are enforced now",
+          "detail": "Pass them back on later calls or the model loses its reasoning thread across the conversation.",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        }
+      ]
     },
     {
       "id": "gemini-2-5-flash-lite",
@@ -923,7 +1428,8 @@
       "use_well": [
         "The rock-bottom Gemini for massive simple jobs — classification, extraction, cleanup at $0.10/$0.40.",
         "Don't use it for reasoning or complex code — it's the lowest capability tier on the board."
-      ]
+      ],
+      "usage_guidance": []
     },
     {
       "id": "grok-4-5",
@@ -972,6 +1478,36 @@
         "Cheap frontier-class coding — ~4x fewer output tokens than Opus-class peers means real costs run below the sticker price.",
         "The 75% cache discount ($0.50 cached input) rewards repeated-context workloads like agents and long sessions.",
         "No classic benchmarks published and not in the EU at launch — verify on your own tasks first."
+      ],
+      "usage_guidance": [
+        {
+          "tip": "Set a prompt_cache_key or you'll overpay",
+          "detail": "xAI: \"we highly recommend setting a prompt_cache_key… without it you often pay full input price on a cache-cold server.\" It routes a conversation to the same server so cache hits actually land.",
+          "tier": "lab",
+          "source": "https://docs.x.ai/developers/grok-4-5",
+          "source_label": "xAI — Grok 4.5 docs"
+        },
+        {
+          "tip": "Reasoning can't be turned off",
+          "detail": "And presencePenalty, frequencyPenalty and stop are rejected on reasoning models — requests including them error out.",
+          "tier": "lab",
+          "source": "https://docs.x.ai/developers/model-capabilities/text/reasoning",
+          "source_label": "xAI — Reasoning"
+        },
+        {
+          "tip": "reasoning_effort defaults to high",
+          "detail": "low and medium are the alternatives.",
+          "tier": "lab",
+          "source": "https://docs.x.ai/developers/grok-4-5",
+          "source_label": "xAI — Grok 4.5 docs"
+        },
+        {
+          "tip": "Raise your client timeout",
+          "detail": "xAI's own code examples use 3600 seconds to leave room for thinking time.",
+          "tier": "lab",
+          "source": "https://docs.x.ai/developers/grok-4-5",
+          "source_label": "xAI — Grok 4.5 docs"
+        }
       ]
     },
     {
@@ -1015,6 +1551,22 @@
       "use_well": [
         "The bulk-work machine: $0.14/$0.28 with near-free cache hits — process huge volumes of text or code for pennies.",
         "Step up to V4-Pro the moment reasoning depth starts to matter."
+      ],
+      "usage_guidance": [
+        {
+          "tip": "Thinking mode ignores your sampling settings — silently",
+          "detail": "DeepSeek: thinking mode \"does not support the temperature, top_p, presence_penalty, or frequency_penalty parameters, and while setting these parameters will not trigger an error, they will also have no effect.\" No warning, just no effect.",
+          "tier": "lab",
+          "source": "https://api-docs.deepseek.com/guides/thinking_mode/",
+          "source_label": "DeepSeek — Thinking Mode"
+        },
+        {
+          "tip": "Default temperature is 1.0",
+          "detail": "Change temperature or top_p — not both.",
+          "tier": "lab",
+          "source": "https://api-docs.deepseek.com/quick_start/parameter_settings/",
+          "source_label": "DeepSeek — The Temperature Parameter"
+        }
       ]
     },
     {
@@ -1066,7 +1618,8 @@
         "input": 1.2,
         "output": 6,
         "aggregator_note": "OpenRouter shows ~$3.90 — matches no Alibaba tier. Ours is the 0–32K Singapore tier."
-      }
+      },
+      "usage_guidance": []
     },
     {
       "id": "qwen3-coder-plus",
@@ -1117,7 +1670,23 @@
         "input": 1,
         "output": 5,
         "aggregator_note": "OpenRouter shows ~$3.25 — matches no Alibaba tier. Ours is the 0–32K Singapore tier."
-      }
+      },
+      "usage_guidance": [
+        {
+          "tip": "Qwen publishes exact sampling settings",
+          "detail": "temperature 0.7, top_p 0.8, top_k 20, repetition penalty 1.05. Note: published on the open-weight Qwen3-Coder model cards, not the hosted endpoint — treat as the vendor's recommendation for the model family.",
+          "tier": "lab",
+          "source": "https://huggingface.co/Qwen/Qwen3-Coder-480B-A35B-Instruct",
+          "source_label": "Qwen — Qwen3-Coder model card"
+        },
+        {
+          "tip": "Give it room on hard problems",
+          "detail": "Qwen recommends a 32,768-token output length for most queries, and 38,912 for competition-grade maths and programming.",
+          "tier": "lab",
+          "source": "https://huggingface.co/Qwen/Qwen3-Coder-480B-A35B-Instruct",
+          "source_label": "Qwen — Qwen3-Coder model card"
+        }
+      ]
     },
     {
       "id": "qwen-turbo",
@@ -1158,7 +1727,8 @@
       "use_well": [
         "Among the cheapest hosted models anywhere — massive-volume tagging and cleanup at $0.05/M input.",
         "Its thinking mode ($0.5/M output) adds cheap reasoning for slightly harder bulk work."
-      ]
+      ],
+      "usage_guidance": []
     },
     {
       "id": "mistral-medium-3-1",
@@ -1210,7 +1780,16 @@
             "It's cheap enough to iterate freely — generate variants and pick, rather than perfecting one draft."
           ]
         }
-      }
+      },
+      "usage_guidance": [
+        {
+          "tip": "Put your standing rules in the system prompt",
+          "detail": "Mistral Medium has strong system-prompt adherence — the system prompt \"sets the general context and instructions for the model's behavior\" and is the main dial for steering it.",
+          "tier": "lab",
+          "source": "https://docs.mistral.ai/models/best-practices/prompt-engineering",
+          "source_label": "Mistral — Prompting"
+        }
+      ]
     },
     {
       "id": "gemini-3-6-flash",
@@ -1255,7 +1834,51 @@
         "date": "2026-07-29",
         "input": 1.5,
         "output": 7.5
-      }
+      },
+      "usage_guidance": [
+        {
+          "tip": "Leave temperature at 1.0",
+          "detail": "Google warns that setting it below 1.0 \"may lead to unexpected behavior, such as looping or degraded performance, particularly in complex mathematical or reasoning tasks.\" If you carried a low temperature over from Gemini 2.5 for consistent output, remove it.",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        },
+        {
+          "tip": "Stop hand-writing chain-of-thought",
+          "detail": "Google: if you used complex prompting \"to force Gemini 2.5 to reason, try Gemini 3 with thinking_level: 'high' and simplified prompts.\"",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        },
+        {
+          "tip": "Keep prompts short and direct",
+          "detail": "\"Gemini 3 responds best to direct, clear instructions. It may over-analyze verbose or overly complex prompt engineering techniques used for older models.\"",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        },
+        {
+          "tip": "Put your question after the data, not before it",
+          "detail": "With a whole book, codebase or long video in the prompt, \"place your specific instructions or questions at the end of the prompt, after the data context.\"",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        },
+        {
+          "tip": "thinking_level replaces thinking budgets",
+          "detail": "high is the default and the slowest to first token; low and minimal suit chat and high-volume work. Don't set thinking_level and the legacy thinking_budget together.",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/generate-content/thinking",
+          "source_label": "Google — Gemini thinking"
+        },
+        {
+          "tip": "Thought signatures are enforced now",
+          "detail": "Pass them back on later calls or the model loses its reasoning thread across the conversation.",
+          "tier": "lab",
+          "source": "https://ai.google.dev/gemini-api/docs/gemini-3",
+          "source_label": "Google — Gemini 3 developer guide"
+        }
+      ]
     },
     {
       "id": "glm-5-2",
@@ -1300,7 +1923,37 @@
         "date": "2026-07-29",
         "input": 1.4,
         "output": 4.4
-      }
+      },
+      "usage_guidance": [
+        {
+          "tip": "Thinking is on by default",
+          "detail": "A change from GLM-4.6's hybrid default. Turn it off entirely with enable_thinking=false.",
+          "tier": "lab",
+          "source": "https://docs.z.ai/guides/capabilities/thinking-mode",
+          "source_label": "Z.ai — Thinking Mode"
+        },
+        {
+          "tip": "Switch reasoning on and off per turn, inside one session",
+          "detail": "Z.ai suggests turning it off for \"asking a fact\" or \"tweaking wording,\" and on for \"complex planning,\" \"multi-constraint reasoning,\" or \"code debugging.\"",
+          "tier": "lab",
+          "source": "https://docs.z.ai/guides/capabilities/thinking-mode",
+          "source_label": "Z.ai — Thinking Mode"
+        },
+        {
+          "tip": "reasoning_effort only takes max and high — and max is the default",
+          "detail": "Any unrecognised value is treated as max, so a typo silently costs you the expensive tier.",
+          "tier": "lab",
+          "source": "https://docs.z.ai/guides/capabilities/thinking-mode",
+          "source_label": "Z.ai — Thinking Mode"
+        },
+        {
+          "tip": "On coding work, keep earlier turns' reasoning in context",
+          "detail": "Z.ai says it preserves continuity, improves results and raises cache hits — saving tokens on real tasks.",
+          "tier": "lab",
+          "source": "https://huggingface.co/zai-org/GLM-5.2",
+          "source_label": "Z.ai — GLM-5.2 model card"
+        }
+      ]
     }
   ],
   "releases": [
@@ -1775,5 +2428,6 @@
       ]
     }
   ],
-  "effort_ladder_note": "effort_ladders = published cost-vs-performance curves where a single model is run at several effort/reasoning settings, so you can see what extra spend actually buys. Each ladder carries its publisher, harness, method and confidence, and is shown with those attached — vendor-run benchmarks are directional, never a settled ranking. A ladder is only listed when the publisher has released the figure; nothing here is modelled or extrapolated from list prices."
+  "effort_ladder_note": "effort_ladders = published cost-vs-performance curves where a single model is run at several effort/reasoning settings, so you can see what extra spend actually buys. Each ladder carries its publisher, harness, method and confidence, and is shown with those attached — vendor-run benchmarks are directional, never a settled ranking. A ladder is only listed when the publisher has released the figure; nothing here is modelled or extrapolated from list prices.",
+  "usage_guidance_note": "usage_guidance = how to actually use a model well, and which habits from your last model to drop. Every entry carries the page it came from. tier 'lab' = published by the lab that makes the model (prompting guide, migration guide, model card, release notes). tier 'reported' = a consensus visible across real public discussion, cited to the threads, shown as what people are finding rather than as best practice. A model with no published guidance and no clear consensus shows nothing — same blank-means-unsourced rule as the benchmarks. Guidance goes stale on every model release; refresh it with the rest of the data."
 }

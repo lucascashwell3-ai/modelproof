@@ -175,7 +175,13 @@
         "kimi.ai",
         "developers.openai.com",
         "platform.claude.com",
-        "claude.com"
+        "claude.com",
+        "docs.x.ai",
+        "api-docs.deepseek.com",
+        "cookbook.openai.com",
+        "docs.mistral.ai",
+        "docs.z.ai",
+        "github.com"
       ],
       "verified": "2026-07-25",
       "gives": [
@@ -184,7 +190,20 @@
         "launch-day benchmarks"
       ],
       "conflicts": "The most conflicted source class — a lab grading its own model. Fastest at launch, which is why it is allowed at all.",
-      "notes": "Always label source_kind 'vendor-reported'. Never the only source once a Tier-A number exists for the same field. List price is the one field where a vendor page outranks everything."
+      "notes": "Always label source_kind 'vendor-reported'. Never the only source once a Tier-A number exists for the same field. List price is the one field where a vendor page outranks everything.",
+      "host_paths": {
+        "huggingface.co": [
+          "moonshotai/",
+          "Qwen/",
+          "zai-org/",
+          "meta-llama/",
+          "mistralai/",
+          "deepseek-ai/",
+          "openai/",
+          "google/"
+        ]
+      },
+      "host_paths_note": "Hugging Face hosts both third-party datasets and vendor-owned model cards. A card under a vendor's own org is that vendor publishing about its own model, so it resolves here rather than to whichever entry claims the bare host."
     }
   ]
 }
