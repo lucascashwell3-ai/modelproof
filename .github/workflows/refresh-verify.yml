@@ -35,7 +35,7 @@ jobs:
           live=$(curl -fsS "$url")
           echo "$live" > /tmp/live-models.json
           live_as_of=$(python3 -c "import json;print(json.load(open('/tmp/live-models.json'))['as_of'])")
-          collect_date=$(python3 -c "import json;print(json.load(open('data/refresh/receipt.json'))['ran_at'][:10])" 2>/dev/null || date -u +%Y-%m-%d)
+          collect_date=$(python3 -c "import json;print(json.load(open('data/refresh/receipt-collect.json'))['ran_at'][:10])" 2>/dev/null || date -u +%Y-%m-%d)
           today=$(date -u +%Y-%m-%d)
           echo "live as_of=$live_as_of, collect receipt date=$collect_date, today=$today"
 
@@ -78,7 +78,7 @@ jobs:
             const fs = require('fs');
             const ok = process.env.OK === '1';
             fs.mkdirSync('data/refresh', { recursive: true });
-            fs.writeFileSync('data/refresh/receipt.json', JSON.stringify({
+            fs.writeFileSync('data/refresh/receipt-verify.json', JSON.stringify({
               job: 'verify', ran_at: new Date().toISOString(), ok, ...(ok ? {} : { error: 'live as_of/gate check failed' }),
             }, null, 2) + '\n');
           "
@@ -90,7 +90,7 @@ jobs:
         run: |
           git config user.name "modelproof-verify"
           git config user.email "actions@users.noreply.github.com"
-          git add data/refresh/receipt.json
+          git add data/refresh/receipt-verify.json
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "modelproof verify receipt $(date -u +%Y-%m-%d)"
           for i in 1 2 3; do

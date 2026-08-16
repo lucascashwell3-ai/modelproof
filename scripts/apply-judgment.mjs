@@ -27,7 +27,7 @@ const ROOT = new URL('../', import.meta.url);
 const dataUrl = new URL('data/models.json', ROOT);
 const changelogUrl = new URL('data/changelog.json', ROOT);
 const worklistUrl = new URL('data/refresh/worklist.json', ROOT);
-const receiptUrl = new URL('data/refresh/receipt.json', ROOT);
+const receiptUrl = new URL('data/refresh/receipt-judge.json', ROOT);
 
 const NUMERIC_MODEL_FIELDS = ['price_input', 'price_output', 'context_window', 'speed_tps'];
 const BENCHMARK_FIELDS = ['swe_bench', 'gpqa', 'aime', 'mmlu_pro', 'lmarena_elo'];

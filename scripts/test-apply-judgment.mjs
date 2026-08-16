@@ -146,7 +146,7 @@ test('CLI: a valid judgment applies, passes the gate, and removes the item from 
     assert.equal(after.models.find((m) => m.id === target.id).benchmarks.gpqa, 77.7);
     const worklist = JSON.parse(readFileSync(join(dir, 'data', 'refresh', 'worklist.json'), 'utf8'));
     assert.deepEqual(worklist.items.map((i) => i.id), ['keep:this']);
-    const receipt = JSON.parse(readFileSync(join(dir, 'data', 'refresh', 'receipt.json'), 'utf8'));
+    const receipt = JSON.parse(readFileSync(join(dir, 'data', 'refresh', 'receipt-judge.json'), 'utf8'));
     assert.equal(receipt.job, 'judge');
     assert.equal(receipt.ok, true);
   });

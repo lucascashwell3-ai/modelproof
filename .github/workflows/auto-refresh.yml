@@ -48,11 +48,11 @@ jobs:
         run: |
           git config user.name "modelproof-auto-refresh"
           git config user.email "actions@users.noreply.github.com"
-          if git diff --quiet data/models.json data/changelog.json data/_auto_refresh_state.json data/refresh/worklist.json data/refresh/receipt.json 2>/dev/null; then
+          if git diff --quiet data/models.json data/changelog.json data/_auto_refresh_state.json data/refresh/worklist.json data/refresh/receipt-collect.json 2>/dev/null; then
             echo "no changes — nothing to publish"
             exit 0
           fi
-          git add data/models.json data/changelog.json data/_auto_refresh_state.json data/refresh/worklist.json data/refresh/receipt.json 2>/dev/null || true
+          git add data/models.json data/changelog.json data/_auto_refresh_state.json data/refresh/worklist.json data/refresh/receipt-collect.json 2>/dev/null || true
           git commit -m "modelproof collect $(date -u +%Y-%m-%d)"
           echo "PUBLISHED=1" >> "$GITHUB_ENV"
           ok=0

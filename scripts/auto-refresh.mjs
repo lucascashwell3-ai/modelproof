@@ -11,7 +11,7 @@
    publish:  writes data/models.json + data/changelog.json, then runs the honesty gate.
    worklist: writes data/refresh/worklist.json — conflicts, new-model/benchmark/ladder/release
              candidates the Judge should research, capped at 15, priority-ordered.
-   report:   writes data/refresh/receipt.json and prints applied/held/worklist counts.
+   report:   writes data/refresh/receipt-collect.json and prints applied/held/worklist counts.
 
    Usage:
      node scripts/auto-refresh.mjs [--dry-run]
@@ -28,7 +28,7 @@ const changelogUrl = new URL('data/changelog.json', ROOT);
 const aliasUrl = new URL('scripts/model-aliases.json', ROOT);
 const stateUrl = new URL('data/_auto_refresh_state.json', ROOT);
 const worklistUrl = new URL('data/refresh/worklist.json', ROOT);
-const receiptUrl = new URL('data/refresh/receipt.json', ROOT);
+const receiptUrl = new URL('data/refresh/receipt-collect.json', ROOT);
 
 const MAX_WORKLIST = 15;
 const WORKLIST_PRIORITY = { 'new-model': 0, conflict: 1, deprecation: 2, benchmark: 3, ladder: 4, release: 5 };

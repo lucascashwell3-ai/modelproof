@@ -22,7 +22,7 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
 5. Run `node scripts/apply-judgment.mjs judgments.json`. It enforces the schema, applies, runs
    the honesty gate, and restores the file if the gate fails — trust its exit code.
 6. If it exits 0: `git add data/` (data/ files only — models.json, changelog.json,
-   refresh/worklist.json, refresh/receipt.json). Commit, `git pull --rebase origin main`, then
+   refresh/worklist.json, refresh/receipt-judge.json). Commit, `git pull --rebase origin main`, then
    `git push origin HEAD:main`. Retry the pull/push up to 3 times on conflict.
 7. If any items held: run `node scripts/needs-lucas-issue.mjs judgments.json` to file/update the
    "Needs Lucas — modelproof data refresh" issue (idempotent by title; closes it when nothing is
