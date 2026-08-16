@@ -43,4 +43,4 @@ reporter reads these for the board and missed-tick detection.
 - `node scripts/apply-judgment.mjs judgments.json --dry-run` — judge apply, prints only.
 - `node --test scripts/test-auto-refresh.mjs scripts/test-apply-judgment.mjs` — unit tests.
 
-**Last known good:** 2026-08-16 — Collect 31966006991 (15 queued) → Judge cse_01UTBzYskvNx5YYeHgimPGzS (Sonnet; +9 models cited, 6 held → issue #13) → Verify green. 38 models live.
+**Last known good:** 2026-08-16 — Collect 31966006991 (15 queued) → Judge cse_01UTBzYskvNx5YYeHgimPGzS (Sonnet; +9 models cited, 6 held → issue #13) → Verify 31966363872 green. 38 models live.
