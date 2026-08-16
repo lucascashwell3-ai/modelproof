@@ -1,0 +1,15 @@
+[
+  {
+    "id": "claude-opus-5:gpqa",
+    "kind": "benchmark",
+    "field": "gpqa",
+    "value": 94.1,
+    "sources": [{ "url": "https://www.anthropic.com/news/claude-opus-5", "date": "2026-08-16" }],
+    "reason": "corroborated against vendor model card, matches within stated stderr"
+  },
+  {
+    "id": "kimi-k3:price_input",
+    "hold": true,
+    "reason": "no second source found to confirm the OpenRouter price"
+  }
+]

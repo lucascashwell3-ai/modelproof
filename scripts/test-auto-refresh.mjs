@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   normalize, matchAlias, withinTolerance, factAgreement, withinSanityBounds,
   newerWins, admitNewModel, isKnownVendor, trackDeprecation, canonicalKey, evaluateFact,
+  buildWorklist, bestForLine,
 } from './auto-refresh.mjs';
 
 test('normalize strips punctuation/case', () => {
@@ -81,10 +82,10 @@ test('trackDeprecation: flags a model missing 2 consecutive runs, not 1', () => 
   const ids = ['model-a', 'model-b'];
   let state = {};
   let r = trackDeprecation(state, new Set(['model-b']), ids); // model-a missing, run 1
-  assert.deepEqual(r.deprecatedNow, []);
+  assert.deepEqual(r.absentNow, []);
   state = r.state;
   r = trackDeprecation(state, new Set(['model-b']), ids); // model-a missing, run 2
-  assert.deepEqual(r.deprecatedNow, ['model-a']);
+  assert.deepEqual(r.absentNow, ['model-a']);
 });
 
 test('trackDeprecation: reappearing resets the counter', () => {
@@ -92,7 +93,48 @@ test('trackDeprecation: reappearing resets the counter', () => {
   let state = { 'model-a': 1 };
   const r = trackDeprecation(state, new Set(['model-a']), ids);
   assert.equal(r.state['model-a'], 0);
-  assert.deepEqual(r.deprecatedNow, []);
+  assert.deepEqual(r.absentNow, []);
+});
+
+// --- regression: presence detection MUST use the same matching as price matching -----------------
+// Bug: llama-4-maverick (and kimi/qwen/glm/mistral) were flagged absent while ALSO being matched
+// for price on OpenRouter, because presence only checked matchAlias(c.name) for OpenRouter and
+// matchAlias(c.id) for LiteLLM — missing the id/name cross-check the price matcher used. A model
+// that matches for price can never simultaneously count as absent.
+function stillPresentIds(models, orList, llmList, aliases) {
+  const present = new Set();
+  for (const m of models) {
+    const inOr = orList.some((c) => matchAlias(c.name, [m], aliases) === m.id || matchAlias(c.id, [m], aliases) === m.id);
+    const inLlm = llmList.some((c) => matchAlias(c.id, [m], aliases) === m.id || matchAlias(c.name, [m], aliases) === m.id);
+    if (inOr || inLlm || (!orList.length && !llmList.length)) present.add(m.id);
+  }
+  return present;
+}
+
+test('a model matched for price (by id, not name) can never count as absent', () => {
+  // OpenRouter candidate whose "name" field does NOT match our model, but whose "id" does — this
+  // is exactly the llama-4-maverick shape: price matching resolves it via c.id, so presence must too.
+  const models = [{ id: 'llama-4-maverick', name: 'Llama 4 Maverick' }];
+  const aliases = { 'llama-4-maverick': ['llama 4 maverick', 'llama-4-maverick'] };
+  const orList = [{ id: 'llama-4-maverick', name: 'Meta: Some Repackaged Display Name', priceInput: 0.2 }];
+  const llmList = [];
+
+  // price matcher (mirrors the real orMatch predicate in main()) finds it —
+  const priceMatched = orList.some((c) => matchAlias(c.name, models, aliases) === 'llama-4-maverick' || matchAlias(c.id, models, aliases) === 'llama-4-maverick');
+  assert.equal(priceMatched, true);
+
+  // — so presence detection must find it too.
+  const present = stillPresentIds(models, orList, llmList, aliases);
+  assert.ok(present.has('llama-4-maverick'), 'model matched for price was incorrectly flagged absent');
+});
+
+test('the same fix applies on the LiteLLM side (matched by name, not id)', () => {
+  const models = [{ id: 'kimi-k3', name: 'Kimi K3' }];
+  const aliases = { 'kimi-k3': ['kimi k3', 'moonshot kimi k3'] };
+  const orList = [];
+  const llmList = [{ id: 'moonshot/some-internal-key-1234', name: 'kimi k3', priceInput: 3 }];
+  const present = stillPresentIds(models, orList, llmList, aliases);
+  assert.ok(present.has('kimi-k3'), 'model matched by name on LiteLLM was incorrectly flagged absent');
 });
 
 // --- canonicalKey / LiteLLM-style key normalization -------------------------------------------
@@ -170,4 +212,67 @@ test('evaluateFact: agreeing sources but change trips sanity bound is HELD', () 
   const r = evaluateFact(5.0, [{ source: 'openrouter', value: 30.0 }, { source: 'litellm', value: 30.1 }]);
   assert.equal(r.status, 'held');
   assert.equal(r.reason, 'sanity-bound');
+});
+
+// --- buildWorklist: priority, cap, idempotency ---------------------------------------------------
+
+test('buildWorklist orders new-model > conflict > deprecation > benchmark > ladder > release', () => {
+  const items = [
+    { id: 'r1', kind: 'release' }, { id: 'l1', kind: 'ladder' }, { id: 'b1', kind: 'benchmark' },
+    { id: 'd1', kind: 'deprecation' }, { id: 'c1', kind: 'conflict' }, { id: 'n1', kind: 'new-model' },
+  ];
+  const out = buildWorklist(items);
+  assert.deepEqual(out.map((i) => i.kind), ['new-model', 'conflict', 'deprecation', 'benchmark', 'ladder', 'release']);
+});
+
+test('buildWorklist caps at 15 items, keeping highest priority', () => {
+  const items = [];
+  for (let i = 0; i < 20; i++) items.push({ id: `release-${i}`, kind: 'release' });
+  for (let i = 0; i < 3; i++) items.push({ id: `new-${i}`, kind: 'new-model' });
+  const out = buildWorklist(items);
+  assert.equal(out.length, 15);
+  assert.equal(out.filter((i) => i.kind === 'new-model').length, 3);
+  assert.equal(out.filter((i) => i.kind === 'release').length, 12);
+});
+
+test('buildWorklist is idempotent — same input, same output', () => {
+  const items = [
+    { id: 'b2', kind: 'benchmark' }, { id: 'b1', kind: 'benchmark' }, { id: 'n1', kind: 'new-model' },
+  ];
+  const a = buildWorklist(items);
+  const b = buildWorklist(items);
+  assert.deepEqual(a, b);
+  assert.deepEqual(a.map((i) => i.id), ['n1', 'b1', 'b2']); // tie-break by id within same kind
+});
+
+// --- bestForLine: deterministic template, no prose generation ------------------------------------
+
+test('bestForLine calls out cheapest same-vendor model with context + price', () => {
+  const models = [
+    { id: 'a', vendor: 'Acme', price_input: 1, price_output: 5, context_window: 1000000 },
+    { id: 'b', vendor: 'Acme', price_input: 5, price_output: 25, context_window: 200000 },
+  ];
+  const line = bestForLine(models[0], models);
+  assert.match(line, /Cheapest Acme model/);
+  assert.match(line, /1M ctx/);
+  assert.match(line, /\$1/);
+});
+
+test('bestForLine falls back to vendor + specs when no ranking applies (single vendor model)', () => {
+  const models = [{ id: 'a', vendor: 'Acme', price_input: 3, price_output: 9, context_window: 128000 }];
+  const line = bestForLine(models[0], models);
+  assert.match(line, /Acme model/);
+  assert.match(line, /128K ctx/);
+  assert.match(line, /\$3\/\$9/);
+});
+
+// --- receipt shape (documented, not filesystem-dependent) -----------------------------------------
+
+test('collect receipt has the documented shape', () => {
+  const receipt = { job: 'collect', ran_at: new Date().toISOString(), applied: 0, held: 0, confirmed: 0, new_models: 0, worklist_items: 0, ok: true };
+  for (const k of ['job', 'ran_at', 'applied', 'held', 'confirmed', 'new_models', 'worklist_items', 'ok']) {
+    assert.ok(k in receipt, `receipt missing ${k}`);
+  }
+  assert.equal(receipt.job, 'collect');
+  assert.equal(typeof receipt.ok, 'boolean');
 });

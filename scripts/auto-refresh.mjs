@@ -1,23 +1,25 @@
 #!/usr/bin/env node
-/* Auto-refresh v1 (automation/PIPELINE_V1.md job 4). Publishes facts, not proposals.
-   Stages: feed -> check -> publish -> report. See automation/jobs/auto-refresh/README.md.
+/* Collect v1.1 (automation/PIPELINE_V1.md "Modelproof refresh — v1.1"). Publishes facts, not
+   proposals; hands anything it can't settle to worklist.json for the cloud Judge routine.
+   Stages: feed -> check -> publish -> worklist -> report. See automation/jobs/auto-refresh/README.md.
 
-   feed:    OpenRouter models API + LiteLLM price table (both Tier-A, public, no key) +
-            vendor pages already listed in scripts/sources.json. Optional judgment layer
-            (Anthropic API) reads a vendor page and extracts strict JSON, only when
-            ANTHROPIC_API_KEY is set.
-   check:   deterministic rules decide what counts as a fact (see FACT RULES below).
-   publish: writes data/models.json + data/changelog.json, then runs the honesty gate.
-   report:  prints applied/held counts; held items go to one GitHub issue (idempotent by title).
+   feed:     OpenRouter models API + LiteLLM price table (both Tier-A, public, no key) + Epoch
+             (via scripts/collect-epoch.mjs, reused as a module) + LMArena leaderboard (best
+             effort — public JSON/CSV; skipped with a note if unreachable, no scraping).
+   check:    deterministic rules decide what counts as a fact (see FACT RULES below). No LLM
+             judgment here — that layer moved to the Judge cloud routine (scripts/refresh-judge.md).
+   publish:  writes data/models.json + data/changelog.json, then runs the honesty gate.
+   worklist: writes data/refresh/worklist.json — conflicts, new-model/benchmark/ladder/release
+             candidates the Judge should research, capped at 15, priority-ordered.
+   report:   writes data/refresh/receipt.json and prints applied/held/worklist counts.
 
    Usage:
      node scripts/auto-refresh.mjs [--dry-run]
    Env:
-     ANTHROPIC_API_KEY  optional — enables the judgment layer, capped at 40 calls/run.
-     GH_TOKEN           required in CI to file/close the review issue (workflow_dispatch works
-                         without it locally; the script just skips the issue step).
+     GH_TOKEN  required in CI to file/close the review issue (workflow_dispatch works without
+               it locally; the script just skips the issue step).
 */
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = new URL('../', import.meta.url);
@@ -25,6 +27,12 @@ const dataUrl = new URL('data/models.json', ROOT);
 const changelogUrl = new URL('data/changelog.json', ROOT);
 const aliasUrl = new URL('scripts/model-aliases.json', ROOT);
 const stateUrl = new URL('data/_auto_refresh_state.json', ROOT);
+const worklistUrl = new URL('data/refresh/worklist.json', ROOT);
+const receiptUrl = new URL('data/refresh/receipt.json', ROOT);
+
+const MAX_WORKLIST = 15;
+const WORKLIST_PRIORITY = { 'new-model': 0, conflict: 1, deprecation: 2, benchmark: 3, ladder: 4, release: 5 };
+const LMARENA_URL = 'https://storage.googleapis.com/lmsys-arena-external/leaderboard_table.csv';
 
 const OR_URL = 'https://openrouter.ai/api/v1/models';
 const LITELLM_URL = 'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json';
@@ -186,20 +194,58 @@ export function isKnownVendor(vendorName) {
 
 /**
  * Track "missing from all sources" across runs. state: { [modelId]: consecutiveMisses }.
- * Returns { state, deprecatedNow: string[] } — ids that just crossed the 2-run threshold.
+ * Returns { state, absentNow: string[] } — ids that just crossed the 2-run threshold. This is a
+ * candidate list only — deprecation is never auto-applied; absentNow becomes a "deprecation"
+ * worklist item for the Judge to decide with a cited source.
  */
 export function trackDeprecation(state, presentIds, allModelIds) {
   const next = { ...state };
-  const deprecatedNow = [];
+  const absentNow = [];
   for (const id of allModelIds) {
     if (presentIds.has(id)) {
       next[id] = 0;
     } else {
       next[id] = (next[id] || 0) + 1;
-      if (next[id] === 2) deprecatedNow.push(id);
+      if (next[id] === 2) absentNow.push(id);
     }
   }
-  return { state: next, deprecatedNow };
+  return { state: next, absentNow };
+}
+
+/**
+ * Sort candidate worklist items by kind priority (new-model > conflict > benchmark > ladder >
+ * release), then by id for a stable tie-break, and cap at MAX_WORKLIST. Same input always
+ * produces the same output (idempotent) — nothing here depends on wall-clock time or Math.random.
+ */
+export function buildWorklist(items) {
+  const sorted = [...items].sort((a, b) => {
+    const pa = WORKLIST_PRIORITY[a.kind] ?? 99;
+    const pb = WORKLIST_PRIORITY[b.kind] ?? 99;
+    if (pa !== pb) return pa - pb;
+    return String(a.id).localeCompare(String(b.id));
+  });
+  return sorted.slice(0, MAX_WORKLIST);
+}
+
+/**
+ * Deterministic "best for" line built from facts only — no prose generation. Ranks the model's
+ * price_input among same-vendor models to call out "cheapest"/"priciest" when it's actually true.
+ */
+export function bestForLine(model, allModels) {
+  const parts = [];
+  const sameVendor = (allModels || []).filter((m) => m.vendor === model.vendor && m.price_input != null);
+  if (model.price_input != null && sameVendor.length > 1) {
+    const sorted = [...sameVendor].sort((a, b) => a.price_input - b.price_input);
+    if (sorted[0].id === model.id) parts.push(`Cheapest ${model.vendor} model`);
+    else if (sorted[sorted.length - 1].id === model.id) parts.push(`Priciest ${model.vendor} model`);
+  }
+  if (!parts.length) parts.push(model.vendor ? `${model.vendor} model` : 'Model');
+  if (model.context_window) {
+    const ctx = model.context_window >= 1e6 ? `${Math.round(model.context_window / 1e6)}M ctx` : `${Math.round(model.context_window / 1e3)}K ctx`;
+    parts.push(ctx);
+  }
+  if (model.price_input != null && model.price_output != null) parts.push(`$${model.price_input}/$${model.price_output}`);
+  return parts.join(' · ');
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -260,35 +306,30 @@ async function feedLiteLLM() {
   }
 }
 
-/** Optional judgment layer. Only runs when ANTHROPIC_API_KEY is set. Cap 40 calls/run. */
-async function judgeModel(model, vendorUrl, apiKey) {
-  const prompt = `Extract current facts for the AI model "${model.name}" (vendor: ${model.vendor}) ` +
-    `from this vendor page: ${vendorUrl}\n\n` +
-    `Return STRICT JSON only, no prose, matching exactly:\n` +
-    `{"price_input": number|null, "price_output": number|null, "context_window": number|null, ` +
-    `"released": string|null, "deprecated": boolean, "benchmarks": {}, "sources": [string]}\n` +
-    `Rules: price_input/price_output are USD per 1M tokens. Return null for anything not stated ` +
-    `on the page. Never invent or estimate a number.`;
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-5',
-      max_tokens: 1500,
-      temperature: 0,
-      messages: [{ role: 'user', content: prompt }],
-    }),
-  });
-  if (!res.ok) throw new Error(`judgment layer HTTP ${res.status}`);
-  const json = await res.json();
-  const text = (json.content || []).map((c) => c.text || '').join('');
-  const match = text.match(/\{[\s\S]*\}/);
-  if (!match) throw new Error('judgment layer returned no JSON');
-  return JSON.parse(match[0]);
+/** LMArena leaderboard — best effort. Public CSV export; no scraping if it moves or 404s. */
+async function feedLmArena() {
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 15000);
+    let res;
+    try {
+      res = await fetch(LMARENA_URL, { signal: ctrl.signal });
+    } finally {
+      clearTimeout(t);
+    }
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    const [head, ...rows] = text.trim().split('\n').map((r) => r.split(','));
+    const nameIdx = head.findIndex((h) => /model/i.test(h));
+    const eloIdx = head.findIndex((h) => /elo|score|rating/i.test(h));
+    if (nameIdx < 0 || eloIdx < 0) throw new Error('unexpected CSV shape');
+    return rows.filter((r) => r.length > Math.max(nameIdx, eloIdx)).map((r) => ({
+      source: 'lmarena', name: r[nameIdx], lmarena_elo: Number(r[eloIdx]) || null,
+    }));
+  } catch (e) {
+    console.log(`feed: LMArena unreachable/unavailable (${e.message}) — skipping, no scraping fallback.`);
+    return [];
+  }
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -303,17 +344,15 @@ async function main() {
   const changelog = existsSync(changelogUrl) ? JSON.parse(readFileSync(changelogUrl)) : [];
   const today = new Date().toISOString().slice(0, 10);
 
-  console.log('feed: fetching OpenRouter + LiteLLM...');
-  const [orList, llmList] = await Promise.all([feedOpenRouter(), feedLiteLLM()]);
-  console.log(`feed: openrouter=${orList.length} litellm=${llmList.length} candidates`);
-
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) console.log('judgment layer skipped: no ANTHROPIC_API_KEY');
+  console.log('feed: fetching OpenRouter + LiteLLM + LMArena...');
+  const [orList, llmList, arenaList] = await Promise.all([feedOpenRouter(), feedLiteLLM(), feedLmArena()]);
+  console.log(`feed: openrouter=${orList.length} litellm=${llmList.length} lmarena=${arenaList.length} candidates`);
 
   const applied = [];
   const held = [];
   const confirmed = [];
   const newModels = [];
+  const worklistItems = [];
   const presentIds = new Set();
 
   // --- check: existing models — price/context facts -------------------------------------------
@@ -336,8 +375,25 @@ async function main() {
         confirmed.push({ model: m.name, field: targetField, sources: verdict.sources });
       } else if (verdict.status === 'held') {
         held.push({ model: m.name, field: targetField, reason: verdict.reason, observations: obs, current, candidate: verdict.candidate });
+        worklistItems.push({
+          id: `${m.id}:${targetField}`, model: m.name, kind: 'conflict', field: targetField, current,
+          observations: obs.map((o) => ({ source: o.source, url: o.source === 'openrouter' ? OR_URL : LITELLM_URL, value: o.value, date: today })),
+          ask: `${m.name} ${targetField.replace('_', ' ')} is currently ${current ?? 'null'}; sources disagree (${verdict.reason}) — what's the correct current value, with a source URL and date?`,
+        });
       } else if (verdict.status === 'applied') {
         applied.push({ model: m.name, id: m.id, field: targetField, old: current, new: Math.round(verdict.value * 100) / 100, sources: verdict.sources });
+      }
+    }
+
+    // LMArena elo — benchmark candidate, not an auto-applied fact (single source).
+    if (m.benchmarks?.lmarena_elo == null) {
+      const arenaMatch = arenaList.find((a) => matchAlias(a.name, [m], aliases) === m.id);
+      if (arenaMatch?.lmarena_elo != null) {
+        worklistItems.push({
+          id: `${m.id}:lmarena_elo`, model: m.name, kind: 'benchmark', field: 'lmarena_elo', current: null,
+          observations: [{ source: 'lmarena', url: LMARENA_URL, value: arenaMatch.lmarena_elo, date: today }],
+          ask: `LMArena reports an elo of ${arenaMatch.lmarena_elo} for ${m.name} — corroborate against a second leaderboard or the vendor card before publishing.`,
+        });
       }
     }
   }
@@ -381,20 +437,41 @@ async function main() {
         auto_added: today,
       });
     } else {
-      held.push({ model: c.name, field: 'new-model', reason: `admission rules not met (sources=${sourceCount} pricing=${hasPricing} vendor=${vendorKnown})` });
+      const reason = `admission rules not met (sources=${sourceCount} pricing=${hasPricing} vendor=${vendorKnown})`;
+      held.push({ model: c.name, field: 'new-model', reason });
+      worklistItems.push({
+        id: `new:${canonicalKey(c.id)}`, model: c.name, kind: 'new-model', current: null,
+        observations: [{ source: 'openrouter', url: OR_URL, value: c.priceInput, date: today }],
+        ask: `"${c.name}" showed up on OpenRouter but ${reason} — is this a real, released model? If so, find vendor + a second source and add it.`,
+      });
     }
   }
 
   // --- check: deprecation tracking ---------------------------------------------------------------
-  const orNames = new Set(orList.map((c) => normalize(c.name)));
-  const llmNames = new Set(llmList.map((c) => normalize(c.id)));
+  // Presence MUST use the exact same matching as the price check above (both name and id, both
+  // directions) — a model matched for price can never simultaneously count as absent.
   const stillPresent = new Set();
   for (const m of data.models) {
-    const inOr = orList.some((c) => matchAlias(c.name, [m], aliases) === m.id);
-    const inLlm = llmList.some((c) => matchAlias(c.id, [m], aliases) === m.id);
+    const inOr = orList.some((c) => matchAlias(c.name, [m], aliases) === m.id || matchAlias(c.id, [m], aliases) === m.id);
+    const inLlm = llmList.some((c) => matchAlias(c.id, [m], aliases) === m.id || matchAlias(c.name, [m], aliases) === m.id);
     if (inOr || inLlm || (!orList.length && !llmList.length)) stillPresent.add(m.id);
   }
-  const { state: nextState, deprecatedNow } = trackDeprecation(state, stillPresent, data.models.map((m) => m.id));
+  const { state: nextState, absentNow } = trackDeprecation(state, stillPresent, data.models.map((m) => m.id));
+
+  // Deprecation is NEVER auto-applied — 2 consecutive absent runs becomes a worklist item for
+  // the Judge to decide with a cited vendor source, not a direct write.
+  for (const id of absentNow) {
+    const m = data.models.find((x) => x.id === id);
+    if (!m || m.deprecated) continue;
+    worklistItems.push({
+      id: `${id}:deprecation`, model: m.name, kind: 'deprecation', field: 'deprecated', current: false,
+      observations: [{ source: 'auto-refresh', url: OR_URL, value: null, date: today }],
+      ask: `Is ${m.name} deprecated/retired? Cite the vendor page. (Absent from OpenRouter + LiteLLM for 2 consecutive collect runs.)`,
+    });
+  }
+
+  // --- worklist (computed regardless of dry-run, so --dry-run can preview it) ------------------
+  const worklist = { generated: today, items: buildWorklist(worklistItems) };
 
   // --- publish -------------------------------------------------------------------------------
   let changed = false;
@@ -406,18 +483,37 @@ async function main() {
       changed = true;
       changelog.push({ date: today, model: a.model, field: a.field, old: a.old, new: a.new, sources: a.sources });
     }
-    for (const id of deprecatedNow) {
-      const m = data.models.find((x) => x.id === id);
-      if (m && !m.deprecated) { m.deprecated = true; changed = true; changelog.push({ date: today, model: m.name, field: 'deprecated', old: false, new: true, sources: ['auto-refresh: absent from all feeds for 2 consecutive runs'] }); }
-    }
     for (const nm of newModels) {
       data.models.push(nm);
       changed = true;
       changelog.push({ date: today, model: nm.name, field: 'added', old: null, new: 'new model', sources: nm.sources });
+      data.releases = data.releases || [];
+      data.releases.push({
+        date: nm.released ? String(nm.released).slice(0, 10) : today,
+        vendor: nm.vendor,
+        title: `${nm.vendor} releases ${nm.name}`,
+        summary: `Auto-added from OpenRouter/LiteLLM — pricing and context window sourced, benchmarks not yet verified.`,
+        source: nm.sources[0],
+        why: 'New listing — check back once benchmarks are sourced.',
+      });
     }
+    // best_for_line: deterministic template, added to every model missing it (strengths untouched).
+    let bestForChanged = false;
+    for (const m of data.models) {
+      if (!m.best_for_line) {
+        m.best_for_line = bestForLine(m, data.models);
+        bestForChanged = true;
+      }
+    }
+    if (bestForChanged) changed = true;
+
     if (changed) data.as_of = today;
     writeFileSync(stateUrl, JSON.stringify(nextState, null, 2) + '\n');
 
+    mkdirSync(new URL('data/refresh/', ROOT), { recursive: true });
+    writeFileSync(worklistUrl, JSON.stringify(worklist, null, 2) + '\n');
+
+    let gateOk = true;
     if (changed) {
       writeFileSync(dataUrl, JSON.stringify(data, null, 2) + '\n');
       writeFileSync(changelogUrl, JSON.stringify(changelog, null, 2) + '\n');
@@ -428,22 +524,32 @@ async function main() {
         execFileSync('node', [fileURLToPath(new URL('scripts/validate-data.mjs', ROOT))], { stdio: 'inherit' });
       } catch (e) {
         console.error('honesty gate failed — reverting write, nothing published.');
+        gateOk = false;
         process.exitCode = 1;
-        return;
       }
     }
+
+    writeFileSync(receiptUrl, JSON.stringify({
+      job: 'collect', ran_at: new Date().toISOString(), applied: applied.length, held: held.length,
+      confirmed: confirmed.length, new_models: newModels.length, worklist_items: worklist.items.length,
+      ok: gateOk, ...(gateOk ? {} : { error: 'honesty gate failed' }),
+    }, null, 2) + '\n');
+
+    if (!gateOk) return;
   }
 
   // --- report ----------------------------------------------------------------------------------
   console.log(`\n=== auto-refresh report (${dryRun ? 'DRY RUN' : 'LIVE'}) ===`);
-  console.log(`applied: ${applied.length}  held: ${held.length}  confirmed: ${confirmed.length}  new models (would add): ${newModels.length}  deprecated: ${deprecatedNow.length}`);
+  console.log(`applied: ${applied.length}  held: ${held.length}  confirmed: ${confirmed.length}  new models (would add): ${newModels.length}  absent 2 runs (would ask Judge): ${absentNow.length}`);
   console.log('\n-- applied (first 12) --');
   applied.slice(0, 12).forEach((a) => console.log(`  ${a.model} / ${a.field}: ${a.old} -> ${a.new} [${a.sources.join('+')}]`));
   console.log('\n-- held (first 8, genuine conflicts only) --');
   held.slice(0, 8).forEach((h) => console.log(`  ${h.model} / ${h.field}: ${h.reason}${h.current != null ? ` (current=${h.current}, candidate=${h.candidate})` : ''}`));
   console.log('\n-- new models (would add — publish-eligible) --');
   newModels.forEach((n) => console.log(`  ${n.name} (${n.vendor})`));
-  if (deprecatedNow.length) console.log('\n-- deprecated --\n' + deprecatedNow.join(', '));
+  if (absentNow.length) console.log('\n-- absent 2 consecutive runs (deprecation worklist item, never auto-applied) --\n' + absentNow.join(', '));
+  console.log(`\n-- worklist for the Judge (${worklist.items.length} of ${worklistItems.length} candidates, first 10) --`);
+  worklist.items.slice(0, 10).forEach((i) => console.log(`  [${i.kind}] ${i.model}: ${i.ask}`));
 
   if (!dryRun) await reportIssue(held);
 }
@@ -478,7 +584,13 @@ async function reportIssue(held) {
   }
 }
 
-const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
+import { realpathSync } from 'node:fs';
+import { resolve } from 'node:path';
+const isMain = (() => {
+  if (!process.argv[1]) return false;
+  try { return fileURLToPath(import.meta.url) === realpathSync(resolve(process.argv[1])); }
+  catch { return fileURLToPath(import.meta.url) === process.argv[1]; }
+})();
 if (isMain) {
   main().catch((e) => { console.error(e); process.exitCode = 1; });
 }

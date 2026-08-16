@@ -1,0 +1,105 @@
+name: Modelproof verify
+# v1.1 "Verify" piece (automation/PIPELINE_V1.md "Modelproof refresh — v1.1"). Confirms the
+# Collect + Judge pieces actually published: live data/models.json on Pages must have as_of >=
+# today's collect receipt date, and the gate must pass on the live file. On failure, reverts the
+# data commit(s) made since Collect ran and pushes, then fails loud.
+on:
+  schedule:
+    - cron: "15 7 * * 2,5"   # Tue/Fri 07:15 UTC — 75 min after Collect, well past the Judge window
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: modelproof-verify
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Fetch live data/models.json and check as_of + gate
+        id: check
+        run: |
+          set -e
+          url="https://lucascashwell3-ai.github.io/modelproof/data/models.json"
+          live=$(curl -fsS "$url")
+          echo "$live" > /tmp/live-models.json
+          live_as_of=$(python3 -c "import json;print(json.load(open('/tmp/live-models.json'))['as_of'])")
+          collect_date=$(python3 -c "import json;print(json.load(open('data/refresh/receipt.json'))['ran_at'][:10])" 2>/dev/null || date -u +%Y-%m-%d)
+          today=$(date -u +%Y-%m-%d)
+          echo "live as_of=$live_as_of, collect receipt date=$collect_date, today=$today"
+
+          ok=1
+          python3 -c "
+import sys, datetime
+live = datetime.date.fromisoformat('$live_as_of')
+collect = datetime.date.fromisoformat('$collect_date')
+sys.exit(0 if live >= collect else 1)
+" || ok=0
+
+          cp /tmp/live-models.json data/models.json
+          node scripts/validate-data.mjs || ok=0
+
+          echo "OK=$ok" >> "$GITHUB_OUTPUT"
+
+      - name: Restore working tree (verify only reads, never keeps the live copy)
+        run: git checkout -- data/models.json
+
+      - name: Revert on failure
+        if: steps.check.outputs.OK != '1'
+        run: |
+          git config user.name "modelproof-verify"
+          git config user.email "actions@users.noreply.github.com"
+          collect_sha=$(git log --oneline -n 20 --format="%H %s" | grep -m1 "modelproof collect" | cut -d' ' -f1 || true)
+          if [ -z "$collect_sha" ]; then
+            echo "::error title=modelproof verify::no recent 'modelproof collect' commit found to revert — manual check needed"
+            exit 1
+          fi
+          git revert --no-edit "${collect_sha}..HEAD" || git revert --no-edit "$collect_sha"
+          ok=0
+          for i in 1 2 3; do
+            if git push origin HEAD:main; then ok=1; break; fi
+            git pull --rebase --autostash origin main || true
+            sleep 5
+          done
+          [ "$ok" = "1" ] || echo "::error title=modelproof verify revert push failed::manual revert needed"
+          echo "::error title=modelproof verify failed::live data did not verify — reverted commit(s) since collect"
+          exit 1
+
+      - name: Write receipt
+        if: always()
+        run: |
+          node -e "
+            const fs = require('fs');
+            const ok = process.env.OK === '1';
+            fs.mkdirSync('data/refresh', { recursive: true });
+            fs.writeFileSync('data/refresh/receipt.json', JSON.stringify({
+              job: 'verify', ran_at: new Date().toISOString(), ok, ...(ok ? {} : { error: 'live as_of/gate check failed' }),
+            }, null, 2) + '\n');
+          "
+        env:
+          OK: ${{ steps.check.outputs.OK }}
+
+      - name: Commit verify receipt
+        if: always()
+        run: |
+          git config user.name "modelproof-verify"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/refresh/receipt.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "modelproof verify receipt $(date -u +%Y-%m-%d)"
+          for i in 1 2 3; do
+            if git push origin HEAD:main; then break; fi
+            git pull --rebase --autostash origin main || true
+            sleep 5
+          done
