@@ -40,12 +40,7 @@ jobs:
           echo "live as_of=$live_as_of, collect receipt date=$collect_date, today=$today"
 
           ok=1
-          python3 -c "
-import sys, datetime
-live = datetime.date.fromisoformat('$live_as_of')
-collect = datetime.date.fromisoformat('$collect_date')
-sys.exit(0 if live >= collect else 1)
-" || ok=0
+          python3 -c "import sys,datetime as d; sys.exit(0 if d.date.fromisoformat('$live_as_of') >= d.date.fromisoformat('$collect_date') else 1)" || ok=0
 
           cp /tmp/live-models.json data/models.json
           node scripts/validate-data.mjs || ok=0
