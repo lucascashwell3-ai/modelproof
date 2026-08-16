@@ -1,0 +1,42 @@
+[
+  {
+    "date": "2026-08-16",
+    "model": "Google: Gemini 3.7 Flash",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/google/gemini-3.7-flash"
+    ]
+  },
+  {
+    "date": "2026-08-16",
+    "model": "SpaceXAI: Grok 4.6",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/x-ai/grok-4.6"
+    ]
+  },
+  {
+    "date": "2026-08-16",
+    "model": "Meta: Muse Spark 1.2",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.2"
+    ]
+  },
+  {
+    "date": "2026-08-16",
+    "model": "Meta: Muse Spark 1.1",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.1"
+    ]
+  }
+]
