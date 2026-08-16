@@ -25,4 +25,4 @@ nothing writes. Push/verify follow the feeder pattern: publish → wait for Page
 **Local run:** `node scripts/auto-refresh.mjs --dry-run` (prints, writes nothing).
 Tests: `node --test scripts/test-auto-refresh.mjs`.
 
-**Last known good:** not yet run in Actions.
+**Last known good:** 2026-08-16 18:08Z, run 31963688243 — 4 models added, 26 confirmed, 35 held to issue #13; live as_of verified.
