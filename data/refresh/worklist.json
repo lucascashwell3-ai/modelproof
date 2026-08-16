@@ -1,0 +1,230 @@
+{
+  "generated": "2026-08-16",
+  "items": [
+    {
+      "id": "new:aionlabsaion30",
+      "model": "AionLabs: Aion-3.0",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 3,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"AionLabs: Aion-3.0\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:aionlabsaion30mini",
+      "model": "AionLabs: Aion-3.0-Mini",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.7,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"AionLabs: Aion-3.0-Mini\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:bytedanceseedseed20code",
+      "model": "ByteDance Seed: Seed-2.0-Code",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.5,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"ByteDance Seed: Seed-2.0-Code\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:bytedanceseedseed21turbo",
+      "model": "ByteDance Seed: Seed 2.1 Turbo",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.5,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"ByteDance Seed: Seed 2.1 Turbo\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:inclusionailing30flash",
+      "model": "Ling-3.0-flash",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.020999999999999998,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"Ling-3.0-flash\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:kwaipilotkatcoderairv25",
+      "model": "Kwaipilot: KAT-Coder-Air V2.5",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.15,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"Kwaipilot: KAT-Coder-Air V2.5\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:kwaipilotkatcoderprov25",
+      "model": "Kwaipilot: KAT-Coder-Pro V2.5",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.74,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"Kwaipilot: KAT-Coder-Pro V2.5\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:meituanlongcat20",
+      "model": "Meituan: LongCat 2.0",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.3,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"Meituan: LongCat 2.0\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:metamuseglimmer30b",
+      "model": "Meta: Muse Glimmer 30B",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.35,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"Meta: Muse Glimmer 30B\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=true) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:nvidianemotron35lightning",
+      "model": "NVIDIA: Nemotron 3.5 Lightning",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.08,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"NVIDIA: Nemotron 3.5 Lightning\" showed up on OpenRouter but admission rules not met (sources=2 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:openrouterautobeta",
+      "model": "Auto Router (Beta)",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": -1000000,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"Auto Router (Beta)\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:poolsidelagunas21",
+      "model": "Poolside: Laguna S 2.1",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.09,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"Poolside: Laguna S 2.1\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:poolsidelagunaxs21",
+      "model": "Poolside: Laguna XS 2.1",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.06,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"Poolside: Laguna XS 2.1\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:qwenqwen37flash",
+      "model": "Qwen: Qwen3.7 Flash",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.03,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"Qwen: Qwen3.7 Flash\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=true) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:qwenqwen3824ta95b",
+      "model": "Qwen: Qwen3.8 2.4T A95B",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 2,
+          "date": "2026-08-16"
+        }
+      ],
+      "ask": "\"Qwen: Qwen3.8 2.4T A95B\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=true) — is this a real, released model? If so, find vendor + a second source and add it."
+    }
+  ]
+}

@@ -69,7 +69,8 @@
             "Give it the full problem and source material in one message; it's built for long single-pass reasoning."
           ]
         }
-      }
+      },
+      "best_for_line": "Anthropic model · 1M ctx · $5/$25"
     },
     {
       "id": "kimi-k3",
@@ -127,7 +128,8 @@
             "1M context makes it a strong fit for reasoning across large document sets in one pass."
           ]
         }
-      }
+      },
+      "best_for_line": "Priciest Moonshot AI model · 1M ctx · $3/$15"
     },
     {
       "id": "claude-fable-5",
@@ -179,7 +181,8 @@
         "Save it for the hardest overnight agent runs and deepest reasoning — for everyday coding, Opus 4.8 or Sonnet 5 do the job at a fraction of the price.",
         "Thinking is always on — give it the complete task up front in one well-specified message and let it run; drip-feeding steps wastes its strength.",
         "It's built for 1M-token context: paste whole codebases or document sets in rather than pre-summarizing."
-      ]
+      ],
+      "best_for_line": "Priciest Anthropic model · 1M ctx · $10/$50"
     },
     {
       "id": "claude-opus-4-8",
@@ -245,7 +248,8 @@
             "For rewrites, paste the original plus one sentence of direction — it holds a voice well across long documents."
           ]
         }
-      }
+      },
+      "best_for_line": "Anthropic model · 1M ctx · $5/$25"
     },
     {
       "id": "claude-sonnet-5",
@@ -296,7 +300,8 @@
         "The daily driver: ~85 coding at $2/$10 — use it for routine coding and agents, and escalate to Opus only for the genuinely hard problems.",
         "Intro pricing ends Aug 31, 2026 (then $3/$15) — budget for the increase if you're building on it.",
         "Built to run agents cheaply at scale — a good default for CI bots and background automations."
-      ]
+      ],
+      "best_for_line": "Anthropic model · 1M ctx · $2/$10"
     },
     {
       "id": "gpt-5-5",
@@ -350,7 +355,8 @@
         "input": 5,
         "output": 30,
         "aggregator_note": "OpenRouter shows ~$180 — matches no tier OpenAI publishes."
-      }
+      },
+      "best_for_line": "OpenAI model · 1M ctx · $5/$30"
     },
     {
       "id": "gemini-3-1-pro",
@@ -400,7 +406,8 @@
         "Strongest budget pick for hard reasoning and big multimodal jobs (documents + images together).",
         "Watch the 200K-token threshold — price doubles to $4/$18 above it, so chunk very long inputs when you can.",
         "Still a Preview SKU — pin the version and re-test before production bets."
-      ]
+      ],
+      "best_for_line": "Priciest Google model · 1M ctx · $2/$12"
     },
     {
       "id": "deepseek-v4-pro",
@@ -457,7 +464,8 @@
             "Cache-hit input is nearly free (~$0.0036/M) — long research sessions that keep building on the same context cost almost nothing."
           ]
         }
-      }
+      },
+      "best_for_line": "Priciest DeepSeek model · 1M ctx · $0.435/$0.87"
     },
     {
       "id": "kimi-k2-6",
@@ -511,7 +519,8 @@
         "input": 0.95,
         "output": 4,
         "aggregator_note": "OpenRouter shows ~$2.72 — provider pass-through. Vendor input is cache-miss $0.95 / cache-hit $0.16."
-      }
+      },
+      "best_for_line": "Cheapest Moonshot AI model · 262K ctx · $0.95/$4"
     },
     {
       "id": "llama-4-maverick",
@@ -556,7 +565,8 @@
       "use_well": [
         "A cheap open generalist for bulk work and long documents — not the top open coder, so don't pick it for hard coding.",
         "Prices vary 20%+ by host (Fireworks/Together/Groq) — compare hosts before committing volume."
-      ]
+      ],
+      "best_for_line": "Meta model · 1M ctx · $0.22/$0.88"
     },
     {
       "id": "o4-mini",
@@ -610,7 +620,8 @@
         "input": 1.1,
         "output": 4.4,
         "aggregator_note": "OpenRouter shows ~$8 — that's OpenAI's Priority tier ($2/$8), not standard."
-      }
+      },
+      "best_for_line": "OpenAI model · $1.1/$4.4"
     },
     {
       "id": "claude-haiku-4-5",
@@ -657,7 +668,8 @@
         "Use it when volume and speed beat peak intelligence: classification, routing, extraction.",
         "Pair it as the cheap tier under a smarter model — let Haiku triage the easy 90%, escalate the hard 10%.",
         "200K context — split very long documents rather than forcing them in."
-      ]
+      ],
+      "best_for_line": "Cheapest Anthropic model · 200K ctx · $1/$5"
     },
     {
       "id": "gpt-5-6-sol",
@@ -707,7 +719,8 @@
       "use_well": [
         "OpenAI's top tier for the hardest agentic, coding, and security work — pay for it only when Terra falls short.",
         "Its chain-of-thought reasoning means higher latency and token spend — budget for both."
-      ]
+      ],
+      "best_for_line": "Priciest OpenAI model · 1M ctx · $5/$30"
     },
     {
       "id": "gpt-5-6-terra",
@@ -770,7 +783,8 @@
         "input": 2,
         "output": 12,
         "aggregator_note": "20% price cut announced 2026-07-30 (was $2.50/$15); confirmed live on OpenAI's own pricing page."
-      }
+      },
+      "best_for_line": "OpenAI model · 1M ctx · $2/$12"
     },
     {
       "id": "gpt-5-6-luna",
@@ -824,7 +838,8 @@
         "input": 0.2,
         "output": 1.2,
         "aggregator_note": "80% price cut announced 2026-07-30 (was $1/$6); confirmed live on OpenAI's own pricing page."
-      }
+      },
+      "best_for_line": "Cheapest OpenAI model · 1M ctx · $0.2/$1.2"
     },
     {
       "id": "gemini-3-5-flash",
@@ -880,7 +895,8 @@
         "input": 1.5,
         "output": 9,
         "aggregator_note": "OpenRouter shows ~$2.50 — not Google's published rate."
-      }
+      },
+      "best_for_line": "Google model · 1M ctx · $1.5/$9"
     },
     {
       "id": "gemini-2-5-flash-lite",
@@ -923,7 +939,8 @@
       "use_well": [
         "The rock-bottom Gemini for massive simple jobs — classification, extraction, cleanup at $0.10/$0.40.",
         "Don't use it for reasoning or complex code — it's the lowest capability tier on the board."
-      ]
+      ],
+      "best_for_line": "Cheapest Google model · 1M ctx · $0.1/$0.4"
     },
     {
       "id": "grok-4-5",
@@ -972,7 +989,8 @@
         "Cheap frontier-class coding — ~4x fewer output tokens than Opus-class peers means real costs run below the sticker price.",
         "The 75% cache discount ($0.50 cached input) rewards repeated-context workloads like agents and long sessions.",
         "No classic benchmarks published and not in the EU at launch — verify on your own tasks first."
-      ]
+      ],
+      "best_for_line": "xAI model · 500K ctx · $2/$6"
     },
     {
       "id": "deepseek-v4-flash",
@@ -1015,7 +1033,8 @@
       "use_well": [
         "The bulk-work machine: $0.14/$0.28 with near-free cache hits — process huge volumes of text or code for pennies.",
         "Step up to V4-Pro the moment reasoning depth starts to matter."
-      ]
+      ],
+      "best_for_line": "Cheapest DeepSeek model · 1M ctx · $0.14/$0.28"
     },
     {
       "id": "qwen3-max",
@@ -1066,7 +1085,8 @@
         "input": 1.2,
         "output": 6,
         "aggregator_note": "OpenRouter shows ~$3.90 — matches no Alibaba tier. Ours is the 0–32K Singapore tier."
-      }
+      },
+      "best_for_line": "Priciest Alibaba (Qwen) model · 256K ctx · $1.2/$6"
     },
     {
       "id": "qwen3-coder-plus",
@@ -1117,7 +1137,8 @@
         "input": 1,
         "output": 5,
         "aggregator_note": "OpenRouter shows ~$3.25 — matches no Alibaba tier. Ours is the 0–32K Singapore tier."
-      }
+      },
+      "best_for_line": "Alibaba (Qwen) model · 1M ctx · $1/$5"
     },
     {
       "id": "qwen-turbo",
@@ -1158,7 +1179,8 @@
       "use_well": [
         "Among the cheapest hosted models anywhere — massive-volume tagging and cleanup at $0.05/M input.",
         "Its thinking mode ($0.5/M output) adds cheap reasoning for slightly harder bulk work."
-      ]
+      ],
+      "best_for_line": "Cheapest Alibaba (Qwen) model · $0.05/$0.2"
     },
     {
       "id": "mistral-medium-3-1",
@@ -1210,7 +1232,8 @@
             "It's cheap enough to iterate freely — generate variants and pick, rather than perfecting one draft."
           ]
         }
-      }
+      },
+      "best_for_line": "Mistral AI model · $0.4/$2"
     },
     {
       "id": "gemini-3-6-flash",
@@ -1255,7 +1278,8 @@
         "date": "2026-07-29",
         "input": 1.5,
         "output": 7.5
-      }
+      },
+      "best_for_line": "Google model · $1.5/$7.5"
     },
     {
       "id": "glm-5-2",
@@ -1300,7 +1324,8 @@
         "date": "2026-07-29",
         "input": 1.4,
         "output": 4.4
-      }
+      },
+      "best_for_line": "Z.ai (Zhipu) model · $1.4/$4.4"
     },
     {
       "id": "google-gemini-3-7-flash",
@@ -1331,7 +1356,8 @@
       "coding_confidence": "low",
       "use_well": [],
       "task_copy": {},
-      "auto_added": "2026-08-16"
+      "auto_added": "2026-08-16",
+      "best_for_line": "google model · 1M ctx · $0.38/$1.88"
     },
     {
       "id": "x-ai-grok-4-6",
@@ -1362,7 +1388,8 @@
       "coding_confidence": "low",
       "use_well": [],
       "task_copy": {},
-      "auto_added": "2026-08-16"
+      "auto_added": "2026-08-16",
+      "best_for_line": "x-ai model · 500K ctx · $2/$6"
     },
     {
       "id": "meta-muse-spark-1-2",
@@ -1393,7 +1420,8 @@
       "coding_confidence": "low",
       "use_well": [],
       "task_copy": {},
-      "auto_added": "2026-08-16"
+      "auto_added": "2026-08-16",
+      "best_for_line": "Cheapest meta model · 1M ctx · $1.25/$4.25"
     },
     {
       "id": "meta-muse-spark-1-1",
@@ -1424,7 +1452,8 @@
       "coding_confidence": "low",
       "use_well": [],
       "task_copy": {},
-      "auto_added": "2026-08-16"
+      "auto_added": "2026-08-16",
+      "best_for_line": "Priciest meta model · 1M ctx · $1.25/$4.25"
     }
   ],
   "releases": [
