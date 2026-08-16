@@ -1,7 +1,5 @@
 {
-  "job": "judge",
-  "ran_at": "2026-08-16T18:59:36.317Z",
-  "applied": 9,
-  "held": 6,
+  "job": "verify",
+  "ran_at": "2026-08-16T19:02:21.450Z",
   "ok": true
 }
