@@ -1,4 +1,5 @@
 name: data-refresh
+# v0 — superseded by auto-refresh.yml; retire after 2 green weeks.
 # Weekly, propose-only. The bot NEVER writes prices/benchmarks and NEVER pushes to main —
 # it opens a PR with a verification checklist. Merging the PR (a human) is the only path to prod;
 # GitHub Pages redeploys from main on merge. Mirrors scripts/refresh.md's sourcing standard.

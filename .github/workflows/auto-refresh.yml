@@ -1,0 +1,95 @@
+name: auto-refresh
+# v1 job 4 (automation/PIPELINE_V1.md). Auto-publishes price/context facts that pass the
+# check-stage agreement + sanity rules straight to main. No PR, no review stage for facts —
+# only genuinely conflicting/unverifiable items go to a GitHub issue for Lucas. Publish is
+# followed by a live verify against GitHub Pages; a mismatch reverts the commit and fails loud.
+on:
+  schedule:
+    - cron: "17 6 * * 1"   # Mondays 06:17 UTC — off-peak minute, matches data-refresh.yml
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: auto-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Unit test the check-stage rules
+        run: node --test scripts/test-auto-refresh.mjs
+
+      - name: Run auto-refresh (feed -> check -> publish -> report)
+        id: run
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GH_TOKEN: ${{ secrets.MODELPROOF_AUTOREFRESH_TOKEN || github.token }}
+        run: |
+          before=$(python3 -c "import json;print(json.load(open('data/models.json'))['as_of'])")
+          echo "AS_OF_BEFORE=$before" >> "$GITHUB_ENV"
+          node scripts/auto-refresh.mjs
+
+      - name: Commit and push straight to main
+        env:
+          GH_TOKEN: ${{ secrets.MODELPROOF_AUTOREFRESH_TOKEN || github.token }}
+        run: |
+          git config user.name "modelproof-auto-refresh"
+          git config user.email "actions@users.noreply.github.com"
+          if git diff --quiet data/models.json data/changelog.json data/_auto_refresh_state.json 2>/dev/null; then
+            echo "no changes — nothing to publish"
+            exit 0
+          fi
+          git add data/models.json data/changelog.json data/_auto_refresh_state.json 2>/dev/null || true
+          git commit -m "auto-refresh $(date -u +%Y-%m-%d)"
+          echo "PUBLISHED=1" >> "$GITHUB_ENV"
+          ok=0
+          for i in 1 2 3; do
+            if git push origin HEAD:main; then ok=1; break; fi
+            echo "push attempt $i rejected — rebasing on main"
+            git pull --rebase --autostash origin main || true
+            sleep 5
+          done
+          if [ "$ok" != "1" ]; then
+            echo "::error title=auto-refresh push failed::data not published after 3 attempts"
+            exit 1
+          fi
+
+      - name: Wait for Pages deploy, then verify as_of matches
+        if: env.PUBLISHED == '1'
+        run: |
+          after=$(python3 -c "import json;print(json.load(open('data/models.json'))['as_of'])")
+          url="https://lucascashwell3-ai.github.io/modelproof/data/models.json"
+          ok=0
+          for i in $(seq 1 30); do
+            live=$(curl -fsS "$url" | python3 -c "import json,sys;print(json.load(sys.stdin)['as_of'])" 2>/dev/null || echo "-1")
+            if [ "$live" = "$after" ]; then ok=1; break; fi
+            echo "attempt $i: live as_of=$live want=$after — waiting for Pages"
+            sleep 10
+          done
+          if [ "$ok" != "1" ]; then
+            echo "::error title=auto-refresh verify failed::live as_of never matched (before=$AS_OF_BEFORE after=$after) — reverting"
+            git config user.name "modelproof-auto-refresh"
+            git config user.email "actions@users.noreply.github.com"
+            git revert --no-edit HEAD
+            ok2=0
+            for i in 1 2 3; do
+              if git push origin HEAD:main; then ok2=1; break; fi
+              git pull --rebase --autostash origin main || true
+              sleep 5
+            done
+            [ "$ok2" = "1" ] || echo "::error title=auto-refresh revert push failed::manual revert needed"
+            exit 1
+          fi
+          echo "verified: live as_of = $after"
