@@ -1454,6 +1454,253 @@
       "task_copy": {},
       "auto_added": "2026-08-16",
       "best_for_line": "Priciest meta model · 1M ctx · $1.25/$4.25"
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "ling-3-0-flash",
+      "name": "Ling-3.0-flash",
+      "vendor": "InclusionAI (Ant Group)",
+      "context_window": 262144,
+      "price_input": 0.06,
+      "price_output": 0.18,
+      "sources": [
+        "https://huggingface.co/inclusionAI/Ling-3.0-flash",
+        "https://blog.kilo.ai/p/announcing-ling-30-flash-free-on",
+        "https://www.aimadetools.com/blog/ling-3-0-flash-complete-guide/"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "kat-coder-pro-v2-5",
+      "name": "Kwaipilot: KAT-Coder-Pro V2.5",
+      "vendor": "Kwaipilot",
+      "sources": [
+        "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
+        "https://vercel.com/ai-gateway/models/kat-coder-pro-v2.5"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "kat-coder-air-v2-5",
+      "name": "Kwaipilot: KAT-Coder-Air V2.5",
+      "vendor": "Kwaipilot",
+      "sources": [
+        "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
+        "https://openrouter.ai/kwaipilot/kat-coder-air-v2.5"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": 59.5,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "longcat-2-0",
+      "name": "Meituan: LongCat 2.0",
+      "vendor": "Meituan",
+      "context_window": 1000000,
+      "sources": [
+        "https://github.com/meituan-longcat/LongCat-2.0",
+        "https://venturebeat.com/technology/meituan-open-sources-longcat-2-0-the-1-6t-near-frontier-agentic-coding-model-thats-been-leading-openrouter-trained-entirely-on-chinese-chips",
+        "https://www.scmp.com/tech/tech-trends/article/3358854/china-debuts-biggest-ai-model-trained-local-chips-meituan-releases-longcat-20"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "muse-glimmer-30b",
+      "name": "Meta: Muse Glimmer 30B",
+      "vendor": "Meta",
+      "sources": [
+        "https://developer.meta.com/ai/models/muse-glimmer/",
+        "https://huggingface.co/meta-models/Muse-Glimmer-30B",
+        "https://venturebeat.com/technology/meta-returns-to-open-source-with-muse-glimmer-an-apache-2-0-licensed-30b-parameter-ai-model-optimized-for-agents-available-now"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "nemotron-3-5-lightning",
+      "name": "NVIDIA: Nemotron 3.5 Lightning",
+      "vendor": "NVIDIA",
+      "sources": [
+        "https://developer.nvidia.com/blog/nvidia-nemotron-3-5-lightning-delivers-fast-accurate-specialized-task-execution-for-long-running-agents/",
+        "https://blogs.nvidia.com/blog/nemotron-lightning-switchyard-rtx-dgx/",
+        "https://www.cnbc.com/2026/08/11/nvidia-releases-nemotron-3point5-lightning-open-source-ai-model-.html"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "laguna-s-2-1",
+      "name": "Poolside: Laguna S 2.1",
+      "vendor": "Poolside",
+      "context_window": 1000000,
+      "sources": [
+        "https://poolside.ai/blog/introducing-laguna-s-2-1",
+        "https://venturebeat.com/infrastructure/poolside-drops-laguna-s-2-1-an-open-weight-coding-model-that-beats-rivals-10x-its-size"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "qwen3-7-flash",
+      "name": "Qwen: Qwen3.7 Flash",
+      "vendor": "Qwen (Alibaba)",
+      "context_window": 991000,
+      "price_input": 0.03,
+      "price_output": 0.13,
+      "sources": [
+        "https://docs.qwencloud.com/changelog/models",
+        "https://www.eesel.ai/blog/qwen-3-7-flash"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "seed-2-1-turbo",
+      "name": "ByteDance Seed: Seed 2.1 Turbo",
+      "vendor": "ByteDance",
+      "context_window": 256000,
+      "sources": [
+        "https://seed.bytedance.com/en/seed2_1",
+        "https://datanorth.ai/news/bytedance-releases-seed-2-1-pro-and-seed-2-1-turbo"
+      ]
     }
   ],
   "releases": [

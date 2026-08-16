@@ -38,5 +38,108 @@
     "sources": [
       "https://openrouter.ai/meta/muse-spark-1.1"
     ]
+  },
+  {
+    "date": "2026-08-16",
+    "model": "Ling-3.0-flash",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://huggingface.co/inclusionAI/Ling-3.0-flash",
+      "https://blog.kilo.ai/p/announcing-ling-30-flash-free-on",
+      "https://www.aimadetools.com/blog/ling-3-0-flash-complete-guide/"
+    ]
+  },
+  {
+    "date": "2026-08-16",
+    "model": "Kwaipilot: KAT-Coder-Pro V2.5",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
+      "https://vercel.com/ai-gateway/models/kat-coder-pro-v2.5"
+    ]
+  },
+  {
+    "date": "2026-08-16",
+    "model": "Kwaipilot: KAT-Coder-Air V2.5",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
+      "https://openrouter.ai/kwaipilot/kat-coder-air-v2.5"
+    ]
+  },
+  {
+    "date": "2026-08-16",
+    "model": "Meituan: LongCat 2.0",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://github.com/meituan-longcat/LongCat-2.0",
+      "https://venturebeat.com/technology/meituan-open-sources-longcat-2-0-the-1-6t-near-frontier-agentic-coding-model-thats-been-leading-openrouter-trained-entirely-on-chinese-chips",
+      "https://www.scmp.com/tech/tech-trends/article/3358854/china-debuts-biggest-ai-model-trained-local-chips-meituan-releases-longcat-20"
+    ]
+  },
+  {
+    "date": "2026-08-16",
+    "model": "Meta: Muse Glimmer 30B",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://developer.meta.com/ai/models/muse-glimmer/",
+      "https://huggingface.co/meta-models/Muse-Glimmer-30B",
+      "https://venturebeat.com/technology/meta-returns-to-open-source-with-muse-glimmer-an-apache-2-0-licensed-30b-parameter-ai-model-optimized-for-agents-available-now"
+    ]
+  },
+  {
+    "date": "2026-08-16",
+    "model": "NVIDIA: Nemotron 3.5 Lightning",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://developer.nvidia.com/blog/nvidia-nemotron-3-5-lightning-delivers-fast-accurate-specialized-task-execution-for-long-running-agents/",
+      "https://blogs.nvidia.com/blog/nemotron-lightning-switchyard-rtx-dgx/",
+      "https://www.cnbc.com/2026/08/11/nvidia-releases-nemotron-3point5-lightning-open-source-ai-model-.html"
+    ]
+  },
+  {
+    "date": "2026-08-16",
+    "model": "Poolside: Laguna S 2.1",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://poolside.ai/blog/introducing-laguna-s-2-1",
+      "https://venturebeat.com/infrastructure/poolside-drops-laguna-s-2-1-an-open-weight-coding-model-that-beats-rivals-10x-its-size"
+    ]
+  },
+  {
+    "date": "2026-08-16",
+    "model": "Qwen: Qwen3.7 Flash",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://docs.qwencloud.com/changelog/models",
+      "https://www.eesel.ai/blog/qwen-3-7-flash"
+    ]
+  },
+  {
+    "date": "2026-08-16",
+    "model": "ByteDance Seed: Seed 2.1 Turbo",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://seed.bytedance.com/en/seed2_1",
+      "https://datanorth.ai/news/bytedance-releases-seed-2-1-pro-and-seed-2-1-turbo"
+    ]
   }
 ]

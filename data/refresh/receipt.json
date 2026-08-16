@@ -1,10 +1,7 @@
 {
-  "job": "collect",
-  "ran_at": "2026-08-16T18:55:17.564Z",
-  "applied": 0,
-  "held": 36,
-  "confirmed": 33,
-  "new_models": 0,
-  "worklist_items": 15,
+  "job": "judge",
+  "ran_at": "2026-08-16T18:59:36.317Z",
+  "applied": 9,
+  "held": 6,
   "ok": true
 }
