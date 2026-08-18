@@ -1710,6 +1710,159 @@
         "https://datanorth.ai/news/bytedance-releases-seed-2-1-pro-and-seed-2-1-turbo"
       ],
       "best_for_line": "ByteDance model · 256K ctx"
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "aion-3-0",
+      "name": "AionLabs: Aion-3.0",
+      "vendor": "AionLabs",
+      "released": "2026-07-07",
+      "context_window": 131000,
+      "price_input": 3,
+      "price_output": 6,
+      "sources": [
+        "https://www.aionlabs.ai/",
+        "https://openrouter.ai/aion-labs/aion-3.0",
+        "https://writingmate.ai/models/aion-labs/aion-3.0",
+        "https://designforonline.com/ai-models/aionlabs-aion-3-0/"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "aion-3-0-mini",
+      "name": "AionLabs: Aion-3.0-Mini",
+      "vendor": "AionLabs",
+      "released": "2026-07-07",
+      "context_window": 131000,
+      "price_input": 0.7,
+      "price_output": 1.4,
+      "sources": [
+        "https://www.aionlabs.ai/",
+        "https://openrouter.ai/aion-labs/aion-3.0-mini",
+        "https://designforonline.com/ai-models/aionlabs-aion-3-0-mini/"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "seed-2-0-code",
+      "name": "ByteDance Seed: Seed-2.0-Code",
+      "vendor": "ByteDance",
+      "released": "2026-02-14",
+      "context_window": 256000,
+      "sources": [
+        "https://seed.bytedance.com/en/seed2",
+        "https://howaiworks.ai/models/doubao-seed-code",
+        "https://developer.puter.com/ai/bytedance/seed-2.0-code/"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "laguna-xs-2-1",
+      "name": "Poolside: Laguna XS 2.1",
+      "vendor": "Poolside",
+      "released": "2026-07-02",
+      "context_window": 256000,
+      "price_input": 0.1,
+      "price_output": 0.2,
+      "sources": [
+        "https://poolside.ai/blog/introducing-laguna-xs-2-1",
+        "https://huggingface.co/poolside/Laguna-XS.2"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "qwen3-8-2-4t-a95b",
+      "name": "Qwen: Qwen3.8 2.4T A95B",
+      "vendor": "Alibaba (Qwen)",
+      "released": "2026-08-01",
+      "context_window": 983616,
+      "price_input": 2,
+      "price_output": 6,
+      "sources": [
+        "https://x.com/Alibaba_Qwen/status/2084100707423289643",
+        "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b",
+        "https://www.marktechpost.com/2026/07/19/alibaba-previews-qwen3-8-max-a-2-4-trillion-parameter-multimodal-model-days-after-moonshots-kimi-k3-open-weight-launch/"
+      ]
     }
   ],
   "releases": [

@@ -141,5 +141,65 @@
       "https://seed.bytedance.com/en/seed2_1",
       "https://datanorth.ai/news/bytedance-releases-seed-2-1-pro-and-seed-2-1-turbo"
     ]
+  },
+  {
+    "date": "2026-08-18",
+    "model": "AionLabs: Aion-3.0",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://www.aionlabs.ai/",
+      "https://openrouter.ai/aion-labs/aion-3.0",
+      "https://writingmate.ai/models/aion-labs/aion-3.0",
+      "https://designforonline.com/ai-models/aionlabs-aion-3-0/"
+    ]
+  },
+  {
+    "date": "2026-08-18",
+    "model": "AionLabs: Aion-3.0-Mini",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://www.aionlabs.ai/",
+      "https://openrouter.ai/aion-labs/aion-3.0-mini",
+      "https://designforonline.com/ai-models/aionlabs-aion-3-0-mini/"
+    ]
+  },
+  {
+    "date": "2026-08-18",
+    "model": "ByteDance Seed: Seed-2.0-Code",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://seed.bytedance.com/en/seed2",
+      "https://howaiworks.ai/models/doubao-seed-code",
+      "https://developer.puter.com/ai/bytedance/seed-2.0-code/"
+    ]
+  },
+  {
+    "date": "2026-08-18",
+    "model": "Poolside: Laguna XS 2.1",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://poolside.ai/blog/introducing-laguna-xs-2-1",
+      "https://huggingface.co/poolside/Laguna-XS.2"
+    ]
+  },
+  {
+    "date": "2026-08-18",
+    "model": "Qwen: Qwen3.8 2.4T A95B",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://x.com/Alibaba_Qwen/status/2084100707423289643",
+      "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b",
+      "https://www.marktechpost.com/2026/07/19/alibaba-previews-qwen3-8-max-a-2-4-trillion-parameter-multimodal-model-days-after-moonshots-kimi-k3-open-weight-launch/"
+    ]
   }
 ]
