@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-16",
+  "generated": "2026-08-18",
   "items": [
     {
       "id": "new:aionlabsaion30",
@@ -11,7 +11,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 3,
-          "date": "2026-08-16"
+          "date": "2026-08-18"
         }
       ],
       "ask": "\"AionLabs: Aion-3.0\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
@@ -26,7 +26,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.7,
-          "date": "2026-08-16"
+          "date": "2026-08-18"
         }
       ],
       "ask": "\"AionLabs: Aion-3.0-Mini\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
@@ -41,7 +41,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.5,
-          "date": "2026-08-16"
+          "date": "2026-08-18"
         }
       ],
       "ask": "\"ByteDance Seed: Seed-2.0-Code\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
@@ -56,25 +56,10 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": -1000000,
-          "date": "2026-08-16"
+          "date": "2026-08-18"
         }
       ],
       "ask": "\"Auto Router (Beta)\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
-    },
-    {
-      "id": "new:poolsidelagunaxs21",
-      "model": "Poolside: Laguna XS 2.1",
-      "kind": "new-model",
-      "current": null,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.06,
-          "date": "2026-08-16"
-        }
-      ],
-      "ask": "\"Poolside: Laguna XS 2.1\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
       "id": "new:qwenqwen3824ta95b",
@@ -86,10 +71,174 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 2,
-          "date": "2026-08-16"
+          "date": "2026-08-18"
         }
       ],
       "ask": "\"Qwen: Qwen3.8 2.4T A95B\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=true) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:qwenqwen3827b",
+      "model": "Qwen: Qwen3.8 27B",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.44999999999999996,
+          "date": "2026-08-18"
+        }
+      ],
+      "ask": "\"Qwen: Qwen3.8 27B\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=true) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:qwenqwen38max",
+      "model": "Qwen: Qwen3.8 Max",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 2,
+          "date": "2026-08-18"
+        }
+      ],
+      "ask": "\"Qwen: Qwen3.8 Max\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=true) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:sakanasakananamazu",
+      "model": "Sakana: Sakana Namazu",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.95,
+          "date": "2026-08-18"
+        }
+      ],
+      "ask": "\"Sakana: Sakana Namazu\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:tencenthy3",
+      "model": "Tencent: Hy3",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.13199999999999998,
+          "date": "2026-08-18"
+        }
+      ],
+      "ask": "\"Tencent: Hy3\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:thinkingmachinesinkling",
+      "model": "Thinking Machines: Inkling",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.95,
+          "date": "2026-08-18"
+        }
+      ],
+      "ask": "\"Thinking Machines: Inkling\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:thinkingmachinesinklingsmall",
+      "model": "Thinking Machines: Inkling Small",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.44999999999999996,
+          "date": "2026-08-18"
+        }
+      ],
+      "ask": "\"Thinking Machines: Inkling Small\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:upstagesolarpro4",
+      "model": "Upstage: Solar Pro 4",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.03,
+          "date": "2026-08-18"
+        }
+      ],
+      "ask": "\"Upstage: Solar Pro 4\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:xaigroklatest",
+      "model": "xAI: Grok Latest",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 2,
+          "date": "2026-08-18"
+        }
+      ],
+      "ask": "\"xAI: Grok Latest\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "deepseek-v4-flash:price_input",
+      "model": "DeepSeek V4-Flash",
+      "kind": "conflict",
+      "field": "price_input",
+      "current": 0.14,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.08259999999999999,
+          "date": "2026-08-18"
+        },
+        {
+          "source": "litellm",
+          "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "value": 0.14,
+          "date": "2026-08-18"
+        }
+      ],
+      "ask": "DeepSeek V4-Flash price input is currently 0.14; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
+    },
+    {
+      "id": "deepseek-v4-flash:price_output",
+      "model": "DeepSeek V4-Flash",
+      "kind": "conflict",
+      "field": "price_output",
+      "current": 0.28,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.16519999999999999,
+          "date": "2026-08-18"
+        },
+        {
+          "source": "litellm",
+          "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "value": 0.28,
+          "date": "2026-08-18"
+        }
+      ],
+      "ask": "DeepSeek V4-Flash price output is currently 0.28; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
     }
   ]
 }
