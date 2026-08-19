@@ -4,8 +4,8 @@ name: data-refresh
 # it opens a PR with a verification checklist. Merging the PR (a human) is the only path to prod;
 # GitHub Pages redeploys from main on merge. Mirrors scripts/refresh.md's sourcing standard.
 on:
-  schedule:
-    - cron: '17 6 * * 1'   # Mondays 06:17 UTC — off-peak minute (avoid :00; GitHub drops top-of-hour runs). Best-effort, no SLA.
+  # Schedule REMOVED 2026-08-18: superseded by auto-refresh.yml (Collect/Judge/Verify, live 08-16).
+  # Kept dispatch-only as a manual fallback; it opened PRs nobody was clearing.
   workflow_dispatch: {}      # run on demand for same-day drops
 
 permissions:
