@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-08-18",
+  "as_of": "2026-08-21",
   "models": [
     {
       "id": "claude-opus-5",
@@ -1862,6 +1862,186 @@
         "https://x.com/Alibaba_Qwen/status/2084100707423289643",
         "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b",
         "https://www.marktechpost.com/2026/07/19/alibaba-previews-qwen3-8-max-a-2-4-trillion-parameter-multimodal-model-days-after-moonshots-kimi-k3-open-weight-launch/"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "qwen3-8-27b",
+      "name": "Qwen: Qwen3.8 27B",
+      "vendor": "Alibaba (Qwen)",
+      "released": "2026-08-14",
+      "context_window": 262144,
+      "price_input": null,
+      "price_output": null,
+      "sources": [
+        "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
+        "https://venturebeat.com/technology/qwen3-8-27b-runs-frontier-class-coding-agents-and-reasoning-locally-no-cloud-api-required"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "sakana-namazu",
+      "name": "Sakana: Sakana Namazu",
+      "vendor": "Sakana AI",
+      "released": "2026-08-03",
+      "context_window": null,
+      "price_input": 0.95,
+      "price_output": 4,
+      "sources": [
+        "https://sakana.ai/namazu-api/",
+        "https://aiweekly.co/alerts/sakana-ai-ships-namazu-a-japanese-tuned-kimi-k26-llm"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "tencent-hy3",
+      "name": "Tencent: Hy3",
+      "vendor": "Tencent",
+      "released": "2026-07-06",
+      "context_window": 256000,
+      "price_input": 0.15,
+      "price_output": 0.59,
+      "sources": [
+        "https://www.tencent.com/en-us/articles/2202386.html",
+        "https://technode.com/2026/07/07/tencent-launches-hunyuan-hy3-integrates-model-across-multiple-products/"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "inkling",
+      "name": "Thinking Machines: Inkling",
+      "vendor": "Thinking Machines Lab",
+      "released": "2026-07-15",
+      "context_window": 1048576,
+      "price_input": null,
+      "price_output": null,
+      "sources": [
+        "https://thinkingmachines.ai/model-card/inkling/",
+        "https://techcrunch.com/2026/07/15/thinking-machines-amps-up-its-bet-against-one-size-fits-all-ai-with-its-first-open-model-inkling/"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "inkling-small",
+      "name": "Thinking Machines: Inkling Small",
+      "vendor": "Thinking Machines Lab",
+      "released": "2026-08-02",
+      "context_window": 1048576,
+      "price_input": 0.45,
+      "price_output": 1.2,
+      "sources": [
+        "https://thinkingmachines.ai/news/inkling-small/",
+        "https://venturebeat.com/technology/thinking-machines-debuts-inkling-small-open-source-ai-model-nearing-performance-of-predecessor-at-about-1-4-size"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null,
+        "lmarena_elo": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "solar-pro-4",
+      "name": "Upstage: Solar Pro 4",
+      "vendor": "Upstage",
+      "released": "2026-08-10",
+      "context_window": 524288,
+      "price_input": 0.3,
+      "price_output": 1.2,
+      "sources": [
+        "https://www.upstage.ai/blog/en/solar-pro-4",
+        "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4"
       ]
     }
   ],

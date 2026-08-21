@@ -201,5 +201,71 @@
       "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b",
       "https://www.marktechpost.com/2026/07/19/alibaba-previews-qwen3-8-max-a-2-4-trillion-parameter-multimodal-model-days-after-moonshots-kimi-k3-open-weight-launch/"
     ]
+  },
+  {
+    "date": "2026-08-21",
+    "model": "Qwen: Qwen3.8 27B",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
+      "https://venturebeat.com/technology/qwen3-8-27b-runs-frontier-class-coding-agents-and-reasoning-locally-no-cloud-api-required"
+    ]
+  },
+  {
+    "date": "2026-08-21",
+    "model": "Sakana: Sakana Namazu",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://sakana.ai/namazu-api/",
+      "https://aiweekly.co/alerts/sakana-ai-ships-namazu-a-japanese-tuned-kimi-k26-llm"
+    ]
+  },
+  {
+    "date": "2026-08-21",
+    "model": "Tencent: Hy3",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://www.tencent.com/en-us/articles/2202386.html",
+      "https://technode.com/2026/07/07/tencent-launches-hunyuan-hy3-integrates-model-across-multiple-products/"
+    ]
+  },
+  {
+    "date": "2026-08-21",
+    "model": "Thinking Machines: Inkling",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://thinkingmachines.ai/model-card/inkling/",
+      "https://techcrunch.com/2026/07/15/thinking-machines-amps-up-its-bet-against-one-size-fits-all-ai-with-its-first-open-model-inkling/"
+    ]
+  },
+  {
+    "date": "2026-08-21",
+    "model": "Thinking Machines: Inkling Small",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://thinkingmachines.ai/news/inkling-small/",
+      "https://venturebeat.com/technology/thinking-machines-debuts-inkling-small-open-source-ai-model-nearing-performance-of-predecessor-at-about-1-4-size"
+    ]
+  },
+  {
+    "date": "2026-08-21",
+    "model": "Upstage: Solar Pro 4",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://www.upstage.ai/blog/en/solar-pro-4",
+      "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4"
+    ]
   }
 ]

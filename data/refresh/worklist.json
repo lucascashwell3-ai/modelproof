@@ -17,21 +17,6 @@
       "ask": "\"Auto Router (Beta)\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
-      "id": "new:qwenqwen3827b",
-      "model": "Qwen: Qwen3.8 27B",
-      "kind": "new-model",
-      "current": null,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.44999999999999996,
-          "date": "2026-08-18"
-        }
-      ],
-      "ask": "\"Qwen: Qwen3.8 27B\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=true) — is this a real, released model? If so, find vendor + a second source and add it."
-    },
-    {
       "id": "new:qwenqwen38max",
       "model": "Qwen: Qwen3.8 Max",
       "kind": "new-model",
@@ -45,81 +30,6 @@
         }
       ],
       "ask": "\"Qwen: Qwen3.8 Max\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=true) — is this a real, released model? If so, find vendor + a second source and add it."
-    },
-    {
-      "id": "new:sakanasakananamazu",
-      "model": "Sakana: Sakana Namazu",
-      "kind": "new-model",
-      "current": null,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.95,
-          "date": "2026-08-18"
-        }
-      ],
-      "ask": "\"Sakana: Sakana Namazu\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
-    },
-    {
-      "id": "new:tencenthy3",
-      "model": "Tencent: Hy3",
-      "kind": "new-model",
-      "current": null,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.13199999999999998,
-          "date": "2026-08-18"
-        }
-      ],
-      "ask": "\"Tencent: Hy3\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
-    },
-    {
-      "id": "new:thinkingmachinesinkling",
-      "model": "Thinking Machines: Inkling",
-      "kind": "new-model",
-      "current": null,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.95,
-          "date": "2026-08-18"
-        }
-      ],
-      "ask": "\"Thinking Machines: Inkling\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
-    },
-    {
-      "id": "new:thinkingmachinesinklingsmall",
-      "model": "Thinking Machines: Inkling Small",
-      "kind": "new-model",
-      "current": null,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.44999999999999996,
-          "date": "2026-08-18"
-        }
-      ],
-      "ask": "\"Thinking Machines: Inkling Small\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
-    },
-    {
-      "id": "new:upstagesolarpro4",
-      "model": "Upstage: Solar Pro 4",
-      "kind": "new-model",
-      "current": null,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.03,
-          "date": "2026-08-18"
-        }
-      ],
-      "ask": "\"Upstage: Solar Pro 4\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
       "id": "new:xaigroklatest",
