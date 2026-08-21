@@ -1241,8 +1241,8 @@
       "vendor": "Google",
       "released": "unknown",
       "context_window": null,
-      "price_input": 1.5,
-      "price_output": 7.5,
+      "price_input": 0.75,
+      "price_output": 3.75,
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": null,
@@ -1741,7 +1741,8 @@
         "https://openrouter.ai/aion-labs/aion-3.0",
         "https://writingmate.ai/models/aion-labs/aion-3.0",
         "https://designforonline.com/ai-models/aionlabs-aion-3-0/"
-      ]
+      ],
+      "best_for_line": "Priciest AionLabs model · 131K ctx · $3/$6"
     },
     {
       "benchmarks": {
@@ -1772,7 +1773,8 @@
         "https://www.aionlabs.ai/",
         "https://openrouter.ai/aion-labs/aion-3.0-mini",
         "https://designforonline.com/ai-models/aionlabs-aion-3-0-mini/"
-      ]
+      ],
+      "best_for_line": "Cheapest AionLabs model · 131K ctx · $0.7/$1.4"
     },
     {
       "benchmarks": {
@@ -1801,7 +1803,8 @@
         "https://seed.bytedance.com/en/seed2",
         "https://howaiworks.ai/models/doubao-seed-code",
         "https://developer.puter.com/ai/bytedance/seed-2.0-code/"
-      ]
+      ],
+      "best_for_line": "ByteDance model · 256K ctx"
     },
     {
       "benchmarks": {
@@ -1831,7 +1834,8 @@
       "sources": [
         "https://poolside.ai/blog/introducing-laguna-xs-2-1",
         "https://huggingface.co/poolside/Laguna-XS.2"
-      ]
+      ],
+      "best_for_line": "Poolside model · 256K ctx · $0.1/$0.2"
     },
     {
       "benchmarks": {
@@ -1862,7 +1866,8 @@
         "https://x.com/Alibaba_Qwen/status/2084100707423289643",
         "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b",
         "https://www.marktechpost.com/2026/07/19/alibaba-previews-qwen3-8-max-a-2-4-trillion-parameter-multimodal-model-days-after-moonshots-kimi-k3-open-weight-launch/"
-      ]
+      ],
+      "best_for_line": "Priciest Alibaba (Qwen) model · 984K ctx · $2/$6"
     },
     {
       "benchmarks": {
@@ -1892,7 +1897,8 @@
       "sources": [
         "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
         "https://venturebeat.com/technology/qwen3-8-27b-runs-frontier-class-coding-agents-and-reasoning-locally-no-cloud-api-required"
-      ]
+      ],
+      "best_for_line": "Alibaba (Qwen) model · 262K ctx"
     },
     {
       "benchmarks": {
@@ -1922,7 +1928,8 @@
       "sources": [
         "https://sakana.ai/namazu-api/",
         "https://aiweekly.co/alerts/sakana-ai-ships-namazu-a-japanese-tuned-kimi-k26-llm"
-      ]
+      ],
+      "best_for_line": "Sakana AI model · $0.95/$4"
     },
     {
       "benchmarks": {
@@ -1952,7 +1959,8 @@
       "sources": [
         "https://www.tencent.com/en-us/articles/2202386.html",
         "https://technode.com/2026/07/07/tencent-launches-hunyuan-hy3-integrates-model-across-multiple-products/"
-      ]
+      ],
+      "best_for_line": "Tencent model · 256K ctx · $0.15/$0.59"
     },
     {
       "benchmarks": {
@@ -1982,7 +1990,8 @@
       "sources": [
         "https://thinkingmachines.ai/model-card/inkling/",
         "https://techcrunch.com/2026/07/15/thinking-machines-amps-up-its-bet-against-one-size-fits-all-ai-with-its-first-open-model-inkling/"
-      ]
+      ],
+      "best_for_line": "Thinking Machines Lab model · 1M ctx"
     },
     {
       "benchmarks": {
@@ -2012,7 +2021,8 @@
       "sources": [
         "https://thinkingmachines.ai/news/inkling-small/",
         "https://venturebeat.com/technology/thinking-machines-debuts-inkling-small-open-source-ai-model-nearing-performance-of-predecessor-at-about-1-4-size"
-      ]
+      ],
+      "best_for_line": "Thinking Machines Lab model · 1M ctx · $0.45/$1.2"
     },
     {
       "benchmarks": {
@@ -2042,7 +2052,8 @@
       "sources": [
         "https://www.upstage.ai/blog/en/solar-pro-4",
         "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4"
-      ]
+      ],
+      "best_for_line": "Upstage model · 524K ctx · $0.3/$1.2"
     }
   ],
   "releases": [

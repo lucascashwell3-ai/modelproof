@@ -267,5 +267,27 @@
       "https://www.upstage.ai/blog/en/solar-pro-4",
       "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4"
     ]
+  },
+  {
+    "date": "2026-08-21",
+    "model": "Gemini 3.6 Flash",
+    "field": "price_input",
+    "old": 1.5,
+    "new": 0.75,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-08-21",
+    "model": "Gemini 3.6 Flash",
+    "field": "price_output",
+    "old": 7.5,
+    "new": 3.75,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
   }
 ]
