@@ -1423,7 +1423,8 @@ async function boot() {
   initReveal();
   renderFilters();
   renderLabChips();          // build the "which lab" chips from the data's vendors + wire them
-  if ($('#result')) renderResult();   // engine + comparator live on the home page only
+  if ($('#cmpBoard')) seedCompare();  // the side-by-side board seeds from the default task until the user hand-picks
+  if ($('#chart')) renderChart();      // the model map used to hang off the hero engine's verdict; it stands alone now
   renderEffort();            // published effort ladders; guarded no-op on table.html
   renderTable();             // full table lives on table.html; guarded no-op elsewhere
   renderFeed();
