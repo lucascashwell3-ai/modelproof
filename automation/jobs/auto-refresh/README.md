@@ -27,6 +27,16 @@ searches vendor pages, model cards, Epoch, papers for anything Collect can't set
   only, numeric fields numeric, sourced, reason ≥12 chars), gate-checked, restores the file and
   exits 1 on gate failure.
 
+**Usage guidance (added 2026-08-22):** the advisor skill ranks on `best_for` + `use_well`, and 24
+of 49 models had neither. Collect now puts up to 3 blank models per run on the worklist as
+`guidance` items — reserved slots inside the 15 (a live dry-run showed ~45 higher-priority
+candidates per run, so without reservation guidance would never reach the Judge). Rotation is a
+cursor in `data/_auto_refresh_state.json` (`guidanceCursor`): sorted ids, start after the last
+attempted, wrap — a held model comes round again after the rest. The Judge fills from the
+vendor's docs, cited; `apply-judgment.mjs` enforces vocab tags, 2–4 tips of 20–240 chars, and
+growth-only (never overwrites existing guidance). At 3 per run, 2 runs/week, the blank half of the
+catalog fills in about a month.
+
 **Caps:** 2 passes/week. Judge: ≤15 worklist items, ≤10 minutes wall-clock, Sonnet only. Anything
 past the cap waits for the next pass — nothing piles up silently, it just stays in the worklist.
 

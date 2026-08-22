@@ -31,7 +31,12 @@ const worklistUrl = new URL('data/refresh/worklist.json', ROOT);
 const receiptUrl = new URL('data/refresh/receipt-collect.json', ROOT);
 
 const MAX_WORKLIST = 15;
-const WORKLIST_PRIORITY = { 'new-model': 0, conflict: 1, deprecation: 2, benchmark: 3, ladder: 4, release: 5 };
+const WORKLIST_PRIORITY = { 'new-model': 0, conflict: 1, deprecation: 2, benchmark: 3, ladder: 4, release: 5, guidance: 6 };
+// Usage guidance (best_for + use_well) is what the advisor skill ranks on; Collect can't write
+// prose, so blank models rotate through the Judge a few at a time. They get RESERVED slots
+// inside the 15 — a live dry-run (2026-08-22) showed ~45 higher-priority candidates every run,
+// so "lowest priority" alone meant guidance would never reach the Judge. 24 of 49 were blank.
+const GUIDANCE_PER_RUN = 3;
 const LMARENA_URL = 'https://storage.googleapis.com/lmsys-arena-external/leaderboard_table.csv';
 
 const OR_URL = 'https://openrouter.ai/api/v1/models';
@@ -213,18 +218,54 @@ export function trackDeprecation(state, presentIds, allModelIds) {
 }
 
 /**
+ * Which models still need usage guidance: empty best_for or empty use_well. Deprecated models
+ * and models with no price at all are skipped — nothing to recommend yet.
+ */
+export function needsGuidance(m) {
+  if (m.deprecated) return false;
+  if (m.price_input == null && m.price_output == null) return false;
+  return !(m.best_for || []).length || !(m.use_well || []).length;
+}
+
+/**
+ * Rotating pick: sort blank ids, start after the last id attempted (state.guidanceCursor),
+ * wrap around, take GUIDANCE_PER_RUN. Same state + same models → same picks (idempotent);
+ * a model the Judge held simply comes round again after the others have had their turn.
+ */
+export function pickGuidance(models, state, perRun = GUIDANCE_PER_RUN) {
+  const ids = models.filter(needsGuidance).map((m) => m.id).sort();
+  if (!ids.length) return { picked: [], cursor: state.guidanceCursor ?? null };
+  const cursor = state.guidanceCursor ?? null;
+  let start = cursor ? ids.findIndex((id) => id > cursor) : 0;
+  if (start < 0) start = 0;
+  const picked = [];
+  for (let i = 0; i < Math.min(perRun, ids.length); i++) picked.push(ids[(start + i) % ids.length]);
+  return { picked, cursor: picked[picked.length - 1] };
+}
+
+export function guidanceItem(m, today) {
+  return {
+    id: `${m.id}:guidance`, model: m.name, kind: 'guidance', field: 'use_well', current: null,
+    observations: [{ source: 'auto-refresh', url: OR_URL, value: null, date: today }],
+    ask: `${m.name} has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete.`,
+  };
+}
+
+/**
  * Sort candidate worklist items by kind priority (new-model > conflict > benchmark > ladder >
  * release), then by id for a stable tie-break, and cap at MAX_WORKLIST. Same input always
  * produces the same output (idempotent) — nothing here depends on wall-clock time or Math.random.
  */
 export function buildWorklist(items) {
-  const sorted = [...items].sort((a, b) => {
+  const byPriority = (a, b) => {
     const pa = WORKLIST_PRIORITY[a.kind] ?? 99;
     const pb = WORKLIST_PRIORITY[b.kind] ?? 99;
     if (pa !== pb) return pa - pb;
     return String(a.id).localeCompare(String(b.id));
-  });
-  return sorted.slice(0, MAX_WORKLIST);
+  };
+  const guidance = items.filter((i) => i.kind === 'guidance').sort(byPriority).slice(0, GUIDANCE_PER_RUN);
+  const rest = items.filter((i) => i.kind !== 'guidance').sort(byPriority).slice(0, MAX_WORKLIST - guidance.length);
+  return [...rest, ...guidance].sort(byPriority);
 }
 
 /**
@@ -470,6 +511,14 @@ async function main() {
     });
   }
 
+  // Usage guidance — a rotating handful of blank models for the Judge (lowest priority).
+  const guidance = pickGuidance(data.models, nextState);
+  for (const id of guidance.picked) {
+    const m = data.models.find((x) => x.id === id);
+    if (m) worklistItems.push(guidanceItem(m, today));
+  }
+  nextState.guidanceCursor = guidance.cursor;
+
   // --- worklist (computed regardless of dry-run, so --dry-run can preview it) ------------------
   const worklist = { generated: today, items: buildWorklist(worklistItems) };
 
@@ -549,6 +598,7 @@ async function main() {
   newModels.forEach((n) => console.log(`  ${n.name} (${n.vendor})`));
   if (absentNow.length) console.log('\n-- absent 2 consecutive runs (deprecation worklist item, never auto-applied) --\n' + absentNow.join(', '));
   console.log(`\n-- worklist for the Judge (${worklist.items.length} of ${worklistItems.length} candidates, first 10) --`);
+  console.log('  by kind: ' + Object.entries(worklist.items.reduce((acc, i) => ((acc[i.kind] = (acc[i.kind] || 0) + 1), acc), {})).map(([k, n]) => `${k}=${n}`).join(' '));
   worklist.items.slice(0, 10).forEach((i) => console.log(`  [${i.kind}] ${i.model}: ${i.ask}`));
 
   if (!dryRun) await reportIssue(held);

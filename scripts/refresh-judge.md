@@ -19,6 +19,15 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
    - Apply: `{"id", "kind", "field"?, "value", "sources":[{"url","date"}], "reason"}` — reason
      ≥12 chars, cites what you found.
    - Hold: `{"id", "hold": true, "reason"}`.
+   - **`guidance` items** (up to 3 per run — a blank model needs `best_for` tags + `use_well`
+     tips): read the vendor's own model card / docs page, then
+     `"value": {"best_for": [tags from the vocab in the ask], "use_well": [2–4 tips], "strengths"?: [...]}`.
+     Tips are plain one-sentence advice someone would act on — when its thinking mode earns its
+     cost, when a cheaper tier is enough, cache/batch tactics, pricing traps — in the same voice
+     as the existing `use_well` entries in `data/models.json`. Every tip must trace to something
+     the vendor actually published; if the vendor publishes nothing concrete, hold. Never copy a
+     marketing line; never infer a capability from the model's name or size. Guidance only fills
+     empty fields — it can't overwrite what's already there.
 5. Run `node scripts/apply-judgment.mjs judgments.json`. It enforces the schema, applies, runs
    the honesty gate, and restores the file if the gate fails — trust its exit code.
 6. If it exits 0: `git add data/` (data/ files only — models.json, changelog.json,

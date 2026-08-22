@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   normalize, matchAlias, withinTolerance, factAgreement, withinSanityBounds,
   newerWins, admitNewModel, isKnownVendor, trackDeprecation, canonicalKey, evaluateFact,
-  buildWorklist, bestForLine,
+  buildWorklist, bestForLine, needsGuidance, pickGuidance, guidanceItem,
 } from './auto-refresh.mjs';
 
 test('normalize strips punctuation/case', () => {
@@ -275,4 +275,48 @@ test('collect receipt has the documented shape', () => {
   }
   assert.equal(receipt.job, 'collect');
   assert.equal(typeof receipt.ok, 'boolean');
+});
+
+// --- usage guidance rotation (2026-08-22) -----------------------------------------------------
+const G = (id, extra = {}) => ({ id, name: id, price_input: 1, price_output: 2, best_for: [], use_well: [], ...extra });
+test('needsGuidance: blank models yes; filled, deprecated, or unpriced models no', () => {
+  assert.equal(needsGuidance(G('a')), true);
+  assert.equal(needsGuidance(G('b', { best_for: ['coding'] })), true);            // half-blank still counts
+  assert.equal(needsGuidance(G('c', { best_for: ['coding'], use_well: ['x'] })), false);
+  assert.equal(needsGuidance(G('d', { deprecated: true })), false);
+  assert.equal(needsGuidance(G('e', { price_input: null, price_output: null })), false);
+});
+test('pickGuidance takes at most perRun, in sorted order, from a fresh state', () => {
+  const models = ['m3', 'm1', 'm2', 'm5', 'm4'].map((id) => G(id));
+  const { picked, cursor } = pickGuidance(models, {}, 3);
+  assert.deepEqual(picked, ['m1', 'm2', 'm3']);
+  assert.equal(cursor, 'm3');
+});
+test('pickGuidance rotates: the next run starts after the cursor and wraps around', () => {
+  const models = ['m1', 'm2', 'm3', 'm4', 'm5'].map((id) => G(id));
+  const r2 = pickGuidance(models, { guidanceCursor: 'm4' }, 4);
+  assert.deepEqual(r2.picked, ['m5', 'm1', 'm2', 'm3']);
+  const r3 = pickGuidance(models, { guidanceCursor: r2.cursor }, 4);
+  assert.deepEqual(r3.picked, ['m4', 'm5', 'm1', 'm2']);
+});
+test('pickGuidance is idempotent: same state + models → same picks', () => {
+  const models = ['m1', 'm2', 'm3'].map((id) => G(id));
+  assert.deepEqual(pickGuidance(models, { guidanceCursor: 'm1' }, 2), pickGuidance(models, { guidanceCursor: 'm1' }, 2));
+});
+test('pickGuidance: filled models drop out of the rotation; a stale cursor past the end wraps to the start', () => {
+  const models = [G('m1', { best_for: ['coding'], use_well: ['x'] }), G('m2'), G('m3')];
+  assert.deepEqual(pickGuidance(models, { guidanceCursor: 'm9' }, 4).picked, ['m2', 'm3']);
+  assert.deepEqual(pickGuidance([], {}, 4).picked, []);
+});
+test('guidance items sort last, keep their reserved slots when conflicts overflow, and never exceed 3', () => {
+  const items = [guidanceItem(G('zz'), '2026-08-22'), { id: 'a:price_input', kind: 'conflict' }, { id: 'b:lmarena_elo', kind: 'benchmark' }];
+  assert.deepEqual(buildWorklist(items).map((i) => i.kind), ['conflict', 'benchmark', 'guidance']);
+  const many = Array.from({ length: 40 }, (_, i) => ({ id: `c${String(i).padStart(2, '0')}:price_input`, kind: 'conflict' }));
+  const five = ['g1', 'g2', 'g3', 'g4', 'g5'].map((id) => guidanceItem(G(id), '2026-08-22'));
+  const out = buildWorklist([...many, ...five]);
+  assert.equal(out.length, 15);
+  assert.equal(out.filter((i) => i.kind === 'guidance').length, 3);
+  assert.equal(out.filter((i) => i.kind === 'conflict').length, 12);
+  // with no guidance candidates the full 15 go to the rest
+  assert.equal(buildWorklist(many).length, 15);
 });

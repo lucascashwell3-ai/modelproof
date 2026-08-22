@@ -151,3 +151,47 @@ test('CLI: a valid judgment applies, passes the gate, and removes the item from 
     assert.equal(receipt.ok, true);
   });
 });
+
+// --- guidance (2026-08-22): fills best_for + use_well on blank models, growth-only ------------
+const GOOD_GUIDANCE = {
+  id: 'blank-model:guidance', kind: 'guidance', reason: 'vendor model card lists intended uses and a batch discount',
+  sources: [{ url: 'https://vendor.example/docs/model', date: '2026-08-22' }],
+  value: { best_for: ['cheap-bulk', 'speed'], use_well: ['Turn thinking off for extraction — it only adds cost here.', 'Use the batch endpoint for anything overnight; the vendor halves the price.'] },
+};
+test('validateJudgment accepts a well-formed guidance judgment', () => {
+  assert.deepEqual(validateJudgment(GOOD_GUIDANCE), []);
+});
+test('validateJudgment rejects a guidance tag outside the vocab', () => {
+  const errs = validateJudgment({ ...GOOD_GUIDANCE, value: { ...GOOD_GUIDANCE.value, best_for: ['marketing'] } });
+  assert.ok(errs.some((e) => /not in vocab/.test(e)));
+});
+test('validateJudgment rejects guidance with one tip, five tips, or a tip under 20 chars', () => {
+  assert.ok(validateJudgment({ ...GOOD_GUIDANCE, value: { ...GOOD_GUIDANCE.value, use_well: ['Only one tip that is long enough to pass.'] } }).length);
+  assert.ok(validateJudgment({ ...GOOD_GUIDANCE, value: { ...GOOD_GUIDANCE.value, use_well: Array(5).fill('A perfectly fine tip that is long enough.') } }).length);
+  assert.ok(validateJudgment({ ...GOOD_GUIDANCE, value: { ...GOOD_GUIDANCE.value, use_well: ['too short', 'A perfectly fine tip that is long enough.'] } }).length);
+});
+test('validateJudgment rejects guidance that tries to set a price', () => {
+  const errs = validateJudgment({ ...GOOD_GUIDANCE, value: { ...GOOD_GUIDANCE.value, price_input: 0.1 } });
+  assert.ok(errs.some((e) => /can't set "price_input"/.test(e)));
+});
+test('applyOne fills empty guidance fields and records the source', () => {
+  const data = { models: [{ id: 'blank-model', name: 'Blank', best_for: [], use_well: [], sources: [] }] };
+  const entry = applyOne(data, GOOD_GUIDANCE, '2026-08-22');
+  assert.equal(entry.field, 'best_for+use_well');
+  assert.deepEqual(data.models[0].best_for, ['cheap-bulk', 'speed']);
+  assert.equal(data.models[0].use_well.length, 2);
+  assert.ok(data.models[0].sources.includes('https://vendor.example/docs/model'));
+});
+test('applyOne never overwrites guidance that already exists (growth-only)', () => {
+  const data = { models: [{ id: 'blank-model', name: 'Blank', best_for: ['coding'], use_well: ['A human wrote this tip and it must survive.'], sources: [] }] };
+  const entry = applyOne(data, GOOD_GUIDANCE, '2026-08-22');
+  assert.equal(entry, null);
+  assert.deepEqual(data.models[0].best_for, ['coding']);
+  assert.equal(data.models[0].use_well[0], 'A human wrote this tip and it must survive.');
+});
+test('applyOne fills only the empty half when one field already has guidance', () => {
+  const data = { models: [{ id: 'blank-model', name: 'Blank', best_for: ['coding'], use_well: [], sources: [] }] };
+  const entry = applyOne(data, GOOD_GUIDANCE, '2026-08-22');
+  assert.equal(entry.field, 'use_well');
+  assert.deepEqual(data.models[0].best_for, ['coding']);
+});

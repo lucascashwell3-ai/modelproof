@@ -32,6 +32,8 @@ const receiptUrl = new URL('data/refresh/receipt-judge.json', ROOT);
 const NUMERIC_MODEL_FIELDS = ['price_input', 'price_output', 'context_window', 'speed_tps'];
 const BENCHMARK_FIELDS = ['swe_bench', 'gpqa', 'aime', 'mmlu_pro', 'lmarena_elo'];
 const RELEASE_FIELDS = ['date', 'vendor', 'title', 'summary', 'source', 'why'];
+// same vocab as validate-data.mjs — a tag outside it fails the gate anyway; failing here is earlier and clearer
+const BEST_FOR_VOCAB = ['reasoning', 'agentic', 'coding', 'research', 'long-context', 'writing', 'cheap-bulk', 'speed', 'vision'];
 
 /** Validate one judgment. Returns an array of error strings (empty = valid). */
 export function validateJudgment(j) {
@@ -42,7 +44,7 @@ export function validateJudgment(j) {
     if (!j.reason || j.reason.length < 12) errs.push(`${j.id}: hold reason must be >= 12 chars`);
     return errs;
   }
-  if (!j.kind || !['conflict', 'benchmark', 'ladder', 'new-model', 'release'].includes(j.kind)) {
+  if (!j.kind || !['conflict', 'benchmark', 'ladder', 'new-model', 'release', 'guidance'].includes(j.kind)) {
     errs.push(`${j.id}: bad or missing kind "${j.kind}"`);
   }
   if (!j.reason || j.reason.length < 12) errs.push(`${j.id}: reason must be >= 12 chars ("${j.reason || ''}")`);
@@ -71,6 +73,16 @@ export function validateJudgment(j) {
         errs.push(`${j.id}: new-model field "${f}" is numeric but value is "${j.value[f]}"`);
       }
     }
+  } else if (j.kind === 'guidance') {
+    // value: { best_for: [vocab…], use_well: [2–4 plain sentences], strengths?: [...] }
+    const v = j.value;
+    if (!v || typeof v !== 'object') { errs.push(`${j.id}: guidance value must be an object`); return errs; }
+    if (!Array.isArray(v.best_for) || !v.best_for.length) errs.push(`${j.id}: guidance needs best_for[]`);
+    else for (const t of v.best_for) if (!BEST_FOR_VOCAB.includes(t)) errs.push(`${j.id}: best_for tag "${t}" not in vocab`);
+    if (!Array.isArray(v.use_well) || v.use_well.length < 2 || v.use_well.length > 4) errs.push(`${j.id}: use_well needs 2–4 tips`);
+    else for (const t of v.use_well) if (typeof t !== 'string' || t.length < 20 || t.length > 240) errs.push(`${j.id}: use_well tip must be 20–240 chars`);
+    if (v.strengths != null && (!Array.isArray(v.strengths) || v.strengths.some((t) => typeof t !== 'string'))) errs.push(`${j.id}: strengths must be string[]`);
+    for (const k of Object.keys(v)) if (!['best_for', 'use_well', 'strengths'].includes(k)) errs.push(`${j.id}: guidance can't set "${k}"`);
   } else if (j.kind === 'ladder') {
     if (!j.value || typeof j.value !== 'object' || !Array.isArray(j.value.series)) {
       errs.push(`${j.id}: ladder judgment needs value{series:[...]}`);
@@ -108,6 +120,18 @@ export function applyOne(data, j, today) {
     };
     data.models.push(nm);
     return { date: today, model: nm.name, field: 'added', old: null, new: 'new model (judged)', sources: nm.sources, reason: j.reason };
+  }
+  if (j.kind === 'guidance') {
+    // growth-only: fills empty fields, never overwrites guidance a human or earlier Judge wrote
+    const m = data.models.find((x) => x.id === modelId);
+    if (!m) throw new Error(`${j.id}: no model with id "${modelId}"`);
+    const filled = [];
+    for (const f of ['best_for', 'use_well', 'strengths']) {
+      if (j.value[f] && !(m[f] || []).length) { m[f] = j.value[f]; filled.push(f); }
+    }
+    if (!filled.length) return null;   // nothing was empty — a no-op, not an overwrite
+    m.sources = Array.from(new Set([...(m.sources || []), ...j.sources.map((s) => s.url)]));
+    return { date: today, model: m.name, field: filled.join('+'), old: null, new: 'usage guidance', sources: j.sources.map((s) => s.url), reason: j.reason };
   }
   if (j.kind === 'ladder') {
     data.effort_ladders = data.effort_ladders || [];
