@@ -4,8 +4,7 @@
    Stages: feed -> check -> publish -> worklist -> report. See automation/jobs/auto-refresh/README.md.
 
    feed:     OpenRouter models API + LiteLLM price table (both Tier-A, public, no key) + Epoch
-             (via scripts/collect-epoch.mjs, reused as a module) + LMArena leaderboard (best
-             effort — public JSON/CSV; skipped with a note if unreachable, no scraping).
+             (via scripts/collect-epoch.mjs, reused as a module)
    check:    deterministic rules decide what counts as a fact (see FACT RULES below). No LLM
              judgment here — that layer moved to the Judge cloud routine (scripts/refresh-judge.md).
    publish:  writes data/models.json + data/changelog.json, then runs the honesty gate.
@@ -20,6 +19,10 @@
                it locally; the script just skips the issue step).
 */
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { isNotablePriceChange, priceEntry, addEntry } from './timeline.mjs';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = new URL('../', import.meta.url);
@@ -31,8 +34,12 @@ const worklistUrl = new URL('data/refresh/worklist.json', ROOT);
 const receiptUrl = new URL('data/refresh/receipt-collect.json', ROOT);
 
 const MAX_WORKLIST = 15;
-const WORKLIST_PRIORITY = { 'new-model': 0, conflict: 1, deprecation: 2, benchmark: 3, ladder: 4, release: 5 };
-const LMARENA_URL = 'https://storage.googleapis.com/lmsys-arena-external/leaderboard_table.csv';
+const WORKLIST_PRIORITY = { 'new-model': 0, conflict: 1, deprecation: 2, benchmark: 3, ladder: 4, release: 5, guidance: 6 };
+// Usage guidance (best_for + use_well) is what the advisor skill ranks on; Collect can't write
+// prose, so blank models rotate through the Judge a few at a time. They get RESERVED slots
+// inside the 15 — a live dry-run (2026-08-22) showed ~45 higher-priority candidates every run,
+// so "lowest priority" alone meant guidance would never reach the Judge. 24 of 49 were blank.
+const GUIDANCE_PER_RUN = 3;
 
 const OR_URL = 'https://openrouter.ai/api/v1/models';
 const LITELLM_URL = 'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json';
@@ -213,18 +220,132 @@ export function trackDeprecation(state, presentIds, allModelIds) {
 }
 
 /**
+ * Which models still need usage guidance: empty best_for or empty use_well. Deprecated models
+ * and models with no price at all are skipped — nothing to recommend yet.
+ */
+export function needsGuidance(m) {
+  if (m.deprecated) return false;
+  if (m.price_input == null && m.price_output == null) return false;
+  return !(m.best_for || []).length || !(m.use_well || []).length;
+}
+
+/**
+ * Rotating pick: sort blank ids, start after the last id attempted (state.guidanceCursor),
+ * wrap around, take GUIDANCE_PER_RUN. Same state + same models → same picks (idempotent);
+ * a model the Judge held simply comes round again after the others have had their turn.
+ */
+export function pickGuidance(models, state, perRun = GUIDANCE_PER_RUN) {
+  const ids = models.filter(needsGuidance).map((m) => m.id).sort();
+  if (!ids.length) return { picked: [], cursor: state.guidanceCursor ?? null };
+  const cursor = state.guidanceCursor ?? null;
+  let start = cursor ? ids.findIndex((id) => id > cursor) : 0;
+  if (start < 0) start = 0;
+  const picked = [];
+  for (let i = 0; i < Math.min(perRun, ids.length); i++) picked.push(ids[(start + i) % ids.length]);
+  return { picked, cursor: picked[picked.length - 1] };
+}
+
+export function guidanceItem(m, today) {
+  return {
+    id: `${m.id}:guidance`, model: m.name, kind: 'guidance', field: 'use_well', current: null,
+    observations: [{ source: 'auto-refresh', url: OR_URL, value: null, date: today }],
+    ask: `${m.name} has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete.`,
+  };
+}
+
+// --- effort ladders: CursorBench from Epoch AI's CC-BY export (tier A, exact values) ----------
+const EPOCH_ZIP_URL = 'https://epoch.ai/data/benchmark_data.zip';
+const CURSORBENCH_LADDER_ID = 'cursorbench-agentic-coding';
+const EFFORT_ORDER = ['low', 'medium', 'high', 'xhigh', 'max'];
+
+/** Tiny CSV reader — quoted fields with commas are the only wrinkle in Epoch's file. */
+export function parseCsv(text) {
+  const rows = [];
+  for (const line of text.split(/\r?\n/)) {
+    if (!line.trim()) continue;
+    const cells = []; let cur = '', q = false;
+    for (const ch of line) {
+      if (ch === '"') q = !q;
+      else if (ch === ',' && !q) { cells.push(cur); cur = ''; }
+      else cur += ch;
+    }
+    cells.push(cur);
+    rows.push(cells);
+  }
+  const head = rows.shift() || [];
+  return rows.map((r) => Object.fromEntries(head.map((h, i) => [h, r[i] ?? ''])));
+}
+
+/**
+ * Rebuild the CursorBench ladder's points from Epoch's cursorbench_external.csv. Pure: returns
+ * { changed, notes }. Each series carries `source_key` (the CSV's model-version stem, e.g.
+ * "gpt-5.6-sol"); rows are "<stem>_<level>". Rules, in the spirit of the price feed:
+ *  - the series list is fixed here — this never adds or drops a model, only refreshes rungs;
+ *  - a series the file no longer carries (or carries with < 2 usable rungs) keeps yesterday's
+ *    points and is noted, never blanked;
+ *  - a rung without both cost and score is dropped, never interpolated;
+ *  - as_of moves to `today` only when at least one point actually changed.
+ */
+export function refreshCursorBench(data, rows, today) {
+  const L = (data.effort_ladders || []).find((l) => l.id === CURSORBENCH_LADDER_ID);
+  const notes = [];
+  if (!L) return { changed: false, notes: ['no cursorbench ladder in data'] };
+  let changed = false;
+  for (const s of L.series) {
+    if (!s.source_key) { notes.push(`${s.label}: no source_key — left as is`); continue; }
+    const pts = {};
+    for (const r of rows) {
+      const mv = r['Model version'] || '';
+      const i = mv.lastIndexOf('_');
+      if (i < 0) continue;
+      const stem = mv.slice(0, i), lvl = mv.slice(i + 1).toLowerCase();
+      if (stem !== s.source_key || !EFFORT_ORDER.includes(lvl)) continue;
+      const cost = Number(r['Cost per task']), score = Number(r['Score']);
+      if (!r['Cost per task'] || !r['Score'] || !Number.isFinite(cost) || !Number.isFinite(score) || cost <= 0) continue;
+      pts[lvl] = { effort: lvl, cost: Math.round(cost * 100) / 100, score: Math.round(score * 1000) / 10 };
+    }
+    const next = EFFORT_ORDER.filter((l) => pts[l]).map((l) => pts[l]);
+    if (next.length < 2) { notes.push(`${s.label}: ${next.length} usable rung(s) in the file — kept previous ${s.points.length}`); continue; }
+    if (JSON.stringify(next) !== JSON.stringify(s.points)) { s.points = next; changed = true; notes.push(`${s.label}: ${next.length} rungs refreshed`); }
+  }
+  if (changed) L.as_of = today;
+  return { changed, notes };
+}
+
+/** Download Epoch's bundle and pull the CursorBench CSV out of it. Best effort — [] on any failure. */
+async function feedEpochCursorBench() {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 60000);
+  try {
+    const res = await fetch(EPOCH_ZIP_URL, { signal: ctrl.signal });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const zipPath = join(tmpdir(), `epoch-benchmarks-${process.pid}.zip`);
+    writeFileSync(zipPath, Buffer.from(await res.arrayBuffer()));
+    const csv = execFileSync('unzip', ['-p', zipPath, 'cursorbench_external.csv'], { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+    return parseCsv(csv);
+  } catch (e) {
+    console.log(`feed: Epoch CursorBench export unreachable (${e.message}) — ladder keeps its current points.`);
+    return [];
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+/**
  * Sort candidate worklist items by kind priority (new-model > conflict > benchmark > ladder >
  * release), then by id for a stable tie-break, and cap at MAX_WORKLIST. Same input always
  * produces the same output (idempotent) — nothing here depends on wall-clock time or Math.random.
  */
 export function buildWorklist(items) {
-  const sorted = [...items].sort((a, b) => {
+  const byPriority = (a, b) => {
     const pa = WORKLIST_PRIORITY[a.kind] ?? 99;
     const pb = WORKLIST_PRIORITY[b.kind] ?? 99;
     if (pa !== pb) return pa - pb;
     return String(a.id).localeCompare(String(b.id));
-  });
-  return sorted.slice(0, MAX_WORKLIST);
+  };
+  const guidance = items.filter((i) => i.kind === 'guidance').sort(byPriority).slice(0, GUIDANCE_PER_RUN);
+  const rest = items.filter((i) => i.kind !== 'guidance').sort(byPriority).slice(0, MAX_WORKLIST - guidance.length);
+  return [...rest, ...guidance].sort(byPriority);
 }
 
 /**
@@ -306,31 +427,6 @@ async function feedLiteLLM() {
   }
 }
 
-/** LMArena leaderboard — best effort. Public CSV export; no scraping if it moves or 404s. */
-async function feedLmArena() {
-  try {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 15000);
-    let res;
-    try {
-      res = await fetch(LMARENA_URL, { signal: ctrl.signal });
-    } finally {
-      clearTimeout(t);
-    }
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text = await res.text();
-    const [head, ...rows] = text.trim().split('\n').map((r) => r.split(','));
-    const nameIdx = head.findIndex((h) => /model/i.test(h));
-    const eloIdx = head.findIndex((h) => /elo|score|rating/i.test(h));
-    if (nameIdx < 0 || eloIdx < 0) throw new Error('unexpected CSV shape');
-    return rows.filter((r) => r.length > Math.max(nameIdx, eloIdx)).map((r) => ({
-      source: 'lmarena', name: r[nameIdx], lmarena_elo: Number(r[eloIdx]) || null,
-    }));
-  } catch (e) {
-    console.log(`feed: LMArena unreachable/unavailable (${e.message}) — skipping, no scraping fallback.`);
-    return [];
-  }
-}
 
 // ---------------------------------------------------------------------------------------------
 // main
@@ -344,9 +440,12 @@ async function main() {
   const changelog = existsSync(changelogUrl) ? JSON.parse(readFileSync(changelogUrl)) : [];
   const today = new Date().toISOString().slice(0, 10);
 
-  console.log('feed: fetching OpenRouter + LiteLLM + LMArena...');
-  const [orList, llmList, arenaList] = await Promise.all([feedOpenRouter(), feedLiteLLM(), feedLmArena()]);
-  console.log(`feed: openrouter=${orList.length} litellm=${llmList.length} lmarena=${arenaList.length} candidates`);
+  console.log('feed: fetching OpenRouter + LiteLLM...');
+  const [orList, llmList] = await Promise.all([feedOpenRouter(), feedLiteLLM()]);
+  console.log(`feed: openrouter=${orList.length} litellm=${llmList.length} candidates`);
+  const epochRows = await feedEpochCursorBench();
+  const ladder = epochRows.length ? refreshCursorBench(data, epochRows, today) : { changed: false, notes: ['feed empty — untouched'] };
+  console.log(`ladder: cursorbench ${ladder.changed ? 'REFRESHED' : 'unchanged'} — ${ladder.notes.join('; ')}`);
 
   const applied = [];
   const held = [];
@@ -385,17 +484,6 @@ async function main() {
       }
     }
 
-    // LMArena elo — benchmark candidate, not an auto-applied fact (single source).
-    if (m.benchmarks?.lmarena_elo == null) {
-      const arenaMatch = arenaList.find((a) => matchAlias(a.name, [m], aliases) === m.id);
-      if (arenaMatch?.lmarena_elo != null) {
-        worklistItems.push({
-          id: `${m.id}:lmarena_elo`, model: m.name, kind: 'benchmark', field: 'lmarena_elo', current: null,
-          observations: [{ source: 'lmarena', url: LMARENA_URL, value: arenaMatch.lmarena_elo, date: today }],
-          ask: `LMArena reports an elo of ${arenaMatch.lmarena_elo} for ${m.name} — corroborate against a second leaderboard or the vendor card before publishing.`,
-        });
-      }
-    }
   }
 
   // --- check: new models -----------------------------------------------------------------------
@@ -422,7 +510,7 @@ async function main() {
         price_input: c.priceInput != null ? Math.round(c.priceInput * 100) / 100 : (llmSame?.priceInput ?? null),
         price_output: c.priceOutput != null ? Math.round(c.priceOutput * 100) / 100 : (llmSame?.priceOutput ?? null),
         speed_tps: null,
-        benchmarks: { swe_bench: null, gpqa: null, aime: null, mmlu_pro: null, lmarena_elo: null },
+        benchmarks: { swe_bench: null, gpqa: null, aime: null, mmlu_pro: null },
         best_for: [],
         strengths: [],
         weaknesses: [],
@@ -470,6 +558,14 @@ async function main() {
     });
   }
 
+  // Usage guidance — a rotating handful of blank models for the Judge (lowest priority).
+  const guidance = pickGuidance(data.models, nextState);
+  for (const id of guidance.picked) {
+    const m = data.models.find((x) => x.id === id);
+    if (m) worklistItems.push(guidanceItem(m, today));
+  }
+  nextState.guidanceCursor = guidance.cursor;
+
   // --- worklist (computed regardless of dry-run, so --dry-run can preview it) ------------------
   const worklist = { generated: today, items: buildWorklist(worklistItems) };
 
@@ -482,6 +578,10 @@ async function main() {
       m[a.field] = a.new;
       changed = true;
       changelog.push({ date: today, model: a.model, field: a.field, old: a.old, new: a.new, sources: a.sources });
+      // a price move of 20%+ is timeline news (kind: price); smaller moves stay in the changelog only
+      if ((a.field === 'price_input' || a.field === 'price_output') && isNotablePriceChange(a.old, a.new)) {
+        addEntry(data, priceEntry(m, a.field === 'price_input' ? 'input' : 'output', a.old, a.new, OR_URL, today));
+      }
     }
     for (const nm of newModels) {
       data.models.push(nm);
@@ -489,6 +589,7 @@ async function main() {
       changelog.push({ date: today, model: nm.name, field: 'added', old: null, new: 'new model', sources: nm.sources });
       data.releases = data.releases || [];
       data.releases.push({
+        kind: 'model',
         date: nm.released ? String(nm.released).slice(0, 10) : today,
         vendor: nm.vendor,
         title: `${nm.vendor} releases ${nm.name}`,
@@ -506,6 +607,10 @@ async function main() {
       }
     }
     if (bestForChanged) changed = true;
+    if (ladder.changed) {
+      changed = true;
+      changelog.push({ date: today, model: 'CursorBench ladder', field: 'effort_ladders', old: null, new: ladder.notes.join('; '), sources: [EPOCH_ZIP_URL] });
+    }
 
     if (changed) data.as_of = today;
     writeFileSync(stateUrl, JSON.stringify(nextState, null, 2) + '\n');
@@ -549,6 +654,7 @@ async function main() {
   newModels.forEach((n) => console.log(`  ${n.name} (${n.vendor})`));
   if (absentNow.length) console.log('\n-- absent 2 consecutive runs (deprecation worklist item, never auto-applied) --\n' + absentNow.join(', '));
   console.log(`\n-- worklist for the Judge (${worklist.items.length} of ${worklistItems.length} candidates, first 10) --`);
+  console.log('  by kind: ' + Object.entries(worklist.items.reduce((acc, i) => ((acc[i.kind] = (acc[i.kind] || 0) + 1), acc), {})).map(([k, n]) => `${k}=${n}`).join(' '));
   worklist.items.slice(0, 10).forEach((i) => console.log(`  [${i.kind}] ${i.model}: ${i.ask}`));
 
   if (!dryRun) await reportIssue(held);

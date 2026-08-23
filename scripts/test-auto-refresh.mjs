@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   normalize, matchAlias, withinTolerance, factAgreement, withinSanityBounds,
   newerWins, admitNewModel, isKnownVendor, trackDeprecation, canonicalKey, evaluateFact,
-  buildWorklist, bestForLine,
+  buildWorklist, bestForLine, needsGuidance, pickGuidance, guidanceItem, parseCsv, refreshCursorBench,
 } from './auto-refresh.mjs';
 
 test('normalize strips punctuation/case', () => {
@@ -275,4 +275,122 @@ test('collect receipt has the documented shape', () => {
   }
   assert.equal(receipt.job, 'collect');
   assert.equal(typeof receipt.ok, 'boolean');
+});
+
+// --- usage guidance rotation (2026-08-22) -----------------------------------------------------
+const G = (id, extra = {}) => ({ id, name: id, price_input: 1, price_output: 2, best_for: [], use_well: [], ...extra });
+test('needsGuidance: blank models yes; filled, deprecated, or unpriced models no', () => {
+  assert.equal(needsGuidance(G('a')), true);
+  assert.equal(needsGuidance(G('b', { best_for: ['coding'] })), true);            // half-blank still counts
+  assert.equal(needsGuidance(G('c', { best_for: ['coding'], use_well: ['x'] })), false);
+  assert.equal(needsGuidance(G('d', { deprecated: true })), false);
+  assert.equal(needsGuidance(G('e', { price_input: null, price_output: null })), false);
+});
+test('pickGuidance takes at most perRun, in sorted order, from a fresh state', () => {
+  const models = ['m3', 'm1', 'm2', 'm5', 'm4'].map((id) => G(id));
+  const { picked, cursor } = pickGuidance(models, {}, 3);
+  assert.deepEqual(picked, ['m1', 'm2', 'm3']);
+  assert.equal(cursor, 'm3');
+});
+test('pickGuidance rotates: the next run starts after the cursor and wraps around', () => {
+  const models = ['m1', 'm2', 'm3', 'm4', 'm5'].map((id) => G(id));
+  const r2 = pickGuidance(models, { guidanceCursor: 'm4' }, 4);
+  assert.deepEqual(r2.picked, ['m5', 'm1', 'm2', 'm3']);
+  const r3 = pickGuidance(models, { guidanceCursor: r2.cursor }, 4);
+  assert.deepEqual(r3.picked, ['m4', 'm5', 'm1', 'm2']);
+});
+test('pickGuidance is idempotent: same state + models → same picks', () => {
+  const models = ['m1', 'm2', 'm3'].map((id) => G(id));
+  assert.deepEqual(pickGuidance(models, { guidanceCursor: 'm1' }, 2), pickGuidance(models, { guidanceCursor: 'm1' }, 2));
+});
+test('pickGuidance: filled models drop out of the rotation; a stale cursor past the end wraps to the start', () => {
+  const models = [G('m1', { best_for: ['coding'], use_well: ['x'] }), G('m2'), G('m3')];
+  assert.deepEqual(pickGuidance(models, { guidanceCursor: 'm9' }, 4).picked, ['m2', 'm3']);
+  assert.deepEqual(pickGuidance([], {}, 4).picked, []);
+});
+test('guidance items sort last, keep their reserved slots when conflicts overflow, and never exceed 3', () => {
+  const items = [guidanceItem(G('zz'), '2026-08-22'), { id: 'a:price_input', kind: 'conflict' }, { id: 'b:gpqa', kind: 'benchmark' }];
+  assert.deepEqual(buildWorklist(items).map((i) => i.kind), ['conflict', 'benchmark', 'guidance']);
+  const many = Array.from({ length: 40 }, (_, i) => ({ id: `c${String(i).padStart(2, '0')}:price_input`, kind: 'conflict' }));
+  const five = ['g1', 'g2', 'g3', 'g4', 'g5'].map((id) => guidanceItem(G(id), '2026-08-22'));
+  const out = buildWorklist([...many, ...five]);
+  assert.equal(out.length, 15);
+  assert.equal(out.filter((i) => i.kind === 'guidance').length, 3);
+  assert.equal(out.filter((i) => i.kind === 'conflict').length, 12);
+  // with no guidance candidates the full 15 go to the rest
+  assert.equal(buildWorklist(many).length, 15);
+});
+
+// --- CursorBench ladder refresh from Epoch's CSV (2026-08-22) ----------------------------------
+const CSV = `Model version,Score,Reasoning level,Cost per task,Tokens per task,Name
+claude-opus-5_low,0.628,Low,2.55,18529,Opus 5 Low
+claude-opus-5_high,0.667,High,3.91,27932,Opus 5 High
+claude-opus-5_max,0.70,Max,8.23,61838,"Opus 5, Max"
+gpt-5.6-sol_low,0.526,Low,1.01,5104,Sol Low
+gpt-5.6-sol_max,,Max,5.69,28320,Sol Max
+grok-4.6_low,0.61,Low,0.70,1,Grok
+`;
+const ladderData = () => ({ effort_ladders: [{ id: 'cursorbench-agentic-coding', as_of: '2026-07-25', series: [
+  { model_id: 'claude-opus-5', label: 'Opus 5', source_key: 'claude-opus-5', points: [{ effort: 'high', cost: 3.91, score: 66.7 }] },
+  { model_id: 'gpt-5-6-sol', label: 'GPT-5.6 Sol', source_key: 'gpt-5.6-sol', points: [{ effort: 'low', cost: 1, score: 52 }, { effort: 'max', cost: 5.5, score: 67 }] },
+  { model_id: 'x-ai-grok-4-6', label: 'Grok 4.6', source_key: 'grok-4.6', points: [{ effort: 'low', cost: 0.7, score: 61 }, { effort: 'high', cost: 2.3, score: 69.9 }] },
+  { model_id: 'claude-fable-5', label: 'Fable 5', points: [{ effort: 'low', cost: 4, score: 62 }, { effort: 'max', cost: 18, score: 72.9 }] },
+] }] });
+test('parseCsv handles quoted commas and blank cells', () => {
+  const rows = parseCsv(CSV);
+  assert.equal(rows.length, 6);
+  assert.equal(rows[2].Name, 'Opus 5, Max');
+  assert.equal(rows[4].Score, '');
+});
+test('refreshCursorBench rebuilds rungs in effort order, rounds, and moves as_of only on change', () => {
+  const d = ladderData();
+  const r = refreshCursorBench(d, parseCsv(CSV), '2026-08-25');
+  assert.equal(r.changed, true);
+  const opus = d.effort_ladders[0].series[0];
+  assert.deepEqual(opus.points, [{ effort: 'low', cost: 2.55, score: 62.8 }, { effort: 'high', cost: 3.91, score: 66.7 }, { effort: 'max', cost: 8.23, score: 70 }]);
+  assert.equal(d.effort_ladders[0].as_of, '2026-08-25');
+  // second run with the same file: nothing changes, as_of stays
+  const r2 = refreshCursorBench(d, parseCsv(CSV), '2026-08-28');
+  assert.equal(r2.changed, false);
+  assert.equal(d.effort_ladders[0].as_of, '2026-08-25');
+});
+test('refreshCursorBench keeps yesterday\'s points when the file has fewer than 2 usable rungs for a model', () => {
+  const d = ladderData();
+  refreshCursorBench(d, parseCsv(CSV), '2026-08-25');
+  const sol = d.effort_ladders[0].series[1];     // Sol max has a blank score → only 1 usable rung
+  assert.equal(sol.points.length, 2);
+  assert.equal(sol.points[1].cost, 5.5);
+  const grok = d.effort_ladders[0].series[2];    // Grok has only 1 row → kept
+  assert.equal(grok.points.length, 2);
+});
+test('refreshCursorBench never adds or drops a series, and leaves a series without source_key alone', () => {
+  const d = ladderData();
+  refreshCursorBench(d, parseCsv(CSV), '2026-08-25');
+  assert.equal(d.effort_ladders[0].series.length, 4);
+  assert.deepEqual(d.effort_ladders[0].series[3].points, [{ effort: 'low', cost: 4, score: 62 }, { effort: 'max', cost: 18, score: 72.9 }]);
+});
+test('refreshCursorBench is a no-op on an empty feed and on data with no cursorbench ladder', () => {
+  const d = ladderData();
+  assert.equal(refreshCursorBench(d, [], '2026-08-25').changed, false);
+  assert.equal(refreshCursorBench({ effort_ladders: [] }, parseCsv(CSV), '2026-08-25').changed, false);
+});
+
+// --- timeline helpers (scripts/timeline.mjs) --------------------------------------------------
+import { isNotablePriceChange, priceEntry, addEntry } from './timeline.mjs';
+test('isNotablePriceChange: 20% is the bar; null or zero old price never qualifies', () => {
+  assert.equal(isNotablePriceChange(5, 4), true);
+  assert.equal(isNotablePriceChange(5, 4.5), false);
+  assert.equal(isNotablePriceChange(1, 1.2), true);
+  assert.equal(isNotablePriceChange(null, 4), false);
+  assert.equal(isNotablePriceChange(0, 4), false);
+});
+test('priceEntry + addEntry: tagged, sourced, and idempotent by title', () => {
+  const data = { releases: [] };
+  const m = { name: 'M One', vendor: 'Acme' };
+  assert.equal(addEntry(data, priceEntry(m, 'input', 1, 0.2, 'https://openrouter.ai/api/v1/models', '2026-08-25')), true);
+  assert.equal(addEntry(data, priceEntry(m, 'input', 1, 0.2, 'https://openrouter.ai/api/v1/models', '2026-08-25')), false);
+  assert.equal(data.releases.length, 1);
+  assert.equal(data.releases[0].kind, 'price');
+  assert.match(data.releases[0].title, /-80%/);
+  assert.equal(data.releases[0].source, 'https://openrouter.ai/api/v1/models');
 });
