@@ -2058,6 +2058,46 @@
   ],
   "releases": [
     {
+      "date": "2026-08-21",
+      "vendor": "OpenAI",
+      "title": "GPT-5.6 Sol price cut — $5/$30 → $4/$20 per 1M",
+      "summary": "OpenAI cut Sol's API price by 'over 20%' ($5 → $4 input, $30 → $20 output per 1M tokens), promotional through at least Nov 21, 2026. Subscription usage unaffected.",
+      "source": "https://community.openai.com/t/20-price-reduction-for-gpt-5-6-sol-api-codex-credits-and-chatgpt-work/1391726",
+      "why": "If Sol is your top-tier pick, re-run your cost-per-task maths — every effort ladder on this page that plots Sol uses the old price."
+    },
+    {
+      "date": "2026-08-13",
+      "vendor": "Google",
+      "title": "Google releases Gemini 3.7 Flash",
+      "summary": "An algorithmic update three weeks after 3.6 Flash, billed as Google's 'most intelligent workhorse model yet' for coding, web dev and agents. Introductory price $0.75/$3.75 per 1M through Dec 31, 2026, then $1.50/$7.50. Stated gains over 3.6 Flash: FrontierCode 1.1 43.6% (from 34.4%), DeepSWE v1.1 65.3% (from 49.0%).",
+      "source": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-3-7-flash/",
+      "why": "The cheap-and-capable tier moved: at $0.75/$3.75 this is the price of a small model with mid-tier coding scores. The intro price doubles on Jan 1 — budget for that."
+    },
+    {
+      "date": "2026-08-13",
+      "vendor": "DeepSeek",
+      "title": "DeepSeek V4 Pro goes GA as '0813' — and gets peak-hour pricing",
+      "summary": "V4 Pro leaves preview (1M context, 384K max output). Pricing now splits peak vs off-peak: output $1.98/1M off-peak vs $3.96 peak; cache-miss input $0.66 vs $1.32. Peak hours 01:00–04:00 and 06:00–10:00 UTC, Mon–Fri, effective Aug 16.",
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "why": "Overnight bulk jobs just got a clock: schedule them off-peak or pay double. The flat 'cheapest frontier-ish coder' story now depends on when you run."
+    },
+    {
+      "date": "2026-08-12",
+      "vendor": "xAI",
+      "title": "xAI releases Grok 4.6",
+      "summary": "Frontier multimodal model built on Grok 4.5, aimed at long-running agents, coding and visual work. 500K context; $2/$6 per 1M under 200K prompt tokens, $4/$12 above; four effort levels (low → xhigh). No benchmark numbers on xAI's own page.",
+      "source": "https://docs.x.ai/developers/release-notes",
+      "why": "On CursorBench it tops the board at a fraction of Opus-tier cost (see the effort ladders). Watch the 200K-token price cliff on long contexts."
+    },
+    {
+      "date": "2026-07-30",
+      "vendor": "OpenAI",
+      "title": "GPT-5.6 Luna −80%, Terra −20%",
+      "summary": "Luna drops from $1/$6 to $0.20/$1.20 per 1M; Terra from $2.50/$15 to $2/$12. Sol unchanged at the time (cut separately on Aug 21).",
+      "source": "https://openai.com/index/advancing-the-price-performance-frontier-with-gpt-5-6/",
+      "why": "Luna at $0.20/$1.20 is now a bulk-work candidate, not just a chat tier. Any ladder or chart costed before Jul 30 overstates Luna by 5x."
+    },
+    {
       "date": "2026-07-23",
       "vendor": "Anthropic",
       "title": "Anthropic releases Claude Opus 5",
