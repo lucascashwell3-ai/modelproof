@@ -4,8 +4,7 @@
    Stages: feed -> check -> publish -> worklist -> report. See automation/jobs/auto-refresh/README.md.
 
    feed:     OpenRouter models API + LiteLLM price table (both Tier-A, public, no key) + Epoch
-             (via scripts/collect-epoch.mjs, reused as a module) + LMArena leaderboard (best
-             effort — public JSON/CSV; skipped with a note if unreachable, no scraping).
+             (via scripts/collect-epoch.mjs, reused as a module)
    check:    deterministic rules decide what counts as a fact (see FACT RULES below). No LLM
              judgment here — that layer moved to the Judge cloud routine (scripts/refresh-judge.md).
    publish:  writes data/models.json + data/changelog.json, then runs the honesty gate.
@@ -41,7 +40,6 @@ const WORKLIST_PRIORITY = { 'new-model': 0, conflict: 1, deprecation: 2, benchma
 // inside the 15 — a live dry-run (2026-08-22) showed ~45 higher-priority candidates every run,
 // so "lowest priority" alone meant guidance would never reach the Judge. 24 of 49 were blank.
 const GUIDANCE_PER_RUN = 3;
-const LMARENA_URL = 'https://storage.googleapis.com/lmsys-arena-external/leaderboard_table.csv';
 
 const OR_URL = 'https://openrouter.ai/api/v1/models';
 const LITELLM_URL = 'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json';
@@ -429,31 +427,6 @@ async function feedLiteLLM() {
   }
 }
 
-/** LMArena leaderboard — best effort. Public CSV export; no scraping if it moves or 404s. */
-async function feedLmArena() {
-  try {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 15000);
-    let res;
-    try {
-      res = await fetch(LMARENA_URL, { signal: ctrl.signal });
-    } finally {
-      clearTimeout(t);
-    }
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text = await res.text();
-    const [head, ...rows] = text.trim().split('\n').map((r) => r.split(','));
-    const nameIdx = head.findIndex((h) => /model/i.test(h));
-    const eloIdx = head.findIndex((h) => /elo|score|rating/i.test(h));
-    if (nameIdx < 0 || eloIdx < 0) throw new Error('unexpected CSV shape');
-    return rows.filter((r) => r.length > Math.max(nameIdx, eloIdx)).map((r) => ({
-      source: 'lmarena', name: r[nameIdx], lmarena_elo: Number(r[eloIdx]) || null,
-    }));
-  } catch (e) {
-    console.log(`feed: LMArena unreachable/unavailable (${e.message}) — skipping, no scraping fallback.`);
-    return [];
-  }
-}
 
 // ---------------------------------------------------------------------------------------------
 // main
@@ -467,9 +440,9 @@ async function main() {
   const changelog = existsSync(changelogUrl) ? JSON.parse(readFileSync(changelogUrl)) : [];
   const today = new Date().toISOString().slice(0, 10);
 
-  console.log('feed: fetching OpenRouter + LiteLLM + LMArena...');
-  const [orList, llmList, arenaList] = await Promise.all([feedOpenRouter(), feedLiteLLM(), feedLmArena()]);
-  console.log(`feed: openrouter=${orList.length} litellm=${llmList.length} lmarena=${arenaList.length} candidates`);
+  console.log('feed: fetching OpenRouter + LiteLLM...');
+  const [orList, llmList] = await Promise.all([feedOpenRouter(), feedLiteLLM()]);
+  console.log(`feed: openrouter=${orList.length} litellm=${llmList.length} candidates`);
   const epochRows = await feedEpochCursorBench();
   const ladder = epochRows.length ? refreshCursorBench(data, epochRows, today) : { changed: false, notes: ['feed empty — untouched'] };
   console.log(`ladder: cursorbench ${ladder.changed ? 'REFRESHED' : 'unchanged'} — ${ladder.notes.join('; ')}`);
@@ -511,17 +484,6 @@ async function main() {
       }
     }
 
-    // LMArena elo — benchmark candidate, not an auto-applied fact (single source).
-    if (m.benchmarks?.lmarena_elo == null) {
-      const arenaMatch = arenaList.find((a) => matchAlias(a.name, [m], aliases) === m.id);
-      if (arenaMatch?.lmarena_elo != null) {
-        worklistItems.push({
-          id: `${m.id}:lmarena_elo`, model: m.name, kind: 'benchmark', field: 'lmarena_elo', current: null,
-          observations: [{ source: 'lmarena', url: LMARENA_URL, value: arenaMatch.lmarena_elo, date: today }],
-          ask: `LMArena reports an elo of ${arenaMatch.lmarena_elo} for ${m.name} — corroborate against a second leaderboard or the vendor card before publishing.`,
-        });
-      }
-    }
   }
 
   // --- check: new models -----------------------------------------------------------------------
@@ -548,7 +510,7 @@ async function main() {
         price_input: c.priceInput != null ? Math.round(c.priceInput * 100) / 100 : (llmSame?.priceInput ?? null),
         price_output: c.priceOutput != null ? Math.round(c.priceOutput * 100) / 100 : (llmSame?.priceOutput ?? null),
         speed_tps: null,
-        benchmarks: { swe_bench: null, gpqa: null, aime: null, mmlu_pro: null, lmarena_elo: null },
+        benchmarks: { swe_bench: null, gpqa: null, aime: null, mmlu_pro: null },
         best_for: [],
         strengths: [],
         weaknesses: [],

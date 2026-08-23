@@ -4,12 +4,12 @@
 
 | UTC (Tue+Fri) | Piece | Runs on | Does |
 |---|---|---|---|
-| 06:00 | **Collect** | GitHub Actions (`.github/workflows/auto-refresh.yml`) | Pulls OpenRouter + LiteLLM + LMArena (best effort); applies 2-source-agreement facts; writes `data/refresh/worklist.json` for anything it can't settle (new models, conflicts, benchmarks, ladders, releases) |
+| 06:00 | **Collect** | GitHub Actions (`.github/workflows/auto-refresh.yml`) | Pulls OpenRouter + LiteLLM + Epoch's benchmark export; applies 2-source-agreement facts; writes `data/refresh/worklist.json` for anything it can't settle (new models, conflicts, benchmarks, ladders, releases) |
 | 06:30 | **Judge** | claude.ai cloud routine, Sonnet | Reads only `worklist.json`, researches the open web, writes `judgments.json`, applies via `scripts/apply-judgment.mjs`, pushes to main. Instructions: `scripts/refresh-judge.md`. |
 | 07:15 | **Verify** | GitHub Actions (`.github/workflows/refresh-verify.yml`) | Confirms live `as_of` ≥ collect's receipt date and the gate passes on the live file; reverts + fails loud on mismatch |
 
-**Sources:** OpenRouter models API + LiteLLM price table (Tier A, public, no key) + LMArena
-leaderboard CSV (best effort — skipped with a note if unreachable, never scraped). Judge also
+**Sources:** OpenRouter models API + LiteLLM price table (Tier A, public, no key) + Epoch AI's
+CC-BY benchmark export (ladders). LMArena dropped 2026-08-22: feed 404s and its terms forbid republishing. Judge also
 searches vendor pages, model cards, Epoch, papers for anything Collect can't settle.
 
 **Publish rules:**

@@ -31,7 +31,7 @@ const worklistUrl = new URL('data/refresh/worklist.json', ROOT);
 const receiptUrl = new URL('data/refresh/receipt-judge.json', ROOT);
 
 const NUMERIC_MODEL_FIELDS = ['price_input', 'price_output', 'context_window', 'speed_tps'];
-const BENCHMARK_FIELDS = ['swe_bench', 'gpqa', 'aime', 'mmlu_pro', 'lmarena_elo'];
+const BENCHMARK_FIELDS = ['swe_bench', 'gpqa', 'aime', 'mmlu_pro'];   // lmarena_elo dropped 2026-08-22
 const RELEASE_FIELDS = ['date', 'vendor', 'title', 'summary', 'source', 'why'];
 // same vocab as validate-data.mjs — a tag outside it fails the gate anyway; failing here is earlier and clearer
 const BEST_FOR_VOCAB = ['reasoning', 'agentic', 'coding', 'research', 'long-context', 'writing', 'cheap-bulk', 'speed', 'vision'];
@@ -150,7 +150,7 @@ export function applyOne(data, j, today) {
   if (j.kind === 'new-model') {
     if (data.models.some((m) => m.id === j.value.id)) throw new Error(`${j.id}: model id "${j.value.id}" already exists`);
     const nm = {
-      benchmarks: { swe_bench: null, gpqa: null, aime: null, mmlu_pro: null, lmarena_elo: null },
+      benchmarks: { swe_bench: null, gpqa: null, aime: null, mmlu_pro: null },
       best_for: [], strengths: [], weaknesses: [], verdict: null, confidence: 'low',
       coding_score: null, coding_basis: null, coding_confidence: 'low', use_well: [], task_copy: {},
       ...j.value,

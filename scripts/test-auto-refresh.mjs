@@ -309,7 +309,7 @@ test('pickGuidance: filled models drop out of the rotation; a stale cursor past 
   assert.deepEqual(pickGuidance([], {}, 4).picked, []);
 });
 test('guidance items sort last, keep their reserved slots when conflicts overflow, and never exceed 3', () => {
-  const items = [guidanceItem(G('zz'), '2026-08-22'), { id: 'a:price_input', kind: 'conflict' }, { id: 'b:lmarena_elo', kind: 'benchmark' }];
+  const items = [guidanceItem(G('zz'), '2026-08-22'), { id: 'a:price_input', kind: 'conflict' }, { id: 'b:gpqa', kind: 'benchmark' }];
   assert.deepEqual(buildWorklist(items).map((i) => i.kind), ['conflict', 'benchmark', 'guidance']);
   const many = Array.from({ length: 40 }, (_, i) => ({ id: `c${String(i).padStart(2, '0')}:price_input`, kind: 'conflict' }));
   const five = ['g1', 'g2', 'g3', 'g4', 'g5'].map((id) => guidanceItem(G(id), '2026-08-22'));

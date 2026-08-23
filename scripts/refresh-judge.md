@@ -11,7 +11,7 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
    for source tiers).
 3. For each item, in the order given (already priority-sorted, capped at 15):
    - Search the open web: vendor announcements, official model cards, reputable leaderboards
-     (Epoch, LMArena), papers. Corroborate — one page is not enough for a conflict or a new fact.
+     (Epoch AI, ARC Prize, benchmark sites), papers. LMArena is off the table — its terms don't allow republishing. Corroborate — one page is not enough for a conflict or a new fact.
    - Every value needs a source URL (http/https) and a date.
    - If evidence is missing, thin, or contradictory: output a hold. **Never invent a number,
      never soften a conflict into a guess.**
