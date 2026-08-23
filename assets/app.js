@@ -1101,8 +1101,25 @@ function relWhen(d) {
 function renderFeed() {
   const feed = $('#feed');
   if (!feed) return;
-  const rel = (state.data.releases || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-  if (!rel.length) { feed.innerHTML = '<li class="empty">No recent releases recorded.</li>'; return; }
+  // kinds: model (default view) · price · retired. The chips add the other two in.
+  const all = state.data.releases || [];
+  const kinds = $('#feedKinds');
+  state.feedKinds = state.feedKinds || new Set(['model']);
+  if (kinds && !kinds.childElementCount) {
+    const counts = { price: all.filter((r) => r.kind === 'price').length, retired: all.filter((r) => r.kind === 'retired').length };
+    kinds.innerHTML = `
+      <span class="feed-kind feed-kind--fixed">New models</span>
+      <button class="feed-kind" type="button" data-kind="price" aria-pressed="false">+ Price changes <i>${counts.price}</i></button>
+      <button class="feed-kind" type="button" data-kind="retired" aria-pressed="false">+ Retirements <i>${counts.retired}</i></button>`;
+    kinds.querySelectorAll('[data-kind]').forEach((b) => b.addEventListener('click', () => {
+      const k = b.dataset.kind;
+      if (state.feedKinds.has(k)) state.feedKinds.delete(k); else state.feedKinds.add(k);
+      b.setAttribute('aria-pressed', String(state.feedKinds.has(k)));
+      renderFeed();
+    }));
+  }
+  const rel = all.filter((r) => state.feedKinds.has(r.kind || 'model')).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  if (!rel.length) { feed.innerHTML = '<li class="empty">Nothing recorded for this view yet.</li>'; return; }
   feed.innerHTML = rel.map((r, i) => {
     const w = relWhen(r.date);
     const title = r.source
@@ -1112,7 +1129,7 @@ function renderFeed() {
     <li class="rel" style="--i:${Math.min(i, 6)}">
       <div class="rel__when"><span class="rel__mon">${w.mon}</span><span class="rel__day">${w.day}</span></div>
       <div class="rel__card">
-        ${r.vendor ? `<span class="rel__vendor">${r.vendor}</span>` : ''}
+        ${r.vendor ? `<span class="rel__vendor">${r.vendor}</span>` : ''}${r.kind === 'price' ? '<span class="rel__kind">price</span>' : r.kind === 'retired' ? '<span class="rel__kind rel__kind--off">retired</span>' : ''}
         <h3 class="rel__title">${title}</h3>
         <p class="rel__sum">${r.summary || ''}</p>
         ${r.why ? `<p class="rel__why"><span>Should you care?</span> ${r.why}</p>` : ''}

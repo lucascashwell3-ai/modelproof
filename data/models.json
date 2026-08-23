@@ -2063,7 +2063,8 @@
       "title": "GPT-5.6 Sol price cut — $5/$30 → $4/$20 per 1M",
       "summary": "OpenAI cut Sol's API price by 'over 20%' ($5 → $4 input, $30 → $20 output per 1M tokens), promotional through at least Nov 21, 2026. Subscription usage unaffected.",
       "source": "https://community.openai.com/t/20-price-reduction-for-gpt-5-6-sol-api-codex-credits-and-chatgpt-work/1391726",
-      "why": "If Sol is your top-tier pick, re-run your cost-per-task maths — every effort ladder on this page that plots Sol uses the old price."
+      "why": "If Sol is your top-tier pick, re-run your cost-per-task maths — every effort ladder on this page that plots Sol uses the old price.",
+      "kind": "price"
     },
     {
       "date": "2026-08-13",
@@ -2071,7 +2072,8 @@
       "title": "Google releases Gemini 3.7 Flash",
       "summary": "An algorithmic update three weeks after 3.6 Flash, billed as Google's 'most intelligent workhorse model yet' for coding, web dev and agents. Introductory price $0.75/$3.75 per 1M through Dec 31, 2026, then $1.50/$7.50. Stated gains over 3.6 Flash: FrontierCode 1.1 43.6% (from 34.4%), DeepSWE v1.1 65.3% (from 49.0%).",
       "source": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-3-7-flash/",
-      "why": "The cheap-and-capable tier moved: at $0.75/$3.75 this is the price of a small model with mid-tier coding scores. The intro price doubles on Jan 1 — budget for that."
+      "why": "The cheap-and-capable tier moved: at $0.75/$3.75 this is the price of a small model with mid-tier coding scores. The intro price doubles on Jan 1 — budget for that.",
+      "kind": "model"
     },
     {
       "date": "2026-08-13",
@@ -2079,7 +2081,8 @@
       "title": "DeepSeek V4 Pro goes GA as '0813' — and gets peak-hour pricing",
       "summary": "V4 Pro leaves preview (1M context, 384K max output). Pricing now splits peak vs off-peak: output $1.98/1M off-peak vs $3.96 peak; cache-miss input $0.66 vs $1.32. Peak hours 01:00–04:00 and 06:00–10:00 UTC, Mon–Fri, effective Aug 16.",
       "source": "https://api-docs.deepseek.com/quick_start/pricing/",
-      "why": "Overnight bulk jobs just got a clock: schedule them off-peak or pay double. The flat 'cheapest frontier-ish coder' story now depends on when you run."
+      "why": "Overnight bulk jobs just got a clock: schedule them off-peak or pay double. The flat 'cheapest frontier-ish coder' story now depends on when you run.",
+      "kind": "model"
     },
     {
       "date": "2026-08-12",
@@ -2087,7 +2090,8 @@
       "title": "xAI releases Grok 4.6",
       "summary": "Frontier multimodal model built on Grok 4.5, aimed at long-running agents, coding and visual work. 500K context; $2/$6 per 1M under 200K prompt tokens, $4/$12 above; four effort levels (low → xhigh). No benchmark numbers on xAI's own page.",
       "source": "https://docs.x.ai/developers/release-notes",
-      "why": "On CursorBench it tops the board at a fraction of Opus-tier cost (see the effort ladders). Watch the 200K-token price cliff on long contexts."
+      "why": "On CursorBench it tops the board at a fraction of Opus-tier cost (see the effort ladders). Watch the 200K-token price cliff on long contexts.",
+      "kind": "model"
     },
     {
       "date": "2026-07-30",
@@ -2095,7 +2099,8 @@
       "title": "GPT-5.6 Luna −80%, Terra −20%",
       "summary": "Luna drops from $1/$6 to $0.20/$1.20 per 1M; Terra from $2.50/$15 to $2/$12. Sol unchanged at the time (cut separately on Aug 21).",
       "source": "https://openai.com/index/advancing-the-price-performance-frontier-with-gpt-5-6/",
-      "why": "Luna at $0.20/$1.20 is now a bulk-work candidate, not just a chat tier. Any ladder or chart costed before Jul 30 overstates Luna by 5x."
+      "why": "Luna at $0.20/$1.20 is now a bulk-work candidate, not just a chat tier. Any ladder or chart costed before Jul 30 overstates Luna by 5x.",
+      "kind": "price"
     },
     {
       "date": "2026-07-23",
@@ -2103,7 +2108,8 @@
       "title": "Anthropic releases Claude Opus 5",
       "summary": "Opus-tier pricing ($5/$25 per M, same as Opus 4.8) with Fable-class coding: 43.3% on Anthropic's Frontier-Bench v0.1 agentic-coding run vs Fable 5's 33.7% and Opus 4.8's 18.7%, and within 0.5% of Fable 5's peak CursorBench 3.2 score at max effort — at roughly half Fable's cost per task. 1M context, 128K output, five effort levels (low → max). Per-benchmark public numbers (SWE-bench Verified, GPQA) not published yet.",
       "source": "https://www.anthropic.com/news/claude-opus-5",
-      "why": "If you pay for Claude: this is the new default for hard coding and agent work — Fable-level results at half the price. If you were paying Fable's $10/$50 for coding, check whether Opus 5 covers it."
+      "why": "If you pay for Claude: this is the new default for hard coding and agent work — Fable-level results at half the price. If you were paying Fable's $10/$50 for coding, check whether Opus 5 covers it.",
+      "kind": "model"
     },
     {
       "date": "2026-07-16",
@@ -2111,7 +2117,8 @@
       "title": "Moonshot releases Kimi K3",
       "summary": "2.8T-param open-weight MoE (largest to date) at $3/$15 per M, 1M context, native vision. Tops the Frontend Code Arena (1679 Elo) ahead of Claude Fable 5, winning 6 of 7 frontend categories. Full weights due ~July 27; SWE-bench Verified not yet published.",
       "source": "https://www.tomshardware.com/tech-industry/artificial-intelligence/moonshot-releases-2-8-trillion-parameter-kimi-k3",
-      "why": "If you build front-end or web UI: the new top pick for frontend coding — it edges out even Fable 5 in blind tests, at a fraction of the price ($3/$15)."
+      "why": "If you build front-end or web UI: the new top pick for frontend coding — it edges out even Fable 5 in blind tests, at a fraction of the price ($3/$15).",
+      "kind": "model"
     },
     {
       "date": "2026-07-09",
@@ -2119,7 +2126,8 @@
       "title": "GPT-5.6 (Sol/Terra/Luna) reaches general availability",
       "summary": "Three-tier family (Sol $5/$30, Terra $2.50/$15, Luna $1/$6) tops the Artificial Analysis Coding Index; previewed June 26 behind a US-government access list.",
       "source": "https://techcrunch.com/2026/07/09/openai-launches-its-new-family-of-models-with-gpt-5-6/",
-      "why": "If you're on ChatGPT/OpenAI: three tiers now — Sol (top), Terra (value, ~$2.50/$15), Luna (cheap). Terra is the sweet spot for most."
+      "why": "If you're on ChatGPT/OpenAI: three tiers now — Sol (top), Terra (value, ~$2.50/$15), Luna (cheap). Terra is the sweet spot for most.",
+      "kind": "model"
     },
     {
       "date": "2026-07-08",
@@ -2127,7 +2135,8 @@
       "title": "xAI releases Grok 4.5",
       "summary": "'Opus-class' token-efficient coding/agentic model at $2/$6 per M — far cheaper than Opus 4.8 — bundled into Cursor; not available in EU at launch.",
       "source": "https://x.ai/news/grok-4-5",
-      "why": "If you use Grok: the first version genuinely competitive for coding (86/100) at a low $2/$6."
+      "why": "If you use Grok: the first version genuinely competitive for coding (86/100) at a low $2/$6.",
+      "kind": "model"
     },
     {
       "date": "2026-07-01",
@@ -2135,7 +2144,8 @@
       "title": "Anthropic redeploys Claude Fable 5",
       "summary": "Fable 5 came back online after the US government lifted a June 12 export-control order that had pulled it offline — an AI-governance flashpoint.",
       "source": "https://llm-stats.com/llm-updates",
-      "why": "Only matters for the hardest agent/reasoning runs — it's premium ($10/$50) and access-restricted; most people are better served by Opus or Sonnet."
+      "why": "Only matters for the hardest agent/reasoning runs — it's premium ($10/$50) and access-restricted; most people are better served by Opus or Sonnet.",
+      "kind": "model"
     },
     {
       "date": "2026-06-30",
@@ -2143,7 +2153,8 @@
       "title": "Anthropic launches Claude Sonnet 5",
       "summary": "Cheaper agent-focused model, near-Opus quality; intro pricing $2/$10 per M through Aug 31 (then $3/$15), 1M context, default on Free/Pro.",
       "source": "https://techcrunch.com/2026/06/30/anthropic-launches-claude-sonnet-5-as-a-cheaper-way-to-run-agents/",
-      "why": "Big one for coders: ~85 coding at $2/$10 — the best coding value right now. (Intro price; rises to $3/$15 on 2026-09-01.)"
+      "why": "Big one for coders: ~85 coding at $2/$10 — the best coding value right now. (Intro price; rises to $3/$15 on 2026-09-01.)",
+      "kind": "model"
     },
     {
       "date": "2026-06-20",
@@ -2151,7 +2162,8 @@
       "title": "Open-weight wave: DeepSeek V4 preview, GLM-5.2, Qwen3-Coder-Next",
       "summary": "A cluster of 1M-token open-weight coding models landed, pressuring closed-model pricing — including the compact 80B/3B-active Qwen3-Coder-Next.",
       "source": "https://kingy.ai/news/best-open-weight-ai-models-in-2026-glm-5-2-vs-deepseek-v4-vs-kimi-k2-6-vs-qwen-vs-mistral/",
-      "why": "Care if you self-host or want low cost: strong open-weight options (DeepSeek V4, Qwen3-Coder) at a fraction of frontier prices."
+      "why": "Care if you self-host or want low cost: strong open-weight options (DeepSeek V4, Qwen3-Coder) at a fraction of frontier prices.",
+      "kind": "model"
     },
     {
       "date": "2026-06-12",
@@ -2159,7 +2171,8 @@
       "title": "Moonshot ships Kimi K2.7 Code",
       "summary": "Open-weight coding model claiming +21.8% over K2.6 on its own Kimi Code Bench v2 — continued fast iteration in Chinese open-weight coders.",
       "source": "https://kingy.ai/news/best-open-weight-ai-models-in-2026-glm-5-2-vs-deepseek-v4-vs-kimi-k2-6-vs-qwen-vs-mistral/",
-      "why": "Niche: a cheap, coding-focused open model — worth a look if you want low-cost agentic coding."
+      "why": "Niche: a cheap, coding-focused open model — worth a look if you want low-cost agentic coding.",
+      "kind": "model"
     },
     {
       "date": "2026-05-19",
@@ -2167,7 +2180,8 @@
       "title": "Google ships Gemini 3.5 Flash",
       "summary": "Fast Flash-tier model with near-Pro reasoning (GPQA ~92%), 1M context, ~278 tok/s, at $1.50/$9 per M.",
       "source": "https://ai.google.dev/gemini-api/docs/pricing",
-      "why": "If you use Gemini: a fast, cheap workhorse (coding 83 at ~$1.50/$9)."
+      "why": "If you use Gemini: a fast, cheap workhorse (coding 83 at ~$1.50/$9).",
+      "kind": "model"
     },
     {
       "date": "2026-05",
@@ -2175,7 +2189,8 @@
       "title": "Claude Opus 4.8",
       "summary": "Flagship Opus tier at $5/$25 per M, 1M context, 88.6% SWE-bench Verified — the strong coding/agentic default below Fable's price.",
       "source": "https://platform.claude.com/docs/en/about-claude/pricing",
-      "why": "Anthropic's flagship you'll actually reach for — top-tier coding and reasoning at $5/$25."
+      "why": "Anthropic's flagship you'll actually reach for — top-tier coding and reasoning at $5/$25.",
+      "kind": "model"
     },
     {
       "date": "2026-04-24",
@@ -2183,7 +2198,8 @@
       "title": "DeepSeek V4-Flash and V4-Pro",
       "summary": "Open-weight (MIT) 1M-context models at rock-bottom prices; V4-Pro hits ~80.6% SWE-bench Verified with near-free cache-hit input.",
       "source": "https://api-docs.deepseek.com/quick_start/pricing/",
-      "why": "The value story: near-frontier coding at ~$0.43/$0.87 (Pro) — big savings when that quality is enough."
+      "why": "The value story: near-frontier coding at ~$0.43/$0.87 (Pro) — big savings when that quality is enough.",
+      "kind": "model"
     },
     {
       "date": "2026-04-23",
@@ -2191,7 +2207,8 @@
       "title": "OpenAI introduces GPT-5.5",
       "summary": "Prior flagship at $5/$30 per M, 1M context, 81.9% SWE-bench Verified and LMArena Elo 1475 — now largely superseded by GPT-5.6 at equal cost.",
       "source": "https://openai.com/index/introducing-gpt-5-5/",
-      "why": "Superseded by GPT-5.6 — only relevant if something is still pinned to it."
+      "why": "Superseded by GPT-5.6 — only relevant if something is still pinned to it.",
+      "kind": "model"
     },
     {
       "date": "2026-04-20",
@@ -2199,7 +2216,8 @@
       "title": "Moonshot releases Kimi K2.6",
       "summary": "1T-param MoE (32B active) open-weight agentic coder at 80.2% SWE-bench Verified, built for long-horizon multi-step tasks.",
       "source": "https://platform.kimi.ai/docs/pricing/chat-k26",
-      "why": "A cheap, long-context open model — niche unless you want low-cost bulk work."
+      "why": "A cheap, long-context open model — niche unless you want low-cost bulk work.",
+      "kind": "model"
     },
     {
       "date": "2025-10-01",
@@ -2207,7 +2225,8 @@
       "title": "Claude Haiku 4.5",
       "summary": "Cheapest/fastest Claude at $1/$5 per M, 200K context — built for high-volume classification, routing, and extraction.",
       "source": "https://www.anthropic.com/news/claude-haiku-4-5",
-      "why": "Anthropic's cheap/fast tier ($1/$5) — a good default for high-volume simple tasks."
+      "why": "Anthropic's cheap/fast tier ($1/$5) — a good default for high-volume simple tasks.",
+      "kind": "model"
     }
   ],
   "benchmarks_legend": {

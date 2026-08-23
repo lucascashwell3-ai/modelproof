@@ -946,3 +946,16 @@ sup.est { font-family: var(--mono); font-size: 9px; color: var(--warn); margin-l
 .zone-sub { fill: var(--ink-3); font-family: var(--mono); font-size: 10px; letter-spacing: 0.03em; }
 .dot .d-core { transition: r .15s var(--ease); }
 .dot:hover .d-core { r: 7; }
+
+/* timeline kinds (2026-08-22): new models by default; price changes + retirements opt in */
+.feed-kinds { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.feed-kind { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.03em; color: var(--ink-2); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; transition: all .15s var(--ease); }
+.feed-kind i { font-style: normal; color: var(--ink-4); margin-left: 4px; }
+.feed-kind:hover { border-color: var(--gold-line); color: var(--ink); }
+.feed-kind[aria-pressed="true"] { background: var(--gold-soft); border-color: var(--gold-line); color: var(--gold); }
+.feed-kind[aria-pressed="true"] i { color: var(--gold-2); }
+.feed-kind--fixed { cursor: default; color: var(--gold); border-color: var(--gold-line); background: var(--gold-soft); }
+.rel__kind { display: inline-block; margin-left: 6px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--gold); border: 1px solid var(--gold-line); border-radius: 999px; padding: 2px 8px; vertical-align: middle; }
+.rel__kind--off { color: var(--low); border-color: var(--line); }
