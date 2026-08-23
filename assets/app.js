@@ -40,7 +40,7 @@ function prioLabel(p) { return p <= 16 ? 'cheapest' : p <= 38 ? 'value' : p <= 6
 const GOAL_METRIC = {
   coding: 'coding_score',   // unified 0-100 coding score (blends SWE-bench + other sourced signals)
   research: 'gpqa',
-  writing: 'lmarena_elo',
+  writing: 'gpqa',          // no clean writing benchmark — general reasoning is the fallback (LMArena dropped 2026-08-22: no-redistribution source, feed dead)
   'cheap-bulk': 'mmlu_pro',
 };
 
@@ -54,7 +54,7 @@ const GOAL_TAGS = {
 };
 
 const GOAL_DESC = {
-  coding: 'Writing, fixing & refactoring code — including multi-step agent tasks. Ranked on a 0–100 coding score: SWE-bench where it exists, otherwise sourced signals (LMArena Code Elo, AA Coding Index) so new models aren\'t stuck at "—".',
+  coding: 'Writing, fixing & refactoring code — including multi-step agent tasks. Ranked on a 0–100 coding score: SWE-bench where it exists, otherwise sourced signals (agentic suites, vendor-published evals) so new models aren\'t stuck at "—".',
   research: 'Deep thinking, analysis & planning. Ranked on graduate-level reasoning (GPQA).',
   writing: 'Drafting prose, emails & content. No clean writing benchmark exists, so only models the data tags for prose are ranked — on general ability + price.',
   'cheap-bulk': 'High-volume simple work — classification, tagging, extraction. Cheapest capable option first.',
@@ -486,7 +486,7 @@ function upgradeCheck(top, metric) {
 }
 
 function metricLabel(metric) {
-  return { coding_score: 'Coding', swe_bench: 'SWE-bench', gpqa: 'GPQA', aime: 'AIME', lmarena_elo: 'LMArena Elo', mmlu_pro: 'MMLU-Pro' }[metric] || metric;
+  return { coding_score: 'Coding', swe_bench: 'SWE-bench', gpqa: 'GPQA', aime: 'AIME', mmlu_pro: 'MMLU-Pro' }[metric] || metric;
 }
 
 // ---------- labs facet: multi-select vendor chips + an "All labs" default ----------
@@ -1030,7 +1030,6 @@ function renderTable() {
               <li>SWE-bench Verified: ${fmtScore(m.benchmarks?.swe_bench)}</li>
               <li>GPQA (reasoning): ${fmtScore(m.benchmarks?.gpqa)}</li>
               <li>AIME (math): ${fmtScore(m.benchmarks?.aime)}</li>
-              <li>LMArena Elo: ${num(m.benchmarks?.lmarena_elo) ? '<span class="na">—</span>' : m.benchmarks.lmarena_elo}</li>
             </ul>
             <h4 style="margin-top:14px">Confidence: <span style="color:var(--ink)">${m.confidence}</span></h4>
             <div class="srcs">${(m.sources || []).slice(0, 3).map((u) => `<a href="${u}" target="_blank" rel="noopener">${shortUrl(u)}</a>`).join(' · ') || '<span class="na">no public source recorded</span>'}</div>

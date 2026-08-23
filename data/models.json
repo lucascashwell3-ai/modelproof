@@ -14,8 +14,7 @@
         "swe_bench": null,
         "gpqa": 93.9,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "coding",
@@ -85,8 +84,7 @@
         "swe_bench": null,
         "gpqa": 93.1,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "coding",
@@ -144,8 +142,7 @@
         "swe_bench": 95.5,
         "gpqa": 91.3,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "reasoning",
@@ -197,8 +194,7 @@
         "swe_bench": 88.6,
         "gpqa": 93.6,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "coding",
@@ -264,8 +260,7 @@
         "swe_bench": 85.2,
         "gpqa": 90.5,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "coding",
@@ -316,8 +311,7 @@
         "swe_bench": 81.9,
         "gpqa": 93.6,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": 1475
+        "mmlu_pro": null
       },
       "best_for": [
         "coding",
@@ -371,8 +365,7 @@
         "swe_bench": 80.6,
         "gpqa": 94.3,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "reasoning",
@@ -422,8 +415,7 @@
         "swe_bench": 80.6,
         "gpqa": 90.1,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "coding",
@@ -480,8 +472,7 @@
         "swe_bench": 76.7,
         "gpqa": 90.8,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "coding",
@@ -535,8 +526,7 @@
         "swe_bench": 74.2,
         "gpqa": 65.8,
         "aime": null,
-        "mmlu_pro": 77.1,
-        "lmarena_elo": null
+        "mmlu_pro": 77.1
       },
       "best_for": [
         "cheap-bulk",
@@ -581,8 +571,7 @@
         "swe_bench": 68.1,
         "gpqa": 81.4,
         "aime": 92.7,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "reasoning",
@@ -636,8 +625,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "cheap-bulk",
@@ -684,8 +672,7 @@
         "swe_bench": null,
         "gpqa": 94.6,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "coding",
@@ -735,8 +722,7 @@
         "swe_bench": null,
         "gpqa": 93.3,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "coding",
@@ -799,8 +785,7 @@
         "swe_bench": null,
         "gpqa": 91.6,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "cheap-bulk",
@@ -854,8 +839,7 @@
         "swe_bench": 79.3,
         "gpqa": 92.8,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "speed",
@@ -911,8 +895,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "cheap-bulk",
@@ -955,8 +938,7 @@
         "swe_bench": null,
         "gpqa": 93.4,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "coding",
@@ -1005,8 +987,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "cheap-bulk",
@@ -1049,8 +1030,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "reasoning",
@@ -1101,8 +1081,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "coding",
@@ -1153,8 +1132,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "cheap-bulk",
@@ -1195,8 +1173,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "coding",
@@ -1248,8 +1225,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "speed",
@@ -1294,8 +1270,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [
         "coding",
@@ -1340,8 +1315,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1372,8 +1346,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1404,8 +1377,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1436,8 +1408,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1460,8 +1431,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1491,8 +1461,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1518,8 +1487,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1545,8 +1513,7 @@
         "swe_bench": 59.5,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1574,8 +1541,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1602,8 +1568,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1630,8 +1595,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1658,8 +1622,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1688,8 +1651,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1716,8 +1678,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1749,8 +1710,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1781,8 +1741,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1811,8 +1770,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1842,8 +1800,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1874,8 +1831,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1905,8 +1861,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1936,8 +1891,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1967,8 +1921,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -1998,8 +1951,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -2029,8 +1981,7 @@
         "swe_bench": null,
         "gpqa": null,
         "aime": null,
-        "mmlu_pro": null,
-        "lmarena_elo": null
+        "mmlu_pro": null
       },
       "best_for": [],
       "strengths": [],
@@ -2233,8 +2184,7 @@
     "swe_bench": "SWE-bench Verified — % of real-world GitHub issues resolved end-to-end (agentic coding). Note: several 2026 models published only SWE-bench Pro, a different/harder variant, so their Verified cell is null.",
     "gpqa": "GPQA Diamond — % correct on graduate-level, Google-proof science reasoning questions. Figures sourced from Epoch AI are independently run and reported at the reasoning-effort setting Epoch used (max for Opus 5, Kimi K3, GPT-5.6 Terra and Luna; xhigh for Sonnet 5; high for Grok 4.5), so they are best-case settings rather than defaults.",
     "aime": "AIME — % on advanced high-school competition math (American Invitational Mathematics Examination).",
-    "mmlu_pro": "MMLU-Pro — % on a harder, multi-discipline knowledge and reasoning benchmark.",
-    "lmarena_elo": "LMArena text Elo — human head-to-head preference rating (higher = preferred more often)."
+    "mmlu_pro": "MMLU-Pro — % on a harder, multi-discipline knowledge and reasoning benchmark."
   },
   "notes": "Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: they mix primary leaderboards, Epoch AI's independently-run figures, and third-party aggregators, and a confidence flag rides on every model. Claude Opus 5 (released 2026-07-23) is priced at Anthropic's published $5/$25; its GPQA (93.9) is Epoch's independent run, but SWE-bench Verified is still unpublished, so its coding score remains an agentic-suite-led estimate at medium confidence. Kimi K3 is scored on its frontend-coding lead (#1 in the Frontend Code Arena); its GPQA (93.1) is Epoch-run, SWE-bench Verified is still unpublished, and its open-weight release (slated 2026-07-27) has not been re-verified as shipped here — treat self-hosting as unconfirmed. Several 2026 models publish only agentic evals that don't map to SWE-bench Verified; those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it.",
   "usage": {
@@ -2260,26 +2210,6 @@
           }
         ],
         "source": "https://officechai.com/ai/these-are-the-most-popular-ai-model-companies-on-openrouter-june-2026/"
-      },
-      {
-        "label": "Preference",
-        "sub": "LMArena blind human votes",
-        "note": "A quality-preference signal, not usage. ~7.3M votes; the whole top tier sits within ~55 Elo — the tightest ever.",
-        "top": [
-          {
-            "name": "Claude Opus 4.8",
-            "detail": "#1 · ~1510 Elo"
-          },
-          {
-            "name": "GPT-5.5 Pro",
-            "detail": "#2"
-          },
-          {
-            "name": "Gemini 3.1 Pro",
-            "detail": "#3"
-          }
-        ],
-        "source": "https://lmarena.ai/leaderboard"
       },
       {
         "label": "Consumers",
