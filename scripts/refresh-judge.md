@@ -23,6 +23,18 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
      `"release": {"summary": "...", "why": "...", "source": "https://..."}` inside `value` when the
      vendor page gives you something concrete to say (one or two plain sentences each); leave it out
      and a factual stub is written instead.
+   - **Effort ladders from launch posts** (you can do this; Collect can't — it has no browser and
+     can't read a picture): when a `new-model` item is a frontier model from Anthropic, OpenAI, Google
+     or xAI, open the vendor's launch post and look for a cost-vs-score chart with one line per effort
+     setting (low → max). If there is one, submit a second judgment `"kind": "ladder"` whose value is a
+     full ladder object (copy the shape of an existing entry in `data/models.json → effort_ladders`):
+     `id`, `suite`, `task`, `as_of`, `publisher`, `source_kind: "vendor-reported"`, `source`,
+     `confidence: "medium"`, `levels`, `series[]` (≥3 points each, `model_id` must exist in the
+     catalog), and a `method` that says plainly how you got the numbers — "exact, stated in the
+     page's table" or "read off the chart, ±x" — plus the `harness` and `caveat` the page gives.
+     Never write into a ladder that Collect maintains from a data export (CursorBench); never submit a
+     ladder from a chart you couldn't actually open. One ladder per post; skip if the chart has no
+     cost axis.
    - **`deprecation` items**: answer yes with `"kind": "deprecation", "value": true` and the vendor's
      retirement notice in sources — the model is marked retired and a "retires" timeline entry is
      written. If you can't find the notice, hold; never mark a model retired on a hunch.

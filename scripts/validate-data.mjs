@@ -47,7 +47,11 @@ for (const m of data.models) {
     if (!/swe.?bench/i.test(m.coding_basis || '')) W(`${id}: has SWE-bench but coding_basis doesn't cite it`);
   }
 }
-for (const r of data.releases || []) if (!r.source) W(`release "${r.title}": no source URL`);
+for (const r of data.releases || []) {
+  if (!r.source) W(`release "${r.title}": no source URL`);
+  if (r.kind != null && !['model', 'price', 'retired'].includes(r.kind)) E(`release "${r.title}": kind "${r.kind}" must be model | price | retired`);
+  if (r.kind == null) W(`release "${r.title}": no kind — the site shows it under new models`);
+}
 
 // 7. effort ladders: a published cost/performance curve must carry its provenance, and
 //    every plotted point must be a real number against a model we actually list.

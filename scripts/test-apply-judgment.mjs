@@ -249,3 +249,24 @@ test('validateJudgment rejects a release with an unknown kind', () => {
   const j = { id: 'x:release', kind: 'release', sources: SOURCES, reason: 'launch post read in full', value: { date: '2026-08-25', vendor: 'Acme', title: 'T', summary: 'S', source: 'https://a.example', why: 'W', kind: 'rumour' } };
   assert.ok(validateJudgment(j).some((e) => /release kind/.test(e)));
 });
+
+// --- ladder judgments: provenance required, feed-maintained ladders off limits (2026-08-22) ------
+const LADDER = { id: 'x:ladder', kind: 'ladder', sources: SOURCES, reason: 'launch post chart read in a browser',
+  value: { id: 'acme-bench', suite: 'AcmeBench', task: 'Agentic coding', as_of: '2026-08-25', publisher: 'Acme', source_kind: 'vendor-reported',
+    source: 'https://acme.example/launch', confidence: 'medium', method: 'Values read off the chart, ±1 point.', harness: 'Acme run', caveat: 'Vendor-run.',
+    levels: ['low', 'medium', 'high'], series: [{ model_id: 'm1', label: 'M One', points: [{ effort: 'low', cost: 1, score: 10 }, { effort: 'medium', cost: 2, score: 20 }, { effort: 'high', cost: 3, score: 30 }] }] } };
+test('validateJudgment accepts a full ladder and rejects one without provenance, method, or ≥3 points', () => {
+  assert.deepEqual(validateJudgment(LADDER), []);
+  const { caveat, ...noCaveat } = LADDER.value;
+  assert.ok(validateJudgment({ ...LADDER, value: noCaveat }).some((e) => /missing "caveat"/.test(e)));
+  assert.ok(validateJudgment({ ...LADDER, value: { ...LADDER.value, method: 'numbers' } }).some((e) => /method must say/.test(e)));
+  const two = { ...LADDER.value, series: [{ model_id: 'm1', label: 'M One', points: LADDER.value.series[0].points.slice(0, 2) }] };
+  assert.ok(validateJudgment({ ...LADDER, value: two }).some((e) => /needs ≥3 points/.test(e)));
+});
+test('applyOne adds a ladder, refuses an unknown model_id, and refuses to overwrite a feed-maintained ladder', () => {
+  const data = { models: [{ id: 'm1', name: 'M One', vendor: 'Acme' }], effort_ladders: [{ id: 'cursorbench-agentic-coding', series: [{ model_id: 'm1', source_key: 'm-one', points: [] }] }] };
+  applyOne(data, LADDER, '2026-08-25');
+  assert.equal(data.effort_ladders.length, 2);
+  assert.throws(() => applyOne(data, { ...LADDER, value: { ...LADDER.value, series: [{ ...LADDER.value.series[0], model_id: 'ghost' }] } }, '2026-08-25'), /unknown model_id/);
+  assert.throws(() => applyOne(data, { ...LADDER, value: { ...LADDER.value, id: 'cursorbench-agentic-coding' } }, '2026-08-25'), /feed-maintained/);
+});

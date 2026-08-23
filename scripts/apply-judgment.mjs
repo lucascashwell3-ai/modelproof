@@ -95,8 +95,23 @@ export function validateJudgment(j) {
     if (v.strengths != null && (!Array.isArray(v.strengths) || v.strengths.some((t) => typeof t !== 'string'))) errs.push(`${j.id}: strengths must be string[]`);
     for (const k of Object.keys(v)) if (!['best_for', 'use_well', 'strengths'].includes(k)) errs.push(`${j.id}: guidance can't set "${k}"`);
   } else if (j.kind === 'ladder') {
-    if (!j.value || typeof j.value !== 'object' || !Array.isArray(j.value.series)) {
+    const v = j.value;
+    if (!v || typeof v !== 'object' || !Array.isArray(v.series) || !v.series.length) {
       errs.push(`${j.id}: ladder judgment needs value{series:[...]}`);
+    } else {
+      // the same provenance the honesty gate demands, checked here so a thin ladder fails before anything is written
+      for (const f of ['id', 'suite', 'task', 'as_of', 'publisher', 'source_kind', 'source', 'confidence', 'method', 'caveat', 'levels']) {
+        if (!v[f]) errs.push(`${j.id}: ladder value missing "${f}"`);
+      }
+      if (v.method && !/read off|digitis|digitiz|exact|stated/i.test(v.method)) errs.push(`${j.id}: ladder method must say how the numbers were obtained (exact/stated vs read off a chart)`);
+      for (const s of v.series) {
+        if (!s.model_id || !s.label) errs.push(`${j.id}: every series needs model_id + label`);
+        if (!Array.isArray(s.points) || s.points.length < 3) errs.push(`${j.id}: series "${s.label || s.model_id}" needs ≥3 points — a ladder is several effort settings, not a pair`);
+        for (const p of s.points || []) {
+          if (typeof p.cost !== 'number' || typeof p.score !== 'number' || !(p.cost > 0)) errs.push(`${j.id}: point "${p.effort}" on ${s.label} needs numeric cost (> 0) and score`);
+          if (Array.isArray(v.levels) && !v.levels.includes(p.effort)) errs.push(`${j.id}: point effort "${p.effort}" not in levels[]`);
+        }
+      }
     }
   }
   return errs;
@@ -176,7 +191,11 @@ export function applyOne(data, j, today) {
   }
   if (j.kind === 'ladder') {
     data.effort_ladders = data.effort_ladders || [];
+    for (const s of j.value.series) if (!data.models.some((m) => m.id === s.model_id)) throw new Error(`${j.id}: series "${s.label}" points at unknown model_id "${s.model_id}"`);
     const existing = data.effort_ladders.find((L) => L.id === j.value.id);
+    // a ladder fed from a machine-readable export (series carry source_key) is Collect's — a chart-read
+    // judgment must never overwrite exact values with estimates
+    if (existing && existing.series.some((s) => s.source_key)) throw new Error(`${j.id}: ladder "${existing.id}" is feed-maintained (source_key) — not writable by a judgment`);
     if (existing) Object.assign(existing, j.value);
     else data.effort_ladders.push(j.value);
     return { date: today, model: j.value.id, field: 'ladder', old: null, new: 'ladder updated', sources: j.sources.map((s) => s.url), reason: j.reason };
