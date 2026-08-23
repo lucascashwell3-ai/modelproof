@@ -2411,7 +2411,7 @@
       "source_kind": "third-party",
       "source": "https://epoch.ai/benchmarks/use-this-data",
       "confidence": "high",
-      "method": "Exact published values, not digitised from a picture: taken from Epoch AI's CC-BY benchmark data export (cursorbench_external.csv in benchmark_data.zip, file dated 2026-08-23), which mirrors Cursor's own CursorBench 3.2 leaderboard (Cursor's changelog: Aug 11 2026 'Updated Sonnet 5 results to account for adjusted pricing'). Score is the published fraction correct as a percentage; cost is Cursor's per-task figure from the tokens each model actually used at its published per-million pricing (input, cache read, cache write, output). Rungs are keyed on the file's 'Reasoning level' column. Eight models are plotted for cross-lab coverage; any model-and-rung missing a cost or score is dropped, never interpolated.",
+      "method": "Exact published values, not digitised from a picture: taken from Epoch AI's CC-BY benchmark data export (cursorbench_external.csv in benchmark_data.zip, file dated 2026-08-23), which mirrors Cursor's own CursorBench 3.2 leaderboard (Cursor's changelog: Aug 11 2026 'Updated Sonnet 5 results to account for adjusted pricing'). Score is the published fraction correct as a percentage; cost is Cursor's per-task figure from the tokens each model actually used at its published per-million pricing (input, cache read, cache write, output). Rungs are keyed on the file's 'Reasoning level' column. Five of the most-used models are plotted (Opus 5, Sonnet 5, GPT-5.6 Sol, Grok 4.6, Gemini 3.7 Flash) so the chart stays readable — Fable 5, Opus 4.8, GPT-5.6 Terra, Luna, GPT-5.5, Kimi K3 and others are in the source file; any model-and-rung missing a cost or score is dropped, never interpolated.",
       "harness": "Cursor's agent running CursorBench 3.2 (instruction-following and advanced tool-use problems added Jul 8 2026), one entry per reasoning-effort setting. Cursor notes results are subject to variance and small score differences may not be meaningful.",
       "caveat": "Independent of Anthropic, but not of everyone: CursorBench is run and published by Cursor, which ships its own coding model (Composer), so it is a benchmark by a company with a horse in the coding race. Epoch AI mirrors those numbers under CC-BY, it does not re-run them — and Epoch has its own disclosed conflict elsewhere, having had OpenAI fund the FrontierMath benchmark with dataset access, which it disclosed only after the fact. Read this as a second opinion measured on a different task by a different party, not as a neutral referee settling the question.",
       "levels": [
@@ -2455,38 +2455,6 @@
           ]
         },
         {
-          "model_id": "claude-fable-5",
-          "label": "Fable 5",
-          "color": "#e8a93a",
-          "points": [
-            {
-              "effort": "low",
-              "cost": 4.46,
-              "score": 62.1
-            },
-            {
-              "effort": "medium",
-              "cost": 6.8,
-              "score": 65.2
-            },
-            {
-              "effort": "high",
-              "cost": 10.81,
-              "score": 70.6
-            },
-            {
-              "effort": "xhigh",
-              "cost": 13.74,
-              "score": 72.0
-            },
-            {
-              "effort": "max",
-              "cost": 18.02,
-              "score": 72.9
-            }
-          ]
-        },
-        {
           "model_id": "claude-sonnet-5",
           "label": "Sonnet 5",
           "color": "#f5d98b",
@@ -2519,38 +2487,6 @@
           ]
         },
         {
-          "model_id": "claude-opus-4-8",
-          "label": "Opus 4.8",
-          "color": "#3f7fe0",
-          "points": [
-            {
-              "effort": "low",
-              "cost": 2.93,
-              "score": 54.3
-            },
-            {
-              "effort": "medium",
-              "cost": 3.83,
-              "score": 56.6
-            },
-            {
-              "effort": "high",
-              "cost": 4.41,
-              "score": 58.4
-            },
-            {
-              "effort": "xhigh",
-              "cost": 6.14,
-              "score": 62.1
-            },
-            {
-              "effort": "max",
-              "cost": 7.59,
-              "score": 63.8
-            }
-          ]
-        },
-        {
           "model_id": "gpt-5-6-sol",
           "label": "GPT-5.6 Sol",
           "color": "#9aa0ab",
@@ -2579,38 +2515,6 @@
               "effort": "max",
               "cost": 5.69,
               "score": 67.2
-            }
-          ]
-        },
-        {
-          "model_id": "gpt-5-6-terra",
-          "label": "GPT-5.6 Terra",
-          "color": "#c9ced8",
-          "points": [
-            {
-              "effort": "low",
-              "cost": 0.42,
-              "score": 46.9
-            },
-            {
-              "effort": "medium",
-              "cost": 0.49,
-              "score": 50.3
-            },
-            {
-              "effort": "high",
-              "cost": 0.71,
-              "score": 54.2
-            },
-            {
-              "effort": "xhigh",
-              "cost": 1.15,
-              "score": 59.2
-            },
-            {
-              "effort": "max",
-              "cost": 2.31,
-              "score": 64.9
             }
           ]
         },

@@ -814,7 +814,7 @@ function renderEffort() {
     return;
   }
 
-  const W = 920, H = 470, padL = 60, padR = 104, padT = 26, padB = 62;
+  const W = 920, H = 470, padL = 60, padR = 136, padT = 26, padB = 62;
   const plotW = W - padL - padR, plotH = H - padT - padB;
 
   const all = series.flatMap((s) => s.points);
@@ -855,12 +855,22 @@ function renderEffort() {
   svg += `<text class="axis-title" x="${padL + plotW / 2}" y="${H - 16}" text-anchor="middle">${(L.x_label || 'COST PER ATTEMPT (LOG)').toUpperCase()}</text>`;
   svg += `<text class="axis-title" transform="translate(15 ${padT + plotH / 2}) rotate(-90)" text-anchor="middle">${(L.y_label || 'SCORE').toUpperCase()}${yBot > 0 ? ` · AXIS STARTS AT ${yBot}` : ''} →</text>`;
 
+  // end labels: sorted by where they land, pushed apart so no two sit within 15px; a short
+  // leader ties a pushed label back to its rung
+  const ends = series.map((s) => { const e = s.points.slice().sort((a, b) => a.cost - b.cost).pop(); return { s, x: X(e.cost), y: Y(e.score) }; })
+    .sort((a, b) => a.y - b.y);
+  let prevY = -Infinity;
+  ends.forEach((e) => { e.ly = Math.max(e.y, prevY + 15); prevY = e.ly; });
+  const over = ends.length ? ends[ends.length - 1].ly - (padT + plotH) : 0;   // stack ran off the bottom — shift it all up
+  if (over > 0) ends.forEach((e) => { e.ly -= over; });
+  const labelAt = Object.fromEntries(ends.map((e) => [e.s.model_id, e]));
+
   // one curve per model: line, then a dot per effort rung, then the name at the last rung
   series.forEach((s) => {
     const pts = s.points.slice().sort((a, b) => a.cost - b.cost);
     const d = pts.map((p, i) => `${i ? 'L' : 'M'} ${X(p.cost).toFixed(1)} ${Y(p.score).toFixed(1)}`).join(' ');
     svg += `<g class="lad-series" data-mid="${s.model_id}">`;
-    svg += `<path class="lad-line" d="${d}" fill="none" stroke="${s.color}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>`;
+    svg += `<path class="lad-line" d="${d}" fill="none" stroke="${s.color}" stroke-width="2" stroke-opacity="0.85" stroke-linejoin="round" stroke-linecap="round"/>`;
     pts.forEach((p, i) => {
       const cx = X(p.cost), cy = Y(p.score);
       svg += `<g class="lad-pt" data-mid="${s.model_id}" data-i="${i}">`;
@@ -869,8 +879,10 @@ function renderEffort() {
       svg += `<circle class="lad-dot" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="5.6" fill="${s.color}" stroke="var(--bg-2)" stroke-width="1.6"/>`;
       svg += `</g>`;
     });
-    const end = pts[pts.length - 1];
-    svg += `<text class="lad-name" x="${(X(end.cost) + 14).toFixed(1)}" y="${(Y(end.score) + 4).toFixed(1)}" fill="${s.color}">${s.label}</text>`;
+    // names live in a column at the plot's right edge, never on top of another model's line
+    const e = labelAt[s.model_id], lx = padL + plotW + 12;
+    svg += `<line x1="${(e.x + 7).toFixed(1)}" y1="${e.y.toFixed(1)}" x2="${(lx - 4).toFixed(1)}" y2="${e.ly.toFixed(1)}" stroke="${s.color}" stroke-width="1" stroke-opacity="0.3" stroke-dasharray="2 3"/>`;
+    svg += `<text class="lad-name" x="${lx.toFixed(1)}" y="${(e.ly + 4).toFixed(1)}" fill="${s.color}">${s.label}</text>`;
     svg += `</g>`;
   });
 
