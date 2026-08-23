@@ -19,6 +19,10 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
    - Apply: `{"id", "kind", "field"?, "value", "sources":[{"url","date"}], "reason"}` — reason
      ≥12 chars, cites what you found.
    - Hold: `{"id", "hold": true, "reason"}`.
+   - **`new-model` items**: the apply also writes a "what changed" timeline entry. Add
+     `"release": {"summary": "...", "why": "...", "source": "https://..."}` inside `value` when the
+     vendor page gives you something concrete to say (one or two plain sentences each); leave it out
+     and a factual stub is written instead.
    - **`guidance` items** (up to 3 per run — a blank model needs `best_for` tags + `use_well`
      tips): read the vendor's own model card / docs page, then
      `"value": {"best_for": [tags from the vocab in the ask], "use_well": [2–4 tips], "strengths"?: [...]}`.

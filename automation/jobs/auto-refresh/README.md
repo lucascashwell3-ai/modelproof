@@ -37,6 +37,17 @@ vendor's docs, cited; `apply-judgment.mjs` enforces vocab tags, 2–4 tips of 20
 growth-only (never overwrites existing guidance). At 3 per run, 2 runs/week, the blank half of the
 catalog fills in about a month.
 
+**Effort ladders (added 2026-08-22):** Collect downloads Epoch AI's CC-BY `benchmark_data.zip` and
+rebuilds the CursorBench ladder's rungs from `cursorbench_external.csv` (tier A, exact values). Each
+series carries a `source_key` (the CSV's model stem); the series list is fixed in data — the feed never
+adds or drops a model, only refreshes rungs. A series with < 2 usable rungs in the file keeps
+yesterday's points; an unreachable feed leaves the ladder untouched. The other two ladders
+(Frontier-Bench, Terminal-Bench) are chart-read from vendor posts — manual, by design.
+
+**Timeline:** every model the Judge admits now gets a `releases` entry (date = its release date,
+source = the Judge's first source; the Judge may supply `release: {summary, why, source}`).
+Collect's auto-admits already did this.
+
 **Caps:** 2 passes/week. Judge: ≤15 worklist items, ≤10 minutes wall-clock, Sonnet only. Anything
 past the cap waits for the next pass — nothing piles up silently, it just stays in the worklist.
 

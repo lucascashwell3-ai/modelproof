@@ -20,6 +20,9 @@
                it locally; the script just skips the issue step).
 */
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = new URL('../', import.meta.url);
@@ -251,6 +254,84 @@ export function guidanceItem(m, today) {
   };
 }
 
+// --- effort ladders: CursorBench from Epoch AI's CC-BY export (tier A, exact values) ----------
+const EPOCH_ZIP_URL = 'https://epoch.ai/data/benchmark_data.zip';
+const CURSORBENCH_LADDER_ID = 'cursorbench-agentic-coding';
+const EFFORT_ORDER = ['low', 'medium', 'high', 'xhigh', 'max'];
+
+/** Tiny CSV reader — quoted fields with commas are the only wrinkle in Epoch's file. */
+export function parseCsv(text) {
+  const rows = [];
+  for (const line of text.split(/\r?\n/)) {
+    if (!line.trim()) continue;
+    const cells = []; let cur = '', q = false;
+    for (const ch of line) {
+      if (ch === '"') q = !q;
+      else if (ch === ',' && !q) { cells.push(cur); cur = ''; }
+      else cur += ch;
+    }
+    cells.push(cur);
+    rows.push(cells);
+  }
+  const head = rows.shift() || [];
+  return rows.map((r) => Object.fromEntries(head.map((h, i) => [h, r[i] ?? ''])));
+}
+
+/**
+ * Rebuild the CursorBench ladder's points from Epoch's cursorbench_external.csv. Pure: returns
+ * { changed, notes }. Each series carries `source_key` (the CSV's model-version stem, e.g.
+ * "gpt-5.6-sol"); rows are "<stem>_<level>". Rules, in the spirit of the price feed:
+ *  - the series list is fixed here — this never adds or drops a model, only refreshes rungs;
+ *  - a series the file no longer carries (or carries with < 2 usable rungs) keeps yesterday's
+ *    points and is noted, never blanked;
+ *  - a rung without both cost and score is dropped, never interpolated;
+ *  - as_of moves to `today` only when at least one point actually changed.
+ */
+export function refreshCursorBench(data, rows, today) {
+  const L = (data.effort_ladders || []).find((l) => l.id === CURSORBENCH_LADDER_ID);
+  const notes = [];
+  if (!L) return { changed: false, notes: ['no cursorbench ladder in data'] };
+  let changed = false;
+  for (const s of L.series) {
+    if (!s.source_key) { notes.push(`${s.label}: no source_key — left as is`); continue; }
+    const pts = {};
+    for (const r of rows) {
+      const mv = r['Model version'] || '';
+      const i = mv.lastIndexOf('_');
+      if (i < 0) continue;
+      const stem = mv.slice(0, i), lvl = mv.slice(i + 1).toLowerCase();
+      if (stem !== s.source_key || !EFFORT_ORDER.includes(lvl)) continue;
+      const cost = Number(r['Cost per task']), score = Number(r['Score']);
+      if (!r['Cost per task'] || !r['Score'] || !Number.isFinite(cost) || !Number.isFinite(score) || cost <= 0) continue;
+      pts[lvl] = { effort: lvl, cost: Math.round(cost * 100) / 100, score: Math.round(score * 1000) / 10 };
+    }
+    const next = EFFORT_ORDER.filter((l) => pts[l]).map((l) => pts[l]);
+    if (next.length < 2) { notes.push(`${s.label}: ${next.length} usable rung(s) in the file — kept previous ${s.points.length}`); continue; }
+    if (JSON.stringify(next) !== JSON.stringify(s.points)) { s.points = next; changed = true; notes.push(`${s.label}: ${next.length} rungs refreshed`); }
+  }
+  if (changed) L.as_of = today;
+  return { changed, notes };
+}
+
+/** Download Epoch's bundle and pull the CursorBench CSV out of it. Best effort — [] on any failure. */
+async function feedEpochCursorBench() {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 60000);
+  try {
+    const res = await fetch(EPOCH_ZIP_URL, { signal: ctrl.signal });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const zipPath = join(tmpdir(), `epoch-benchmarks-${process.pid}.zip`);
+    writeFileSync(zipPath, Buffer.from(await res.arrayBuffer()));
+    const csv = execFileSync('unzip', ['-p', zipPath, 'cursorbench_external.csv'], { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+    return parseCsv(csv);
+  } catch (e) {
+    console.log(`feed: Epoch CursorBench export unreachable (${e.message}) — ladder keeps its current points.`);
+    return [];
+  } finally {
+    clearTimeout(t);
+  }
+}
+
 /**
  * Sort candidate worklist items by kind priority (new-model > conflict > benchmark > ladder >
  * release), then by id for a stable tie-break, and cap at MAX_WORKLIST. Same input always
@@ -388,6 +469,9 @@ async function main() {
   console.log('feed: fetching OpenRouter + LiteLLM + LMArena...');
   const [orList, llmList, arenaList] = await Promise.all([feedOpenRouter(), feedLiteLLM(), feedLmArena()]);
   console.log(`feed: openrouter=${orList.length} litellm=${llmList.length} lmarena=${arenaList.length} candidates`);
+  const epochRows = await feedEpochCursorBench();
+  const ladder = epochRows.length ? refreshCursorBench(data, epochRows, today) : { changed: false, notes: ['feed empty — untouched'] };
+  console.log(`ladder: cursorbench ${ladder.changed ? 'REFRESHED' : 'unchanged'} — ${ladder.notes.join('; ')}`);
 
   const applied = [];
   const held = [];
@@ -555,6 +639,10 @@ async function main() {
       }
     }
     if (bestForChanged) changed = true;
+    if (ladder.changed) {
+      changed = true;
+      changelog.push({ date: today, model: 'CursorBench ladder', field: 'effort_ladders', old: null, new: ladder.notes.join('; '), sources: [EPOCH_ZIP_URL] });
+    }
 
     if (changed) data.as_of = today;
     writeFileSync(stateUrl, JSON.stringify(nextState, null, 2) + '\n');

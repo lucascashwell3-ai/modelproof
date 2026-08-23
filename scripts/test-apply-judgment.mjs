@@ -129,7 +129,8 @@ test('CLI: a bad value that breaks the gate is restored, exit code 1', () => {
     const after = readFileSync(join(dir, 'data', 'models.json'), 'utf8');
     // restored to the pre-run (corrupted-confidence) fixture — gpqa=55 must NOT have been left applied
     assert.equal(after, before);
-    assert.ok(!after.includes(': 55'), 'gate-rejected value must not survive in the restored file');
+    // look for the exact field write, not a bare ": 55" — real data legitimately contains 55.5-style scores
+    assert.ok(!/"gpqa":\s*55\b/.test(after), 'gate-rejected value must not survive in the restored file');
   });
 });
 
@@ -194,4 +195,30 @@ test('applyOne fills only the empty half when one field already has guidance', (
   const entry = applyOne(data, GOOD_GUIDANCE, '2026-08-22');
   assert.equal(entry.field, 'use_well');
   assert.deepEqual(data.models[0].best_for, ['coding']);
+});
+
+// --- new-model → timeline entry (2026-08-22) ---------------------------------------------------
+const NEW_MODEL = {
+  id: 'new:acme-zeta-1', kind: 'new-model', reason: 'listed on OpenRouter and LiteLLM with matching pricing; vendor page confirms',
+  sources: [{ url: 'https://acme.example/zeta', date: '2026-08-22' }],
+  value: { id: 'acme-zeta-1', name: 'Zeta 1', vendor: 'Acme', price_input: 1, price_output: 3, released: '2026-08-20' },
+};
+test('applyOne on a new model also writes a timeline entry with the model\'s release date and source', () => {
+  const data = { models: [], releases: [] };
+  applyOne(data, NEW_MODEL, '2026-08-22');
+  assert.equal(data.releases.length, 1);
+  assert.equal(data.releases[0].title, 'Acme releases Zeta 1');
+  assert.equal(data.releases[0].date, '2026-08-20');
+  assert.equal(data.releases[0].source, 'https://acme.example/zeta');
+  assert.ok(data.releases[0].summary.length > 20);
+});
+test('applyOne uses the Judge\'s release copy when given, validates it, and never duplicates a title', () => {
+  const j = { ...NEW_MODEL, value: { ...NEW_MODEL.value, release: { summary: 'Zeta 1 ships with 1M context.', why: 'Cheap long-context option.', source: 'https://acme.example/blog' } } };
+  assert.deepEqual(validateJudgment(j), []);
+  assert.ok(validateJudgment({ ...j, value: { ...j.value, release: { summary: 5 } } }).some((e) => /release\.summary/.test(e)));
+  assert.ok(validateJudgment({ ...j, value: { ...j.value, release: { source: 'ftp://x' } } }).some((e) => /release\.source/.test(e)));
+  const data = { models: [], releases: [{ title: 'Acme releases Zeta 1', date: '2026-08-20' }] };
+  applyOne(data, j, '2026-08-22');
+  assert.equal(data.releases.length, 1);            // already there — not added twice
+  assert.equal(data.models[0].release, undefined);  // release copy never lands on the model record
 });

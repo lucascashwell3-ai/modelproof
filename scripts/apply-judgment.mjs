@@ -68,6 +68,12 @@ export function validateJudgment(j) {
   } else if (j.kind === 'new-model') {
     if (!j.value || typeof j.value !== 'object') { errs.push(`${j.id}: new-model judgment needs value{}`); return errs; }
     for (const f of ['id', 'name', 'vendor']) if (!j.value[f]) errs.push(`${j.id}: new-model value missing "${f}"`);
+    if (j.value.release != null) {
+      const r = j.value.release;
+      if (typeof r !== 'object') errs.push(`${j.id}: release must be an object {summary, why, source?}`);
+      else for (const f of ['summary', 'why', 'source']) if (r[f] != null && typeof r[f] !== 'string') errs.push(`${j.id}: release.${f} must be a string`);
+      if (r && r.source && !/^https?:\/\//i.test(r.source)) errs.push(`${j.id}: release.source must be http(s)`);
+    }
     for (const f of NUMERIC_MODEL_FIELDS) {
       if (j.value[f] != null && (typeof j.value[f] !== 'number' || Number.isNaN(j.value[f]))) {
         errs.push(`${j.id}: new-model field "${f}" is numeric but value is "${j.value[f]}"`);
@@ -119,6 +125,23 @@ export function applyOne(data, j, today) {
       sources: Array.from(new Set([...(j.value.sources || []), ...j.sources.map((s) => s.url)])),
     };
     data.models.push(nm);
+    // every admitted model gets a timeline entry (2026-08-22: Judge-admitted models used to skip
+    // the timeline — Grok 4.6 and Gemini 3.7 Flash were in the catalog with no "what changed" line).
+    // The Judge may supply value.release {summary, why}; otherwise a plain factual stub, never prose we invented.
+    data.releases = data.releases || [];
+    const title = `${nm.vendor} releases ${nm.name}`;
+    if (!data.releases.some((r) => r.title === title)) {
+      const rel = j.value.release || {};
+      data.releases.push({
+        date: nm.released ? String(nm.released).slice(0, 10) : today,
+        vendor: nm.vendor,
+        title,
+        summary: rel.summary || `Added after Judge verification — ${j.reason}`,
+        source: rel.source || j.sources[0].url,
+        why: rel.why || 'New listing — pricing sourced; check back once benchmarks and usage guidance land.',
+      });
+    }
+    delete nm.release;
     return { date: today, model: nm.name, field: 'added', old: null, new: 'new model (judged)', sources: nm.sources, reason: j.reason };
   }
   if (j.kind === 'guidance') {
