@@ -940,3 +940,9 @@ sup.est { font-family: var(--mono); font-size: 9px; color: var(--warn); margin-l
 .cmp-select:focus-visible { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-soft); }
 .cmp-select option, .cmp-select optgroup { background: var(--panel); color: var(--ink); }
 @media (max-width: 640px) { .cmp-picker { grid-template-columns: 1fr; } }
+
+/* model map v2 (2026-08-22): value zone wash + clean dots */
+.zone-lbl { fill: var(--gold); font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; font-weight: 600; opacity: 0.9; }
+.zone-sub { fill: var(--ink-3); font-family: var(--mono); font-size: 10px; letter-spacing: 0.03em; }
+.dot .d-core { transition: r .15s var(--ease); }
+.dot:hover .d-core { r: 7; }

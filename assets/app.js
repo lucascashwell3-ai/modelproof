@@ -604,7 +604,7 @@ function renderChart() {
     .filter((p) => !num(p.x) && !num(p.y));
 
   $('#mapLegend').innerHTML =
-    `<span><i style="background:var(--gold)"></i>On the value frontier — a smart buy</span>
+    `<span><i style="background:var(--gold)"></i>Smart buy — nothing is both cheaper and better</span>
      <span><i style="background:rgba(233,230,223,0.45)"></i>Beaten on price + quality</span>
      <span class="dim">↑ ${metricLabel(metric)} &nbsp;·&nbsp; → $ / 1M out (log)</span>`;
 
@@ -632,7 +632,7 @@ function renderChart() {
   const xticks = tickCandidates.filter((t) => t >= pMin * 0.9 && t <= pMax * 1.1);
   if (xticks.length < 2) { xticks.length = 0; xticks.push(pMin, pMax); }
 
-  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Model map: cost versus capability, with the value frontier">`;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Model map: cost versus capability; the value zone is top-left">`;
 
   // the value (Pareto) frontier: models nothing else beats on BOTH price and capability
   const frontier = pts
@@ -641,15 +641,12 @@ function renderChart() {
   const onFrontier = new Set(frontier.map((p) => p.m.id));
   const drawFrontier = frontier.length >= 3 && pts.length >= 5;   // else a 2-step line looks thin — fall back to scatter
 
-  // dither fill of the strong region (above/left of the frontier) — the texture, made meaningful
-  if (drawFrontier) {
-    const fx = (p) => X(p.x).toFixed(1), fy = (p) => Y(p.y).toFixed(1);
-    const poly = [`${fx(frontier[0])},${padT}`, `${fx(frontier[0])},${fy(frontier[0])}`];
-    for (let i = 1; i < frontier.length; i++) { poly.push(`${fx(frontier[i])},${Y(frontier[i - 1].y).toFixed(1)}`); poly.push(`${fx(frontier[i])},${fy(frontier[i])}`); }
-    poly.push(`${fx(frontier[frontier.length - 1])},${padT}`);
-    svg += `<defs><clipPath id="froClip"><polygon points="${poly.join(' ')}"/></clipPath></defs>`;
-    svg += `<image href="${ditherFieldURI(plotW, plotH)}" x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" preserveAspectRatio="none" style="image-rendering:pixelated" opacity="0.5" clip-path="url(#froClip)"/>`;
-  }
+  // the value zone (2026-08-22): a diagonal wash, strongest in the top-left corner (cheap and
+  // capable) fading to nothing bottom-right. A direction, not a box — no arbitrary edge.
+  svg += `<defs><radialGradient id="zoneG" cx="0" cy="0" r="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#f2c14e" stop-opacity="0.20"/><stop offset="0.55" stop-color="#f2c14e" stop-opacity="0.05"/><stop offset="1" stop-color="#f2c14e" stop-opacity="0"/></radialGradient></defs>`;
+  svg += `<rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="url(#zoneG)"/>`;
+  svg += `<text class="zone-lbl" x="${padL + 14}" y="${padT + 20}">↖ VALUE ZONE</text>`;
+  svg += `<text class="zone-sub" x="${padL + 14}" y="${padT + 36}">cheaper and more capable, this way</text>`;
 
   // axes
   svg += `<line class="axis-line" x1="${padL}" y1="${padT + plotH}" x2="${padL + plotW}" y2="${padT + plotH}"/>`;
@@ -667,13 +664,6 @@ function renderChart() {
   svg += `<text class="axis-title" x="${padL + plotW / 2}" y="${H - 10}" text-anchor="middle">PRICE — $ / 1M OUTPUT TOKENS (LOG)</text>`;
   svg += `<text class="axis-title" transform="translate(16 ${padT + plotH / 2}) rotate(-90)" text-anchor="middle">${metricLabel(metric).toUpperCase()} →</text>`;
 
-  // the gold staircase — the best capability available at each price
-  if (drawFrontier) {
-    let d = `M ${X(frontier[0].x).toFixed(1)} ${Y(frontier[0].y).toFixed(1)}`;
-    for (let i = 1; i < frontier.length; i++) d += ` L ${X(frontier[i].x).toFixed(1)} ${Y(frontier[i - 1].y).toFixed(1)} L ${X(frontier[i].x).toFixed(1)} ${Y(frontier[i].y).toFixed(1)}`;
-    svg += `<path class="frontier-line" d="${d}" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>`;
-  }
-
   // teaching moment: if the pick sits BELOW the frontier, connect it to the model that beats it
   const pickPt = pts.find((p) => p.m.id === state.pickId);
   if (drawFrontier && pickPt && !onFrontier.has(pickPt.m.id)) {
@@ -682,17 +672,26 @@ function renderChart() {
   }
 
   // dots: frontier + pick burn gold and labelled; dominated models recede to pale gray
+  // labelled (hot) dots that sit within 14px of each other get their labels pushed apart
+  const placed = [];
+  const labelDy = (cx, cy) => {
+    let dy = 0;
+    for (const q of placed) if (Math.abs(q.cx - cx) < 120 && Math.abs(q.cy + q.dy - (cy + dy)) < 14) dy = (q.cy + q.dy) - cy + (cy >= q.cy ? 14 : -14);
+    placed.push({ cx, cy, dy });
+    return dy;
+  };
   pts.forEach((p) => {
     const cx = X(p.x), cy = Y(p.y);
     const isPick = p.m.id === state.pickId;
     const fro = drawFrontier && onFrontier.has(p.m.id);
     const hot = isPick || fro;
+    const dy = hot ? labelDy(cx, cy) : 0;
     const nearRight = cx > padL + plotW * 0.72;
     const lx = nearRight ? -12 : 12;
     svg += `<g class="dot ${isPick ? 'is-pick' : ''} ${fro ? 'is-frontier' : ''}" data-id="${p.m.id}" transform="translate(${cx.toFixed(1)} ${cy.toFixed(1)})">`;
     svg += `<circle class="d-hit" r="24" fill="transparent"/>`;
-    svg += `<g class="dot__marks">${ditherCluster(hot ? '#f2c14e' : 'rgba(233,230,223,0.42)', isPick ? 44 : hot ? 28 : 16)}</g>`;
-    svg += `<text class="dot__label" x="${lx}" y="4" text-anchor="${nearRight ? 'end' : 'start'}">${p.m.name}</text>`;
+    svg += `<circle class="d-core" r="${isPick ? 7 : hot ? 5.5 : 4}" fill="${hot ? 'var(--gold)' : 'rgba(233,230,223,0.38)'}" stroke="${hot ? '#0a0b0f' : 'none'}" stroke-width="1.5"/>`;
+    svg += `<text class="dot__label${hot ? '' : ' dot__label--quiet'}" x="${lx}" y="${4 + dy}" text-anchor="${nearRight ? 'end' : 'start'}">${p.m.name}</text>`;
     svg += `</g>`;
   });
 
