@@ -23,6 +23,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { isNotablePriceChange, priceEntry, addEntry } from './timeline.mjs';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = new URL('../', import.meta.url);
@@ -615,6 +616,10 @@ async function main() {
       m[a.field] = a.new;
       changed = true;
       changelog.push({ date: today, model: a.model, field: a.field, old: a.old, new: a.new, sources: a.sources });
+      // a price move of 20%+ is timeline news (kind: price); smaller moves stay in the changelog only
+      if ((a.field === 'price_input' || a.field === 'price_output') && isNotablePriceChange(a.old, a.new)) {
+        addEntry(data, priceEntry(m, a.field === 'price_input' ? 'input' : 'output', a.old, a.new, OR_URL, today));
+      }
     }
     for (const nm of newModels) {
       data.models.push(nm);
@@ -622,6 +627,7 @@ async function main() {
       changelog.push({ date: today, model: nm.name, field: 'added', old: null, new: 'new model', sources: nm.sources });
       data.releases = data.releases || [];
       data.releases.push({
+        kind: 'model',
         date: nm.released ? String(nm.released).slice(0, 10) : today,
         vendor: nm.vendor,
         title: `${nm.vendor} releases ${nm.name}`,

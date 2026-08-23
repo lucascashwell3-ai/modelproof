@@ -374,3 +374,23 @@ test('refreshCursorBench is a no-op on an empty feed and on data with no cursorb
   assert.equal(refreshCursorBench(d, [], '2026-08-25').changed, false);
   assert.equal(refreshCursorBench({ effort_ladders: [] }, parseCsv(CSV), '2026-08-25').changed, false);
 });
+
+// --- timeline helpers (scripts/timeline.mjs) --------------------------------------------------
+import { isNotablePriceChange, priceEntry, addEntry } from './timeline.mjs';
+test('isNotablePriceChange: 20% is the bar; null or zero old price never qualifies', () => {
+  assert.equal(isNotablePriceChange(5, 4), true);
+  assert.equal(isNotablePriceChange(5, 4.5), false);
+  assert.equal(isNotablePriceChange(1, 1.2), true);
+  assert.equal(isNotablePriceChange(null, 4), false);
+  assert.equal(isNotablePriceChange(0, 4), false);
+});
+test('priceEntry + addEntry: tagged, sourced, and idempotent by title', () => {
+  const data = { releases: [] };
+  const m = { name: 'M One', vendor: 'Acme' };
+  assert.equal(addEntry(data, priceEntry(m, 'input', 1, 0.2, 'https://openrouter.ai/api/v1/models', '2026-08-25')), true);
+  assert.equal(addEntry(data, priceEntry(m, 'input', 1, 0.2, 'https://openrouter.ai/api/v1/models', '2026-08-25')), false);
+  assert.equal(data.releases.length, 1);
+  assert.equal(data.releases[0].kind, 'price');
+  assert.match(data.releases[0].title, /-80%/);
+  assert.equal(data.releases[0].source, 'https://openrouter.ai/api/v1/models');
+});

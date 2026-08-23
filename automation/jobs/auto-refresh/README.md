@@ -44,7 +44,13 @@ adds or drops a model, only refreshes rungs. A series with < 2 usable rungs in t
 yesterday's points; an unreachable feed leaves the ladder untouched. The other two ladders
 (Frontier-Bench, Terminal-Bench) are chart-read from vendor posts — manual, by design.
 
-**Timeline:** every model the Judge admits now gets a `releases` entry (date = its release date,
+**Timeline kinds (2026-08-22):** every entry carries `kind: model | price | retired`; the site shows
+new models by default and lets readers add the other two. Collect writes a `price` entry for any
+applied price move of 20%+ (`scripts/timeline.mjs`); the Judge's price resolutions do the same, and a
+Judge `deprecation` (value: true, vendor notice in sources) marks the model retired and writes a
+`retired` entry. Smaller price moves stay in the changelog only.
+
+**Timeline — new models:** every model the Judge admits now gets a `releases` entry (date = its release date,
 source = the Judge's first source; the Judge may supply `release: {summary, why, source}`).
 Collect's auto-admits already did this.
 

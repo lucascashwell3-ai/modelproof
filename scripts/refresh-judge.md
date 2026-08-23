@@ -23,6 +23,11 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
      `"release": {"summary": "...", "why": "...", "source": "https://..."}` inside `value` when the
      vendor page gives you something concrete to say (one or two plain sentences each); leave it out
      and a factual stub is written instead.
+   - **`deprecation` items**: answer yes with `"kind": "deprecation", "value": true` and the vendor's
+     retirement notice in sources — the model is marked retired and a "retires" timeline entry is
+     written. If you can't find the notice, hold; never mark a model retired on a hunch.
+   - **Price `conflict` resolutions** that move a price 20% or more write a price-change timeline
+     entry on their own — nothing extra to do, but make sure the source is the vendor's pricing page.
    - **`guidance` items** (up to 3 per run — a blank model needs `best_for` tags + `use_well`
      tips): read the vendor's own model card / docs page, then
      `"value": {"best_for": [tags from the vocab in the ask], "use_well": [2–4 tips], "strengths"?: [...]}`.

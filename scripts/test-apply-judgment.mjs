@@ -96,7 +96,7 @@ function mktempRepo() {
   const dir = mkdtempSync(join(tmpdir(), 'apply-judgment-test-'));
   mkdirSync(join(dir, 'scripts'), { recursive: true });
   mkdirSync(join(dir, 'data', 'refresh'), { recursive: true });
-  for (const f of ['apply-judgment.mjs', 'validate-data.mjs', 'sources.json']) {
+  for (const f of ['apply-judgment.mjs', 'validate-data.mjs', 'sources.json', 'timeline.mjs']) {
     writeFileSync(join(dir, 'scripts', f), readFileSync(join(SCRIPTS_DIR, f)));
   }
   const models = JSON.parse(readFileSync(REAL_DATA));
@@ -221,4 +221,31 @@ test('applyOne uses the Judge\'s release copy when given, validates it, and neve
   applyOne(data, j, '2026-08-22');
   assert.equal(data.releases.length, 1);            // already there — not added twice
   assert.equal(data.models[0].release, undefined);  // release copy never lands on the model record
+});
+
+// --- timeline from price moves + deprecations (2026-08-22) --------------------------------------
+test('a Judge price resolution of 20%+ writes a tagged price entry; a small move does not', () => {
+  const data = { models: [{ id: 'm1', name: 'M One', vendor: 'Acme', price_input: 5, price_output: 30, sources: [] }], releases: [] };
+  applyOne(data, { id: 'm1:price_output', kind: 'conflict', field: 'price_output', value: 20, sources: SOURCES, reason: 'vendor pricing page shows $20 since Aug 21' }, '2026-08-25');
+  assert.equal(data.releases.length, 1);
+  assert.equal(data.releases[0].kind, 'price');
+  assert.match(data.releases[0].title, /output price cut — \$30 → \$20 per 1M \(-33%\)/);
+  applyOne(data, { id: 'm1:price_input', kind: 'conflict', field: 'price_input', value: 4.5, sources: SOURCES, reason: 'vendor pricing page shows 4.50' }, '2026-08-25');
+  assert.equal(data.releases.length, 1);   // −10%: changelog only
+});
+test('a deprecation judgment must be value:true, marks the model, and writes a retired entry once', () => {
+  assert.ok(validateJudgment({ id: 'm1:deprecation', kind: 'deprecation', value: false, sources: SOURCES, reason: 'vendor says retired on Sept 1' }).length);
+  const j = { id: 'm1:deprecation', kind: 'deprecation', value: true, sources: SOURCES, reason: 'vendor deprecation notice: retired Sept 1, 2026' };
+  assert.deepEqual(validateJudgment(j), []);
+  const data = { models: [{ id: 'm1', name: 'M One', vendor: 'Acme', sources: [] }], releases: [] };
+  applyOne(data, j, '2026-08-25');
+  applyOne(data, j, '2026-08-25');
+  assert.equal(data.models[0].deprecated, true);
+  assert.equal(data.releases.length, 1);
+  assert.equal(data.releases[0].kind, 'retired');
+  assert.equal(data.releases[0].title, 'Acme retires M One');
+});
+test('validateJudgment rejects a release with an unknown kind', () => {
+  const j = { id: 'x:release', kind: 'release', sources: SOURCES, reason: 'launch post read in full', value: { date: '2026-08-25', vendor: 'Acme', title: 'T', summary: 'S', source: 'https://a.example', why: 'W', kind: 'rumour' } };
+  assert.ok(validateJudgment(j).some((e) => /release kind/.test(e)));
 });

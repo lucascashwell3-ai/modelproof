@@ -20,6 +20,7 @@
    Usage:
      node scripts/apply-judgment.mjs <judgments.json> [--dry-run]
 */
+import { isNotablePriceChange, priceEntry, retiredEntry, addEntry } from './timeline.mjs';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -44,7 +45,7 @@ export function validateJudgment(j) {
     if (!j.reason || j.reason.length < 12) errs.push(`${j.id}: hold reason must be >= 12 chars`);
     return errs;
   }
-  if (!j.kind || !['conflict', 'benchmark', 'ladder', 'new-model', 'release', 'guidance'].includes(j.kind)) {
+  if (!j.kind || !['conflict', 'benchmark', 'ladder', 'new-model', 'release', 'guidance', 'deprecation'].includes(j.kind)) {
     errs.push(`${j.id}: bad or missing kind "${j.kind}"`);
   }
   if (!j.reason || j.reason.length < 12) errs.push(`${j.id}: reason must be >= 12 chars ("${j.reason || ''}")`);
@@ -65,6 +66,7 @@ export function validateJudgment(j) {
   } else if (j.kind === 'release') {
     if (!j.value || typeof j.value !== 'object') { errs.push(`${j.id}: release judgment needs value{}`); return errs; }
     for (const f of RELEASE_FIELDS) if (!j.value[f]) errs.push(`${j.id}: release value missing "${f}"`);
+    if (j.value.kind != null && !['model', 'price', 'retired'].includes(j.value.kind)) errs.push(`${j.id}: release kind must be model | price | retired`);
   } else if (j.kind === 'new-model') {
     if (!j.value || typeof j.value !== 'object') { errs.push(`${j.id}: new-model judgment needs value{}`); return errs; }
     for (const f of ['id', 'name', 'vendor']) if (!j.value[f]) errs.push(`${j.id}: new-model value missing "${f}"`);
@@ -79,6 +81,9 @@ export function validateJudgment(j) {
         errs.push(`${j.id}: new-model field "${f}" is numeric but value is "${j.value[f]}"`);
       }
     }
+  } else if (j.kind === 'deprecation') {
+    // value must be literally true — "is it retired?" answered yes, with the vendor page in sources
+    if (j.value !== true) errs.push(`${j.id}: deprecation value must be true (to decline, hold instead)`);
   } else if (j.kind === 'guidance') {
     // value: { best_for: [vocab…], use_well: [2–4 plain sentences], strengths?: [...] }
     const v = j.value;
@@ -108,11 +113,23 @@ export function applyOne(data, j, today) {
     if (BENCHMARK_FIELDS.includes(j.field)) { m.benchmarks = m.benchmarks || {}; m.benchmarks[j.field] = j.value; }
     else m[j.field] = j.value;
     m.sources = Array.from(new Set([...(m.sources || []), ...j.sources.map((s) => s.url)]));
+    if ((j.field === 'price_input' || j.field === 'price_output') && isNotablePriceChange(old, j.value)) {
+      addEntry(data, priceEntry(m, j.field === 'price_input' ? 'input' : 'output', old, j.value, j.sources[0].url, today));
+    }
     return { date: today, model: m.name, field: j.field, old, new: j.value, sources: j.sources.map((s) => s.url), reason: j.reason };
+  }
+  if (j.kind === 'deprecation') {
+    const m = data.models.find((x) => x.id === modelId);
+    if (!m) throw new Error(`${j.id}: no model with id "${modelId}"`);
+    const old = !!m.deprecated;
+    m.deprecated = true;
+    m.sources = Array.from(new Set([...(m.sources || []), ...j.sources.map((s) => s.url)]));
+    addEntry(data, retiredEntry(m, j.sources[0].url, today, j.reason));
+    return { date: today, model: m.name, field: 'deprecated', old, new: true, sources: j.sources.map((s) => s.url), reason: j.reason };
   }
   if (j.kind === 'release') {
     data.releases = data.releases || [];
-    data.releases.push(j.value);
+    data.releases.push({ kind: 'model', ...j.value });   // a Judge-written entry defaults to the new-model view unless it says otherwise
     return { date: today, model: j.value.vendor, field: 'release', old: null, new: j.value.title, sources: j.sources.map((s) => s.url), reason: j.reason };
   }
   if (j.kind === 'new-model') {
@@ -133,6 +150,7 @@ export function applyOne(data, j, today) {
     if (!data.releases.some((r) => r.title === title)) {
       const rel = j.value.release || {};
       data.releases.push({
+        kind: 'model',
         date: nm.released ? String(nm.released).slice(0, 10) : today,
         vendor: nm.vendor,
         title,
