@@ -73,9 +73,11 @@ html { scroll-behavior: smooth; overflow-x: clip; }
 body {
   font-family: var(--font);
   color: var(--ink);
-  /* the live ASCII sunset (#asciiScene, fixed) is the real backdrop; this deep base only shows
-     for the split second before the canvas paints, so it matches the scene's darkest water. */
-  background: #07060e;
+  /* 2026-08-22: the ASCII sunset is gone (it fought the text). Flat deep base, one soft
+     gold glow high up behind the hero, nothing moving. */
+  background: var(--bg);
+  background-image: radial-gradient(ellipse 70% 40% at 50% -5%, rgba(242,193,78,0.10), transparent 70%);
+  background-repeat: no-repeat;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -828,17 +830,15 @@ sup.est { font-family: var(--mono); font-size: 9px; color: var(--warn); margin-l
 }
 .hero__panel { display: flex; flex-direction: column; min-width: 0; position: relative; }
 /* legibility over the busy water: a soft dark pool behind the lettering, no blur (perf rule) */
-.hero__panel::before { content: ""; position: absolute; inset: -40px -60px -20px -60px; z-index: -1; pointer-events: none;
-  background: radial-gradient(ellipse at 40% 30%, rgba(7,6,14,.78) 0%, rgba(7,6,14,.55) 45%, transparent 75%); }
+
 .hero__h1 {
   font-family: var(--head); font-weight: 800; letter-spacing: -0.035em; line-height: 1.02;
   font-size: clamp(2.1rem, 4.4vw, 3.6rem); color: #fff; margin-bottom: 16px;
-  text-shadow: 0 2px 30px rgba(0,0,0,0.55);
 }
 .hero__h1 em { font-style: normal; color: var(--gold); }
 .hero__sub {
   font-size: clamp(1rem, 1.25vw, 1.12rem); color: #e6dfd0; max-width: 50ch; line-height: 1.55;
-  margin-bottom: 22px; text-shadow: 0 1px 18px rgba(0,0,0,0.6);
+  margin-bottom: 22px;
 }
 .hero__assure { margin-top: 12px; font-size: .8rem; color: var(--good); font-weight: 500; }
 
