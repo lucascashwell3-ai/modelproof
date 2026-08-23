@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 
 const CONF = ['low', 'medium', 'high'];
 const VOCAB = ['reasoning', 'agentic', 'coding', 'research', 'long-context', 'writing', 'cheap-bulk', 'speed', 'vision'];
-const BENCHES = ['swe_bench', 'gpqa', 'aime', 'mmlu_pro', 'lmarena_elo'];
+const BENCHES = ['swe_bench', 'gpqa', 'aime', 'mmlu_pro'];   // lmarena_elo dropped 2026-08-22
 const num = (v) => v === null || v === undefined || Number.isNaN(v);
 
 const data = JSON.parse(readFileSync(new URL('../data/models.json', import.meta.url)));

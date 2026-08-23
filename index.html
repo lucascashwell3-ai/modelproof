@@ -15,17 +15,14 @@
   <meta name="twitter:title" content="Modelproof — which AI model should you actually use?" />
   <meta name="twitter:description" content="A calm decision tool for AI models. Your goal or your lab → a straight answer, not a leaderboard." />
   <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
-  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=jetbrains-mono@400,500&display=swap" rel="stylesheet" />
+  <link href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&f[]=cabinet-grotesk@700,800&f[]=jetbrains-mono@400,500&display=swap" rel="stylesheet" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- same Fraunces cut as the Proof site (portfolio-v2) so the two wordmarks match -->
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=mk22" />
+  <link rel="stylesheet" href="assets/styles.css?v=mk27" />
 </head>
 <body>
-  <!-- the live ASCII sunset — one fixed, full-viewport canvas that carries the whole site -->
-  <canvas id="asciiScene" aria-hidden="true"></canvas>
-  <div class="grain" aria-hidden="true"></div>
 
   <!-- floating capsule nav -->
   <header class="nav" id="nav">
@@ -41,80 +38,52 @@
   </header>
 
   <main id="top">
-    <!-- ============ HERO: warm ASCII sunset + entry goal picker ============ -->
+    <!-- ============ HERO: what it is + how to get it + the skill running ============ -->
     <section class="hero" id="hero">
-      <!-- the wordmark stands alone on the live ASCII sunset that carries the whole site -->
-      <div class="hero__band">
-        <div class="hero__scrim" aria-hidden="true"></div>
-        <div class="hero__title">
-          <span class="hero__eyebrow">Model selection, without the noise</span>
-          <h1 class="hero__wordmark">Model<em>proof</em></h1>
-        </div>
-      </div>
+      <div class="hero__split" id="install">
+        <div class="hero__panel">
+          <h1 class="hero__h1">Know which AI model to use <em>before</em> you start.</h1>
+          <p class="hero__sub">Say what you&rsquo;re about to do &mdash; an overnight bulk job, a client deck, a new
+          project. Modelproof checks what you already pay for, the live prices and scores, and names one model
+          and how to use it. Neutral, cost-first, no leaderboard.</p>
 
-      <!-- the tool sits below the scene, on clean dark -->
-      <div class="hero__tool" id="engine">
-        <!-- the console: pick task + budget + (optional) the labs you use → answer resolves below -->
-        <div class="console" role="group" aria-label="Get a model recommendation">
-          <div class="console__row">
-            <span class="console__label">Task</span>
-            <div class="segmented segmented--goals goalctl" role="radiogroup" aria-label="Task">
-              <i class="seg-pill" aria-hidden="true"></i>
-              <button class="seg is-active" data-goal="coding" role="radio" aria-checked="true">Coding</button>
-              <button class="seg" data-goal="research" role="radio" aria-checked="false">Strategy</button>
-              <button class="seg" data-goal="writing" role="radio" aria-checked="false">Writing</button>
-              <button class="seg" data-goal="cheap-bulk" role="radio" aria-checked="false">Cheap bulk</button>
+          <div class="installer">
+            <div class="inst-tabs" role="tablist" aria-label="Ways to get Modelproof">
+              <button class="inst-tab" role="tab" aria-selected="true" data-m="prompt" id="instTab-prompt" aria-controls="instPane-prompt">Paste a prompt</button>
+              <button class="inst-tab" role="tab" aria-selected="false" data-m="cli" id="instTab-cli" aria-controls="instPane-cli">Install the skill</button>
+              <button class="inst-tab" role="tab" aria-selected="false" data-m="mcp" id="instTab-mcp" aria-controls="instPane-mcp">MCP server</button>
+            </div>
+            <div class="inst-pane on" id="instPane-prompt" role="tabpanel" data-pane="prompt" aria-labelledby="instTab-prompt">
+              <p>Paste one short prompt into Claude Code, Cursor, or any agentic AI &mdash; it installs the advisor and asks what you&rsquo;re about to do.</p>
+              <div class="cmdwrap"><textarea id="promptText" readonly rows="3" aria-label="Advisor prompt" class="inst-prompt"></textarea><button class="copy" id="copyPrompt" type="button" aria-label="Copy prompt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>
+            </div>
+            <div class="inst-pane" id="instPane-cli" role="tabpanel" data-pane="cli" aria-labelledby="instTab-cli" hidden>
+              <p>For Claude Code. Downloads five plain-text files you can read &mdash; nothing is piped into a shell, and it never changes a setting without showing you the plan and getting your yes.</p>
+              <div class="cmdwrap"><div class="cmdbox inst-cmd">for f in SKILL.md references/data.md references/detect-setup.md references/consent.md references/security.md; do curl -fsSL --create-dirs https://raw.githubusercontent.com/lucascashwell3-ai/modelproof/main/skills/modelproof-advisor/$f -o ~/.claude/skills/modelproof-advisor/$f; done</div><button class="copy" type="button" aria-label="Copy" data-copy="for f in SKILL.md references/data.md references/detect-setup.md references/consent.md references/security.md; do curl -fsSL --create-dirs https://raw.githubusercontent.com/lucascashwell3-ai/modelproof/main/skills/modelproof-advisor/$f -o ~/.claude/skills/modelproof-advisor/$f; done"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>
+            </div>
+            <div class="inst-pane" id="instPane-mcp" role="tabpanel" data-pane="mcp" aria-labelledby="instTab-mcp" hidden>
+              <p>For Cursor, Claude Desktop, and any MCP-capable agent &mdash; the live model data as read-only tools your agent can query mid-task.</p>
+              <div class="cmdwrap"><div class="cmdbox inst-cmd">git clone https://github.com/lucascashwell3-ai/modelproof && cd modelproof/mcp && npm install && claude mcp add modelproof -- node $(pwd)/server.js</div><button class="copy" type="button" aria-label="Copy" data-copy="git clone https://github.com/lucascashwell3-ai/modelproof && cd modelproof/mcp && npm install && claude mcp add modelproof -- node $(pwd)/server.js"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>
+            </div>
+            <div class="inst-foot">
+              <a href="https://github.com/lucascashwell3-ai/modelproof/blob/main/skills/modelproof-advisor/SKILL.md" target="_blank" rel="noopener">SKILL.md ↗</a>
+              <a href="https://github.com/lucascashwell3-ai/modelproof/blob/main/mcp/README.md" target="_blank" rel="noopener">MCP readme ↗</a>
             </div>
           </div>
-          <div class="console__row">
-            <span class="console__label">Budget</span>
-            <!-- budget is a continuum, not 4 buckets: a spring slider with a live-updating answer -->
-            <div class="budget">
-              <input type="range" id="budgetRange" min="0" max="100" step="1" value="48"
-                     aria-label="Budget — slide from cheapest to best quality" />
-              <div class="budget__scale" aria-hidden="true">
-                <button type="button" class="budget__word" data-bp="6" tabindex="-1">Cheapest</button>
-                <button type="button" class="budget__word" data-bp="28" tabindex="-1">Value</button>
-                <button type="button" class="budget__word is-on" data-bp="48" tabindex="-1">Balanced</button>
-                <button type="button" class="budget__word" data-bp="85" tabindex="-1">Best</button>
-              </div>
+          <p class="hero__assure">✓ Every price and score here is sourced and dated. Nothing is guessed &mdash; unknowns stay blank.</p>
+        </div>
+
+        <div class="term-col">
+          <div class="term" id="term">
+            <div class="term-bar">
+              <span class="tdot"></span><span class="tdot"></span><span class="tdot"></span>
+              <span class="term-title" id="termTitle">claude — 96×28</span>
+              <span class="term-dots" id="termDots" aria-hidden="true"><span class="mdot on"></span><span class="mdot"></span><span class="mdot"></span></span>
             </div>
-          </div>
-          <div class="console__row console__row--labs">
-            <span class="console__label">Labs I use <em>optional</em></span>
-            <div class="labchips labctl" role="group" aria-label="Labs I use"></div>
-          </div>
-          <p class="console__echo" id="queryEcho" aria-hidden="true"></p>
-        </div>
-
-        <div class="engine__result" id="result" aria-live="polite">
-          <!-- populated by app.js -->
-        </div>
-
-        <!-- portable engine: turn this selection into a paste-in prompt for your own AI -->
-        <div class="promptgen">
-        <div class="promptgen__pitch">
-          <h3 class="promptgen__title">Take this advisor with you</h3>
-          <p class="promptgen__sub">One click turns your selection into a paste-in prompt — your own AI
-          becomes the model-picker, so you never have to come back and check.</p>
-        </div>
-        <button class="promptgen__btn" id="genPrompt" type="button" disabled>
-          Get my advisor prompt <span aria-hidden="true">→</span>
-        </button>
-        <p class="promptgen__more">Prefer it to work automatically in your AI? Also a <a href="https://github.com/lucascashwell3-ai/modelproof/tree/main/skills" target="_blank" rel="noopener">Claude skill + MCP</a>.</p>
-        <div class="promptgen__panel" id="promptPanel" hidden>
-          <p class="promptgen__hint">
-            Paste this into Claude or ChatGPT — as a custom instruction or your first message — and it
-            becomes your own ongoing model-picker, so you don't have to keep coming back to check.
-          </p>
-          <textarea class="promptgen__text" id="promptText" readonly rows="12" aria-label="Generated model-advisor prompt"></textarea>
-          <div class="promptgen__actions">
-            <button class="promptgen__copy" id="copyPrompt" type="button">Copy prompt</button>
-            <span class="promptgen__status" id="copyStatus" role="status" aria-live="polite"></span>
+            <div class="term-body" id="termBody" aria-label="Abridged demo of the advisor working"></div>
           </div>
         </div>
       </div>
-      </div><!-- /hero__tool -->
     </section>
 
     <!-- ============ evidence divider — depth below, out of the way ============ -->
@@ -127,7 +96,7 @@
       <div class="panel__head">
         <div>
           <h2 class="panel__title"><span class="panel__no">01</span>Compare, side by side</h2>
-          <p class="panel__desc">Pick up to <em>five</em> models — pre-loaded from your answer above. Coding score is 0–100 — SWE-bench Verified where published, otherwise a sourced estimate (marked <em>est</em>); the dot + label show confidence. <span class="dim">"—" means not publicly sourced. We don't guess.</span></p>
+          <p class="panel__desc">Pick up to <em>three</em> models. Coding score is 0–100 — SWE-bench Verified where published, otherwise a sourced estimate (marked <em>est</em>); the dot + label show confidence. <span class="dim">"—" means not publicly sourced. We don't guess.</span></p>
         </div>
       </div>
       <div class="cmp-picker" id="cmpPicker" aria-label="Choose models to compare"></div>
@@ -142,9 +111,9 @@
           <h2 class="panel__title"><span class="panel__no">02</span>The model map</h2>
           <p class="panel__desc">
             Every model placed by <em>what it costs</em> (→) and <em>how capable it is</em> (↑).
-            The gold line is the <em>value frontier</em> — the most capability you can buy at each price.
-            On the line is a smart buy; anything below it is beaten by something cheaper <em>and</em> better.
-            <span class="dim">Reflects your task above; hover any cluster for the numbers.</span>
+            The glow in the top-left is the <em>value zone</em> — the cheaper-and-stronger corner every model wants to be in.
+            Gold dots are smart buys: nothing is both cheaper <em>and</em> better. Grey dots are beaten on both.
+            <span class="dim">Ranked on coding; hover any dot for the numbers.</span>
           </p>
         </div>
         <div class="legend" id="mapLegend"></div>
@@ -177,8 +146,9 @@
       <div class="panel__head">
         <div>
           <h2 class="panel__title"><span class="panel__no">04</span>What changed lately</h2>
-          <p class="panel__desc">The releases actually worth knowing about — newest first.</p>
+          <p class="panel__desc">New models, newest first. Add price changes and retirements if you want the whole picture.</p>
         </div>
+        <div class="feed-kinds" id="feedKinds" aria-label="What to show"></div>
       </div>
       <ol class="feed" id="feed"></ol>
     </section>
@@ -229,6 +199,7 @@
 
   <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
 
-  <script src="assets/app.js?v=mk22"></script>
+  <script src="assets/app.js?v=mk35"></script>
+  <script src="assets/demo.js"></script>
 </body>
 </html>

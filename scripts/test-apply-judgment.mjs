@@ -129,7 +129,8 @@ test('CLI: a bad value that breaks the gate is restored, exit code 1', () => {
     const after = readFileSync(join(dir, 'data', 'models.json'), 'utf8');
     // restored to the pre-run (corrupted-confidence) fixture — gpqa=55 must NOT have been left applied
     assert.equal(after, before);
-    assert.ok(!after.includes(': 55'), 'gate-rejected value must not survive in the restored file');
+    // look for the exact field write, not a bare ": 55" — real data legitimately contains 55.5-style scores
+    assert.ok(!/"gpqa":\s*55\b/.test(after), 'gate-rejected value must not survive in the restored file');
   });
 });
 

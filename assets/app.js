@@ -40,7 +40,7 @@ function prioLabel(p) { return p <= 16 ? 'cheapest' : p <= 38 ? 'value' : p <= 6
 const GOAL_METRIC = {
   coding: 'coding_score',   // unified 0-100 coding score (blends SWE-bench + other sourced signals)
   research: 'gpqa',
-  writing: 'lmarena_elo',
+  writing: 'gpqa',          // no clean writing benchmark — general reasoning is the fallback (LMArena dropped 2026-08-22: no-redistribution source, feed dead)
   'cheap-bulk': 'mmlu_pro',
 };
 
@@ -54,7 +54,7 @@ const GOAL_TAGS = {
 };
 
 const GOAL_DESC = {
-  coding: 'Writing, fixing & refactoring code — including multi-step agent tasks. Ranked on a 0–100 coding score: SWE-bench where it exists, otherwise sourced signals (LMArena Code Elo, AA Coding Index) so new models aren\'t stuck at "—".',
+  coding: 'Writing, fixing & refactoring code — including multi-step agent tasks. Ranked on a 0–100 coding score: SWE-bench where it exists, otherwise sourced signals (agentic suites, vendor-published evals) so new models aren\'t stuck at "—".',
   research: 'Deep thinking, analysis & planning. Ranked on graduate-level reasoning (GPQA).',
   writing: 'Drafting prose, emails & content. No clean writing benchmark exists, so only models the data tags for prose are ranked — on general ability + price.',
   'cheap-bulk': 'High-volume simple work — classification, tagging, extraction. Cheapest capable option first.',
@@ -292,15 +292,26 @@ function renderCompare() {
   const pk = $('#cmpPicker'), bd = $('#cmpBoard');
   if (!pk || !bd) return;
 
-  pk.innerHTML = all.map((m) => {
-    const on = state.compare.includes(m.id);
-    return `<button class="chip ${on ? 'is-active' : ''}" data-cmp="${m.id}" type="button">${m.name}</button>`;
-  }).join('');
-  pk.querySelectorAll('[data-cmp]').forEach((b) => b.addEventListener('click', () => {
-    const id = b.getAttribute('data-cmp');
-    const i = state.compare.indexOf(id);
-    if (i >= 0) { if (state.compare.length <= 2) return; state.compare.splice(i, 1); }
-    else { if (state.compare.length >= CMP_MAX) return; state.compare.push(id); }
+  // Three dropdowns, one per column (2026-08-22 — the 49-chip wall was unreadable). Each
+  // lists every model grouped by vendor; a column can be cleared to "—" down to two.
+  const byVendor = {};
+  all.forEach((m) => { (byVendor[m.vendor] = byVendor[m.vendor] || []).push(m); });
+  const vendors = Object.keys(byVendor).sort();
+  const slots = [0, 1, 2].map((i) => state.compare[i] || '');
+  pk.innerHTML = slots.map((sel, i) => `
+    <label class="cmp-slot">
+      <span class="cmp-slot__n">${i + 1}</span>
+      <select class="cmp-select" data-slot="${i}" aria-label="Model ${i + 1}">
+        <option value="">${i < 2 ? 'Pick a model' : '— none —'}</option>
+        ${vendors.map((v) => `<optgroup label="${v}">${byVendor[v].map((m) =>
+          `<option value="${m.id}" ${m.id === sel ? 'selected' : ''} ${state.compare.includes(m.id) && m.id !== sel ? 'disabled' : ''}>${m.name}</option>`).join('')}</optgroup>`).join('')}
+      </select>
+    </label>`).join('');
+  pk.querySelectorAll('.cmp-select').forEach((el) => el.addEventListener('change', () => {
+    const i = Number(el.dataset.slot), id = el.value;
+    const next = [0, 1, 2].map((k) => (k === i ? id : (state.compare[k] || ''))).filter(Boolean);
+    if (next.length < 2) { el.value = state.compare[i] || ''; return; }   // keep at least two to compare
+    state.compare = next;
     state.cmpCustom = true;
     renderCompare();
   }));
@@ -475,7 +486,7 @@ function upgradeCheck(top, metric) {
 }
 
 function metricLabel(metric) {
-  return { coding_score: 'Coding', swe_bench: 'SWE-bench', gpqa: 'GPQA', aime: 'AIME', lmarena_elo: 'LMArena Elo', mmlu_pro: 'MMLU-Pro' }[metric] || metric;
+  return { coding_score: 'Coding', swe_bench: 'SWE-bench', gpqa: 'GPQA', aime: 'AIME', mmlu_pro: 'MMLU-Pro' }[metric] || metric;
 }
 
 // ---------- labs facet: multi-select vendor chips + an "All labs" default ----------
@@ -593,7 +604,7 @@ function renderChart() {
     .filter((p) => !num(p.x) && !num(p.y));
 
   $('#mapLegend').innerHTML =
-    `<span><i style="background:var(--gold)"></i>On the value frontier — a smart buy</span>
+    `<span><i style="background:var(--gold)"></i>Smart buy — nothing is both cheaper and better</span>
      <span><i style="background:rgba(233,230,223,0.45)"></i>Beaten on price + quality</span>
      <span class="dim">↑ ${metricLabel(metric)} &nbsp;·&nbsp; → $ / 1M out (log)</span>`;
 
@@ -621,7 +632,7 @@ function renderChart() {
   const xticks = tickCandidates.filter((t) => t >= pMin * 0.9 && t <= pMax * 1.1);
   if (xticks.length < 2) { xticks.length = 0; xticks.push(pMin, pMax); }
 
-  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Model map: cost versus capability, with the value frontier">`;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Model map: cost versus capability; the value zone is top-left">`;
 
   // the value (Pareto) frontier: models nothing else beats on BOTH price and capability
   const frontier = pts
@@ -630,15 +641,12 @@ function renderChart() {
   const onFrontier = new Set(frontier.map((p) => p.m.id));
   const drawFrontier = frontier.length >= 3 && pts.length >= 5;   // else a 2-step line looks thin — fall back to scatter
 
-  // dither fill of the strong region (above/left of the frontier) — the texture, made meaningful
-  if (drawFrontier) {
-    const fx = (p) => X(p.x).toFixed(1), fy = (p) => Y(p.y).toFixed(1);
-    const poly = [`${fx(frontier[0])},${padT}`, `${fx(frontier[0])},${fy(frontier[0])}`];
-    for (let i = 1; i < frontier.length; i++) { poly.push(`${fx(frontier[i])},${Y(frontier[i - 1].y).toFixed(1)}`); poly.push(`${fx(frontier[i])},${fy(frontier[i])}`); }
-    poly.push(`${fx(frontier[frontier.length - 1])},${padT}`);
-    svg += `<defs><clipPath id="froClip"><polygon points="${poly.join(' ')}"/></clipPath></defs>`;
-    svg += `<image href="${ditherFieldURI(plotW, plotH)}" x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" preserveAspectRatio="none" style="image-rendering:pixelated" opacity="0.5" clip-path="url(#froClip)"/>`;
-  }
+  // the value zone (2026-08-22): a diagonal wash, strongest in the top-left corner (cheap and
+  // capable) fading to nothing bottom-right. A direction, not a box — no arbitrary edge.
+  svg += `<defs><radialGradient id="zoneG" cx="0" cy="0" r="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#f2c14e" stop-opacity="0.20"/><stop offset="0.55" stop-color="#f2c14e" stop-opacity="0.05"/><stop offset="1" stop-color="#f2c14e" stop-opacity="0"/></radialGradient></defs>`;
+  svg += `<rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="url(#zoneG)"/>`;
+  svg += `<text class="zone-lbl" x="${padL + 14}" y="${padT + 20}">↖ VALUE ZONE</text>`;
+  svg += `<text class="zone-sub" x="${padL + 14}" y="${padT + 36}">cheaper and more capable, this way</text>`;
 
   // axes
   svg += `<line class="axis-line" x1="${padL}" y1="${padT + plotH}" x2="${padL + plotW}" y2="${padT + plotH}"/>`;
@@ -656,13 +664,6 @@ function renderChart() {
   svg += `<text class="axis-title" x="${padL + plotW / 2}" y="${H - 10}" text-anchor="middle">PRICE — $ / 1M OUTPUT TOKENS (LOG)</text>`;
   svg += `<text class="axis-title" transform="translate(16 ${padT + plotH / 2}) rotate(-90)" text-anchor="middle">${metricLabel(metric).toUpperCase()} →</text>`;
 
-  // the gold staircase — the best capability available at each price
-  if (drawFrontier) {
-    let d = `M ${X(frontier[0].x).toFixed(1)} ${Y(frontier[0].y).toFixed(1)}`;
-    for (let i = 1; i < frontier.length; i++) d += ` L ${X(frontier[i].x).toFixed(1)} ${Y(frontier[i - 1].y).toFixed(1)} L ${X(frontier[i].x).toFixed(1)} ${Y(frontier[i].y).toFixed(1)}`;
-    svg += `<path class="frontier-line" d="${d}" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>`;
-  }
-
   // teaching moment: if the pick sits BELOW the frontier, connect it to the model that beats it
   const pickPt = pts.find((p) => p.m.id === state.pickId);
   if (drawFrontier && pickPt && !onFrontier.has(pickPt.m.id)) {
@@ -671,17 +672,26 @@ function renderChart() {
   }
 
   // dots: frontier + pick burn gold and labelled; dominated models recede to pale gray
+  // labelled (hot) dots that sit within 14px of each other get their labels pushed apart
+  const placed = [];
+  const labelDy = (cx, cy) => {
+    let dy = 0;
+    for (const q of placed) if (Math.abs(q.cx - cx) < 120 && Math.abs(q.cy + q.dy - (cy + dy)) < 14) dy = (q.cy + q.dy) - cy + (cy >= q.cy ? 14 : -14);
+    placed.push({ cx, cy, dy });
+    return dy;
+  };
   pts.forEach((p) => {
     const cx = X(p.x), cy = Y(p.y);
     const isPick = p.m.id === state.pickId;
     const fro = drawFrontier && onFrontier.has(p.m.id);
     const hot = isPick || fro;
+    const dy = hot ? labelDy(cx, cy) : 0;
     const nearRight = cx > padL + plotW * 0.72;
     const lx = nearRight ? -12 : 12;
     svg += `<g class="dot ${isPick ? 'is-pick' : ''} ${fro ? 'is-frontier' : ''}" data-id="${p.m.id}" transform="translate(${cx.toFixed(1)} ${cy.toFixed(1)})">`;
     svg += `<circle class="d-hit" r="24" fill="transparent"/>`;
-    svg += `<g class="dot__marks">${ditherCluster(hot ? '#f2c14e' : 'rgba(233,230,223,0.42)', isPick ? 44 : hot ? 28 : 16)}</g>`;
-    svg += `<text class="dot__label" x="${lx}" y="4" text-anchor="${nearRight ? 'end' : 'start'}">${p.m.name}</text>`;
+    svg += `<circle class="d-core" r="${isPick ? 7 : hot ? 5.5 : 4}" fill="${hot ? 'var(--gold)' : 'rgba(233,230,223,0.38)'}" stroke="${hot ? '#0a0b0f' : 'none'}" stroke-width="1.5"/>`;
+    svg += `<text class="dot__label${hot ? '' : ' dot__label--quiet'}" x="${lx}" y="${4 + dy}" text-anchor="${nearRight ? 'end' : 'start'}">${p.m.name}</text>`;
     svg += `</g>`;
   });
 
@@ -804,7 +814,7 @@ function renderEffort() {
     return;
   }
 
-  const W = 920, H = 470, padL = 60, padR = 104, padT = 26, padB = 62;
+  const W = 920, H = 470, padL = 60, padR = 136, padT = 26, padB = 62;
   const plotW = W - padL - padR, plotH = H - padT - padB;
 
   const all = series.flatMap((s) => s.points);
@@ -812,21 +822,26 @@ function renderEffort() {
   const lo = Math.log10(cMin * 0.82), hi = Math.log10(cMax * 1.18);
   const X = (v) => padL + ((Math.log10(v) - lo) / (hi - lo)) * plotW;
 
-  const sMax = Math.max(...all.map((p) => p.score));
+  const sMax = Math.max(...all.map((p) => p.score)), sMin = Math.min(...all.map((p) => p.score));
   const yTop = Math.max(5, Math.ceil((sMax * 1.1) / 5) * 5);
-  const Y = (v) => padT + (1 - v / yTop) * plotH;
+  // y floor: when every score sits high (CursorBench runs 48–73), starting at 0 squashes the
+  // curves into the top quarter. Start a rung below the lowest point instead; the axis label
+  // says so. Ladders that reach down near 0 (Frontier-Bench) keep the full scale.
+  const yBot = sMin > 20 ? Math.max(0, Math.floor((sMin - 5) / 5) * 5) : 0;
+  const yCap = yBot > 0 ? Math.ceil((sMax + 2) / 5) * 5 : yTop;   // no empty headroom on a floored axis
+  const Y = (v) => padT + (1 - (v - yBot) / (yCap - yBot)) * plotH;
 
-  const TICKS = [0.5, 1, 1.5, 2, 3, 5, 7, 10, 15, 20, 30, 50, 70, 100, 150];
+  const TICKS = [0.1, 0.15, 0.2, 0.3, 0.5, 1, 1.5, 2, 3, 5, 7, 10, 15, 20, 30, 50, 70, 100, 150];
   let xticks = TICKS.filter((t) => t >= cMin * 0.82 && t <= cMax * 1.18);
   if (xticks.length < 2) xticks = [cMin, cMax];
 
   let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${L.task} score versus cost per attempt, one curve per model with a point at each effort level">`;
 
   // grid first, so curves sit on top
-  const ystep = yTop > 40 ? 10 : 5;
-  for (let v = 0; v <= yTop; v += ystep) {
+  const ystep = (yCap - yBot) > 40 ? 10 : 5;
+  for (let v = yBot; v <= yCap; v += ystep) {
     const yy = Y(v);
-    svg += `<line class="grid-line" x1="${padL}" y1="${yy.toFixed(1)}" x2="${padL + plotW}" y2="${yy.toFixed(1)}" opacity="${v === 0 ? 0 : 0.55}"/>`;
+    svg += `<line class="grid-line" x1="${padL}" y1="${yy.toFixed(1)}" x2="${padL + plotW}" y2="${yy.toFixed(1)}" opacity="${v === yBot ? 0 : 0.55}"/>`;
     svg += `<text class="axis-lbl" x="${padL - 10}" y="${(yy + 4).toFixed(1)}" text-anchor="end">${v}</text>`;
   }
   xticks.forEach((t) => {
@@ -838,14 +853,24 @@ function renderEffort() {
   svg += `<line class="axis-line" x1="${padL}" y1="${padT + plotH}" x2="${padL + plotW}" y2="${padT + plotH}"/>`;
   svg += `<line class="axis-line" x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + plotH}"/>`;
   svg += `<text class="axis-title" x="${padL + plotW / 2}" y="${H - 16}" text-anchor="middle">${(L.x_label || 'COST PER ATTEMPT (LOG)').toUpperCase()}</text>`;
-  svg += `<text class="axis-title" transform="translate(15 ${padT + plotH / 2}) rotate(-90)" text-anchor="middle">${(L.y_label || 'SCORE').toUpperCase()} →</text>`;
+  svg += `<text class="axis-title" transform="translate(15 ${padT + plotH / 2}) rotate(-90)" text-anchor="middle">${(L.y_label || 'SCORE').toUpperCase()}${yBot > 0 ? ` · AXIS STARTS AT ${yBot}` : ''} →</text>`;
+
+  // end labels: sorted by where they land, pushed apart so no two sit within 15px; a short
+  // leader ties a pushed label back to its rung
+  const ends = series.map((s) => { const e = s.points.slice().sort((a, b) => a.cost - b.cost).pop(); return { s, x: X(e.cost), y: Y(e.score) }; })
+    .sort((a, b) => a.y - b.y);
+  let prevY = -Infinity;
+  ends.forEach((e) => { e.ly = Math.max(e.y, prevY + 15); prevY = e.ly; });
+  const over = ends.length ? ends[ends.length - 1].ly - (padT + plotH) : 0;   // stack ran off the bottom — shift it all up
+  if (over > 0) ends.forEach((e) => { e.ly -= over; });
+  const labelAt = Object.fromEntries(ends.map((e) => [e.s.model_id, e]));
 
   // one curve per model: line, then a dot per effort rung, then the name at the last rung
   series.forEach((s) => {
     const pts = s.points.slice().sort((a, b) => a.cost - b.cost);
     const d = pts.map((p, i) => `${i ? 'L' : 'M'} ${X(p.cost).toFixed(1)} ${Y(p.score).toFixed(1)}`).join(' ');
     svg += `<g class="lad-series" data-mid="${s.model_id}">`;
-    svg += `<path class="lad-line" d="${d}" fill="none" stroke="${s.color}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>`;
+    svg += `<path class="lad-line" d="${d}" fill="none" stroke="${s.color}" stroke-width="2" stroke-opacity="0.85" stroke-linejoin="round" stroke-linecap="round"/>`;
     pts.forEach((p, i) => {
       const cx = X(p.cost), cy = Y(p.score);
       svg += `<g class="lad-pt" data-mid="${s.model_id}" data-i="${i}">`;
@@ -854,8 +879,10 @@ function renderEffort() {
       svg += `<circle class="lad-dot" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="5.6" fill="${s.color}" stroke="var(--bg-2)" stroke-width="1.6"/>`;
       svg += `</g>`;
     });
-    const end = pts[pts.length - 1];
-    svg += `<text class="lad-name" x="${(X(end.cost) + 14).toFixed(1)}" y="${(Y(end.score) + 4).toFixed(1)}" fill="${s.color}">${s.label}</text>`;
+    // names live in a column at the plot's right edge, never on top of another model's line
+    const e = labelAt[s.model_id], lx = padL + plotW + 12;
+    svg += `<line x1="${(e.x + 7).toFixed(1)}" y1="${e.y.toFixed(1)}" x2="${(lx - 4).toFixed(1)}" y2="${e.ly.toFixed(1)}" stroke="${s.color}" stroke-width="1" stroke-opacity="0.3" stroke-dasharray="2 3"/>`;
+    svg += `<text class="lad-name" x="${lx.toFixed(1)}" y="${(e.ly + 4).toFixed(1)}" fill="${s.color}">${s.label}</text>`;
     svg += `</g>`;
   });
 
@@ -1003,7 +1030,6 @@ function renderTable() {
               <li>SWE-bench Verified: ${fmtScore(m.benchmarks?.swe_bench)}</li>
               <li>GPQA (reasoning): ${fmtScore(m.benchmarks?.gpqa)}</li>
               <li>AIME (math): ${fmtScore(m.benchmarks?.aime)}</li>
-              <li>LMArena Elo: ${num(m.benchmarks?.lmarena_elo) ? '<span class="na">—</span>' : m.benchmarks.lmarena_elo}</li>
             </ul>
             <h4 style="margin-top:14px">Confidence: <span style="color:var(--ink)">${m.confidence}</span></h4>
             <div class="srcs">${(m.sources || []).slice(0, 3).map((u) => `<a href="${u}" target="_blank" rel="noopener">${shortUrl(u)}</a>`).join(' · ') || '<span class="na">no public source recorded</span>'}</div>
@@ -1074,8 +1100,25 @@ function relWhen(d) {
 function renderFeed() {
   const feed = $('#feed');
   if (!feed) return;
-  const rel = (state.data.releases || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-  if (!rel.length) { feed.innerHTML = '<li class="empty">No recent releases recorded.</li>'; return; }
+  // kinds: model (default view) · price · retired. The chips add the other two in.
+  const all = state.data.releases || [];
+  const kinds = $('#feedKinds');
+  state.feedKinds = state.feedKinds || new Set(['model']);
+  if (kinds && !kinds.childElementCount) {
+    const counts = { price: all.filter((r) => r.kind === 'price').length, retired: all.filter((r) => r.kind === 'retired').length };
+    kinds.innerHTML = `
+      <span class="feed-kind feed-kind--fixed">New models</span>
+      <button class="feed-kind" type="button" data-kind="price" aria-pressed="false">+ Price changes <i>${counts.price}</i></button>
+      <button class="feed-kind" type="button" data-kind="retired" aria-pressed="false">+ Retirements <i>${counts.retired}</i></button>`;
+    kinds.querySelectorAll('[data-kind]').forEach((b) => b.addEventListener('click', () => {
+      const k = b.dataset.kind;
+      if (state.feedKinds.has(k)) state.feedKinds.delete(k); else state.feedKinds.add(k);
+      b.setAttribute('aria-pressed', String(state.feedKinds.has(k)));
+      renderFeed();
+    }));
+  }
+  const rel = all.filter((r) => state.feedKinds.has(r.kind || 'model')).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  if (!rel.length) { feed.innerHTML = '<li class="empty">Nothing recorded for this view yet.</li>'; return; }
   feed.innerHTML = rel.map((r, i) => {
     const w = relWhen(r.date);
     const title = r.source
@@ -1085,7 +1128,7 @@ function renderFeed() {
     <li class="rel" style="--i:${Math.min(i, 6)}">
       <div class="rel__when"><span class="rel__mon">${w.mon}</span><span class="rel__day">${w.day}</span></div>
       <div class="rel__card">
-        ${r.vendor ? `<span class="rel__vendor">${r.vendor}</span>` : ''}
+        ${r.vendor ? `<span class="rel__vendor">${r.vendor}</span>` : ''}${r.kind === 'price' ? '<span class="rel__kind">price</span>' : r.kind === 'retired' ? '<span class="rel__kind rel__kind--off">retired</span>' : ''}
         <h3 class="rel__title">${title}</h3>
         <p class="rel__sum">${r.summary || ''}</p>
         ${r.why ? `<p class="rel__why"><span>Should you care?</span> ${r.why}</p>` : ''}
@@ -1423,7 +1466,8 @@ async function boot() {
   initReveal();
   renderFilters();
   renderLabChips();          // build the "which lab" chips from the data's vendors + wire them
-  if ($('#result')) renderResult();   // engine + comparator live on the home page only
+  if ($('#cmpBoard')) seedCompare();  // the side-by-side board seeds from the default task until the user hand-picks
+  if ($('#chart')) renderChart();      // the model map used to hang off the hero engine's verdict; it stands alone now
   renderEffort();            // published effort ladders; guarded no-op on table.html
   renderTable();             // full table lives on table.html; guarded no-op elsewhere
   renderFeed();
