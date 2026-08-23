@@ -926,3 +926,17 @@ sup.est { font-family: var(--mono); font-size: 9px; color: var(--warn); margin-l
   .inst-pane { min-height: 0; }
 }
 @media (max-width: 480px) { .term-dots { display: none } .inst-tab { font-size: .74rem; padding: 11px 4px } }
+
+/* compare v2 (2026-08-22): three dropdowns replace the 49-chip wall */
+.cmp-picker { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
+.cmp-slot { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.cmp-slot__n { font-family: var(--mono); font-size: 11px; color: var(--gold); width: 18px; height: 18px; border-radius: 50%;
+  border: 1px solid var(--gold-line); display: grid; place-items: center; flex: none; }
+.cmp-select { flex: 1; min-width: 0; appearance: none; -webkit-appearance: none; font-family: var(--font); font-size: 13.5px; font-weight: 500;
+  color: var(--ink); background: var(--panel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23b9bdc7' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+  border: 1px solid var(--line); border-radius: var(--r-sm); padding: 9px 34px 9px 12px; cursor: pointer; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;
+  transition: border-color .15s var(--ease); }
+.cmp-select:hover { border-color: var(--gold-line); }
+.cmp-select:focus-visible { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-soft); }
+.cmp-select option, .cmp-select optgroup { background: var(--panel); color: var(--ink); }
+@media (max-width: 640px) { .cmp-picker { grid-template-columns: 1fr; } }

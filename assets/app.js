@@ -292,15 +292,26 @@ function renderCompare() {
   const pk = $('#cmpPicker'), bd = $('#cmpBoard');
   if (!pk || !bd) return;
 
-  pk.innerHTML = all.map((m) => {
-    const on = state.compare.includes(m.id);
-    return `<button class="chip ${on ? 'is-active' : ''}" data-cmp="${m.id}" type="button">${m.name}</button>`;
-  }).join('');
-  pk.querySelectorAll('[data-cmp]').forEach((b) => b.addEventListener('click', () => {
-    const id = b.getAttribute('data-cmp');
-    const i = state.compare.indexOf(id);
-    if (i >= 0) { if (state.compare.length <= 2) return; state.compare.splice(i, 1); }
-    else { if (state.compare.length >= CMP_MAX) return; state.compare.push(id); }
+  // Three dropdowns, one per column (2026-08-22 — the 49-chip wall was unreadable). Each
+  // lists every model grouped by vendor; a column can be cleared to "—" down to two.
+  const byVendor = {};
+  all.forEach((m) => { (byVendor[m.vendor] = byVendor[m.vendor] || []).push(m); });
+  const vendors = Object.keys(byVendor).sort();
+  const slots = [0, 1, 2].map((i) => state.compare[i] || '');
+  pk.innerHTML = slots.map((sel, i) => `
+    <label class="cmp-slot">
+      <span class="cmp-slot__n">${i + 1}</span>
+      <select class="cmp-select" data-slot="${i}" aria-label="Model ${i + 1}">
+        <option value="">${i < 2 ? 'Pick a model' : '— none —'}</option>
+        ${vendors.map((v) => `<optgroup label="${v}">${byVendor[v].map((m) =>
+          `<option value="${m.id}" ${m.id === sel ? 'selected' : ''} ${state.compare.includes(m.id) && m.id !== sel ? 'disabled' : ''}>${m.name}</option>`).join('')}</optgroup>`).join('')}
+      </select>
+    </label>`).join('');
+  pk.querySelectorAll('.cmp-select').forEach((el) => el.addEventListener('change', () => {
+    const i = Number(el.dataset.slot), id = el.value;
+    const next = [0, 1, 2].map((k) => (k === i ? id : (state.compare[k] || ''))).filter(Boolean);
+    if (next.length < 2) { el.value = state.compare[i] || ''; return; }   // keep at least two to compare
+    state.compare = next;
     state.cmpCustom = true;
     renderCompare();
   }));
