@@ -812,9 +812,14 @@ function renderEffort() {
   const lo = Math.log10(cMin * 0.82), hi = Math.log10(cMax * 1.18);
   const X = (v) => padL + ((Math.log10(v) - lo) / (hi - lo)) * plotW;
 
-  const sMax = Math.max(...all.map((p) => p.score));
+  const sMax = Math.max(...all.map((p) => p.score)), sMin = Math.min(...all.map((p) => p.score));
   const yTop = Math.max(5, Math.ceil((sMax * 1.1) / 5) * 5);
-  const Y = (v) => padT + (1 - v / yTop) * plotH;
+  // y floor: when every score sits high (CursorBench runs 48–73), starting at 0 squashes the
+  // curves into the top quarter. Start a rung below the lowest point instead; the axis label
+  // says so. Ladders that reach down near 0 (Frontier-Bench) keep the full scale.
+  const yBot = sMin > 20 ? Math.max(0, Math.floor((sMin - 5) / 5) * 5) : 0;
+  const yCap = yBot > 0 ? Math.ceil((sMax + 2) / 5) * 5 : yTop;   // no empty headroom on a floored axis
+  const Y = (v) => padT + (1 - (v - yBot) / (yCap - yBot)) * plotH;
 
   const TICKS = [0.5, 1, 1.5, 2, 3, 5, 7, 10, 15, 20, 30, 50, 70, 100, 150];
   let xticks = TICKS.filter((t) => t >= cMin * 0.82 && t <= cMax * 1.18);
@@ -823,10 +828,10 @@ function renderEffort() {
   let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${L.task} score versus cost per attempt, one curve per model with a point at each effort level">`;
 
   // grid first, so curves sit on top
-  const ystep = yTop > 40 ? 10 : 5;
-  for (let v = 0; v <= yTop; v += ystep) {
+  const ystep = (yCap - yBot) > 40 ? 10 : 5;
+  for (let v = yBot; v <= yCap; v += ystep) {
     const yy = Y(v);
-    svg += `<line class="grid-line" x1="${padL}" y1="${yy.toFixed(1)}" x2="${padL + plotW}" y2="${yy.toFixed(1)}" opacity="${v === 0 ? 0 : 0.55}"/>`;
+    svg += `<line class="grid-line" x1="${padL}" y1="${yy.toFixed(1)}" x2="${padL + plotW}" y2="${yy.toFixed(1)}" opacity="${v === yBot ? 0 : 0.55}"/>`;
     svg += `<text class="axis-lbl" x="${padL - 10}" y="${(yy + 4).toFixed(1)}" text-anchor="end">${v}</text>`;
   }
   xticks.forEach((t) => {
@@ -838,7 +843,7 @@ function renderEffort() {
   svg += `<line class="axis-line" x1="${padL}" y1="${padT + plotH}" x2="${padL + plotW}" y2="${padT + plotH}"/>`;
   svg += `<line class="axis-line" x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + plotH}"/>`;
   svg += `<text class="axis-title" x="${padL + plotW / 2}" y="${H - 16}" text-anchor="middle">${(L.x_label || 'COST PER ATTEMPT (LOG)').toUpperCase()}</text>`;
-  svg += `<text class="axis-title" transform="translate(15 ${padT + plotH / 2}) rotate(-90)" text-anchor="middle">${(L.y_label || 'SCORE').toUpperCase()} →</text>`;
+  svg += `<text class="axis-title" transform="translate(15 ${padT + plotH / 2}) rotate(-90)" text-anchor="middle">${(L.y_label || 'SCORE').toUpperCase()}${yBot > 0 ? ` · AXIS STARTS AT ${yBot}` : ''} →</text>`;
 
   // one curve per model: line, then a dot per effort rung, then the name at the last rung
   series.forEach((s) => {
