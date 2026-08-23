@@ -2253,7 +2253,7 @@
       "task": "Agentic coding",
       "x_label": "Cost per attempt (USD, log scale)",
       "y_label": "Score (%)",
-      "as_of": "2026-07-23",
+      "as_of": "2026-07-24",
       "publisher": "Anthropic",
       "source_kind": "vendor-reported",
       "source": "https://www.anthropic.com/news/claude-opus-5",
@@ -2406,13 +2406,13 @@
       "task": "Agentic coding",
       "x_label": "Cost per task (USD, log scale)",
       "y_label": "Score (%)",
-      "as_of": "2026-07-25",
+      "as_of": "2026-08-22",
       "publisher": "Epoch AI (mirroring Cursor's CursorBench)",
       "source_kind": "third-party",
       "source": "https://epoch.ai/benchmarks/use-this-data",
       "confidence": "high",
-      "method": "Exact published values, not digitised from a picture: taken from Epoch AI's CC-BY benchmark data export (cursorbench_external.csv, updated 2026-07-25), which mirrors Cursor's own CursorBench leaderboard. Score is the published fraction correct, rendered as a percentage; cost is Cursor's measured average spend per task, not a figure modelled from list prices. Rungs are keyed on the file's 'Reasoning level' column — note the three Opus 5 rows all carry the model-version string 'claude-opus-5_max' upstream, which looks like a copy-paste error at the source, so the reasoning-level column is what distinguishes them. Any model-and-rung missing a cost or a score is dropped rather than interpolated, which is why the ladders have different lengths.",
-      "harness": "Cursor's agent running CursorBench, one entry per reasoning-effort setting rather than one per model, because each setting trades score against spend. Alongside score, the source publishes average cost, token usage and agent steps per task. GPT-5.6 Sol currently has only its max rung published, so it is not plotted here.",
+      "method": "Exact published values, not digitised from a picture: taken from Epoch AI's CC-BY benchmark data export (cursorbench_external.csv in benchmark_data.zip, file dated 2026-08-23), which mirrors Cursor's own CursorBench 3.2 leaderboard (Cursor's changelog: Aug 11 2026 'Updated Sonnet 5 results to account for adjusted pricing'). Score is the published fraction correct as a percentage; cost is Cursor's per-task figure from the tokens each model actually used at its published per-million pricing (input, cache read, cache write, output). Rungs are keyed on the file's 'Reasoning level' column. Eight models are plotted for cross-lab coverage; any model-and-rung missing a cost or score is dropped, never interpolated.",
+      "harness": "Cursor's agent running CursorBench 3.2 (instruction-following and advanced tool-use problems added Jul 8 2026), one entry per reasoning-effort setting. Cursor notes results are subject to variance and small score differences may not be meaningful.",
       "caveat": "Independent of Anthropic, but not of everyone: CursorBench is run and published by Cursor, which ships its own coding model (Composer), so it is a benchmark by a company with a horse in the coding race. Epoch AI mirrors those numbers under CC-BY, it does not re-run them — and Epoch has its own disclosed conflict elsewhere, having had OpenAI fund the FrontierMath benchmark with dataset access, which it disclosed only after the fact. Read this as a second opinion measured on a different task by a different party, not as a neutral referee settling the question.",
       "levels": [
         "low",
@@ -2428,6 +2428,16 @@
           "color": "#e05c3e",
           "points": [
             {
+              "effort": "low",
+              "cost": 2.55,
+              "score": 62.8
+            },
+            {
+              "effort": "medium",
+              "cost": 3.29,
+              "score": 64.3
+            },
+            {
               "effort": "high",
               "cost": 3.91,
               "score": 66.7
@@ -2440,7 +2450,7 @@
             {
               "effort": "max",
               "cost": 8.23,
-              "score": 70
+              "score": 70.0
             }
           ]
         },
@@ -2450,6 +2460,16 @@
           "color": "#e8a93a",
           "points": [
             {
+              "effort": "low",
+              "cost": 4.46,
+              "score": 62.1
+            },
+            {
+              "effort": "medium",
+              "cost": 6.8,
+              "score": 65.2
+            },
+            {
               "effort": "high",
               "cost": 10.81,
               "score": 70.6
@@ -2457,12 +2477,44 @@
             {
               "effort": "xhigh",
               "cost": 13.74,
-              "score": 72
+              "score": 72.0
             },
             {
               "effort": "max",
               "cost": 18.02,
               "score": 72.9
+            }
+          ]
+        },
+        {
+          "model_id": "claude-sonnet-5",
+          "label": "Sonnet 5",
+          "color": "#f5d98b",
+          "points": [
+            {
+              "effort": "low",
+              "cost": 0.87,
+              "score": 47.7
+            },
+            {
+              "effort": "medium",
+              "cost": 1.44,
+              "score": 52.4
+            },
+            {
+              "effort": "high",
+              "cost": 2.13,
+              "score": 56.9
+            },
+            {
+              "effort": "xhigh",
+              "cost": 5.23,
+              "score": 58.4
+            },
+            {
+              "effort": "max",
+              "cost": 6.87,
+              "score": 61.2
             }
           ]
         },
@@ -2499,29 +2551,266 @@
           ]
         },
         {
-          "model_id": "gpt-5-5",
-          "label": "GPT-5.5",
+          "model_id": "gpt-5-6-sol",
+          "label": "GPT-5.6 Sol",
           "color": "#9aa0ab",
           "points": [
             {
               "effort": "low",
-              "cost": 1.19,
-              "score": 48.8
+              "cost": 1.01,
+              "score": 52.6
             },
             {
               "effort": "medium",
-              "cost": 2.22,
-              "score": 59.2
+              "cost": 1.95,
+              "score": 60.0
             },
             {
               "effort": "high",
-              "cost": 3.59,
-              "score": 62.6
+              "cost": 2.79,
+              "score": 63.5
             },
             {
               "effort": "xhigh",
-              "cost": 4.37,
-              "score": 64.3
+              "cost": 3.88,
+              "score": 64.5
+            },
+            {
+              "effort": "max",
+              "cost": 5.69,
+              "score": 67.2
+            }
+          ]
+        },
+        {
+          "model_id": "gpt-5-6-terra",
+          "label": "GPT-5.6 Terra",
+          "color": "#c9ced8",
+          "points": [
+            {
+              "effort": "low",
+              "cost": 0.42,
+              "score": 46.9
+            },
+            {
+              "effort": "medium",
+              "cost": 0.49,
+              "score": 50.3
+            },
+            {
+              "effort": "high",
+              "cost": 0.71,
+              "score": 54.2
+            },
+            {
+              "effort": "xhigh",
+              "cost": 1.15,
+              "score": 59.2
+            },
+            {
+              "effort": "max",
+              "cost": 2.31,
+              "score": 64.9
+            }
+          ]
+        },
+        {
+          "model_id": "x-ai-grok-4-6",
+          "label": "Grok 4.6",
+          "color": "#7fd9b4",
+          "points": [
+            {
+              "effort": "low",
+              "cost": 0.7,
+              "score": 61.0
+            },
+            {
+              "effort": "medium",
+              "cost": 1.28,
+              "score": 67.1
+            },
+            {
+              "effort": "high",
+              "cost": 2.34,
+              "score": 69.9
+            },
+            {
+              "effort": "xhigh",
+              "cost": 2.81,
+              "score": 70.8
+            }
+          ]
+        },
+        {
+          "model_id": "google-gemini-3-7-flash",
+          "label": "Gemini 3.7 Flash",
+          "color": "#8ab4ff",
+          "points": [
+            {
+              "effort": "low",
+              "cost": 0.74,
+              "score": 53.8
+            },
+            {
+              "effort": "medium",
+              "cost": 0.95,
+              "score": 59.0
+            },
+            {
+              "effort": "high",
+              "cost": 1.2,
+              "score": 61.6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "openai-terminal-bench-2-1-agentic-terminal",
+      "suite": "Terminal-Bench 2.1",
+      "task": "Agentic terminal tasks",
+      "x_label": "API cost per task (USD, log scale)",
+      "y_label": "Score (%)",
+      "as_of": "2026-07-09",
+      "publisher": "OpenAI",
+      "source_kind": "vendor-reported",
+      "source": "https://openai.com/index/gpt-5-6/",
+      "confidence": "medium",
+      "method": "Digitised from the interactive score-vs-cost chart in OpenAI's GPT-5.6 launch post: point positions were pulled from the chart's SVG and calibrated against the six values the page states in its table (Sol 88.8, GPT-5.5 85.6, Fable 5 83.1, Opus 4.8 78.9, Gemini 3.1 Pro 70.7 all reproduce to ±0.1), so treat scores as ±0.3 points and costs as ±$0.03. Effort labels are not in the chart markup; each model's points are ordered by cost and labelled low → max by position, which matches the page's statement that Sol ships with xhigh and max rungs. GPT-5.5 has four points. Models with a single point (Fable 5, Opus 4.8, Gemini 3.1 Pro) are not plotted — one point isn't a ladder.",
+      "harness": "OpenAI's own run of Terminal-Bench 2.1. Cost is OpenAI's estimate, not a measurement: the page's footnote says latency and API cost were estimated by looking at production behaviour and simulating offline at regular API pricing, and that real-world results may vary substantially.",
+      "caveat": "A lab publishing about its own models, on a chart it drew. Terminal-Bench is an accepted third-party benchmark, but this run, harness and cost model are OpenAI's and have not been reproduced. Two things to know: the page's summary table states Terra 87.4% and Luna 84.7%, higher than the top of their plotted curves (84.3 / 82.5) with no explanation; and OpenAI cut Luna's price 80% and Terra's 20% on Jul 30 and Sol's 20% on Aug 21, so the plotted costs are launch-day prices and now overstate what those rungs cost.",
+      "levels": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "series": [
+        {
+          "model_id": "gpt-5-6-sol",
+          "label": "GPT-5.6 Sol",
+          "color": "#9aa0ab",
+          "level_note": "Labels are positional (ordered by cost), not read from the chart.",
+          "points": [
+            {
+              "effort": "low",
+              "cost": 0.66,
+              "score": 76.4
+            },
+            {
+              "effort": "medium",
+              "cost": 0.89,
+              "score": 81.8
+            },
+            {
+              "effort": "high",
+              "cost": 1.09,
+              "score": 84.7
+            },
+            {
+              "effort": "xhigh",
+              "cost": 1.33,
+              "score": 84.9
+            },
+            {
+              "effort": "max",
+              "cost": 1.72,
+              "score": 88.8
+            }
+          ]
+        },
+        {
+          "model_id": "gpt-5-6-terra",
+          "label": "GPT-5.6 Terra",
+          "color": "#e8a93a",
+          "level_note": "Labels are positional (ordered by cost), not read from the chart.",
+          "points": [
+            {
+              "effort": "low",
+              "cost": 0.24,
+              "score": 55.5
+            },
+            {
+              "effort": "medium",
+              "cost": 0.41,
+              "score": 71.7
+            },
+            {
+              "effort": "high",
+              "cost": 0.63,
+              "score": 76.6
+            },
+            {
+              "effort": "xhigh",
+              "cost": 0.73,
+              "score": 79.6
+            },
+            {
+              "effort": "max",
+              "cost": 0.97,
+              "score": 84.3
+            }
+          ]
+        },
+        {
+          "model_id": "gpt-5-6-luna",
+          "label": "GPT-5.6 Luna",
+          "color": "#7fd9b4",
+          "level_note": "Labels are positional (ordered by cost), not read from the chart.",
+          "points": [
+            {
+              "effort": "low",
+              "cost": 0.13,
+              "score": 49.4
+            },
+            {
+              "effort": "medium",
+              "cost": 0.25,
+              "score": 58.7
+            },
+            {
+              "effort": "high",
+              "cost": 0.44,
+              "score": 73.9
+            },
+            {
+              "effort": "xhigh",
+              "cost": 0.59,
+              "score": 74.6
+            },
+            {
+              "effort": "max",
+              "cost": 0.63,
+              "score": 82.5
+            }
+          ]
+        },
+        {
+          "model_id": "gpt-5-5",
+          "label": "GPT-5.5",
+          "color": "#3f7fe0",
+          "level_note": "Four points on the chart; labelled low → xhigh by cost order.",
+          "points": [
+            {
+              "effort": "low",
+              "cost": 0.35,
+              "score": 72.8
+            },
+            {
+              "effort": "medium",
+              "cost": 0.54,
+              "score": 80.0
+            },
+            {
+              "effort": "high",
+              "cost": 0.91,
+              "score": 83.8
+            },
+            {
+              "effort": "xhigh",
+              "cost": 1.33,
+              "score": 85.6
             }
           ]
         }

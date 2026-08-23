@@ -831,7 +831,7 @@ function renderEffort() {
   const yCap = yBot > 0 ? Math.ceil((sMax + 2) / 5) * 5 : yTop;   // no empty headroom on a floored axis
   const Y = (v) => padT + (1 - (v - yBot) / (yCap - yBot)) * plotH;
 
-  const TICKS = [0.5, 1, 1.5, 2, 3, 5, 7, 10, 15, 20, 30, 50, 70, 100, 150];
+  const TICKS = [0.1, 0.15, 0.2, 0.3, 0.5, 1, 1.5, 2, 3, 5, 7, 10, 15, 20, 30, 50, 70, 100, 150];
   let xticks = TICKS.filter((t) => t >= cMin * 0.82 && t <= cMax * 1.18);
   if (xticks.length < 2) xticks = [cMin, cMax];
 
