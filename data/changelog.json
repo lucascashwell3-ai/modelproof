@@ -289,5 +289,117 @@
       "openrouter",
       "litellm"
     ]
+  },
+  {
+    "date": "2026-08-25",
+    "model": "Tencent: Hy-MT2-1.8B",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://huggingface.co/tencent/Hy-MT2-1.8B",
+      "https://github.com/Tencent-Hunyuan/Hy-MT2",
+      "https://openrouter.ai/tencent/hy-mt2-1.8b"
+    ]
+  },
+  {
+    "date": "2026-08-25",
+    "model": "Tencent: Hy-MT2-30B-A3B",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://github.com/Tencent-Hunyuan/Hy-MT2",
+      "https://openrouter.ai/tencent/hy-mt2-30b-a3b"
+    ]
+  },
+  {
+    "date": "2026-08-25",
+    "model": "GLM-5.3",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://x.com/Zai_org/status/2088132965922476159",
+      "https://openrouter.ai/z-ai/glm-5.3",
+      "https://datanorth.ai/news/z-ai-releases-glm-5-3"
+    ]
+  },
+  {
+    "date": "2026-08-25",
+    "model": "DeepSeek V4-Flash",
+    "field": "price_input",
+    "old": 0.14,
+    "new": 0.44,
+    "sources": [
+      "https://api-docs.deepseek.com/quick_start/pricing/",
+      "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+    ]
+  },
+  {
+    "date": "2026-08-25",
+    "model": "DeepSeek V4-Flash",
+    "field": "price_output",
+    "old": 0.28,
+    "new": 1.32,
+    "sources": [
+      "https://api-docs.deepseek.com/quick_start/pricing/",
+      "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+    ]
+  },
+  {
+    "date": "2026-08-25",
+    "model": "DeepSeek V4-Pro",
+    "field": "price_input",
+    "old": 0.435,
+    "new": 1.32,
+    "sources": [
+      "https://api-docs.deepseek.com/quick_start/pricing/",
+      "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+    ]
+  },
+  {
+    "date": "2026-08-25",
+    "model": "DeepSeek V4-Pro",
+    "field": "price_output",
+    "old": 0.87,
+    "new": 3.96,
+    "sources": [
+      "https://api-docs.deepseek.com/quick_start/pricing/",
+      "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+    ]
+  },
+  {
+    "date": "2026-08-25",
+    "model": "Google: Gemini 3.7 Flash",
+    "field": "price_input",
+    "old": 0.38,
+    "new": 0.75,
+    "sources": [
+      "https://ai.google.dev/gemini-api/docs/pricing",
+      "https://openrouter.ai/api/v1/models"
+    ]
+  },
+  {
+    "date": "2026-08-25",
+    "model": "GPT-5.6 Sol",
+    "field": "price_input",
+    "old": 5,
+    "new": 4,
+    "sources": [
+      "https://developers.openai.com/api/docs/pricing",
+      "https://www.citybiz.co/article/892929/openai-cuts-gpt-5-6-sol-api-pricing-20-for-three-months/"
+    ]
+  },
+  {
+    "date": "2026-08-25",
+    "model": "GPT-5.6 Sol",
+    "field": "price_output",
+    "old": 30,
+    "new": 20,
+    "sources": [
+      "https://developers.openai.com/api/docs/pricing",
+      "https://www.citybiz.co/article/892929/openai-cuts-gpt-5-6-sol-api-pricing-20-for-three-months/"
+    ]
   }
 ]

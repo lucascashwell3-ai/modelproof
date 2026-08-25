@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-08-21",
+  "as_of": "2026-08-25",
   "models": [
     {
       "id": "claude-opus-5",
@@ -408,8 +408,8 @@
       "vendor": "DeepSeek",
       "released": "2026-04-24",
       "context_window": 1000000,
-      "price_input": 0.435,
-      "price_output": 0.87,
+      "price_input": 1.32,
+      "price_output": 3.96,
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": 80.6,
@@ -438,7 +438,8 @@
       "sources": [
         "https://api-docs.deepseek.com/quick_start/pricing/",
         "https://llm-stats.com/benchmarks/swe-bench-verified",
-        "https://benchlm.ai/models/deepseek-v4-pro-max"
+        "https://benchlm.ai/models/deepseek-v4-pro-max",
+        "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
       ],
       "coding_score": 81,
       "coding_basis": "SWE-bench Verified 80.6% (AA Coding Index lower, 59.4)",
@@ -665,8 +666,8 @@
       "vendor": "OpenAI",
       "released": "2026-07-09",
       "context_window": 1000000,
-      "price_input": 5,
-      "price_output": 30,
+      "price_input": 4,
+      "price_output": 20,
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": null,
@@ -698,7 +699,8 @@
         "https://developers.openai.com/api/docs/pricing",
         "https://artificialanalysis.ai/articles/gpt-5-6-has-landed",
         "https://benchlm.ai/models/gpt-5-6-sol",
-        "https://techcrunch.com/2026/07/09/openai-launches-its-new-family-of-models-with-gpt-5-6/"
+        "https://techcrunch.com/2026/07/09/openai-launches-its-new-family-of-models-with-gpt-5-6/",
+        "https://www.citybiz.co/article/892929/openai-cuts-gpt-5-6-sol-api-pricing-20-for-three-months/"
       ],
       "coding_score": 90,
       "coding_basis": "AA Coding Index #1 (77.4) + LMArena Code Elo #2 (1636)",
@@ -980,8 +982,8 @@
       "vendor": "DeepSeek",
       "released": "2026-04-24",
       "context_window": 1000000,
-      "price_input": 0.14,
-      "price_output": 0.28,
+      "price_input": 0.44,
+      "price_output": 1.32,
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": null,
@@ -1006,7 +1008,8 @@
       "verdict": "Reach for it to process huge volumes of text or code cheaply when you don't need the absolute top reasoning tier.",
       "confidence": "medium",
       "sources": [
-        "https://api-docs.deepseek.com/quick_start/pricing/"
+        "https://api-docs.deepseek.com/quick_start/pricing/",
+        "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
       ],
       "coding_score": 72,
       "coding_basis": "estimated just below V4-Pro (cheaper tier); no direct benchmark",
@@ -1308,7 +1311,7 @@
       "vendor": "google",
       "released": "2026-08-13",
       "context_window": 1048576,
-      "price_input": 0.38,
+      "price_input": 0.75,
       "price_output": 1.88,
       "speed_tps": null,
       "benchmarks": {
@@ -1323,7 +1326,9 @@
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/google/gemini-3.7-flash"
+        "https://openrouter.ai/google/gemini-3.7-flash",
+        "https://ai.google.dev/gemini-api/docs/pricing",
+        "https://openrouter.ai/api/v1/models"
       ],
       "coding_score": null,
       "coding_basis": null,
@@ -2005,6 +2010,95 @@
         "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4"
       ],
       "best_for_line": "Upstage model · 524K ctx · $0.3/$1.2"
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "tencent-hy-mt2-1-8b",
+      "name": "Tencent: Hy-MT2-1.8B",
+      "vendor": "Tencent",
+      "released": "2026-05-21",
+      "context_window": 8192,
+      "price_input": 0.044,
+      "price_output": 0.177,
+      "sources": [
+        "https://huggingface.co/tencent/Hy-MT2-1.8B",
+        "https://github.com/Tencent-Hunyuan/Hy-MT2",
+        "https://openrouter.ai/tencent/hy-mt2-1.8b"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "tencent-hy-mt2-30b-a3b",
+      "name": "Tencent: Hy-MT2-30B-A3B",
+      "vendor": "Tencent",
+      "released": "2026-05-21",
+      "context_window": 8192,
+      "price_input": 0.074,
+      "price_output": 0.295,
+      "sources": [
+        "https://github.com/Tencent-Hunyuan/Hy-MT2",
+        "https://openrouter.ai/tencent/hy-mt2-30b-a3b"
+      ]
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "glm-5-3",
+      "name": "GLM-5.3",
+      "vendor": "Z.ai (Zhipu)",
+      "released": "2026-08-14",
+      "context_window": 1048576,
+      "price_input": 1.4,
+      "price_output": 4.4,
+      "sources": [
+        "https://x.com/Zai_org/status/2088132965922476159",
+        "https://openrouter.ai/z-ai/glm-5.3",
+        "https://datanorth.ai/news/z-ai-releases-glm-5-3"
+      ]
     }
   ],
   "releases": [
@@ -2178,6 +2272,96 @@
       "source": "https://www.anthropic.com/news/claude-haiku-4-5",
       "why": "Anthropic's cheap/fast tier ($1/$5) — a good default for high-volume simple tasks.",
       "kind": "model"
+    },
+    {
+      "kind": "model",
+      "date": "2026-05-21",
+      "vendor": "Tencent",
+      "title": "Tencent releases Tencent: Hy-MT2-1.8B",
+      "summary": "Tencent Hunyuan open-sourced the Hy-MT2 translation family (1.8B/7B/30B-A3B) under Apache-2.0, using 1.25-bit quantization to fit the 1.8B model into 440MB for on-device use.",
+      "source": "https://huggingface.co/tencent/Hy-MT2-1.8B",
+      "why": "Extends Tencent's open translation lineup past Hy-MT1.5, with claimed gains over larger commercial and open models on multilingual translation tasks."
+    },
+    {
+      "kind": "model",
+      "date": "2026-05-21",
+      "vendor": "Tencent",
+      "title": "Tencent releases Tencent: Hy-MT2-30B-A3B",
+      "summary": "Tencent Hunyuan open-sourced the Hy-MT2 translation family (1.8B/7B/30B-A3B) under Apache-2.0; the 30B-A3B variant is a 30B-total/3B-active MoE aimed at professional-grade translation across 33 languages.",
+      "source": "https://github.com/Tencent-Hunyuan/Hy-MT2",
+      "why": "Extends Tencent's open translation lineup past Hy-MT1.5, with claimed gains over larger commercial and open models on multilingual translation tasks."
+    },
+    {
+      "kind": "model",
+      "date": "2026-08-14",
+      "vendor": "Z.ai (Zhipu)",
+      "title": "Z.ai (Zhipu) releases GLM-5.3",
+      "summary": "Z.ai shipped GLM-5.3, a post-training upgrade of the GLM-5.2 base aimed at coding and cyber-defense work, lifting Terminal-Bench 3.0 from 4.6% to 28.3%.",
+      "source": "https://x.com/Zai_org/status/2088132965922476159",
+      "why": "Available now via Z.ai's GLM Coding Plan and ZCode; broader API access and open weights are staged to follow after safety hardening."
+    },
+    {
+      "kind": "price",
+      "date": "2026-08-25",
+      "vendor": "DeepSeek",
+      "title": "DeepSeek V4-Flash input price rise — $0.14 → $0.44 per 1M (+214%)",
+      "summary": "DeepSeek now lists DeepSeek V4-Flash at $0.44 per 1M input tokens, from $0.14. Confirmed by two independent price feeds.",
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "why": "Budgets built on the old DeepSeek V4-Flash price are now 214% short. Check whether a cheaper tier covers the job."
+    },
+    {
+      "kind": "price",
+      "date": "2026-08-25",
+      "vendor": "DeepSeek",
+      "title": "DeepSeek V4-Flash output price rise — $0.28 → $1.32 per 1M (+371%)",
+      "summary": "DeepSeek now lists DeepSeek V4-Flash at $1.32 per 1M output tokens, from $0.28. Confirmed by two independent price feeds.",
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "why": "Budgets built on the old DeepSeek V4-Flash price are now 371% short. Check whether a cheaper tier covers the job."
+    },
+    {
+      "kind": "price",
+      "date": "2026-08-25",
+      "vendor": "DeepSeek",
+      "title": "DeepSeek V4-Pro input price rise — $0.43 → $1.32 per 1M (+203%)",
+      "summary": "DeepSeek now lists DeepSeek V4-Pro at $1.32 per 1M input tokens, from $0.43. Confirmed by two independent price feeds.",
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "why": "Budgets built on the old DeepSeek V4-Pro price are now 203% short. Check whether a cheaper tier covers the job."
+    },
+    {
+      "kind": "price",
+      "date": "2026-08-25",
+      "vendor": "DeepSeek",
+      "title": "DeepSeek V4-Pro output price rise — $0.87 → $3.96 per 1M (+355%)",
+      "summary": "DeepSeek now lists DeepSeek V4-Pro at $3.96 per 1M output tokens, from $0.87. Confirmed by two independent price feeds.",
+      "source": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "why": "Budgets built on the old DeepSeek V4-Pro price are now 355% short. Check whether a cheaper tier covers the job."
+    },
+    {
+      "kind": "price",
+      "date": "2026-08-25",
+      "vendor": "google",
+      "title": "Google: Gemini 3.7 Flash input price rise — $0.38 → $0.75 per 1M (+97%)",
+      "summary": "google now lists Google: Gemini 3.7 Flash at $0.75 per 1M input tokens, from $0.38. Confirmed by two independent price feeds.",
+      "source": "https://ai.google.dev/gemini-api/docs/pricing",
+      "why": "Budgets built on the old Google: Gemini 3.7 Flash price are now 97% short. Check whether a cheaper tier covers the job."
+    },
+    {
+      "kind": "price",
+      "date": "2026-08-25",
+      "vendor": "OpenAI",
+      "title": "GPT-5.6 Sol input price cut — $5 → $4 per 1M (-20%)",
+      "summary": "OpenAI now lists GPT-5.6 Sol at $4 per 1M input tokens, from $5. Confirmed by two independent price feeds.",
+      "source": "https://developers.openai.com/api/docs/pricing",
+      "why": "Re-run any cost-per-task maths that used GPT-5.6 Sol — the old number overstates it by 20%."
+    },
+    {
+      "kind": "price",
+      "date": "2026-08-25",
+      "vendor": "OpenAI",
+      "title": "GPT-5.6 Sol output price cut — $30 → $20 per 1M (-33%)",
+      "summary": "OpenAI now lists GPT-5.6 Sol at $20 per 1M output tokens, from $30. Confirmed by two independent price feeds.",
+      "source": "https://developers.openai.com/api/docs/pricing",
+      "why": "Re-run any cost-per-task maths that used GPT-5.6 Sol — the old number overstates it by 33%."
     }
   ],
   "benchmarks_legend": {
@@ -2439,7 +2623,7 @@
             {
               "effort": "max",
               "cost": 8.23,
-              "score": 70.0
+              "score": 70
             }
           ],
           "source_key": "claude-opus-5"
@@ -2490,7 +2674,7 @@
             {
               "effort": "medium",
               "cost": 1.95,
-              "score": 60.0
+              "score": 60
             },
             {
               "effort": "high",
@@ -2518,7 +2702,7 @@
             {
               "effort": "low",
               "cost": 0.7,
-              "score": 61.0
+              "score": 61
             },
             {
               "effort": "medium",
@@ -2551,7 +2735,7 @@
             {
               "effort": "medium",
               "cost": 0.95,
-              "score": 59.0
+              "score": 59
             },
             {
               "effort": "high",
@@ -2698,7 +2882,7 @@
             {
               "effort": "medium",
               "cost": 0.54,
-              "score": 80.0
+              "score": 80
             },
             {
               "effort": "high",
