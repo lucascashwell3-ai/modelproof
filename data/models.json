@@ -2039,7 +2039,8 @@
         "https://huggingface.co/tencent/Hy-MT2-1.8B",
         "https://github.com/Tencent-Hunyuan/Hy-MT2",
         "https://openrouter.ai/tencent/hy-mt2-1.8b"
-      ]
+      ],
+      "best_for_line": "Cheapest Tencent model · 8K ctx · $0.044/$0.177"
     },
     {
       "benchmarks": {
@@ -2068,7 +2069,8 @@
       "sources": [
         "https://github.com/Tencent-Hunyuan/Hy-MT2",
         "https://openrouter.ai/tencent/hy-mt2-30b-a3b"
-      ]
+      ],
+      "best_for_line": "Tencent model · 8K ctx · $0.074/$0.295"
     },
     {
       "benchmarks": {
@@ -2098,7 +2100,8 @@
         "https://x.com/Zai_org/status/2088132965922476159",
         "https://openrouter.ai/z-ai/glm-5.3",
         "https://datanorth.ai/news/z-ai-releases-glm-5-3"
-      ]
+      ],
+      "best_for_line": "Priciest Z.ai (Zhipu) model · 1M ctx · $1.4/$4.4"
     }
   ],
   "releases": [
