@@ -488,5 +488,25 @@
       "https://docs.z.ai/guides/llm/glm-5.3",
       "https://z.ai/blog/glm-5.3"
     ]
+  },
+  {
+    "date": "2026-08-28",
+    "model": "Qwen: Qwen3.8 Max",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/qwen/qwen3.8-max"
+    ]
+  },
+  {
+    "date": "2026-08-28",
+    "model": "CursorBench ladder",
+    "field": "effort_ladders",
+    "old": null,
+    "new": "Sonnet 5: 5 rungs refreshed",
+    "sources": [
+      "https://epoch.ai/data/benchmark_data.zip"
+    ]
   }
 ]

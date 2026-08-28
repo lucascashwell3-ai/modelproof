@@ -2118,6 +2118,37 @@
         "https://z.ai/blog/glm-5.3"
       ],
       "best_for_line": "Priciest Z.ai (Zhipu) model · 1M ctx · $1.4/$4.4"
+    },
+    {
+      "id": "qwen-qwen3-8-max",
+      "name": "Qwen: Qwen3.8 Max",
+      "vendor": "qwen",
+      "released": "2026-08-03",
+      "context_window": 1000000,
+      "price_input": 2,
+      "price_output": 6,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/qwen/qwen3.8-max"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "auto_added": "2026-08-28",
+      "best_for_line": "qwen model · 1M ctx · $2/$6"
     }
   ],
   "releases": [
@@ -2381,6 +2412,15 @@
       "summary": "OpenAI now lists GPT-5.6 Sol at $20 per 1M output tokens, from $30. Confirmed by two independent price feeds.",
       "source": "https://developers.openai.com/api/docs/pricing",
       "why": "Re-run any cost-per-task maths that used GPT-5.6 Sol — the old number overstates it by 33%."
+    },
+    {
+      "kind": "model",
+      "date": "2026-08-03",
+      "vendor": "qwen",
+      "title": "qwen releases Qwen: Qwen3.8 Max",
+      "summary": "Auto-added from OpenRouter/LiteLLM — pricing and context window sourced, benchmarks not yet verified.",
+      "source": "https://openrouter.ai/qwen/qwen3.8-max",
+      "why": "New listing — check back once benchmarks are sourced."
     }
   ],
   "benchmarks_legend": {
@@ -2598,7 +2638,7 @@
       "task": "Agentic coding",
       "x_label": "Cost per task (USD, log scale)",
       "y_label": "Score (%)",
-      "as_of": "2026-08-22",
+      "as_of": "2026-08-28",
       "publisher": "Epoch AI (mirroring Cursor's CursorBench)",
       "source_kind": "third-party",
       "source": "https://epoch.ai/benchmarks/use-this-data",
@@ -2669,13 +2709,13 @@
             },
             {
               "effort": "xhigh",
-              "cost": 5.23,
-              "score": 58.4
+              "cost": 2.77,
+              "score": 58.7
             },
             {
               "effort": "max",
-              "cost": 6.87,
-              "score": 61.2
+              "cost": 4.3,
+              "score": 61.5
             }
           ],
           "source_key": "claude-sonnet-5"

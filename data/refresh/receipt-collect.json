@@ -1,10 +1,10 @@
 {
   "job": "collect",
-  "ran_at": "2026-08-25T06:43:22.360Z",
+  "ran_at": "2026-08-28T18:13:21.373Z",
   "applied": 0,
   "held": 42,
   "confirmed": 55,
-  "new_models": 0,
+  "new_models": 1,
   "worklist_items": 15,
   "ok": true
 }
