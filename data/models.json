@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-08-25",
+  "as_of": "2026-08-28",
   "models": [
     {
       "id": "claude-opus-5",
@@ -439,7 +439,8 @@
         "https://api-docs.deepseek.com/quick_start/pricing/",
         "https://llm-stats.com/benchmarks/swe-bench-verified",
         "https://benchlm.ai/models/deepseek-v4-pro-max",
-        "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "https://api-docs.deepseek.com/quick_start/pricing"
       ],
       "coding_score": 81,
       "coding_basis": "SWE-bench Verified 80.6% (AA Coding Index lower, 59.4)",
@@ -700,7 +701,9 @@
         "https://artificialanalysis.ai/articles/gpt-5-6-has-landed",
         "https://benchlm.ai/models/gpt-5-6-sol",
         "https://techcrunch.com/2026/07/09/openai-launches-its-new-family-of-models-with-gpt-5-6/",
-        "https://www.citybiz.co/article/892929/openai-cuts-gpt-5-6-sol-api-pricing-20-for-three-months/"
+        "https://www.citybiz.co/article/892929/openai-cuts-gpt-5-6-sol-api-pricing-20-for-three-months/",
+        "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
+        "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
       ],
       "coding_score": 90,
       "coding_basis": "AA Coding Index #1 (77.4) + LMArena Code Elo #2 (1636)",
@@ -1009,7 +1012,8 @@
       "confidence": "medium",
       "sources": [
         "https://api-docs.deepseek.com/quick_start/pricing/",
-        "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+        "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+        "https://api-docs.deepseek.com/quick_start/pricing"
       ],
       "coding_score": 72,
       "coding_basis": "estimated just below V4-Pro (cheaper tier); no direct benchmark",
@@ -2079,7 +2083,12 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "coding",
+        "agentic",
+        "long-context",
+        "reasoning"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -2087,7 +2096,12 @@
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Reasoning can't be switched off, but effort has three levels — set it to low for simple tasks so you aren't paying for reasoning tokens you don't need.",
+        "Save max effort (~75K reasoning tokens) for genuinely complex coding work; Z.ai's own docs recommend low for simpler tasks.",
+        "Route non-urgent calls to off-peak hours (all weekend, per the GLM Coding Plan) to pay half the standard points.",
+        "Lean on the 1M-token context for whole-repository code review and long-horizon agent tasks rather than chunking files manually."
+      ],
       "task_copy": {},
       "id": "glm-5-3",
       "name": "GLM-5.3",
@@ -2099,7 +2113,9 @@
       "sources": [
         "https://x.com/Zai_org/status/2088132965922476159",
         "https://openrouter.ai/z-ai/glm-5.3",
-        "https://datanorth.ai/news/z-ai-releases-glm-5-3"
+        "https://datanorth.ai/news/z-ai-releases-glm-5-3",
+        "https://docs.z.ai/guides/llm/glm-5.3",
+        "https://z.ai/blog/glm-5.3"
       ],
       "best_for_line": "Priciest Z.ai (Zhipu) model · 1M ctx · $1.4/$4.4"
     }
