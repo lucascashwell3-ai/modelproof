@@ -260,9 +260,6 @@ function queryText() {
 }
 
 function renderResult() {
-  // a generated prompt reflects the selection at generation time — reset it when the selection changes
-  const pp = document.getElementById('promptPanel'); if (pp) pp.hidden = true;
-  const cs = document.getElementById('copyStatus'); if (cs) cs.textContent = '';
   const echo = $('#queryEcho');
   if (echo) { const q = queryText(); echo.innerHTML = `${q.task} · ${q.budget} cost · <b>${q.labs}</b>`; }
   syncURL();         // the selection is shareable — it lives in the query string
@@ -502,72 +499,6 @@ function renderLabChips() {
   document.querySelectorAll('[data-lab]').forEach((b) =>
     b.addEventListener('click', () => setLabs(b.getAttribute('data-lab')))
   );
-}
-
-// ---------- prompt generator: a paste-in "model advisor" for the user's own AI ----------
-const GOAL_PLAIN = {
-  coding: 'writing, fixing and refactoring code (including multi-step agent tasks)',
-  research: 'research, analysis, reasoning and strategy',
-  writing: 'writing and drafting prose, emails and content',
-  'cheap-bulk': 'high-volume simple work like classification, tagging and extraction',
-};
-function numPlain(v, money) { if (num(v)) return 'n/a'; if (money) return '$' + (v < 10 ? v.toFixed(2) : String(Math.round(v))); return String(v); }
-function ctxPlain(t) { if (num(t)) return ''; if (t >= 1e6) return (t / 1e6).toFixed(t % 1e6 ? 1 : 0) + 'M'; if (t >= 1e3) return Math.round(t / 1e3) + 'K'; return '' + t; }
-
-function modelFactLine(m) {
-  const bits = [];
-  // an estimate stays an estimate when it travels — the caveat rides in the export too
-  if (!num(m.coding_score)) bits.push(`coding ${m.coding_score}/100${isEst(m) ? ' (est — SWE-bench not published)' : ''}`);
-  if (!num(m.benchmarks?.gpqa)) bits.push(`GPQA ${m.benchmarks.gpqa}`);
-  bits.push((num(m.price_input) && num(m.price_output)) ? 'price n/a'
-    : `${numPlain(m.price_input, true)} in / ${numPlain(m.price_output, true)} out per 1M`);
-  const ctx = ctxPlain(m.context_window); if (ctx) bits.push(`${ctx} context`);
-  const good = (m.best_for || []).slice(0, 3).map((t) => TAG_LABEL[t] || t).join(', ');
-  return `- ${m.name} (${m.vendor}): ${bits.join('; ')}${good ? `; good for ${good}` : ''}.`;
-}
-
-const DATA_URL = 'https://lucascashwell3-ai.github.io/modelproof/data/models.json';
-function buildAdvisorPrompt() {
-  const asof = state.data.as_of || 'recently';
-  const prio = prioLabel(state.priority);
-  // facts list ALL models (so the advisor can name a cheaper option outside my labs), but MY SETUP
-  // states my labs as a soft preference — the same "task + optional lab filter" the site uses.
-  const scope = state.labs.length
-    ? `I mostly work on ${GOAL_PLAIN[state.goal] || state.goal}. I mainly pay for ${state.labs.map((v) => LAB_LABEL[v] || v).join(' + ')}, so prefer those — but if a model outside them is much cheaper or clearly better for a task, name it as an option and let me decide.`
-    : `I mostly work on ${GOAL_PLAIN[state.goal] || state.goal}. You may recommend from any model listed below.`;
-  const list = state.data.models.slice().sort((a, b) => (num(b.coding_score) ? -1 : b.coding_score) - (num(a.coding_score) ? -1 : a.coding_score));
-  const facts = list.map(modelFactLine).join('\n');
-  // "use it well" tips ride along for MY models (or the common flagships when no labs picked)
-  const tipPool = state.labs.length
-    ? list.filter((m) => state.labs.includes(m.vendor))
-    : list.filter((m) => COMMON_IDS.includes(m.id));
-  const tipLines = tipPool
-    .filter((m) => (m.use_well || []).length)
-    .map((m) => `- ${m.name}: ${m.use_well.join(' ')}`)
-    .join('\n');
-
-  return `You are my AI model-selection advisor. When I describe a task, tell me which model to use and why — optimizing for a "${prio}" balance of cost versus quality, and always honest about cost. Your first job is making the most of what I already have; suggesting something new comes second.
-
-MY SETUP
-${scope}
-
-STAY CURRENT (do this first if you can)
-Before advising, fetch the live data at ${DATA_URL} and use those numbers — they are kept up to date. If you can't browse, use the dated snapshot below and warn me it may be stale.
-
-MODEL FACTS — a snapshot from Modelproof, dated ${asof}. Prices are USD per 1M tokens. Benchmarks are directional (coding is a 0–100 score — SWE-bench Verified where published, otherwise a sourced estimate marked "est"; GPQA is graduate-level reasoning). "n/a" means the figure wasn't publicly sourced — treat it as unknown, never guess. Verify anything cost-critical against the vendor's own pricing page.
-${facts}
-
-HOW TO USE MY MODELS WELL — practical notes per model (from the same sourced data):
-${tipLines || '- (pick labs on the Modelproof site to get per-model usage notes here)'}
-
-HOW TO ADVISE ME
-1. For any task I describe, recommend ONE model in a sentence, with the reason — from my own models first.
-2. Then tell me HOW to use it for this task, using the notes above: when a thinking/reasoning mode earns its cost, when my cheap tier handles it fine, context-length and cache tactics, pricing cliffs to avoid.
-3. If a cheaper model I already have is nearly as good, name it — saving me money inside my own subscriptions comes before anything else.
-4. Only after that: if a model outside my setup is meaningfully better or much cheaper for the task, state it as a neutral, cost-first fact ("X does this at $A vs your $B") and let me decide. If nothing outside is meaningfully better, tell me plainly that I'm set.
-5. Recommend on merit and cost only. Stay neutral; do not favor any company.
-6. Never invent a price or benchmark. If a number is "n/a", say it's unknown rather than guessing.
-7. This snapshot is dated ${asof}. If it is now much later and you couldn't fetch live data, remind me that AI prices and models change fast and to re-check current figures at ${DATA_URL}.`;
 }
 
 // ---------- cost vs capability chart ----------
@@ -1237,24 +1168,6 @@ function wire() {
     })
   );
 
-  // prompt generator
-  const gen = $('#genPrompt'), ta = $('#promptText'), panel = $('#promptPanel'), copyStatus = $('#copyStatus');
-  // the status says what actually happened: the generate button auto-copies and SAYS so;
-  // a bare "Copied ✓" next to an unclicked button read as a lie (cold review #18)
-  function copyPrompt(auto) {
-    if (!ta) return;
-    const ok = () => { if (copyStatus) copyStatus.textContent = auto ? 'Copied to your clipboard automatically ✓' : 'Copied ✓'; };
-    const manual = () => { ta.focus(); ta.select(); if (copyStatus) copyStatus.textContent = 'Select all + copy'; };
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(ok).catch(manual);
-    else manual();
-  }
-  if (gen) gen.addEventListener('click', () => {
-    if (!ta || !panel || !state.data) return;   // no data, no prompt — the button stays disabled until data lands
-    ta.value = buildAdvisorPrompt();
-    panel.hidden = false;
-    copyPrompt(true);                          // auto-copy the moment it's generated — and say so
-  });
-  const copyBtn = $('#copyPrompt'); if (copyBtn) copyBtn.addEventListener('click', () => copyPrompt(false));
 }
 
 // ---------- site-wide ASCII sunset (fixed, full-viewport background) ----------
@@ -1426,7 +1339,6 @@ function renderLoadError() {
   if (tb) tb.innerHTML = `<tr><td colspan="6">${msg}</td></tr>`;
   const r = $('#result');
   if (r) r.innerHTML = msg;
-  const gen = $('#genPrompt'); if (gen) gen.disabled = true;   // no data behind the CTA
   const retry = $('#retryLoad');
   if (retry) retry.addEventListener('click', () => {
     retry.disabled = true; retry.textContent = 'Loading…';
@@ -1459,7 +1371,6 @@ async function boot() {
   // the snapshot date is injected from the same field as the badge — the sourcing note
   // itself carries no hand-written dates, so the two can never disagree (cold review #3)
   setText('#footNotes', 'Data snapshot ' + asof + '. ' + (state.data.notes || 'Pricing from official vendor pages; benchmarks from public leaderboards. Every figure carries a confidence flag; unsourced numbers are left blank rather than guessed.'));
-  const gen = $('#genPrompt'); if (gen) gen.disabled = false;   // data's here — the advisor can work now
 
   wire();
   setActive('data-goal', state.goal);   // reflect a URL-restored task on the console
