@@ -54,8 +54,8 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
 6. If it exits 0: `git add data/` (data/ files only — models.json, changelog.json,
    refresh/worklist.json, refresh/receipt-judge.json). Commit, `git pull --rebase origin main`, then
    `git push origin HEAD:main`. Retry the pull/push up to 3 times on conflict.
-7. If any items held: run `node scripts/needs-lucas-issue.mjs judgments.json` to file/update the
-   "Needs Lucas — modelproof data refresh" issue (idempotent by title; closes it when nothing is
+7. If any items held: run `node scripts/held-review-issue.mjs judgments.json` to file/update the
+   "Held for review — modelproof data refresh" issue (idempotent by title; closes it when nothing is
    held).
 
 ## Hard rules

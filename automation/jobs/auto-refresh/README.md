@@ -59,8 +59,8 @@ past the cap waits for the next pass — nothing piles up silently, it just stay
 
 **Failure behavior:** honesty gate (`scripts/validate-data.mjs`) blocks every publish, Collect or
 Judge, on any error. Verify reverts the data commit(s) since Collect on a live-mismatch or
-gate failure and fails loud. Held items collect into one GitHub issue ("Needs Lucas — modelproof
-data refresh", via `scripts/needs-lucas-issue.mjs`), closed automatically when empty.
+gate failure and fails loud. Held items collect into one GitHub issue ("Held for review — modelproof
+data refresh", via `scripts/held-review-issue.mjs`), closed automatically when empty.
 
 **Receipts:** each piece writes `data/refresh/receipt-<piece>.json (collect / judge / verify)` (`{job, ran_at, ..., ok}`) — the
 reporter reads these for the board and missed-tick detection.

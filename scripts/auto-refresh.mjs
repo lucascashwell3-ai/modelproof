@@ -665,7 +665,7 @@ async function reportIssue(held) {
   const token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
   const repo = process.env.GITHUB_REPOSITORY; // "owner/repo", set by Actions
   if (!token || !repo) { console.log('report: no GH_TOKEN/GITHUB_REPOSITORY — skipping issue (local run).'); return; }
-  const title = 'Needs Lucas — modelproof data refresh';
+  const title = 'Held for review — modelproof data refresh';
   const api = (path, opts = {}) => fetch(`https://api.github.com/repos/${repo}${path}`, {
     ...opts,
     headers: { authorization: `Bearer ${token}`, accept: 'application/vnd.github+json', ...(opts.headers || {}) },
