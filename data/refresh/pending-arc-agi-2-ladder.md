@@ -1,7 +1,7 @@
 # Parked: ARC-AGI-2 cost-per-task effort ladder (ARC Prize) — NOT rendered
 
 Why parked: arcprize.org terms (effective 2024-06-03) forbid copying/republishing content "for any
-commercial purpose" without written permission. Lucas to email team@arcprize.org; on a yes, this
+commercial purpose" without written permission. Permission request emailed to team@arcprize.org 2026-08-22; on a yes, this
 becomes a third ladder (source_kind: third-party, tier A once added to scripts/sources.json).
 
 Source: https://arcprize.org/leaderboard — values verified 2026-08-22 from the page's own JSON

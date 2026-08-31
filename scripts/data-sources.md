@@ -96,7 +96,7 @@ facts aren't copyrightable). Not usable as a systematic feed.
   the index, as of 2026-07-24). But: free tier is **internal use only, no redistribution**; Pro is
   single-seat; redistribution needs the **Commercial** tier, whose **price is not published**
   ("contact us", no free trial). Also runs paid pre-release evals *with* the labs. → cite in
-  `sources[]`, never as a ladder feed, unless Lucas buys a Commercial licence.
+  `sources[]`, never as a ladder feed without a Commercial licence.
 - **llm-stats.com** — 334 models, aggregates benchmarks + provider pricing + live throughput, has
   a REST API and MCP. But redistribution terms are unpublished, and it's an aggregator (thinner
   provenance than whoever ran the eval). Useful for *discovery* — "who's published a number we

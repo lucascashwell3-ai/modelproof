@@ -28,7 +28,7 @@ to reflect today's cuts.
 # Adopting Epoch's independent figures over weaker sources — 2026-07-25
 
 Two shipped numbers were resting on thinner provenance than the free, independently-run data now
-available. Flagged in the previous entry, decided by Lucas the same day: take Epoch on both.
+available. Flagged in the previous entry; decided the same day: take Epoch on both.
 
 | Model | Field | Was | Now | Why |
 |---|---|---|---|---|
@@ -98,7 +98,7 @@ silently rewriting a shipped number:
 1. **Kimi K2.6 SWE-bench: we show 80.2%, Epoch's independent run says 76.7%.** Ours traces to
    llm-stats.com, which our own registry classes Tier B — "aggregator, use for discovery, not as a
    cited authority." By the precedence rule the independent re-run should win, which would also pull
-   its `coding_score` down from 80. **Lucas's call.**
+   its `coding_score` down from 80. **Held for review.**
 2. **Gemini 3.5 Flash GPQA: we show 92.2%, Epoch says 92.8%.** Ours traces to a third-party blog
    that isn't in the source registry at all.
 
@@ -117,13 +117,13 @@ more than one ladder.
 
 ## Why this source
 
-Researched every candidate that publishes score *and* real cost per attempt (see
-`claude-universe/status/_modelproof-neutral-ladder-findings.md`). Two hard requirements: rungs at
+Researched every candidate that publishes score *and* real cost per attempt (research
+notes kept off-repo). Two hard requirements: rungs at
 each reasoning-effort level, and a licence that permits republication on a public site.
 
 - **Artificial Analysis — rejected.** Best-shaped data anywhere, but its free tier is internal-use
   only and a public site counts as redistribution, needing a Commercial licence at an unpublished
-  "contact us" price. Lucas's call, 2026-07-25: *"if we have to pay we're not using it."* AA stays
+  "contact us" price. Decision, 2026-07-25: paid licences are ruled out. AA stays
   usable as an ordinary cited reference; it is not a feed.
 - **Epoch AI — adopted.** Data is **CC-BY**: free to use, distribute and reproduce with credit,
   read off their own licensing page. Its `cursorbench_external.csv` export carries one row per
@@ -214,7 +214,7 @@ Also swapped the compare table's Anthropic default from Opus 4.8 → Opus 5.
 
 ## 2. New panel 03 — "What more effort actually buys"
 
-The ask (Lucas, 2026-07-24): performance vs. cost, top models, a point at each effort level —
+The ask (2026-07-24): performance vs. cost, top models, a point at each effort level —
 modelled on Anthropic's Opus 5 launch chart.
 
 New `effort_ladders` block in `models.json` + `renderEffort()` in `app.js`. Log cost axis,
