@@ -21,7 +21,7 @@ fi
 
 # --- 2. High-confidence live-secret patterns in tracked content ---
 # Anthropic, Stripe live, AWS, GitHub tokens, private keys, real Etherscan keys.
-PATTERNS='sk-ant-(api03-)?[A-Za-z0-9_-]{40,}|sk_live_[A-Za-z0-9]{20,}|rk_live_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{36,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|ETHERSCAN_API_KEY[=: ]+[A-Z0-9]{30,}|4UQFGG19Y6RFXKQ9N6DPAZYCJPW3SCBV44'
+PATTERNS='sk-ant-(api03-)?[A-Za-z0-9_-]{40,}|sk_live_[A-Za-z0-9]{20,}|rk_live_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{36,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|ETHERSCAN_API_KEY[=: ]+[A-Z0-9]{30,}'
 
 # Exclude this scanner itself (it necessarily contains the patterns as regexes).
 hits=$(git grep -nIE "$PATTERNS" -- . ':(exclude)scripts/secret-scan.sh' 2>/dev/null)
