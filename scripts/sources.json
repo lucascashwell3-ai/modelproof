@@ -83,7 +83,7 @@
         "Intelligence Index vs cost per task, with separate per-effort entries"
       ],
       "conflicts": "Runs paid pre-release evaluations with the labs, including for Claude Opus 5 itself.",
-      "notes": "RULED OUT as a feed, 2026-07-25, by Lucas: the free tier is internal-use-only and a public site counts as redistribution, which needs a Commercial licence at an unpublished price. Decision was 'if we have to pay we're not using it'. Do not reopen and do not request a quote. Citing a figure in sources[] with a link is fine; ingesting is not."
+      "notes": "RULED OUT as a feed, 2026-07-25: the free tier is internal-use-only and a public site counts as redistribution, which needs a Commercial licence at an unpublished price. Decision: paid licences are ruled out. Do not reopen and do not request a quote. Citing a figure in sources[] with a link is fine; ingesting is not."
     },
     {
       "id": "llm-stats",

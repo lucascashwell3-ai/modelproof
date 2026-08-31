@@ -20,3 +20,6 @@ Thumbs.db
 /STATUS.md
 /PRODUCT.md
 /design/
+
+# personal Claude Code config — local only
+.claude/

@@ -171,7 +171,7 @@ Run the fan-out refresh prompt above (regenerates the whole file, then adversari
 - Neutral voice: a release entry must read as information, never promotion of a lab.
 - An effort ladder ships with its publisher, harness, method and caveat, or it doesn't ship.
 
-### Wanted next (Lucas, 2026-07-12): per-model usage volumes
+### Wanted next (2026-07-12): per-model usage volumes
 In the weekly pass, also pull **per-model monthly token/request volumes from OpenRouter's
 public rankings** for as many of our 22 models as are listed. Add to each lens entry (or a
 new `usage.models[]` map) with the source URL. Where a model isn't listed, leave it blank —
@@ -190,6 +190,6 @@ benchmarks and never pushes to `main`:
 - The Action opens a PR (`auto/data-refresh`); **a human verifies, edits by hand, bumps `as_of`,
   and merges** — the only path to production.
 
-**One-time enablement (Lucas):** repo Settings → Actions → General → "Allow GitHub Actions to
+**One-time enablement (repo owner):** repo Settings → Actions → General → "Allow GitHub Actions to
 create and approve pull requests"; branch protection on `main` requiring 1 review. Per-model usage
 volumes (OpenRouter *rankings*) need an API-key secret — deferred with the usage view.
