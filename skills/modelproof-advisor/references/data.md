@@ -5,6 +5,10 @@
 Primary: `https://lucascashwell3-ai.github.io/modelproof/data/models.json`
 Mirror:  `https://raw.githubusercontent.com/lucascashwell3-ai/modelproof/main/data/models.json`
 
+Fetch it **raw** — `curl` (or your tool's plain HTTP read) and parse the JSON yourself.
+Never fetch it through a tool that summarizes pages: summarizers have returned invented
+values for this exact file. The JSON is the record.
+
 If both fail: say so in one line inside the recommendation ("working from memory — numbers
 may be stale, live data at modelproof"), and carry on with what you know. Never pretend
 you fetched.
@@ -17,7 +21,7 @@ shows where extra spend stops buying quality).
 
 Per model: `name`, `vendor`, `price_input` / `price_output` (USD per 1M tokens),
 `context_window`, `coding_score` (0–100 blend), `benchmarks` (`swe_bench`, `gpqa`, `aime`,
-`mmlu_pro`, `lmarena_elo`), `best_for` tags, `strengths`, `weaknesses`, `use_well` (2–4
+`mmlu_pro`), `best_for` tags, `strengths`, `weaknesses`, `use_well` (2–4
 practical tips — the heart of the answer), `confidence` on figures. `null` means unknown —
 say unknown, never fill it in.
 
@@ -27,15 +31,16 @@ say unknown, never fill it in.
 |---|---|---|
 | code / build / agent run | `coding_score`, then the effort ladder if present | price per task, context |
 | research, analysis, strategy, hard reasoning | `gpqa`, `mmlu_pro` | price |
-| writing, decks, presentations, docs | no writing benchmark exists and `lmarena_elo`/`mmlu_pro` are mostly empty — rank by `best_for` containing `writing`, then `strengths`, then the vendor's current flagship over its older one; say "no clean writing benchmark" once | price |
+| writing, decks, presentations, docs | no writing benchmark exists — rank by `best_for` containing `writing`, then `strengths` and `gpqa`, then the vendor's current flagship over its older one; say "no clean writing benchmark" once | price |
 | overnight / bulk / batch / classify / extract / summarize | **price first** (`price_input`+`price_output`), with a capability floor | batch-API and cache discounts from `use_well` |
 | long documents, big codebases | `context_window` first | price |
 | "what's new" | `releases[]`, newest first, read the `why` | — |
 
 Capability floor: never hand a quality task to a weak model because it's cheap. Bulk is the
 one place price leads — and even there, the pick must clear the floor. The floor for bulk:
-`best_for` fits, `confidence` is not low, and at least one benchmark or `use_well` entry is
-filled in. Between models that all clear it, the cheapest **well-documented** one wins —
+`best_for` fits, `confidence` is not low, and at least one benchmark or `use_well` entry
+**that speaks to this kind of work** is filled in — a coding-only score clears nothing for
+extraction or summarization. Between models that all clear it, the cheapest **well-documented** one wins —
 a $0.05 model with nothing but a coding score is not a pick for an unattended overnight run
 on real customer data; it's the outside-kit fact. There is no summarization benchmark;
 say so if asked, and lean on `best_for` + `strengths`.
