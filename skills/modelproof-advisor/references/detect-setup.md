@@ -4,7 +4,9 @@ Check presence only. Never read or echo a key's value. Never search on anything 
 
 **The tool you're running in is itself a signal.** In Claude Code, Anthropic access is
 proven — don't report "nothing detected" to someone who is talking to Claude. Same logic for
-Gemini CLI (Google) and Codex CLI (OpenAI).
+Gemini CLI (Google) and Codex CLI (OpenAI). But proven access is for *that tool only*: a
+Cursor or chat subscription doesn't prove an API key a standalone script can use. If the job
+runs headless, keys are what count.
 
 ## Providers (API keys / logins)
 
@@ -22,7 +24,12 @@ Gemini CLI (Google) and Codex CLI (OpenAI).
 | Gemini CLI | `~/.gemini/settings.json` | edit the key |
 | Aider | `.aider.conf.yml` → `model` | edit the key |
 | A script / batch job / API call (most bulk work) | the model id in their code | nothing to write — give the model id and the API to use (Batch API for overnight) |
+| A chat app (Claude.ai, ChatGPT, Gemini) | the app's model picker | nothing to write — name the menu |
 | Anything else | ask: "what tool are you running this in?" | — |
+
+The editor and the thing that runs the job can differ: a bulk script written in Cursor runs
+on an API key, not Cursor's model menu. Plan for where the job *runs*. Deciding for a team →
+nothing on this machine matters; skip detection, no write.
 
 **Write a setting, or just say it?** "Starting a project / this repo from now on" → the
 project's settings file goes in the plan. A one-off task (a deck, a memo, one bulk run) →
@@ -39,6 +46,8 @@ Claude, ChatGPT, Gemini, something else?"
 
 ## Budget, if unstated
 
-Infer from their words: "overnight bulk", "tight", "cheap" → cheapest that clears the floor;
-"client deck", "PE presentation", "important" → quality first; nothing said → value (best
-score per dollar). State the inference in the readback so they can correct it.
+Infer from their words — judgment, not keyword matching: "overnight bulk", "tight", "cheap",
+"runs daily" → cheapest that clears the floor; "client deck", "board memo", "important",
+anything a stranger will judge them by → quality first; nothing said → value (best score per
+dollar). Those are examples, not a list — a phrase that isn't on it still counts if the
+stakes are plain. State the inference in the readback so they can correct it.
