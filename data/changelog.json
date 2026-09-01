@@ -508,5 +508,151 @@
     "sources": [
       "https://epoch.ai/data/benchmark_data.zip"
     ]
+  },
+  {
+    "date": "2026-09-01",
+    "model": "Qwen: Qwen3.8 Flash",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
+      "https://thenewstack.io/qwen38-flash-previews-qwen4/",
+      "https://openrouter.ai/qwen/qwen3.8-flash"
+    ]
+  },
+  {
+    "date": "2026-09-01",
+    "model": "Tencent: Hy4 preview",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://www.tencent.com/tencent-releases-and-open-sources-tencent-hy4-preview/",
+      "https://technode.com/2026/08/28/tencent-open-sources-hy4-preview-with-770b-parameters-and-a-1m-token-context/",
+      "https://openrouter.ai/tencent/hy4-preview"
+    ]
+  },
+  {
+    "date": "2026-09-01",
+    "model": "Tencent: Hy-MT2-7B",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://huggingface.co/tencent/Hy-MT2-7B",
+      "https://github.com/Tencent-Hunyuan/Hy-MT2",
+      "https://openrouter.ai/tencent/hy-mt2-7b"
+    ]
+  },
+  {
+    "date": "2026-09-01",
+    "model": "DeepSeek V4-Flash",
+    "field": "price_input",
+    "old": 0.44,
+    "new": 0.44,
+    "sources": [
+      "https://api-docs.deepseek.com/quick_start/pricing",
+      "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+    ]
+  },
+  {
+    "date": "2026-09-01",
+    "model": "DeepSeek V4-Flash",
+    "field": "price_output",
+    "old": 1.32,
+    "new": 1.32,
+    "sources": [
+      "https://api-docs.deepseek.com/quick_start/pricing",
+      "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+    ]
+  },
+  {
+    "date": "2026-09-01",
+    "model": "DeepSeek V4-Pro",
+    "field": "price_input",
+    "old": 1.32,
+    "new": 1.32,
+    "sources": [
+      "https://api-docs.deepseek.com/quick_start/pricing",
+      "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+    ]
+  },
+  {
+    "date": "2026-09-01",
+    "model": "DeepSeek V4-Pro",
+    "field": "price_output",
+    "old": 3.96,
+    "new": 3.96,
+    "sources": [
+      "https://api-docs.deepseek.com/quick_start/pricing",
+      "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+    ]
+  },
+  {
+    "date": "2026-09-01",
+    "model": "Google: Gemini 3.7 Flash",
+    "field": "price_output",
+    "old": 1.88,
+    "new": 3.75,
+    "sources": [
+      "https://ai.google.dev/gemini-api/docs/pricing",
+      "https://openrouter.ai/google/gemini-3.7-flash"
+    ]
+  },
+  {
+    "date": "2026-09-01",
+    "model": "GPT-5.6 Sol",
+    "field": "price_input",
+    "old": 4,
+    "new": 4,
+    "sources": [
+      "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
+      "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+    ]
+  },
+  {
+    "date": "2026-09-01",
+    "model": "GPT-5.6 Sol",
+    "field": "price_output",
+    "old": 20,
+    "new": 20,
+    "sources": [
+      "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
+      "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+    ]
+  },
+  {
+    "date": "2026-09-01",
+    "model": "Google: Gemini 3.7 Flash",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://ai.google.dev/gemini-api/docs/latest-model",
+      "https://deepmind.google/models/gemini/flash/"
+    ]
+  },
+  {
+    "date": "2026-09-01",
+    "model": "Thinking Machines: Inkling Small",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://thinkingmachines.ai/model-card/inkling-small/",
+      "https://thinkingmachines.ai/news/inkling-small/"
+    ]
+  },
+  {
+    "date": "2026-09-01",
+    "model": "Poolside: Laguna XS 2.1",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://docs.poolside.ai/release-notes/models",
+      "https://huggingface.co/poolside/Laguna-XS-2.1-NVFP4"
+    ]
   }
 ]
