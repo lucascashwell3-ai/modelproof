@@ -2209,7 +2209,8 @@
         "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
         "https://thenewstack.io/qwen38-flash-previews-qwen4/",
         "https://openrouter.ai/qwen/qwen3.8-flash"
-      ]
+      ],
+      "best_for_line": "Cheapest qwen model · 1M ctx · $0.15/$0.47"
     },
     {
       "benchmarks": {
@@ -2239,7 +2240,8 @@
         "https://www.tencent.com/tencent-releases-and-open-sources-tencent-hy4-preview/",
         "https://technode.com/2026/08/28/tencent-open-sources-hy4-preview-with-770b-parameters-and-a-1m-token-context/",
         "https://openrouter.ai/tencent/hy4-preview"
-      ]
+      ],
+      "best_for_line": "Priciest Tencent model · 1M ctx · $0.834/$2.501"
     },
     {
       "benchmarks": {
@@ -2269,7 +2271,8 @@
         "https://huggingface.co/tencent/Hy-MT2-7B",
         "https://github.com/Tencent-Hunyuan/Hy-MT2",
         "https://openrouter.ai/tencent/hy-mt2-7b"
-      ]
+      ],
+      "best_for_line": "Tencent model · 8K ctx · $0.074/$0.295"
     }
   ],
   "releases": [
