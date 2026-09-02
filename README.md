@@ -50,6 +50,7 @@ source cleanly is held in a review issue instead of published.
 **Honesty rules:**
 
 - **Pricing** traces to official vendor pages (standard tier, USD per 1M tokens).
+  Verify anything cost-critical against the vendor's own pricing page before relying on it.
 - **Benchmarks** are directional, cited, and confidence-flagged — never treated as truth.
 - **A blank (—) means "not reliably sourced," never a guess.** The validator
   ([`scripts/validate-data.mjs`](scripts/validate-data.mjs)) blocks any publish that breaks
