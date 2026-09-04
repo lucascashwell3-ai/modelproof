@@ -654,5 +654,59 @@
       "https://docs.poolside.ai/release-notes/models",
       "https://huggingface.co/poolside/Laguna-XS-2.1-NVFP4"
     ]
+  },
+  {
+    "date": "2026-09-04",
+    "model": "GPT-5.6 Sol",
+    "field": "price_input",
+    "old": 4,
+    "new": 4,
+    "sources": [
+      "https://developers.openai.com/api/docs/pricing",
+      "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+    ]
+  },
+  {
+    "date": "2026-09-04",
+    "model": "GPT-5.6 Sol",
+    "field": "price_output",
+    "old": 20,
+    "new": 20,
+    "sources": [
+      "https://developers.openai.com/api/docs/pricing",
+      "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+    ]
+  },
+  {
+    "date": "2026-09-04",
+    "model": "IBM: Granite 4.2 8B",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://research.ibm.com/blog/introducing-granite-4-2",
+      "https://huggingface.co/ibm-granite/granite-4.2-8b"
+    ]
+  },
+  {
+    "date": "2026-09-04",
+    "model": "Ling-3.0-flash",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://huggingface.co/inclusionAI/Ling-3.0-flash"
+    ]
+  },
+  {
+    "date": "2026-09-04",
+    "model": "Meta: Muse Spark 1.1",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://ai.meta.com/blog/introducing-muse-spark-msl/",
+      "https://ai.meta.com/static-resource/muse-spark-1-1-evaluation-report/"
+    ]
   }
 ]

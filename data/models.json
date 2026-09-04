@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-09-01",
+  "as_of": "2026-09-04",
   "models": [
     {
       "id": "claude-opus-5",
@@ -1431,18 +1431,31 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "reasoning",
+        "agentic",
+        "coding",
+        "long-context",
+        "vision"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/meta/muse-spark-1.1"
+        "https://openrouter.ai/meta/muse-spark-1.1",
+        "https://ai.meta.com/blog/introducing-muse-spark-msl/",
+        "https://ai.meta.com/static-resource/muse-spark-1-1-evaluation-report/"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Natively multimodal — it accepts image, video, PDF and audio input directly, so skip a separate OCR or transcription step for those tasks.",
+        "1M-token context window suits large codebases or long documents in a single pass rather than chunking.",
+        "Scores 76.0 on SWE-Bench Verified and 51.2 on SWE-Bench Pro per Meta's own evaluation report — solid for autonomous coding-agent work, not just chat.",
+        "At $1.25/$4.25 per million input/output tokens, output-heavy agentic loops (tool calls, long reasoning traces) dominate cost, so budget for output volume."
+      ],
       "task_copy": {},
       "auto_added": "2026-08-16",
       "best_for_line": "Priciest meta model · 1M ctx · $1.25/$4.25"
@@ -1454,7 +1467,14 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "reasoning",
+        "agentic",
+        "coding",
+        "long-context",
+        "speed",
+        "cheap-bulk"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -1462,7 +1482,12 @@
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Thinking mode is on by default; disable it per request with chat_template_kwargs: {enable_thinking: false} when you just need a fast, non-reasoning answer.",
+        "Only 5.1B of its 124B parameters activate per token, so it runs cheap relative to its benchmark scores — a good pick for high-volume or cheap-bulk coding-agent traffic.",
+        "Deploy with SGLang or vLLM using tensor parallelism across 4–8 GPUs; its HiCache+Mooncake hierarchical caching cuts time-to-first-token 60–80% on long-input requests.",
+        "Use the model card's recommended sampling settings (temperature 0.6, top_p 0.95, top_k 20) — its reasoning traces are tuned around them."
+      ],
       "task_copy": {},
       "id": "ling-3-0-flash",
       "name": "Ling-3.0-flash",
@@ -2273,6 +2298,37 @@
         "https://openrouter.ai/tencent/hy-mt2-7b"
       ],
       "best_for_line": "Tencent model · 8K ctx · $0.074/$0.295"
+    },
+    {
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [
+        "agentic",
+        "coding",
+        "reasoning"
+      ],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "id": "granite-4-2-8b",
+      "name": "IBM: Granite 4.2 8B",
+      "vendor": "IBM",
+      "released": "2026-08-25",
+      "context_window": 128000,
+      "sources": [
+        "https://research.ibm.com/blog/introducing-granite-4-2",
+        "https://huggingface.co/ibm-granite/granite-4.2-8b"
+      ]
     }
   ],
   "releases": [
@@ -2581,6 +2637,15 @@
       "summary": "google now lists Google: Gemini 3.7 Flash at $3.75 per 1M output tokens, from $1.88. Confirmed by two independent price feeds.",
       "source": "https://ai.google.dev/gemini-api/docs/pricing",
       "why": "Budgets built on the old Google: Gemini 3.7 Flash price are now 99% short. Check whether a cheaper tier covers the job."
+    },
+    {
+      "kind": "model",
+      "date": "2026-08-25",
+      "vendor": "IBM",
+      "title": "IBM releases IBM: Granite 4.2 8B",
+      "summary": "IBM released Granite 4.2 on Aug 25, 2026: open (Apache 2.0) 3B/8B/30B dense reasoning models with a per-request thinking toggle.",
+      "source": "https://research.ibm.com/blog/introducing-granite-4-2",
+      "why": "Adds a native reasoning switch plus an added agentic-RL training stage (tool-calling, multi-step coding, terminal use) to IBM's open Granite line."
     }
   ],
   "benchmarks_legend": {
