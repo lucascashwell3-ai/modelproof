@@ -1,6 +1,36 @@
 {
-  "generated": "2026-09-01",
+  "generated": "2026-09-04",
   "items": [
+    {
+      "id": "new:inceptionmercury25preview",
+      "model": "Inception: Mercury 2.5 Preview",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.04,
+          "date": "2026-09-04"
+        }
+      ],
+      "ask": "\"Inception: Mercury 2.5 Preview\" showed up on OpenRouter but admission rules not met (sources=2 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:zaiglmflashlatest",
+      "model": "Z.ai: GLM Flash Latest",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.075,
+          "date": "2026-09-04"
+        }
+      ],
+      "ask": "\"Z.ai: GLM Flash Latest\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
+    },
     {
       "id": "new:zaiglmlatest",
       "model": "Z.ai: GLM Latest",
@@ -10,8 +40,8 @@
         {
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
-          "value": 1.17,
-          "date": "2026-09-01"
+          "value": 1.15,
+          "date": "2026-09-04"
         }
       ],
       "ask": "\"Z.ai: GLM Latest\" showed up on OpenRouter but admission rules not met (sources=1 pricing=true vendor=false) — is this a real, released model? If so, find vendor + a second source and add it."
@@ -26,14 +56,14 @@
         {
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.08092,
-          "date": "2026-09-01"
+          "value": 0.088606,
+          "date": "2026-09-04"
         },
         {
           "source": "litellm",
           "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "value": 0.44,
-          "date": "2026-09-01"
+          "date": "2026-09-04"
         }
       ],
       "ask": "DeepSeek V4-Flash price input is currently 0.44; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
@@ -48,14 +78,14 @@
         {
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.16184,
-          "date": "2026-09-01"
+          "value": 0.177212,
+          "date": "2026-09-04"
         },
         {
           "source": "litellm",
           "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "value": 1.32,
-          "date": "2026-09-01"
+          "date": "2026-09-04"
         }
       ],
       "ask": "DeepSeek V4-Flash price output is currently 1.32; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
@@ -70,14 +100,14 @@
         {
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
-          "value": 1.5999999999999999,
-          "date": "2026-09-01"
+          "value": 1.04226,
+          "date": "2026-09-04"
         },
         {
           "source": "litellm",
           "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "value": 1.32,
-          "date": "2026-09-01"
+          "date": "2026-09-04"
         }
       ],
       "ask": "DeepSeek V4-Pro price input is currently 1.32; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
@@ -92,17 +122,91 @@
         {
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
-          "value": 3.1999999999999997,
-          "date": "2026-09-01"
+          "value": 2.08452,
+          "date": "2026-09-04"
         },
         {
           "source": "litellm",
           "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "value": 3.9600000000000004,
-          "date": "2026-09-01"
+          "date": "2026-09-04"
         }
       ],
       "ask": "DeepSeek V4-Pro price output is currently 3.96; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
+    },
+    {
+      "id": "gpt-5-6-sol:price_input",
+      "model": "GPT-5.6 Sol",
+      "kind": "conflict",
+      "field": "price_input",
+      "current": 4,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 2,
+          "date": "2026-09-04"
+        },
+        {
+          "source": "litellm",
+          "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "value": 4,
+          "date": "2026-09-04"
+        }
+      ],
+      "ask": "GPT-5.6 Sol price input is currently 4; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
+    },
+    {
+      "id": "gpt-5-6-sol:price_output",
+      "model": "GPT-5.6 Sol",
+      "kind": "conflict",
+      "field": "price_output",
+      "current": 20,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 10,
+          "date": "2026-09-04"
+        },
+        {
+          "source": "litellm",
+          "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "value": 20,
+          "date": "2026-09-04"
+        }
+      ],
+      "ask": "GPT-5.6 Sol price output is currently 20; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
+    },
+    {
+      "id": "granite-4-2-8b:price_input",
+      "model": "IBM: Granite 4.2 8B",
+      "kind": "conflict",
+      "field": "price_input",
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.09999999999999999,
+          "date": "2026-09-04"
+        }
+      ],
+      "ask": "IBM: Granite 4.2 8B price input is currently null; sources disagree (single-source) — what's the correct current value, with a source URL and date?"
+    },
+    {
+      "id": "granite-4-2-8b:price_output",
+      "model": "IBM: Granite 4.2 8B",
+      "kind": "conflict",
+      "field": "price_output",
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.15,
+          "date": "2026-09-04"
+        }
+      ],
+      "ask": "IBM: Granite 4.2 8B price output is currently null; sources disagree (single-source) — what's the correct current value, with a source URL and date?"
     },
     {
       "id": "inkling:price_input",
@@ -115,60 +219,14 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 1,
-          "date": "2026-09-01"
+          "date": "2026-09-04"
         }
       ],
       "ask": "Thinking Machines: Inkling price input is currently null; sources disagree (single-source) — what's the correct current value, with a source URL and date?"
     },
     {
-      "id": "inkling:price_output",
-      "model": "Thinking Machines: Inkling",
-      "kind": "conflict",
-      "field": "price_output",
-      "current": null,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 4.05,
-          "date": "2026-09-01"
-        }
-      ],
-      "ask": "Thinking Machines: Inkling price output is currently null; sources disagree (single-source) — what's the correct current value, with a source URL and date?"
-    },
-    {
-      "id": "kat-coder-pro-v2-5:price_input",
-      "model": "Kwaipilot: KAT-Coder-Pro V2.5",
-      "kind": "conflict",
-      "field": "price_input",
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.74,
-          "date": "2026-09-01"
-        }
-      ],
-      "ask": "Kwaipilot: KAT-Coder-Pro V2.5 price input is currently null; sources disagree (single-source) — what's the correct current value, with a source URL and date?"
-    },
-    {
-      "id": "kat-coder-pro-v2-5:price_output",
-      "model": "Kwaipilot: KAT-Coder-Pro V2.5",
-      "kind": "conflict",
-      "field": "price_output",
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 2.96,
-          "date": "2026-09-01"
-        }
-      ],
-      "ask": "Kwaipilot: KAT-Coder-Pro V2.5 price output is currently null; sources disagree (single-source) — what's the correct current value, with a source URL and date?"
-    },
-    {
-      "id": "meta-muse-spark-1-2:guidance",
-      "model": "Meta: Muse Spark 1.2",
+      "id": "qwen-qwen3-8-flash:guidance",
+      "model": "Qwen: Qwen3.8 Flash",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -177,10 +235,42 @@
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-09-01"
+          "date": "2026-09-04"
         }
       ],
-      "ask": "Meta: Muse Spark 1.2 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "Qwen: Qwen3.8 Flash has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+    },
+    {
+      "id": "qwen-qwen3-8-max:guidance",
+      "model": "Qwen: Qwen3.8 Max",
+      "kind": "guidance",
+      "field": "use_well",
+      "current": null,
+      "observations": [
+        {
+          "source": "auto-refresh",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": null,
+          "date": "2026-09-04"
+        }
+      ],
+      "ask": "Qwen: Qwen3.8 Max has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+    },
+    {
+      "id": "qwen3-7-flash:guidance",
+      "model": "Qwen: Qwen3.7 Flash",
+      "kind": "guidance",
+      "field": "use_well",
+      "current": null,
+      "observations": [
+        {
+          "source": "auto-refresh",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": null,
+          "date": "2026-09-04"
+        }
+      ],
+      "ask": "Qwen: Qwen3.7 Flash has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     }
   ]
 }

@@ -2328,7 +2328,101 @@
       "sources": [
         "https://research.ibm.com/blog/introducing-granite-4-2",
         "https://huggingface.co/ibm-granite/granite-4.2-8b"
-      ]
+      ],
+      "best_for_line": "IBM model · 128K ctx"
+    },
+    {
+      "id": "meta-muse-spark-1-3-contributor",
+      "name": "Meta: Muse Spark 1.3 Contributor",
+      "vendor": "meta",
+      "released": "2026-09-02",
+      "context_window": 1048576,
+      "price_input": 0.1,
+      "price_output": 0.2,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/meta/muse-spark-1.3-contributor"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "auto_added": "2026-09-04",
+      "best_for_line": "Cheapest meta model · 1M ctx · $0.1/$0.2"
+    },
+    {
+      "id": "meta-muse-spark-1-3",
+      "name": "Meta: Muse Spark 1.3",
+      "vendor": "meta",
+      "released": "2026-09-02",
+      "context_window": 1048576,
+      "price_input": 1.25,
+      "price_output": 4.25,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/meta/muse-spark-1.3"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "auto_added": "2026-09-04",
+      "best_for_line": "Priciest meta model · 1M ctx · $1.25/$4.25"
+    },
+    {
+      "id": "google-gemini-3-8-flash",
+      "name": "Google: Gemini 3.8 Flash",
+      "vendor": "google",
+      "released": "2026-09-02",
+      "context_window": 1048576,
+      "price_input": 0.75,
+      "price_output": 3.75,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/google/gemini-3.8-flash"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "auto_added": "2026-09-04",
+      "best_for_line": "Priciest google model · 1M ctx · $0.75/$3.75"
     }
   ],
   "releases": [
@@ -2646,6 +2740,33 @@
       "summary": "IBM released Granite 4.2 on Aug 25, 2026: open (Apache 2.0) 3B/8B/30B dense reasoning models with a per-request thinking toggle.",
       "source": "https://research.ibm.com/blog/introducing-granite-4-2",
       "why": "Adds a native reasoning switch plus an added agentic-RL training stage (tool-calling, multi-step coding, terminal use) to IBM's open Granite line."
+    },
+    {
+      "kind": "model",
+      "date": "2026-09-02",
+      "vendor": "meta",
+      "title": "meta releases Meta: Muse Spark 1.3 Contributor",
+      "summary": "Auto-added from OpenRouter/LiteLLM — pricing and context window sourced, benchmarks not yet verified.",
+      "source": "https://openrouter.ai/meta/muse-spark-1.3-contributor",
+      "why": "New listing — check back once benchmarks are sourced."
+    },
+    {
+      "kind": "model",
+      "date": "2026-09-02",
+      "vendor": "meta",
+      "title": "meta releases Meta: Muse Spark 1.3",
+      "summary": "Auto-added from OpenRouter/LiteLLM — pricing and context window sourced, benchmarks not yet verified.",
+      "source": "https://openrouter.ai/meta/muse-spark-1.3",
+      "why": "New listing — check back once benchmarks are sourced."
+    },
+    {
+      "kind": "model",
+      "date": "2026-09-02",
+      "vendor": "google",
+      "title": "google releases Google: Gemini 3.8 Flash",
+      "summary": "Auto-added from OpenRouter/LiteLLM — pricing and context window sourced, benchmarks not yet verified.",
+      "source": "https://openrouter.ai/google/gemini-3.8-flash",
+      "why": "New listing — check back once benchmarks are sourced."
     }
   ],
   "benchmarks_legend": {
