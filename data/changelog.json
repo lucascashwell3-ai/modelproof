@@ -738,5 +738,85 @@
     "sources": [
       "https://openrouter.ai/google/gemini-3.8-flash"
     ]
+  },
+  {
+    "date": "2026-09-06",
+    "model": "OpenAI: GPT-6 Astra",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/openai/gpt-6-astra"
+    ]
+  },
+  {
+    "date": "2026-09-06",
+    "model": "OpenAI: GPT-6 Astra Pro",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/openai/gpt-6-astra-pro"
+    ]
+  },
+  {
+    "date": "2026-09-06",
+    "model": "Anthropic: Claude Fable 5.1",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/anthropic/claude-fable-5.1"
+    ]
+  },
+  {
+    "date": "2026-09-06",
+    "model": "Meta: Muse Spark 1.2 Contributor",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.2-contributor"
+    ]
+  },
+  {
+    "date": "2026-09-06",
+    "model": "DeepSeek: DeepSeek V4 Flash Vision Exp",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/deepseek/deepseek-v4-flash-vision-exp"
+    ]
+  },
+  {
+    "date": "2026-09-06",
+    "model": "DeepSeek: DeepSeek V4 Pro 0813",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/deepseek/deepseek-v4-pro-0813"
+    ]
+  },
+  {
+    "date": "2026-09-06",
+    "model": "DeepSeek V4 Flash Latest",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/~deepseek/deepseek-v4-flash-latest"
+    ]
+  },
+  {
+    "date": "2026-09-06",
+    "model": "DeepSeek: DeepSeek V4 Flash 0731",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/deepseek/deepseek-v4-flash-0731"
+    ]
   }
 ]

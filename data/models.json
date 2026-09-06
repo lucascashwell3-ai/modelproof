@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-09-04",
+  "as_of": "2026-09-06",
   "models": [
     {
       "id": "claude-opus-5",
@@ -2423,6 +2423,254 @@
       "task_copy": {},
       "auto_added": "2026-09-04",
       "best_for_line": "Priciest google model · 1M ctx · $0.75/$3.75"
+    },
+    {
+      "id": "openai-gpt-6-astra",
+      "name": "OpenAI: GPT-6 Astra",
+      "vendor": "openai",
+      "released": "2026-09-04",
+      "context_window": 1050000,
+      "price_input": 10,
+      "price_output": 50,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/openai/gpt-6-astra"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "auto_added": "2026-09-06",
+      "best_for_line": "Cheapest openai model · 1M ctx · $10/$50"
+    },
+    {
+      "id": "openai-gpt-6-astra-pro",
+      "name": "OpenAI: GPT-6 Astra Pro",
+      "vendor": "openai",
+      "released": "2026-09-04",
+      "context_window": 1050000,
+      "price_input": 10,
+      "price_output": 50,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/openai/gpt-6-astra-pro"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "auto_added": "2026-09-06",
+      "best_for_line": "Priciest openai model · 1M ctx · $10/$50"
+    },
+    {
+      "id": "anthropic-claude-fable-5-1",
+      "name": "Anthropic: Claude Fable 5.1",
+      "vendor": "anthropic",
+      "released": "2026-09-01",
+      "context_window": 1000000,
+      "price_input": 10,
+      "price_output": 50,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/anthropic/claude-fable-5.1"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "auto_added": "2026-09-06",
+      "best_for_line": "anthropic model · 1M ctx · $10/$50"
+    },
+    {
+      "id": "meta-muse-spark-1-2-contributor",
+      "name": "Meta: Muse Spark 1.2 Contributor",
+      "vendor": "meta",
+      "released": "2026-08-21",
+      "context_window": 1048576,
+      "price_input": 0.1,
+      "price_output": 0.2,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/meta/muse-spark-1.2-contributor"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "auto_added": "2026-09-06",
+      "best_for_line": "meta model · 1M ctx · $0.1/$0.2"
+    },
+    {
+      "id": "deepseek-deepseek-v4-flash-vision-exp",
+      "name": "DeepSeek: DeepSeek V4 Flash Vision Exp",
+      "vendor": "deepseek",
+      "released": "2026-08-21",
+      "context_window": 1048576,
+      "price_input": 0.22,
+      "price_output": 0.66,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/deepseek/deepseek-v4-flash-vision-exp"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "auto_added": "2026-09-06",
+      "best_for_line": "deepseek model · 1M ctx · $0.22/$0.66"
+    },
+    {
+      "id": "deepseek-deepseek-v4-pro-0813",
+      "name": "DeepSeek: DeepSeek V4 Pro 0813",
+      "vendor": "deepseek",
+      "released": "2026-08-12",
+      "context_window": 1048576,
+      "price_input": 0.58,
+      "price_output": 1.74,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/deepseek/deepseek-v4-pro-0813"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "auto_added": "2026-09-06",
+      "best_for_line": "Priciest deepseek model · 1M ctx · $0.58/$1.74"
+    },
+    {
+      "id": "-deepseek-deepseek-v4-flash-latest",
+      "name": "DeepSeek V4 Flash Latest",
+      "vendor": "~deepseek",
+      "released": "2026-08-01",
+      "context_window": 1310720,
+      "price_input": 0.05,
+      "price_output": 0.09,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/~deepseek/deepseek-v4-flash-latest"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "auto_added": "2026-09-06",
+      "best_for_line": "~deepseek model · 1M ctx · $0.05/$0.09"
+    },
+    {
+      "id": "deepseek-deepseek-v4-flash-0731",
+      "name": "DeepSeek: DeepSeek V4 Flash 0731",
+      "vendor": "deepseek",
+      "released": "2026-07-31",
+      "context_window": 1310720,
+      "price_input": 0.05,
+      "price_output": 0.1,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/deepseek/deepseek-v4-flash-0731"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "auto_added": "2026-09-06",
+      "best_for_line": "Cheapest deepseek model · 1M ctx · $0.05/$0.1"
     }
   ],
   "releases": [
@@ -2766,6 +3014,78 @@
       "title": "Google releases Gemini 3.8 Flash",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/google/gemini-3.8-flash",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-09-04",
+      "vendor": "openai",
+      "title": "OpenAI releases GPT-6 Astra",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/openai/gpt-6-astra",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-09-04",
+      "vendor": "openai",
+      "title": "OpenAI releases GPT-6 Astra Pro",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/openai/gpt-6-astra-pro",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-09-01",
+      "vendor": "anthropic",
+      "title": "Anthropic releases Claude Fable 5.1",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/anthropic/claude-fable-5.1",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-08-21",
+      "vendor": "meta",
+      "title": "Meta releases Muse Spark 1.2 Contributor",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/meta/muse-spark-1.2-contributor",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-08-21",
+      "vendor": "deepseek",
+      "title": "DeepSeek releases DeepSeek V4 Flash Vision Exp",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/deepseek/deepseek-v4-flash-vision-exp",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-08-12",
+      "vendor": "deepseek",
+      "title": "DeepSeek releases DeepSeek V4 Pro 0813",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/deepseek/deepseek-v4-pro-0813",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-08-01",
+      "vendor": "~deepseek",
+      "title": "DeepSeek releases DeepSeek V4 Flash Latest",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/~deepseek/deepseek-v4-flash-latest",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-07-31",
+      "vendor": "deepseek",
+      "title": "DeepSeek releases DeepSeek V4 Flash 0731",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/deepseek/deepseek-v4-flash-0731",
       "why": "Priced and available now; treat capability as unproven until scores land."
     }
   ],
