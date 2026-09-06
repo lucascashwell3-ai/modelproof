@@ -194,6 +194,29 @@ export function admitNewModel({ sourceCount, hasPricing, vendorKnown }) {
   return sourceCount >= 2 && !!hasPricing && !!vendorKnown;
 }
 
+// Display casing for vendors we know about, keyed by normalize(). Falls back to the raw
+// vendor string when we don't recognize it (better than guessing at capitalization).
+const VENDOR_DISPLAY = {
+  anthropic: 'Anthropic', openai: 'OpenAI', google: 'Google', meta: 'Meta',
+  mistral: 'Mistral AI', mistralai: 'Mistral AI', xai: 'xAI', deepseek: 'DeepSeek',
+  alibaba: 'Alibaba', qwen: 'Qwen', amazon: 'Amazon', cohere: 'Cohere',
+  moonshot: 'Moonshot AI', moonshotai: 'Moonshot AI',
+};
+
+/**
+ * Release-feed title for a newly admitted model. OpenRouter names already come vendor-prefixed
+ * ("Qwen: Qwen3.8 Flash", "Google: Gemini 3.8 Flash"), so blindly prepending nm.vendor doubles
+ * the vendor and — since nm.vendor is a lowercased id fragment — mangles the casing too
+ * ("qwen releases Qwen: Qwen3.8 Flash"). Prefer the name's own vendor prefix (already properly
+ * cased); only fall back to a display-cased nm.vendor when the name carries no prefix.
+ */
+export function releaseTitle(nm) {
+  const m = /^([^:]+):\s*(.+)$/.exec(nm.name || '');
+  if (m) return `${m[1].trim()} releases ${m[2].trim()}`;
+  const display = VENDOR_DISPLAY[normalize(nm.vendor)] || nm.vendor;
+  return `${display} releases ${nm.name}`;
+}
+
 export function isKnownVendor(vendorName) {
   return KNOWN_VENDORS.has(normalize(vendorName).replace(/inc|corp|ltd|ai$/g, '') || normalize(vendorName)) ||
     KNOWN_VENDORS.has(String(vendorName || '').trim().toLowerCase());
@@ -592,10 +615,10 @@ async function main() {
         kind: 'model',
         date: nm.released ? String(nm.released).slice(0, 10) : today,
         vendor: nm.vendor,
-        title: `${nm.vendor} releases ${nm.name}`,
-        summary: `Auto-added from OpenRouter/LiteLLM — pricing and context window sourced, benchmarks not yet verified.`,
+        title: releaseTitle(nm),
+        summary: 'Listed with sourced pricing and context window; benchmark scores are pending publication.',
         source: nm.sources[0],
-        why: 'New listing — check back once benchmarks are sourced.',
+        why: 'Priced and available now; treat capability as unproven until scores land.',
       });
     }
     // best_for_line: deterministic template, added to every model missing it (strengths untouched).

@@ -18,7 +18,9 @@ const state = {
   cmpCustom: false,      // true once the user hand-picks — stops auto-reseeding from the engine
   ladder: 0,             // which published effort ladder is on screen
   ladderOff: new Set(),  // model ids toggled off in the effort chart
+  feedExpanded: false,   // timeline defaults to the latest FEED_CAP; "Show all" reveals the rest
 };
+const FEED_CAP = 6;
 const CMP_MAX = 5;
 
 // compare-table default: one flagship per major lab (neutral — no lab over-represented).
@@ -705,9 +707,12 @@ function renderEffort() {
     src.innerHTML = L
       ? `<b>Where this comes from.</b> ${L.publisher}, ${L.suite} (${L.source_kind}, ${L.as_of}) —
          <a href="${L.source}" target="_blank" rel="noopener">source</a>.
-         <span class="lad-source__block">${L.harness}</span>
-         <span class="lad-source__block">${L.method}</span>
-         <span class="lad-source__block lad-source__warn">${L.caveat}</span>`
+         <details class="lad-source__details">
+           <summary>Read the method notes</summary>
+           <span class="lad-source__block">${L.harness}</span>
+           <span class="lad-source__block">${L.method}</span>
+           <span class="lad-source__block lad-source__warn">${L.caveat}</span>
+         </details>`
       : '';
   }
 
@@ -1049,8 +1054,22 @@ function renderFeed() {
     }));
   }
   const rel = all.filter((r) => state.feedKinds.has(r.kind || 'model')).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-  if (!rel.length) { feed.innerHTML = '<li class="empty">Nothing recorded for this view yet.</li>'; return; }
-  feed.innerHTML = rel.map((r, i) => {
+  const more = $('#feedMore');
+  if (!rel.length) {
+    feed.innerHTML = '<li class="empty">Nothing recorded for this view yet.</li>';
+    if (more) more.innerHTML = '';
+    return;
+  }
+  // 6-cap applies after filtering — chips narrow `rel` first, then the cap trims the view.
+  const visible = state.feedExpanded ? rel : rel.slice(0, FEED_CAP);
+  if (more) {
+    more.innerHTML = rel.length > FEED_CAP
+      ? `<button class="feed-kind feed-more__btn" type="button" id="feedToggle">${state.feedExpanded ? 'Show fewer' : `Show all ${rel.length}`}</button>`
+      : '';
+    const toggle = $('#feedToggle');
+    if (toggle) toggle.addEventListener('click', () => { state.feedExpanded = !state.feedExpanded; renderFeed(); });
+  }
+  feed.innerHTML = visible.map((r, i) => {
     const w = relWhen(r.date);
     const title = r.source
       ? `<a href="${r.source}" target="_blank" rel="noopener">${r.title}<span class="rel__ext">↗</span></a>`
@@ -1327,6 +1346,19 @@ function initReveal() {
 // set text on an element only if it exists (app.js runs on both index.html and table.html)
 function setText(sel, txt) { const e = $(sel); if (e) e.textContent = txt; }
 
+// footer "How it's sourced" — general sourcing facts only. Per-model caveats (which benchmark
+// run a given score comes from, unverified releases, etc.) belong on the full table, not here.
+const SOURCING_FACTS = [
+  'Pricing is pulled from official vendor pages — standard tier, USD per 1M tokens.',
+  'Benchmarks are cited and confidence-flagged; treat them as directional, not ground truth.',
+  'A blank ("—") means the figure wasn’t reliably sourced — never a guess.',
+  'Independent project, not affiliated with or sponsored by any model vendor.',
+];
+function renderSourcingNotes() {
+  const el = $('#footNotes');
+  if (el) el.innerHTML = SOURCING_FACTS.map((f) => `<li>${f}</li>`).join('');
+}
+
 // a broken fetch must fail like a product, not a stack trace: plain words, a retry,
 // and no live controls pretending there's data behind them (cold review #15)
 function renderLoadError() {
@@ -1368,9 +1400,7 @@ async function boot() {
   if (nav) nav.innerHTML = '● snapshot ' + asof + '<span class="nav__asof-extra"> · pricing verified</span>';
   setText('#footAsof', asof);
   setText('#allCount', `all ${state.data.models.length} models`);   // never hand-count the roster again
-  // the snapshot date is injected from the same field as the badge — the sourcing note
-  // itself carries no hand-written dates, so the two can never disagree (cold review #3)
-  setText('#footNotes', 'Data snapshot ' + asof + '. ' + (state.data.notes || 'Pricing from official vendor pages; benchmarks from public leaderboards. Every figure carries a confidence flag; unsourced numbers are left blank rather than guessed.'));
+  renderSourcingNotes();
 
   wire();
   setActive('data-goal', state.goal);   // reflect a URL-restored task on the console

@@ -2483,7 +2483,7 @@
     {
       "date": "2026-07-16",
       "vendor": "Moonshot AI",
-      "title": "Moonshot releases Kimi K3",
+      "title": "Moonshot AI releases Kimi K3",
       "summary": "2.8T-param open-weight MoE (largest to date) at $3/$15 per M, 1M context, native vision. Tops the Frontend Code Arena (1679 Elo) ahead of Claude Fable 5, winning 6 of 7 frontend categories. Full weights due ~July 27; SWE-bench Verified not yet published.",
       "source": "https://www.tomshardware.com/tech-industry/artificial-intelligence/moonshot-releases-2-8-trillion-parameter-kimi-k3",
       "why": "If you build front-end or web UI: the new top pick for frontend coding — it edges out even Fable 5 in blind tests, at a fraction of the price ($3/$15).",
@@ -2582,7 +2582,7 @@
     {
       "date": "2026-04-20",
       "vendor": "Moonshot AI",
-      "title": "Moonshot releases Kimi K2.6",
+      "title": "Moonshot AI releases Kimi K2.6",
       "summary": "1T-param MoE (32B active) open-weight agentic coder at 80.2% SWE-bench Verified, built for long-horizon multi-step tasks.",
       "source": "https://platform.kimi.ai/docs/pricing/chat-k26",
       "why": "A cheap, long-context open model — niche unless you want low-cost bulk work.",
@@ -2601,7 +2601,7 @@
       "kind": "model",
       "date": "2026-05-21",
       "vendor": "Tencent",
-      "title": "Tencent releases Tencent: Hy-MT2-1.8B",
+      "title": "Tencent releases Hy-MT2-1.8B",
       "summary": "Tencent Hunyuan open-sourced the Hy-MT2 translation family (1.8B/7B/30B-A3B) under Apache-2.0, using 1.25-bit quantization to fit the 1.8B model into 440MB for on-device use.",
       "source": "https://huggingface.co/tencent/Hy-MT2-1.8B",
       "why": "Extends Tencent's open translation lineup past Hy-MT1.5, with claimed gains over larger commercial and open models on multilingual translation tasks."
@@ -2610,7 +2610,7 @@
       "kind": "model",
       "date": "2026-05-21",
       "vendor": "Tencent",
-      "title": "Tencent releases Tencent: Hy-MT2-30B-A3B",
+      "title": "Tencent releases Hy-MT2-30B-A3B",
       "summary": "Tencent Hunyuan open-sourced the Hy-MT2 translation family (1.8B/7B/30B-A3B) under Apache-2.0; the 30B-A3B variant is a 30B-total/3B-active MoE aimed at professional-grade translation across 33 languages.",
       "source": "https://github.com/Tencent-Hunyuan/Hy-MT2",
       "why": "Extends Tencent's open translation lineup past Hy-MT1.5, with claimed gains over larger commercial and open models on multilingual translation tasks."
@@ -2691,16 +2691,16 @@
       "kind": "model",
       "date": "2026-08-03",
       "vendor": "qwen",
-      "title": "qwen releases Qwen: Qwen3.8 Max",
-      "summary": "Auto-added from OpenRouter/LiteLLM — pricing and context window sourced, benchmarks not yet verified.",
+      "title": "Qwen releases Qwen3.8 Max",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/qwen/qwen3.8-max",
-      "why": "New listing — check back once benchmarks are sourced."
+      "why": "Priced and available now; treat capability as unproven until scores land."
     },
     {
       "kind": "model",
       "date": "2026-08-26",
       "vendor": "qwen",
-      "title": "qwen releases Qwen: Qwen3.8 Flash",
+      "title": "Qwen releases Qwen3.8 Flash",
       "summary": "Alibaba released Qwen3.8-Flash, a 125B-total/6B-active MoE model previewing the hybrid-attention architecture behind Qwen4, with a 262K native context extensible to 1M via YaRN.",
       "source": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
       "why": "Positioned as a cost-efficiency play — Alibaba says it beats Qwen3.7-Plus at roughly one-ninth the training cost, with the biggest gains in coding and office tasks."
@@ -2709,7 +2709,7 @@
       "kind": "model",
       "date": "2026-08-28",
       "vendor": "Tencent",
-      "title": "Tencent releases Tencent: Hy4 preview",
+      "title": "Tencent releases Hy4 preview",
       "summary": "Tencent Hunyuan open-sourced Hy4 preview, a 770B-total/49B-active MoE flagship under Apache-2.0 with a 1M-token context, co-designed with Tencent's CodeBuddy and WorkBuddy products.",
       "source": "https://www.tencent.com/tencent-releases-and-open-sources-tencent-hy4-preview/",
       "why": "Positioned as Tencent's new flagship for coding, office, and agentic productivity tasks; Tencent's internal blind evaluation reportedly edged out GLM 5.3 and Kimi K3 on engineering tasks."
@@ -2718,7 +2718,7 @@
       "kind": "model",
       "date": "2026-05-21",
       "vendor": "Tencent",
-      "title": "Tencent releases Tencent: Hy-MT2-7B",
+      "title": "Tencent releases Hy-MT2-7B",
       "summary": "Tencent Hunyuan open-sourced the Hy-MT2 translation family (1.8B/7B/30B-A3B) under Apache-2.0; the 7B variant targets balanced performance across 33 languages.",
       "source": "https://huggingface.co/tencent/Hy-MT2-7B",
       "why": "Fills out the Hy-MT2 family already in the catalog (1.8B and 30B-A3B) with the middle 7B tier."
@@ -2736,7 +2736,7 @@
       "kind": "model",
       "date": "2026-08-25",
       "vendor": "IBM",
-      "title": "IBM releases IBM: Granite 4.2 8B",
+      "title": "IBM releases Granite 4.2 8B",
       "summary": "IBM released Granite 4.2 on Aug 25, 2026: open (Apache 2.0) 3B/8B/30B dense reasoning models with a per-request thinking toggle.",
       "source": "https://research.ibm.com/blog/introducing-granite-4-2",
       "why": "Adds a native reasoning switch plus an added agentic-RL training stage (tool-calling, multi-step coding, terminal use) to IBM's open Granite line."
@@ -2745,28 +2745,28 @@
       "kind": "model",
       "date": "2026-09-02",
       "vendor": "meta",
-      "title": "meta releases Meta: Muse Spark 1.3 Contributor",
-      "summary": "Auto-added from OpenRouter/LiteLLM — pricing and context window sourced, benchmarks not yet verified.",
+      "title": "Meta releases Muse Spark 1.3 Contributor",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/meta/muse-spark-1.3-contributor",
-      "why": "New listing — check back once benchmarks are sourced."
+      "why": "Priced and available now; treat capability as unproven until scores land."
     },
     {
       "kind": "model",
       "date": "2026-09-02",
       "vendor": "meta",
-      "title": "meta releases Meta: Muse Spark 1.3",
-      "summary": "Auto-added from OpenRouter/LiteLLM — pricing and context window sourced, benchmarks not yet verified.",
+      "title": "Meta releases Muse Spark 1.3",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/meta/muse-spark-1.3",
-      "why": "New listing — check back once benchmarks are sourced."
+      "why": "Priced and available now; treat capability as unproven until scores land."
     },
     {
       "kind": "model",
       "date": "2026-09-02",
       "vendor": "google",
-      "title": "google releases Google: Gemini 3.8 Flash",
-      "summary": "Auto-added from OpenRouter/LiteLLM — pricing and context window sourced, benchmarks not yet verified.",
+      "title": "Google releases Gemini 3.8 Flash",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/google/gemini-3.8-flash",
-      "why": "New listing — check back once benchmarks are sourced."
+      "why": "Priced and available now; treat capability as unproven until scores land."
     }
   ],
   "benchmarks_legend": {
