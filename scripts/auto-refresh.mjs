@@ -76,15 +76,50 @@ export const stripDateSuffix = (s) => String(s || '').replace(DATE_SUFFIX, '');
  */
 export const canonicalKey = (s) => normalize(stripDateSuffix(stripProviderPrefix(s)));
 
-/** Loose containment match used only for new-model dedup (never for price facts). */
+// Feed display names come as "Vendor: Model Name" ("MoonshotAI: Kimi K3", "Z.ai: GLM 5.3",
+// "Qwen: Qwen3 Max") — a few of our own catalog names inherited that shape too (whatever a past
+// Judge run copied verbatim). Strip that lead segment before comparing, mirroring
+// stripProviderPrefix for machine-style ids ("anthropic/claude-x") and the existing
+// releaseTitle() vendor/name split, so a vendor-prefixed listing still resolves to the bare name
+// it's a re-listing of.
+const DISPLAY_VENDOR_PREFIX = /^[A-Za-z][A-Za-z0-9.\- ]{0,29}:\s+/;
+export const stripDisplayVendorPrefix = (s) => String(s || '').replace(DISPLAY_VENDOR_PREFIX, '');
+
+/**
+ * New-model dedup key: strip the variant tag, the display vendor prefix, then canonicalize.
+ * Applied identically to a candidate and to a known model's name/id/aliases so it doesn't matter
+ * which side happens to carry the "Vendor: " noise.
+ */
+const dedupKey = (s) => canonicalKey(stripDisplayVendorPrefix(stripVariantSuffix(s)));
+
+/**
+ * Returns the id of the known model `name` matches (by name, id, or alias), or null. EXACT key
+ * match only — never substring containment. Containment is what caused the bug this replaced:
+ * canonicalKey deletes every separator, so "claude-fable-5" -> "claudefable5" is a plain PREFIX
+ * of "claude-fable-5.1" -> "claudefable51", and the old `k.includes(n) || n.includes(k)` check
+ * silently treated the point release as the model it supersedes. A prefix/suffix "boundary"
+ * exception was tried and rejected: on live data it also merged genuinely different models that
+ * share a word stem — "Z.ai: GLM 5.3" vs "Z.ai: GLM 5.3 Flash", "inclusionAI: Ling 3.0 Flash" vs
+ * "... Flash Fin" — which is exactly the class of silent-merge bug being fixed here. Exact-match
+ * plus prefix-stripping (provider ids, vendor display names, date/variant suffixes) is what
+ * verified clean against data/models.json + the live OpenRouter feed (see the fix PR for the
+ * before/after diff).
+ */
+export function findKnownModel(name, models, aliases) {
+  const n = dedupKey(name);
+  if (!n) return null;
+  for (const m of models) {
+    const known = [dedupKey(m.name), dedupKey(m.id), ...(aliases[m.id] || []).map(dedupKey)];
+    if (known.some((k) => k && k === n)) return m.id;
+  }
+  return null;
+}
+
+/** Same-model match used only for new-model dedup (never for price facts). */
 export function isKnownCandidate(name, models, aliases) {
   const n = canonicalKey(stripVariantSuffix(name));
   if (!n) return true; // empty name can't be a real candidate
-  for (const m of models) {
-    const known = [canonicalKey(m.name), canonicalKey(m.id), ...(aliases[m.id] || []).map(canonicalKey)];
-    if (known.some((k) => k && (k === n || k.includes(n) || n.includes(k)))) return true;
-  }
-  return false;
+  return findKnownModel(name, models, aliases) != null;
 }
 
 /** Match a candidate name/id against our models via the alias map. Returns our model id or null. */
@@ -192,6 +227,23 @@ export function newerWins(asOf, candidateDate) {
 /** New-model admission: >=2 sources, has pricing, name maps to a known vendor. */
 export function admitNewModel({ sourceCount, hasPricing, vendorKnown }) {
   return sourceCount >= 2 && !!hasPricing && !!vendorKnown;
+}
+
+/** Human-readable reasons a new-model candidate failed admission — same predicates as
+ *  admitNewModel(), decomposed for the `dropped:` run-log line and the worklist ask so the two
+ *  never drift out of sync. */
+export function admissionFailReasons({ sourceCount, hasPricing, vendorKnown }) {
+  const reasons = [];
+  if (sourceCount < 2) reasons.push('single source');
+  if (!hasPricing) reasons.push('no pricing data');
+  if (!vendorKnown) reasons.push('unknown vendor');
+  return reasons;
+}
+
+/** Exact wording for a `dropped:` run-log line, kept as one function so the log text and the
+ *  tests that check it can never drift apart. */
+export function formatDropLine(id, reason) {
+  return `dropped: ${id} — ${reason}`;
 }
 
 // Display casing for vendors we know about, keyed by normalize(). Falls back to the raw
@@ -510,13 +562,19 @@ async function main() {
   }
 
   // --- check: new models -----------------------------------------------------------------------
+  // Every candidate that doesn't become a new model leaves exactly one `dropped:` log line below
+  // — no candidate silently disappears between the feed and the report.
   const seen = new Set();
+  const dropped = [];
+  const logDrop = (id, reason) => { dropped.push({ id, reason }); console.log(formatDropLine(id, reason)); };
   for (const c of orList) {
-    if (/free|preview-\d|:online|extended/i.test(c.id || '')) continue; // variant, not a new model
-    if (isKnownCandidate(c.name, data.models, aliases) || isKnownCandidate(c.id, data.models, aliases)) continue;
+    if (/free|preview-\d|:online|extended/i.test(c.id || '')) { logDrop(c.id, 'variant suffix, not a new model'); continue; }
+    const knownMatch = findKnownModel(c.name, data.models, aliases) || findKnownModel(c.id, data.models, aliases);
+    if (knownMatch) { logDrop(c.id, `known as ${knownMatch}`); continue; }
     const n = canonicalKey(stripVariantSuffix(c.name));
-    if (!n || seen.has(n)) continue;
-    if (c.created && (Date.parse(today) - Date.parse(c.created)) / 864e5 > 45) continue; // stale, not day-0
+    if (!n) { logDrop(c.id, 'empty/unresolvable name'); continue; }
+    if (seen.has(n)) { logDrop(c.id, 'duplicate of another candidate this run'); continue; }
+    if (c.created && (Date.parse(today) - Date.parse(c.created)) / 864e5 > 45) { logDrop(c.id, 'stale (listed on OpenRouter >45 days ago)'); continue; }
     const llmSame = llmList.find((l) => canonicalKey(l.id).includes(n) || n.includes(canonicalKey(l.id)));
     const sourceCount = 1 + (llmSame ? 1 : 0);
     const vendorGuess = (c.id || '').split('/')[0];
@@ -548,7 +606,8 @@ async function main() {
         auto_added: today,
       });
     } else {
-      const reason = `admission rules not met (sources=${sourceCount} pricing=${hasPricing} vendor=${vendorKnown})`;
+      const reason = admissionFailReasons({ sourceCount, hasPricing, vendorKnown }).join(', ');
+      logDrop(c.id, `${reason} — queued for Judge review`);
       held.push({ model: c.name, field: 'new-model', reason });
       worklistItems.push({
         id: `new:${canonicalKey(c.id)}`, model: c.name, kind: 'new-model', current: null,
@@ -659,7 +718,8 @@ async function main() {
 
     writeFileSync(receiptUrl, JSON.stringify({
       job: 'collect', ran_at: new Date().toISOString(), applied: applied.length, held: held.length,
-      confirmed: confirmed.length, new_models: newModels.length, worklist_items: worklist.items.length,
+      confirmed: confirmed.length, new_models: newModels.length, dropped: dropped.length,
+      worklist_items: worklist.items.length,
       ok: gateOk, ...(gateOk ? {} : { error: 'honesty gate failed' }),
     }, null, 2) + '\n');
 
@@ -668,7 +728,7 @@ async function main() {
 
   // --- report ----------------------------------------------------------------------------------
   console.log(`\n=== auto-refresh report (${dryRun ? 'DRY RUN' : 'LIVE'}) ===`);
-  console.log(`applied: ${applied.length}  held: ${held.length}  confirmed: ${confirmed.length}  new models (would add): ${newModels.length}  absent 2 runs (would ask Judge): ${absentNow.length}`);
+  console.log(`applied: ${applied.length}  held: ${held.length}  confirmed: ${confirmed.length}  new models (would add): ${newModels.length}  dropped: ${dropped.length}  absent 2 runs (would ask Judge): ${absentNow.length}`);
   console.log('\n-- applied (first 12) --');
   applied.slice(0, 12).forEach((a) => console.log(`  ${a.model} / ${a.field}: ${a.old} -> ${a.new} [${a.sources.join('+')}]`));
   console.log('\n-- held (first 8, genuine conflicts only) --');

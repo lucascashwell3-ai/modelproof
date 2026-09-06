@@ -4,7 +4,7 @@ import {
   normalize, matchAlias, withinTolerance, factAgreement, withinSanityBounds,
   newerWins, admitNewModel, isKnownVendor, trackDeprecation, canonicalKey, evaluateFact,
   buildWorklist, bestForLine, needsGuidance, pickGuidance, guidanceItem, parseCsv, refreshCursorBench,
-  releaseTitle,
+  releaseTitle, isKnownCandidate, findKnownModel, admissionFailReasons, formatDropLine,
 } from './auto-refresh.mjs';
 
 test('normalize strips punctuation/case', () => {
@@ -170,6 +170,73 @@ test('canonicalKey strips provider prefixes, date suffixes, and separators', () 
   assert.equal(canonicalKey('deepseek/deepseek-v4-pro'), canonicalKey('deepseek-v4-pro'));
 });
 
+// --- isKnownCandidate: point releases are NEW models, real aliases still dedupe ----------------
+// Bug (2026-09-06, verified live): isKnownCandidate compared fully-stripped canonicalKey values
+// with substring containment. canonicalKey deletes every separator, so "claude-fable-5" ->
+// "claudefable5" is a plain PREFIX of "claude-fable-5.1" -> "claudefable51" — the point release
+// was silently treated as already-known and dropped before ever reaching the admission rule.
+//
+// Fix: exact key match only, never containment. A "prefix/suffix boundary" exception (allow a
+// non-digit word suffix to still count as the same model) was tried and rejected — verifying it
+// against the live OpenRouter feed showed it ALSO merges genuinely different models that share a
+// word stem ("Z.ai: GLM 5.3" vs "GLM 5.3 Flash", "Ling 3.0 Flash" vs "Ling 3.0 Flash Fin"), which
+// is exactly the silent-merge bug class being fixed. The only leniency kept is prefix-stripping:
+// provider ids ("anthropic/x"), display vendor names ("MoonshotAI: x"), and date/variant suffixes
+// — all resolved via findKnownModel()'s dedupKey, then compared for EQUALITY, never containment.
+
+test('isKnownCandidate: a point-release bump is a NEW model, not a known one', () => {
+  const models = [{ id: 'claude-fable-5', name: 'Claude Fable 5' }];
+  const aliases = {};
+  assert.equal(isKnownCandidate('anthropic/claude-fable-5.1', models, aliases), false);
+  assert.equal(isKnownCandidate('Anthropic: Claude Fable 5.1', models, aliases), false);
+  assert.equal(findKnownModel('anthropic/claude-fable-5.1', models, aliases), null);
+  // a genuinely different, differently-suffixed model never dedupes just for sharing a stem
+  assert.equal(isKnownCandidate('Claude Fable 5 Pro', models, aliases), false);
+});
+
+test('isKnownCandidate: provider-prefixed ids still dedupe (equality, not containment)', () => {
+  const models = [{ id: 'claude-opus-5', name: 'Claude Opus 5' }];
+  const aliases = { 'claude-opus-5': ['claude opus 5'] };
+  assert.equal(isKnownCandidate('anthropic/claude-opus-5', models, aliases), true);
+  assert.equal(findKnownModel('anthropic/claude-opus-5', models, aliases), 'claude-opus-5');
+  assert.equal(isKnownCandidate('claude-opus-5-20260723', models, aliases), true); // date suffix
+});
+
+// Regression case (found verifying this fix against the live feed): OpenRouter/LiteLLM display
+// names come as "Vendor: Model Name" ("MoonshotAI: Kimi K3", "Z.ai: GLM 5.3", "Qwen: Qwen3 Max").
+// A naive containment-to-equality swap would have newly (and wrongly) surfaced every one of these
+// as a fake "new model", because canonicalKey doesn't strip that human-readable vendor prefix.
+// findKnownModel() strips it (stripDisplayVendorPrefix) before comparing.
+test('isKnownCandidate: a "Vendor: Model" display name still dedupes against the bare model', () => {
+  const models = [
+    { id: 'kimi-k3', name: 'Kimi K3' },
+    { id: 'glm-5-3', name: 'GLM-5.3' },
+    { id: 'qwen3-max', name: 'Qwen3-Max' },
+  ];
+  const aliases = {};
+  assert.equal(isKnownCandidate('MoonshotAI: Kimi K3', models, aliases), true);
+  assert.equal(findKnownModel('MoonshotAI: Kimi K3', models, aliases), 'kimi-k3');
+  assert.equal(isKnownCandidate('Z.ai: GLM 5.3', models, aliases), true);
+  assert.equal(isKnownCandidate('Qwen: Qwen3 Max', models, aliases), true);
+  // but a real variant of that same vendor-prefixed model is still a distinct candidate
+  assert.equal(isKnownCandidate('Z.ai: GLM 5.3 Flash', models, aliases), false);
+});
+
+// --- dropped: <id> — <reason> run-log line: no candidate disappears silently -------------------
+
+test('formatDropLine + admissionFailReasons produce the exact dropped: log wording', () => {
+  assert.equal(formatDropLine('vendor/model-x', 'known as claude-fable-5'), 'dropped: vendor/model-x — known as claude-fable-5');
+  assert.deepEqual(admissionFailReasons({ sourceCount: 1, hasPricing: true, vendorKnown: true }), ['single source']);
+  assert.deepEqual(admissionFailReasons({ sourceCount: 2, hasPricing: true, vendorKnown: false }), ['unknown vendor']);
+  assert.deepEqual(admissionFailReasons({ sourceCount: 1, hasPricing: false, vendorKnown: false }), [
+    'single source', 'no pricing data', 'unknown vendor',
+  ]);
+  assert.equal(
+    formatDropLine('acme/new-thing', admissionFailReasons({ sourceCount: 1, hasPricing: true, vendorKnown: true }).join(', ')),
+    'dropped: acme/new-thing — single source',
+  );
+});
+
 test('matchAlias resolves 3 real LiteLLM-style keys per vendor to our ids', () => {
   const models = [
     { id: 'claude-opus-5', name: 'Claude Opus 5' },
@@ -292,8 +359,8 @@ test('bestForLine falls back to vendor + specs when no ranking applies (single v
 // --- receipt shape (documented, not filesystem-dependent) -----------------------------------------
 
 test('collect receipt has the documented shape', () => {
-  const receipt = { job: 'collect', ran_at: new Date().toISOString(), applied: 0, held: 0, confirmed: 0, new_models: 0, worklist_items: 0, ok: true };
-  for (const k of ['job', 'ran_at', 'applied', 'held', 'confirmed', 'new_models', 'worklist_items', 'ok']) {
+  const receipt = { job: 'collect', ran_at: new Date().toISOString(), applied: 0, held: 0, confirmed: 0, new_models: 0, dropped: 0, worklist_items: 0, ok: true };
+  for (const k of ['job', 'ran_at', 'applied', 'held', 'confirmed', 'new_models', 'dropped', 'worklist_items', 'ok']) {
     assert.ok(k in receipt, `receipt missing ${k}`);
   }
   assert.equal(receipt.job, 'collect');
