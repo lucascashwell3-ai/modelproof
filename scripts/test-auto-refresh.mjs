@@ -4,6 +4,7 @@ import {
   normalize, matchAlias, withinTolerance, factAgreement, withinSanityBounds,
   newerWins, admitNewModel, isKnownVendor, trackDeprecation, canonicalKey, evaluateFact,
   buildWorklist, bestForLine, needsGuidance, pickGuidance, guidanceItem, parseCsv, refreshCursorBench,
+  releaseTitle,
 } from './auto-refresh.mjs';
 
 test('normalize strips punctuation/case', () => {
@@ -69,6 +70,28 @@ test('admitNewModel: publishes on >=2 sources + pricing + known vendor', () => {
   assert.equal(admitNewModel({ sourceCount: 1, hasPricing: true, vendorKnown: true }), false);
   assert.equal(admitNewModel({ sourceCount: 2, hasPricing: false, vendorKnown: true }), false);
   assert.equal(admitNewModel({ sourceCount: 2, hasPricing: true, vendorKnown: false }), false);
+});
+
+test('releaseTitle: strips the vendor prefix already in the name, keeps its casing', () => {
+  assert.equal(
+    releaseTitle({ vendor: 'qwen', name: 'Qwen: Qwen3.8 Flash' }),
+    'Qwen releases Qwen3.8 Flash',
+  );
+  assert.equal(
+    releaseTitle({ vendor: 'google', name: 'Google: Gemini 3.8 Flash' }),
+    'Google releases Gemini 3.8 Flash',
+  );
+});
+
+test('releaseTitle: no vendor prefix in the name falls back to a display-cased vendor', () => {
+  assert.equal(
+    releaseTitle({ vendor: 'meta', name: 'Muse Spark 1.3' }),
+    'Meta releases Muse Spark 1.3',
+  );
+  assert.equal(
+    releaseTitle({ vendor: 'SomeNewLab', name: 'Foo 1' }),
+    'SomeNewLab releases Foo 1',
+  );
 });
 
 test('isKnownVendor recognizes our vendor list, rejects unknowns', () => {
