@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { namingProblems, canonicalVendor, VENDORS } from './naming.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
+import { STATUS_VALUES, ADOPTION_VALUES, deriveStatus, deriveAdoption } from './derive-status-adoption.mjs';
 
 const CONF = ['low', 'medium', 'high'];
 const VOCAB = ['reasoning', 'agentic', 'coding', 'research', 'long-context', 'writing', 'cheap-bulk', 'speed', 'vision'];
@@ -269,6 +270,25 @@ export function validate(data, registry) {
     if (!Number.isInteger(or.rank) || or.rank < 1) E(`${id}: usage.openrouter.rank "${or.rank}" must be a positive integer`);
     if (!or.as_of || !DATE_RE.test(or.as_of)) E(`${id}: usage.openrouter.as_of "${or.as_of}" must be a YYYY-MM-DD date`);
     if (!or.source_url || !/^https?:\/\//i.test(or.source_url)) E(`${id}: usage.openrouter.source_url must be http(s)`);
+  }
+
+  // 10d. status / adoption (scripts/derive-status-adoption.mjs, added with the judged-ranking
+  // rewrite, 2026-09-07) — model-level, not per-task, because assets/decide.mjs's "a preview SKU
+  // or a low-adoption model can never be start_here" gate has to fire even on a task with no
+  // judged record at all (the exact gap a 0.16%-share preview model exploited to top "research"
+  // on a benchmark number alone). Both are pure derivations of fields the catalog already
+  // sources — model.deprecated / model.name for status, usage.openrouter.share for adoption — so
+  // this gate re-derives them and requires an exact match, the same cross-check pattern rule 6
+  // above uses for SWE-bench: a hand-edited or stale value drifting from its own source is a bug,
+  // not a matter of opinion.
+  for (const m of data.models) {
+    const id = m.name || m.id || '(unnamed)';
+    if (!STATUS_VALUES.includes(m.status)) { E(`${id}: status "${m.status}" must be one of ${STATUS_VALUES.join(', ')}`); continue; }
+    if (!ADOPTION_VALUES.includes(m.adoption)) { E(`${id}: adoption "${m.adoption}" must be one of ${ADOPTION_VALUES.join(', ')}`); continue; }
+    const wantStatus = deriveStatus(m).status;
+    if (m.status !== wantStatus) E(`${id}: status "${m.status}" doesn't match what deriveStatus() computes from this model's own name/deprecated flag ("${wantStatus}") — re-run scripts/derive-status-adoption.mjs`);
+    const wantAdoption = deriveAdoption(m).adoption;
+    if (m.adoption !== wantAdoption) E(`${id}: adoption "${m.adoption}" doesn't match what deriveAdoption() computes from usage.openrouter.share ("${wantAdoption}") — re-run scripts/derive-status-adoption.mjs`);
   }
 
   return { errors, warnings };

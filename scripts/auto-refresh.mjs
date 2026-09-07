@@ -26,6 +26,7 @@ import { isNotablePriceChange, priceEntry, addEntry } from './timeline.mjs';
 import { deriveAvailabilityForModel, availabilityEquals, fetchBedrockModelKeys } from './derive-availability.mjs';
 import { deriveUsageForCatalog, fetchOpenRouterRankings } from './derive-usage.mjs';
 import { deriveTaskFit, TASK_IDS } from './derive-task-fit.mjs';
+import { deriveStatusAdoptionForCatalog } from './derive-status-adoption.mjs';
 import { fileURLToPath } from 'node:url';
 import { canonicalVendor, bareModelName, modelId, isCommunityListing, AUTO_ADMIT_VENDORS } from './naming.mjs';
 
@@ -948,6 +949,19 @@ async function main() {
         m.task_fit = taskFitById.get(m.id);
         if (!('task_fit_judged' in m)) m.task_fit_judged = null; // reserved for a future Judge pass — never overwritten once set
         if (!('usage' in m) || m.usage == null || typeof m.usage !== 'object') m.usage = { openrouter: null };
+      }
+    }
+    // status / adoption (scripts/derive-status-adoption.mjs): model-level facts the decision
+    // layer's judged-ranking gate reads directly, so they're kept fresh every run, not just when
+    // `changed` — a model's usage.openrouter.share can cross an adoption bucket boundary on a run
+    // that touched nothing else about that model.
+    {
+      const statusAdoption = deriveStatusAdoptionForCatalog(data.models);
+      for (const m of data.models) {
+        const next = statusAdoption.get(m.id);
+        if (m.status !== next.status || m.adoption !== next.adoption) changed = true;
+        m.status = next.status;
+        m.adoption = next.adoption;
       }
     }
     // best_for_line: deterministic template, added to every model missing it (strengths untouched).

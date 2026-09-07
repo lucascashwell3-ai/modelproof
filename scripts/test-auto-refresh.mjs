@@ -754,7 +754,7 @@ const REGISTRY = { sources: [] };
 // stays about the one naming rule it names.
 const BLANK_TASK_FIT = Object.fromEntries(TASK_IDS.map((t) => [t, { score: null, basis: [], reason: 'naming-rule test fixture — task fit not exercised here' }]));
 const cleanData = (models) => ({
-  models: models.map((m) => ({ task_fit: BLANK_TASK_FIT, task_fit_judged: null, usage: { openrouter: null }, ...m })),
+  models: models.map((m) => ({ task_fit: BLANK_TASK_FIT, task_fit_judged: null, usage: { openrouter: null }, status: 'ga', adoption: 'unknown', ...m })),
   releases: [],
   effort_ladders: [],
 });

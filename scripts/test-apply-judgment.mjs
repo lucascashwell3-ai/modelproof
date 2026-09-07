@@ -99,7 +99,7 @@ function mktempRepo() {
   const dir = mkdtempSync(join(tmpdir(), 'apply-judgment-test-'));
   mkdirSync(join(dir, 'scripts'), { recursive: true });
   mkdirSync(join(dir, 'data', 'refresh'), { recursive: true });
-  for (const f of ['apply-judgment.mjs', 'validate-data.mjs', 'check-sources.mjs', 'sources.json', 'timeline.mjs', 'naming.mjs', 'derive-task-fit.mjs']) {
+  for (const f of ['apply-judgment.mjs', 'validate-data.mjs', 'check-sources.mjs', 'sources.json', 'timeline.mjs', 'naming.mjs', 'derive-task-fit.mjs', 'derive-status-adoption.mjs']) {
     writeFileSync(join(dir, 'scripts', f), readFileSync(join(SCRIPTS_DIR, f)));
   }
   const models = JSON.parse(readFileSync(REAL_DATA));

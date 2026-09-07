@@ -159,7 +159,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "moderate"
     },
     {
       "id": "kimi-k3",
@@ -306,7 +308,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "moderate"
     },
     {
       "id": "claude-fable-5",
@@ -442,7 +446,9 @@
       "task_fit_judged": null,
       "usage": {
         "openrouter": null
-      }
+      },
+      "status": "ga",
+      "adoption": "unknown"
     },
     {
       "id": "claude-opus-4-8",
@@ -592,7 +598,9 @@
       "task_fit_judged": null,
       "usage": {
         "openrouter": null
-      }
+      },
+      "status": "ga",
+      "adoption": "unknown"
     },
     {
       "id": "claude-sonnet-5",
@@ -734,7 +742,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "moderate"
     },
     {
       "id": "gpt-5-5",
@@ -878,7 +888,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "gemini-3-1-pro",
@@ -1018,7 +1030,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "preview",
+      "adoption": "low"
     },
     {
       "id": "deepseek-v4-pro",
@@ -1166,7 +1180,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "moderate"
     },
     {
       "id": "kimi-k2-6",
@@ -1309,7 +1325,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "llama-4-maverick",
@@ -1436,7 +1454,9 @@
       "task_fit_judged": null,
       "usage": {
         "openrouter": null
-      }
+      },
+      "status": "ga",
+      "adoption": "unknown"
     },
     {
       "id": "o4-mini",
@@ -1572,7 +1592,9 @@
       "task_fit_judged": null,
       "usage": {
         "openrouter": null
-      }
+      },
+      "status": "ga",
+      "adoption": "unknown"
     },
     {
       "id": "claude-haiku-4-5",
@@ -1693,7 +1715,9 @@
       "task_fit_judged": null,
       "usage": {
         "openrouter": null
-      }
+      },
+      "status": "ga",
+      "adoption": "unknown"
     },
     {
       "id": "gpt-5-6-sol",
@@ -1836,7 +1860,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "moderate"
     },
     {
       "id": "gpt-5-6-terra",
@@ -1989,7 +2015,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "gpt-5-6-luna",
@@ -2134,7 +2162,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "broad"
     },
     {
       "id": "gemini-3-5-flash",
@@ -2281,7 +2311,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "gemini-2-5-flash-lite",
@@ -2404,7 +2436,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "moderate"
     },
     {
       "id": "grok-4-5",
@@ -2542,7 +2576,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "deepseek-v4-flash",
@@ -2666,7 +2702,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "broad"
     },
     {
       "id": "qwen3-max",
@@ -2796,7 +2834,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "qwen3-coder-plus",
@@ -2926,7 +2966,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "qwen-turbo",
@@ -3040,7 +3082,9 @@
       "task_fit_judged": null,
       "usage": {
         "openrouter": null
-      }
+      },
+      "status": "ga",
+      "adoption": "unknown"
     },
     {
       "id": "mistral-medium-3-1",
@@ -3170,7 +3214,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "gemini-3-6-flash",
@@ -3290,7 +3336,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "glm-5-2",
@@ -3410,7 +3458,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "broad"
     },
     {
       "id": "gemini-3-7-flash",
@@ -3530,7 +3580,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "moderate"
     },
     {
       "id": "grok-4-6",
@@ -3653,7 +3705,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "muse-spark-1-2",
@@ -3758,7 +3812,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "muse-spark-1-1",
@@ -3877,7 +3933,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -3993,7 +4051,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -4093,7 +4153,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -4193,7 +4255,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -4295,7 +4359,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -4396,7 +4462,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -4513,7 +4581,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "moderate"
     },
     {
       "benchmarks": {
@@ -4614,7 +4684,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "moderate"
     },
     {
       "benchmarks": {
@@ -4718,7 +4790,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -4819,7 +4893,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -4925,7 +5001,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -5030,7 +5108,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -5133,7 +5213,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -5246,7 +5328,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -5375,7 +5459,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -5480,7 +5566,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -5578,7 +5666,9 @@
       "task_fit_judged": null,
       "usage": {
         "openrouter": null
-      }
+      },
+      "status": "ga",
+      "adoption": "unknown"
     },
     {
       "benchmarks": {
@@ -5682,7 +5772,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "broad"
     },
     {
       "benchmarks": {
@@ -5786,7 +5878,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -5901,7 +5995,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -6005,7 +6101,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "moderate"
     },
     {
       "benchmarks": {
@@ -6110,7 +6208,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -6214,7 +6314,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -6348,7 +6450,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "broad"
     },
     {
       "id": "qwen3-8-max",
@@ -6453,7 +6557,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -6575,7 +6681,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -6703,7 +6811,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "preview",
+      "adoption": "broad"
     },
     {
       "benchmarks": {
@@ -6808,7 +6918,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "benchmarks": {
@@ -6914,7 +7026,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "muse-spark-1-3-contributor",
@@ -7019,7 +7133,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "moderate"
     },
     {
       "id": "muse-spark-1-3",
@@ -7124,7 +7240,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "gemini-3-8-flash",
@@ -7246,7 +7364,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "moderate"
     },
     {
       "id": "gpt-6-astra",
@@ -7368,7 +7488,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "gpt-6-astra-pro",
@@ -7473,7 +7595,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "claude-fable-5-1",
@@ -7595,7 +7719,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "muse-spark-1-2-contributor",
@@ -7700,7 +7826,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "deepseek-v4-flash-vision-exp",
@@ -7822,7 +7950,9 @@
           "as_of": "2026-09-06",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
-      }
+      },
+      "status": "ga",
+      "adoption": "low"
     },
     {
       "id": "deepseek-v4-pro-0813",
@@ -7938,7 +8068,9 @@
       },
       "usage": {
         "openrouter": null
-      }
+      },
+      "status": "ga",
+      "adoption": "unknown"
     },
     {
       "id": "deepseek-v4-flash-0731",
@@ -8054,7 +8186,9 @@
       },
       "usage": {
         "openrouter": null
-      }
+      },
+      "status": "ga",
+      "adoption": "unknown"
     }
   ],
   "releases": [

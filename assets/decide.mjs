@@ -60,22 +60,43 @@
    2. Data rule — dataRule.noChinaHosted drops any model whose vendor's data/vendors.json
       country is exactly "China". A vendor with no country on file is KEPT (unknown is never
       treated as a match) and the caller is told so in that task's assumptions[].
-   3. Capability floor — drop any model with no sourced fit for this task at all. Quantitative
-      fit (model.task_fit[taskId].score) wins whenever it's sourced — a real number outranks a
-      qualitative one every time. When it's null, a judged fit (model.task_fit_judged[taskId],
-      scripts/refresh-judge.md) fills the gap: "strong" or "capable" clears the floor with a
-      score standing in for the band (JUDGED_BAND_SCORE below); "weak" or "unknown" doesn't clear
-      it, same as no basis at all. This is still "has a real basis" rather than "clears some
-      invented numeric bar" — judged fit is real, sourced evidence (claims[], each with a
-      source_url + tier + quote), just not a benchmark number. Every shortlist item carries
-      `basis: 'measured' | 'reported' | 'lab-stated'` so the caller always knows which kind of
-      evidence it's looking at — 'reported' when at least one backing claim is a named
-      third-party source, 'lab-stated' when every claim is the vendor's own (see
-      basisFromClaims()). taskFitFor() is the one place this precedence is decided.
-   4. Rank by stance, ties -> cheaper (see rankByStance). Before ranking, any model strictly
-      dominated by a cheaper-or-equal, at-least-as-fit model already in the candidate set is
-      dropped (dropDominated) — so the returned shortlist can never contain a pricier model
-      that isn't at least justified by a higher fit than every cheaper option.
+   3. Capability floor — THE JUDGMENT IS THE GATE (rewritten 2026-09-07; see the PR this
+      shipped in for why). A model needs a real, sourced judged band for THIS task
+      (model.task_fit_judged[taskId], scripts/refresh-judge.md) to be a candidate at all —
+      "strong" or "capable" clears the floor, "weak" or no record at all ("unknown") doesn't,
+      full stop. A high quantitative score with no judged record NEVER creates a candidate on
+      its own any more — that was the exact bug that let a 0.16%-usage-share preview SKU
+      ("Gemini 3.1 Pro (Preview)", rank 53 of ~380 on OpenRouter) top "research" purely because
+      its GPQA was high: the brain was asking for judgment only on the models that HAD no
+      number, so a number alone could always win. Quantitative fit (model.task_fit[taskId].score)
+      still matters — see rule 4 — but only as a tie-breaker among models a judged record already
+      cleared, never as a way to skip judgment. taskFitFor() still computes the numeric `fit`
+      shown alongside a pick (real score when sourced, else the flat JUDGED_BAND_SCORE constant),
+      but judgedBandOf() — not taskFitFor() — decides who's even in the running. Every shortlist
+      item carries `basis: 'reported' | 'lab-stated'` (see basisFromClaims()) so the caller always
+      knows whether at least one backing claim names an independent third party, plus the model's
+      own `status` ('ga'|'preview'|'deprecated') and `adoption` ('broad'|'moderate'|'low'|'unknown',
+      from usage.openrouter.share — scripts/derive-status-adoption.mjs) and its top claim's own
+      sentence as `why`.
+   4. Rank by judged band (strong > capable), then confidence (high > medium > low), then the
+      chosen stance's cost/fit comparator, ties -> cheaper (see rankByStance) — band and
+      confidence come first for every stance, "cheapest" included: a cheaper but lower-judged or
+      less-confident pick never outranks a better-judged one, it only wins the tie-break inside
+      the same (band, confidence) tier. Before ranking, any model strictly dominated by a
+      cheaper-or-equal, at-least-as-fit model already in the candidate set is dropped
+      (dropDominated) — so the returned shortlist can never contain a pricier model that isn't at
+      least justified by a higher fit than every cheaper option.
+      Two more rules decide which survivor gets `start_here: true` (see isDisqualifiedFromStartHere):
+        - a `status: 'preview'` model is never start_here under stance 'best', or on an
+          "enterprise-style" input (isEnterpriseInput: a single named vendor + volume 'heavy',
+          or any truthy dataRule key) — it can still place lower in the shortlist, labelled preview.
+        - an `adoption: 'low'` model is never start_here while a 'broad' or 'moderate'-adoption
+          model of the SAME judged band is also a candidate — a benchmark win doesn't buy the top
+          spot away from a model people are actually already running, in the same tier of judged
+          quality.
+      Neither rule removes a model from the shortlist — it only decides which of the top 3 gets
+      the start_here flag; a disqualified model that still ranks in the top 3 stays there, just
+      not first.
    Only the top 3 survivors are returned; item 0 is always start_here: true.
    ============================================================ */
 
@@ -176,6 +197,23 @@ export function basisFromClaims(claims) {
   return (claims || []).some((c) => c && c.tier && c.tier !== 'lab') ? 'reported' : 'lab-stated';
 }
 
+/** THE gate for rule 3 (see the file header): { band, confidence, judged: record|null }. Looks at
+ * model.task_fit_judged[taskId] ONLY — a quantitative task_fit score, however high, is never
+ * consulted here, so it can never manufacture a candidate on its own. No record on file reads the
+ * same as an explicit "unknown" band: both fail the floor. This is deliberately a different
+ * question from taskFitFor() below (which still answers "what number do we show", preferring a
+ * real score when one exists) — judgedBandOf answers "is this model even in the running", and
+ * only a human/agent judgment call can answer that now. */
+export function judgedBandOf(model, taskId) {
+  const rec = model.task_fit_judged?.[taskId];
+  if (!rec || !rec.band) return { band: 'unknown', confidence: null, judged: null };
+  return { band: rec.band, confidence: rec.confidence ?? null, judged: rec };
+}
+const BAND_RANK = { strong: 3, capable: 2, weak: 1, unknown: 0 };
+const CONFIDENCE_RANK = { high: 3, medium: 2, low: 1 };
+export const bandRank = (band) => BAND_RANK[band] ?? 0;
+export const confidenceRank = (confidence) => CONFIDENCE_RANK[confidence] ?? 0;
+
 /** { score, basis, reason?, source: 'measured'|'reported'|'lab-stated', judged: record|null } —
  * quantitative fit wins whenever it's sourced; a judged record only ever fills a gap, never
  * overrides a real number. */
@@ -200,6 +238,54 @@ export function buildJudgedWhy(item) {
   const band = item.judgedBand || 'unknown';
   const confidence = item.judgedConfidence || 'unknown';
   return `Judged ${band} fit (${confidence} confidence) from ${n} sourced claim${n === 1 ? '' : 's'}, not a benchmark score.`;
+}
+
+/** `why` for the new judgment-first shortlist: the record's own top claim sentence, verbatim —
+ * the actual evidence a reader can check, not a generic restatement of the band. "Top" prefers
+ * the first claim that ISN'T just a usage/popularity signal (a capability claim says more than
+ * "people already use this"), falling back to the first claim of any tier if that's all there
+ * is. Every judged record has at least one claim (validate-data.mjs requires a non-empty
+ * claims[]), so this only ever returns the fallback string for a malformed/missing record. */
+export function topClaimSentence(claims) {
+  const list = Array.isArray(claims) ? claims : [];
+  const top = list.find((c) => c && c.tier !== 'usage' && c.sentence) || list.find((c) => c && c.sentence);
+  return top ? top.sentence : 'No sourced claim on file for this pick.';
+}
+
+// -----------------------------------------------------------------------------------------
+// start_here eligibility — a model can win the shortlist without winning the TOP spot. Neither
+// rule below drops a model from the shortlist; they only decide which of the top 3 gets
+// `start_here: true` (see decide()'s reordering step).
+// -----------------------------------------------------------------------------------------
+
+/** "Enterprise-style" input, for the preview-status rule: a single named vendor at heavy volume
+ * (a team standardizing on one vendor's paid tier, not shopping around), or any data rule turned
+ * on (noChinaHosted today — a compliance-flavored ask). 'any'/'openrouter' don't count as "a
+ * single vendor" — they're explicitly the opposite of standardizing on one vendor's own paid API. */
+export function isEnterpriseInput(input) {
+  const have = Array.isArray(input?.have) ? input.have : [];
+  const singleNamedVendor = have.length === 1 && Object.keys(VENDOR_KEY_DISPLAY).includes(String(have[0] || '').toLowerCase());
+  const heavyVolume = input?.volume === 'heavy';
+  const dataRuleSet = !!input?.dataRule && Object.values(input.dataRule).some(Boolean);
+  return (singleNamedVendor && heavyVolume) || dataRuleSet;
+}
+
+/** A `status: 'preview'` model never gets start_here under stance 'best' or an enterprise-style
+ * input — a team explicitly asking for "the best" or standardizing on one vendor at scale
+ * shouldn't be pointed at a SKU the vendor itself hasn't finished shipping. An `adoption: 'low'`
+ * model never gets start_here while a 'broad'/'moderate'-adoption model of the SAME judged band
+ * is also a candidate — a benchmark edge doesn't buy the top spot away from a model people are
+ * actually already running, once judgment has already put both in the same tier of quality. */
+export function isDisqualifiedFromStartHere(item, allCandidates, stance, input) {
+  if (item.model.status === 'preview' && (stance === 'best' || isEnterpriseInput(input))) return true;
+  if (item.model.adoption === 'low') {
+    const betterAdoptionSameBand = (allCandidates || []).some((other) => (
+      other !== item && other.band === item.band &&
+      (other.model.adoption === 'broad' || other.model.adoption === 'moderate')
+    ));
+    if (betterAdoptionSameBand) return true;
+  }
+  return false;
 }
 
 // -----------------------------------------------------------------------------------------
@@ -254,17 +340,32 @@ export function filterCandidates(taskId, input, data) {
     if (!isReachable(model, input.have)) continue;
     const dr = passesDataRule(model, input.dataRule, data.vendors);
     if (!dr.ok) continue;
+    // Rule 3 — the judgment IS the gate (see the file header). A judged record for THIS task is
+    // required to be a candidate at all; a quantitative score with no judged band never gets in
+    // on its own any more.
+    const { band, confidence, judged } = judgedBandOf(model, taskId);
+    if (band !== 'strong' && band !== 'capable') continue;
+    // taskFitFor still decides the NUMBER shown alongside the pick (a real score when sourced,
+    // else the flat JUDGED_BAND_SCORE) — but never whether the model is here at all (that's
+    // judgedBandOf, above). Claims/reconciliation always come from the judged record itself
+    // (never from taskFitFor's `judged`, which is null on its 'measured' branch) so a model with
+    // BOTH a real score and a judged record still shows the evidence that actually earned it a
+    // place in the running.
     const fit = taskFitFor(model, taskId);
-    if (fit.score == null) continue; // rule 3: no basis at all = never recommended
     candidates.push({
       model,
-      fit: fit.score,
+      band,
+      confidence,
+      // Guaranteed non-null in practice (taskFitFor always resolves a score once a strong/capable
+      // judged record exists), but falls back to the band constant rather than ever sorting on a
+      // NaN if that guarantee is ever violated by a future edit.
+      fit: fit.score ?? JUDGED_BAND_SCORE[band],
       fit_basis: fit.basis,
-      basis: fit.source,
-      claims: fit.judged?.claims || [],
-      reconciliation: fit.judged?.reconciliation ?? null,
-      judgedBand: fit.judged?.band ?? null,
-      judgedConfidence: fit.judged?.confidence ?? null,
+      basis: basisFromClaims(judged.claims),
+      claims: judged.claims,
+      reconciliation: judged.reconciliation ?? null,
+      judgedBand: band,
+      judgedConfidence: confidence,
       monthly_cost_usd: monthlyCost(model, vol),
       seat_plan_alternative: findSeatPlanAlternative(model, input.have, data.plans),
       unknownCountryVendor: dr.unknownCountry ? model.vendor : null,
@@ -288,22 +389,29 @@ export function dropDominated(list) {
 }
 
 // -----------------------------------------------------------------------------------------
-// Rule 4 — rank by stance, ties -> cheaper
+// Rule 4 — rank by judged band, then confidence, then the stance's cost/fit comparator
 // -----------------------------------------------------------------------------------------
 const costOrInf = (x) => (num(x.monthly_cost_usd) ? x.monthly_cost_usd : Infinity);
+
+/** Band, then confidence — the primary sort key for EVERY stance (see the file header). Every
+ * candidate reaching this function already cleared rule 3, so band is always 'strong' or
+ * 'capable' here; this comparator still checks the general case rather than hard-coding those
+ * two values, so it keeps working if a future band is ever added. */
+const byBandThenConfidence = (a, b) => bandRank(b.band) - bandRank(a.band) || confidenceRank(b.confidence) - confidenceRank(a.confidence);
 
 export function rankByStance(list, stance) {
   const arr = [...list];
   if (stance === 'cheapest') {
-    arr.sort((a, b) => costOrInf(a) - costOrInf(b) || b.fit - a.fit);
+    arr.sort((a, b) => byBandThenConfidence(a, b) || costOrInf(a) - costOrInf(b) || b.fit - a.fit);
     return arr;
   }
   if (stance === 'best') {
-    arr.sort((a, b) => b.fit - a.fit || costOrInf(a) - costOrInf(b));
+    arr.sort((a, b) => byBandThenConfidence(a, b) || b.fit - a.fit || costOrInf(a) - costOrInf(b));
     return arr;
   }
   // 'balanced' (default): a 50/50 blend of normalized fit and normalized cheapness, same
-  // min-max / log-price style as scripts/derive-task-fit.mjs and the site's own app.js.
+  // min-max / log-price style as scripts/derive-task-fit.mjs and the site's own app.js — used to
+  // break ties WITHIN a (band, confidence) tier, same as the other two stances.
   const fits = list.map((x) => x.fit);
   const minF = Math.min(...fits), maxF = Math.max(...fits);
   const fitNorm = (f) => (maxF === minF ? 0.5 : (f - minF) / (maxF - minF));
@@ -316,7 +424,7 @@ export function rankByStance(list, stance) {
     return 1 - (Math.log(Math.max(c, 1e-9)) - minC) / (maxC - minC);
   };
   const blended = (x) => 0.5 * fitNorm(x.fit) + 0.5 * cheapNorm(x.monthly_cost_usd);
-  arr.sort((a, b) => blended(b) - blended(a) || costOrInf(a) - costOrInf(b));
+  arr.sort((a, b) => byBandThenConfidence(a, b) || blended(b) - blended(a) || costOrInf(a) - costOrInf(b));
   return arr;
 }
 
@@ -348,17 +456,29 @@ export function decide(input, data) {
     const { candidates, vol } = filterCandidates(taskId, { ...input, stance }, data);
     const pruned = dropDominated(candidates);
     const ranked = rankByStance(pruned, stance);
-    const top = ranked.slice(0, 3);
+
+    // start_here eligibility (see isDisqualifiedFromStartHere / the file header): find the
+    // first-ranked candidate that ISN'T disqualified and move it to the front, keeping everyone
+    // else's relative order — a disqualified model still shows up in the top 3 if it ranks there,
+    // it just doesn't get the start_here flag. If every candidate is disqualified there's no
+    // alternative to prefer, so the normal #1 keeps start_here (a rule with nothing better to
+    // point at doesn't block the only option).
+    let startIdx = ranked.findIndex((item) => !isDisqualifiedFromStartHere(item, ranked, stance, input));
+    if (startIdx === -1) startIdx = 0;
+    const reordered = startIdx === 0 ? ranked : [ranked[startIdx], ...ranked.slice(0, startIdx), ...ranked.slice(startIdx + 1)];
+    const top = reordered.slice(0, 3);
 
     const shortlist = top.map((item, idx) => ({
       id: item.model.id,
       name: item.model.name,
       tag: tagFor(item, top, have),
-      why: item.basis === 'measured' ? buildWhy(item.model, item.fit_basis) : buildJudgedWhy(item),
+      why: topClaimSentence(item.claims),
       monthly_cost_usd: item.monthly_cost_usd,
       fit: item.fit,
       fit_basis: item.fit_basis,
       basis: item.basis,
+      status: item.model.status ?? null,
+      adoption: item.model.adoption ?? null,
       claims: item.claims,
       reconciliation: item.reconciliation,
       start_here: idx === 0,
@@ -375,7 +495,14 @@ export function decide(input, data) {
       assumptions.push('Vision fit is a yes/no tag match (no graded multimodal score exists in the data) — every vision-tagged model scores the same, and ties break on price.');
     }
     if (!candidates.length) {
-      assumptions.push('No model in the catalog clears every filter (reachability, data rule, task floor) for this task with the given inputs.');
+      assumptions.push('No model in the catalog clears every filter (reachability, data rule, or the judged-fit floor) for this task with the given inputs — a real benchmark score alone is never enough; something has to have actually judged this model for this task.');
+    }
+    if (startIdx > 0) {
+      const skipped = ranked[0];
+      const reason = skipped.model.status === 'preview'
+        ? 'it\'s still a preview release'
+        : `its adoption is low while a broader-adoption model of the same judged band is also a candidate`;
+      assumptions.push(`"${skipped.model.name}" ranked highest before the start_here check but wasn't set as start_here — ${reason}. It's still listed below if it placed in the top 3.`);
     }
 
     tasks[taskId] = { shortlist, assumptions };

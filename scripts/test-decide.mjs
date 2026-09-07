@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   decide, filterCandidates, isReachable, vendorCountry, WHY_FIELDS, VENDOR_KEY_DISPLAY, STANCES,
-  taskFitFor, basisFromClaims,
+  taskFitFor, basisFromClaims, judgedBandOf, bandRank, confidenceRank, isEnterpriseInput,
+  isDisqualifiedFromStartHere, topClaimSentence, rankByStance,
 } from '../assets/decide.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
 
@@ -39,34 +40,13 @@ test('eval situations only reference real task ids', () => {
 });
 
 // ---------------------------------------------------------------------------------------------
-// The 20-situation eval. Each situation's `expected` was drafted by running decide() against the
-// live catalog (see data/eval/situations.json's _readme) — this is deliberately a trip-wire: a
-// data refresh that changes prices/scores/availability enough to flip one of these SHOULD fail
-// this test, which is exactly why it's wired into .github/workflows/auto-refresh.yml after Collect.
+// The situations eval used to live here as a hard-coded 20-case test. It's superseded (2026-09-07)
+// by scripts/test-eval-situations.mjs, which runs every situation in data/eval/situations.json
+// PLUS data/eval/must-never.json and prints a pass rate — situations.json itself now holds a cold
+// answer key (drafted by a separate pass with no visibility into this engine's internals, not by
+// running decide() and reading off the winner) precisely so this eval can't grade its own
+// homework. See that file for the real eval; this file keeps the structural/property tests below.
 // ---------------------------------------------------------------------------------------------
-test('eval: 20 realistic situations match their drafted expectations', () => {
-  const failures = [];
-  for (const s of situations) {
-    const taskId = s.input.tasks[0];
-    const out = decide(s.input, data);
-    const shortlist = out.tasks[taskId]?.shortlist || [];
-    const { start_here_any_of, must_not_include } = s.expected;
-
-    if (start_here_any_of.length === 0) {
-      if (shortlist.length !== 0) failures.push(`${s.id}: expected an empty shortlist, got [${shortlist.map((x) => x.id)}]`);
-    } else {
-      const startHere = shortlist.find((x) => x.start_here);
-      if (!startHere) failures.push(`${s.id}: no start_here item in shortlist`);
-      else if (!start_here_any_of.includes(startHere.id)) {
-        failures.push(`${s.id}: start_here "${startHere.id}" not in expected [${start_here_any_of}]`);
-      }
-    }
-    for (const id of must_not_include || []) {
-      if (shortlist.some((x) => x.id === id)) failures.push(`${s.id}: "${id}" must not appear in the shortlist but does`);
-    }
-  }
-  assert.equal(failures.length, 0, `\n${failures.join('\n')}`);
-});
 
 // ---------------------------------------------------------------------------------------------
 // Full-grid property test: task (10) x have (7) x stance (3) x volume (3) x dataRule (2)
@@ -113,21 +93,35 @@ test(`full grid: ${TASK_IDS.length} tasks x ${HAVE_OPTIONS.length} have x ${STAN
               }
             }
 
-            // (c) under 'cheapest', start_here is the cheapest model that clears every filter
-            //     (recomputed independently from the full pre-ranking candidate set, not just
-            //     the top 3, so this checks against the WHOLE eligible universe).
+            // (c) under 'cheapest', start_here is the cheapest model WITHIN THE TOP (band,
+            //     confidence) tier among candidates (rule 4, rewritten 2026-09-07: band and
+            //     confidence come before any stance's cost/fit comparator, "cheapest" included —
+            //     a cheaper but lower-judged model never outranks a better-judged one). Recomputed
+            //     independently from the full pre-ranking candidate set, not just the top 3.
             if (stance === 'cheapest') {
               const { candidates } = filterCandidates(taskId, input, data);
-              const withCost = candidates.filter((c) => typeof c.monthly_cost_usd === 'number');
-              if (withCost.length) {
-                const minCost = Math.min(...withCost.map((c) => c.monthly_cost_usd));
+              if (candidates.length) {
+                const topBand = Math.max(...candidates.map((c) => bandRank(c.band)));
+                const topConfidence = Math.max(...candidates.filter((c) => bandRank(c.band) === topBand).map((c) => confidenceRank(c.confidence)));
+                const topTier = candidates.filter((c) => bandRank(c.band) === topBand && confidenceRank(c.confidence) === topConfidence);
+                const withCost = topTier.filter((c) => typeof c.monthly_cost_usd === 'number');
                 const startHere = shortlist.find((x) => x.start_here);
-                if (!startHere) failures.push(`${label}: candidates exist but no start_here was returned`);
-                else if (Math.abs(startHere.monthly_cost_usd - minCost) > 1e-9) {
-                  failures.push(`${label}: start_here "${startHere.id}" costs ${startHere.monthly_cost_usd}, cheapest eligible is ${minCost}`);
+                if (!startHere) {
+                  failures.push(`${label}: candidates exist but no start_here was returned`);
+                } else if (withCost.length) {
+                  const minCost = Math.min(...withCost.map((c) => c.monthly_cost_usd));
+                  // start_here can legitimately be pricier than minCost only if the actual
+                  // cheapest-in-tier model(s) were disqualified from start_here (preview/low
+                  // adoption) — never for any other reason.
+                  if (Math.abs(startHere.monthly_cost_usd - minCost) > 1e-9) {
+                    const ranked = rankByStance(candidates, stance);
+                    const cheapestInTier = topTier.find((c) => Math.abs(c.monthly_cost_usd - minCost) < 1e-9);
+                    const cheapestDisqualified = cheapestInTier && isDisqualifiedFromStartHere(cheapestInTier, ranked, stance, input);
+                    if (!cheapestDisqualified) {
+                      failures.push(`${label}: start_here "${startHere.id}" costs ${startHere.monthly_cost_usd}, cheapest in its (band,confidence) tier is ${minCost} and wasn't disqualified`);
+                    }
+                  }
                 }
-              } else if (candidates.length && shortlist.length === 0) {
-                failures.push(`${label}: candidates existed (all unpriced) but shortlist was empty`);
               }
             }
 
@@ -141,11 +135,47 @@ test(`full grid: ${TASK_IDS.length} tasks x ${HAVE_OPTIONS.length} have x ${STAN
               }
             }
 
-            // (e) every `why` mentions only fields present in that item's fit_basis
+            // (e) every shortlist item carries a real basis/status/adoption/why — the judgment-
+            // first shape every candidate must have now that a judged record is mandatory to be
+            // a candidate at all (rule 3, rewritten 2026-09-07).
             for (const item of shortlist) {
-              const mentioned = Object.entries(WHY_FIELDS).filter(([, v]) => v.mention.test(item.why)).map(([k]) => k);
-              const extra = mentioned.filter((k) => !item.fit_basis.includes(k));
-              if (extra.length) failures.push(`${label}: "${item.id}" why="${item.why}" mentions ${extra} not in fit_basis [${item.fit_basis}]`);
+              if (!['reported', 'lab-stated'].includes(item.basis)) failures.push(`${label}: "${item.id}" basis "${item.basis}" must be reported|lab-stated now that judgment gates every candidate`);
+              if (!item.claims || !item.claims.length) failures.push(`${label}: "${item.id}" has no claims backing its judged band`);
+              if (typeof item.why !== 'string' || !item.why.length) failures.push(`${label}: "${item.id}" has no why text`);
+              if (item.status == null) failures.push(`${label}: "${item.id}" is missing status`);
+              if (item.adoption == null) failures.push(`${label}: "${item.id}" is missing adoption`);
+            }
+
+            // (f) NEW RULE — status:'preview' never gets start_here under stance 'best' or an
+            // enterprise-style input, UNLESS every candidate is preview-disqualified (nothing
+            // better to prefer).
+            if (stance === 'best' || isEnterpriseInput(input)) {
+              const startHere = shortlist.find((x) => x.start_here);
+              if (startHere && startHere.status === 'preview') {
+                const { candidates } = filterCandidates(taskId, input, data);
+                const hadNonPreviewAlternative = candidates.some((c) => c.model.status !== 'preview');
+                if (hadNonPreviewAlternative) {
+                  failures.push(`${label}: start_here "${startHere.id}" is a preview model but a non-preview candidate existed`);
+                }
+              }
+            }
+
+            // (g) NEW RULE — adoption:'low' never gets start_here while a broad/moderate model of
+            // the SAME judged band is also a candidate.
+            {
+              const startHere = shortlist.find((x) => x.start_here);
+              if (startHere && startHere.adoption === 'low') {
+                const { candidates } = filterCandidates(taskId, input, data);
+                // band isn't on the shortlist item itself — look it back up from the candidate set.
+                const startHereCandidate = candidates.find((c) => c.model.id === startHere.id);
+                const hadBetterAdoptionSameBand = startHereCandidate && candidates.some((c) => (
+                  c !== startHereCandidate && c.band === startHereCandidate.band &&
+                  (c.model.adoption === 'broad' || c.model.adoption === 'moderate')
+                ));
+                if (hadBetterAdoptionSameBand) {
+                  failures.push(`${label}: start_here "${startHere.id}" has low adoption but a broader-adoption same-band candidate existed`);
+                }
+              }
             }
           }
         }
@@ -277,7 +307,9 @@ test('judged fit: a model with only a judged band appears in the shortlist with 
   assert.notEqual(item.basis, 'measured');
   assert.equal(item.claims.length, 1);
   assert.equal(item.claims[0].source_url, JUDGED_CLAIM.source_url);
-  assert.match(item.why, /judged/i);
+  // why (rewritten 2026-09-07): the record's own top claim sentence, verbatim — not a generic
+  // "judged X fit" restatement.
+  assert.equal(item.why, JUDGED_CLAIM.sentence);
 });
 
 test('judged fit: a "weak" band never appears in the shortlist (same as no basis at all)', () => {
@@ -287,13 +319,81 @@ test('judged fit: a "weak" band never appears in the shortlist (same as no basis
   assert.equal(out.tasks.coding.shortlist.length, 0);
 });
 
-test('usage field never changes ranking: two otherwise-identical models rank the same with or without usage set', () => {
-  const base = models.find((m) => m.task_fit?.chat?.score != null && typeof m.price_output === 'number');
-  assert.ok(base, 'fixture assumption: at least one catalog model has a chat fit and a price');
-  const withUsage = { ...base, usage: { openrouter: { category: 'overall', share: 42.5, rank: 1, as_of: '2026-09-01', source_url: 'https://openrouter.ai/api/frontend/v1/rankings/models' } } };
-  const input = { tasks: ['chat'], have: ['any'], stance: 'balanced', volume: 'typical', dataRule: {} };
-  const outA = decide(input, { ...data, models: [base] });
-  const outB = decide(input, { ...data, models: [withUsage] });
-  const strip = (shortlist) => shortlist.map((x) => ({ id: x.id, fit: x.fit, cost: x.monthly_cost_usd, tag: x.tag }));
-  assert.deepEqual(strip(outA.tasks.chat.shortlist), strip(outB.tasks.chat.shortlist));
+// ---------------------------------------------------------------------------------------------
+// Judged-ranking rewrite (2026-09-07): the whole point of this change is that adoption/status —
+// NOT just a benchmark number — now DOES change ranking (the opposite of the pre-rewrite
+// invariant this test file used to assert). This is the regression test for the exact bug the
+// rewrite exists to fix: a low-adoption preview model must never win start_here over a
+// broad/moderate-adoption GA model of the SAME judged band on fit/price alone.
+// ---------------------------------------------------------------------------------------------
+function bandedFixture(id, overrides = {}) {
+  return judgedFixtureModel({
+    id, name: overrides.name || id,
+    price_input: 0.1, price_output: 0.1,
+    task_fit_judged: { coding: { band: 'strong', confidence: 'high', claims: [{ ...JUDGED_CLAIM, sentence: `${id} claim` }], reconciliation: null, as_of: '2026-09-01' } },
+    status: 'ga', adoption: 'unknown',
+    ...overrides,
+  });
+}
+
+test('adoption gate: a low-adoption model never gets start_here over a broad/moderate model of the SAME band, even with a higher raw fit', () => {
+  // Priced so neither dominates the other (dropDominated would otherwise remove whichever one
+  // has both a lower-or-equal fit AND a lower-or-equal cost, defeating the point of this test) —
+  // the higher-fit model costs more, the broader-adoption model costs less.
+  const low = bandedFixture('low-adopt-strong', { adoption: 'low', price_output: 10, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 99, basis: ['coding_score'] } } });
+  const broad = bandedFixture('broad-adopt-strong', { adoption: 'broad', price_output: 0.1, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 60, basis: ['coding_score'] } } });
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, { models: [low, broad], plans, presets, vendors });
+  const shortlist = out.tasks.coding.shortlist;
+  const startHere = shortlist.find((x) => x.start_here);
+  assert.equal(startHere.id, 'broad-adopt-strong', 'the higher-fit but low-adoption model must not win start_here over a same-band broad-adoption model');
+  assert.ok(shortlist.some((x) => x.id === 'low-adopt-strong'), 'the low-adoption model should still appear in the shortlist, just not first');
+});
+
+test('adoption gate: a low-adoption model DOES get start_here when no broad/moderate model of the same band exists', () => {
+  const low = bandedFixture('lonely-low-adopt', { adoption: 'low' });
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, { models: [low], plans, presets, vendors });
+  assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'lonely-low-adopt');
+});
+
+test('preview gate: a preview model never gets start_here under stance "best" when a non-preview candidate exists', () => {
+  const preview = bandedFixture('preview-model', { status: 'preview', price_output: 10, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 99, basis: ['coding_score'] } } });
+  const ga = bandedFixture('ga-model', { status: 'ga', price_output: 0.1, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 60, basis: ['coding_score'] } } });
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, { models: [preview, ga], plans, presets, vendors });
+  assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'ga-model');
+});
+
+test('preview gate: stance "cheapest" with no enterprise-style input does NOT disqualify a preview model', () => {
+  const preview = bandedFixture('preview-cheapest-ok', { status: 'preview', price_output: 0.01 });
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'cheapest', volume: 'typical', dataRule: {} }, { models: [preview], plans, presets, vendors });
+  assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'preview-cheapest-ok');
+});
+
+test('preview gate: an enterprise-style input (single named vendor + heavy volume) disqualifies preview even under "balanced"', () => {
+  const preview = bandedFixture('preview-enterprise', { status: 'preview', vendor: 'Anthropic', price_output: 10, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 99, basis: ['coding_score'] } } });
+  const ga = bandedFixture('ga-enterprise', { status: 'ga', vendor: 'Anthropic', price_output: 0.1, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 60, basis: ['coding_score'] } } });
+  const out = decide({ tasks: ['coding'], have: ['anthropic'], stance: 'balanced', volume: 'heavy', dataRule: {} }, { models: [preview, ga], plans, presets, vendors });
+  assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'ga-enterprise');
+});
+
+test('isEnterpriseInput: single named vendor needs BOTH the vendor and heavy volume; a dataRule alone is enough on its own', () => {
+  assert.equal(isEnterpriseInput({ have: ['anthropic'], volume: 'heavy', dataRule: {} }), true);
+  assert.equal(isEnterpriseInput({ have: ['anthropic'], volume: 'typical', dataRule: {} }), false);
+  assert.equal(isEnterpriseInput({ have: ['any'], volume: 'heavy', dataRule: {} }), false);
+  assert.equal(isEnterpriseInput({ have: ['openrouter'], volume: 'heavy', dataRule: {} }), false);
+  assert.equal(isEnterpriseInput({ have: ['any'], volume: 'light', dataRule: { noChinaHosted: true } }), true);
+});
+
+test('judgedBandOf: no task_fit_judged record at all reads the same as an explicit "unknown" band', () => {
+  assert.deepEqual(judgedBandOf({ task_fit_judged: null }, 'coding'), { band: 'unknown', confidence: null, judged: null });
+  assert.deepEqual(judgedBandOf({ task_fit_judged: {} }, 'coding'), { band: 'unknown', confidence: null, judged: null });
+  const rec = { band: 'strong', confidence: 'high', claims: [] };
+  assert.deepEqual(judgedBandOf({ task_fit_judged: { coding: rec } }, 'coding'), { band: 'strong', confidence: 'high', judged: rec });
+});
+
+test('topClaimSentence: prefers a non-usage claim over a usage claim, falls back to usage if that\'s all there is', () => {
+  const usageOnly = [{ tier: 'usage', sentence: 'usage sentence' }];
+  assert.equal(topClaimSentence(usageOnly), 'usage sentence');
+  const mixed = [{ tier: 'usage', sentence: 'usage sentence' }, { tier: 'lab', sentence: 'lab sentence' }];
+  assert.equal(topClaimSentence(mixed), 'lab sentence');
+  assert.equal(topClaimSentence([]), 'No sourced claim on file for this pick.');
 });
