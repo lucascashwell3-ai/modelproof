@@ -82,7 +82,75 @@
           "https://openrouter.ai/api/v1/models",
           "https://platform.claude.com/docs/en/about-claude/pricing"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 95,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 94,
+          "basis": [
+            "coding_score",
+            "context_window",
+            "effort_ladders"
+          ]
+        },
+        "bulk": {
+          "score": 40,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 94,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 89,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 53,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 61,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 95,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": 94,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "kimi-k3",
@@ -152,7 +220,75 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 96,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 90,
+          "basis": [
+            "coding_score",
+            "context_window"
+          ]
+        },
+        "bulk": {
+          "score": 45,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 93,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 88,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 56,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 64,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": 100,
+          "basis": [
+            "best_for:vision"
+          ]
+        },
+        "frontend": {
+          "score": 96,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": 93,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "claude-fable-5",
@@ -217,7 +353,75 @@
           "https://openrouter.ai/api/v1/models",
           "https://platform.claude.com/docs/en/about-claude/pricing"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 95,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 94,
+          "basis": [
+            "coding_score",
+            "context_window",
+            "effort_ladders"
+          ]
+        },
+        "bulk": {
+          "score": 32,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 91,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 87,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 46,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 55,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 95,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": 91,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "claude-opus-4-8",
@@ -296,7 +500,75 @@
           "https://openrouter.ai/api/v1/models",
           "https://platform.claude.com/docs/en/about-claude/pricing"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 89,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 90,
+          "basis": [
+            "coding_score",
+            "context_window",
+            "effort_ladders"
+          ]
+        },
+        "bulk": {
+          "score": 40,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 94,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 88,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 52,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 61,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 89,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": 94,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "claude-sonnet-5",
@@ -360,7 +632,76 @@
           "https://openrouter.ai/api/v1/models",
           "https://platform.claude.com/docs/en/about-claude/pricing"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 85,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 87,
+          "basis": [
+            "coding_score",
+            "context_window",
+            "effort_ladders"
+          ]
+        },
+        "bulk": {
+          "score": 49,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 91,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 86,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 58,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 65,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 90,
+          "basis": [
+            "coding_score",
+            "best_for:speed"
+          ]
+        },
+        "exec-summaries": {
+          "score": 91,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "gpt-5-5",
@@ -427,7 +768,75 @@
           "https://developers.openai.com/api/docs/pricing",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 82,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 85,
+          "basis": [
+            "coding_score",
+            "context_window",
+            "effort_ladders"
+          ]
+        },
+        "bulk": {
+          "score": 38,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 94,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 88,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 51,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 59,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 82,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": 94,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "gemini-3-1-pro",
@@ -490,7 +899,75 @@
           "https://ai.google.dev/gemini-api/docs/pricing",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 81,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 80,
+          "basis": [
+            "coding_score",
+            "context_window"
+          ]
+        },
+        "bulk": {
+          "score": 48,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 94,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 89,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 59,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 66,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": 100,
+          "basis": [
+            "best_for:vision"
+          ]
+        },
+        "frontend": {
+          "score": 81,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": 94,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "deepseek-v4-pro",
@@ -562,7 +1039,74 @@
           "https://api-docs.deepseek.com/quick_start/pricing/",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 81,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 80,
+          "basis": [
+            "coding_score",
+            "context_window"
+          ]
+        },
+        "bulk": {
+          "score": 58,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 90,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 86,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 65,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 70,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 81,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": 90,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "kimi-k2-6",
@@ -629,7 +1173,74 @@
           "https://openrouter.ai/api/v1/models",
           "https://platform.kimi.ai/docs/pricing/chat-k26"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 77,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 60,
+          "basis": [
+            "coding_score",
+            "context_window"
+          ]
+        },
+        "bulk": {
+          "score": 58,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 91,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 69,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 66,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 71,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 77,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": 91,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "llama-4-maverick",
@@ -686,7 +1297,74 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 74,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 76,
+          "basis": [
+            "coding_score",
+            "context_window"
+          ]
+        },
+        "bulk": {
+          "score": 65,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 66,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 70,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 65,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 65,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 74,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": 66,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "o4-mini",
@@ -753,7 +1431,73 @@
           "https://developers.openai.com/api/docs/pricing",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 68,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 68,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "bulk": {
+          "score": 54,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 81,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 81,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "extraction": {
+          "score": 60,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 64,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": 100,
+          "basis": [
+            "best_for:vision"
+          ]
+        },
+        "frontend": {
+          "score": 68,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": 81,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "claude-haiku-4-5",
@@ -813,7 +1557,65 @@
           "https://openrouter.ai/api/v1/models",
           "https://platform.claude.com/docs/en/about-claude/pricing"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 66,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 51,
+          "basis": [
+            "coding_score",
+            "context_window"
+          ]
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 71,
+          "basis": [
+            "coding_score",
+            "best_for:speed"
+          ]
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "gpt-5-6-sol",
@@ -879,7 +1681,75 @@
           "https://developers.openai.com/api/docs/pricing",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 90,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 91,
+          "basis": [
+            "coding_score",
+            "context_window",
+            "effort_ladders"
+          ]
+        },
+        "bulk": {
+          "score": 43,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 95,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 89,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 55,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 63,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 90,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": 95,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "gpt-5-6-terra",
@@ -955,7 +1825,75 @@
           "https://developers.openai.com/api/docs/pricing",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 87,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 89,
+          "basis": [
+            "coding_score",
+            "context_window",
+            "effort_ladders"
+          ]
+        },
+        "bulk": {
+          "score": 48,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 93,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 88,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 58,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 65,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 87,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": 93,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "gpt-5-6-luna",
@@ -1022,7 +1960,76 @@
           "https://developers.openai.com/api/docs/pricing",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 79,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 83,
+          "basis": [
+            "coding_score",
+            "context_window",
+            "effort_ladders"
+          ]
+        },
+        "bulk": {
+          "score": 71,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 92,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 87,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 76,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 79,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 84,
+          "basis": [
+            "coding_score",
+            "best_for:speed"
+          ]
+        },
+        "exec-summaries": {
+          "score": 92,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "gemini-3-5-flash",
@@ -1091,7 +2098,76 @@
           "https://ai.google.dev/gemini-api/docs/pricing",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 79,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 78,
+          "basis": [
+            "coding_score",
+            "context_window"
+          ]
+        },
+        "bulk": {
+          "score": 50,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 93,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 88,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 60,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 67,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": 100,
+          "basis": [
+            "best_for:vision"
+          ]
+        },
+        "frontend": {
+          "score": 84,
+          "basis": [
+            "coding_score",
+            "best_for:speed"
+          ]
+        },
+        "exec-summaries": {
+          "score": 93,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "gemini-2-5-flash-lite",
@@ -1147,7 +2223,65 @@
           "https://ai.google.dev/gemini-api/docs/pricing",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 52,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 59,
+          "basis": [
+            "coding_score",
+            "context_window"
+          ]
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 57,
+          "basis": [
+            "coding_score",
+            "best_for:speed"
+          ]
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "grok-4-5",
@@ -1209,7 +2343,74 @@
           "https://docs.x.ai/docs/models",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 86,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 72,
+          "basis": [
+            "coding_score",
+            "context_window"
+          ]
+        },
+        "bulk": {
+          "score": 55,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "writing": {
+          "score": 93,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        },
+        "research": {
+          "score": 77,
+          "basis": [
+            "benchmarks.gpqa",
+            "context_window"
+          ]
+        },
+        "extraction": {
+          "score": 64,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "chat": {
+          "score": 70,
+          "basis": [
+            "benchmarks.gpqa",
+            "price_output"
+          ]
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 86,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": 93,
+          "basis": [
+            "benchmarks.gpqa"
+          ]
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "deepseek-v4-flash",
@@ -1267,7 +2468,64 @@
           "https://api-docs.deepseek.com/quick_start/pricing/",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 72,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 73,
+          "basis": [
+            "coding_score",
+            "context_window"
+          ]
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 72,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "qwen3-max",
@@ -1331,7 +2589,64 @@
           "https://openrouter.ai/api/v1/models",
           "https://www.alibabacloud.com/help/en/model-studio/billing-for-model-studio"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 74,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 58,
+          "basis": [
+            "coding_score",
+            "context_window"
+          ]
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 74,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "qwen3-coder-plus",
@@ -1395,7 +2710,64 @@
           "https://openrouter.ai/api/v1/models",
           "https://www.alibabacloud.com/help/en/model-studio/billing-for-model-studio"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 73,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 74,
+          "basis": [
+            "coding_score",
+            "context_window"
+          ]
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 73,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "qwen-turbo",
@@ -1449,7 +2821,64 @@
           "https://openrouter.ai/api/v1/models",
           "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 48,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 48,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 53,
+          "basis": [
+            "coding_score",
+            "best_for:speed"
+          ]
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "mistral-medium-3-1",
@@ -1514,7 +2943,63 @@
           "https://mistral.ai/pricing/",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": 62,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "agents": {
+          "score": 62,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": 62,
+          "basis": [
+            "coding_score"
+          ]
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "gemini-3-6-flash",
@@ -1572,7 +3057,60 @@
           "https://ai.google.dev/gemini-api/docs/pricing",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "glm-5-2",
@@ -1630,7 +3168,60 @@
           "https://docs.z.ai/guides/overview/pricing",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "gemini-3-7-flash",
@@ -1688,7 +3279,60 @@
           "https://ai.google.dev/gemini-api/docs/pricing",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "grok-4-6",
@@ -1732,7 +3376,60 @@
           "https://openrouter.ai/api/v1/models",
           "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "muse-spark-1-2",
@@ -1775,7 +3472,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "muse-spark-1-1",
@@ -1831,7 +3581,61 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": 100,
+          "basis": [
+            "best_for:vision"
+          ]
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -1885,7 +3689,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -1923,7 +3780,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -1961,7 +3871,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2001,7 +3964,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2040,7 +4056,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2079,7 +4148,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2118,7 +4240,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2160,7 +4335,60 @@
           "https://docs.qwencloud.com/changelog/models",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2199,7 +4427,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2243,7 +4524,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2286,7 +4620,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2327,7 +4714,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2378,7 +4818,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2422,7 +4915,60 @@
           "https://openrouter.ai/api/v1/models",
           "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2465,7 +5011,60 @@
           "https://openrouter.ai/api/v1/models",
           "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2507,7 +5106,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2549,7 +5201,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2591,7 +5296,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2643,7 +5401,61 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": 100,
+          "basis": [
+            "best_for:vision"
+          ]
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2685,7 +5497,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2728,7 +5593,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2770,7 +5688,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2826,7 +5797,60 @@
           "https://docs.z.ai/guides/llm/glm-5.3",
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "qwen3-8-max",
@@ -2869,7 +5893,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2912,7 +5989,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2955,7 +6085,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -2998,7 +6181,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "benchmarks": {
@@ -3042,7 +6278,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "muse-spark-1-3-contributor",
@@ -3085,7 +6374,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "muse-spark-1-3",
@@ -3128,7 +6470,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "gemini-3-8-flash",
@@ -3171,7 +6566,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "gpt-6-astra",
@@ -3214,7 +6662,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "gpt-6-astra-pro",
@@ -3257,7 +6758,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "claude-fable-5-1",
@@ -3300,7 +6854,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "muse-spark-1-2-contributor",
@@ -3343,7 +6950,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "deepseek-v4-flash-vision-exp",
@@ -3386,7 +7046,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "deepseek-v4-pro-0813",
@@ -3429,7 +7142,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     },
     {
       "id": "deepseek-v4-flash-0731",
@@ -3472,7 +7238,60 @@
         "sources": [
           "https://openrouter.ai/api/v1/models"
         ]
-      }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "task_fit_judged": null
     }
   ],
   "releases": [

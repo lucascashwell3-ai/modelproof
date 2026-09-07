@@ -10,6 +10,7 @@ import {
 } from './auto-refresh.mjs';
 import { modelId, canonicalVendor, bareModelName, isCommunityListing, namingProblems, VENDORS, isCanonicalVendor } from './naming.mjs';
 import { validate } from './validate-data.mjs';
+import { TASK_IDS } from './derive-task-fit.mjs';
 
 test('normalize strips punctuation/case', () => {
   assert.equal(normalize('Claude Opus 5'), 'claudeopus5');
@@ -672,7 +673,15 @@ test('namingProblems: a clean record has none', () => {
 });
 
 const REGISTRY = { sources: [] };
-const cleanData = (models) => ({ models, releases: [], effort_ladders: [] });
+// These naming-rule fixtures don't care about task_fit — give every one a minimal-but-valid
+// task_fit{} + task_fit_judged so the (separate) task_fit gate never fires here and each test
+// stays about the one naming rule it names.
+const BLANK_TASK_FIT = Object.fromEntries(TASK_IDS.map((t) => [t, { score: null, basis: [], reason: 'naming-rule test fixture — task fit not exercised here' }]));
+const cleanData = (models) => ({
+  models: models.map((m) => ({ task_fit: BLANK_TASK_FIT, task_fit_judged: null, ...m })),
+  releases: [],
+  effort_ladders: [],
+});
 const errorsFor = (m) => validate(cleanData([m]), REGISTRY).errors;
 
 test('honesty gate REJECTS a vendor-glued id', () => {

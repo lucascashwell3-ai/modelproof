@@ -37,7 +37,7 @@ jobs:
           node-version: 20
 
       - name: Unit test the check-stage rules
-        run: node --test scripts/test-auto-refresh.mjs scripts/test-apply-judgment.mjs scripts/test-derive-availability.mjs
+        run: node --test scripts/test-auto-refresh.mjs scripts/test-apply-judgment.mjs scripts/test-derive-availability.mjs scripts/test-derive-task-fit.mjs scripts/test-decide.mjs
 
       - name: Run collect (feed -> check -> publish -> worklist -> report)
         id: run
@@ -47,6 +47,15 @@ jobs:
           before=$(python3 -c "import json;print(json.load(open('data/models.json'))['as_of'])")
           echo "AS_OF_BEFORE=$before" >> "$GITHUB_ENV"
           node scripts/auto-refresh.mjs
+
+      - name: Re-run the full suite against the refreshed data (decision-layer eval included)
+        # scripts/auto-refresh.mjs's own internal honesty gate (validate-data.mjs) already blocks
+        # a schema-invalid refresh from writing at all — this step catches the class that gate
+        # can't: a refresh that's perfectly valid but changes prices/scores/availability enough to
+        # flip one of data/eval/situations.json's drafted expectations (scripts/test-decide.mjs).
+        # Runs BEFORE "Commit and push" so a red run here blocks publish, not just notifies after
+        # the fact.
+        run: node --test scripts/test-*.mjs
 
       - name: Commit and push straight to main
         env:

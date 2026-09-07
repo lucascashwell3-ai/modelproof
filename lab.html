@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modelproof — Decision lab</title>
+  <meta name="description" content="The shared rule engine behind Modelproof's model advisor, run in the open — 20 realistic situations plus a form to run your own. Every pick traces to a named field; a missing fact stays null." />
+  <meta name="theme-color" content="#0a0b0f" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%230a0b0f'/%3E%3Ccircle cx='12' cy='12' r='9.2' fill='none' stroke='%23f2c14e' stroke-opacity='0.5' stroke-width='1.4'/%3E%3Cpath d='M7.6 12.4l3 3 5.8-6.6' fill='none' stroke='%23f2c14e' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+  <link href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&f[]=jetbrains-mono@400,500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css?v=mk27" />
+  <style>
+    /* Lab-page-only layout, built entirely from styles.css's existing tokens (colors, radii,
+       fonts, shadow) — no new visual language, just a card grid the rest of the site doesn't
+       need elsewhere. */
+    .lab-form { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    .lab-field { display: flex; flex-direction: column; gap: 6px; }
+    .lab-field label { font-size: 11.5px; font-weight: 500; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
+    .lab-field select, .lab-field .lab-checks { font-family: var(--font); font-size: 13.5px; color: var(--ink);
+      background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 9px 10px; }
+    .lab-checks { display: flex; flex-wrap: wrap; gap: 10px 14px; }
+    .lab-checks label { display: flex; align-items: center; gap: 6px; text-transform: none; font-size: 13px; color: var(--ink-2); letter-spacing: normal; font-weight: 400; }
+    .lab-run { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; }
+    .lab-run button { font-family: var(--font); font-weight: 700; font-size: 13.5px; color: var(--on-metal);
+      background: var(--gold-metal); box-shadow: var(--metal-sheen); border: none; border-radius: 999px;
+      padding: 11px 22px; cursor: pointer; }
+    .lab-run button:hover { filter: brightness(1.04); }
+    .lab-run__note { color: var(--ink-4); font-size: 12px; }
+
+    .situation { border: 1px solid var(--line); border-radius: var(--r-md); padding: 18px 20px; margin-top: 16px;
+      background: var(--panel); }
+    .situation__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+    .situation__title { font-family: var(--display); font-size: 1.05rem; font-weight: 500; color: var(--ink); }
+    .situation__input { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); }
+    .situation__desc { color: var(--ink-2); font-size: 13px; margin-top: 4px; }
+
+    .shortlist { display: grid; gap: 10px; margin-top: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .pick { border: 1px solid var(--line-soft); border-radius: var(--r-sm); padding: 12px 14px; background: var(--panel-2); }
+    .pick.is-start { border-color: var(--gold-line); background: var(--gold-soft); }
+    .pick__row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .pick__name { font-weight: 600; color: var(--ink); font-size: 13.5px; }
+    .pick__cost { font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
+    .pick__why { color: var(--ink-2); font-size: 12.5px; margin-top: 6px; line-height: 1.45; }
+    .pick__seat { color: var(--ink-3); font-size: 11.5px; margin-top: 6px; }
+    .pick__tag { display: inline-block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.03em;
+      color: var(--gold); border: 1px solid var(--gold-line); background: var(--gold-soft);
+      border-radius: 999px; padding: 2px 8px; margin-bottom: 2px; }
+
+    .assumptions { list-style: none; margin-top: 12px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+    .assumptions li { color: var(--ink-3); font-size: 12px; padding-left: 14px; position: relative; line-height: 1.5; }
+    .assumptions li::before { content: "—"; position: absolute; left: 0; color: var(--ink-4); }
+    .empty-note { color: var(--ink-3); font-size: 13px; font-style: italic; }
+  </style>
+</head>
+<body data-page="lab">
+
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="index.html" aria-label="Modelproof home">
+      <svg class="nav__seal" viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">
+        <circle cx="12" cy="12" r="9.2" class="r-ring" />
+        <path d="M7.6 12.4l3 3 5.8-6.6" class="r-check" />
+      </svg>
+      <span>Model<b>proof</b></span>
+    </a>
+    <span class="nav__asof" id="navAsof">loading…</span>
+    <a class="nav__link" href="index.html">← Back to the tool</a>
+  </header>
+
+  <main id="top">
+    <section class="pagehead" aria-labelledby="phTitle">
+      <div class="hero__scrim" aria-hidden="true"></div>
+      <span class="hero__eyebrow">Decision lab</span>
+      <h1 class="pagehead__title" id="phTitle">The rules, run in the open</h1>
+      <p class="pagehead__sub">The same shared engine behind the model advisor — reachability, a no-China-hosted option, a capability floor, then ranked by cheapest / balanced / best. Every pick names the exact fields it's based on; a missing fact stays blank, never guessed.</p>
+    </section>
+
+    <section class="panel" id="try">
+      <div class="panel__head">
+        <div>
+          <h2 class="panel__title">Run your own</h2>
+          <p class="panel__desc">Pick a task and what you already have access to. <span class="dim">Runs entirely in your browser against the same data the site shows — nothing is sent anywhere.</span></p>
+        </div>
+      </div>
+      <form class="lab-form" id="labForm">
+        <div class="lab-field">
+          <label for="fTask">Task</label>
+          <select id="fTask"></select>
+        </div>
+        <div class="lab-field">
+          <label for="fStance">Stance</label>
+          <select id="fStance">
+            <option value="cheapest">Cheapest</option>
+            <option value="balanced" selected>Balanced</option>
+            <option value="best">Best</option>
+          </select>
+        </div>
+        <div class="lab-field">
+          <label for="fVolume">Volume</label>
+          <select id="fVolume">
+            <option value="light">Light</option>
+            <option value="typical" selected>Typical</option>
+            <option value="heavy">Heavy</option>
+          </select>
+        </div>
+        <div class="lab-field">
+          <label for="fChina">Data rule</label>
+          <div class="lab-checks"><label><input type="checkbox" id="fChina" /> No China-hosted models</label></div>
+        </div>
+        <div class="lab-field" style="grid-column: 1 / -1;">
+          <label>What you already have</label>
+          <div class="lab-checks" id="fHave">
+            <label><input type="checkbox" value="any" checked /> Any (no filter)</label>
+            <label><input type="checkbox" value="anthropic" /> Anthropic</label>
+            <label><input type="checkbox" value="openai" /> OpenAI</label>
+            <label><input type="checkbox" value="google" /> Google</label>
+            <label><input type="checkbox" value="xai" /> xAI</label>
+            <label><input type="checkbox" value="openrouter" /> OpenRouter</label>
+          </div>
+        </div>
+        <div class="lab-run">
+          <button type="submit">Run</button>
+          <span class="lab-run__note" id="runNote"></span>
+        </div>
+      </form>
+      <div id="customResult"></div>
+    </section>
+
+    <section class="panel" id="situations">
+      <div class="panel__head">
+        <div>
+          <h2 class="panel__title">20 realistic situations</h2>
+          <p class="panel__desc">Drafted by running the engine against the live catalog, not from opinion — see each rationale. <span class="dim">A future data refresh that changes these enough to flip an expectation fails the automated test suite (scripts/test-decide.mjs), on purpose.</span></p>
+        </div>
+      </div>
+      <div id="situationsList"></div>
+    </section>
+  </main>
+
+  <footer class="foot" id="sourcing">
+    <div class="foot__grid">
+      <div>
+        <div class="foot__brand">
+          <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
+            <circle cx="12" cy="12" r="9.2" class="r-ring" />
+            <path d="M7.6 12.4l3 3 5.8-6.6" class="r-check" />
+          </svg>
+          <span>Model<b>proof</b></span>
+        </div>
+        <p class="foot__note">A decision tool, not a leaderboard. Built by Lucas Cashwell. Sibling project: <strong>DATproof</strong>.</p>
+      </div>
+      <div class="foot__col">
+        <h3>Rule order</h3>
+        <p>Reachable with what you have → clears the data rule → clears the task's capability floor → ranked by stance, ties broken by price. See <code>assets/decide.mjs</code> for the exact order.</p>
+      </div>
+      <div class="foot__col">
+        <h3>Freshness</h3>
+        <p>
+          Data snapshot: <strong id="footAsof">—</strong>. Task fit is recomputed every refresh from the same
+          sourced fields the rest of the site shows — a "—" or a missing pick means the data doesn't support
+          a confident answer, never a guess.
+        </p>
+      </div>
+    </div>
+    <p class="foot__legal">
+      Independent project · not affiliated with any model vendor · a decision aid, not financial or
+      procurement advice — verify anything cost-critical before you commit spend.
+    </p>
+  </footer>
+
+  <script type="module">
+    import { decide } from './assets/decide.mjs';
+
+    const fmtUSD = (n) => (typeof n === 'number' ? `$${n.toFixed(2)}/mo` : 'cost unknown');
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    function renderShortlist(shortlist) {
+      if (!shortlist.length) return '<p class="empty-note">No model clears every filter for this task with these inputs.</p>';
+      return `<div class="shortlist">${shortlist.map((item) => `
+        <div class="pick${item.start_here ? ' is-start' : ''}">
+          <span class="pick__tag">${esc(item.tag)}${item.start_here ? ' · start here' : ''}</span>
+          <div class="pick__row">
+            <span class="pick__name">${esc(item.name)}</span>
+            <span class="pick__cost">${esc(fmtUSD(item.monthly_cost_usd))}</span>
+          </div>
+          <div class="pick__why">${esc(item.why)} <span class="dim">(fit ${item.fit}/100)</span></div>
+          ${item.seat_plan_alternative
+            ? `<div class="pick__seat">Seat plan alternative: ${esc(item.seat_plan_alternative.plan)} — $${item.seat_plan_alternative.price_usd_month}/mo</div>`
+            : ''}
+        </div>`).join('')}</div>`;
+    }
+
+    function renderAssumptions(assumptions) {
+      if (!assumptions || !assumptions.length) return '';
+      return `<ul class="assumptions">${assumptions.map((a) => `<li>${esc(a)}</li>`).join('')}</ul>`;
+    }
+
+    function inputSummary(input) {
+      const parts = [
+        `tasks: ${input.tasks.join(', ')}`,
+        `have: ${input.have.length ? input.have.join(', ') : '(none)'}`,
+        `stance: ${input.stance}`,
+        `volume: ${typeof input.volume === 'string' ? input.volume : 'custom'}`,
+        `no-China-hosted: ${input.dataRule?.noChinaHosted ? 'yes' : 'no'}`,
+      ];
+      return parts.join(' · ');
+    }
+
+    async function main() {
+      const [models, plansFile, presetsFile, vendorsFile, tasksFile, situationsFile] = await Promise.all([
+        fetch('data/models.json').then((r) => r.json()),
+        fetch('data/plans.json').then((r) => r.json()),
+        fetch('data/usage-presets.json').then((r) => r.json()),
+        fetch('data/vendors.json').then((r) => r.json()),
+        fetch('data/tasks.json').then((r) => r.json()),
+        fetch('data/eval/situations.json').then((r) => r.json()),
+      ]);
+      const data = { models: models.models, plans: plansFile.plans, presets: presetsFile.presets, vendors: vendorsFile.vendors };
+
+      document.getElementById('navAsof').textContent = `data as of ${models.as_of}`;
+      document.getElementById('footAsof').textContent = models.as_of;
+
+      const taskSelect = document.getElementById('fTask');
+      taskSelect.innerHTML = tasksFile.tasks.map((t) => `<option value="${esc(t.id)}">${esc(t.label)}</option>`).join('');
+
+      // -------- 20 situations --------
+      const list = document.getElementById('situationsList');
+      list.innerHTML = situationsFile.situations.map((s) => {
+        const taskId = s.input.tasks[0];
+        const out = decide(s.input, data);
+        const result = out.tasks[taskId] || { shortlist: [], assumptions: [] };
+        return `
+          <article class="situation" data-situation-id="${esc(s.id)}">
+            <div class="situation__head">
+              <h3 class="situation__title">${esc(s.description)}</h3>
+              <span class="situation__input">${esc(inputSummary(s.input))}</span>
+            </div>
+            <p class="situation__desc">${esc(s.rationale)}</p>
+            ${renderShortlist(result.shortlist)}
+            ${renderAssumptions(result.assumptions)}
+          </article>`;
+      }).join('');
+
+      // -------- custom form --------
+      const form = document.getElementById('labForm');
+      const runNote = document.getElementById('runNote');
+      function runCustom(ev) {
+        if (ev) ev.preventDefault();
+        const taskId = taskSelect.value;
+        const stance = document.getElementById('fStance').value;
+        const volume = document.getElementById('fVolume').value;
+        const noChinaHosted = document.getElementById('fChina').checked;
+        const have = [...document.querySelectorAll('#fHave input:checked')].map((el) => el.value);
+        const input = { tasks: [taskId], have, stance, volume, dataRule: { noChinaHosted } };
+        const t0 = performance.now();
+        const out = decide(input, data);
+        const elapsed = (performance.now() - t0).toFixed(2);
+        const result = out.tasks[taskId] || { shortlist: [], assumptions: [] };
+        runNote.textContent = `${elapsed}ms`;
+        document.getElementById('customResult').innerHTML = `
+          <article class="situation">
+            <div class="situation__head">
+              <h3 class="situation__title">Your query</h3>
+              <span class="situation__input">${esc(inputSummary(input))}</span>
+            </div>
+            ${renderShortlist(result.shortlist)}
+            ${renderAssumptions(result.assumptions)}
+          </article>`;
+      }
+      form.addEventListener('submit', runCustom);
+      // 'any' and a named vendor are mutually exclusive in the have-checkboxes, so the demo
+      // reflects decide()'s own "'any' means no filter" rule rather than silently combining them.
+      document.getElementById('fHave').addEventListener('change', (ev) => {
+        const boxes = [...document.querySelectorAll('#fHave input')];
+        if (ev.target.value === 'any' && ev.target.checked) {
+          boxes.forEach((b) => { if (b !== ev.target) b.checked = false; });
+        } else if (ev.target.checked) {
+          boxes.find((b) => b.value === 'any').checked = false;
+        }
+      });
+      runCustom();
+    }
+
+    main().catch((err) => {
+      document.getElementById('situationsList').innerHTML = `<p class="empty-note">Could not load the decision lab: ${esc(err.message)}</p>`;
+      console.error(err);
+    });
+  </script>
+</body>
+</html>
