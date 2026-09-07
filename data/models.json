@@ -4482,7 +4482,9 @@
       "verdict": "Use for massive-volume simple tasks — classification, tagging, extraction, cleanup — where cost per token matters most.",
       "confidence": "medium",
       "sources": [
-        "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
+        "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+        "https://openrouter.ai/qwen/qwen-turbo",
+        "https://electroiq.com/stats/qwen-ai-statistics/"
       ],
       "coding_score": 48,
       "coding_basis": "community consensus (small/fast tier)",
@@ -4561,7 +4563,37 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "bulk": {
+          "band": "capable",
+          "confidence": "low",
+          "claims": [
+            {
+              "sentence": "Alibaba Cloud's Model Studio pricing page (checked 2026-09-07) prices Qwen-Turbo's international endpoint at $0.05 per million input tokens and $0.2 per million output tokens, and notes a discount for batch calls, which fits high-volume low-cost workloads.",
+              "source_url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "50% batch inference discount"
+            },
+            {
+              "sentence": "OpenRouter's model listing for Qwen-Turbo (checked 2026-09-07) describes it as a 1M-context model built for fast, low-cost handling of simple tasks.",
+              "source_url": "https://openrouter.ai/qwen/qwen-turbo",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Qwen-Turbo, based on Qwen2.5, is a 1M context model that provides fast speed and low cost, suitable for simple tasks."
+            },
+            {
+              "sentence": "Electroiq's Qwen statistics page (checked 2026-09-07) reports that more than 90,000 enterprises use the Qwen model family, of which Qwen-Turbo is the cheapest tier, as of 2025.",
+              "source_url": "https://electroiq.com/stats/qwen-ai-statistics/",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "more than 90,000 enterprises use the Qwen model family"
+            }
+          ],
+          "reconciliation": "Alibaba's Model Studio page (checked 2026-09-07) marks Qwen-Turbo as no longer updated and points users to Qwen-Flash, while the same page and OpenRouter's listing (checked 2026-09-07) still price and serve Qwen-Turbo as an active option.",
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": null
       },
@@ -4600,7 +4632,9 @@
       "confidence": "medium",
       "sources": [
         "https://mistral.ai/pricing/",
-        "https://www.cloudzero.com/blog/mistral-api-pricing/"
+        "https://www.cloudzero.com/blog/mistral-api-pricing/",
+        "https://openrouter.ai/mistralai/mistral-medium-3.1",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "coding_score": 62,
       "coding_basis": "community consensus (EU mid-tier; no coding benchmark surfaced)",
@@ -4687,7 +4721,74 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "strong",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's model page for Mistral Medium 3.1 (checked 2026-09-07) states it offers competitive accuracy relative to larger models including Claude Sonnet 3.5/3.7, Llama 4 Maverick, and Command R+, and lists coding among its strong domains.",
+              "source_url": "https://openrouter.ai/mistralai/mistral-medium-3.1",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "offers competitive accuracy relative to larger models like Claude Sonnet 3.5/3.7, Llama 4 Maverick, and Command R+"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 617,508 standard-variant requests and about 2.2 billion prompt tokens for Mistral Medium 3.1 on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"total_prompt_tokens\":2199757883,\"total_native_tokens_reasoning\":0,\"count\":617508"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "bulk": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's pricing FAQ for Mistral Medium 3.1 (checked 2026-09-07) lists the model at $0.40 per million input tokens and $2.00 per million output tokens, with cache-read priced separately at $0.04 per million tokens.",
+              "source_url": "https://openrouter.ai/mistralai/mistral-medium-3.1",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Mistral Medium 3.1 costs $0.40/M input tokens and $2.00/M output tokens, with separate rates for Cache Read at $0.04/M tokens."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 617,508 standard-variant requests and about 2.2 billion prompt tokens for Mistral Medium 3.1 on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"total_prompt_tokens\":2199757883,\"total_native_tokens_reasoning\":0,\"count\":617508"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "writing": {
+          "band": "capable",
+          "confidence": "low",
+          "claims": [
+            {
+              "sentence": "OpenRouter's top-apps ranking for Mistral Medium 3.1 (checked 2026-09-07) lists novelcrafter, a novel-writing tool, among the applications built on the model.",
+              "source_url": "https://openrouter.ai/mistralai/mistral-medium-3.1",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "Your personal novel writing toolbox. Plan, write and tinker with your story."
+            },
+            {
+              "sentence": "OpenRouter's model page for Mistral Medium 3.1 (checked 2026-09-07) describes it as combining strong reasoning and multimodal performance with substantially lower cost than larger models, which supports high-volume writing use.",
+              "source_url": "https://openrouter.ai/mistralai/mistral-medium-3.1",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "It balances state-of-the-art reasoning and multimodal performance with 8× lower cost compared to traditional large models"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -5517,7 +5618,8 @@
       "sources": [
         "https://openrouter.ai/meta/muse-spark-1.1",
         "https://ai.meta.com/blog/introducing-muse-spark-msl/",
-        "https://ai.meta.com/static-resource/muse-spark-1-1-evaluation-report/"
+        "https://ai.meta.com/static-resource/muse-spark-1-1-evaluation-report/",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "coding_score": null,
       "coding_basis": null,
@@ -5596,7 +5698,96 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's model description for Muse Spark 1.1 (checked 2026-09-07) relays Meta's claim of strong performance on real-world coding across large codebases, computer-use workflows, and visual-to-code generation.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.1",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Meta reports strong performance on real-world coding across large codebases, computer-use workflows, and visual-to-code generation."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 788,719 standard-variant requests and about 15.4 billion prompt tokens for Muse Spark 1.1 on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meta/muse-spark-1.1-20260709\",\"variant\":\"standard\",\"total_completion_tokens\":467443045,\"total_prompt_tokens\":15357667618,\"total_native_tokens_reasoning\":0,\"count\":788719"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's model description for Muse Spark 1.1 (checked 2026-09-07) says it is built to orchestrate multi-agent workflows as either a main planning agent or a subagent, and to generalize to new tools and MCP servers without extra training.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.1",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "The model is designed to orchestrate multi-agent workflows, acting as either a main agent that plans and delegates or as a subagent"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 788,719 standard-variant requests and about 15.4 billion prompt tokens for Muse Spark 1.1 on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meta/muse-spark-1.1-20260709\",\"variant\":\"standard\",\"total_completion_tokens\":467443045,\"total_prompt_tokens\":15357667618,\"total_native_tokens_reasoning\":0,\"count\":788719"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "vision": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's model description for Muse Spark 1.1 (checked 2026-09-07) states it accepts text, images, video, audio, and PDF documents as input with a 1M-token context window.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.1",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "It accepts text, images, video, audio, and PDF documents and returns text, with a 1M-token context window."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 788,719 standard-variant requests and about 15.4 billion prompt tokens for Muse Spark 1.1 on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meta/muse-spark-1.1-20260709\",\"variant\":\"standard\",\"total_completion_tokens\":467443045,\"total_prompt_tokens\":15357667618,\"total_native_tokens_reasoning\":0,\"count\":788719"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "research": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's model description for Muse Spark 1.1 (checked 2026-09-07) says it supports structured output, parallel function calling, built-in search with citations, and configurable reasoning effort, which fits research-style tasks.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.1",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "It supports structured output, parallel function calling, built-in search with citations, and configurable reasoning effort."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 788,719 standard-variant requests and about 15.4 billion prompt tokens for Muse Spark 1.1 on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meta/muse-spark-1.1-20260709\",\"variant\":\"standard\",\"total_completion_tokens\":467443045,\"total_prompt_tokens\":15357667618,\"total_native_tokens_reasoning\":0,\"count\":788719"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -5647,7 +5838,8 @@
       "sources": [
         "https://huggingface.co/inclusionAI/Ling-3.0-flash",
         "https://blog.kilo.ai/p/announcing-ling-30-flash-free-on",
-        "https://www.aimadetools.com/blog/ling-3-0-flash-complete-guide/"
+        "https://www.aimadetools.com/blog/ling-3-0-flash-complete-guide/",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "InclusionAI (Ant Group) model · 262K ctx · $0.06/$0.18",
       "availability": {
@@ -5714,7 +5906,117 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "InclusionAI's own Hugging Face model card for Ling-3.0-flash (checked 2026-09-07) states the model matches or exceeds its predecessor Ring-2.6-1T across key benchmarks while activating far fewer parameters per token.",
+              "source_url": "https://huggingface.co/inclusionAI/Ling-3.0-flash",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "Ling-3.0-flash matches or outperforms its predecessor across key benchmarks."
+            },
+            {
+              "sentence": "Kilo's blog post on Ling 3.0 Flash (checked 2026-09-07) says it is built for running multi-turn coding agents and daily agentic workflows on tight token budgets.",
+              "source_url": "https://blog.kilo.ai/p/announcing-ling-30-flash-free-on",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Whether you are running multi-turn coding agents or building daily agentic workflows on tight token budgets, Ling 3.0 Flash brings high capabilities at lightning speed."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 16,526,258 standard-variant requests and about 76.8 billion prompt tokens for Ling-3.0-flash on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"inclusionai/ling-3.0-flash-20260723\",\"variant\":\"standard\",\"total_completion_tokens\":9983539016,\"total_prompt_tokens\":76781664960,\"total_native_tokens_reasoning\":0,\"count\":16526258"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "InclusionAI's Hugging Face model card (checked 2026-09-07) says Ling-3.0-flash activates only 5.1B parameters per token while providing reasoning, instruction-following, and long-context capabilities meant to power complex agentic workflows in production.",
+              "source_url": "https://huggingface.co/inclusionAI/Ling-3.0-flash",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "Activating only 5.1B parameters per token, it provides impressive reasoning, instruction following, and long-context capabilities to empower complex agentic workflows in production environments."
+            },
+            {
+              "sentence": "Kilo's blog post (checked 2026-09-07) describes Ling 3.0 Flash as suited to daily agentic workflows run on tight token budgets.",
+              "source_url": "https://blog.kilo.ai/p/announcing-ling-30-flash-free-on",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Whether you are running multi-turn coding agents or building daily agentic workflows on tight token budgets, Ling 3.0 Flash brings high capabilities at lightning speed."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 16,526,258 standard-variant requests and about 76.8 billion prompt tokens for Ling-3.0-flash on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"inclusionai/ling-3.0-flash-20260723\",\"variant\":\"standard\",\"total_completion_tokens\":9983539016,\"total_prompt_tokens\":76781664960,\"total_native_tokens_reasoning\":0,\"count\":16526258"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "bulk": {
+          "band": "strong",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "InclusionAI's Hugging Face model card (checked 2026-09-07) says Ling-3.0-flash is engineered for speed and compute efficiency and claims it performs well against larger competing models and its own previous-generation flagships.",
+              "source_url": "https://huggingface.co/inclusionAI/Ling-3.0-flash",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "Engineered for speed, compute efficiency, and production deployment, Ling-3.0-flash delivers class-defying performance against both larger SOTA competitors and previous-generation flagships."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 16,526,258 standard-variant requests and about 76.8 billion prompt tokens for Ling-3.0-flash on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"inclusionai/ling-3.0-flash-20260723\",\"variant\":\"standard\",\"total_completion_tokens\":9983539016,\"total_prompt_tokens\":76781664960,\"total_native_tokens_reasoning\":0,\"count\":16526258"
+            }
+          ],
+          "reconciliation": "InclusionAI's own claim of beating larger competitors is self-reported; the third-party Kilo blog places Ling 3.0 Flash alongside Gemini 3.6 Flash contextually but does not report a direct head-to-head benchmark between the two as of 2026-09-07.",
+          "as_of": "2026-09-07"
+        },
+        "research": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "InclusionAI's Hugging Face model card (checked 2026-09-07) credits Ling-3.0-flash with long-context capabilities meant to support complex, multi-step workflows.",
+              "source_url": "https://huggingface.co/inclusionAI/Ling-3.0-flash",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "Activating only 5.1B parameters per token, it provides impressive reasoning, instruction following, and long-context capabilities to empower complex agentic workflows in production environments."
+            },
+            {
+              "sentence": "Kilo's blog post (checked 2026-09-07) says Ling 3.0 Flash ships with a native 256K context window, extendable to 1M, aimed at long-horizon task stability and deep repository reasoning.",
+              "source_url": "https://blog.kilo.ai/p/announcing-ling-30-flash-free-on",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Features a native 256K context window (extendable up to 1M), perfect for long-horizon task stability and deep repository reasoning."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 16,526,258 standard-variant requests and about 76.8 billion prompt tokens for Ling-3.0-flash on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"inclusionai/ling-3.0-flash-20260723\",\"variant\":\"standard\",\"total_completion_tokens\":9983539016,\"total_prompt_tokens\":76781664960,\"total_native_tokens_reasoning\":0,\"count\":16526258"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -5749,7 +6051,9 @@
       "vendor": "Kwaipilot",
       "sources": [
         "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
-        "https://vercel.com/ai-gateway/models/kat-coder-pro-v2.5"
+        "https://vercel.com/ai-gateway/models/kat-coder-pro-v2.5",
+        "https://arxiv.org/abs/2607.05471",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Kwaipilot model",
       "availability": {
@@ -5816,7 +6120,66 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "strong",
+          "confidence": "high",
+          "claims": [
+            {
+              "sentence": "The KAT-Coder-V2.5 technical report on arXiv (checked 2026-09-07) states the model ranks second only to Opus 4.8 on repository-level software engineering benchmarks.",
+              "source_url": "https://arxiv.org/abs/2607.05471",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "ranks second only to the frontier Opus 4.8 on repository-level software engineering"
+            },
+            {
+              "sentence": "Vercel's AI Gateway model listing (checked 2026-09-07) puts KAT-Coder-Pro V2.5's SWE-Bench Pro score at 65.2 with a 256K-token context window.",
+              "source_url": "https://vercel.com/ai-gateway/models/kat-coder-pro-v2.5",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "It scores 65.2 on SWE-Bench Pro and 94.9 on PinchBench, with a context window of 256K tokens and output up to 80K tokens."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 6,367 standard-variant requests and about 73.2 million prompt tokens for KAT-Coder-Pro V2.5 on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"kwaipilot/kat-coder-pro-v2.5-20260710\",\"variant\":\"standard\",\"total_completion_tokens\":2535844,\"total_prompt_tokens\":73207890,\"total_native_tokens_reasoning\":0,\"count\":6367"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "strong",
+          "confidence": "high",
+          "claims": [
+            {
+              "sentence": "The KAT-Coder-V2.5 technical report on arXiv (checked 2026-09-07) credits the model with the highest PinchBench agentic tool-use score among the models the KwaiKAT team evaluated.",
+              "source_url": "https://arxiv.org/abs/2607.05471",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "delivers the best agentic tool-use result on PinchBench"
+            },
+            {
+              "sentence": "Vercel's AI Gateway model listing (checked 2026-09-07) reports the same 94.9 PinchBench score for KAT-Coder-Pro V2.5.",
+              "source_url": "https://vercel.com/ai-gateway/models/kat-coder-pro-v2.5",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "It scores 65.2 on SWE-Bench Pro and 94.9 on PinchBench, with a context window of 256K tokens and output up to 80K tokens."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 6,367 standard-variant requests and about 73.2 million prompt tokens for KAT-Coder-Pro V2.5 on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"kwaipilot/kat-coder-pro-v2.5-20260710\",\"variant\":\"standard\",\"total_completion_tokens\":2535844,\"total_prompt_tokens\":73207890,\"total_native_tokens_reasoning\":0,\"count\":6367"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -5851,7 +6214,9 @@
       "vendor": "Kwaipilot",
       "sources": [
         "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
-        "https://openrouter.ai/kwaipilot/kat-coder-air-v2.5"
+        "https://openrouter.ai/kwaipilot/kat-coder-air-v2.5",
+        "https://openrouter.ai/api/frontend/v1/rankings/models",
+        "https://developer.puter.com/ai/kwaipilot/kat-coder-air-v2.5/"
       ],
       "best_for_line": "Kwaipilot model",
       "availability": {
@@ -5918,7 +6283,96 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's model description for KAT-Coder-Air V2.5 (checked 2026-09-07) says it can take an entire issue or business workflow and autonomously locate and make the needed code changes inside the actual repository.",
+              "source_url": "https://openrouter.ai/kwaipilot/kat-coder-air-v2.5",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "KAT-Coder-Air V2.5 is a flagship-level Agentic Coding model that can directly hand over an entire issue or an entire business workflow to it"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 964 standard-variant requests and about 13.8 million prompt tokens for KAT-Coder-Air V2.5 on 2026-08-31, the most recent day it appears in the feed.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"kwaipilot/kat-coder-air-v2.5-20260710\",\"variant\":\"standard\",\"total_completion_tokens\":644747,\"total_prompt_tokens\":13818334,\"total_native_tokens_reasoning\":0,\"count\":964"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's model description for KAT-Coder-Air V2.5 (checked 2026-09-07) describes it as able to complete an entire process autonomously inside a real repository rather than a single-turn edit.",
+              "source_url": "https://openrouter.ai/kwaipilot/kat-coder-air-v2.5",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "allowing it to autonomously locate and make modifications, and complete the entire process in the actual repository"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 964 standard-variant requests and about 13.8 million prompt tokens for KAT-Coder-Air V2.5 on 2026-08-31, the most recent day it appears in the feed.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"kwaipilot/kat-coder-air-v2.5-20260710\",\"variant\":\"standard\",\"total_completion_tokens\":644747,\"total_prompt_tokens\":13818334,\"total_native_tokens_reasoning\":0,\"count\":964"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "frontend": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's model description for KAT-Coder-Air V2.5 (checked 2026-09-07) says it retains the front-end aesthetic generation capability of the prior V2 model through an integrated mixture of experts.",
+              "source_url": "https://openrouter.ai/kwaipilot/kat-coder-air-v2.5",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "it seamlessly integrates multiple experts to fully retain the front-end aesthetic generation capability of V2"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 964 standard-variant requests and about 13.8 million prompt tokens for KAT-Coder-Air V2.5 on 2026-08-31, the most recent day it appears in the feed.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"kwaipilot/kat-coder-air-v2.5-20260710\",\"variant\":\"standard\",\"total_completion_tokens\":644747,\"total_prompt_tokens\":13818334,\"total_native_tokens_reasoning\":0,\"count\":964"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "bulk": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Puter's developer listing for KAT-Coder-Air V2.5 (checked 2026-09-07) prices it at $0.15 per million input tokens and $0.6 per million output tokens.",
+              "source_url": "https://developer.puter.com/ai/kwaipilot/kat-coder-air-v2.5/",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "KAT-Coder-Air V2.5 costs $0.15 per 1M input tokens and $0.6 per 1M output tokens."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 964 standard-variant requests and about 13.8 million prompt tokens for KAT-Coder-Air V2.5 on 2026-08-31, the most recent day it appears in the feed.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"kwaipilot/kat-coder-air-v2.5-20260710\",\"variant\":\"standard\",\"total_completion_tokens\":644747,\"total_prompt_tokens\":13818334,\"total_native_tokens_reasoning\":0,\"count\":964"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -5955,7 +6409,9 @@
       "sources": [
         "https://github.com/meituan-longcat/LongCat-2.0",
         "https://venturebeat.com/technology/meituan-open-sources-longcat-2-0-the-1-6t-near-frontier-agentic-coding-model-thats-been-leading-openrouter-trained-entirely-on-chinese-chips",
-        "https://www.scmp.com/tech/tech-trends/article/3358854/china-debuts-biggest-ai-model-trained-local-chips-meituan-releases-longcat-20"
+        "https://www.scmp.com/tech/tech-trends/article/3358854/china-debuts-biggest-ai-model-trained-local-chips-meituan-releases-longcat-20",
+        "https://felloai.com/longcat-2-0/",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Meituan model · 1M ctx",
       "availability": {
@@ -6022,7 +6478,66 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Meituan's LongCat-2.0 GitHub README (checked 2026-09-07) states the model's architecture and post-training give it strong performance on coding and agentic tasks.",
+              "source_url": "https://github.com/meituan-longcat/LongCat-2.0",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "this gives LongCat-2.0 strong performance on coding and agentic tasks"
+            },
+            {
+              "sentence": "A felloai.com review (checked 2026-09-07) reports Meituan's own SWE-bench Pro score of 59.5 for LongCat-2.0 versus 58.6 for GPT-5.5.",
+              "source_url": "https://felloai.com/longcat-2-0/",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Meituan says LongCat-2.0 scores 59.5 on SWE-bench Pro versus GPT-5.5"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 320,246 standard-variant requests and about 5.7 billion prompt tokens for LongCat-2.0 on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meituan/longcat-2.0-20260720\",\"variant\":\"standard\",\"total_completion_tokens\":237634215,\"total_prompt_tokens\":5666313930,\"total_native_tokens_reasoning\":0,\"count\":320246"
+            }
+          ],
+          "reconciliation": "Meituan's own benchmark places LongCat-2.0 slightly ahead of GPT-5.5 on SWE-bench Pro (59.5 vs 58.6) as of its 2026-06-30 release, but felloai.com's review (checked 2026-09-07) notes the score is self-reported and not independently verified.",
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Meituan's LongCat-2.0 GitHub README (checked 2026-09-07) says the model is deeply integrated with harnesses such as Claude Code, OpenClaw, and Hermes for repository-level edits and automated task execution.",
+              "source_url": "https://github.com/meituan-longcat/LongCat-2.0",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "delivering strong performance across code understanding, repository-level edits, automated task execution, and agentic workflows"
+            },
+            {
+              "sentence": "A felloai.com review (checked 2026-09-07) says LongCat-2.0 ran anonymously on OpenRouter as \"Owl Alpha\" and handled roughly 10.1 trillion tokens a month before Meituan revealed its identity.",
+              "source_url": "https://felloai.com/longcat-2-0/",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "handling roughly 10.1 trillion tokens a month before Meituan revealed it as LongCat-2.0."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 320,246 standard-variant requests and about 5.7 billion prompt tokens for LongCat-2.0 on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meituan/longcat-2.0-20260720\",\"variant\":\"standard\",\"total_completion_tokens\":237634215,\"total_prompt_tokens\":5666313930,\"total_native_tokens_reasoning\":0,\"count\":320246"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",

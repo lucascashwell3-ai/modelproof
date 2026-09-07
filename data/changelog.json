@@ -2451,5 +2451,232 @@
       "https://huggingface.co/poolside/Laguna-XS-2.1",
       "https://openrouter.ai/api/frontend/v1/rankings/models"
     ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen-Turbo",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "https://openrouter.ai/qwen/qwen-turbo",
+      "https://electroiq.com/stats/qwen-ai-statistics/"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Mistral Medium 3.1",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/mistralai/mistral-medium-3.1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Mistral Medium 3.1",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/mistralai/mistral-medium-3.1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Mistral Medium 3.1",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/mistralai/mistral-medium-3.1"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.1",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.1",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.1",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.1",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Ling-3.0-flash",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/inclusionAI/Ling-3.0-flash",
+      "https://blog.kilo.ai/p/announcing-ling-30-flash-free-on",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Ling-3.0-flash",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/inclusionAI/Ling-3.0-flash",
+      "https://blog.kilo.ai/p/announcing-ling-30-flash-free-on",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Ling-3.0-flash",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://huggingface.co/inclusionAI/Ling-3.0-flash",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Ling-3.0-flash",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/inclusionAI/Ling-3.0-flash",
+      "https://blog.kilo.ai/p/announcing-ling-30-flash-free-on",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "KAT-Coder-Pro V2.5",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://arxiv.org/abs/2607.05471",
+      "https://vercel.com/ai-gateway/models/kat-coder-pro-v2.5",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "KAT-Coder-Pro V2.5",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://arxiv.org/abs/2607.05471",
+      "https://vercel.com/ai-gateway/models/kat-coder-pro-v2.5",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "KAT-Coder-Air V2.5",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/kwaipilot/kat-coder-air-v2.5",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "KAT-Coder-Air V2.5",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/kwaipilot/kat-coder-air-v2.5",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "KAT-Coder-Air V2.5",
+    "field": "task_fit_judged.frontend",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/kwaipilot/kat-coder-air-v2.5",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "KAT-Coder-Air V2.5",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://developer.puter.com/ai/kwaipilot/kat-coder-air-v2.5/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "LongCat 2.0",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://github.com/meituan-longcat/LongCat-2.0",
+      "https://felloai.com/longcat-2-0/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "LongCat 2.0",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://github.com/meituan-longcat/LongCat-2.0",
+      "https://felloai.com/longcat-2-0/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
   }
 ]
