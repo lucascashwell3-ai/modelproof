@@ -24,6 +24,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { isNotablePriceChange, priceEntry, addEntry } from './timeline.mjs';
 import { deriveAvailabilityForModel, availabilityEquals, fetchBedrockModelKeys } from './derive-availability.mjs';
+import { deriveTaskFit } from './derive-task-fit.mjs';
 import { fileURLToPath } from 'node:url';
 import { canonicalVendor, bareModelName, modelId, isCommunityListing, AUTO_ADMIT_VENDORS } from './naming.mjs';
 
@@ -811,6 +812,19 @@ async function main() {
       });
       // new models are pushed after the availability pass above ran, so derive theirs now.
       nm.availability = deriveAvailabilityForModel(nm, { orList, aliases, orFeedOk, bedrockKeys });
+    }
+    // task_fit (scripts/derive-task-fit.mjs): recomputed for the WHOLE catalog whenever anything
+    // changed, not just for new models — task fit's price/context normalizers are relative to
+    // every model in the catalog, so one price move or one new model can shift everyone else's
+    // score too. A pure function of already-published fields, so re-running it is always safe
+    // and idempotent; the honesty gate below would otherwise reject a freshly admitted model for
+    // having no task_fit at all (validate-data.mjs requires one on every model).
+    if (changed) {
+      const { taskFitById } = deriveTaskFit(data);
+      for (const m of data.models) {
+        m.task_fit = taskFitById.get(m.id);
+        if (!('task_fit_judged' in m)) m.task_fit_judged = null; // reserved for a future Judge pass — never overwritten once set
+      }
     }
     // best_for_line: deterministic template, added to every model missing it (strengths untouched).
     let bestForChanged = false;

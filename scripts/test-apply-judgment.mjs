@@ -81,6 +81,8 @@ import { fileURLToPath } from 'node:url';
 const SCRIPTS_DIR = fileURLToPath(new URL('.', import.meta.url));
 const REAL_DATA = fileURLToPath(new URL('../data/models.json', import.meta.url));
 const REAL_PLANS = fileURLToPath(new URL('../data/plans.json', import.meta.url));
+const REAL_VENDORS = fileURLToPath(new URL('../data/vendors.json', import.meta.url));
+const REAL_PRESETS = fileURLToPath(new URL('../data/usage-presets.json', import.meta.url));
 
 function withSandbox(fn) {
   // apply-judgment.mjs resolves paths relative to its own file (../data/models.json etc), so we
@@ -97,14 +99,17 @@ function mktempRepo() {
   const dir = mkdtempSync(join(tmpdir(), 'apply-judgment-test-'));
   mkdirSync(join(dir, 'scripts'), { recursive: true });
   mkdirSync(join(dir, 'data', 'refresh'), { recursive: true });
-  for (const f of ['apply-judgment.mjs', 'validate-data.mjs', 'sources.json', 'timeline.mjs', 'naming.mjs']) {
+  for (const f of ['apply-judgment.mjs', 'validate-data.mjs', 'sources.json', 'timeline.mjs', 'naming.mjs', 'derive-task-fit.mjs']) {
     writeFileSync(join(dir, 'scripts', f), readFileSync(join(SCRIPTS_DIR, f)));
   }
   const models = JSON.parse(readFileSync(REAL_DATA));
   writeFileSync(join(dir, 'data', 'models.json'), JSON.stringify(models, null, 2));
-  // validate-data.mjs (copied above) also gates data/plans.json — give the sandbox the real one
-  // so the honesty-gate subprocess it runs doesn't fail on a missing sibling file.
+  // validate-data.mjs (copied above) also gates data/plans.json, data/vendors.json and
+  // data/usage-presets.json — give the sandbox the real copies so the honesty-gate subprocess
+  // it runs doesn't fail on a missing sibling file.
   writeFileSync(join(dir, 'data', 'plans.json'), readFileSync(REAL_PLANS));
+  writeFileSync(join(dir, 'data', 'vendors.json'), readFileSync(REAL_VENDORS));
+  writeFileSync(join(dir, 'data', 'usage-presets.json'), readFileSync(REAL_PRESETS));
   writeFileSync(join(dir, 'data', 'changelog.json'), '[]');
   writeFileSync(join(dir, 'data', 'refresh', 'worklist.json'), JSON.stringify({ generated: '2026-08-16', items: [{ id: 'm1:price_input', kind: 'conflict' }] }));
   return dir;

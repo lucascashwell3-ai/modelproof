@@ -7,7 +7,8 @@
 import { readFileSync, realpathSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
-import { namingProblems, canonicalVendor } from './naming.mjs';
+import { namingProblems, canonicalVendor, VENDORS } from './naming.mjs';
+import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
 
 const CONF = ['low', 'medium', 'high'];
 const VOCAB = ['reasoning', 'agentic', 'coding', 'research', 'long-context', 'writing', 'cheap-bulk', 'speed', 'vision'];
@@ -145,6 +146,39 @@ export function validate(data, registry) {
     if (r.vendor && fix && fix !== r.vendor) E(`release "${r.title}": vendor "${r.vendor}" must be written "${fix}"`);
   }
 
+  // 10. task_fit (scripts/derive-task-fit.mjs): every model must carry a score-or-null-plus-
+  //     reason for EXACTLY the ten known tasks, citing only the shared basis vocabulary. A
+  //     score with no basis, or a basis token outside BASIS_TOKENS, means a fitter drifted from
+  //     the registry assets/decide.mjs's `why` builder also reads from — same class of bug the
+  //     naming-rule gate exists to catch, just for the decision layer instead of the catalog.
+  for (const m of data.models) {
+    const id = m.name || m.id || '(unnamed)';
+    const tf = m.task_fit;
+    if (tf == null || typeof tf !== 'object' || Array.isArray(tf)) { E(`${id}: missing task_fit{} (scripts/derive-task-fit.mjs) — every model needs one`); continue; }
+    const keys = Object.keys(tf);
+    for (const t of TASK_IDS) if (!keys.includes(t)) E(`${id}: task_fit missing "${t}"`);
+    for (const t of keys) if (!TASK_IDS.includes(t)) E(`${id}: task_fit has unknown task "${t}" — not one of ${TASK_IDS.join(', ')}`);
+    for (const t of TASK_IDS) {
+      const entry = tf[t];
+      if (entry == null || typeof entry !== 'object') { E(`${id}: task_fit.${t} must be an object`); continue; }
+      if (entry.score !== null && (typeof entry.score !== 'number' || entry.score < 0 || entry.score > 100)) {
+        E(`${id}: task_fit.${t}.score "${entry.score}" must be null or 0-100`);
+      }
+      if (!Array.isArray(entry.basis)) E(`${id}: task_fit.${t}.basis must be an array`);
+      else for (const token of entry.basis) if (!BASIS_TOKENS.includes(token)) E(`${id}: task_fit.${t}.basis cites unknown token "${token}"`);
+      if (entry.score == null) {
+        if (Array.isArray(entry.basis) && entry.basis.length) E(`${id}: task_fit.${t} has score:null but a non-empty basis[] — a null score should cite nothing`);
+        if (!entry.reason || typeof entry.reason !== 'string') E(`${id}: task_fit.${t} has score:null but no plain-English reason — never a silent exclusion`);
+      } else if (Array.isArray(entry.basis) && !entry.basis.length) {
+        E(`${id}: task_fit.${t} has a score but an empty basis[] — every score must trace to at least one field`);
+      }
+    }
+    // task_fit_judged is reserved for a future Judge override (scripts/derive-task-fit.mjs's
+    // header) that doesn't exist yet — v1 must keep it null, or a stray value would silently
+    // start overriding rule-based fit with nothing behind it.
+    if (m.task_fit_judged !== null) E(`${id}: task_fit_judged must be null in v1 (no Judge pass exists yet) — got ${JSON.stringify(m.task_fit_judged)}`);
+  }
+
   return { errors, warnings };
 }
 
@@ -218,6 +252,59 @@ function main() {
     }
   }
 
+  // 11. data/vendors.json (assets/decide.mjs's noChinaHosted data rule): every vendor in
+  // scripts/naming.mjs's VENDORS needs exactly one row here, or a new vendor would silently
+  // read as "unknown country" (kept, not excluded) instead of a deliberate call. country is a
+  // plain string or null (never a guessed default); source, when present, must be a real URL —
+  // see data/vendors.json's own _readme for how these were sourced (a one-time editorial pass,
+  // not the automated Collect pipeline).
+  let vendorsFile = null;
+  try {
+    vendorsFile = JSON.parse(readFileSync(new URL('../data/vendors.json', import.meta.url)));
+  } catch (e) {
+    E(`data/vendors.json: couldn't read/parse (${e.message})`);
+  }
+  if (vendorsFile) {
+    if (!Array.isArray(vendorsFile.vendors)) E('data/vendors.json: top-level "vendors" must be an array');
+    else {
+      const seenVendors = new Set();
+      for (const v of vendorsFile.vendors) {
+        const vid = v.vendor || '(unnamed)';
+        if (!VENDORS.includes(v.vendor)) E(`data/vendors.json: "${vid}" is not a canonical vendor in scripts/naming.mjs VENDORS`);
+        if (seenVendors.has(v.vendor)) E(`data/vendors.json: duplicate row for "${vid}"`);
+        seenVendors.add(v.vendor);
+        if (v.country !== null && typeof v.country !== 'string') E(`data/vendors.json: "${vid}" country must be a string or null`);
+        if (v.source != null && (typeof v.source !== 'string' || !/^https?:\/\//.test(v.source))) E(`data/vendors.json: "${vid}" source "${v.source}" isn't a URL`);
+      }
+      for (const canon of VENDORS) if (!seenVendors.has(canon)) W(`data/vendors.json: no row for canonical vendor "${canon}" — the noChinaHosted rule will treat it as unknown-country (kept)`);
+    }
+  }
+
+  // 12. data/usage-presets.json (assets/decide.mjs's volume input): the three named bands must
+  // each carry non-negative monthly token counts and a plain-English rationale — these are
+  // stated assumptions, not sourced facts, but an assumption with no rationale is just a guess
+  // wearing a label.
+  let presetsFile = null;
+  try {
+    presetsFile = JSON.parse(readFileSync(new URL('../data/usage-presets.json', import.meta.url)));
+  } catch (e) {
+    E(`data/usage-presets.json: couldn't read/parse (${e.message})`);
+  }
+  if (presetsFile) {
+    const PRESET_KEYS = ['light', 'typical', 'heavy'];
+    if (typeof presetsFile.presets !== 'object' || presetsFile.presets == null) E('data/usage-presets.json: top-level "presets" must be an object');
+    else {
+      for (const key of PRESET_KEYS) {
+        const p = presetsFile.presets[key];
+        if (!p) { E(`data/usage-presets.json: missing preset "${key}"`); continue; }
+        for (const field of ['tokens_in_month', 'tokens_out_month']) {
+          if (typeof p[field] !== 'number' || p[field] < 0) E(`data/usage-presets.json: preset "${key}".${field} must be a non-negative number`);
+        }
+        if (!p.rationale || typeof p.rationale !== 'string') E(`data/usage-presets.json: preset "${key}" is missing a plain-English rationale`);
+      }
+    }
+  }
+
   if (warnings.length) { console.log('⚠ warnings (non-blocking):'); warnings.forEach((w) => console.log('  - ' + w)); }
   if (errors.length) {
     console.error(`\n✗ ${errors.length} honesty-gate error(s) — blocking:`);
@@ -226,7 +313,8 @@ function main() {
   }
   const ladderPts = (data.effort_ladders || []).reduce((n, L) => n + (L.series || []).reduce((k, s) => k + (s.points || []).length, 0), 0);
   const planCount = plans?.plans?.length || 0;
-  console.log(`\n✓ honesty gate passed: ${data.models.length} models, ${(data.releases || []).length} releases, ${(data.effort_ladders || []).length} effort ladder(s) / ${ladderPts} points, ${planCount} plan(s), 0 errors.`);
+  const vendorCount = vendorsFile?.vendors?.length || 0;
+  console.log(`\n✓ honesty gate passed: ${data.models.length} models, ${(data.releases || []).length} releases, ${(data.effort_ladders || []).length} effort ladder(s) / ${ladderPts} points, ${planCount} plan(s), ${vendorCount} vendor(s), 0 errors.`);
 }
 
 const isMain = (() => {
