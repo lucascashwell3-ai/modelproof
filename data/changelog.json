@@ -2224,5 +2224,49 @@
       "https://openrouter.ai/api/frontend/v1/rankings/models",
       "https://arena.ai/leaderboard/code/webdev"
     ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Haiku 4.5",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.anthropic.com/news/claude-haiku-4-5",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.6 Luna",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.8 Flash",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Grok 4.5",
+    "field": "task_fit_judged.frontend",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/code/webdev"
+    ]
   }
 ]

@@ -2774,6 +2774,28 @@
           ],
           "reconciliation": null,
           "as_of": "2026-09-07"
+        },
+        "bulk": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Anthropic's own Claude Haiku 4.5 launch post (Oct 15, 2025) says it gives similar coding performance to Claude Sonnet 4 at one-third the cost and more than twice the speed, checked 2026-09-06.",
+              "source_url": "https://www.anthropic.com/news/claude-haiku-4-5",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "similar levels of coding performance but at one-third the cost and more than twice the speed"
+            },
+            {
+              "sentence": "Arena's Text Arena Overall leaderboard (human-voted) lists Claude Haiku 4.5 at a score of 1413, checked 2026-09-06.",
+              "source_url": "https://arena.ai/leaderboard/text",
+              "tier": "reported",
+              "date": "2026-09-06",
+              "quote": "claude-haiku-4-5-20251001 Anthropic · Proprietary 1413 ±3 125,243 $1 / $5 200K"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
         }
       },
       "usage": {
@@ -3328,7 +3350,8 @@
         "https://artificialanalysis.ai/articles/gpt-5-6-has-landed",
         "https://epoch.ai/benchmarks/gpqa-diamond",
         "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-        "https://arena.ai/leaderboard/text"
+        "https://arena.ai/leaderboard/text",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "coding_score": 79,
       "coding_basis": "vendor coding-agent index ~74.6; no third-party yet",
@@ -3462,6 +3485,28 @@
             },
             {
               "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists GPT-5.6 Luna at a score of 1453, checked 2026-09-06.",
+              "source_url": "https://arena.ai/leaderboard/text",
+              "tier": "reported",
+              "date": "2026-09-06",
+              "quote": "gpt-5.6-luna-xhigh OpenAI · Proprietary 1453 ±5 24,740 $0.20 / $1.20 N/A"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "bulk": {
+          "band": "strong",
+          "confidence": "high",
+          "claims": [
+            {
+              "sentence": "OpenRouter's own rankings feed recorded real API traffic for GPT-5.6 Luna on 2026-09-06, ranking it #2 by token volume across its entire tracked catalog (11.21% of that day's total tokens).",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"openai/gpt-5.6-luna-20260709\",\"variant\":\"standard\""
+            },
+            {
+              "sentence": "Arena's Text Arena Overall leaderboard (human-voted) lists GPT-5.6 Luna at a score of 1453, checked 2026-09-06.",
               "source_url": "https://arena.ai/leaderboard/text",
               "tier": "reported",
               "date": "2026-09-06",
@@ -3798,7 +3843,8 @@
         "https://epoch.ai/benchmarks/gpqa-diamond",
         "https://openrouter.ai/api/frontend/v1/rankings/models",
         "https://arena.ai/leaderboard/text",
-        "https://arena.ai/leaderboard/search"
+        "https://arena.ai/leaderboard/search",
+        "https://arena.ai/leaderboard/code/webdev"
       ],
       "coding_score": 86,
       "coding_basis": "AA Coding Index 72.5 + LMArena Code Elo #4 (1566)",
@@ -3928,6 +3974,28 @@
               "tier": "reported",
               "date": "2026-09-06",
               "quote": "grok-4.5 SpaceXAI · Proprietary 1213 ±7 31,505 $2 / $6 500K"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "frontend": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Grok 4.5 on 2026-09-06, ranking it #71 by token volume across its entire tracked catalog (0.09% of that day's total tokens).",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"x-ai/grok-4.5-20260708\",\"variant\":\"standard\""
+            },
+            {
+              "sentence": "Arena's WebDev leaderboard (human-voted, front-end code generation) lists Grok 4.5 at a score of 1556, checked 2026-09-06.",
+              "source_url": "https://arena.ai/leaderboard/code/webdev",
+              "tier": "reported",
+              "date": "2026-09-06",
+              "quote": "grok-4.5 SpaceXAI · Proprietary 1556 +8/-8 7,361 $2 / $6 500K"
             }
           ],
           "reconciliation": null,
@@ -9097,6 +9165,28 @@
             },
             {
               "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Gemini 3.8 Flash at a score of 1494, checked 2026-09-06.",
+              "source_url": "https://arena.ai/leaderboard/text",
+              "tier": "reported",
+              "date": "2026-09-06",
+              "quote": "gemini-3.8-flash-high Google · Proprietary 1494 ±9 Preliminary 5,125 $0.75 / $3.75 1M"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "research": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Gemini 3.8 Flash on 2026-09-06, ranking it #22 by token volume across its entire tracked catalog (0.93% of that day's total tokens).",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"google/gemini-3.8-flash-20260902\",\"variant\":\"standard\""
+            },
+            {
+              "sentence": "Arena's Text Arena Overall leaderboard (human-voted) lists Gemini 3.8 Flash (High) at a score of 1494, checked 2026-09-06.",
               "source_url": "https://arena.ai/leaderboard/text",
               "tier": "reported",
               "date": "2026-09-06",
