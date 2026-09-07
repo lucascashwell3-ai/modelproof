@@ -1189,5 +1189,102 @@
       "https://openrouter.ai/~deepseek/deepseek-v4-flash-latest"
     ],
     "note": "community re-host (~deepseek) of the \"latest\" alias pointer — duplicates DeepSeek V4 Flash 0731; not a vendor listing"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Laguna S 2.1",
+    "field": "price_input",
+    "new": 0.09,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Laguna S 2.1",
+    "field": "price_output",
+    "new": 0.18,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Laguna XS 2.1",
+    "field": "price_input",
+    "old": 0.1,
+    "new": 0.06,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Laguna XS 2.1",
+    "field": "price_output",
+    "old": 0.2,
+    "new": 0.12,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 27B",
+    "field": "price_output",
+    "old": null,
+    "new": 3,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Inkling",
+    "field": "price_input",
+    "old": null,
+    "new": 1,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Inkling",
+    "field": "price_output",
+    "old": null,
+    "new": 4.05,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4 Flash Vision Exp",
+    "field": "price_input",
+    "old": 0.22,
+    "new": 0.44,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4 Flash Vision Exp",
+    "field": "price_output",
+    "old": 0.66,
+    "new": 1.32,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
   }
 ]
