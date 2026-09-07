@@ -23,6 +23,7 @@ import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { isNotablePriceChange, priceEntry, addEntry } from './timeline.mjs';
+import { deriveAvailabilityForModel, availabilityEquals, fetchBedrockModelKeys } from './derive-availability.mjs';
 import { fileURLToPath } from 'node:url';
 import { canonicalVendor, bareModelName, modelId, isCommunityListing, AUTO_ADMIT_VENDORS } from './naming.mjs';
 
@@ -537,6 +538,7 @@ async function feedOpenRouter() {
       priceInput: o.pricing?.prompt != null ? Number(o.pricing.prompt) * 1e6 : null,
       priceOutput: o.pricing?.completion != null ? Number(o.pricing.completion) * 1e6 : null,
       contextWindow: o.context_length ?? null,
+      hfId: o.hugging_face_id ?? null, // used by derive-availability.mjs's open_weights check
       created: o.created ? new Date(o.created * 1000).toISOString().slice(0, 10) : null,
     }));
   } catch (e) {
@@ -606,6 +608,29 @@ async function main() {
   const epochRows = await feedEpochCursorBench();
   const ladder = epochRows.length ? refreshCursorBench(data, epochRows, today) : { changed: false, notes: ['feed empty — untouched'] };
   console.log(`ladder: cursorbench ${ladder.changed ? 'REFRESHED' : 'unchanged'} — ${ladder.notes.join('; ')}`);
+
+  // --- availability: where each model can actually be reached (direct API, OpenRouter, AWS
+  // Bedrock, open weights) — see scripts/derive-availability.mjs for the sourcing rules. Runs
+  // every full pass (this early-exit already returned above if this is a cheap skip cycle), so
+  // it stays at most a day stale. Computed unconditionally (even under --dry-run) so a dry run
+  // exercises the real fetch + derivation path; only the write is gated below.
+  console.log('availability: fetching AWS Bedrock price list...');
+  const bedrockKeys = await fetchBedrockModelKeys();
+  const orFeedOk = orList.length > 0;
+  const availabilityUpdates = [];
+  for (const m of data.models) {
+    const next = deriveAvailabilityForModel(m, { orList, aliases, orFeedOk, bedrockKeys });
+    if (!availabilityEquals(m.availability, next)) availabilityUpdates.push({ id: m.id, availability: next });
+  }
+  const availCounts = data.models.reduce((acc, m) => {
+    const a = availabilityUpdates.find((u) => u.id === m.id)?.availability || m.availability || {};
+    for (const k of ['direct_api', 'openrouter', 'aws_bedrock', 'open_weights']) if (a[k]) acc[k] = (acc[k] || 0) + 1;
+    return acc;
+  }, {});
+  console.log(`availability: ${availabilityUpdates.length} of ${data.models.length} model(s) changed — ` +
+    `direct_api=${availCounts.direct_api || 0} openrouter=${availCounts.openrouter || 0} ` +
+    `aws_bedrock=${availCounts.aws_bedrock || 0} open_weights=${availCounts.open_weights || 0}` +
+    (bedrockKeys ? '' : ' (AWS Bedrock check skipped — fetch failed, prior values kept)'));
 
   const applied = [];
   const held = [];
@@ -753,6 +778,12 @@ async function main() {
   // --- publish -------------------------------------------------------------------------------
   let changed = false;
   if (!dryRun) {
+    for (const u of availabilityUpdates) {
+      const m = data.models.find((x) => x.id === u.id);
+      if (!m) continue;
+      m.availability = u.availability;
+      changed = true;
+    }
     for (const a of applied) {
       const m = data.models.find((x) => x.id === a.id);
       if (!m) continue;
@@ -778,6 +809,8 @@ async function main() {
         source: nm.sources[0],
         why: 'Priced and available now; treat capability as unproven until scores land.',
       });
+      // new models are pushed after the availability pass above ran, so derive theirs now.
+      nm.availability = deriveAvailabilityForModel(nm, { orList, aliases, orFeedOk, bedrockKeys });
     }
     // best_for_line: deterministic template, added to every model missing it (strengths untouched).
     let bestForChanged = false;
@@ -818,7 +851,7 @@ async function main() {
     writeFileSync(receiptUrl, JSON.stringify({
       job: 'collect', ran_at: new Date().toISOString(), applied: applied.length, held: held.length,
       confirmed: confirmed.length, new_models: newModels.length, dropped: dropped.length,
-      worklist_items: worklist.items.length,
+      worklist_items: worklist.items.length, availability_changed: availabilityUpdates.length,
       ok: gateOk, ...(gateOk ? {} : { error: 'honesty gate failed' }),
     }, null, 2) + '\n');
 
