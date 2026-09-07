@@ -5,6 +5,7 @@ import {
   newerWins, admitNewModel, isKnownVendor, trackDeprecation, canonicalKey, evaluateFact,
   buildWorklist, bestForLine, needsGuidance, pickGuidance, guidanceItem, parseCsv, refreshCursorBench,
   releaseTitle, isKnownCandidate, findKnownModel, admissionFailReasons, formatDropLine,
+  normalizeDisplayName, findNewCandidateIds, decideRefreshRun, DAILY_FULL_RUN_HOUR_UTC,
 } from './auto-refresh.mjs';
 
 test('normalize strips punctuation/case', () => {
@@ -92,6 +93,111 @@ test('releaseTitle: no vendor prefix in the name falls back to a display-cased v
     releaseTitle({ vendor: 'SomeNewLab', name: 'Foo 1' }),
     'SomeNewLab releases Foo 1',
   );
+});
+
+// --- normalizeDisplayName: strip "<Vendor>: " only when it names the vendor field ---------------
+// Bug (2026-09-06, verified live): admission copied OpenRouter's "Vendor: Model Name" display
+// name straight into `name`, so "Anthropic: Claude Fable 5.1", "OpenAI: GPT-6 Astra" and "OpenAI:
+// GPT-6 Astra Pro" landed in the catalog verbatim, duplicating the vendor field in the model name.
+test('normalizeDisplayName strips a leading vendor prefix that matches the vendor field', () => {
+  assert.equal(normalizeDisplayName('Anthropic: Claude Fable 5.1', 'anthropic'), 'Claude Fable 5.1');
+  assert.equal(normalizeDisplayName('OpenAI: GPT-6 Astra', 'openai'), 'GPT-6 Astra');
+  assert.equal(normalizeDisplayName('OpenAI: GPT-6 Astra Pro', 'openai'), 'GPT-6 Astra Pro');
+  assert.equal(normalizeDisplayName('Qwen: Qwen3.8 Max', 'qwen'), 'Qwen3.8 Max'); // casing differs, still matches
+});
+
+test('normalizeDisplayName leaves a prefix alone when it names a different vendor', () => {
+  // "SpaceXAI" isn't the "x-ai" vendor field written differently — never guess, only strip a
+  // confirmed match.
+  assert.equal(normalizeDisplayName('SpaceXAI: Grok 4.6', 'x-ai'), 'SpaceXAI: Grok 4.6');
+});
+
+test('normalizeDisplayName is a no-op on a name with no vendor prefix', () => {
+  assert.equal(normalizeDisplayName('Claude Opus 5', 'anthropic'), 'Claude Opus 5');
+});
+
+// --- cheap early exit: release watching every 2h without a second job -------------------------
+
+test('decideRefreshRun: skips when there are no new ids and it is not the daily hour', () => {
+  assert.equal(decideRefreshRun([], 8), 'skip');
+  assert.equal(decideRefreshRun([], 0), 'skip');
+});
+
+test('decideRefreshRun: runs when there is at least one new id, any hour', () => {
+  assert.equal(decideRefreshRun([{ id: 'acme/new-1', key: 'new1' }], 8), 'run');
+  assert.equal(decideRefreshRun(['anything'], 23), 'run');
+});
+
+test('decideRefreshRun: always runs at the daily full-run hour (06:00 UTC), new ids or not', () => {
+  assert.equal(DAILY_FULL_RUN_HOUR_UTC, 6);
+  assert.equal(decideRefreshRun([], DAILY_FULL_RUN_HOUR_UTC), 'run');
+  assert.equal(decideRefreshRun([{ id: 'x', key: 'x' }], DAILY_FULL_RUN_HOUR_UTC), 'run');
+});
+
+test('findNewCandidateIds: a candidate matching a known model is not new', () => {
+  const models = [{ id: 'claude-fable-5-1', name: 'Claude Fable 5.1' }];
+  const aliases = {};
+  const orList = [{ id: 'anthropic/claude-fable-5.1', name: 'Anthropic: Claude Fable 5.1' }];
+  assert.deepEqual(findNewCandidateIds({ orList, models, aliases, pending: [] }), []);
+});
+
+test('findNewCandidateIds: a genuinely unknown candidate is new, keyed for persistence', () => {
+  const models = [{ id: 'claude-fable-5-1', name: 'Claude Fable 5.1' }];
+  const aliases = {};
+  const orList = [{ id: 'acme/brand-new-model', name: 'Acme: Brand New Model' }];
+  const out = findNewCandidateIds({ orList, models, aliases, pending: [] });
+  assert.equal(out.length, 1);
+  assert.equal(out[0].id, 'acme/brand-new-model');
+  assert.equal(out[0].key, canonicalKey('Acme: Brand New Model'));
+});
+
+test('findNewCandidateIds: a candidate already in `pending` (a prior cycle already flagged it) is not new again', () => {
+  const models = [];
+  const aliases = {};
+  const orList = [{ id: 'acme/still-unresolved', name: 'Acme: Still Unresolved' }];
+  const key = canonicalKey('Acme: Still Unresolved');
+  assert.equal(findNewCandidateIds({ orList, models, aliases, pending: [key] }).length, 0);
+});
+
+test('findNewCandidateIds: variant tags and free/preview suffixes never count as new', () => {
+  const models = [];
+  const aliases = {};
+  const orList = [
+    { id: 'acme/model-x:online', name: 'Acme: Model X (online)' },
+    { id: 'acme/model-y:free', name: 'Acme: Model Y' },
+    { id: 'acme/model-z-preview-3', name: 'Acme: Model Z Preview 3' },
+  ];
+  assert.deepEqual(findNewCandidateIds({ orList, models, aliases, pending: [] }), []);
+});
+
+// Regression (found testing this against the live OpenRouter feed, 2026-09-06): a candidate
+// listed months ago that our narrow curated catalog never picked up is NOT a launch — without a
+// staleness cutoff, every long-standing OpenRouter listing outside the catalog counts as "new"
+// forever, which is exactly the noise release watching is supposed to ignore.
+test('findNewCandidateIds: a listing older than maxAgeDays is stale, not a launch', () => {
+  const models = [];
+  const aliases = {};
+  const orList = [{ id: 'acme/ancient-model', name: 'Acme: Ancient Model', created: '2026-01-01' }];
+  assert.deepEqual(findNewCandidateIds({ orList, models, aliases, pending: [], today: '2026-09-06' }), []);
+});
+
+test('findNewCandidateIds: a listing inside the staleness window still counts as new', () => {
+  const models = [];
+  const aliases = {};
+  const orList = [{ id: 'acme/fresh-model', name: 'Acme: Fresh Model', created: '2026-08-20' }];
+  const out = findNewCandidateIds({ orList, models, aliases, pending: [], today: '2026-09-06' });
+  assert.equal(out.length, 1);
+});
+
+// LiteLLM's price table is not scanned for new candidates — see the function's own doc comment
+// for why (~3,200 "new" ids on a single live run, almost the whole table). This test just pins
+// that a caller passing llmList through has no effect; it's the OR-only scope that matters.
+test('findNewCandidateIds: an extra llmList argument is ignored — only orList is scanned', () => {
+  const models = [];
+  const aliases = {};
+  const orList = [];
+  const llmList = [{ id: 'acme/only-on-litellm', name: 'acme/only-on-litellm' }];
+  assert.deepEqual(findNewCandidateIds({ orList, llmList, models, aliases, pending: [] }), []);
 });
 
 test('isKnownVendor recognizes our vendor list, rejects unknowns', () => {

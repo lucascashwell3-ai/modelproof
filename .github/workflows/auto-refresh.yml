@@ -5,9 +5,15 @@ name: Modelproof collect (v1.1)
 # stage for facts — only genuinely conflicting/unverifiable items go to the worklist or a GitHub
 # issue. Publish is followed by a live verify against GitHub Pages; a mismatch reverts and fails
 # loud. Standalone Verify piece: .github/workflows/refresh-verify.yml.
+#
+# Runs every 2h (one workflow, one schedule — no second job) so a launch-day model is caught
+# within ~2h instead of waiting for the old Tue/Fri cadence. Most cycles are a cheap id-only
+# check inside scripts/auto-refresh.mjs that exits before touching the network for anything
+# beyond the OpenRouter/LiteLLM lists; the full collect (price facts, worklist, publish) only
+# runs when that check finds a genuinely new candidate, or at the daily 06:00 UTC full-run hour.
 on:
   schedule:
-    - cron: "0 6 * * 2,5"   # Tue/Fri 06:00 UTC
+    - cron: "0 */2 * * *"   # every 2 hours — see scripts/auto-refresh.mjs's early-exit for what actually runs
   workflow_dispatch: {}
 
 permissions:
