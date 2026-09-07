@@ -158,6 +158,40 @@ test(`full grid: ${TASK_IDS.length} tasks x ${HAVE_OPTIONS.length} have x ${STAN
 });
 
 // ---------------------------------------------------------------------------------------------
+// Rule 1 regression (2026-09-06): a vendor sells its own models through its own API by
+// definition, so a stale/unsourced availability.direct_api must never veto reachability for
+// that vendor's own model. Before this fix, direct_api !== true wrongly hid: claude-fable-5-1
+// (1/6 Anthropic), gpt-6-astra + gpt-6-astra-pro (2/7 OpenAI), gemini-3-8-flash (1/6 Google),
+// grok-4-6 (1/2 xAI) — all real, sellable, first-party models with a sourced task_fit.
+// ---------------------------------------------------------------------------------------------
+test("rule 1: an Anthropic/OpenAI/Google/xAI-only user reaches every one of that vendor's own models", () => {
+  for (const [key, vendorName] of Object.entries(VENDOR_KEY_DISPLAY)) {
+    const vendorModels = models.filter((m) => m.vendor === vendorName);
+    assert.ok(vendorModels.length > 0, `no catalog models found for vendor "${vendorName}"`);
+    for (const m of vendorModels) {
+      assert.ok(
+        isReachable(m, [key]),
+        `have=['${key}'] should reach its own vendor's model "${m.id}" regardless of availability.direct_api (=${m.availability?.direct_api}), but isReachable() said no`,
+      );
+    }
+  }
+});
+
+test('rule 1 regression: direct_api !== true no longer excludes a vendor\'s own model', () => {
+  const firstPartyVendors = Object.values(VENDOR_KEY_DISPLAY);
+  const stillUnsourced = models.filter((m) => firstPartyVendors.includes(m.vendor) && m.availability?.direct_api !== true);
+  // This fixture must keep at least one direct_api !== true first-party model per vendor, or
+  // this test stops exercising the bug it's guarding against.
+  const byVendor = {};
+  for (const m of stillUnsourced) byVendor[m.vendor] = (byVendor[m.vendor] || 0) + 1;
+  assert.deepEqual(byVendor, { Anthropic: 1, OpenAI: 2, Google: 1, xAI: 1 });
+  for (const m of stillUnsourced) {
+    const key = Object.keys(VENDOR_KEY_DISPLAY).find((k) => VENDOR_KEY_DISPLAY[k] === m.vendor);
+    assert.ok(isReachable(m, [key]), `"${m.id}" (${m.vendor}, direct_api=${m.availability?.direct_api}) must be reachable via its own vendor key`);
+  }
+});
+
+// ---------------------------------------------------------------------------------------------
 // Performance: a single call for all 10 tasks at once must stay well under the 50ms/query budget
 // the spec sets for browser use (this dataset is 67 models — trivial for plain JS, but this is
 // the guard that would catch an accidental O(n^2)-over-everything regression).

@@ -37,13 +37,24 @@
         have includes 'any'        -> no filter, every model passes this step.
         have includes 'openrouter' -> keep if model.availability.openrouter === true.
         have includes a vendor key -> keep if model.vendor is that vendor's canonical name
-                                       AND model.availability.direct_api === true. Requiring
-                                       the sourced direct_api flag (not just a vendor-name
-                                       match) means an Anthropic/OpenAI/Google/xAI model whose
-                                       own direct_api flag hasn't been sourced yet is excluded
-                                       here too — the same "unsourced is never assumed true"
-                                       rule the rest of this repo runs on, even though it can
-                                       feel too strict for a vendor's own first-party model.
+                                       (VENDOR_KEY_DISPLAY, mirroring scripts/naming.mjs's
+                                       canonical spelling). A vendor sells its own models
+                                       through its own API by definition, so no availability
+                                       flag can veto that — model.availability.direct_api is a
+                                       sourced fact about whether the pipeline found that
+                                       vendor's own pricing-page URL (see
+                                       scripts/derive-availability.mjs), not about whether the
+                                       model is reachable, and treating an unsourced direct_api
+                                       as "unreachable" wrongly hid a vendor's own brand-new
+                                       model before that page got indexed (fixed 2026-09-06 —
+                                       e.g. claude-fable-5-1, gpt-6-astra, gpt-6-astra-pro,
+                                       gemini-3-8-flash, grok-4-6, all real/sellable/direct_api:
+                                       null). direct_api stays a supporting signal only for a
+                                       model of some OTHER vendor that the chosen vendor
+                                       resells (e.g. a marketplace reselling a third party's
+                                       model) — no such cross-vendor field exists in this data
+                                       yet, so today this case never fires; add it back here if
+                                       that data ever lands.
        A model passes step 1 if ANY key in `have` clears it (the array is "everything you
        have", not "all of these at once").
    2. Data rule — dataRule.noChinaHosted drops any model whose vendor's data/vendors.json
@@ -119,7 +130,9 @@ export function reachableVia(model, have) {
   const via = [];
   if (list.includes('openrouter') && model.availability?.openrouter === true) via.push('openrouter');
   for (const key of Object.keys(VENDOR_KEY_DISPLAY)) {
-    if (list.includes(key) && model.vendor === VENDOR_KEY_DISPLAY[key] && model.availability?.direct_api === true) via.push(key);
+    // A vendor's own models are reachable through that vendor's own API by definition — no
+    // availability.direct_api check here (see the rule-1 comment in the file header for why).
+    if (list.includes(key) && model.vendor === VENDOR_KEY_DISPLAY[key]) via.push(key);
   }
   return via;
 }
