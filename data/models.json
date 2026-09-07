@@ -6058,7 +6058,9 @@
       "sources": [
         "https://developer.meta.com/ai/models/muse-glimmer/",
         "https://huggingface.co/meta-models/Muse-Glimmer-30B",
-        "https://venturebeat.com/technology/meta-returns-to-open-source-with-muse-glimmer-an-apache-2-0-licensed-30b-parameter-ai-model-optimized-for-agents-available-now"
+        "https://venturebeat.com/technology/meta-returns-to-open-source-with-muse-glimmer-an-apache-2-0-licensed-30b-parameter-ai-model-optimized-for-agents-available-now",
+        "https://kingy.ai/blog/muse-glimmer-30b-benchmarks-hardware-run/",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Meta model",
       "availability": {
@@ -6125,7 +6127,59 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Meta's Hugging Face model card for Muse Glimmer 30B (checked 2026-09-07) lists coding agent work as an intended use case, covering writing, debugging, and resolving software engineering tasks.",
+              "source_url": "https://huggingface.co/meta-models/Muse-Glimmer-30B",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "Coding agents: Writing, debugging, and resolving real-world software engineering tasks"
+            },
+            {
+              "sentence": "Independent review site Kingy.ai (checked 2026-09-07) noted that Meta's published SWE-Bench Pro and SWE-Bench Verified comparison table for Muse Glimmer 30B is Meta's own data, not an independently reproduced benchmark run.",
+              "source_url": "https://kingy.ai/blog/muse-glimmer-30b-benchmarks-hardware-run/",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "it is not a benchmark sweep, a zero-cost service or a fully reproducible open-source release"
+            },
+            {
+              "sentence": "OpenRouter's public model-usage rankings feed (checked 2026-09-07) recorded 1,488,126 requests against Meta's muse-glimmer-30b-20260810 permaslug (standard variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meta/muse-glimmer-30b-20260810\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": "Meta's own SWE-Bench Verified score of 76.0 for Muse Glimmer 30B is close to but below the 77.2 Meta recorded for Qwen3.6-27B in the same table, and Kingy.ai's 2026-09-07-checked review flagged that table as Meta-sourced rather than independently reproduced.",
+          "as_of": "2026-09-07"
+        },
+        "vision": {
+          "band": "capable",
+          "confidence": "low",
+          "claims": [
+            {
+              "sentence": "Meta's Hugging Face model card (checked 2026-09-07) lists multimodal reasoning over screenshots, charts, documents, and images as an intended use case for Muse Glimmer 30B.",
+              "source_url": "https://huggingface.co/meta-models/Muse-Glimmer-30B",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "Multimodal reasoning: Interpreting screenshots, charts, documents, and images"
+            },
+            {
+              "sentence": "OpenRouter's public model-usage rankings feed (checked 2026-09-07) recorded 1,488,126 requests against Meta's muse-glimmer-30b-20260810 permaslug (standard variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meta/muse-glimmer-30b-20260810\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -6280,7 +6334,9 @@
       "context_window": 1000000,
       "sources": [
         "https://poolside.ai/blog/introducing-laguna-s-2-1",
-        "https://venturebeat.com/infrastructure/poolside-drops-laguna-s-2-1-an-open-weight-coding-model-that-beats-rivals-10x-its-size"
+        "https://venturebeat.com/infrastructure/poolside-drops-laguna-s-2-1-an-open-weight-coding-model-that-beats-rivals-10x-its-size",
+        "https://aitoolsreview.co.uk/insights/poolside-laguna-s-2-1",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Poolside model · 1M ctx",
       "availability": {
@@ -6347,7 +6403,59 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "high",
+          "claims": [
+            {
+              "sentence": "Poolside's July 21, 2026 launch blog post for Laguna S 2.1 (checked 2026-09-07) states the model is a 118B total parameter Mixture-of-Experts model with 8B activated parameters per token.",
+              "source_url": "https://poolside.ai/blog/introducing-laguna-s-2-1",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "a 118b total parameter mixture-of-experts (moe) model with 8b activated parameters per token"
+            },
+            {
+              "sentence": "AIToolsReview's review of Laguna S 2.1 (checked 2026-09-07) found the model winning outright against named rivals on SWE-Bench Multilingual and SWE Atlas while trailing them on other benchmarks.",
+              "source_url": "https://aitoolsreview.co.uk/insights/poolside-laguna-s-2-1",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "laguna s 2.1 actually wins outright on swe-bench multilingual (78.5%) and swe atlas (46.2%)"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 16,284,148 requests against Poolside's poolside/laguna-s-2.1-20260720 permaslug (free variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"poolside/laguna-s-2.1-20260720\",\"variant\":\"free\""
+            }
+          ],
+          "reconciliation": "Poolside's own July 21, 2026 blog post describes Laguna S 2.1 as the leading agentic coding model within its own weight class, while AIToolsReview's 2026-09-07-checked review found it trailing the much larger Kimi K3 on Terminal-Bench 2.1 and Claude Fable 5 on SWE-Bench Pro.",
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Poolside's launch blog post (checked 2026-09-07) describes Laguna S 2.1 as a step forward in developing models that pursue longer-horizon work and make effective use of reasoning.",
+              "source_url": "https://poolside.ai/blog/introducing-laguna-s-2-1",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "a significant step forward in our development of models that pursue longer horizon work and make effective use of reasoning"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 16,284,148 requests against Poolside's poolside/laguna-s-2.1-20260720 permaslug (free variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"poolside/laguna-s-2.1-20260720\",\"variant\":\"free\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -6385,7 +6493,8 @@
       "price_output": 0.13,
       "sources": [
         "https://docs.qwencloud.com/changelog/models",
-        "https://www.eesel.ai/blog/qwen-3-7-flash"
+        "https://www.eesel.ai/blog/qwen-3-7-flash",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Cheapest Alibaba (Qwen) model · 991K ctx · $0.03/$0.13",
       "availability": {
@@ -6453,7 +6562,37 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "bulk": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Independent review site eesel.ai (checked 2026-09-07) recommends Qwen3.7 Flash specifically for high-volume multimodal work where an occasional wrong answer is tolerable, such as tagging and classification.",
+              "source_url": "https://www.eesel.ai/blog/qwen-3-7-flash",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "high-volume multimodal work where a single wrong answer is cheap and recoverable"
+            },
+            {
+              "sentence": "Alibaba's QwenCloud changelog (checked 2026-09-07) describes Qwen3.7 Flash as delivering a comprehensive upgrade over the prior 3.6-Flash model in multimodal understanding and agent execution.",
+              "source_url": "https://docs.qwencloud.com/changelog/models",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "delivers a comprehensive upgrade over 3.6-Flash in multimodal understanding and agent execution"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 47,864,615 requests against Alibaba's qwen/qwen3.7-flash-20260727 permaslug (standard variant) on 2026-09-06, among the highest volumes of the models checked in this batch.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"qwen/qwen3.7-flash-20260727\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": "Alibaba's own changelog markets Qwen3.7 Flash's multimodal and agent upgrades in prose without a benchmark table, while eesel.ai's 2026-09-07-checked review independently ran Roboflow Vision Evals and placed it 22nd of 23 models overall, recommending it only for cheap, error-tolerant, high-volume classification work.",
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -6489,7 +6628,8 @@
       "context_window": 256000,
       "sources": [
         "https://seed.bytedance.com/en/seed2_1",
-        "https://datanorth.ai/news/bytedance-releases-seed-2-1-pro-and-seed-2-1-turbo"
+        "https://datanorth.ai/news/bytedance-releases-seed-2-1-pro-and-seed-2-1-turbo",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "ByteDance model · 256K ctx",
       "availability": {
@@ -6556,7 +6696,81 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "low",
+          "claims": [
+            {
+              "sentence": "ByteDance's Seed 2.1 page (checked 2026-09-07) states that in code engineering the model strengthens end-to-end delivery with more reliable requirement understanding, coding, debugging, and validation.",
+              "source_url": "https://seed.bytedance.com/en/seed2_1",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "in code engineering, it strengthens end-to-end delivery, enabling more reliable requirement understanding, coding, debugging, and validation"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 98,118 requests against ByteDance's bytedance-seed/seed-2-1-turbo-20260810 permaslug (standard variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"bytedance-seed/seed-2-1-turbo-20260810\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": "ByteDance's own Seed 2.1 page describes the Turbo variant's coding capabilities in prose, but per DataNorth's 2026-09-07-checked report ByteDance has not published parameter counts or independent benchmark scores specifically for the Seed 2.1 family.",
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "ByteDance's Seed 2.1 page (checked 2026-09-07) states the model reliably handles multi-step tasks ranging from project planning and file processing to tool use.",
+              "source_url": "https://seed.bytedance.com/en/seed2_1",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "from project planning and file processing to tool use"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 98,118 requests against ByteDance's bytedance-seed/seed-2-1-turbo-20260810 permaslug (standard variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"bytedance-seed/seed-2-1-turbo-20260810\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "exec-summaries": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "ByteDance's Seed 2.1 page (checked 2026-09-07) states the model reliably handles multi-step tasks for high-value office work and complex everyday consultations.",
+              "source_url": "https://seed.bytedance.com/en/seed2_1",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "for high-value office work and complex everyday consultations, it reliably handles multi-step tasks"
+            },
+            {
+              "sentence": "DataNorth's June 24, 2026 report on the Seed 2.1 launch (checked 2026-09-07) describes Seed 2.1 Turbo as a faster, lower-cost variant built for high-frequency enterprise workloads.",
+              "source_url": "https://datanorth.ai/news/bytedance-releases-seed-2-1-pro-and-seed-2-1-turbo",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "a faster, lower cost variant built for high frequency enterprise workloads"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 98,118 requests against ByteDance's bytedance-seed/seed-2-1-turbo-20260810 permaslug (standard variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"bytedance-seed/seed-2-1-turbo-20260810\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -6597,7 +6811,8 @@
         "https://www.aionlabs.ai/",
         "https://openrouter.ai/aion-labs/aion-3.0",
         "https://writingmate.ai/models/aion-labs/aion-3.0",
-        "https://designforonline.com/ai-models/aionlabs-aion-3-0/"
+        "https://designforonline.com/ai-models/aionlabs-aion-3-0/",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Priciest AionLabs model · 131K ctx · $3/$6",
       "availability": {
@@ -6664,7 +6879,52 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "writing": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's model listing for Aion-3.0 (checked 2026-09-07) describes it as a multi-model roleplaying and storytelling system built on the GLM family of models.",
+              "source_url": "https://openrouter.ai/aion-labs/aion-3.0",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Aion-3.0 is a multi-model roleplaying and storytelling system from AionLabs, built on the GLM family of models."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 478,141 requests against AionLabs' aion-labs/aion-3.0-20260707 permaslug (standard variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"aion-labs/aion-3.0-20260707\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "chat": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's model page for Aion-3.0 (checked 2026-09-07) lists Janitor AI, a character chatbot platform, as its top application by token volume.",
+              "source_url": "https://openrouter.ai/aion-labs/aion-3.0",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Janitor AI is a chatbot platform where users create and chat with custom AI characters for interactive roleplay, storytelling, and immersive fiction."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 478,141 requests against AionLabs' aion-labs/aion-3.0-20260707 permaslug (standard variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"aion-labs/aion-3.0-20260707\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -6704,7 +6964,8 @@
       "sources": [
         "https://www.aionlabs.ai/",
         "https://openrouter.ai/aion-labs/aion-3.0-mini",
-        "https://designforonline.com/ai-models/aionlabs-aion-3-0-mini/"
+        "https://designforonline.com/ai-models/aionlabs-aion-3-0-mini/",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Cheapest AionLabs model · 131K ctx · $0.7/$1.4",
       "availability": {
@@ -6771,7 +7032,52 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "writing": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's model listing for Aion-3.0-Mini (checked 2026-09-07) describes it as a multi-model roleplaying and storytelling system built on the DeepSeek family of models.",
+              "source_url": "https://openrouter.ai/aion-labs/aion-3.0-mini",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Aion-3.0 Mini is a multi-model roleplaying and storytelling system from AionLabs, built on the DeepSeek family of models."
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 178,162 requests against AionLabs' aion-labs/aion-3.0-mini-20260707 permaslug (standard variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"aion-labs/aion-3.0-mini-20260707\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "chat": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's model page for Aion-3.0-Mini (checked 2026-09-07) lists HammerAI, a character-chat app, as its top application by token volume.",
+              "source_url": "https://openrouter.ai/aion-labs/aion-3.0-mini",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Chat with AI characters for free"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 178,162 requests against AionLabs' aion-labs/aion-3.0-mini-20260707 permaslug (standard variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"aion-labs/aion-3.0-mini-20260707\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -6809,7 +7115,9 @@
       "sources": [
         "https://seed.bytedance.com/en/seed2",
         "https://howaiworks.ai/models/doubao-seed-code",
-        "https://developer.puter.com/ai/bytedance/seed-2.0-code/"
+        "https://developer.puter.com/ai/bytedance/seed-2.0-code/",
+        "https://seed.bytedance.com/en/blog/seed-2-0-official-launch",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "ByteDance model · 256K ctx",
       "availability": {
@@ -6876,7 +7184,59 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "ByteDance's official Seed 2.0 launch blog post (checked 2026-09-07) confirms Seed 2.0 includes a dedicated Code model alongside the general-purpose Pro, Lite, and Mini variants.",
+              "source_url": "https://seed.bytedance.com/en/blog/seed-2-0-official-launch",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "Seed2.0 offers three general-purpose Agent models of different sizes - Pro, Lite, and Mini, along with a dedicated Code model"
+            },
+            {
+              "sentence": "HowAIWorks.ai's model page for Doubao Seed 2.0 Code (checked 2026-09-07) states it has stronger programming and reasoning abilities than ByteDance's preceding Seed coding models.",
+              "source_url": "https://howaiworks.ai/models/doubao-seed-code",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Stronger programming and reasoning abilities than the preceding Seed coding models"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 33,416 requests against ByteDance's bytedance-seed/seed-2.0-code-20260730 permaslug (standard variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"bytedance-seed/seed-2.0-code-20260730\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "low",
+          "claims": [
+            {
+              "sentence": "HowAIWorks.ai's model page for Doubao Seed 2.0 Code (checked 2026-09-07) recommends it for agentic feature implementation, described as multi-step work where the model must plan, execute, observe results, and revise the plan.",
+              "source_url": "https://howaiworks.ai/models/doubao-seed-code",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "multi-step work where the model must plan, execute, observe results, and revise the plan"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 33,416 requests against ByteDance's bytedance-seed/seed-2.0-code-20260730 permaslug (standard variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"bytedance-seed/seed-2.0-code-20260730\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -6924,7 +7284,10 @@
         "https://poolside.ai/blog/introducing-laguna-xs-2-1",
         "https://huggingface.co/poolside/Laguna-XS.2",
         "https://docs.poolside.ai/release-notes/models",
-        "https://huggingface.co/poolside/Laguna-XS-2.1-NVFP4"
+        "https://huggingface.co/poolside/Laguna-XS-2.1-NVFP4",
+        "https://benchable.ai/models/poolside/laguna-xs-2.1-20260625",
+        "https://openrouter.ai/api/frontend/v1/rankings/models",
+        "https://huggingface.co/poolside/Laguna-XS-2.1"
       ],
       "best_for_line": "Poolside model · 256K ctx · $0.1/$0.2",
       "availability": {
@@ -6991,7 +7354,66 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Poolside's July 2, 2026 blog post introducing Laguna XS 2.1 (checked 2026-09-07) states it is a 33B total parameter Mixture-of-Experts model with 3B activated parameters per token, up 5.4 points to 63.1% on SWE-bench Multilingual versus the prior XS.2 release.",
+              "source_url": "https://poolside.ai/blog/introducing-laguna-xs-2-1",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "up 5.4 points to 63.1%"
+            },
+            {
+              "sentence": "Benchmark tracking site Benchable.ai (checked 2026-09-07) reports Laguna XS 2.1 achieving a 100% success rate across all of the benchmarks in its evaluation suite.",
+              "source_url": "https://benchable.ai/models/poolside/laguna-xs-2.1-20260625",
+              "tier": "measured",
+              "date": "2026-09-07",
+              "quote": "achieving a 100% success rate across all 7 benchmarks"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 1,930,672 requests against Poolside's poolside/laguna-xs-2.1-20260625 permaslug (free variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"poolside/laguna-xs-2.1-20260625\",\"variant\":\"free\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Poolside's blog post for Laguna XS 2.1 (checked 2026-09-07) states it is designed for agentic coding and long-horizon work on a local machine.",
+              "source_url": "https://poolside.ai/blog/introducing-laguna-xs-2-1",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "designed for agentic coding and long-horizon work on a local machine"
+            },
+            {
+              "sentence": "Poolside's Hugging Face model card for the Laguna XS line (checked 2026-09-07) describes it as a lightweight terminal-based coding agent that runs on a Mac with 36GB of RAM.",
+              "source_url": "https://huggingface.co/poolside/Laguna-XS-2.1",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "a lightweight terminal-based coding agent"
+            },
+            {
+              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 1,930,672 requests against Poolside's poolside/laguna-xs-2.1-20260625 permaslug (free variant) on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"poolside/laguna-xs-2.1-20260625\",\"variant\":\"free\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",

@@ -2268,5 +2268,188 @@
       "https://openrouter.ai/api/frontend/v1/rankings/models",
       "https://arena.ai/leaderboard/code/webdev"
     ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Glimmer 30B",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/meta-models/Muse-Glimmer-30B",
+      "https://kingy.ai/blog/muse-glimmer-30b-benchmarks-hardware-run/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Glimmer 30B",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/meta-models/Muse-Glimmer-30B",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Laguna S 2.1",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://poolside.ai/blog/introducing-laguna-s-2-1",
+      "https://aitoolsreview.co.uk/insights/poolside-laguna-s-2-1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Laguna S 2.1",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://poolside.ai/blog/introducing-laguna-s-2-1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.7 Flash",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.eesel.ai/blog/qwen-3-7-flash",
+      "https://docs.qwencloud.com/changelog/models",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Seed 2.1 Turbo",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://seed.bytedance.com/en/seed2_1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Seed 2.1 Turbo",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://seed.bytedance.com/en/seed2_1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Seed 2.1 Turbo",
+    "field": "task_fit_judged.exec-summaries",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://seed.bytedance.com/en/seed2_1",
+      "https://datanorth.ai/news/bytedance-releases-seed-2-1-pro-and-seed-2-1-turbo",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Aion-3.0",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/aion-labs/aion-3.0",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Aion-3.0",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/aion-labs/aion-3.0",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Aion-3.0-Mini",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/aion-labs/aion-3.0-mini",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Aion-3.0-Mini",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/aion-labs/aion-3.0-mini",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Seed-2.0-Code",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://seed.bytedance.com/en/blog/seed-2-0-official-launch",
+      "https://howaiworks.ai/models/doubao-seed-code",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Seed-2.0-Code",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://howaiworks.ai/models/doubao-seed-code",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Laguna XS 2.1",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://poolside.ai/blog/introducing-laguna-xs-2-1",
+      "https://benchable.ai/models/poolside/laguna-xs-2.1-20260625",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Laguna XS 2.1",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://poolside.ai/blog/introducing-laguna-xs-2-1",
+      "https://huggingface.co/poolside/Laguna-XS-2.1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
   }
 ]
