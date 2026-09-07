@@ -400,14 +400,36 @@ export function filterCandidates(taskId, input, data) {
  * guarantees the eventual shortlist never contains a pricier model with a lower (or equal)
  * fit than a cheaper one. Candidates with an unknown cost can't be compared either way, so
  * they're never dropped by this step. */
+/** y dominates x only if y's judged tier (band, then confidence) is AT LEAST AS GOOD as x's —
+ * a 'capable' model can never dominate-and-eliminate a 'strong' one just by being cheaper or
+ * carrying a higher raw fit number, or the exact bug this whole rewrite exists to kill (a number
+ * outranking a judgment) would sneak back in through domination pruning instead of ranking. Within
+ * the SAME (band, confidence) tier this is exactly the old fit+cost comparison; across tiers, a
+ * strictly-better-tier model dominates a cheaper-or-equal one outright (its judgment already
+ * establishes "at least as fit" — no numeric fit comparison needed), and a worse-tier model can
+ * never dominate a better-tier one regardless of price. */
+const ADOPTION_RANK = { broad: 3, moderate: 2, unknown: 1, low: 0 };
+const adoptionRank = (adoption) => ADOPTION_RANK[adoption] ?? 1;
+
+export function dominates(y, x) {
+  if (y === x || !num(x.monthly_cost_usd) || !num(y.monthly_cost_usd)) return false;
+  const sameBandConfidence = bandRank(y.band) === bandRank(x.band) && confidenceRank(y.confidence) === confidenceRank(x.confidence);
+  const yTierAtLeastAsGood = bandRank(y.band) > bandRank(x.band) ||
+    (bandRank(y.band) === bandRank(x.band) && confidenceRank(y.confidence) >= confidenceRank(x.confidence));
+  if (!yTierAtLeastAsGood) return false;
+  // Within the SAME (band, confidence) tier, a lower-adoption model can never dominate-and-
+  // eliminate a higher-adoption one either — otherwise a cheap, low-adoption model could erase
+  // the very broader-adoption alternative the start_here adoption gate exists to prefer, before
+  // that gate ever runs (2026-09-07 regression, caught by the vision task's own catalog: a
+  // $0.93/mo low-adoption model was dominating a $1.90/mo moderate-adoption one at equal fit).
+  if (sameBandConfidence && adoptionRank(y.model.adoption) < adoptionRank(x.model.adoption)) return false;
+  const cheaperOrEqual = y.monthly_cost_usd <= x.monthly_cost_usd;
+  const atLeastAsFit = sameBandConfidence ? y.fit >= x.fit : true;
+  const strictlyBetter = !sameBandConfidence || y.monthly_cost_usd < x.monthly_cost_usd || y.fit > x.fit;
+  return cheaperOrEqual && atLeastAsFit && strictlyBetter;
+}
 export function dropDominated(list) {
-  return list.filter((x) => !list.some((y) => {
-    if (y === x || !num(x.monthly_cost_usd) || !num(y.monthly_cost_usd)) return false;
-    const cheaperOrEqual = y.monthly_cost_usd <= x.monthly_cost_usd;
-    const atLeastAsFit = y.fit >= x.fit;
-    const strictlyBetter = y.monthly_cost_usd < x.monthly_cost_usd || y.fit > x.fit;
-    return cheaperOrEqual && atLeastAsFit && strictlyBetter;
-  }));
+  return list.filter((x) => !list.some((y) => dominates(y, x)));
 }
 
 // -----------------------------------------------------------------------------------------
@@ -485,7 +507,14 @@ export function decide(input, data) {
     // it just doesn't get the start_here flag. If every candidate is disqualified there's no
     // alternative to prefer, so the normal #1 keeps start_here (a rule with nothing better to
     // point at doesn't block the only option).
-    let startIdx = ranked.findIndex((item) => !isDisqualifiedFromStartHere(item, ranked, stance, input));
+    //
+    // The adoption check is evaluated against the FULL pre-dropDominated `candidates`, not the
+    // pruned/ranked survivors — dropDominated only ever compares raw fit and cost (numbers), so a
+    // broader-adoption same-band model that lost a pure price/fit domination check must still
+    // count as "a real alternative existed" for the adoption gate, or the exact bug this rewrite
+    // exists to kill (a numeric comparison quietly overriding a judgment-based rule) would sneak
+    // back in through domination pruning instead of ranking.
+    let startIdx = ranked.findIndex((item) => !isDisqualifiedFromStartHere(item, candidates, stance, input));
     if (startIdx === -1) startIdx = 0;
     const reordered = startIdx === 0 ? ranked : [ranked[startIdx], ...ranked.slice(0, startIdx), ...ranked.slice(startIdx + 1)];
     const top = reordered.slice(0, 3);

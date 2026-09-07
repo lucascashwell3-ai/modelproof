@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import {
   decide, filterCandidates, isReachable, vendorCountry, WHY_FIELDS, VENDOR_KEY_DISPLAY, STANCES,
   taskFitFor, basisFromClaims, judgedBandOf, bandRank, confidenceRank, isEnterpriseInput,
-  isDisqualifiedFromStartHere, topClaimSentence, rankByStance,
+  isDisqualifiedFromStartHere, topClaimSentence, rankByStance, dominates,
 } from '../assets/decide.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
 
@@ -125,12 +125,21 @@ test(`full grid: ${TASK_IDS.length} tasks x ${HAVE_OPTIONS.length} have x ${STAN
               }
             }
 
-            // (d) never a pricier model with a lower fit than a cheaper one in the same shortlist
+            // (d) never a pricier, lower-fit model dominated by a cheaper one IN THE SAME JUDGED
+            // TIER (band, then confidence) — rewritten 2026-09-07 alongside dropDominated/
+            // dominates(): a pricier model with a lower raw fit number can legitimately survive
+            // now if its judged band is higher (that's the whole point of the rewrite — a
+            // 'capable' model can never eliminate a 'strong' one just by being cheaper), so the
+            // old "pricier AND lower-fit" check only still applies within one (band, confidence)
+            // tier, where dominates() falls back to exactly that comparison.
+            const bandOf = (id) => { const mm = models.find((x) => x.id === id); return judgedBandOf(mm, taskId); };
             for (const a of shortlist) {
               for (const b of shortlist) {
                 if (a === b || typeof a.monthly_cost_usd !== 'number' || typeof b.monthly_cost_usd !== 'number') continue;
-                if (a.monthly_cost_usd > b.monthly_cost_usd && a.fit < b.fit) {
-                  failures.push(`${label}: "${a.id}" ($${a.monthly_cost_usd}, fit ${a.fit}) is pricier AND lower-fit than "${b.id}" ($${b.monthly_cost_usd}, fit ${b.fit})`);
+                const ba = bandOf(a.id), bb = bandOf(b.id);
+                const shaped = (item, band) => ({ ...item, band: band.band, confidence: band.confidence, model: { adoption: item.adoption } });
+                if (dominates(shaped(b, bb), shaped(a, ba))) {
+                  failures.push(`${label}: "${a.id}" ($${a.monthly_cost_usd}, fit ${a.fit}, band ${ba.band}) is dominated by "${b.id}" ($${b.monthly_cost_usd}, fit ${b.fit}, band ${bb.band}) but both survived to the shortlist`);
                 }
               }
             }
