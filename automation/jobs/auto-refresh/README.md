@@ -1,12 +1,22 @@
 # Modelproof refresh v1.1 — owner file
 
-`automation/PIPELINE_V1.md` "Modelproof refresh — v1.1". Three pieces, Tue/Fri, 45 min end to end.
+`automation/PIPELINE_V1.md` "Modelproof refresh — v1.1". Three pieces; Collect now checks in
+every 2h (see "Release watching" below), Judge + Verify stay Tue/Fri, 45 min end to end.
 
-| UTC (Tue+Fri) | Piece | Runs on | Does |
+| UTC | Piece | Runs on | Does |
 |---|---|---|---|
-| 06:00 | **Collect** | GitHub Actions (`.github/workflows/auto-refresh.yml`) | Pulls OpenRouter + LiteLLM + Epoch's benchmark export; applies 2-source-agreement facts; writes `data/refresh/worklist.json` for anything it can't settle (new models, conflicts, benchmarks, ladders, releases) |
-| 06:30 | **Judge** | claude.ai cloud routine, Sonnet | Reads only `worklist.json`, researches the open web, writes `judgments.json`, applies via `scripts/apply-judgment.mjs`, pushes to main. Instructions: `scripts/refresh-judge.md`. |
-| 07:15 | **Verify** | GitHub Actions (`.github/workflows/refresh-verify.yml`) | Confirms live `as_of` ≥ collect's receipt date and the gate passes on the live file; reverts + fails loud on mismatch |
+| every 2h; full pass at 06:00 daily | **Collect** | GitHub Actions (`.github/workflows/auto-refresh.yml`) | Cheap id check most cycles (see below); on a full pass, pulls OpenRouter + LiteLLM + Epoch's benchmark export, applies 2-source-agreement facts, writes `data/refresh/worklist.json` for anything it can't settle (new models, conflicts, benchmarks, ladders, releases) |
+| 06:30 Tue/Fri | **Judge** | claude.ai cloud routine, Sonnet | Reads only `worklist.json`, researches the open web, writes `judgments.json`, applies via `scripts/apply-judgment.mjs`, pushes to main. Instructions: `scripts/refresh-judge.md`. |
+| 07:15 Tue/Fri | **Verify** | GitHub Actions (`.github/workflows/refresh-verify.yml`) | Confirms live `as_of` ≥ collect's receipt date and the gate passes on the live file; reverts + fails loud on mismatch |
+
+**Release watching (added 2026-09-06):** Collect's workflow schedule is every 2h — one workflow,
+one cron entry, no second job. Most cycles it only fetches the OpenRouter + LiteLLM id lists and
+compares them against `data/models.json` + `data/_auto_refresh_state.json`'s already-flagged
+candidates (`findNewCandidateIds` / `decideRefreshRun` in `scripts/auto-refresh.mjs`); with no
+genuinely new id and it's not 06:00 UTC, it logs `no new models — skipping full run` and exits
+without touching the network further or writing anything. A new candidate id, or the 06:00 UTC
+hour itself, runs the full Collect pass exactly as before — this is what catches a launch-day
+model within about 2h instead of waiting for the next scheduled pass.
 
 **Sources:** OpenRouter models API + LiteLLM price table (Tier A, public, no key) + Epoch AI's
 CC-BY benchmark export (ladders). LMArena dropped 2026-08-22: feed 404s and its terms forbid republishing. Judge also
@@ -67,6 +77,8 @@ reporter reads these for the board and missed-tick detection.
 
 **Local run:**
 - `node scripts/auto-refresh.mjs --dry-run` — collect, prints only.
+- `REFRESH_FORCE_FULL=1 node scripts/auto-refresh.mjs --dry-run` — force a full pass regardless of
+  the early-exit check (testing only). `REFRESH_FORCE_SKIP=1` forces the skip path the same way.
 - `node scripts/apply-judgment.mjs judgments.json --dry-run` — judge apply, prints only.
 - `node --test scripts/test-auto-refresh.mjs scripts/test-apply-judgment.mjs` — unit tests.
 

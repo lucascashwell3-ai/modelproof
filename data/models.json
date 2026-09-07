@@ -2425,8 +2425,8 @@
       "best_for_line": "Priciest google model · 1M ctx · $0.75/$3.75"
     },
     {
-      "id": "openai-gpt-6-astra",
-      "name": "OpenAI: GPT-6 Astra",
+      "id": "gpt-6-astra",
+      "name": "GPT-6 Astra",
       "vendor": "openai",
       "released": "2026-09-04",
       "context_window": 1050000,
@@ -2456,8 +2456,8 @@
       "best_for_line": "Cheapest openai model · 1M ctx · $10/$50"
     },
     {
-      "id": "openai-gpt-6-astra-pro",
-      "name": "OpenAI: GPT-6 Astra Pro",
+      "id": "gpt-6-astra-pro",
+      "name": "GPT-6 Astra Pro",
       "vendor": "openai",
       "released": "2026-09-04",
       "context_window": 1050000,
@@ -2487,8 +2487,8 @@
       "best_for_line": "Priciest openai model · 1M ctx · $10/$50"
     },
     {
-      "id": "anthropic-claude-fable-5-1",
-      "name": "Anthropic: Claude Fable 5.1",
+      "id": "claude-fable-5-1",
+      "name": "Claude Fable 5.1",
       "vendor": "anthropic",
       "released": "2026-09-01",
       "context_window": 1000000,

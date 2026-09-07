@@ -86,6 +86,28 @@ const DISPLAY_VENDOR_PREFIX = /^[A-Za-z][A-Za-z0-9.\- ]{0,29}:\s+/;
 export const stripDisplayVendorPrefix = (s) => String(s || '').replace(DISPLAY_VENDOR_PREFIX, '');
 
 /**
+ * Normalize a candidate's display name for admission: strip a leading "<Vendor>: " prefix ONLY
+ * when that prefix names the same vendor already recorded in the vendor field ("Anthropic: Claude
+ * Fable 5.1" + vendor "anthropic" -> "Claude Fable 5.1"). This is what caused "Anthropic: Claude
+ * Fable 5.1", "OpenAI: GPT-6 Astra", "OpenAI: GPT-6 Astra Pro" to land in the catalog verbatim
+ * (2026-09-06) — OpenRouter's display names carry the "Vendor: Model" shape by convention, and
+ * admission copied it straight into `name`, duplicating the vendor field.
+ * A prefix that names something OTHER than the vendor field (e.g. "SpaceXAI: Grok 4.6" when
+ * vendor is "x-ai") is left alone — only strip what's confirmed to be the vendor itself, never
+ * guess. Comparison is via normalize() so casing/punctuation differences ("OpenAI" vs "openai")
+ * don't block the match.
+ */
+export function normalizeDisplayName(name, vendor) {
+  const s = String(name || '');
+  const m = DISPLAY_VENDOR_PREFIX.exec(s);
+  if (!m) return s;
+  const prefix = m[0].replace(/:\s*$/, '').trim();
+  if (normalize(prefix) !== normalize(vendor)) return s;
+  const rest = s.slice(m[0].length).trim();
+  return rest || s;
+}
+
+/**
  * New-model dedup key: strip the variant tag, the display vendor prefix, then canonicalize.
  * Applied identically to a candidate and to a known model's name/id/aliases so it doesn't matter
  * which side happens to carry the "Vendor: " noise.
@@ -120,6 +142,64 @@ export function isKnownCandidate(name, models, aliases) {
   const n = canonicalKey(stripVariantSuffix(name));
   if (!n) return true; // empty name can't be a real candidate
   return findKnownModel(name, models, aliases) != null;
+}
+
+// --- cheap early exit (release watching without a second job) ---------------------------------
+// Purpose: catch a launch-day model within ~2h instead of waiting for the Tue/Fri full run,
+// without a second workflow/job (automation rule: one workflow, one schedule; no job triggers
+// another). The workflow's cron runs every 2h; this decides, using only the already-fetched
+// OpenRouter id list (no Epoch download, no price/worklist processing), whether there's anything
+// worth a full Collect pass this cycle. See findNewCandidateIds() for why LiteLLM — also fetched
+// on every cycle for the full run's price checks — isn't used for this comparison.
+export const DAILY_FULL_RUN_HOUR_UTC = 6; // matches the "Tue/Fri 06:00 UTC" full-run cron hour
+
+/**
+ * Which OpenRouter candidates are worth a full Collect pass this cycle: not a variant tag, not
+ * older than `maxAgeDays` (the same 45-day staleness rule the full run's new-model check uses —
+ * this is release watching, so a listing that's been sitting on OpenRouter for months isn't a
+ * launch, it's just something the catalog never picked up), not a known model (same
+ * alias/canonical matching admission uses), and not already flagged by a previous cheap check
+ * (`pending` — ids a prior cycle already surfaced but the full run couldn't yet resolve, e.g.
+ * still single-source). Without the `pending` exclusion, a stuck candidate that never gets
+ * admitted would force a full run every single 2h cycle forever, instead of the one cycle it
+ * actually takes to notice it.
+ *
+ * LiteLLM is deliberately NOT scanned here even though it's a cheap fetch: it's a ~3,000-entry
+ * historical price table spanning every vendor it has ever priced, not a curated "what's
+ * available now" list — tried against the live feed, treating its ids as independent candidates
+ * found ~3,200 "new" ids on a single run (almost the whole table), which would make the early
+ * exit always decide `run` and defeat the point of it. The full Collect run already treats
+ * LiteLLM the same way — a secondary source that confirms an OpenRouter candidate's price, never
+ * an independent discovery source for new models — this mirrors that.
+ *
+ * Returns [{ id, key }] — `id` for logging, `key` (canonical) for persisting into `pending` next run.
+ */
+export function findNewCandidateIds({ orList, models, aliases, pending, today = new Date().toISOString().slice(0, 10), maxAgeDays = 45 }) {
+  const pendingSet = new Set(pending || []);
+  const seenThisRun = new Set();
+  const out = [];
+  for (const c of orList || []) {
+    if (!c) continue;
+    if (/free|preview-\d|:online|extended/i.test(c.id || '')) continue; // variant tag, not a new model
+    if (c.created && today && (Date.parse(today) - Date.parse(c.created)) / 864e5 > maxAgeDays) continue; // stale listing, not a launch
+    if (findKnownModel(c.name, models, aliases) || findKnownModel(c.id, models, aliases)) continue;
+    const key = canonicalKey(stripVariantSuffix(c.name || c.id));
+    if (!key || seenThisRun.has(key) || pendingSet.has(key)) continue;
+    seenThisRun.add(key);
+    out.push({ id: c.id || c.name, key });
+  }
+  return out;
+}
+
+/**
+ * The decision itself, isolated as a pure function so it's trivial to test: given the candidate
+ * ids a cheap check couldn't already explain, and the current UTC hour, run the full Collect
+ * pipeline or skip it. The 06:00 UTC hour always runs — that's the guaranteed daily full pass
+ * (automation/jobs/auto-refresh/README.md); every other hour only runs when there's something new.
+ */
+export function decideRefreshRun(newIds, hourUTC) {
+  if (hourUTC === DAILY_FULL_RUN_HOUR_UTC) return 'run';
+  return (newIds && newIds.length > 0) ? 'run' : 'skip';
 }
 
 /** Match a candidate name/id against our models via the alias map. Returns our model id or null. */
@@ -518,6 +598,24 @@ async function main() {
   console.log('feed: fetching OpenRouter + LiteLLM...');
   const [orList, llmList] = await Promise.all([feedOpenRouter(), feedLiteLLM()]);
   console.log(`feed: openrouter=${orList.length} litellm=${llmList.length} candidates`);
+
+  // --- cheap early exit (release watching without a second job) -------------------------------
+  // The workflow now runs every 2h; everything above this line is the only network cost paid on
+  // a cycle with nothing new. REFRESH_FORCE_FULL / REFRESH_FORCE_SKIP are local/CI testing
+  // overrides only — the real decision is always decideRefreshRun(newIds, hourUTC).
+  const hourUTC = new Date().getUTCHours();
+  const newCandidates = findNewCandidateIds({ orList, models: data.models, aliases, pending: state.seenCandidateIds, today });
+  const forceFull = process.env.REFRESH_FORCE_FULL === '1';
+  const forceSkip = process.env.REFRESH_FORCE_SKIP === '1';
+  const decision = forceFull ? 'run' : forceSkip ? 'skip' : decideRefreshRun(newCandidates, hourUTC);
+  console.log(`early-exit: ${newCandidates.length} new candidate id(s), hour=${hourUTC} UTC -> ${decision}` +
+    (forceFull ? ' (forced via REFRESH_FORCE_FULL=1)' : forceSkip ? ' (forced via REFRESH_FORCE_SKIP=1)' : '') +
+    (newCandidates.length ? ` [${newCandidates.slice(0, 5).map((c) => c.id).join(', ')}${newCandidates.length > 5 ? ', ...' : ''}]` : ''));
+  if (decision === 'skip') {
+    console.log('no new models — skipping full run');
+    return;
+  }
+
   const epochRows = await feedEpochCursorBench();
   const ladder = epochRows.length ? refreshCursorBench(data, epochRows, today) : { changed: false, notes: ['feed empty — untouched'] };
   console.log(`ladder: cursorbench ${ladder.changed ? 'REFRESHED' : 'unchanged'} — ${ladder.notes.join('; ')}`);
@@ -584,7 +682,7 @@ async function main() {
     if (admitNewModel({ sourceCount, hasPricing, vendorKnown })) {
       newModels.push({
         id: c.id.replace(/[^a-z0-9]+/gi, '-').toLowerCase(),
-        name: c.name,
+        name: normalizeDisplayName(c.name, vendorGuess),
         vendor: vendorGuess,
         released: c.created || null,
         context_window: c.contextWindow ?? llmSame?.contextWindow ?? null,
@@ -647,6 +745,10 @@ async function main() {
     if (m) worklistItems.push(guidanceItem(m, today));
   }
   nextState.guidanceCursor = guidance.cursor;
+
+  // Remember every candidate this run already looked at (admitted or held) so the cheap early-exit
+  // check on the next 2h cycle doesn't force another full run for the same still-unresolved id.
+  nextState.seenCandidateIds = Array.from(new Set([...(state.seenCandidateIds || []), ...newCandidates.map((c) => c.key)]));
 
   // --- worklist (computed regardless of dry-run, so --dry-run can preview it) ------------------
   const worklist = { generated: today, items: buildWorklist(worklistItems) };
