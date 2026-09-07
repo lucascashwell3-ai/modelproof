@@ -818,5 +818,376 @@
     "sources": [
       "https://openrouter.ai/deepseek/deepseek-v4-flash-0731"
     ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.7 Flash",
+    "field": "naming",
+    "old": "google-gemini-3-7-flash · google · Google: Gemini 3.7 Flash",
+    "new": "gemini-3-7-flash · Google · Gemini 3.7 Flash",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Grok 4.6",
+    "field": "naming",
+    "old": "x-ai-grok-4-6 · x-ai · SpaceXAI: Grok 4.6",
+    "new": "grok-4-6 · xAI · Grok 4.6",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.2",
+    "field": "naming",
+    "old": "meta-muse-spark-1-2 · meta · Meta: Muse Spark 1.2",
+    "new": "muse-spark-1-2 · Meta · Muse Spark 1.2",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.1",
+    "field": "naming",
+    "old": "meta-muse-spark-1-1 · meta · Meta: Muse Spark 1.1",
+    "new": "muse-spark-1-1 · Meta · Muse Spark 1.1",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "KAT-Coder-Pro V2.5",
+    "field": "naming",
+    "old": "kat-coder-pro-v2-5 · Kwaipilot · Kwaipilot: KAT-Coder-Pro V2.5",
+    "new": "kat-coder-pro-v2-5 · Kwaipilot · KAT-Coder-Pro V2.5",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "KAT-Coder-Air V2.5",
+    "field": "naming",
+    "old": "kat-coder-air-v2-5 · Kwaipilot · Kwaipilot: KAT-Coder-Air V2.5",
+    "new": "kat-coder-air-v2-5 · Kwaipilot · KAT-Coder-Air V2.5",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "LongCat 2.0",
+    "field": "naming",
+    "old": "longcat-2-0 · Meituan · Meituan: LongCat 2.0",
+    "new": "longcat-2-0 · Meituan · LongCat 2.0",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Glimmer 30B",
+    "field": "naming",
+    "old": "muse-glimmer-30b · Meta · Meta: Muse Glimmer 30B",
+    "new": "muse-glimmer-30b · Meta · Muse Glimmer 30B",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Nemotron 3.5 Lightning",
+    "field": "naming",
+    "old": "nemotron-3-5-lightning · NVIDIA · NVIDIA: Nemotron 3.5 Lightning",
+    "new": "nemotron-3-5-lightning · NVIDIA · Nemotron 3.5 Lightning",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Laguna S 2.1",
+    "field": "naming",
+    "old": "laguna-s-2-1 · Poolside · Poolside: Laguna S 2.1",
+    "new": "laguna-s-2-1 · Poolside · Laguna S 2.1",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.7 Flash",
+    "field": "naming",
+    "old": "qwen3-7-flash · Qwen (Alibaba) · Qwen: Qwen3.7 Flash",
+    "new": "qwen3-7-flash · Alibaba (Qwen) · Qwen3.7 Flash",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Seed 2.1 Turbo",
+    "field": "naming",
+    "old": "seed-2-1-turbo · ByteDance · ByteDance Seed: Seed 2.1 Turbo",
+    "new": "seed-2-1-turbo · ByteDance · Seed 2.1 Turbo",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Aion-3.0",
+    "field": "naming",
+    "old": "aion-3-0 · AionLabs · AionLabs: Aion-3.0",
+    "new": "aion-3-0 · AionLabs · Aion-3.0",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Aion-3.0-Mini",
+    "field": "naming",
+    "old": "aion-3-0-mini · AionLabs · AionLabs: Aion-3.0-Mini",
+    "new": "aion-3-0-mini · AionLabs · Aion-3.0-Mini",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Seed-2.0-Code",
+    "field": "naming",
+    "old": "seed-2-0-code · ByteDance · ByteDance Seed: Seed-2.0-Code",
+    "new": "seed-2-0-code · ByteDance · Seed-2.0-Code",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Laguna XS 2.1",
+    "field": "naming",
+    "old": "laguna-xs-2-1 · Poolside · Poolside: Laguna XS 2.1",
+    "new": "laguna-xs-2-1 · Poolside · Laguna XS 2.1",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 2.4T A95B",
+    "field": "naming",
+    "old": "qwen3-8-2-4t-a95b · Alibaba (Qwen) · Qwen: Qwen3.8 2.4T A95B",
+    "new": "qwen3-8-2-4t-a95b · Alibaba (Qwen) · Qwen3.8 2.4T A95B",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 27B",
+    "field": "naming",
+    "old": "qwen3-8-27b · Alibaba (Qwen) · Qwen: Qwen3.8 27B",
+    "new": "qwen3-8-27b · Alibaba (Qwen) · Qwen3.8 27B",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Sakana Namazu",
+    "field": "naming",
+    "old": "sakana-namazu · Sakana AI · Sakana: Sakana Namazu",
+    "new": "sakana-namazu · Sakana AI · Sakana Namazu",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy3",
+    "field": "naming",
+    "old": "tencent-hy3 · Tencent · Tencent: Hy3",
+    "new": "hy3 · Tencent · Hy3",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Inkling",
+    "field": "naming",
+    "old": "inkling · Thinking Machines Lab · Thinking Machines: Inkling",
+    "new": "inkling · Thinking Machines Lab · Inkling",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Inkling Small",
+    "field": "naming",
+    "old": "inkling-small · Thinking Machines Lab · Thinking Machines: Inkling Small",
+    "new": "inkling-small · Thinking Machines Lab · Inkling Small",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Solar Pro 4",
+    "field": "naming",
+    "old": "solar-pro-4 · Upstage · Upstage: Solar Pro 4",
+    "new": "solar-pro-4 · Upstage · Solar Pro 4",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy-MT2-1.8B",
+    "field": "naming",
+    "old": "tencent-hy-mt2-1-8b · Tencent · Tencent: Hy-MT2-1.8B",
+    "new": "hy-mt2-1-8b · Tencent · Hy-MT2-1.8B",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy-MT2-30B-A3B",
+    "field": "naming",
+    "old": "tencent-hy-mt2-30b-a3b · Tencent · Tencent: Hy-MT2-30B-A3B",
+    "new": "hy-mt2-30b-a3b · Tencent · Hy-MT2-30B-A3B",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 Max",
+    "field": "naming",
+    "old": "qwen-qwen3-8-max · qwen · Qwen: Qwen3.8 Max",
+    "new": "qwen3-8-max · Alibaba (Qwen) · Qwen3.8 Max",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 Flash",
+    "field": "naming",
+    "old": "qwen-qwen3-8-flash · qwen · Qwen: Qwen3.8 Flash",
+    "new": "qwen3-8-flash · Alibaba (Qwen) · Qwen3.8 Flash",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy4 preview",
+    "field": "naming",
+    "old": "tencent-hy4-preview · Tencent · Tencent: Hy4 preview",
+    "new": "hy4-preview · Tencent · Hy4 preview",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy-MT2-7B",
+    "field": "naming",
+    "old": "tencent-hy-mt2-7b · Tencent · Tencent: Hy-MT2-7B",
+    "new": "hy-mt2-7b · Tencent · Hy-MT2-7B",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Granite 4.2 8B",
+    "field": "naming",
+    "old": "granite-4-2-8b · IBM · IBM: Granite 4.2 8B",
+    "new": "granite-4-2-8b · IBM · Granite 4.2 8B",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.3 Contributor",
+    "field": "naming",
+    "old": "meta-muse-spark-1-3-contributor · meta · Meta: Muse Spark 1.3 Contributor",
+    "new": "muse-spark-1-3-contributor · Meta · Muse Spark 1.3 Contributor",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.3",
+    "field": "naming",
+    "old": "meta-muse-spark-1-3 · meta · Meta: Muse Spark 1.3",
+    "new": "muse-spark-1-3 · Meta · Muse Spark 1.3",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.8 Flash",
+    "field": "naming",
+    "old": "google-gemini-3-8-flash · google · Google: Gemini 3.8 Flash",
+    "new": "gemini-3-8-flash · Google · Gemini 3.8 Flash",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-6 Astra",
+    "field": "naming",
+    "old": "gpt-6-astra · openai · GPT-6 Astra",
+    "new": "gpt-6-astra · OpenAI · GPT-6 Astra",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-6 Astra Pro",
+    "field": "naming",
+    "old": "gpt-6-astra-pro · openai · GPT-6 Astra Pro",
+    "new": "gpt-6-astra-pro · OpenAI · GPT-6 Astra Pro",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5.1",
+    "field": "naming",
+    "old": "claude-fable-5-1 · anthropic · Claude Fable 5.1",
+    "new": "claude-fable-5-1 · Anthropic · Claude Fable 5.1",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.2 Contributor",
+    "field": "naming",
+    "old": "meta-muse-spark-1-2-contributor · meta · Meta: Muse Spark 1.2 Contributor",
+    "new": "muse-spark-1-2-contributor · Meta · Muse Spark 1.2 Contributor",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4 Flash Vision Exp",
+    "field": "naming",
+    "old": "deepseek-deepseek-v4-flash-vision-exp · deepseek · DeepSeek: DeepSeek V4 Flash Vision Exp",
+    "new": "deepseek-v4-flash-vision-exp · DeepSeek · DeepSeek V4 Flash Vision Exp",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4 Pro 0813",
+    "field": "naming",
+    "old": "deepseek-deepseek-v4-pro-0813 · deepseek · DeepSeek: DeepSeek V4 Pro 0813",
+    "new": "deepseek-v4-pro-0813 · DeepSeek · DeepSeek V4 Pro 0813",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4 Flash 0731",
+    "field": "naming",
+    "old": "deepseek-deepseek-v4-flash-0731 · deepseek · DeepSeek: DeepSeek V4 Flash 0731",
+    "new": "deepseek-v4-flash-0731 · DeepSeek · DeepSeek V4 Flash 0731",
+    "sources": [],
+    "note": "scripts/naming.mjs — one naming rule for ids and vendors"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4 Flash Latest",
+    "field": "removed",
+    "old": "-deepseek-deepseek-v4-flash-latest",
+    "new": null,
+    "sources": [
+      "https://openrouter.ai/~deepseek/deepseek-v4-flash-latest"
+    ],
+    "note": "community re-host (~deepseek) of the \"latest\" alias pointer — duplicates DeepSeek V4 Flash 0731; not a vendor listing"
   }
 ]

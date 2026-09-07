@@ -19,7 +19,12 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
    - Apply: `{"id", "kind", "field"?, "value", "sources":[{"url","date"}], "reason"}` — reason
      ≥12 chars, cites what you found.
    - Hold: `{"id", "hold": true, "reason"}`.
-   - **`new-model` items**: the apply also writes a "what changed" timeline entry. Add
+   - **`new-model` items**: `value` needs `name` (the model's own name, no "Vendor: " label) and
+     `vendor` (a canonical spelling from `scripts/naming.mjs` — "Google", "Alibaba (Qwen)", "xAI";
+     a vendor not listed there fails the gate, so hold and say so). The `id` is derived from the
+     name by the rule in that file; any id you supply is ignored. Never admit an OpenRouter
+     "~vendor/…" community re-host — it is not the vendor's listing.
+     The apply also writes a "what changed" timeline entry. Add
      `"release": {"summary": "...", "why": "...", "source": "https://..."}` inside `value` when the
      vendor page gives you something concrete to say (one or two plain sentences each); leave it out
      and a factual stub is written instead.

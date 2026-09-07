@@ -179,7 +179,7 @@
         "Thinking is always on — give it the complete task up front in one well-specified message and let it run; drip-feeding steps wastes its strength.",
         "It's built for 1M-token context: paste whole codebases or document sets in rather than pre-summarizing."
       ],
-      "best_for_line": "Priciest Anthropic model · 1M ctx · $10/$50"
+      "best_for_line": "Anthropic model · 1M ctx · $10/$50"
     },
     {
       "id": "claude-opus-4-8",
@@ -459,7 +459,7 @@
           ]
         }
       },
-      "best_for_line": "Priciest DeepSeek model · 1M ctx · $0.435/$0.87"
+      "best_for_line": "Priciest DeepSeek model · 1M ctx · $1.32/$3.96"
     },
     {
       "id": "kimi-k2-6",
@@ -712,7 +712,7 @@
         "OpenAI's top tier for the hardest agentic, coding, and security work — pay for it only when Terra falls short.",
         "Its chain-of-thought reasoning means higher latency and token spend — budget for both."
       ],
-      "best_for_line": "Priciest OpenAI model · 1M ctx · $5/$30"
+      "best_for_line": "OpenAI model · 1M ctx · $4/$20"
     },
     {
       "id": "gpt-5-6-terra",
@@ -977,7 +977,7 @@
         "The 75% cache discount ($0.50 cached input) rewards repeated-context workloads like agents and long sessions.",
         "No classic benchmarks published and not in the EU at launch — verify on your own tasks first."
       ],
-      "best_for_line": "xAI model · 500K ctx · $2/$6"
+      "best_for_line": "Cheapest xAI model · 500K ctx · $2/$6"
     },
     {
       "id": "deepseek-v4-flash",
@@ -1022,7 +1022,7 @@
         "The bulk-work machine: $0.14/$0.28 with near-free cache hits — process huge volumes of text or code for pennies.",
         "Step up to V4-Pro the moment reasoning depth starts to matter."
       ],
-      "best_for_line": "Cheapest DeepSeek model · 1M ctx · $0.14/$0.28"
+      "best_for_line": "DeepSeek model · 1M ctx · $0.44/$1.32"
     },
     {
       "id": "qwen3-max",
@@ -1073,7 +1073,7 @@
         "output": 6,
         "aggregator_note": "OpenRouter shows ~$3.90 — matches no Alibaba tier. Ours is the 0–32K Singapore tier."
       },
-      "best_for_line": "Priciest Alibaba (Qwen) model · 256K ctx · $1.2/$6"
+      "best_for_line": "Alibaba (Qwen) model · 256K ctx · $1.2/$6"
     },
     {
       "id": "qwen3-coder-plus",
@@ -1165,7 +1165,7 @@
         "Among the cheapest hosted models anywhere — massive-volume tagging and cleanup at $0.05/M input.",
         "Its thinking mode ($0.5/M output) adds cheap reasoning for slightly harder bulk work."
       ],
-      "best_for_line": "Cheapest Alibaba (Qwen) model · $0.05/$0.2"
+      "best_for_line": "Alibaba (Qwen) model · $0.05/$0.2"
     },
     {
       "id": "mistral-medium-3-1",
@@ -1262,7 +1262,7 @@
         "input": 1.5,
         "output": 7.5
       },
-      "best_for_line": "Google model · $1.5/$7.5"
+      "best_for_line": "Google model · $0.75/$3.75"
     },
     {
       "id": "glm-5-2",
@@ -1310,9 +1310,9 @@
       "best_for_line": "Z.ai (Zhipu) model · $1.4/$4.4"
     },
     {
-      "id": "google-gemini-3-7-flash",
-      "name": "Google: Gemini 3.7 Flash",
-      "vendor": "google",
+      "id": "gemini-3-7-flash",
+      "name": "Gemini 3.7 Flash",
+      "vendor": "Google",
       "released": "2026-08-13",
       "context_window": 1048576,
       "price_input": 0.75,
@@ -1352,12 +1352,12 @@
       ],
       "task_copy": {},
       "auto_added": "2026-08-16",
-      "best_for_line": "google model · 1M ctx · $0.38/$1.88"
+      "best_for_line": "Google model · 1M ctx · $0.75/$3.75"
     },
     {
-      "id": "x-ai-grok-4-6",
-      "name": "SpaceXAI: Grok 4.6",
-      "vendor": "x-ai",
+      "id": "grok-4-6",
+      "name": "Grok 4.6",
+      "vendor": "xAI",
       "released": "2026-08-12",
       "context_window": 500000,
       "price_input": 2,
@@ -1383,12 +1383,12 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-08-16",
-      "best_for_line": "x-ai model · 500K ctx · $2/$6"
+      "best_for_line": "Priciest xAI model · 500K ctx · $2/$6"
     },
     {
-      "id": "meta-muse-spark-1-2",
-      "name": "Meta: Muse Spark 1.2",
-      "vendor": "meta",
+      "id": "muse-spark-1-2",
+      "name": "Muse Spark 1.2",
+      "vendor": "Meta",
       "released": "2026-08-05",
       "context_window": 1048576,
       "price_input": 1.25,
@@ -1414,12 +1414,12 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-08-16",
-      "best_for_line": "Cheapest meta model · 1M ctx · $1.25/$4.25"
+      "best_for_line": "Meta model · 1M ctx · $1.25/$4.25"
     },
     {
-      "id": "meta-muse-spark-1-1",
-      "name": "Meta: Muse Spark 1.1",
-      "vendor": "meta",
+      "id": "muse-spark-1-1",
+      "name": "Muse Spark 1.1",
+      "vendor": "Meta",
       "released": "2026-07-16",
       "context_window": 1048576,
       "price_input": 1.25,
@@ -1458,7 +1458,7 @@
       ],
       "task_copy": {},
       "auto_added": "2026-08-16",
-      "best_for_line": "Priciest meta model · 1M ctx · $1.25/$4.25"
+      "best_for_line": "Meta model · 1M ctx · $1.25/$4.25"
     },
     {
       "benchmarks": {
@@ -1520,7 +1520,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "kat-coder-pro-v2-5",
-      "name": "Kwaipilot: KAT-Coder-Pro V2.5",
+      "name": "KAT-Coder-Pro V2.5",
       "vendor": "Kwaipilot",
       "sources": [
         "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
@@ -1546,7 +1546,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "kat-coder-air-v2-5",
-      "name": "Kwaipilot: KAT-Coder-Air V2.5",
+      "name": "KAT-Coder-Air V2.5",
       "vendor": "Kwaipilot",
       "sources": [
         "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
@@ -1572,7 +1572,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "longcat-2-0",
-      "name": "Meituan: LongCat 2.0",
+      "name": "LongCat 2.0",
       "vendor": "Meituan",
       "context_window": 1000000,
       "sources": [
@@ -1600,7 +1600,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "muse-glimmer-30b",
-      "name": "Meta: Muse Glimmer 30B",
+      "name": "Muse Glimmer 30B",
       "vendor": "Meta",
       "sources": [
         "https://developer.meta.com/ai/models/muse-glimmer/",
@@ -1627,7 +1627,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "nemotron-3-5-lightning",
-      "name": "NVIDIA: Nemotron 3.5 Lightning",
+      "name": "Nemotron 3.5 Lightning",
       "vendor": "NVIDIA",
       "sources": [
         "https://developer.nvidia.com/blog/nvidia-nemotron-3-5-lightning-delivers-fast-accurate-specialized-task-execution-for-long-running-agents/",
@@ -1654,7 +1654,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "laguna-s-2-1",
-      "name": "Poolside: Laguna S 2.1",
+      "name": "Laguna S 2.1",
       "vendor": "Poolside",
       "context_window": 1000000,
       "sources": [
@@ -1681,8 +1681,8 @@
       "use_well": [],
       "task_copy": {},
       "id": "qwen3-7-flash",
-      "name": "Qwen: Qwen3.7 Flash",
-      "vendor": "Qwen (Alibaba)",
+      "name": "Qwen3.7 Flash",
+      "vendor": "Alibaba (Qwen)",
       "context_window": 991000,
       "price_input": 0.03,
       "price_output": 0.13,
@@ -1690,7 +1690,7 @@
         "https://docs.qwencloud.com/changelog/models",
         "https://www.eesel.ai/blog/qwen-3-7-flash"
       ],
-      "best_for_line": "Qwen (Alibaba) model · 991K ctx · $0.03/$0.13"
+      "best_for_line": "Cheapest Alibaba (Qwen) model · 991K ctx · $0.03/$0.13"
     },
     {
       "benchmarks": {
@@ -1710,7 +1710,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "seed-2-1-turbo",
-      "name": "ByteDance Seed: Seed 2.1 Turbo",
+      "name": "Seed 2.1 Turbo",
       "vendor": "ByteDance",
       "context_window": 256000,
       "sources": [
@@ -1737,7 +1737,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "aion-3-0",
-      "name": "AionLabs: Aion-3.0",
+      "name": "Aion-3.0",
       "vendor": "AionLabs",
       "released": "2026-07-07",
       "context_window": 131000,
@@ -1769,7 +1769,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "aion-3-0-mini",
-      "name": "AionLabs: Aion-3.0-Mini",
+      "name": "Aion-3.0-Mini",
       "vendor": "AionLabs",
       "released": "2026-07-07",
       "context_window": 131000,
@@ -1800,7 +1800,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "seed-2-0-code",
-      "name": "ByteDance Seed: Seed-2.0-Code",
+      "name": "Seed-2.0-Code",
       "vendor": "ByteDance",
       "released": "2026-02-14",
       "context_window": 256000,
@@ -1836,7 +1836,7 @@
       ],
       "task_copy": {},
       "id": "laguna-xs-2-1",
-      "name": "Poolside: Laguna XS 2.1",
+      "name": "Laguna XS 2.1",
       "vendor": "Poolside",
       "released": "2026-07-02",
       "context_window": 256000,
@@ -1868,7 +1868,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "qwen3-8-2-4t-a95b",
-      "name": "Qwen: Qwen3.8 2.4T A95B",
+      "name": "Qwen3.8 2.4T A95B",
       "vendor": "Alibaba (Qwen)",
       "released": "2026-08-01",
       "context_window": 983616,
@@ -1879,7 +1879,7 @@
         "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b",
         "https://www.marktechpost.com/2026/07/19/alibaba-previews-qwen3-8-max-a-2-4-trillion-parameter-multimodal-model-days-after-moonshots-kimi-k3-open-weight-launch/"
       ],
-      "best_for_line": "Priciest Alibaba (Qwen) model · 984K ctx · $2/$6"
+      "best_for_line": "Alibaba (Qwen) model · 984K ctx · $2/$6"
     },
     {
       "benchmarks": {
@@ -1899,7 +1899,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "qwen3-8-27b",
-      "name": "Qwen: Qwen3.8 27B",
+      "name": "Qwen3.8 27B",
       "vendor": "Alibaba (Qwen)",
       "released": "2026-08-14",
       "context_window": 262144,
@@ -1929,7 +1929,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "sakana-namazu",
-      "name": "Sakana: Sakana Namazu",
+      "name": "Sakana Namazu",
       "vendor": "Sakana AI",
       "released": "2026-08-03",
       "context_window": null,
@@ -1958,8 +1958,8 @@
       "coding_confidence": "low",
       "use_well": [],
       "task_copy": {},
-      "id": "tencent-hy3",
-      "name": "Tencent: Hy3",
+      "id": "hy3",
+      "name": "Hy3",
       "vendor": "Tencent",
       "released": "2026-07-06",
       "context_window": 256000,
@@ -1989,7 +1989,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "inkling",
-      "name": "Thinking Machines: Inkling",
+      "name": "Inkling",
       "vendor": "Thinking Machines Lab",
       "released": "2026-07-15",
       "context_window": 1048576,
@@ -2028,7 +2028,7 @@
       ],
       "task_copy": {},
       "id": "inkling-small",
-      "name": "Thinking Machines: Inkling Small",
+      "name": "Inkling Small",
       "vendor": "Thinking Machines Lab",
       "released": "2026-08-02",
       "context_window": 1048576,
@@ -2059,7 +2059,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "solar-pro-4",
-      "name": "Upstage: Solar Pro 4",
+      "name": "Solar Pro 4",
       "vendor": "Upstage",
       "released": "2026-08-10",
       "context_window": 524288,
@@ -2088,8 +2088,8 @@
       "coding_confidence": "low",
       "use_well": [],
       "task_copy": {},
-      "id": "tencent-hy-mt2-1-8b",
-      "name": "Tencent: Hy-MT2-1.8B",
+      "id": "hy-mt2-1-8b",
+      "name": "Hy-MT2-1.8B",
       "vendor": "Tencent",
       "released": "2026-05-21",
       "context_window": 8192,
@@ -2119,8 +2119,8 @@
       "coding_confidence": "low",
       "use_well": [],
       "task_copy": {},
-      "id": "tencent-hy-mt2-30b-a3b",
-      "name": "Tencent: Hy-MT2-30B-A3B",
+      "id": "hy-mt2-30b-a3b",
+      "name": "Hy-MT2-30B-A3B",
       "vendor": "Tencent",
       "released": "2026-05-21",
       "context_window": 8192,
@@ -2176,9 +2176,9 @@
       "best_for_line": "Priciest Z.ai (Zhipu) model · 1M ctx · $1.4/$4.4"
     },
     {
-      "id": "qwen-qwen3-8-max",
-      "name": "Qwen: Qwen3.8 Max",
-      "vendor": "qwen",
+      "id": "qwen3-8-max",
+      "name": "Qwen3.8 Max",
+      "vendor": "Alibaba (Qwen)",
       "released": "2026-08-03",
       "context_window": 1000000,
       "price_input": 2,
@@ -2204,7 +2204,7 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-08-28",
-      "best_for_line": "qwen model · 1M ctx · $2/$6"
+      "best_for_line": "Priciest Alibaba (Qwen) model · 1M ctx · $2/$6"
     },
     {
       "benchmarks": {
@@ -2223,9 +2223,9 @@
       "coding_confidence": "low",
       "use_well": [],
       "task_copy": {},
-      "id": "qwen-qwen3-8-flash",
-      "name": "Qwen: Qwen3.8 Flash",
-      "vendor": "qwen",
+      "id": "qwen3-8-flash",
+      "name": "Qwen3.8 Flash",
+      "vendor": "Alibaba (Qwen)",
       "released": "2026-08-26",
       "context_window": 1000000,
       "price_input": 0.15,
@@ -2235,7 +2235,7 @@
         "https://thenewstack.io/qwen38-flash-previews-qwen4/",
         "https://openrouter.ai/qwen/qwen3.8-flash"
       ],
-      "best_for_line": "Cheapest qwen model · 1M ctx · $0.15/$0.47"
+      "best_for_line": "Alibaba (Qwen) model · 1M ctx · $0.15/$0.47"
     },
     {
       "benchmarks": {
@@ -2254,8 +2254,8 @@
       "coding_confidence": "low",
       "use_well": [],
       "task_copy": {},
-      "id": "tencent-hy4-preview",
-      "name": "Tencent: Hy4 preview",
+      "id": "hy4-preview",
+      "name": "Hy4 preview",
       "vendor": "Tencent",
       "released": "2026-08-28",
       "context_window": 1048576,
@@ -2285,8 +2285,8 @@
       "coding_confidence": "low",
       "use_well": [],
       "task_copy": {},
-      "id": "tencent-hy-mt2-7b",
-      "name": "Tencent: Hy-MT2-7B",
+      "id": "hy-mt2-7b",
+      "name": "Hy-MT2-7B",
       "vendor": "Tencent",
       "released": "2026-05-21",
       "context_window": 8192,
@@ -2321,7 +2321,7 @@
       "use_well": [],
       "task_copy": {},
       "id": "granite-4-2-8b",
-      "name": "IBM: Granite 4.2 8B",
+      "name": "Granite 4.2 8B",
       "vendor": "IBM",
       "released": "2026-08-25",
       "context_window": 128000,
@@ -2332,9 +2332,9 @@
       "best_for_line": "IBM model · 128K ctx"
     },
     {
-      "id": "meta-muse-spark-1-3-contributor",
-      "name": "Meta: Muse Spark 1.3 Contributor",
-      "vendor": "meta",
+      "id": "muse-spark-1-3-contributor",
+      "name": "Muse Spark 1.3 Contributor",
+      "vendor": "Meta",
       "released": "2026-09-02",
       "context_window": 1048576,
       "price_input": 0.1,
@@ -2360,12 +2360,12 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-04",
-      "best_for_line": "Cheapest meta model · 1M ctx · $0.1/$0.2"
+      "best_for_line": "Cheapest Meta model · 1M ctx · $0.1/$0.2"
     },
     {
-      "id": "meta-muse-spark-1-3",
-      "name": "Meta: Muse Spark 1.3",
-      "vendor": "meta",
+      "id": "muse-spark-1-3",
+      "name": "Muse Spark 1.3",
+      "vendor": "Meta",
       "released": "2026-09-02",
       "context_window": 1048576,
       "price_input": 1.25,
@@ -2391,12 +2391,12 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-04",
-      "best_for_line": "Priciest meta model · 1M ctx · $1.25/$4.25"
+      "best_for_line": "Priciest Meta model · 1M ctx · $1.25/$4.25"
     },
     {
-      "id": "google-gemini-3-8-flash",
-      "name": "Google: Gemini 3.8 Flash",
-      "vendor": "google",
+      "id": "gemini-3-8-flash",
+      "name": "Gemini 3.8 Flash",
+      "vendor": "Google",
       "released": "2026-09-02",
       "context_window": 1048576,
       "price_input": 0.75,
@@ -2422,12 +2422,12 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-04",
-      "best_for_line": "Priciest google model · 1M ctx · $0.75/$3.75"
+      "best_for_line": "Google model · 1M ctx · $0.75/$3.75"
     },
     {
       "id": "gpt-6-astra",
       "name": "GPT-6 Astra",
-      "vendor": "openai",
+      "vendor": "OpenAI",
       "released": "2026-09-04",
       "context_window": 1050000,
       "price_input": 10,
@@ -2453,12 +2453,12 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "Cheapest openai model · 1M ctx · $10/$50"
+      "best_for_line": "OpenAI model · 1M ctx · $10/$50"
     },
     {
       "id": "gpt-6-astra-pro",
       "name": "GPT-6 Astra Pro",
-      "vendor": "openai",
+      "vendor": "OpenAI",
       "released": "2026-09-04",
       "context_window": 1050000,
       "price_input": 10,
@@ -2484,12 +2484,12 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "Priciest openai model · 1M ctx · $10/$50"
+      "best_for_line": "Priciest OpenAI model · 1M ctx · $10/$50"
     },
     {
       "id": "claude-fable-5-1",
       "name": "Claude Fable 5.1",
-      "vendor": "anthropic",
+      "vendor": "Anthropic",
       "released": "2026-09-01",
       "context_window": 1000000,
       "price_input": 10,
@@ -2515,12 +2515,12 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "anthropic model · 1M ctx · $10/$50"
+      "best_for_line": "Priciest Anthropic model · 1M ctx · $10/$50"
     },
     {
-      "id": "meta-muse-spark-1-2-contributor",
-      "name": "Meta: Muse Spark 1.2 Contributor",
-      "vendor": "meta",
+      "id": "muse-spark-1-2-contributor",
+      "name": "Muse Spark 1.2 Contributor",
+      "vendor": "Meta",
       "released": "2026-08-21",
       "context_window": 1048576,
       "price_input": 0.1,
@@ -2546,12 +2546,12 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "meta model · 1M ctx · $0.1/$0.2"
+      "best_for_line": "Meta model · 1M ctx · $0.1/$0.2"
     },
     {
-      "id": "deepseek-deepseek-v4-flash-vision-exp",
-      "name": "DeepSeek: DeepSeek V4 Flash Vision Exp",
-      "vendor": "deepseek",
+      "id": "deepseek-v4-flash-vision-exp",
+      "name": "DeepSeek V4 Flash Vision Exp",
+      "vendor": "DeepSeek",
       "released": "2026-08-21",
       "context_window": 1048576,
       "price_input": 0.22,
@@ -2577,12 +2577,12 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "deepseek model · 1M ctx · $0.22/$0.66"
+      "best_for_line": "DeepSeek model · 1M ctx · $0.22/$0.66"
     },
     {
-      "id": "deepseek-deepseek-v4-pro-0813",
-      "name": "DeepSeek: DeepSeek V4 Pro 0813",
-      "vendor": "deepseek",
+      "id": "deepseek-v4-pro-0813",
+      "name": "DeepSeek V4 Pro 0813",
+      "vendor": "DeepSeek",
       "released": "2026-08-12",
       "context_window": 1048576,
       "price_input": 0.58,
@@ -2608,43 +2608,12 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "Priciest deepseek model · 1M ctx · $0.58/$1.74"
+      "best_for_line": "DeepSeek model · 1M ctx · $0.58/$1.74"
     },
     {
-      "id": "-deepseek-deepseek-v4-flash-latest",
-      "name": "DeepSeek V4 Flash Latest",
-      "vendor": "~deepseek",
-      "released": "2026-08-01",
-      "context_window": 1310720,
-      "price_input": 0.05,
-      "price_output": 0.09,
-      "speed_tps": null,
-      "benchmarks": {
-        "swe_bench": null,
-        "gpqa": null,
-        "aime": null,
-        "mmlu_pro": null
-      },
-      "best_for": [],
-      "strengths": [],
-      "weaknesses": [],
-      "verdict": null,
-      "confidence": "low",
-      "sources": [
-        "https://openrouter.ai/~deepseek/deepseek-v4-flash-latest"
-      ],
-      "coding_score": null,
-      "coding_basis": null,
-      "coding_confidence": "low",
-      "use_well": [],
-      "task_copy": {},
-      "auto_added": "2026-09-06",
-      "best_for_line": "~deepseek model · 1M ctx · $0.05/$0.09"
-    },
-    {
-      "id": "deepseek-deepseek-v4-flash-0731",
-      "name": "DeepSeek: DeepSeek V4 Flash 0731",
-      "vendor": "deepseek",
+      "id": "deepseek-v4-flash-0731",
+      "name": "DeepSeek V4 Flash 0731",
+      "vendor": "DeepSeek",
       "released": "2026-07-31",
       "context_window": 1310720,
       "price_input": 0.05,
@@ -2670,7 +2639,7 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "Cheapest deepseek model · 1M ctx · $0.05/$0.1"
+      "best_for_line": "Cheapest DeepSeek model · 1M ctx · $0.05/$0.1"
     }
   ],
   "releases": [
@@ -2911,7 +2880,7 @@
     {
       "kind": "price",
       "date": "2026-08-25",
-      "vendor": "google",
+      "vendor": "Google",
       "title": "Google: Gemini 3.7 Flash input price rise — $0.38 → $0.75 per 1M (+97%)",
       "summary": "google now lists Google: Gemini 3.7 Flash at $0.75 per 1M input tokens, from $0.38. Confirmed by two independent price feeds.",
       "source": "https://ai.google.dev/gemini-api/docs/pricing",
@@ -2938,7 +2907,7 @@
     {
       "kind": "model",
       "date": "2026-08-03",
-      "vendor": "qwen",
+      "vendor": "Alibaba (Qwen)",
       "title": "Qwen releases Qwen3.8 Max",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/qwen/qwen3.8-max",
@@ -2947,7 +2916,7 @@
     {
       "kind": "model",
       "date": "2026-08-26",
-      "vendor": "qwen",
+      "vendor": "Alibaba (Qwen)",
       "title": "Qwen releases Qwen3.8 Flash",
       "summary": "Alibaba released Qwen3.8-Flash, a 125B-total/6B-active MoE model previewing the hybrid-attention architecture behind Qwen4, with a 262K native context extensible to 1M via YaRN.",
       "source": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
@@ -2974,7 +2943,7 @@
     {
       "kind": "price",
       "date": "2026-09-01",
-      "vendor": "google",
+      "vendor": "Google",
       "title": "Google: Gemini 3.7 Flash output price rise — $1.88 → $3.75 per 1M (+99%)",
       "summary": "google now lists Google: Gemini 3.7 Flash at $3.75 per 1M output tokens, from $1.88. Confirmed by two independent price feeds.",
       "source": "https://ai.google.dev/gemini-api/docs/pricing",
@@ -2992,7 +2961,7 @@
     {
       "kind": "model",
       "date": "2026-09-02",
-      "vendor": "meta",
+      "vendor": "Meta",
       "title": "Meta releases Muse Spark 1.3 Contributor",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/meta/muse-spark-1.3-contributor",
@@ -3001,7 +2970,7 @@
     {
       "kind": "model",
       "date": "2026-09-02",
-      "vendor": "meta",
+      "vendor": "Meta",
       "title": "Meta releases Muse Spark 1.3",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/meta/muse-spark-1.3",
@@ -3010,7 +2979,7 @@
     {
       "kind": "model",
       "date": "2026-09-02",
-      "vendor": "google",
+      "vendor": "Google",
       "title": "Google releases Gemini 3.8 Flash",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/google/gemini-3.8-flash",
@@ -3019,7 +2988,7 @@
     {
       "kind": "model",
       "date": "2026-09-04",
-      "vendor": "openai",
+      "vendor": "OpenAI",
       "title": "OpenAI releases GPT-6 Astra",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/openai/gpt-6-astra",
@@ -3028,7 +2997,7 @@
     {
       "kind": "model",
       "date": "2026-09-04",
-      "vendor": "openai",
+      "vendor": "OpenAI",
       "title": "OpenAI releases GPT-6 Astra Pro",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/openai/gpt-6-astra-pro",
@@ -3037,7 +3006,7 @@
     {
       "kind": "model",
       "date": "2026-09-01",
-      "vendor": "anthropic",
+      "vendor": "Anthropic",
       "title": "Anthropic releases Claude Fable 5.1",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/anthropic/claude-fable-5.1",
@@ -3046,7 +3015,7 @@
     {
       "kind": "model",
       "date": "2026-08-21",
-      "vendor": "meta",
+      "vendor": "Meta",
       "title": "Meta releases Muse Spark 1.2 Contributor",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/meta/muse-spark-1.2-contributor",
@@ -3055,7 +3024,7 @@
     {
       "kind": "model",
       "date": "2026-08-21",
-      "vendor": "deepseek",
+      "vendor": "DeepSeek",
       "title": "DeepSeek releases DeepSeek V4 Flash Vision Exp",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/deepseek/deepseek-v4-flash-vision-exp",
@@ -3064,7 +3033,7 @@
     {
       "kind": "model",
       "date": "2026-08-12",
-      "vendor": "deepseek",
+      "vendor": "DeepSeek",
       "title": "DeepSeek releases DeepSeek V4 Pro 0813",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/deepseek/deepseek-v4-pro-0813",
@@ -3072,17 +3041,8 @@
     },
     {
       "kind": "model",
-      "date": "2026-08-01",
-      "vendor": "~deepseek",
-      "title": "DeepSeek releases DeepSeek V4 Flash Latest",
-      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
-      "source": "https://openrouter.ai/~deepseek/deepseek-v4-flash-latest",
-      "why": "Priced and available now; treat capability as unproven until scores land."
-    },
-    {
-      "kind": "model",
       "date": "2026-07-31",
-      "vendor": "deepseek",
+      "vendor": "DeepSeek",
       "title": "DeepSeek releases DeepSeek V4 Flash 0731",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/deepseek/deepseek-v4-flash-0731",
@@ -3420,7 +3380,7 @@
           "source_key": "gpt-5.6-sol"
         },
         {
-          "model_id": "x-ai-grok-4-6",
+          "model_id": "grok-4-6",
           "label": "Grok 4.6",
           "color": "#7fd9b4",
           "points": [
@@ -3448,7 +3408,7 @@
           "source_key": "grok-4.6"
         },
         {
-          "model_id": "google-gemini-3-7-flash",
+          "model_id": "gemini-3-7-flash",
           "label": "Gemini 3.7 Flash",
           "color": "#8ab4ff",
           "points": [
