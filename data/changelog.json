@@ -2678,5 +2678,403 @@
       "https://felloai.com/longcat-2-0/",
       "https://openrouter.ai/api/frontend/v1/rankings/models"
     ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 27B",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 27B",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 27B",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Sakana Namazu",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://sakana.ai/namazu-api/",
+      "https://aiweekly.co/alerts/sakana-ai-ships-namazu-a-japanese-tuned-kimi-k26-llm",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Sakana Namazu",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://sakana.ai/namazu-api/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Sakana Namazu",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://sakana.ai/namazu-api/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Sakana Namazu",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://sakana.ai/namazu-api/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy3",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.tencent.com/en-us/articles/2202386.html",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy3",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.tencent.com/en-us/articles/2202386.html",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy3",
+    "field": "task_fit_judged.frontend",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.tencent.com/en-us/articles/2202386.html",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy3",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://technode.com/2026/07/07/tencent-launches-hunyuan-hy3-integrates-model-across-multiple-products/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy3",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.tencent.com/en-us/articles/2202386.html",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Inkling",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://techcrunch.com/2026/07/15/thinking-machines-amps-up-its-bet-against-one-size-fits-all-ai-with-its-first-open-model-inkling/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Inkling Small",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://thinkingmachines.ai/news/inkling-small/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Inkling Small",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://thinkingmachines.ai/news/inkling-small/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Inkling Small",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://thinkingmachines.ai/news/inkling-small/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Solar Pro 4",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4",
+      "https://www.upstage.ai/blog/en/solar-pro-4",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Solar Pro 4",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.upstage.ai/blog/en/solar-pro-4",
+      "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Solar Pro 4",
+    "field": "task_fit_judged.extraction",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4",
+      "https://www.upstage.ai/blog/en/solar-pro-4",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Solar Pro 4",
+    "field": "task_fit_judged.exec-summaries",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.upstage.ai/blog/en/solar-pro-4",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy-MT2-1.8B",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://github.com/Tencent-Hunyuan/Hy-MT2",
+      "https://huggingface.co/tencent/Hy-MT2-1.8B",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy-MT2-30B-A3B",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://github.com/Tencent-Hunyuan/Hy-MT2",
+      "https://openrouter.ai/tencent/hy-mt2-30b-a3b",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Granite 4.2 8B",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://research.ibm.com/blog/introducing-granite-4-2",
+      "https://huggingface.co/ibm-granite/granite-4.2-8b",
+      "https://thenewstack.io/ibm-granite-reasoning-models/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Granite 4.2 8B",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/ibm-granite/granite-4.2-8b",
+      "https://thenewstack.io/ibm-granite-reasoning-models/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Granite 4.2 8B",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://research.ibm.com/blog/introducing-granite-4-2",
+      "https://huggingface.co/ibm-granite/granite-4.2-8b",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.3",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
+      "https://openrouter.ai/meta/muse-spark-1.3",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.3",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.3",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.3 Contributor",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.3-contributor",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.3 Contributor",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.3-contributor",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.2 Contributor",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.2-contributor",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.2 Contributor",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.2-contributor",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-6 Astra Pro",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://artificialanalysis.ai/articles/benchmarking-gpt-6-astra",
+      "https://openrouter.ai/openai/gpt-6-astra-pro",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-6 Astra Pro",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://artificialanalysis.ai/articles/benchmarking-gpt-6-astra",
+      "https://openrouter.ai/openai/gpt-6-astra-pro",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-6 Astra Pro",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://thenewstack.io/openai-gpt6-astra-benchmarks/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
   }
 ]

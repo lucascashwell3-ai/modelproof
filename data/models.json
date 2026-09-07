@@ -8098,7 +8098,8 @@
       "price_output": null,
       "sources": [
         "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
-        "https://venturebeat.com/technology/qwen3-8-27b-runs-frontier-class-coding-agents-and-reasoning-locally-no-cloud-api-required"
+        "https://venturebeat.com/technology/qwen3-8-27b-runs-frontier-class-coding-agents-and-reasoning-locally-no-cloud-api-required",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Alibaba (Qwen) model · 262K ctx",
       "availability": {
@@ -8166,7 +8167,74 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "strong",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Alibaba's Qwen3.8-27B announcement (checked 2026-09-06) states the 27B model delivers excellent capabilities in coding, professional work, research, and long-horizon agentic tasks while matching the performance of the much larger Qwen3.7-plus MoE model.",
+              "source_url": "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "Qwen3.8-27B delivers excellent capabilities in handling coding, professional work, research, and long-horizon agentic tasks, matching the performance of Qwen3.7-plus"
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 10,828,061 API requests for the qwen/qwen3.8-27b-20260814 standard variant on 2026-09-06, showing real third-party adoption of the local model.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"qwen/qwen3.8-27b-20260814\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": "VentureBeat's coverage of Alibaba's own comparison table shows Qwen3.8-27B ahead of Claude Opus 4.6 Max on SWE-bench Pro and LiveCodeBench specifically, but the same table has Opus ahead on Terminal-Bench, GPQA Diamond, and Humanity's Last Exam, so the win is benchmark-specific rather than across the board.",
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "strong",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Alibaba's Qwen3.8-27B announcement (checked 2026-09-06) states the model is designed to execute complex, multi-step tasks to completion with high reliability, positioning it for agentic workloads.",
+              "source_url": "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "the model is designed to execute complex, multi-step tasks to completion with high reliability."
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 10,828,061 API requests for the qwen/qwen3.8-27b-20260814 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"qwen/qwen3.8-27b-20260814\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "research": {
+          "band": "capable",
+          "confidence": "low",
+          "claims": [
+            {
+              "sentence": "Alibaba's Qwen3.8-27B announcement (checked 2026-09-06) lists research among the tasks the model handles with excellent capability while matching Qwen3.7-plus performance.",
+              "source_url": "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "Qwen3.8-27B delivers excellent capabilities in handling coding, professional work, research, and long-horizon agentic tasks, matching the performance of Qwen3.7-plus"
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 10,828,061 API requests for the qwen/qwen3.8-27b-20260814 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"qwen/qwen3.8-27b-20260814\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -8205,7 +8273,8 @@
       "price_output": 4,
       "sources": [
         "https://sakana.ai/namazu-api/",
-        "https://aiweekly.co/alerts/sakana-ai-ships-namazu-a-japanese-tuned-kimi-k26-llm"
+        "https://aiweekly.co/alerts/sakana-ai-ships-namazu-a-japanese-tuned-kimi-k26-llm",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Sakana AI model · $0.95/$4",
       "availability": {
@@ -8272,7 +8341,110 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "research": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Sakana AI's Namazu launch page (checked 2026-09-06) describes an automated market-research use case where the model runs an entire research job on its own each Monday morning.",
+              "source_url": "https://sakana.ai/namazu-api/",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "the first is generating market research reports automatically. a report lands every monday morning, and the model runs the entire job on its own"
+            },
+            {
+              "sentence": "AI Weekly reported (checked 2026-09-06) that Namazu preserves its Kimi K2.6 base model's capabilities on AIME26, MMLU-Pro, and LiveCodeBench v6 while improving sharply on Japanese-specific benchmarks.",
+              "source_url": "https://aiweekly.co/alerts/sakana-ai-ships-namazu-a-japanese-tuned-kimi-k26-llm",
+              "tier": "reported",
+              "date": "2026-09-06",
+              "quote": "the model preserves kimi's underlying capabilities on aime26, mmlu-pro, and livecodebench v6 while pulling markedly ahead on japanese-specific benchmarks."
+            },
+            {
+              "sentence": "AI Weekly's independent review (checked 2026-09-06) cautioned that Namazu's benchmark gains are a Sakana-run comparison against its own base model, with no head-to-head numbers shown against GPT, Gemini, or Claude.",
+              "source_url": "https://aiweekly.co/alerts/sakana-ai-ships-namazu-a-japanese-tuned-kimi-k26-llm",
+              "tier": "reported",
+              "date": "2026-09-06",
+              "quote": "the sharpest number here is a sakana-run comparison against its own base model, and the landing page does not show head-to-head benchmarks against gpt, gemini,"
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 3,837 API requests for the sakana/namazu-20260811 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"sakana/namazu-20260811\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": "Sakana's reported benchmark gains (e.g. FairPoliticsQA) are measured against Namazu's own Kimi K2.6 base model, and AI Weekly's 2026-09-06 review confirms no independent head-to-head comparison against GPT, Gemini, or Claude has been published, so the improvement is real but unverified against closed-model peers.",
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "low",
+          "claims": [
+            {
+              "sentence": "Sakana AI's Namazu page (checked 2026-09-06) attributes its long, multi-stage market-research workflow to agentic ability inherited from the Kimi K2.6 base model plus a built-in web-search tool.",
+              "source_url": "https://sakana.ai/namazu-api/",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "what supports this long, multi-stage workflow is the strong agentic ability inherited from the base model, together with the web search tool that comes"
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 3,837 API requests for the sakana/namazu-20260811 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"sakana/namazu-20260811\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "writing": {
+          "band": "capable",
+          "confidence": "low",
+          "claims": [
+            {
+              "sentence": "Sakana AI's Namazu launch page (checked 2026-09-06) states the model drafts and writes a market-research report end to end, including web searches and cross-checking, without human involvement.",
+              "source_url": "https://sakana.ai/namazu-api/",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "from drawing up the research plan through repeated web searches, cross-checking what it finds, and writing the report itself."
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 3,837 API requests for the sakana/namazu-20260811 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"sakana/namazu-20260811\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "chat": {
+          "band": "capable",
+          "confidence": "low",
+          "claims": [
+            {
+              "sentence": "Sakana AI's Namazu page (checked 2026-09-06) describes the Japanese-specialized model handling customer-support conversations end to end, from answering inquiries to aggregating order data.",
+              "source_url": "https://sakana.ai/namazu-api/",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "a model specialized for japanese can handle everything end to end, from answering inquiries to aggregating and analyzing order data."
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 3,837 API requests for the sakana/namazu-20260811 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"sakana/namazu-20260811\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": null
       },
@@ -8305,7 +8477,8 @@
       "price_output": 0.59,
       "sources": [
         "https://www.tencent.com/en-us/articles/2202386.html",
-        "https://technode.com/2026/07/07/tencent-launches-hunyuan-hy3-integrates-model-across-multiple-products/"
+        "https://technode.com/2026/07/07/tencent-launches-hunyuan-hy3-integrates-model-across-multiple-products/",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Tencent model · 256K ctx · $0.15/$0.59",
       "availability": {
@@ -8372,7 +8545,125 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Tencent's official HY3 launch announcement (checked 2026-09-06) states HY3 made particularly notable progress in productivity tasks including software development and financial modeling compared with the HY3 preview.",
+              "source_url": "https://www.tencent.com/en-us/articles/2202386.html",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "hy3 has made particularly notable progress in productivity tasks such as software development, office productivity, financial modeling, front-end design and game production"
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 56,418,720 API requests for the tencent/hy3-20260706 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"tencent/hy3-20260706\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Tencent's HY3 launch announcement (checked 2026-09-06) states HY3 improves task planning and tool coordination in agent scenarios, citing WorkBuddy/CodeBuddy, Yuanbao, and Marvis as products using it as an agent.",
+              "source_url": "https://www.tencent.com/en-us/articles/2202386.html",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "in agent scenarios, hy3 improves its task planning and tool coordination."
+            },
+            {
+              "sentence": "The same announcement (checked 2026-09-06) specifies HY3 as a 295-billion-total, 21-billion-active-parameter mixture-of-experts model with a 256K context length.",
+              "source_url": "https://www.tencent.com/en-us/articles/2202386.html",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "hy3 is a hybrid fast-and-slow-thinking model built on a mixture-of-experts (moe) architecture, with 295 billion total parameters and 21 billion active parameters,"
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 56,418,720 API requests for the tencent/hy3-20260706 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"tencent/hy3-20260706\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "frontend": {
+          "band": "capable",
+          "confidence": "low",
+          "claims": [
+            {
+              "sentence": "Tencent's HY3 announcement (checked 2026-09-06) lists front-end design among the productivity tasks where HY3 made particularly notable progress relative to the HY3 preview.",
+              "source_url": "https://www.tencent.com/en-us/articles/2202386.html",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "hy3 has made particularly notable progress in productivity tasks such as software development, office productivity, financial modeling, front-end design and game production"
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 56,418,720 API requests for the tencent/hy3-20260706 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"tencent/hy3-20260706\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "bulk": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "TechNode reported (checked 2026-09-06) that Tencent prices HY3 API access at RMB 1 ($0.15) per million input tokens and RMB 4 ($0.59) per million output tokens.",
+              "source_url": "https://technode.com/2026/07/07/tencent-launches-hunyuan-hy3-integrates-model-across-multiple-products/",
+              "tier": "reported",
+              "date": "2026-09-06",
+              "quote": "tencent has priced hy3 at rmb 1 ($0.15) per million input tokens and rmb 4 ($0.59) per million output tokens."
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 56,418,720 API requests for the tencent/hy3-20260706 standard variant on 2026-09-06, one of the largest usage volumes in the feed.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"tencent/hy3-20260706\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "writing": {
+          "band": "capable",
+          "confidence": "low",
+          "claims": [
+            {
+              "sentence": "Tencent's HY3 announcement (checked 2026-09-06) states HY3 strengthened IMA's knowledge-base Q&A to produce more structured, complete, and usable outputs for long-form writing.",
+              "source_url": "https://www.tencent.com/en-us/articles/2202386.html",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "hy3 has also strengthened ima’s knowledge-base q&a to deliver more structured reasoning, broader information coverage, and more complete, structured and usable outputs for long-form writing."
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 56,418,720 API requests for the tencent/hy3-20260706 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"tencent/hy3-20260706\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -8411,7 +8702,8 @@
       "price_output": null,
       "sources": [
         "https://thinkingmachines.ai/model-card/inkling/",
-        "https://techcrunch.com/2026/07/15/thinking-machines-amps-up-its-bet-against-one-size-fits-all-ai-with-its-first-open-model-inkling/"
+        "https://techcrunch.com/2026/07/15/thinking-machines-amps-up-its-bet-against-one-size-fits-all-ai-with-its-first-open-model-inkling/",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Thinking Machines Lab model · 1M ctx",
       "availability": {
@@ -8478,7 +8770,30 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "TechCrunch reported (checked 2026-09-06) that on one benchmark, Inkling uses a third as many tokens as Nvidia's Nemotron 3 Ultra to hit the same coding performance, per Thinking Machines.",
+              "source_url": "https://techcrunch.com/2026/07/15/thinking-machines-amps-up-its-bet-against-one-size-fits-all-ai-with-its-first-open-model-inkling/",
+              "tier": "reported",
+              "date": "2026-09-06",
+              "quote": "inkling uses a third as many tokens as nvidia’s nemotron 3 ultra — its latest generation open-weight model — to hit the same coding performance."
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 999,090 API requests for the thinkingmachines/inkling-20260715 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"thinkingmachines/inkling-20260715\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -8527,7 +8842,8 @@
       "sources": [
         "https://thinkingmachines.ai/news/inkling-small/",
         "https://venturebeat.com/technology/thinking-machines-debuts-inkling-small-open-source-ai-model-nearing-performance-of-predecessor-at-about-1-4-size",
-        "https://thinkingmachines.ai/model-card/inkling-small/"
+        "https://thinkingmachines.ai/model-card/inkling-small/",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Thinking Machines Lab model · 1M ctx · $0.45/$1.2",
       "availability": {
@@ -8595,7 +8911,95 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "strong",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Thinking Machines' Inkling-Small announcement (checked 2026-09-06) states the model exceeds 80% on SWE-bench Verified, ahead of the 77.6% Inkling's own model card reports for the larger Inkling model on the same benchmark.",
+              "source_url": "https://thinkingmachines.ai/news/inkling-small/",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "on swebench-verified it exceeds 80%."
+            },
+            {
+              "sentence": "The same announcement (checked 2026-09-06) states Inkling-Small surpassed its larger sibling Inkling on reasoning and agentic coding benchmarks after further agentic-coding reinforcement learning.",
+              "source_url": "https://thinkingmachines.ai/news/inkling-small/",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "with these improvements, inkling-small surpassed inkling on reasoning and agentic coding benchmarks."
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 451,641 API requests for the thinkingmachines/inkling-small-20260730 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"thinkingmachines/inkling-small-20260730\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Thinking Machines' Inkling-Small announcement (checked 2026-09-06) attributes Inkling-Small's edge over Inkling on agentic benchmarks to continued agentic-coding reinforcement learning built on an on-policy-distilled checkpoint.",
+              "source_url": "https://thinkingmachines.ai/news/inkling-small/",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "with these improvements, inkling-small surpassed inkling on reasoning and agentic coding benchmarks."
+            },
+            {
+              "sentence": "The announcement (checked 2026-09-06) describes Inkling-Small as achieving comparable performance to the larger Inkling model at about a quarter of its size.",
+              "source_url": "https://thinkingmachines.ai/news/inkling-small/",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "today, we are releasing inkling-small, an efficient open-weights model that achieves comparable performance to inkling at a quarter of its size."
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 451,641 API requests for the thinkingmachines/inkling-small-20260730 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"thinkingmachines/inkling-small-20260730\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "vision": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Thinking Machines' Inkling-Small announcement (checked 2026-09-06) states the model features native reasoning over audio and images with a context window of up to 1M tokens.",
+              "source_url": "https://thinkingmachines.ai/news/inkling-small/",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "like inkling, it features native reasoning over audio and images, variable thinking effort, a context window of up to 1m tokens"
+            },
+            {
+              "sentence": "The same announcement (checked 2026-09-06) states Inkling-Small retains strong performance on visual reasoning, chart and diagram understanding, and visual question answering despite its smaller size.",
+              "source_url": "https://thinkingmachines.ai/news/inkling-small/",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "it retains strong performance on visual reasoning, chart and diagram understanding, mathematical visual question answering, speech understanding, and longer-form audio reasoning."
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 451,641 API requests for the thinkingmachines/inkling-small-20260730 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"thinkingmachines/inkling-small-20260730\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -8634,7 +9038,8 @@
       "price_output": 1.2,
       "sources": [
         "https://www.upstage.ai/blog/en/solar-pro-4",
-        "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4"
+        "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Upstage model · 524K ctx · $0.3/$1.2",
       "availability": {
@@ -8701,7 +9106,117 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "agents": {
+          "band": "strong",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Seoul Economic Daily reported (checked 2026-09-06) that Solar Pro 4 scored 42 on an Artificial Analysis benchmark, topping the scores of Nvidia's Nemotron 3 Ultra (38) and Google's Gemini 3.5 Flash-Lite (37).",
+              "source_url": "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4",
+              "tier": "reported",
+              "date": "2026-09-06",
+              "quote": "that topped the scores of big-tech models such as nvidia's nemotron 3 ultra (38) and google's gemini 3.5 flash-lite (37)."
+            },
+            {
+              "sentence": "Upstage's own Solar Pro 4 blog post (checked 2026-09-06) reports a Terminal-Bench v2.1 score of 57, describing it as completing multi-step jobs in a live shell rather than just generating commands.",
+              "source_url": "https://www.upstage.ai/blog/en/solar-pro-4",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "terminal tasks (terminal-bench v2.1): 57"
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 70,663,518 API requests for the upstage/solar-pro4-20260810 standard variant on 2026-09-06, one of the highest volumes in the feed.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"upstage/solar-pro4-20260810\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "research": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Upstage's Solar Pro 4 blog post (checked 2026-09-06) reports a long-document-reasoning (AA-LCR) score of 71, describing the benchmark as reasoning across roughly 100K tokens of reports and filings to synthesize answers scattered across multiple documents.",
+              "source_url": "https://www.upstage.ai/blog/en/solar-pro-4",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "long-document reasoning (aa-lcr): 71"
+            },
+            {
+              "sentence": "Seoul Economic Daily reported (checked 2026-09-06) that Solar Pro 4 scored 71 on the AA-LCR benchmark, more than 2.3 times better than Solar Pro 3's score on the same benchmark.",
+              "source_url": "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4",
+              "tier": "reported",
+              "date": "2026-09-06",
+              "quote": "it scored 71, more than 2.3 times better than the previous model."
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 70,663,518 API requests for the upstage/solar-pro4-20260810 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"upstage/solar-pro4-20260810\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "extraction": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Seoul Economic Daily reported (checked 2026-09-06) that Solar Pro 4's AA-LCR benchmark specifically measures the ability to extract information from large volumes of long documents and reason toward answers.",
+              "source_url": "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4",
+              "tier": "reported",
+              "date": "2026-09-06",
+              "quote": "on the long-context understanding benchmark aa-lcr, which measures the ability to extract information from large volumes of long documents and reason toward answers based on"
+            },
+            {
+              "sentence": "Upstage's own blog post (checked 2026-09-06) scores Solar Pro 4 at 71 on this AA-LCR long-document benchmark, sourced from Artificial Analysis.",
+              "source_url": "https://www.upstage.ai/blog/en/solar-pro-4",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "long-document reasoning (aa-lcr): 71"
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 70,663,518 API requests for the upstage/solar-pro4-20260810 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"upstage/solar-pro4-20260810\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "exec-summaries": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Upstage's Solar Pro 4 blog post (checked 2026-09-06) demonstrates the model turning market data into an Excel workbook, a review report, and a slide deck across three prompts in one session.",
+              "source_url": "https://www.upstage.ai/blog/en/solar-pro-4",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "three prompts turned market data into an excel workbook, a review report, and a slide deck."
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 70,663,518 API requests for the upstage/solar-pro4-20260810 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"upstage/solar-pro4-20260810\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -8741,7 +9256,8 @@
       "sources": [
         "https://huggingface.co/tencent/Hy-MT2-1.8B",
         "https://github.com/Tencent-Hunyuan/Hy-MT2",
-        "https://openrouter.ai/tencent/hy-mt2-1.8b"
+        "https://openrouter.ai/tencent/hy-mt2-1.8b",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Cheapest Tencent model · 8K ctx · $0.044/$0.177",
       "availability": {
@@ -8808,7 +9324,37 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "bulk": {
+          "band": "strong",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Tencent's Hy-MT2 GitHub README (checked 2026-09-06) states the 1.8B model surpasses mainstream commercial translation APIs from providers such as Microsoft and Doubao overall, aimed at low-cost, high-volume translation.",
+              "source_url": "https://github.com/Tencent-Hunyuan/Hy-MT2",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "the lightweight 1.8b model also surpasses mainstream commercial apis from providers such as microsoft and doubao overall."
+            },
+            {
+              "sentence": "Hy-MT2-1.8B's Hugging Face model page (checked 2026-09-06) shows 237,642 all-time downloads and 22,753 recent downloads for the model.",
+              "source_url": "https://huggingface.co/tencent/Hy-MT2-1.8B",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"downloads\":22753,\"downloadsalltime\":237642,\"id\":\"tencent/hy-mt2-1.8b\""
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 4,400,994 API requests for the tencent/hy-mt2-1.8b-20260521 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"tencent/hy-mt2-1.8b-20260521\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -8847,7 +9393,8 @@
       "price_output": 0.295,
       "sources": [
         "https://github.com/Tencent-Hunyuan/Hy-MT2",
-        "https://openrouter.ai/tencent/hy-mt2-30b-a3b"
+        "https://openrouter.ai/tencent/hy-mt2-30b-a3b",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "Tencent model · 8K ctx · $0.074/$0.295",
       "availability": {
@@ -8914,7 +9461,37 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "bulk": {
+          "band": "strong",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Tencent's Hy-MT2 GitHub README (checked 2026-09-06) states the 30B-A3B model outperforms open-source models such as DeepSeek-V4-Pro and Kimi K2.6 in fast-thinking translation mode.",
+              "source_url": "https://github.com/Tencent-Hunyuan/Hy-MT2",
+              "tier": "lab",
+              "date": "2026-09-06",
+              "quote": "the 7b and 30b-a3b models outperform open-source models such as deepseek-v4-pro and kimi k2.6 in fast-thinking mode"
+            },
+            {
+              "sentence": "OpenRouter's model listing (checked 2026-09-06) describes Hy-MT2-30B-A3B as Tencent's flagship translation model in the Hy-MT2 family, priced at $0.074/$0.295 per million input/output tokens.",
+              "source_url": "https://openrouter.ai/tencent/hy-mt2-30b-a3b",
+              "tier": "reported",
+              "date": "2026-09-06",
+              "quote": "hy-mt2-30b-a3b is tencent's flagship translation model in the hy-mt2 family."
+            },
+            {
+              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 1,705,061 API requests for the tencent/hy-mt2-30b-a3b-20260521 standard variant on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-06",
+              "quote": "\"model_permaslug\":\"tencent/hy-mt2-30b-a3b-20260521\",\"variant\":\"standard\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -9616,7 +10193,9 @@
       "context_window": 128000,
       "sources": [
         "https://research.ibm.com/blog/introducing-granite-4-2",
-        "https://huggingface.co/ibm-granite/granite-4.2-8b"
+        "https://huggingface.co/ibm-granite/granite-4.2-8b",
+        "https://thenewstack.io/ibm-granite-reasoning-models/",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "best_for_line": "IBM model · 128K ctx",
       "availability": {
@@ -9683,7 +10262,109 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "IBM's Granite 4.2 announcement blog states the 8B and 30B models were trained with a dedicated agentic-RL phase aimed at software engineering and terminal-based coding tasks, published 2026-08-25.",
+              "source_url": "https://research.ibm.com/blog/introducing-granite-4-2",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "phase focused on enterprise-style tasks, including software engineering, terminal-based coding, and search-driven workflows."
+            },
+            {
+              "sentence": "IBM's own Hugging Face model card for Granite 4.2 8B lists a self-reported SWE-Bench Verified score of 47.67.",
+              "source_url": "https://huggingface.co/ibm-granite/granite-4.2-8b",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "47.67"
+            },
+            {
+              "sentence": "The New Stack reported that Qwen 3.8 27B beats the Granite 4.2 models on coding benchmarks and that Granite's coding results are inconsistent.",
+              "source_url": "https://thenewstack.io/ibm-granite-reasoning-models/",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Qwen 3.8 27B, especially, beats the Granite models across the board, especially when it comes to coding, where the IBM models deliver inconsistent results overall."
+            },
+            {
+              "sentence": "OpenRouter's public rankings feed recorded 300,868 requests for ibm-granite/granite-4.2-8b in the period reported on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"ibm-granite/granite-4.2-8b-20260831\""
+            }
+          ],
+          "reconciliation": "IBM's own SWE-Bench Verified score and agentic-RL training claim real coding ability, but The New Stack's independent review found Qwen 3.8 27B beating Granite 4.2 on coding with inconsistent results, so third-party coding performance is contested rather than clearly strong.",
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "IBM's Granite 4.2 8B model card states the model reasons about which tools to call before invoking them.",
+              "source_url": "https://huggingface.co/ibm-granite/granite-4.2-8b",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "The model reasons about which tools to invoke and why, producing more accurate function calls."
+            },
+            {
+              "sentence": "IBM's Granite 4.2 8B model card lists a 512K-token context window built for multi-step agentic workflows.",
+              "source_url": "https://huggingface.co/ibm-granite/granite-4.2-8b",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "Supports long documents, multi-turn conversations, and complex agentic workflows."
+            },
+            {
+              "sentence": "The New Stack reported that IBM positions Granite 4.2's main value in high-throughput agentic task performance rather than raw benchmark scores.",
+              "source_url": "https://thenewstack.io/ibm-granite-reasoning-models/",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "IBM argues that the main argument for Granite is its performance in high-throughput agentic tasks, for example."
+            },
+            {
+              "sentence": "OpenRouter's public rankings feed recorded 300,868 requests for ibm-granite/granite-4.2-8b in the period reported on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"ibm-granite/granite-4.2-8b-20260831\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "research": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "IBM's Granite 4.2 blog describes the models' built-in reasoning as planning before acting, aimed at multi-step analytical work.",
+              "source_url": "https://research.ibm.com/blog/introducing-granite-4-2",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "native step-by-step reasoning that helps them plan before they act"
+            },
+            {
+              "sentence": "IBM's Granite 4.2 8B model card reports a self-tested AIME25 score of 86.67.",
+              "source_url": "https://huggingface.co/ibm-granite/granite-4.2-8b",
+              "tier": "lab",
+              "date": "2026-09-07",
+              "quote": "86.67"
+            },
+            {
+              "sentence": "OpenRouter's public rankings feed recorded 300,868 requests for ibm-granite/granite-4.2-8b in the period reported on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"ibm-granite/granite-4.2-8b-20260831\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -9717,7 +10398,8 @@
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/meta/muse-spark-1.3-contributor"
+        "https://openrouter.ai/meta/muse-spark-1.3-contributor",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "coding_score": null,
       "coding_basis": null,
@@ -9790,7 +10472,66 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "low",
+          "claims": [
+            {
+              "sentence": "OpenRouter describes Muse Spark 1.3 Contributor as the low-cost tier of Meta's model built for early-stage agentic, multi-agent, and coding workflows.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.3-contributor",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "multimodal reasoning model for experimentation, learning, and early-stage agentic, multi-agent, and coding workflows."
+            },
+            {
+              "sentence": "OpenRouter states Muse Spark 1.3 Contributor is designed to track information across extended tasks and ask for clarification when needed.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.3-contributor",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "It is designed to track information across extended tasks, work through conflicting inputs, and request clarification or confirmation when needed."
+            },
+            {
+              "sentence": "OpenRouter's public rankings feed recorded 9,811,226 requests for meta/muse-spark-1.3-contributor in the period reported on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meta/muse-spark-1.3-contributor-20260902\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "low",
+          "claims": [
+            {
+              "sentence": "OpenRouter describes Muse Spark 1.3 Contributor as the low-cost tier of Meta's model built for early-stage agentic, multi-agent, and coding workflows.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.3-contributor",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "multimodal reasoning model for experimentation, learning, and early-stage agentic, multi-agent, and coding workflows."
+            },
+            {
+              "sentence": "OpenRouter states Muse Spark 1.3 Contributor is designed to track information across extended tasks and ask for clarification when needed.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.3-contributor",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "It is designed to track information across extended tasks, work through conflicting inputs, and request clarification or confirmation when needed."
+            },
+            {
+              "sentence": "OpenRouter's public rankings feed recorded 9,811,226 requests for meta/muse-spark-1.3-contributor in the period reported on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meta/muse-spark-1.3-contributor-20260902\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -9824,7 +10565,9 @@
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/meta/muse-spark-1.3"
+        "https://openrouter.ai/meta/muse-spark-1.3",
+        "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "coding_score": null,
       "coding_basis": null,
@@ -9897,7 +10640,95 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "strong",
+          "confidence": "high",
+          "claims": [
+            {
+              "sentence": "MarkTechPost reported Meta's benchmark numbers showing Muse Spark 1.3 beating Claude Opus 5 and GPT-5.6 Sol on the DeepSWE v1.1 coding benchmark.",
+              "source_url": "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Muse Spark 1.3 posts 75.4 on DeepSWE v1.1, ahead of Claude Opus 5 at 74.0 and GPT-5.6 Sol at 72.7."
+            },
+            {
+              "sentence": "OpenRouter describes Muse Spark 1.3 as built specifically for long-running coding and agentic workflows.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.3",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Muse Spark 1.3 is a multimodal reasoning model from Meta for long-running agentic, multi-agent, and coding workflows."
+            },
+            {
+              "sentence": "OpenRouter's public rankings feed recorded 1,942,994 requests for meta/muse-spark-1.3 in the period reported on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meta/muse-spark-1.3-20260902\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "MarkTechPost reported Muse Spark 1.3 is designed to ask clarifying questions and pull users in when it stalls during agentic tasks.",
+              "source_url": "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Muse Spark 1.3 asks clarifying questions on ambiguous prompts, pulls the user in when it stalls"
+            },
+            {
+              "sentence": "MarkTechPost reported Meta's own measurement that Muse Spark 1.3 uses about 20% fewer tool calls and 25% fewer tokens than its predecessor.",
+              "source_url": "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Meta engineers measured ~20% fewer tool calls and ~25% fewer tokens versus Muse Spark 1.2"
+            },
+            {
+              "sentence": "OpenRouter's public rankings feed recorded 1,942,994 requests for meta/muse-spark-1.3 in the period reported on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meta/muse-spark-1.3-20260902\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "bulk": {
+          "band": "strong",
+          "confidence": "high",
+          "claims": [
+            {
+              "sentence": "MarkTechPost reported Muse Spark 1.3 scoring far above GPT-5.6 Sol on the MRCR v2 long-context retrieval benchmark at both 512K and 1M token ranges.",
+              "source_url": "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Long-context retrieval is the widest gap: MRCR v2 scores of 98.5 (256K–512K) and 98.1 (512K–1M), against 91.5 and 73.8 for GPT-5.6 Sol."
+            },
+            {
+              "sentence": "MarkTechPost confirmed Muse Spark 1.3 ships with a 1 million token context window.",
+              "source_url": "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "a 1M-token context window"
+            },
+            {
+              "sentence": "OpenRouter's public rankings feed recorded 1,942,994 requests for meta/muse-spark-1.3 in the period reported on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meta/muse-spark-1.3-20260902\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -10315,7 +11146,10 @@
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/openai/gpt-6-astra-pro"
+        "https://openrouter.ai/openai/gpt-6-astra-pro",
+        "https://artificialanalysis.ai/articles/benchmarking-gpt-6-astra",
+        "https://openrouter.ai/api/frontend/v1/rankings/models",
+        "https://thenewstack.io/openai-gpt6-astra-benchmarks/"
       ],
       "coding_score": null,
       "coding_basis": null,
@@ -10388,7 +11222,102 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Artificial Analysis measured GPT-6 Astra at a Coding Index score of 67, roughly matching Claude Opus 5, Fable 5, and Muse Spark 1.3 but behind the leading Fable 5.1.",
+              "source_url": "https://artificialanalysis.ai/articles/benchmarking-gpt-6-astra",
+              "tier": "measured",
+              "date": "2026-09-07",
+              "quote": "GPT-6 Astra scores 67 in the Index - approximately equal to Claude Opus 5 and Fable 5 in Claude Code, and Muse Spark 1.3"
+            },
+            {
+              "sentence": "OpenRouter states GPT-6 Astra Pro serves the same underlying GPT-6 Astra model at a higher reasoning effort for complex tasks.",
+              "source_url": "https://openrouter.ai/openai/gpt-6-astra-pro",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "GPT-6 Astra Pro is the same underlying model as GPT-6 Astra, served with reasoning.mode set to pro for higher-quality responses on complex tasks."
+            },
+            {
+              "sentence": "OpenRouter's public rankings feed recorded 213,819 requests for openai/gpt-6-astra-pro in the period reported on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"openai/gpt-6-astra-pro-20260903\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "research": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "Artificial Analysis measured GPT-6 Astra's overall Intelligence Index at 61, tied with GPT-5.6 Sol and 5 points below Claude Fable 5.1.",
+              "source_url": "https://artificialanalysis.ai/articles/benchmarking-gpt-6-astra",
+              "tier": "measured",
+              "date": "2026-09-07",
+              "quote": "GPT-6 Astra scores equal to GPT-5.6 Sol in the Index at 61. This is 5 points lower than Claude Fable 5.1"
+            },
+            {
+              "sentence": "OpenRouter states GPT-6 Astra Pro runs the underlying model at a higher reasoning effort intended for complex analytical tasks.",
+              "source_url": "https://openrouter.ai/openai/gpt-6-astra-pro",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "GPT-6 Astra Pro is the same underlying model as GPT-6 Astra, served with reasoning.mode set to pro for higher-quality responses on complex tasks."
+            },
+            {
+              "sentence": "OpenRouter's public rankings feed recorded 213,819 requests for openai/gpt-6-astra-pro in the period reported on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"openai/gpt-6-astra-pro-20260903\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "The New Stack reported OpenAI's own OSWorld V2-Offline desktop-agent benchmark score for Astra improved over its predecessor GPT-5.6 Sol.",
+              "source_url": "https://thenewstack.io/openai-gpt6-astra-benchmarks/",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "On the OSWorld V2-Offline benchmark, which tests work across desktop applications, OpenAI says Astra scored 72.6%, up from 65.7% for GPT-5.6 Sol."
+            },
+            {
+              "sentence": "The New Stack reported that Astra cut the average completion time per desktop-agent task nearly in half versus its predecessor.",
+              "source_url": "https://thenewstack.io/openai-gpt6-astra-benchmarks/",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "It also cut the average time per task from about 75 minutes to 40."
+            },
+            {
+              "sentence": "The New Stack reported that Anthropic separately claims a higher OSWorld result for Claude Fable 5.1 than OpenAI's figure for Astra.",
+              "source_url": "https://thenewstack.io/openai-gpt6-astra-benchmarks/",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "Anthropic has reported a higher result of 77.9% for Fable 5.1, but"
+            },
+            {
+              "sentence": "OpenRouter's public rankings feed recorded 213,819 requests for openai/gpt-6-astra-pro in the period reported on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"openai/gpt-6-astra-pro-20260903\""
+            }
+          ],
+          "reconciliation": "OpenAI reports GPT-6 Astra improved its own OSWorld V2-Offline computer-use score to 72.6% over its prior model, but Anthropic separately reported a higher 77.9% for Claude Fable 5.1 on what The New Stack says was a different, non-comparable OSWorld release.",
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -10667,7 +11596,8 @@
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/meta/muse-spark-1.2-contributor"
+        "https://openrouter.ai/meta/muse-spark-1.2-contributor",
+        "https://openrouter.ai/api/frontend/v1/rankings/models"
       ],
       "coding_score": null,
       "coding_basis": null,
@@ -10740,7 +11670,66 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's listing states Muse Spark 1.2 Contributor is a lower-cost Meta reasoning model aimed at developers who want to build cheaply.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.2-contributor",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "is a reasoning model from Meta designed for developers who want to start building at an even lower cost."
+            },
+            {
+              "sentence": "OpenRouter reports that in Meta's own testing, Muse Spark 1.2 Contributor performs well on multi-file refactors and whole-repository code generation.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.2-contributor",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "it performs well on multi-file refactors, extended debugging sessions, whole-repository generation, and tasks that stretch well past a single prompt."
+            },
+            {
+              "sentence": "OpenRouter's public rankings feed recorded 4,597,595 requests for meta/muse-spark-1.2-contributor in the period reported on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meta/muse-spark-1.2-contributor-20260805\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        },
+        "agents": {
+          "band": "capable",
+          "confidence": "medium",
+          "claims": [
+            {
+              "sentence": "OpenRouter's listing describes Muse Spark 1.2 Contributor as a Meta reasoning model tailored for complex agentic tasks.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.2-contributor",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "It is a reasoning model from Meta, tailored for complex agentic tasks."
+            },
+            {
+              "sentence": "OpenRouter states the model supports structured output, parallel function calling, and configurable reasoning effort for agent use.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.2-contributor",
+              "tier": "reported",
+              "date": "2026-09-07",
+              "quote": "supports structured output, parallel function calling, and configurable reasoning effort"
+            },
+            {
+              "sentence": "OpenRouter's public rankings feed recorded 4,597,595 requests for meta/muse-spark-1.2-contributor in the period reported on 2026-09-06.",
+              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+              "tier": "usage",
+              "date": "2026-09-07",
+              "quote": "\"model_permaslug\":\"meta/muse-spark-1.2-contributor-20260805\""
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-09-07"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
