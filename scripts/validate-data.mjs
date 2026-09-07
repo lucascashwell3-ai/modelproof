@@ -126,6 +126,69 @@ for (const m of data.models) {
     E(`${m.name}: confidence "low" with unsourced benchmark(s) [${scored.join(', ')}] — a day-0 stub must keep every benchmark null until a source publishes one`);
 }
 
+// 9. availability (scripts/derive-availability.mjs): where a model can actually be reached.
+// Two shapes of field, both enforced here:
+//   - openrouter is a definite, live-checked fact — true, false, or null (feed unreachable) are
+//     all legitimate.
+//   - every other flag (direct_api, aws_bedrock, google_vertex, azure, open_weights) is sourced
+//     by a fuzzy name/URL match, so a "false" there would be a guess, not a fact — true or null
+//     only. Getting this wrong here is exactly the kind of silent regression a gate exists to
+//     catch: it's cheap to accidentally flip a `?? false` into a `?? null` fallback and start
+//     asserting negatives no source actually backs.
+const AVAIL_BOOL_OR_NULL_ONLY_TRUE = ['direct_api', 'aws_bedrock', 'google_vertex', 'azure', 'open_weights'];
+const AVAIL_KEYS = [...AVAIL_BOOL_OR_NULL_ONLY_TRUE, 'openrouter', 'eu_hosting'];
+for (const m of data.models) {
+  const id = m.name || m.id || '(unnamed)';
+  const a = m.availability;
+  if (a == null) { E(`${id}: missing availability{} — every model needs the field (scripts/derive-availability.mjs), even all-null`); continue; }
+  if (typeof a !== 'object' || Array.isArray(a)) { E(`${id}: availability must be an object`); continue; }
+  for (const k of AVAIL_KEYS) {
+    const v = a[k];
+    if (v !== null && v !== undefined && typeof v !== 'boolean') E(`${id}: availability.${k} is "${v}" — must be true, false, or null`);
+  }
+  for (const k of AVAIL_BOOL_OR_NULL_ONLY_TRUE) {
+    if (a[k] === false) E(`${id}: availability.${k} is false — this field is sourced by a fuzzy match, so only true or null are honest; a miss is "not confirmed", never "confirmed absent"`);
+  }
+  if (!Array.isArray(a.sources)) E(`${id}: availability.sources must be an array`);
+  else {
+    for (const u of a.sources) if (typeof u !== 'string' || !/^https?:\/\//.test(u)) E(`${id}: availability.sources has a non-URL entry "${u}"`);
+    // any asserted flag (true, or a definite false on openrouter) must trace to a source
+    const anyAsserted = AVAIL_KEYS.some((k) => a[k] === true) || a.openrouter === false;
+    if (anyAsserted && !a.sources.length) E(`${id}: availability has an asserted fact but sources[] is empty`);
+  }
+}
+
+// 10. data/plans.json (scripts/refresh-plans.md): seat pricing, refreshed manually. Same honesty
+// rule as everything else — a price with no source_url can't ship, and "contact sales" is null,
+// never a guess at what a sales call would quote.
+const PLAN_VENDORS = ['Anthropic', 'OpenAI', 'Google', 'xAI', 'Cursor', 'GitHub Copilot'];
+let plans = null;
+try {
+  plans = JSON.parse(readFileSync(new URL('../data/plans.json', import.meta.url)));
+} catch (e) {
+  E(`data/plans.json: couldn't read/parse (${e.message})`);
+}
+if (plans) {
+  if (!Array.isArray(plans.plans)) E('data/plans.json: top-level "plans" must be an array');
+  else {
+    for (const p of plans.plans) {
+      const pid = `${p.vendor || '?'} / ${p.plan || '?'}`;
+      if (!p.vendor || !PLAN_VENDORS.includes(p.vendor)) E(`plan ${pid}: vendor must be one of ${PLAN_VENDORS.join(', ')}`);
+      if (!p.plan) E(`plan ${pid}: missing plan name`);
+      if (p.price_usd_month !== null && (typeof p.price_usd_month !== 'number' || p.price_usd_month < 0)) {
+        E(`plan ${pid}: price_usd_month must be a non-negative number or null (contact-sales/JS-only price)`);
+      }
+      if (!p.billing) W(`plan ${pid}: no billing note`);
+      if (!p.source_url) E(`plan ${pid}: missing source_url — every price traces to the vendor's own pricing page, or it's null`);
+      else if (typeof p.source_url !== 'string' || !/^https?:\/\//.test(p.source_url)) E(`plan ${pid}: source_url "${p.source_url}" isn't a URL`);
+      if (!p.as_of) E(`plan ${pid}: missing as_of date`);
+      else if (!/^\d{4}-\d{2}-\d{2}$/.test(p.as_of)) E(`plan ${pid}: as_of "${p.as_of}" must be YYYY-MM-DD`);
+      // The one guess this schema can't allow: a real number with no page behind it.
+      if (typeof p.price_usd_month === 'number' && !p.source_url) E(`plan ${pid}: has a price but no source_url — never invent a price`);
+    }
+  }
+}
+
 if (warnings.length) { console.log('⚠ warnings (non-blocking):'); warnings.forEach((w) => console.log('  - ' + w)); }
 if (errors.length) {
   console.error(`\n✗ ${errors.length} honesty-gate error(s) — blocking:`);
@@ -133,4 +196,5 @@ if (errors.length) {
   process.exit(1);
 }
 const ladderPts = (data.effort_ladders || []).reduce((n, L) => n + (L.series || []).reduce((k, s) => k + (s.points || []).length, 0), 0);
-console.log(`\n✓ honesty gate passed: ${data.models.length} models, ${(data.releases || []).length} releases, ${(data.effort_ladders || []).length} effort ladder(s) / ${ladderPts} points, 0 errors.`);
+const planCount = plans?.plans?.length || 0;
+console.log(`\n✓ honesty gate passed: ${data.models.length} models, ${(data.releases || []).length} releases, ${(data.effort_ladders || []).length} effort ladder(s) / ${ladderPts} points, ${planCount} plan(s), 0 errors.`);

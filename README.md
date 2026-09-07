@@ -45,7 +45,15 @@ Three ways in, all on the site's installer:
 open-weight vendors, refreshed twice a week by an automated Collect → Judge → Verify pipeline
 (GitHub Actions + a research pass with citations; see
 [`automation/jobs/auto-refresh/`](automation/jobs/auto-refresh/)). Anything the pipeline can't
-source cleanly is held in a review issue instead of published.
+source cleanly is held in a review issue instead of published. Each model also carries an
+`availability` object — where it can actually be reached (direct API, OpenRouter, AWS Bedrock,
+open weights) — derived automatically every Collect run by
+[`scripts/derive-availability.mjs`](scripts/derive-availability.mjs); a field is `true` only when
+sourced, `null` otherwise, never a guessed negative. [`data/plans.json`](data/plans.json) holds
+seat/subscription pricing for the major chat apps and coding tools (Claude, ChatGPT, Gemini,
+Grok, Cursor, GitHub Copilot), refreshed manually (see
+[`scripts/refresh-plans.md`](scripts/refresh-plans.md)) straight from each vendor's own pricing
+page — a `null` price means the page didn't show that number in static HTML, never an invented one.
 
 **Honesty rules:**
 
