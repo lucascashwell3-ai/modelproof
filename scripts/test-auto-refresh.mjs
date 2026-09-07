@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
   normalize, matchAlias, withinTolerance, factAgreement, withinSanityBounds,
   newerWins, admitNewModel, isKnownVendor, trackDeprecation, canonicalKey, evaluateFact,
@@ -7,6 +8,8 @@ import {
   releaseTitle, isKnownCandidate, findKnownModel, admissionFailReasons, formatDropLine,
   normalizeDisplayName, findNewCandidateIds, decideRefreshRun, DAILY_FULL_RUN_HOUR_UTC,
 } from './auto-refresh.mjs';
+import { modelId, canonicalVendor, bareModelName, isCommunityListing, namingProblems, VENDORS, isCanonicalVendor } from './naming.mjs';
+import { validate } from './validate-data.mjs';
 
 test('normalize strips punctuation/case', () => {
   assert.equal(normalize('Claude Opus 5'), 'claudeopus5');
@@ -107,9 +110,11 @@ test('normalizeDisplayName strips a leading vendor prefix that matches the vendo
 });
 
 test('normalizeDisplayName leaves a prefix alone when it names a different vendor', () => {
-  // "SpaceXAI" isn't the "x-ai" vendor field written differently — never guess, only strip a
-  // confirmed match.
-  assert.equal(normalizeDisplayName('SpaceXAI: Grok 4.6', 'x-ai'), 'SpaceXAI: Grok 4.6');
+  // A label naming some other vendor is not ours to remove — only strip a confirmed match.
+  assert.equal(normalizeDisplayName('Acme: Grok 4.6', 'x-ai'), 'Acme: Grok 4.6');
+  // "SpaceXAI" IS xAI written the way OpenRouter labels it — scripts/naming.mjs says so
+  // explicitly (VENDOR_ALIASES), so this is a confirmed match, not a guess.
+  assert.equal(normalizeDisplayName('SpaceXAI: Grok 4.6', 'x-ai'), 'Grok 4.6');
 });
 
 test('normalizeDisplayName is a no-op on a name with no vendor prefix', () => {
@@ -529,7 +534,7 @@ grok-4.6_low,0.61,Low,0.70,1,Grok
 const ladderData = () => ({ effort_ladders: [{ id: 'cursorbench-agentic-coding', as_of: '2026-07-25', series: [
   { model_id: 'claude-opus-5', label: 'Opus 5', source_key: 'claude-opus-5', points: [{ effort: 'high', cost: 3.91, score: 66.7 }] },
   { model_id: 'gpt-5-6-sol', label: 'GPT-5.6 Sol', source_key: 'gpt-5.6-sol', points: [{ effort: 'low', cost: 1, score: 52 }, { effort: 'max', cost: 5.5, score: 67 }] },
-  { model_id: 'x-ai-grok-4-6', label: 'Grok 4.6', source_key: 'grok-4.6', points: [{ effort: 'low', cost: 0.7, score: 61 }, { effort: 'high', cost: 2.3, score: 69.9 }] },
+  { model_id: 'grok-4-6', label: 'Grok 4.6', source_key: 'grok-4.6', points: [{ effort: 'low', cost: 0.7, score: 61 }, { effort: 'high', cost: 2.3, score: 69.9 }] },
   { model_id: 'claude-fable-5', label: 'Fable 5', points: [{ effort: 'low', cost: 4, score: 62 }, { effort: 'max', cost: 18, score: 72.9 }] },
 ] }] });
 test('parseCsv handles quoted commas and blank cells', () => {
@@ -589,4 +594,136 @@ test('priceEntry + addEntry: tagged, sourced, and idempotent by title', () => {
   assert.equal(data.releases[0].kind, 'price');
   assert.match(data.releases[0].title, /-80%/);
   assert.equal(data.releases[0].source, 'https://openrouter.ai/api/v1/models');
+});
+
+// --- the naming rule (scripts/naming.mjs), 2026-09 -------------------------------------------
+// Auto-admitted records used to carry OpenRouter's routing path as the id ("google-gemini-3-8-flash",
+// "qwen-qwen3-8-flash", "-deepseek-deepseek-v4-flash-latest") and the feed's lowercase vendor key
+// ("google", "qwen", "~deepseek") next to hand-written "Google" / "Alibaba (Qwen)". One rule now:
+// id = slug of the model's own name, vendor = one canonical spelling, enforced by the honesty gate.
+
+test('modelId: slug of the name, no vendor glued on, parentheticals dropped', () => {
+  assert.equal(modelId('Gemini 3.8 Flash'), 'gemini-3-8-flash');
+  assert.equal(modelId('Google: Gemini 3.8 Flash'), 'gemini-3-8-flash');        // feed label stripped
+  assert.equal(modelId('Muse Spark 1.3'), 'muse-spark-1-3');
+  assert.equal(modelId('Qwen: Qwen3.8 Flash'), 'qwen3-8-flash');
+  assert.equal(modelId('DeepSeek: DeepSeek V4 Pro 0813'), 'deepseek-v4-pro-0813'); // the name itself says DeepSeek
+  assert.equal(modelId('Tencent: Hy4 preview'), 'hy4-preview');
+  assert.equal(modelId('Gemini 3.1 Pro (Preview)'), 'gemini-3-1-pro');
+  assert.equal(modelId('Hy-MT2-1.8B'), 'hy-mt2-1-8b');
+  assert.equal(modelId('o4-mini'), 'o4-mini');
+  assert.equal(modelId('Claude Fable 5.1'), 'claude-fable-5-1');
+});
+
+test('canonicalVendor: every feed spelling lands on one display name; unknown and ~community are null', () => {
+  assert.equal(canonicalVendor('google'), 'Google');
+  assert.equal(canonicalVendor('x-ai'), 'xAI');
+  assert.equal(canonicalVendor('SpaceXAI'), 'xAI');
+  assert.equal(canonicalVendor('qwen'), 'Alibaba (Qwen)');
+  assert.equal(canonicalVendor('Qwen (Alibaba)'), 'Alibaba (Qwen)');
+  assert.equal(canonicalVendor('moonshotai'), 'Moonshot AI');
+  assert.equal(canonicalVendor('Mistral AI'), 'Mistral AI');
+  assert.equal(canonicalVendor('z-ai'), 'Z.ai (Zhipu)');
+  assert.equal(canonicalVendor('Thinking Machines'), 'Thinking Machines Lab');
+  assert.equal(canonicalVendor('~deepseek'), null);          // community re-host is not the vendor
+  assert.equal(canonicalVendor('SomeRandomStartup'), null);
+  for (const v of VENDORS) assert.equal(canonicalVendor(v), v);   // canonical names are fixed points
+  assert.equal(isCanonicalVendor('deepseek'), false);
+});
+
+test('bareModelName: strips a label that names this vendor, keeps one that names another', () => {
+  assert.equal(bareModelName('Google: Gemini 3.8 Flash', 'Google'), 'Gemini 3.8 Flash');
+  assert.equal(bareModelName('ByteDance Seed: Seed 2.1 Turbo', 'ByteDance'), 'Seed 2.1 Turbo');
+  assert.equal(bareModelName('Sakana: Sakana Namazu', 'Sakana AI'), 'Sakana Namazu');
+  assert.equal(bareModelName('Acme: Zeta 1', 'Upstage'), 'Acme: Zeta 1');
+  assert.equal(bareModelName('Claude Opus 5', 'Anthropic'), 'Claude Opus 5');
+});
+
+test('isCommunityListing: "~vendor/…" OpenRouter ids are community re-hosts', () => {
+  assert.equal(isCommunityListing('~deepseek/deepseek-v4-flash-latest'), true);
+  assert.equal(isCommunityListing('deepseek/deepseek-v4-flash-0731'), false);
+});
+
+test('findNewCandidateIds never treats a community listing as a launch', () => {
+  const orList = [{ id: '~deepseek/deepseek-v4-flash-latest', name: 'DeepSeek V4 Flash Latest', created: '2026-09-05' }];
+  assert.deepEqual(findNewCandidateIds({ orList, models: [], aliases: {}, pending: [], today: '2026-09-06' }), []);
+});
+
+test('isKnownVendor (auto-admit policy) resolves through the canonical map', () => {
+  assert.equal(isKnownVendor('x-ai'), true);
+  assert.equal(isKnownVendor('qwen'), true);
+  assert.equal(isKnownVendor('tencent'), false);      // listed vendor, but admits via the Judge only
+  assert.equal(isKnownVendor('~deepseek'), false);
+});
+
+test('canonicalKey strips ANY routing segment, so a clean id still meets its OpenRouter path', () => {
+  assert.equal(canonicalKey('tencent/hy4-preview'), canonicalKey('hy4-preview'));
+  assert.equal(canonicalKey('meta/muse-spark-1.3'), canonicalKey('muse-spark-1-3'));
+  assert.equal(canonicalKey('x-ai/grok-4.6'), canonicalKey('grok-4-6'));
+  assert.equal(canonicalKey('qwen/qwen3.8-flash'), canonicalKey('qwen3-8-flash'));
+  const models = [{ id: 'hy4-preview', name: 'Hy4 preview' }];
+  assert.equal(matchAlias('tencent/hy4-preview', models, {}), 'hy4-preview');
+});
+
+test('namingProblems: a clean record has none', () => {
+  assert.deepEqual(namingProblems({ id: 'gemini-3-8-flash', name: 'Gemini 3.8 Flash', vendor: 'Google' }), []);
+  assert.deepEqual(namingProblems({ id: 'gemini-3-1-pro', name: 'Gemini 3.1 Pro (Preview)', vendor: 'Google' }), []);
+  assert.deepEqual(namingProblems({ id: 'deepseek-v4-pro-0813', name: 'DeepSeek V4 Pro 0813', vendor: 'DeepSeek' }), []);
+});
+
+const REGISTRY = { sources: [] };
+const cleanData = (models) => ({ models, releases: [], effort_ladders: [] });
+const errorsFor = (m) => validate(cleanData([m]), REGISTRY).errors;
+
+test('honesty gate REJECTS a vendor-glued id', () => {
+  const e = errorsFor({ id: 'google-gemini-3-8-flash', name: 'Gemini 3.8 Flash', vendor: 'Google' });
+  assert.ok(e.some((x) => /id "google-gemini-3-8-flash" must be derived from the name/.test(x)), e.join('\n'));
+});
+
+test('honesty gate REJECTS a lowercase feed vendor and names the canonical spelling', () => {
+  const e = errorsFor({ id: 'gemini-3-8-flash', name: 'Gemini 3.8 Flash', vendor: 'google' });
+  assert.ok(e.some((x) => /vendor "google" must be written "Google"/.test(x)), e.join('\n'));
+});
+
+test('honesty gate REJECTS a ~community vendor and a junk id shape', () => {
+  const e = errorsFor({ id: '-deepseek-deepseek-v4-flash-latest', name: 'DeepSeek V4 Flash Latest', vendor: '~deepseek' });
+  assert.ok(e.some((x) => /not a clean slug/.test(x)), e.join('\n'));
+  assert.ok(e.some((x) => /vendor "~deepseek" is not in scripts\/naming.mjs VENDORS/.test(x)), e.join('\n'));
+});
+
+test('honesty gate REJECTS a name that repeats the vendor as a label', () => {
+  const e = errorsFor({ id: 'gemini-3-8-flash', name: 'Google: Gemini 3.8 Flash', vendor: 'Google' });
+  assert.ok(e.some((x) => /repeats the vendor as a label/.test(x)), e.join('\n'));
+});
+
+test('honesty gate REJECTS an unknown free-form vendor and duplicate ids', () => {
+  const e = errorsFor({ id: 'zeta-1', name: 'Zeta 1', vendor: 'Acme' });
+  assert.ok(e.some((x) => /vendor "Acme" is not in scripts\/naming.mjs VENDORS/.test(x)), e.join('\n'));
+  const d = validate(cleanData([
+    { id: 'zeta-1', name: 'Zeta 1', vendor: 'Upstage' },
+    { id: 'zeta-1', name: 'Zeta 1', vendor: 'Upstage' },
+  ]), REGISTRY).errors;
+  assert.ok(d.some((x) => /duplicate id "zeta-1"/.test(x)), d.join('\n'));
+});
+
+test('honesty gate REJECTS a release whose vendor is a feed spelling', () => {
+  const { errors } = validate({ models: [], releases: [{ title: 'Google releases Gemini 3.8 Flash', vendor: 'google', kind: 'model', source: 'https://x' }], effort_ladders: [] }, REGISTRY);
+  assert.ok(errors.some((x) => /vendor "google" must be written "Google"/.test(x)));
+});
+
+test('honesty gate passes a clean record and the live catalog', () => {
+  assert.deepEqual(errorsFor({ id: 'gemini-3-8-flash', name: 'Gemini 3.8 Flash', vendor: 'Google' }), []);
+  const live = JSON.parse(readFileSync(new URL('../data/models.json', import.meta.url)));
+  const reg = JSON.parse(readFileSync(new URL('./sources.json', import.meta.url)));
+  assert.deepEqual(validate(live, reg).errors, []);
+});
+
+test('the admission shape: a feed candidate becomes a clean id + bare name + canonical vendor', () => {
+  const c = { id: 'google/gemini-3.8-flash', name: 'Google: Gemini 3.8 Flash' };
+  const vendor = canonicalVendor(c.id.split('/')[0]);
+  const name = bareModelName(c.name, vendor);
+  assert.equal(vendor, 'Google');
+  assert.equal(name, 'Gemini 3.8 Flash');
+  assert.equal(modelId(name), 'gemini-3-8-flash');
+  assert.deepEqual(namingProblems({ id: modelId(name), name, vendor }), []);
 });

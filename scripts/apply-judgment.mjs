@@ -21,6 +21,7 @@
      node scripts/apply-judgment.mjs <judgments.json> [--dry-run]
 */
 import { isNotablePriceChange, priceEntry, retiredEntry, addEntry } from './timeline.mjs';
+import { canonicalVendor, bareModelName, modelId as idFromName } from './naming.mjs';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -69,7 +70,8 @@ export function validateJudgment(j) {
     if (j.value.kind != null && !['model', 'price', 'retired'].includes(j.value.kind)) errs.push(`${j.id}: release kind must be model | price | retired`);
   } else if (j.kind === 'new-model') {
     if (!j.value || typeof j.value !== 'object') { errs.push(`${j.id}: new-model judgment needs value{}`); return errs; }
-    for (const f of ['id', 'name', 'vendor']) if (!j.value[f]) errs.push(`${j.id}: new-model value missing "${f}"`);
+    // id is derived from name (scripts/naming.mjs) — a supplied one is ignored, so only name + vendor are required
+    for (const f of ['name', 'vendor']) if (!j.value[f]) errs.push(`${j.id}: new-model value missing "${f}"`);
     if (j.value.release != null) {
       const r = j.value.release;
       if (typeof r !== 'object') errs.push(`${j.id}: release must be an object {summary, why, source?}`);
@@ -148,12 +150,19 @@ export function applyOne(data, j, today) {
     return { date: today, model: j.value.vendor, field: 'release', old: null, new: j.value.title, sources: j.sources.map((s) => s.url), reason: j.reason };
   }
   if (j.kind === 'new-model') {
-    if (data.models.some((m) => m.id === j.value.id)) throw new Error(`${j.id}: model id "${j.value.id}" already exists`);
+    // The naming rule (scripts/naming.mjs): canonical vendor spelling, the model's own name with no
+    // "Vendor: " label, id derived from that name. A vendor not in VENDORS passes through as written
+    // and the honesty gate rejects the run, naming the file to add it to — nothing is guessed here.
+    const vendor = canonicalVendor(j.value.vendor) || j.value.vendor;
+    const name = bareModelName(j.value.name, vendor);
+    const id = idFromName(name);
+    if (data.models.some((m) => m.id === id)) throw new Error(`${j.id}: model id "${id}" already exists`);
     const nm = {
       benchmarks: { swe_bench: null, gpqa: null, aime: null, mmlu_pro: null },
       best_for: [], strengths: [], weaknesses: [], verdict: null, confidence: 'low',
       coding_score: null, coding_basis: null, coding_confidence: 'low', use_well: [], task_copy: {},
       ...j.value,
+      id, name, vendor,
       sources: Array.from(new Set([...(j.value.sources || []), ...j.sources.map((s) => s.url)])),
     };
     data.models.push(nm);

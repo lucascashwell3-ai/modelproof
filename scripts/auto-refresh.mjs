@@ -25,6 +25,7 @@ import { join } from 'node:path';
 import { isNotablePriceChange, priceEntry, addEntry } from './timeline.mjs';
 import { deriveAvailabilityForModel, availabilityEquals, fetchBedrockModelKeys } from './derive-availability.mjs';
 import { fileURLToPath } from 'node:url';
+import { canonicalVendor, bareModelName, modelId, isCommunityListing, AUTO_ADMIT_VENDORS } from './naming.mjs';
 
 const ROOT = new URL('../', import.meta.url);
 const dataUrl = new URL('data/models.json', ROOT);
@@ -47,10 +48,9 @@ const LITELLM_URL = 'https://raw.githubusercontent.com/BerriAI/litellm/main/mode
 const AGREEMENT_PCT = 0.02;      // sources must agree within 2%
 const SANITY_HIGH = 5;           // >5x current holds for review
 const SANITY_LOW = 0.2;          // <0.2x current holds for review
-const KNOWN_VENDORS = new Set([
-  'anthropic', 'openai', 'google', 'meta', 'mistral', 'mistral ai', 'xai', 'x-ai', 'x.ai',
-  'deepseek', 'alibaba', 'qwen', 'amazon', 'cohere', 'moonshot', 'moonshot ai',
-]);
+// Vendors Collect may admit on its own live in scripts/naming.mjs (AUTO_ADMIT_VENDORS), next to
+// the canonical vendor spellings — one file decides both what a vendor is called and which
+// vendors publish without the Judge.
 
 // ---------------------------------------------------------------------------------------------
 // pure helpers (unit tested in scripts/test-auto-refresh.mjs)
@@ -61,9 +61,12 @@ export const normalize = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]
 /** Strip OpenRouter/LiteLLM mode suffixes ("(Fast)", "(batch)", ": free") — same model, different tier. */
 export const stripVariantSuffix = (s) => String(s || '').replace(/\s*\((fast|batch|preview)\)\s*/gi, '').trim();
 
-// LiteLLM (and some OpenRouter) keys prefix the vendor/routing path: "anthropic/claude-opus-5",
-// "vertex_ai/gemini-3.5-flash", "bedrock/anthropic.claude-opus-5-v1:0". Strip it before comparing.
-const PROVIDER_PREFIX = /^(anthropic|openai|google|gemini|vertex_ai|bedrock|xai|x-ai|meta-llama|mistralai|deepseek)[/.]/i;
+// LiteLLM and OpenRouter keys prefix the vendor/routing path: "anthropic/claude-opus-5",
+// "vertex_ai/gemini-3.5-flash", "tencent/hy4-preview", "bedrock/anthropic.claude-opus-5-v1:0".
+// Any "<segment>/" is a route, not part of the model, so strip it before comparing — catalog ids
+// never carry the vendor (scripts/naming.mjs), so "tencent/hy4-preview" must meet "hy4-preview".
+// The dotted form ("anthropic.claude-opus-5") is a Bedrock spelling and only has a fixed list.
+const PROVIDER_PREFIX = /^(?:~?[a-z0-9_.-]+\/|(?:anthropic|openai|google|gemini|vertex_ai|bedrock|xai|x-ai|meta-llama|mistralai|deepseek)\.)/i;
 /** Strip a trailing snapshot/date suffix: "-20260723", "@20260723". */
 const DATE_SUFFIX = /[-@]\d{8}$/;
 
@@ -93,19 +96,12 @@ export const stripDisplayVendorPrefix = (s) => String(s || '').replace(DISPLAY_V
  * Fable 5.1", "OpenAI: GPT-6 Astra", "OpenAI: GPT-6 Astra Pro" to land in the catalog verbatim
  * (2026-09-06) — OpenRouter's display names carry the "Vendor: Model" shape by convention, and
  * admission copied it straight into `name`, duplicating the vendor field.
- * A prefix that names something OTHER than the vendor field (e.g. "SpaceXAI: Grok 4.6" when
- * vendor is "x-ai") is left alone — only strip what's confirmed to be the vendor itself, never
- * guess. Comparison is via normalize() so casing/punctuation differences ("OpenAI" vs "openai")
- * don't block the match.
+ * A prefix that names something OTHER than the vendor field is left alone — only strip what's
+ * confirmed to be the vendor itself, never guess. "Same vendor" is decided by scripts/naming.mjs:
+ * canonical match first ("SpaceXAI" and "x-ai" are both xAI), plain normalized equality otherwise.
  */
 export function normalizeDisplayName(name, vendor) {
-  const s = String(name || '');
-  const m = DISPLAY_VENDOR_PREFIX.exec(s);
-  if (!m) return s;
-  const prefix = m[0].replace(/:\s*$/, '').trim();
-  if (normalize(prefix) !== normalize(vendor)) return s;
-  const rest = s.slice(m[0].length).trim();
-  return rest || s;
+  return bareModelName(name, vendor);
 }
 
 /**
@@ -182,6 +178,7 @@ export function findNewCandidateIds({ orList, models, aliases, pending, today = 
   for (const c of orList || []) {
     if (!c) continue;
     if (/free|preview-\d|:online|extended/i.test(c.id || '')) continue; // variant tag, not a new model
+    if (isCommunityListing(c.id)) continue; // "~vendor/…" community re-host — never a launch (scripts/naming.mjs)
     if (c.created && today && (Date.parse(today) - Date.parse(c.created)) / 864e5 > maxAgeDays) continue; // stale listing, not a launch
     if (findKnownModel(c.name, models, aliases) || findKnownModel(c.id, models, aliases)) continue;
     const key = canonicalKey(stripVariantSuffix(c.name || c.id));
@@ -327,15 +324,6 @@ export function formatDropLine(id, reason) {
   return `dropped: ${id} — ${reason}`;
 }
 
-// Display casing for vendors we know about, keyed by normalize(). Falls back to the raw
-// vendor string when we don't recognize it (better than guessing at capitalization).
-const VENDOR_DISPLAY = {
-  anthropic: 'Anthropic', openai: 'OpenAI', google: 'Google', meta: 'Meta',
-  mistral: 'Mistral AI', mistralai: 'Mistral AI', xai: 'xAI', deepseek: 'DeepSeek',
-  alibaba: 'Alibaba', qwen: 'Qwen', amazon: 'Amazon', cohere: 'Cohere',
-  moonshot: 'Moonshot AI', moonshotai: 'Moonshot AI',
-};
-
 /**
  * Release-feed title for a newly admitted model. OpenRouter names already come vendor-prefixed
  * ("Qwen: Qwen3.8 Flash", "Google: Gemini 3.8 Flash"), so blindly prepending nm.vendor doubles
@@ -346,13 +334,12 @@ const VENDOR_DISPLAY = {
 export function releaseTitle(nm) {
   const m = /^([^:]+):\s*(.+)$/.exec(nm.name || '');
   if (m) return `${m[1].trim()} releases ${m[2].trim()}`;
-  const display = VENDOR_DISPLAY[normalize(nm.vendor)] || nm.vendor;
+  const display = canonicalVendor(nm.vendor) || nm.vendor;   // canonical spelling (scripts/naming.mjs); raw only for a vendor we don't list
   return `${display} releases ${nm.name}`;
 }
 
 export function isKnownVendor(vendorName) {
-  return KNOWN_VENDORS.has(normalize(vendorName).replace(/inc|corp|ltd|ai$/g, '') || normalize(vendorName)) ||
-    KNOWN_VENDORS.has(String(vendorName || '').trim().toLowerCase());
+  return AUTO_ADMIT_VENDORS.has(canonicalVendor(vendorName));
 }
 
 /**
@@ -692,6 +679,7 @@ async function main() {
   const logDrop = (id, reason) => { dropped.push({ id, reason }); console.log(formatDropLine(id, reason)); };
   for (const c of orList) {
     if (/free|preview-\d|:online|extended/i.test(c.id || '')) { logDrop(c.id, 'variant suffix, not a new model'); continue; }
+    if (isCommunityListing(c.id)) { logDrop(c.id, 'community listing (~vendor), not the vendor — never admitted, never queued'); continue; }
     const knownMatch = findKnownModel(c.name, data.models, aliases) || findKnownModel(c.id, data.models, aliases);
     if (knownMatch) { logDrop(c.id, `known as ${knownMatch}`); continue; }
     const n = canonicalKey(stripVariantSuffix(c.name));
@@ -705,10 +693,19 @@ async function main() {
     const hasPricing = c.priceInput != null || c.priceOutput != null || llmSame?.priceInput != null;
     seen.add(n);
     if (admitNewModel({ sourceCount, hasPricing, vendorKnown })) {
+      // The naming rule (scripts/naming.mjs): canonical vendor, the model's own name with no
+      // "Vendor: " label, and an id derived from that name — never from the routing path.
+      const vendor = canonicalVendor(vendorGuess);
+      const name = bareModelName(c.name, vendor);
+      const id = modelId(name);
+      if (!id || data.models.some((m) => m.id === id) || newModels.some((m) => m.id === id)) {
+        logDrop(c.id, `id "${id}" is already in the catalog`);
+        continue;
+      }
       newModels.push({
-        id: c.id.replace(/[^a-z0-9]+/gi, '-').toLowerCase(),
-        name: normalizeDisplayName(c.name, vendorGuess),
-        vendor: vendorGuess,
+        id,
+        name,
+        vendor,
         released: c.created || null,
         context_window: c.contextWindow ?? llmSame?.contextWindow ?? null,
         price_input: c.priceInput != null ? Math.round(c.priceInput * 100) / 100 : (llmSame?.priceInput ?? null),

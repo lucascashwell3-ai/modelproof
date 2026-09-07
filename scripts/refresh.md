@@ -34,9 +34,9 @@ procedure. Fastest path: paste the prompt below into a Claude Code session with 
 
 ```jsonc
 {
-  "id": "kebab-case-unique",
-  "name": "Display Name",
-  "vendor": "Vendor",
+  "id": "gemini-3-8-flash",          // derived from name — slug, no vendor glued on (scripts/naming.mjs)
+  "name": "Gemini 3.8 Flash",         // the model's own name, no "Vendor: " label
+  "vendor": "Google",                 // one canonical spelling per vendor: scripts/naming.mjs VENDORS
   "released": "YYYY-MM | YYYY-MM-DD | unknown",
   "context_window": 1000000,        // max input tokens, or null
   "price_input": 2,                  // USD / 1M input tokens, or null

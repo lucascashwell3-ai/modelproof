@@ -26,6 +26,11 @@ searches vendor pages, model cards, Epoch, papers for anything Collect can't set
 - A price/context fact applies when ≥2 independent sources agree within 2%. Single-source or
   conflicting facts go to the worklist for the Judge, never guessed.
 - Any change >5x or <0.2x current holds regardless of agreement (sanity bound).
+- Every record follows one naming rule (`scripts/naming.mjs`): the id is the slug of the model's
+  own name with no vendor glued on (`gemini-3-8-flash`, not `google-gemini-3-8-flash`), the vendor
+  is one canonical spelling from that file's list, the name carries no "Vendor: " label. The
+  honesty gate rejects anything else. OpenRouter "~vendor/…" community re-hosts are dropped with a
+  logged reason and never queued.
 - A new model publishes when found on ≥2 sources with pricing and a known vendor; gets a
   `releases` entry and a deterministic `best_for_line` (facts template, no prose). Otherwise it's
   a `new-model` worklist item for the Judge.
