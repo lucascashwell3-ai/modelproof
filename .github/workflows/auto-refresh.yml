@@ -37,7 +37,7 @@ jobs:
           node-version: 20
 
       - name: Unit test the check-stage rules
-        run: node --test scripts/test-auto-refresh.mjs scripts/test-apply-judgment.mjs
+        run: node --test scripts/test-auto-refresh.mjs scripts/test-apply-judgment.mjs scripts/test-derive-availability.mjs
 
       - name: Run collect (feed -> check -> publish -> worklist -> report)
         id: run

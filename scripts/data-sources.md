@@ -195,3 +195,53 @@ Reversible if it proves too conservative.
 **The bot no longer writes `CHANGES.md`.** It used to overwrite that file wholesale on every run,
 which would have destroyed the human decision log one week at a time. Its report now goes to
 `docs/auto-refresh-report.md`, and the workflow reads the PR body from there.
+
+## Availability + plans (added 2026-09-06, engine round 2)
+
+Two new facts, same rule: sourced or blank.
+
+**`availability{}` on every model** (`scripts/derive-availability.mjs`, run as part of Collect —
+`scripts/auto-refresh.mjs` calls it every full pass, so it stays at most a day stale):
+
+- `openrouter` — exact membership check against the OpenRouter feed Collect already fetches (the
+  same id/name/alias match used for price facts). This is the one field allowed to be a definite
+  `false`: the feed is a complete live snapshot, so absence is a real, checked fact.
+- `direct_api` — `true` + a source URL only when the model already has one of its own vendor's
+  domains on file (`price_checked.url` or `sources[]`) for one of the vendors this v1 covers
+  (Anthropic, OpenAI, Google, xAI, Mistral, DeepSeek, Moonshot, Alibaba/Qwen, Z.ai — see
+  `VENDOR_DOMAINS` in the script). `null`, never `false`, when no such URL is on file — plenty of
+  vendors on that list simply haven't had their pricing page cited yet on a given model.
+- `open_weights` — `true` when OpenRouter's own entry for the model carries a `hugging_face_id`,
+  or the catalog's existing prose already says "open weight(s)". `null`, never `false` — most
+  vendors are closed by default and a text-search miss proves nothing.
+- `aws_bedrock` — `true` + source only on an exact id/name match against **AWS's Price List API**
+  (`https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json`),
+  which is public, unauthenticated JSON with a `products[].attributes.model` field per SKU — unlike
+  the Bedrock `ListFoundationModels` API (needs signed AWS credentials) or the models-supported
+  docs page (HTML table, no stable structure). Checked live 2026-09-06: of the 68 catalog models,
+  only 1 (`x-ai-grok-4-6`, listed as `xai.grok-4.6`) matched — Bedrock's model rollout lags most
+  frontier launches, which is itself the honest finding, not a bug in the matcher.
+- `google_vertex`, `azure` — **null for every model in v1.** Tried within budget and found no
+  public, unauthenticated, machine-readable list: Vertex's Model Garden listing needs an
+  authenticated `aiplatform.googleapis.com` call (`GET .../publishers/google/models` 404s with no
+  token); Azure AI Foundry's catalog lives across thousands of per-model `spec.yaml` files in the
+  `Azure/azureml-assets` GitHub repo with no manifest, and its API needs an authenticated
+  `ai.azure.com` session. Candidate URLs for whoever revisits this:
+  `https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html` (AWS's own docs
+  page, HTML only — the Price List API above is the workaround), the Vertex `aiplatform.googleapis.com`
+  publisher-models endpoint (needs an API key/OAuth token), and the `Azure/azureml-assets` repo on
+  GitHub (needs a real crawl, not a single fetch).
+- `eu_hosting` — null unless sourced; no automated method yet.
+- A field already `true` from a prior run is never regressed to `null`/`false` by a run that
+  simply couldn't re-derive it (a failed fetch, a renamed vendor field) — same fill-vs-change
+  spirit as the rest of this file.
+
+**`data/plans.json`** — seat/subscription pricing for Anthropic, OpenAI, Google, xAI, Cursor, and
+GitHub Copilot. Refreshed manually (`scripts/refresh-plans.md`): fetch each vendor's own pricing
+page with `curl`, read the price straight out of the returned HTML, and set `price_usd_month:
+null` when the number isn't actually in that HTML — several vendors render prices client-side
+(OpenAI's ChatGPT pricing page has zero digits in its static HTML; Cursor's Pro+/Ultra and Teams
+Premium tiers share a JS-toggled price display with their base tier). Google, Anthropic, xAI, and
+GitHub Copilot's own pages, by contrast, render every number server-side. Every entry carries the
+`source_url` it was read from and an `as_of` date; `scripts/validate-data.mjs` rejects any entry
+with a price and no source, or a non-URL `source_url`.

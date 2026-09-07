@@ -69,7 +69,20 @@
           ]
         }
       },
-      "best_for_line": "Anthropic model · 1M ctx · $5/$25"
+      "best_for_line": "Anthropic model · 1M ctx · $5/$25",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models",
+          "https://platform.claude.com/docs/en/about-claude/pricing"
+        ]
+      }
     },
     {
       "id": "kimi-k3",
@@ -127,7 +140,19 @@
           ]
         }
       },
-      "best_for_line": "Priciest Moonshot AI model · 1M ctx · $3/$15"
+      "best_for_line": "Priciest Moonshot AI model · 1M ctx · $3/$15",
+      "availability": {
+        "direct_api": null,
+        "openrouter": false,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "claude-fable-5",
@@ -179,7 +204,20 @@
         "Thinking is always on — give it the complete task up front in one well-specified message and let it run; drip-feeding steps wastes its strength.",
         "It's built for 1M-token context: paste whole codebases or document sets in rather than pre-summarizing."
       ],
-      "best_for_line": "Priciest Anthropic model · 1M ctx · $10/$50"
+      "best_for_line": "Priciest Anthropic model · 1M ctx · $10/$50",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models",
+          "https://platform.claude.com/docs/en/about-claude/pricing"
+        ]
+      }
     },
     {
       "id": "claude-opus-4-8",
@@ -245,7 +283,20 @@
           ]
         }
       },
-      "best_for_line": "Anthropic model · 1M ctx · $5/$25"
+      "best_for_line": "Anthropic model · 1M ctx · $5/$25",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models",
+          "https://platform.claude.com/docs/en/about-claude/pricing"
+        ]
+      }
     },
     {
       "id": "claude-sonnet-5",
@@ -296,7 +347,20 @@
         "Intro pricing ends Aug 31, 2026 (then $3/$15) — budget for the increase if you're building on it.",
         "Built to run agents cheaply at scale — a good default for CI bots and background automations."
       ],
-      "best_for_line": "Anthropic model · 1M ctx · $2/$10"
+      "best_for_line": "Anthropic model · 1M ctx · $2/$10",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models",
+          "https://platform.claude.com/docs/en/about-claude/pricing"
+        ]
+      }
     },
     {
       "id": "gpt-5-5",
@@ -350,7 +414,20 @@
         "output": 30,
         "aggregator_note": "OpenRouter shows ~$180 — matches no tier OpenAI publishes."
       },
-      "best_for_line": "OpenAI model · 1M ctx · $5/$30"
+      "best_for_line": "OpenAI model · 1M ctx · $5/$30",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://developers.openai.com/api/docs/pricing",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "gemini-3-1-pro",
@@ -400,7 +477,20 @@
         "Watch the 200K-token threshold — price doubles to $4/$18 above it, so chunk very long inputs when you can.",
         "Still a Preview SKU — pin the version and re-test before production bets."
       ],
-      "best_for_line": "Priciest Google model · 1M ctx · $2/$12"
+      "best_for_line": "Priciest Google model · 1M ctx · $2/$12",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://ai.google.dev/gemini-api/docs/pricing",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "deepseek-v4-pro",
@@ -459,7 +549,20 @@
           ]
         }
       },
-      "best_for_line": "Priciest DeepSeek model · 1M ctx · $0.435/$0.87"
+      "best_for_line": "Priciest DeepSeek model · 1M ctx · $0.435/$0.87",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://api-docs.deepseek.com/quick_start/pricing/",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "kimi-k2-6",
@@ -513,7 +616,20 @@
         "output": 4,
         "aggregator_note": "OpenRouter shows ~$2.72 — provider pass-through. Vendor input is cache-miss $0.95 / cache-hit $0.16."
       },
-      "best_for_line": "Cheapest Moonshot AI model · 262K ctx · $0.95/$4"
+      "best_for_line": "Cheapest Moonshot AI model · 262K ctx · $0.95/$4",
+      "availability": {
+        "direct_api": true,
+        "openrouter": false,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models",
+          "https://platform.kimi.ai/docs/pricing/chat-k26"
+        ]
+      }
     },
     {
       "id": "llama-4-maverick",
@@ -558,7 +674,19 @@
         "A cheap open generalist for bulk work and long documents — not the top open coder, so don't pick it for hard coding.",
         "Prices vary 20%+ by host (Fireworks/Together/Groq) — compare hosts before committing volume."
       ],
-      "best_for_line": "Meta model · 1M ctx · $0.22/$0.88"
+      "best_for_line": "Meta model · 1M ctx · $0.22/$0.88",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "o4-mini",
@@ -612,7 +740,20 @@
         "output": 4.4,
         "aggregator_note": "OpenRouter shows ~$8 — that's OpenAI's Priority tier ($2/$8), not standard."
       },
-      "best_for_line": "OpenAI model · $1.1/$4.4"
+      "best_for_line": "OpenAI model · $1.1/$4.4",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://developers.openai.com/api/docs/pricing",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "claude-haiku-4-5",
@@ -659,7 +800,20 @@
         "Pair it as the cheap tier under a smarter model — let Haiku triage the easy 90%, escalate the hard 10%.",
         "200K context — split very long documents rather than forcing them in."
       ],
-      "best_for_line": "Cheapest Anthropic model · 200K ctx · $1/$5"
+      "best_for_line": "Cheapest Anthropic model · 200K ctx · $1/$5",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models",
+          "https://platform.claude.com/docs/en/about-claude/pricing"
+        ]
+      }
     },
     {
       "id": "gpt-5-6-sol",
@@ -712,7 +866,20 @@
         "OpenAI's top tier for the hardest agentic, coding, and security work — pay for it only when Terra falls short.",
         "Its chain-of-thought reasoning means higher latency and token spend — budget for both."
       ],
-      "best_for_line": "Priciest OpenAI model · 1M ctx · $5/$30"
+      "best_for_line": "Priciest OpenAI model · 1M ctx · $5/$30",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://developers.openai.com/api/docs/pricing",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "gpt-5-6-terra",
@@ -775,7 +942,20 @@
         "output": 12,
         "aggregator_note": "20% price cut announced 2026-07-30 (was $2.50/$15); confirmed live on OpenAI's own pricing page."
       },
-      "best_for_line": "OpenAI model · 1M ctx · $2/$12"
+      "best_for_line": "OpenAI model · 1M ctx · $2/$12",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://developers.openai.com/api/docs/pricing",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "gpt-5-6-luna",
@@ -829,7 +1009,20 @@
         "output": 1.2,
         "aggregator_note": "80% price cut announced 2026-07-30 (was $1/$6); confirmed live on OpenAI's own pricing page."
       },
-      "best_for_line": "Cheapest OpenAI model · 1M ctx · $0.2/$1.2"
+      "best_for_line": "Cheapest OpenAI model · 1M ctx · $0.2/$1.2",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://developers.openai.com/api/docs/pricing",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "gemini-3-5-flash",
@@ -885,7 +1078,20 @@
         "output": 9,
         "aggregator_note": "OpenRouter shows ~$2.50 — not Google's published rate."
       },
-      "best_for_line": "Google model · 1M ctx · $1.5/$9"
+      "best_for_line": "Google model · 1M ctx · $1.5/$9",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://ai.google.dev/gemini-api/docs/pricing",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "gemini-2-5-flash-lite",
@@ -928,7 +1134,20 @@
         "The rock-bottom Gemini for massive simple jobs — classification, extraction, cleanup at $0.10/$0.40.",
         "Don't use it for reasoning or complex code — it's the lowest capability tier on the board."
       ],
-      "best_for_line": "Cheapest Google model · 1M ctx · $0.1/$0.4"
+      "best_for_line": "Cheapest Google model · 1M ctx · $0.1/$0.4",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://ai.google.dev/gemini-api/docs/pricing",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "grok-4-5",
@@ -977,7 +1196,20 @@
         "The 75% cache discount ($0.50 cached input) rewards repeated-context workloads like agents and long sessions.",
         "No classic benchmarks published and not in the EU at launch — verify on your own tasks first."
       ],
-      "best_for_line": "xAI model · 500K ctx · $2/$6"
+      "best_for_line": "xAI model · 500K ctx · $2/$6",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://docs.x.ai/docs/models",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "deepseek-v4-flash",
@@ -1022,7 +1254,20 @@
         "The bulk-work machine: $0.14/$0.28 with near-free cache hits — process huge volumes of text or code for pennies.",
         "Step up to V4-Pro the moment reasoning depth starts to matter."
       ],
-      "best_for_line": "Cheapest DeepSeek model · 1M ctx · $0.14/$0.28"
+      "best_for_line": "Cheapest DeepSeek model · 1M ctx · $0.14/$0.28",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://api-docs.deepseek.com/quick_start/pricing/",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "qwen3-max",
@@ -1073,7 +1318,20 @@
         "output": 6,
         "aggregator_note": "OpenRouter shows ~$3.90 — matches no Alibaba tier. Ours is the 0–32K Singapore tier."
       },
-      "best_for_line": "Priciest Alibaba (Qwen) model · 256K ctx · $1.2/$6"
+      "best_for_line": "Priciest Alibaba (Qwen) model · 256K ctx · $1.2/$6",
+      "availability": {
+        "direct_api": true,
+        "openrouter": false,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models",
+          "https://www.alibabacloud.com/help/en/model-studio/billing-for-model-studio"
+        ]
+      }
     },
     {
       "id": "qwen3-coder-plus",
@@ -1124,7 +1382,20 @@
         "output": 5,
         "aggregator_note": "OpenRouter shows ~$3.25 — matches no Alibaba tier. Ours is the 0–32K Singapore tier."
       },
-      "best_for_line": "Alibaba (Qwen) model · 1M ctx · $1/$5"
+      "best_for_line": "Alibaba (Qwen) model · 1M ctx · $1/$5",
+      "availability": {
+        "direct_api": true,
+        "openrouter": false,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models",
+          "https://www.alibabacloud.com/help/en/model-studio/billing-for-model-studio"
+        ]
+      }
     },
     {
       "id": "qwen-turbo",
@@ -1165,7 +1436,20 @@
         "Among the cheapest hosted models anywhere — massive-volume tagging and cleanup at $0.05/M input.",
         "Its thinking mode ($0.5/M output) adds cheap reasoning for slightly harder bulk work."
       ],
-      "best_for_line": "Cheapest Alibaba (Qwen) model · $0.05/$0.2"
+      "best_for_line": "Cheapest Alibaba (Qwen) model · $0.05/$0.2",
+      "availability": {
+        "direct_api": true,
+        "openrouter": false,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models",
+          "https://www.alibabacloud.com/help/en/model-studio/model-pricing"
+        ]
+      }
     },
     {
       "id": "mistral-medium-3-1",
@@ -1217,7 +1501,20 @@
           ]
         }
       },
-      "best_for_line": "Mistral AI model · $0.4/$2"
+      "best_for_line": "Mistral AI model · $0.4/$2",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://mistral.ai/pricing/",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "gemini-3-6-flash",
@@ -1262,7 +1559,20 @@
         "input": 1.5,
         "output": 7.5
       },
-      "best_for_line": "Google model · $1.5/$7.5"
+      "best_for_line": "Google model · $1.5/$7.5",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://ai.google.dev/gemini-api/docs/pricing",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "glm-5-2",
@@ -1307,7 +1617,20 @@
         "input": 1.4,
         "output": 4.4
       },
-      "best_for_line": "Z.ai (Zhipu) model · $1.4/$4.4"
+      "best_for_line": "Z.ai (Zhipu) model · $1.4/$4.4",
+      "availability": {
+        "direct_api": true,
+        "openrouter": false,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://docs.z.ai/guides/overview/pricing",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "google-gemini-3-7-flash",
@@ -1352,7 +1675,20 @@
       ],
       "task_copy": {},
       "auto_added": "2026-08-16",
-      "best_for_line": "google model · 1M ctx · $0.38/$1.88"
+      "best_for_line": "google model · 1M ctx · $0.38/$1.88",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://ai.google.dev/gemini-api/docs/pricing",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "x-ai-grok-4-6",
@@ -1383,7 +1719,20 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-08-16",
-      "best_for_line": "x-ai model · 500K ctx · $2/$6"
+      "best_for_line": "x-ai model · 500K ctx · $2/$6",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": true,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models",
+          "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
+        ]
+      }
     },
     {
       "id": "meta-muse-spark-1-2",
@@ -1414,7 +1763,19 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-08-16",
-      "best_for_line": "Cheapest meta model · 1M ctx · $1.25/$4.25"
+      "best_for_line": "Cheapest meta model · 1M ctx · $1.25/$4.25",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "meta-muse-spark-1-1",
@@ -1458,7 +1819,19 @@
       ],
       "task_copy": {},
       "auto_added": "2026-08-16",
-      "best_for_line": "Priciest meta model · 1M ctx · $1.25/$4.25"
+      "best_for_line": "Priciest meta model · 1M ctx · $1.25/$4.25",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1500,7 +1873,19 @@
         "https://blog.kilo.ai/p/announcing-ling-30-flash-free-on",
         "https://www.aimadetools.com/blog/ling-3-0-flash-complete-guide/"
       ],
-      "best_for_line": "InclusionAI (Ant Group) model · 262K ctx · $0.06/$0.18"
+      "best_for_line": "InclusionAI (Ant Group) model · 262K ctx · $0.06/$0.18",
+      "availability": {
+        "direct_api": null,
+        "openrouter": false,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1526,7 +1911,19 @@
         "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
         "https://vercel.com/ai-gateway/models/kat-coder-pro-v2.5"
       ],
-      "best_for_line": "Kwaipilot model"
+      "best_for_line": "Kwaipilot model",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1552,7 +1949,19 @@
         "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
         "https://openrouter.ai/kwaipilot/kat-coder-air-v2.5"
       ],
-      "best_for_line": "Kwaipilot model"
+      "best_for_line": "Kwaipilot model",
+      "availability": {
+        "direct_api": null,
+        "openrouter": false,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1580,7 +1989,19 @@
         "https://venturebeat.com/technology/meituan-open-sources-longcat-2-0-the-1-6t-near-frontier-agentic-coding-model-thats-been-leading-openrouter-trained-entirely-on-chinese-chips",
         "https://www.scmp.com/tech/tech-trends/article/3358854/china-debuts-biggest-ai-model-trained-local-chips-meituan-releases-longcat-20"
       ],
-      "best_for_line": "Meituan model · 1M ctx"
+      "best_for_line": "Meituan model · 1M ctx",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1607,7 +2028,19 @@
         "https://huggingface.co/meta-models/Muse-Glimmer-30B",
         "https://venturebeat.com/technology/meta-returns-to-open-source-with-muse-glimmer-an-apache-2-0-licensed-30b-parameter-ai-model-optimized-for-agents-available-now"
       ],
-      "best_for_line": "Meta model"
+      "best_for_line": "Meta model",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1634,7 +2067,19 @@
         "https://blogs.nvidia.com/blog/nemotron-lightning-switchyard-rtx-dgx/",
         "https://www.cnbc.com/2026/08/11/nvidia-releases-nemotron-3point5-lightning-open-source-ai-model-.html"
       ],
-      "best_for_line": "NVIDIA model"
+      "best_for_line": "NVIDIA model",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1661,7 +2106,19 @@
         "https://poolside.ai/blog/introducing-laguna-s-2-1",
         "https://venturebeat.com/infrastructure/poolside-drops-laguna-s-2-1-an-open-weight-coding-model-that-beats-rivals-10x-its-size"
       ],
-      "best_for_line": "Poolside model · 1M ctx"
+      "best_for_line": "Poolside model · 1M ctx",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1690,7 +2147,20 @@
         "https://docs.qwencloud.com/changelog/models",
         "https://www.eesel.ai/blog/qwen-3-7-flash"
       ],
-      "best_for_line": "Qwen (Alibaba) model · 991K ctx · $0.03/$0.13"
+      "best_for_line": "Qwen (Alibaba) model · 991K ctx · $0.03/$0.13",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://docs.qwencloud.com/changelog/models",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1717,7 +2187,19 @@
         "https://seed.bytedance.com/en/seed2_1",
         "https://datanorth.ai/news/bytedance-releases-seed-2-1-pro-and-seed-2-1-turbo"
       ],
-      "best_for_line": "ByteDance model · 256K ctx"
+      "best_for_line": "ByteDance model · 256K ctx",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1749,7 +2231,19 @@
         "https://writingmate.ai/models/aion-labs/aion-3.0",
         "https://designforonline.com/ai-models/aionlabs-aion-3-0/"
       ],
-      "best_for_line": "Priciest AionLabs model · 131K ctx · $3/$6"
+      "best_for_line": "Priciest AionLabs model · 131K ctx · $3/$6",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1780,7 +2274,19 @@
         "https://openrouter.ai/aion-labs/aion-3.0-mini",
         "https://designforonline.com/ai-models/aionlabs-aion-3-0-mini/"
       ],
-      "best_for_line": "Cheapest AionLabs model · 131K ctx · $0.7/$1.4"
+      "best_for_line": "Cheapest AionLabs model · 131K ctx · $0.7/$1.4",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1809,7 +2315,19 @@
         "https://howaiworks.ai/models/doubao-seed-code",
         "https://developer.puter.com/ai/bytedance/seed-2.0-code/"
       ],
-      "best_for_line": "ByteDance model · 256K ctx"
+      "best_for_line": "ByteDance model · 256K ctx",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1848,7 +2366,19 @@
         "https://docs.poolside.ai/release-notes/models",
         "https://huggingface.co/poolside/Laguna-XS-2.1-NVFP4"
       ],
-      "best_for_line": "Poolside model · 256K ctx · $0.1/$0.2"
+      "best_for_line": "Poolside model · 256K ctx · $0.1/$0.2",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1879,7 +2409,20 @@
         "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b",
         "https://www.marktechpost.com/2026/07/19/alibaba-previews-qwen3-8-max-a-2-4-trillion-parameter-multimodal-model-days-after-moonshots-kimi-k3-open-weight-launch/"
       ],
-      "best_for_line": "Priciest Alibaba (Qwen) model · 984K ctx · $2/$6"
+      "best_for_line": "Priciest Alibaba (Qwen) model · 984K ctx · $2/$6",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models",
+          "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1909,7 +2452,20 @@
         "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
         "https://venturebeat.com/technology/qwen3-8-27b-runs-frontier-class-coding-agents-and-reasoning-locally-no-cloud-api-required"
       ],
-      "best_for_line": "Alibaba (Qwen) model · 262K ctx"
+      "best_for_line": "Alibaba (Qwen) model · 262K ctx",
+      "availability": {
+        "direct_api": true,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models",
+          "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1939,7 +2495,19 @@
         "https://sakana.ai/namazu-api/",
         "https://aiweekly.co/alerts/sakana-ai-ships-namazu-a-japanese-tuned-kimi-k26-llm"
       ],
-      "best_for_line": "Sakana AI model · $0.95/$4"
+      "best_for_line": "Sakana AI model · $0.95/$4",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1969,7 +2537,19 @@
         "https://www.tencent.com/en-us/articles/2202386.html",
         "https://technode.com/2026/07/07/tencent-launches-hunyuan-hy3-integrates-model-across-multiple-products/"
       ],
-      "best_for_line": "Tencent model · 256K ctx · $0.15/$0.59"
+      "best_for_line": "Tencent model · 256K ctx · $0.15/$0.59",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -1999,7 +2579,19 @@
         "https://thinkingmachines.ai/model-card/inkling/",
         "https://techcrunch.com/2026/07/15/thinking-machines-amps-up-its-bet-against-one-size-fits-all-ai-with-its-first-open-model-inkling/"
       ],
-      "best_for_line": "Thinking Machines Lab model · 1M ctx"
+      "best_for_line": "Thinking Machines Lab model · 1M ctx",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -2039,7 +2631,19 @@
         "https://venturebeat.com/technology/thinking-machines-debuts-inkling-small-open-source-ai-model-nearing-performance-of-predecessor-at-about-1-4-size",
         "https://thinkingmachines.ai/model-card/inkling-small/"
       ],
-      "best_for_line": "Thinking Machines Lab model · 1M ctx · $0.45/$1.2"
+      "best_for_line": "Thinking Machines Lab model · 1M ctx · $0.45/$1.2",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -2069,7 +2673,19 @@
         "https://www.upstage.ai/blog/en/solar-pro-4",
         "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4"
       ],
-      "best_for_line": "Upstage model · 524K ctx · $0.3/$1.2"
+      "best_for_line": "Upstage model · 524K ctx · $0.3/$1.2",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -2100,7 +2716,19 @@
         "https://github.com/Tencent-Hunyuan/Hy-MT2",
         "https://openrouter.ai/tencent/hy-mt2-1.8b"
       ],
-      "best_for_line": "Cheapest Tencent model · 8K ctx · $0.044/$0.177"
+      "best_for_line": "Cheapest Tencent model · 8K ctx · $0.044/$0.177",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -2130,7 +2758,19 @@
         "https://github.com/Tencent-Hunyuan/Hy-MT2",
         "https://openrouter.ai/tencent/hy-mt2-30b-a3b"
       ],
-      "best_for_line": "Tencent model · 8K ctx · $0.074/$0.295"
+      "best_for_line": "Tencent model · 8K ctx · $0.074/$0.295",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -2173,7 +2813,20 @@
         "https://docs.z.ai/guides/llm/glm-5.3",
         "https://z.ai/blog/glm-5.3"
       ],
-      "best_for_line": "Priciest Z.ai (Zhipu) model · 1M ctx · $1.4/$4.4"
+      "best_for_line": "Priciest Z.ai (Zhipu) model · 1M ctx · $1.4/$4.4",
+      "availability": {
+        "direct_api": true,
+        "openrouter": false,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://docs.z.ai/guides/llm/glm-5.3",
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "qwen-qwen3-8-max",
@@ -2204,7 +2857,19 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-08-28",
-      "best_for_line": "qwen model · 1M ctx · $2/$6"
+      "best_for_line": "qwen model · 1M ctx · $2/$6",
+      "availability": {
+        "direct_api": null,
+        "openrouter": false,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -2235,7 +2900,19 @@
         "https://thenewstack.io/qwen38-flash-previews-qwen4/",
         "https://openrouter.ai/qwen/qwen3.8-flash"
       ],
-      "best_for_line": "Cheapest qwen model · 1M ctx · $0.15/$0.47"
+      "best_for_line": "Cheapest qwen model · 1M ctx · $0.15/$0.47",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -2266,7 +2943,19 @@
         "https://technode.com/2026/08/28/tencent-open-sources-hy4-preview-with-770b-parameters-and-a-1m-token-context/",
         "https://openrouter.ai/tencent/hy4-preview"
       ],
-      "best_for_line": "Priciest Tencent model · 1M ctx · $0.834/$2.501"
+      "best_for_line": "Priciest Tencent model · 1M ctx · $0.834/$2.501",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -2297,7 +2986,19 @@
         "https://github.com/Tencent-Hunyuan/Hy-MT2",
         "https://openrouter.ai/tencent/hy-mt2-7b"
       ],
-      "best_for_line": "Tencent model · 8K ctx · $0.074/$0.295"
+      "best_for_line": "Tencent model · 8K ctx · $0.074/$0.295",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "benchmarks": {
@@ -2329,7 +3030,19 @@
         "https://research.ibm.com/blog/introducing-granite-4-2",
         "https://huggingface.co/ibm-granite/granite-4.2-8b"
       ],
-      "best_for_line": "IBM model · 128K ctx"
+      "best_for_line": "IBM model · 128K ctx",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "meta-muse-spark-1-3-contributor",
@@ -2360,7 +3073,19 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-04",
-      "best_for_line": "Cheapest meta model · 1M ctx · $0.1/$0.2"
+      "best_for_line": "Cheapest meta model · 1M ctx · $0.1/$0.2",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "meta-muse-spark-1-3",
@@ -2391,7 +3116,19 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-04",
-      "best_for_line": "Priciest meta model · 1M ctx · $1.25/$4.25"
+      "best_for_line": "Priciest meta model · 1M ctx · $1.25/$4.25",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "google-gemini-3-8-flash",
@@ -2422,7 +3159,19 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-04",
-      "best_for_line": "Priciest google model · 1M ctx · $0.75/$3.75"
+      "best_for_line": "Priciest google model · 1M ctx · $0.75/$3.75",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "gpt-6-astra",
@@ -2453,7 +3202,19 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "Cheapest openai model · 1M ctx · $10/$50"
+      "best_for_line": "Cheapest openai model · 1M ctx · $10/$50",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "gpt-6-astra-pro",
@@ -2484,7 +3245,19 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "Priciest openai model · 1M ctx · $10/$50"
+      "best_for_line": "Priciest openai model · 1M ctx · $10/$50",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "claude-fable-5-1",
@@ -2515,7 +3288,19 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "anthropic model · 1M ctx · $10/$50"
+      "best_for_line": "anthropic model · 1M ctx · $10/$50",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "meta-muse-spark-1-2-contributor",
@@ -2546,7 +3331,19 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "meta model · 1M ctx · $0.1/$0.2"
+      "best_for_line": "meta model · 1M ctx · $0.1/$0.2",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "deepseek-deepseek-v4-flash-vision-exp",
@@ -2577,7 +3374,19 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "deepseek model · 1M ctx · $0.22/$0.66"
+      "best_for_line": "deepseek model · 1M ctx · $0.22/$0.66",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "deepseek-deepseek-v4-pro-0813",
@@ -2608,7 +3417,19 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "Priciest deepseek model · 1M ctx · $0.58/$1.74"
+      "best_for_line": "Priciest deepseek model · 1M ctx · $0.58/$1.74",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "-deepseek-deepseek-v4-flash-latest",
@@ -2639,7 +3460,19 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "~deepseek model · 1M ctx · $0.05/$0.09"
+      "best_for_line": "~deepseek model · 1M ctx · $0.05/$0.09",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     },
     {
       "id": "deepseek-deepseek-v4-flash-0731",
@@ -2670,7 +3503,19 @@
       "use_well": [],
       "task_copy": {},
       "auto_added": "2026-09-06",
-      "best_for_line": "Cheapest deepseek model · 1M ctx · $0.05/$0.1"
+      "best_for_line": "Cheapest deepseek model · 1M ctx · $0.05/$0.1",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": true,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      }
     }
   ],
   "releases": [

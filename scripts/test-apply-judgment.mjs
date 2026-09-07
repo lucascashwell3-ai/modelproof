@@ -80,6 +80,7 @@ import { fileURLToPath } from 'node:url';
 
 const SCRIPTS_DIR = fileURLToPath(new URL('.', import.meta.url));
 const REAL_DATA = fileURLToPath(new URL('../data/models.json', import.meta.url));
+const REAL_PLANS = fileURLToPath(new URL('../data/plans.json', import.meta.url));
 
 function withSandbox(fn) {
   // apply-judgment.mjs resolves paths relative to its own file (../data/models.json etc), so we
@@ -101,6 +102,9 @@ function mktempRepo() {
   }
   const models = JSON.parse(readFileSync(REAL_DATA));
   writeFileSync(join(dir, 'data', 'models.json'), JSON.stringify(models, null, 2));
+  // validate-data.mjs (copied above) also gates data/plans.json — give the sandbox the real one
+  // so the honesty-gate subprocess it runs doesn't fail on a missing sibling file.
+  writeFileSync(join(dir, 'data', 'plans.json'), readFileSync(REAL_PLANS));
   writeFileSync(join(dir, 'data', 'changelog.json'), '[]');
   writeFileSync(join(dir, 'data', 'refresh', 'worklist.json'), JSON.stringify({ generated: '2026-08-16', items: [{ id: 'm1:price_input', kind: 'conflict' }] }));
   return dir;
