@@ -1,0 +1,52 @@
+{
+  "_readme": "Expert-default signal for scripts/derive-signals.mjs's `families` calibration in assets/decide.mjs: which models a real tool actually ships/recommends as its own default or featured roster for a given task, curled as static HTML/text 2026-09-07 (raw pages saved alongside the research batch that built this). A model counts as an expert default for a task when a source below explicitly names it for that task; membership counts the same regardless of source (a vendor publishing a shortlist, not a ranked table) — this mirrors eval/METHOD.md's family-(c) treatment. Disclosed bias: 2 of the 3 usable sources are Anthropic's own documentation (Claude Code, Anthropic's own model-selection guide) — OpenAI's (platform.openai.com/docs/guides/model-selection), Google's (ai.google.dev/gemini-api/docs/models) and GitHub Copilot's (docs.github.com/copilot) equivalent pages were fetched but are client-rendered SPAs; curl returned nav/CSS/sidebar only, no usable guidance text, despite retries — so this family under-represents OpenAI/Google/Copilot relative to Anthropic. That is exactly why the calibration rule this file feeds never lets 'expert_default' alone satisfy the >=2-family bar — it always needs a second, non-Anthropic-authored family (usage or arena) to actually promote a model to 'strong'. Refresh: re-curl each source_url, diff for a changed roster/matrix, replace the affected `sources[].entries`, bump `as_of`.",
+  "sources": [
+    {
+      "tool": "Cursor",
+      "source_url": "https://cursor.com/docs/models-and-pricing",
+      "as_of": "2026-09-07",
+      "note": "Cursor's featured/first-class model roster (each with its own doc page). Cursor doesn't break this down per-task, so every listed model is credited for the three task types its own docs frame this roster around: coding, agents, frontend. Composer 2.5 (Cursor's own model) is not in the 67-model catalog and is left unmapped.",
+      "entries": [
+        { "model_id": "claude-sonnet-5", "tasks": ["coding", "agents", "frontend"] },
+        { "model_id": "claude-opus-5", "tasks": ["coding", "agents", "frontend"] },
+        { "model_id": "claude-fable-5-1", "tasks": ["coding", "agents", "frontend"] },
+        { "model_id": "gemini-3-1-pro", "tasks": ["coding", "agents", "frontend"] },
+        { "model_id": "gemini-3-8-flash", "tasks": ["coding", "agents", "frontend"] },
+        { "model_id": "gpt-5-6-sol", "tasks": ["coding", "agents", "frontend"] },
+        { "model_id": "gpt-5-6-terra", "tasks": ["coding", "agents", "frontend"] },
+        { "model_id": "gpt-5-6-luna", "tasks": ["coding", "agents", "frontend"] },
+        { "model_id": "grok-4-6", "tasks": ["coding", "agents", "frontend"] },
+        { "model_id": "grok-4-5", "tasks": ["coding", "agents", "frontend"] }
+      ]
+    },
+    {
+      "tool": "Claude Code",
+      "source_url": "https://docs.claude.com/en/docs/claude-code/model-config ; https://claude.com/blog/claude-model-and-effort-level-in-claude-code",
+      "as_of": "2026-09-07",
+      "note": "Model aliases and their stated purpose: 'sonnet' -> Sonnet 5 ('daily coding tasks'), 'opus' -> Opus 5 ('complex reasoning tasks'), 'fable' -> Fable 5.1 ('hardest and longest-running tasks'), 'haiku' -> Haiku 4.5 ('fast and efficient...simple tasks'). Task credit given only where the source text names a task this product's taxonomy has a match for (see the Anthropic 'choosing a model' source below for Opus/Sonnet/Haiku's fuller task lists — this entry only adds what Claude Code's own docs/blog state that source doesn't already cover: the long-horizon-agentic framing for Fable).",
+      "entries": [
+        { "model_id": "claude-sonnet-5", "tasks": ["coding"] },
+        { "model_id": "claude-fable-5-1", "tasks": ["agents"] },
+        { "model_id": "claude-haiku-4-5", "tasks": ["bulk"] }
+      ]
+    },
+    {
+      "tool": "Anthropic (\"Choosing a Claude model\")",
+      "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+      "as_of": "2026-09-07",
+      "note": "Anthropic's own need -> model -> example-use-cases selection matrix. Verbatim task framing: Fable 5.1 = 'highest available capability' / 'agent sessions that run for hours, multistep deep research, analysis carried through to a finished document'; Opus 5 = 'complex agentic coding and enterprise work' / 'multihour autonomous coding agents...vision-heavy workflows, computer use'; Sonnet 5 = 'speed and capability for everyday coding, agent, and enterprise workloads' / 'code generation, data analysis, content creation, visual understanding, agentic tool use'; Haiku 4.5 = 'lowest latency and price' / 'real-time applications, high-volume intelligent processing, cost-sensitive deployments, sub-agent tasks'.",
+      "entries": [
+        { "model_id": "claude-fable-5-1", "tasks": ["research", "exec-summaries", "agents"] },
+        { "model_id": "claude-opus-5", "tasks": ["coding", "agents", "vision"] },
+        { "model_id": "claude-sonnet-5", "tasks": ["coding", "writing", "chat", "vision", "agents"] },
+        { "model_id": "claude-haiku-4-5", "tasks": ["bulk", "extraction", "chat"] }
+      ]
+    }
+  ],
+  "unusable_sources": [
+    { "tool": "OpenAI", "source_url": "https://platform.openai.com/docs/guides/model-selection", "reason": "client-rendered SPA — curl returned nav/CSS/sidebar only, no model-selection guidance text, despite retries" },
+    { "tool": "Google", "source_url": "https://ai.google.dev/gemini-api/docs/models", "reason": "client-rendered SPA, same failure mode" },
+    { "tool": "GitHub Copilot", "source_url": "https://docs.github.com/en/copilot/reference/ai-models/supported-models", "reason": "client-rendered SPA, same failure mode" },
+    { "tool": "Aider polyglot leaderboard", "source_url": "https://aider.chat/docs/leaderboards/", "reason": "stale — top entries dated 2025-08-23, none of the current 67-model catalog's ids appear in it" }
+  ]
+}

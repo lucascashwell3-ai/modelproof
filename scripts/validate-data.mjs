@@ -291,6 +291,37 @@ export function validate(data, registry) {
     if (m.adoption !== wantAdoption) E(`${id}: adoption "${m.adoption}" doesn't match what deriveAdoption() computes from usage.openrouter.share ("${wantAdoption}") — re-run scripts/derive-status-adoption.mjs`);
   }
 
+  // 10e. signals (scripts/derive-signals.mjs, added with the calibration fix, 2026-09-07) —
+  // per-task real-world-signal counts assets/decide.mjs's rule 3b reads to downgrade a
+  // thinly-evidenced judged "strong" to "capable". Same honesty rule as everywhere else:
+  // usage_rank/arena_rank are a positive integer or null (never 0 or negative — "rank 0" isn't a
+  // real rank), usage_share is 0-100 or null, expert_default is `true` or null (never `false` —
+  // the same "not confirmed, never confirmed absent" convention availability{}'s
+  // AVAIL_BOOL_OR_NULL_ONLY_TRUE uses, since a model absent from Cursor/Claude Code/Anthropic's
+  // published shortlists was simply never on any of them, not affirmatively rejected), and
+  // `families` must be an exact cross-check of the other three fields (same pattern rule 10d uses
+  // for status/adoption) — never a hand-typed number that could drift from what the three actual
+  // fields say.
+  for (const m of data.models) {
+    const id = m.name || m.id || '(unnamed)';
+    const sig = m.signals;
+    if (sig == null || typeof sig !== 'object' || Array.isArray(sig)) { E(`${id}: missing signals{} (scripts/derive-signals.mjs) — every model needs one, keyed by every task id`); continue; }
+    const keys = Object.keys(sig);
+    for (const t of TASK_IDS) if (!keys.includes(t)) E(`${id}: signals missing "${t}"`);
+    for (const t of keys) if (!TASK_IDS.includes(t)) E(`${id}: signals has unknown task "${t}" — not one of ${TASK_IDS.join(', ')}`);
+    for (const t of TASK_IDS) {
+      const rec = sig[t];
+      const label = `${id}: signals.${t}`;
+      if (rec == null || typeof rec !== 'object') { E(`${label} must be an object`); continue; }
+      if (rec.usage_rank !== null && (!Number.isInteger(rec.usage_rank) || rec.usage_rank < 1)) E(`${label}.usage_rank "${rec.usage_rank}" must be null or a positive integer`);
+      if (rec.usage_share !== null && (typeof rec.usage_share !== 'number' || Number.isNaN(rec.usage_share) || rec.usage_share < 0 || rec.usage_share > 100)) E(`${label}.usage_share "${rec.usage_share}" must be null or 0-100`);
+      if (rec.arena_rank !== null && (!Number.isInteger(rec.arena_rank) || rec.arena_rank < 1)) E(`${label}.arena_rank "${rec.arena_rank}" must be null or a positive integer`);
+      if (rec.expert_default !== null && rec.expert_default !== true) E(`${label}.expert_default is "${rec.expert_default}" — must be true or null (never false — absence isn't confirmed rejection)`);
+      const wantFamilies = (rec.usage_rank !== null ? 1 : 0) + (rec.arena_rank !== null ? 1 : 0) + (rec.expert_default === true ? 1 : 0);
+      if (rec.families !== wantFamilies) E(`${label}.families "${rec.families}" doesn't match the count of its own usage_rank/arena_rank/expert_default fields (${wantFamilies}) — re-run scripts/derive-signals.mjs`);
+    }
+  }
+
   return { errors, warnings };
 }
 

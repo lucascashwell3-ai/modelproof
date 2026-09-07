@@ -753,8 +753,9 @@ const REGISTRY = { sources: [] };
 // task_fit{} + task_fit_judged so the (separate) task_fit gate never fires here and each test
 // stays about the one naming rule it names.
 const BLANK_TASK_FIT = Object.fromEntries(TASK_IDS.map((t) => [t, { score: null, basis: [], reason: 'naming-rule test fixture — task fit not exercised here' }]));
+const BLANK_SIGNALS = Object.fromEntries(TASK_IDS.map((t) => [t, { usage_rank: null, usage_share: null, arena_rank: null, expert_default: null, families: 0 }]));
 const cleanData = (models) => ({
-  models: models.map((m) => ({ task_fit: BLANK_TASK_FIT, task_fit_judged: null, usage: { openrouter: null }, status: 'ga', adoption: 'unknown', ...m })),
+  models: models.map((m) => ({ task_fit: BLANK_TASK_FIT, task_fit_judged: null, usage: { openrouter: null }, status: 'ga', adoption: 'unknown', signals: BLANK_SIGNALS, ...m })),
   releases: [],
   effort_ladders: [],
 });

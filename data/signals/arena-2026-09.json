@@ -1,0 +1,112 @@
+{
+  "_readme": "Human-vote leaderboard signal (arena.ai, formerly LMArena/Chatbot Arena) for scripts/derive-signals.mjs's `families` calibration in assets/decide.mjs. Arena's leaderboard tables render client-side via JS — curl gets nav/footer only (verified by diffing curl output against a headless-browser render of the same URL), so this is NOT a live-fetched Collect input like usage.openrouter or this same signals pipeline's OpenRouter task-spend data. It is a DATED, MANUAL snapshot: fetched once via a headless browser (Claude_Browser, read-only) on 2026-09-07 against a page self-dated 'Sep 2, 2026', with the raw captures kept alongside the research batch that built it. `rank` is this model's position within the mapped-to-catalog cut for that task/category (1st mapped = rank 1, etc.) — NOT its raw position on Arena's own (much longer, mostly-unmapped) leaderboard; effort-level variants of the same base model (e.g. claude-opus-5-high / claude-opus-5-max) were de-duplicated to their best-ranked variant before this cut was taken. `category` names the actual Arena leaderboard or column used as each task's proxy — several tasks have no dedicated Arena category and use the closest available one (documented per task below and in eval/signals.md, which is the primary methodology doc this file was distilled from). Refresh procedure: scripts/refresh.md's 'signals refresh' section — replace this file's `tasks` block and bump `as_of`; there is no automated refresh for this source.",
+  "as_of": "2026-09-07",
+  "source_urls": ["https://arena.ai/leaderboard", "https://arena.ai/leaderboard/text"],
+  "tasks": {
+    "coding": {
+      "category": "Text-Arena \"Coding\" (395 models, 1.68M votes)",
+      "source_url": "https://arena.ai/leaderboard/text",
+      "ranks": [
+        { "model_id": "claude-fable-5", "rank": 1 },
+        { "model_id": "kimi-k3", "rank": 2 },
+        { "model_id": "gemini-3-8-flash", "rank": 3 },
+        { "model_id": "claude-opus-4-8", "rank": 4 },
+        { "model_id": "muse-spark-1-2", "rank": 5 }
+      ]
+    },
+    "agents": {
+      "category": "Overview tab, \"Agent\" top-10 card",
+      "source_url": "https://arena.ai/leaderboard",
+      "ranks": [
+        { "model_id": "claude-fable-5-1", "rank": 1 },
+        { "model_id": "claude-opus-5", "rank": 2 },
+        { "model_id": "claude-fable-5", "rank": 3 },
+        { "model_id": "gpt-5-6-sol", "rank": 4 },
+        { "model_id": "claude-opus-4-8", "rank": 5 }
+      ]
+    },
+    "bulk": {
+      "category": null,
+      "source_url": null,
+      "note": "Arena measures preference/quality by blind vote, not cost or throughput — no coverage for a cost-defined task. Documented gap, not an oversight (eval/signals.md).",
+      "ranks": []
+    },
+    "writing": {
+      "category": "Text-Arena \"Creative Writing\" (398 models, 1.23M votes)",
+      "source_url": "https://arena.ai/leaderboard/text",
+      "ranks": [
+        { "model_id": "claude-fable-5", "rank": 1 },
+        { "model_id": "gemini-3-7-flash", "rank": 2 },
+        { "model_id": "gemini-3-8-flash", "rank": 3 },
+        { "model_id": "claude-fable-5-1", "rank": 4 },
+        { "model_id": "gemini-3-1-pro", "rank": 5 }
+      ]
+    },
+    "research": {
+      "category": "Overview tab, \"Search\" top-10 card (grounded web search — closest proxy; Arena has no dedicated research/analysis category)",
+      "source_url": "https://arena.ai/leaderboard",
+      "ranks": [
+        { "model_id": "gpt-5-6-sol", "rank": 1 },
+        { "model_id": "gpt-5-5", "rank": 2 },
+        { "model_id": "claude-fable-5", "rank": 3 },
+        { "model_id": "grok-4-5", "rank": 4 },
+        { "model_id": "gemini-3-1-pro", "rank": 5 }
+      ]
+    },
+    "extraction": {
+      "category": "Overview tab, \"Document\" top-10 card",
+      "source_url": "https://arena.ai/leaderboard",
+      "note": "Only 4 of the top-10 card's entries mapped to a catalog id; the rest were off-catalog/older SKUs.",
+      "ranks": [
+        { "model_id": "claude-opus-5", "rank": 1 },
+        { "model_id": "claude-fable-5", "rank": 2 },
+        { "model_id": "gpt-5-5", "rank": 3 },
+        { "model_id": "gpt-5-6-terra", "rank": 4 }
+      ]
+    },
+    "chat": {
+      "category": "Text-Arena \"Overall\" (general chat quality) top-10",
+      "source_url": "https://arena.ai/leaderboard/text",
+      "ranks": [
+        { "model_id": "claude-fable-5", "rank": 1 },
+        { "model_id": "claude-fable-5-1", "rank": 2 },
+        { "model_id": "muse-spark-1-2", "rank": 3 },
+        { "model_id": "gemini-3-8-flash", "rank": 4 },
+        { "model_id": "claude-opus-5", "rank": 5 }
+      ]
+    },
+    "vision": {
+      "category": "Overview tab, \"Vision\" top-10 card",
+      "source_url": "https://arena.ai/leaderboard",
+      "ranks": [
+        { "model_id": "claude-fable-5", "rank": 1 },
+        { "model_id": "qwen3-8-max", "rank": 2 },
+        { "model_id": "muse-spark-1-2", "rank": 3 },
+        { "model_id": "claude-opus-5", "rank": 4 },
+        { "model_id": "gemini-3-1-pro", "rank": 5 }
+      ]
+    },
+    "frontend": {
+      "category": "Overview tab, \"WebDev\" top-10 card",
+      "source_url": "https://arena.ai/leaderboard",
+      "ranks": [
+        { "model_id": "gpt-6-astra", "rank": 1 },
+        { "model_id": "claude-fable-5-1", "rank": 2 },
+        { "model_id": "claude-opus-5", "rank": 3 },
+        { "model_id": "qwen3-8-max", "rank": 4 },
+        { "model_id": "kimi-k3", "rank": 5 }
+      ]
+    },
+    "exec-summaries": {
+      "category": "Text-Arena rank matrix, \"Longer Query\" column (proxy — Arena has no dedicated summarization category)",
+      "source_url": "https://arena.ai/leaderboard/text",
+      "ranks": [
+        { "model_id": "claude-fable-5", "rank": 1 },
+        { "model_id": "claude-fable-5-1", "rank": 2 },
+        { "model_id": "gemini-3-8-flash", "rank": 3 },
+        { "model_id": "claude-opus-5", "rank": 4 },
+        { "model_id": "kimi-k3", "rank": 5 }
+      ]
+    }
+  }
+}

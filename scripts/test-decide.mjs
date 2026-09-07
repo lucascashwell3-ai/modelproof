@@ -5,6 +5,7 @@ import {
   decide, filterCandidates, isReachable, vendorCountry, WHY_FIELDS, VENDOR_KEY_DISPLAY, STANCES,
   taskFitFor, basisFromClaims, judgedBandOf, bandRank, confidenceRank, isEnterpriseInput,
   isDisqualifiedFromStartHere, topClaimSentence, rankByStance, dominates, dropDominated,
+  calibrateBand,
 } from '../assets/decide.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
 
@@ -132,7 +133,17 @@ test(`full grid: ${TASK_IDS.length} tasks x ${HAVE_OPTIONS.length} have x ${STAN
             // 'capable' model can never eliminate a 'strong' one just by being cheaper), so the
             // old "pricier AND lower-fit" check only still applies within one (band, confidence)
             // tier, where dominates() falls back to exactly that comparison.
-            const bandOf = (id) => { const mm = models.find((x) => x.id === id); return judgedBandOf(mm, taskId); };
+            // Rule 3b calibration (2026-09-07): decide() ranks/gates/dominates on the CALIBRATED
+            // band (a claimed "strong" with fewer than 2 signal families downgrades to
+            // "capable" — see calibrateBand), never the raw judged record's own band, so this
+            // re-derivation has to apply the same calibration or it would flag a domination
+            // "violation" against a band decide() itself never actually used.
+            const bandOf = (id) => {
+              const mm = models.find((x) => x.id === id);
+              const raw = judgedBandOf(mm, taskId);
+              const { band } = calibrateBand(mm, taskId, raw.band);
+              return { band, confidence: raw.confidence };
+            };
             for (const a of shortlist) {
               for (const b of shortlist) {
                 if (a === b || typeof a.monthly_cost_usd !== 'number' || typeof b.monthly_cost_usd !== 'number') continue;

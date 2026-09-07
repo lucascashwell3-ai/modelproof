@@ -79,7 +79,44 @@
       'new', from usage.openrouter.share, or 'new' when `released` is within 60 days of the data
       snapshot regardless of share — scripts/derive-status-adoption.mjs) and its top claim's own
       sentence as `why`.
-   4. Rank by judged band (strong > capable) and confidence (high > medium > low) FIRST within
+   3b. Calibration — a judged band alone still let a SINGLE vendor benchmark claim buy the exact
+      same "strong" band as a model backed by real usage, human votes, AND vendor guidance (fixed
+      2026-09-07, the PR after the rule-3 rewrite above — e.g. kat-coder-pro-v2-5 and
+      muse-spark-1-3 topped "coding" over claude-opus-5/claude-sonnet-5/gpt-5-6-sol on nothing but
+      their own arXiv paper / vendor listing, with ~0% real usage and zero independent-vote or
+      expert-default presence; see the PR this shipped in, eval/signals.md, and
+      scripts/derive-signals.mjs's header for the full story and the three real-world signal
+      families it collects). `model.signals[taskId]` (scripts/derive-signals.mjs; shape:
+      `{ usage_rank, usage_share, arena_rank, expert_default, families }`) counts how many of
+      THREE independent families back a model for a task — OpenRouter task-spend top-10 (usage),
+      arena.ai human-vote top-10 (arena), and a real tool's own featured/default roster (expert) —
+      `families` is 0-3, never invented; a model with no row in a given family for this task is
+      absent from it, not a zero standing in for evidence. The rule: a judged `strong` band needs
+      `families >= 2` to STAY `strong`; with fewer than 2 it is downgraded to `capable` at
+      decision time (the underlying judged record, its claims, and its `confidence` are untouched
+      — only the effective band this engine ranks and gates on changes), and the shortlist item
+      carries `calibration_note: "strong on vendor evidence; limited real-world signal"` so a
+      reader sees exactly why a pick that reads "strong" in the raw data shows up ranked as
+      `capable` here. `capable` (native OR just-downgraded) then needs its OWN family support —
+      `families >= 1` — to survive as a candidate at all ("or a judged record" is the escape hatch
+      right below, not a free pass): a $0.05/Mtok model whose only "capable" evidence is its own
+      vendor's arXiv paper and a near-zero usage stat must not out-cost-rank real, cross-checked
+      picks just because nobody happened to call it "strong". filterCandidates() applies this in
+      two passes for exactly one reason — a WEAK-COVERAGE escape hatch that mirrors
+      eval/METHOD.md's own rule for the cold answer key this engine is graded against: if NOT ONE
+      otherwise-eligible candidate for a given (task, access) combination has any family support
+      at all, the gap is in what got collected, not in every candidate's quality — collecting
+      OpenRouter/Arena/expert-default data for every (task, vendor-restriction) combination in the
+      catalog was never attempted, and a vendor-restricted ask (e.g. "Google only") can land
+      entirely outside what got sampled. In that one case, and only that case, every `capable`
+      record stands on its judged record alone, same as before this rule existed — that's the "or
+      a judged record" clause. Any (task, access) pair where even ONE candidate has real family
+      signal enforces the floor normally on every other candidate in that pair. `taskFitFor()`'s
+      numeric `fit` is recalculated at the calibrated band (not the raw record's) whenever it's the
+      flat JUDGED_BAND_SCORE placeholder rather than a real measured score — so a downgraded pick's
+      shown fit number is honest about which band it actually ranks in now.
+   4. Rank by judged band (strong > capable), THEN by calibration's own `families` count, THEN by
+      confidence (high > medium > low) — FIRST within
       the candidate set — every candidate here already cleared rule 3, so this never lets a
       lower-judged model outrank a better-judged one. What breaks a tie inside the same (band,
       confidence) tier is where the three stances actually differ (fixed 2026-09-07 — a prior
@@ -240,6 +277,31 @@ const CONFIDENCE_RANK = { high: 3, medium: 2, low: 1 };
 export const bandRank = (band) => BAND_RANK[band] ?? 0;
 export const confidenceRank = (confidence) => CONFIDENCE_RANK[confidence] ?? 0;
 
+// -----------------------------------------------------------------------------------------
+// Rule 3b — calibration (see the file header). A judged `strong` needs real-world signal
+// support (scripts/derive-signals.mjs's `families`, 0-3) to stay `strong`; fewer than 2 families
+// downgrades it to `capable` at decision time. This function only ever computes the DOWNGRADE —
+// whether a `capable` band (native or just-downgraded) also needs its own family support to stay
+// a candidate at all is a SEPARATE decision (see filterCandidates' own "capable floor" step,
+// right after this runs) that needs the whole per-(task, access) candidate pool to answer
+// correctly (the weak-coverage escape hatch below), so it can't be decided per-model in isolation
+// here. families is always read here, even when no downgrade happens, so rule 4 can order by it.
+// -----------------------------------------------------------------------------------------
+export const CALIBRATION_LABEL = 'strong on vendor evidence; limited real-world signal';
+export const STRONG_FAMILIES_FLOOR = 2;
+export const CAPABLE_FAMILIES_FLOOR = 1;
+
+/** { band, families, calibration } — `band` is the post-downgrade band; `calibration` is null
+ * unless a downgrade happened, in which case it's `{ downgraded_from: 'strong', families, note:
+ * CALIBRATION_LABEL }`. Pure — reads only model.signals[taskId], never mutates the model. */
+export function calibrateBand(model, taskId, rawBand) {
+  const families = model.signals?.[taskId]?.families ?? 0;
+  if (rawBand === 'strong' && families < STRONG_FAMILIES_FLOOR) {
+    return { band: 'capable', families, calibration: { downgraded_from: 'strong', families, note: CALIBRATION_LABEL } };
+  }
+  return { band: rawBand, families, calibration: null };
+}
+
 /** { score, basis, reason?, source: 'measured'|'reported'|'lab-stated', judged: record|null } —
  * quantitative fit wins whenever it's sourced; a judged record only ever fills a gap, never
  * overrides a real number. */
@@ -378,7 +440,11 @@ export function findSeatPlanAlternative(model, have, plans) {
 // -----------------------------------------------------------------------------------------
 export function filterCandidates(taskId, input, data) {
   const vol = resolveVolume(input.volume, data.presets);
-  const candidates = [];
+  // Pass 1 — everything up through calibration (rules 1-3 + 3b's downgrade), but NOT yet rule
+  // 3b's "capable also needs its own family support" floor — that floor needs to see the WHOLE
+  // pool for this (task, access) combination first, to tell a genuinely thin pick apart from a gap
+  // in what got collected (the weak-coverage escape hatch right below).
+  const preGate = [];
   for (const model of data.models || []) {
     if (!isReachable(model, input.have)) continue;
     const dr = passesDataRule(model, input.dataRule, data.vendors);
@@ -391,8 +457,36 @@ export function filterCandidates(taskId, input, data) {
     // Rule 3 — the judgment IS the gate (see the file header). A judged record for THIS task is
     // required to be a candidate at all; a quantitative score with no judged band never gets in
     // on its own any more.
-    const { band, confidence, judged } = judgedBandOf(model, taskId);
-    if (band !== 'strong' && band !== 'capable') continue;
+    const { band: rawBand, confidence, judged } = judgedBandOf(model, taskId);
+    if (rawBand !== 'strong' && rawBand !== 'capable') continue;
+    // Rule 3b — calibration (see the file header and calibrateBand's own comment): a claimed
+    // `strong` with fewer than 2 real-world signal families downgrades to `capable` here, before
+    // ranking ever sees it. Everything below this line uses the EFFECTIVE (post-calibration)
+    // `band`, never the raw judged record's own band — that's what makes the downgrade actually
+    // stick through domination pruning and ranking, not just cosmetic on the label.
+    const { band, families, calibration } = calibrateBand(model, taskId, rawBand);
+    preGate.push({ model, dr, band, confidence, families, calibration, judged });
+  }
+  // Weak-coverage escape hatch (mirrors eval/METHOD.md's own rule for the cold answer key this
+  // engine is graded against: "a task's coverage counts as weak... when zero reachable candidates
+  // have any family's top-set support... must_not_start is left empty, since there is no
+  // comparative evidence to justify singling any reachable model out"). If NOT ONE otherwise-
+  // eligible candidate for this specific (task, access) combination has any real-world signal
+  // family at all, then nobody collected usage/arena/expert-default data for this corner of the
+  // catalog — that is a gap in what got collected, not evidence every candidate is unproven, so
+  // the "capable needs >=1 family" floor below would be punishing a data gap, not a bad pick.
+  // Widen back to every judged-eligible candidate in that case, exactly as if rule 3b's capable
+  // floor didn't exist for this call. This only ever WIDENS the candidate pool for a (task,
+  // access) pair with literally zero family signal anywhere in it — a pair where even one
+  // candidate has real signal always enforces the floor normally.
+  const hasAnyRealSignal = preGate.some((c) => c.families >= 1);
+  // Pass 2 — rule 3b's capable floor: a `capable` band (native or just-downgraded) also needs its
+  // own family support, unless the weak-coverage escape above applies. `strong` is never subject
+  // to this (it already passed the stricter families >= STRONG_FAMILIES_FLOOR check above).
+  const candidates = [];
+  for (const c of preGate) {
+    if (c.band === 'capable' && c.families < CAPABLE_FAMILIES_FLOOR && hasAnyRealSignal) continue;
+    const { model, dr, band, confidence, families, calibration, judged } = c;
     // taskFitFor still decides the NUMBER shown alongside the pick (a real score when sourced,
     // else the flat JUDGED_BAND_SCORE) — but never whether the model is here at all (that's
     // judgedBandOf, above). Claims/reconciliation always come from the judged record itself
@@ -400,14 +494,22 @@ export function filterCandidates(taskId, input, data) {
     // BOTH a real score and a judged record still shows the evidence that actually earned it a
     // place in the running.
     const fit = taskFitFor(model, taskId);
+    // A downgraded pick's flat placeholder score is recalculated at the CALIBRATED band (68 for
+    // capable, not 88 for the raw record's strong) — but only when fit.score is itself that flat
+    // placeholder (fit.source !== 'measured'); a real measured quant score (e.g. coding_score) is
+    // never touched by calibration, since it's independent evidence, not the judged claim this
+    // rule exists to discount.
+    const fitScore = calibration && fit.source !== 'measured' ? JUDGED_BAND_SCORE[band] : (fit.score ?? JUDGED_BAND_SCORE[band]);
     candidates.push({
       model,
       band,
       confidence,
+      families,
+      calibration,
       // Guaranteed non-null in practice (taskFitFor always resolves a score once a strong/capable
       // judged record exists), but falls back to the band constant rather than ever sorting on a
       // NaN if that guarantee is ever violated by a future edit.
-      fit: fit.score ?? JUDGED_BAND_SCORE[band],
+      fit: fitScore,
       fit_basis: fit.basis,
       basis: basisFromClaims(judged.claims),
       claims: judged.claims,
@@ -475,11 +577,13 @@ export function dropDominated(list) {
 // -----------------------------------------------------------------------------------------
 const costOrInf = (x) => (num(x.monthly_cost_usd) ? x.monthly_cost_usd : Infinity);
 
-/** Band, then confidence — used as the primary key for 'best' and 'balanced', and as a tie-break
- * (after cost) for 'cheapest'. Every candidate reaching this function already cleared rule 3, so
- * band is always 'strong' or 'capable' here; this comparator still checks the general case rather
- * than hard-coding those two values, so it keeps working if a future band is ever added. */
-const byBandThenConfidence = (a, b) => bandRank(b.band) - bandRank(a.band) || confidenceRank(b.confidence) - confidenceRank(a.confidence);
+/** Band, then calibration's own `families` count (rule 3b — more independent real-world signal
+ * outranks less, inside the same band), then confidence — used as the primary key for 'best' and
+ * 'balanced', and as a tie-break (after cost) for 'cheapest'. Every candidate reaching this
+ * function already cleared rule 3, so band is always 'strong' or 'capable' here; this comparator
+ * still checks the general case rather than hard-coding those two values, so it keeps working if
+ * a future band is ever added. */
+const byBandThenConfidence = (a, b) => bandRank(b.band) - bandRank(a.band) || (b.families ?? 0) - (a.families ?? 0) || confidenceRank(b.confidence) - confidenceRank(a.confidence);
 /** Band -> confidence -> fit -> cost, the shared comparator 'best' uses outright and 'balanced'
  * uses within its in-budget set (see below) — kept as one function so the two stances can never
  * quietly drift apart on how they break a tie. Fit (not cost) is the first tie-break inside a
@@ -598,6 +702,14 @@ export function decide(input, data) {
       reconciliation: item.reconciliation,
       start_here: idx === 0,
       seat_plan_alternative: item.seat_plan_alternative,
+      // Rule 3b calibration (see the file header): how many of the 3 real-world signal families
+      // (usage-top-10 / arena-top-10 / expert-default — scripts/derive-signals.mjs) back this
+      // model for this task, and, when a claimed "strong" got downgraded to "capable" for lacking
+      // them, the exact label a reader should see next to it. calibration_note is null on every
+      // pick whose band was never downgraded (including a native "capable" record, which was
+      // never a "strong" claim to begin with).
+      families: item.families ?? 0,
+      calibration_note: item.calibration?.note ?? null,
     }));
 
     const assumptions = [];

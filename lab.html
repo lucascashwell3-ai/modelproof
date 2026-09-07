@@ -72,6 +72,17 @@
     .pick__claims a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 2px; }
     .pick__reconciliation { color: var(--ink-3); font-size: 11.5px; margin-top: 4px; font-style: italic; }
 
+    /* Calibration (2026-09-07): families is how many of 3 independent real-world signals
+       (OpenRouter usage top-10, arena.ai human-vote top-10, a real tool's expert-default roster —
+       scripts/derive-signals.mjs) back this pick for this task — shown next to fit on every pick
+       so "strong"/"capable" never reads as the only evidence. calibration_note only appears on a
+       pick whose judged band was downgraded from "strong" to "capable" for lacking that support
+       (assets/decide.mjs's rule 3b) — it always reads "strong on vendor evidence; limited
+       real-world signal", so a reader sees exactly why a claim that reads "strong" in the raw
+       judged record ranks here as "capable" instead. */
+    .pick__families { color: var(--ink-4); }
+    .pick__calibration { color: var(--warn); font-size: 11.5px; margin-top: 4px; font-style: italic; }
+
     .assumptions { list-style: none; margin-top: 12px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
     .assumptions li { color: var(--ink-3); font-size: 12px; padding-left: 14px; position: relative; line-height: 1.5; }
     .assumptions li::before { content: "—"; position: absolute; left: 0; color: var(--ink-4); }
@@ -97,7 +108,7 @@
       <div class="hero__scrim" aria-hidden="true"></div>
       <span class="hero__eyebrow">Decision lab</span>
       <h1 class="pagehead__title" id="phTitle">The rules, run in the open</h1>
-      <p class="pagehead__sub">The same shared engine behind the model advisor — reachability, a no-China-hosted option, then a judged capability floor: a real, sourced judgment call, not a benchmark score alone. Ranked by judged band, then confidence, then cheapest / balanced / best. Every pick names the claims it's based on; a missing judgment stays blank, never guessed.</p>
+      <p class="pagehead__sub">The same shared engine behind the model advisor — reachability, a no-China-hosted option, then a judged capability floor: a real, sourced judgment call, not a benchmark score alone. A "strong" claim also needs real-world signal — OpenRouter usage, arena.ai human votes, or a real tool's own default roster — to stay "strong"; without it, it ranks as "capable" instead. Ranked by judged band, then how many of those signals back it, then confidence, then cheapest / balanced / best. Every pick names the claims it's based on; a missing judgment stays blank, never guessed.</p>
     </section>
 
     <section class="panel" id="try">
@@ -176,7 +187,7 @@
       </div>
       <div class="foot__col">
         <h3>Rule order</h3>
-        <p>Reachable with what you have → clears the data rule → clears the task's judged capability floor (a real judgment call, not a benchmark number alone) → ranked by judged band, then confidence, then stance, ties broken by price. A preview-status or low-adoption pick can lose the top spot to a same-band alternative. See <code>assets/decide.mjs</code> for the exact order.</p>
+        <p>Reachable with what you have → clears the data rule → clears the task's judged capability floor (a real judgment call, not a benchmark number alone) → calibrated against real-world signal (a "strong" claim with fewer than 2 of {usage, arena, expert-default} downgrades to "capable"; a "capable" claim needs at least 1, unless nobody collected signal for this task/access combination at all) → ranked by judged band, then signal families, then confidence, then stance, ties broken by price. A preview-status or low-adoption pick can lose the top spot to a same-band alternative. See <code>assets/decide.mjs</code> for the exact order.</p>
       </div>
       <div class="foot__col">
         <h3>Freshness</h3>
@@ -230,6 +241,15 @@
       return badges.length ? `<div class="pick__badges">${badges.join('')}</div>` : '';
     }
 
+    // families (0-3, scripts/derive-signals.mjs): how many of {OpenRouter usage top-10, arena.ai
+    // human-vote top-10, a real tool's expert-default roster} back this pick for this task —
+    // shown next to fit on every pick, not just a downgraded one, so "2 signal families" reads as
+    // routine context rather than a flag only appearing when something's wrong.
+    function renderFamilies(item) {
+      const n = typeof item.families === 'number' ? item.families : 0;
+      return `<span class="pick__families dim"> · ${n} signal famil${n === 1 ? 'y' : 'ies'}</span>`;
+    }
+
     function renderShortlist(shortlist) {
       if (!shortlist.length) return '<p class="empty-note">No model clears every filter for this task with these inputs.</p>';
       return `<div class="shortlist">${shortlist.map((item) => `
@@ -239,7 +259,8 @@
             <span class="pick__name">${esc(item.name)}</span>
             <span class="pick__cost">${esc(fmtUSD(item.monthly_cost_usd))}</span>
           </div>
-          <div class="pick__why">${esc(item.why)} <span class="dim">(fit ${item.fit}/100)</span></div>
+          <div class="pick__why">${esc(item.why)} <span class="dim">(fit ${item.fit}/100)</span>${renderFamilies(item)}</div>
+          ${item.calibration_note ? `<div class="pick__calibration">${esc(item.calibration_note)}</div>` : ''}
           ${renderBadges(item)}
           ${renderBasis(item)}
           ${item.seat_plan_alternative

@@ -345,7 +345,79 @@
         }
       },
       "status": "ga",
-      "adoption": "moderate"
+      "adoption": "moderate",
+      "signals": {
+        "coding": {
+          "usage_rank": 1,
+          "usage_share": 37.04,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 2
+        },
+        "agents": {
+          "usage_rank": 1,
+          "usage_share": 13.68,
+          "arena_rank": 2,
+          "expert_default": true,
+          "families": 3
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": 1,
+          "usage_share": 9.02,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "research": {
+          "usage_rank": 2,
+          "usage_share": 10.1,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "extraction": {
+          "usage_rank": 1,
+          "usage_share": 6.79,
+          "arena_rank": 1,
+          "expert_default": null,
+          "families": 2
+        },
+        "chat": {
+          "usage_rank": 1,
+          "usage_share": 10.81,
+          "arena_rank": 5,
+          "expert_default": null,
+          "families": 2
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 4,
+          "expert_default": true,
+          "families": 2
+        },
+        "frontend": {
+          "usage_rank": 1,
+          "usage_share": 39.36,
+          "arena_rank": 3,
+          "expert_default": true,
+          "families": 3
+        },
+        "exec-summaries": {
+          "usage_rank": 2,
+          "usage_share": 8.18,
+          "arena_rank": 4,
+          "expert_default": null,
+          "families": 2
+        }
+      }
     },
     {
       "id": "kimi-k3",
@@ -631,7 +703,79 @@
         }
       },
       "status": "ga",
-      "adoption": "moderate"
+      "adoption": "moderate",
+      "signals": {
+        "coding": {
+          "usage_rank": 2,
+          "usage_share": 7.25,
+          "arena_rank": 2,
+          "expert_default": null,
+          "families": 2
+        },
+        "agents": {
+          "usage_rank": 2,
+          "usage_share": 8.69,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": 4,
+          "usage_share": 4.14,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "research": {
+          "usage_rank": 1,
+          "usage_share": 13.42,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "extraction": {
+          "usage_rank": 4,
+          "usage_share": 3.55,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "chat": {
+          "usage_rank": 4,
+          "usage_share": 5.28,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": 2,
+          "usage_share": 8.61,
+          "arena_rank": 5,
+          "expert_default": null,
+          "families": 2
+        },
+        "exec-summaries": {
+          "usage_rank": 4,
+          "usage_share": 4.65,
+          "arena_rank": 5,
+          "expert_default": null,
+          "families": 2
+        }
+      }
     },
     {
       "id": "claude-fable-5",
@@ -976,7 +1120,79 @@
         "openrouter": null
       },
       "status": "ga",
-      "adoption": "unknown"
+      "adoption": "unknown",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 1,
+          "expert_default": null,
+          "families": 1
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 3,
+          "expert_default": null,
+          "families": 1
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 1,
+          "expert_default": null,
+          "families": 1
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 3,
+          "expert_default": null,
+          "families": 1
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 2,
+          "expert_default": null,
+          "families": 1
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 1,
+          "expert_default": null,
+          "families": 1
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 1,
+          "expert_default": null,
+          "families": 1
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 1,
+          "expert_default": null,
+          "families": 1
+        }
+      }
     },
     {
       "id": "claude-opus-4-8",
@@ -1199,7 +1415,79 @@
         "openrouter": null
       },
       "status": "ga",
-      "adoption": "unknown"
+      "adoption": "unknown",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 4,
+          "expert_default": null,
+          "families": 1
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 5,
+          "expert_default": null,
+          "families": 1
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "claude-sonnet-5",
@@ -1527,7 +1815,79 @@
         }
       },
       "status": "ga",
-      "adoption": "moderate"
+      "adoption": "moderate",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "agents": {
+          "usage_rank": 6,
+          "usage_share": 4.01,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 2
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": 3,
+          "usage_share": 5.07,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 2
+        },
+        "research": {
+          "usage_rank": 5,
+          "usage_share": 4.25,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "extraction": {
+          "usage_rank": 3,
+          "usage_share": 3.88,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "chat": {
+          "usage_rank": 2,
+          "usage_share": 5.64,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 2
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "frontend": {
+          "usage_rank": 4,
+          "usage_share": 3.44,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 2
+        },
+        "exec-summaries": {
+          "usage_rank": 5,
+          "usage_share": 4.41,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        }
+      }
     },
     {
       "id": "gpt-5-5",
@@ -1721,7 +2081,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": 7,
+          "usage_share": 2.77,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 2,
+          "expert_default": null,
+          "families": 1
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 3,
+          "expert_default": null,
+          "families": 1
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "gemini-3-1-pro",
@@ -2047,7 +2479,79 @@
         }
       },
       "status": "preview",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": 5,
+          "usage_share": 2.96,
+          "arena_rank": 5,
+          "expert_default": null,
+          "families": 2
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 5,
+          "expert_default": null,
+          "families": 1
+        },
+        "extraction": {
+          "usage_rank": 5,
+          "usage_share": 3.3,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 5,
+          "expert_default": null,
+          "families": 1
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "deepseek-v4-pro",
@@ -2317,7 +2821,79 @@
         }
       },
       "status": "ga",
-      "adoption": "moderate"
+      "adoption": "moderate",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": 5,
+          "usage_share": 4.49,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "bulk": {
+          "usage_rank": 9,
+          "usage_share": 1.51,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "kimi-k2-6",
@@ -2531,7 +3107,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "llama-4-maverick",
@@ -2706,7 +3354,79 @@
         "openrouter": null
       },
       "status": "ga",
-      "adoption": "unknown"
+      "adoption": "unknown",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "o4-mini",
@@ -2912,7 +3632,79 @@
         "openrouter": null
       },
       "status": "ga",
-      "adoption": "unknown"
+      "adoption": "unknown",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "claude-haiku-4-5",
@@ -3105,7 +3897,79 @@
         "openrouter": null
       },
       "status": "ga",
-      "adoption": "unknown"
+      "adoption": "unknown",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "gpt-5-6-sol",
@@ -3410,7 +4274,79 @@
         }
       },
       "status": "ga",
-      "adoption": "moderate"
+      "adoption": "moderate",
+      "signals": {
+        "coding": {
+          "usage_rank": 3,
+          "usage_share": 6.03,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 2
+        },
+        "agents": {
+          "usage_rank": 3,
+          "usage_share": 8.12,
+          "arena_rank": 4,
+          "expert_default": true,
+          "families": 3
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": 2,
+          "usage_share": 6.4,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "research": {
+          "usage_rank": 3,
+          "usage_share": 9.55,
+          "arena_rank": 1,
+          "expert_default": null,
+          "families": 2
+        },
+        "extraction": {
+          "usage_rank": 2,
+          "usage_share": 6.05,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "chat": {
+          "usage_rank": 3,
+          "usage_share": 5.28,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": 5,
+          "usage_share": 3.09,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 2
+        },
+        "exec-summaries": {
+          "usage_rank": 1,
+          "usage_share": 8.53,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        }
+      }
     },
     {
       "id": "gpt-5-6-terra",
@@ -3613,7 +4549,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": 4,
+          "usage_share": 4.48,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 4,
+          "expert_default": null,
+          "families": 1
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": 7,
+          "usage_share": 2.72,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 2
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "gpt-5-6-luna",
@@ -3830,7 +4838,79 @@
         }
       },
       "status": "ga",
-      "adoption": "broad"
+      "adoption": "broad",
+      "signals": {
+        "coding": {
+          "usage_rank": 7,
+          "usage_share": 2.54,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 2
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "bulk": {
+          "usage_rank": 2,
+          "usage_share": 7.36,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "exec-summaries": {
+          "usage_rank": 3,
+          "usage_share": 5.51,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        }
+      }
     },
     {
       "id": "gemini-3-5-flash",
@@ -4069,7 +5149,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": 6,
+          "usage_share": 3.83,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        }
+      }
     },
     {
       "id": "gemini-2-5-flash-lite",
@@ -4219,7 +5371,79 @@
         }
       },
       "status": "ga",
-      "adoption": "moderate"
+      "adoption": "moderate",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": 5,
+          "usage_share": 2.02,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "grok-4-5",
@@ -4430,7 +5654,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 4,
+          "expert_default": null,
+          "families": 1
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "deepseek-v4-flash",
@@ -4604,7 +5900,79 @@
         }
       },
       "status": "ga",
-      "adoption": "broad"
+      "adoption": "broad",
+      "signals": {
+        "coding": {
+          "usage_rank": 6,
+          "usage_share": 2.85,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "agents": {
+          "usage_rank": 7,
+          "usage_share": 2.74,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "bulk": {
+          "usage_rank": 1,
+          "usage_share": 13.77,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": 6,
+          "usage_share": 2.96,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": 6,
+          "usage_share": 2.79,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "qwen3-max",
@@ -4790,7 +6158,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "qwen3-coder-plus",
@@ -4976,7 +6416,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "qwen-turbo",
@@ -5124,7 +6636,79 @@
         "openrouter": null
       },
       "status": "ga",
-      "adoption": "unknown"
+      "adoption": "unknown",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "mistral-medium-3-1",
@@ -5325,7 +6909,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "gemini-3-6-flash",
@@ -5447,7 +7103,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "glm-5-2",
@@ -5640,7 +7368,79 @@
         }
       },
       "status": "ga",
-      "adoption": "broad"
+      "adoption": "broad",
+      "signals": {
+        "coding": {
+          "usage_rank": 4,
+          "usage_share": 5.01,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "agents": {
+          "usage_rank": 4,
+          "usage_share": 5.59,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "bulk": {
+          "usage_rank": 6,
+          "usage_share": 2.01,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "writing": {
+          "usage_rank": 6,
+          "usage_share": 2.92,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "research": {
+          "usage_rank": 6,
+          "usage_share": 3.2,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "extraction": {
+          "usage_rank": 6,
+          "usage_share": 3,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "chat": {
+          "usage_rank": 5,
+          "usage_share": 5.02,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": 3,
+          "usage_share": 7.76,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "gemini-3-7-flash",
@@ -5787,7 +7587,79 @@
         }
       },
       "status": "ga",
-      "adoption": "moderate"
+      "adoption": "moderate",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": 7,
+          "usage_share": 1.86,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 2,
+          "expert_default": null,
+          "families": 1
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "grok-4-6",
@@ -5936,7 +7808,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "muse-spark-1-2",
@@ -6113,7 +8057,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 5,
+          "expert_default": null,
+          "families": 1
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 3,
+          "expert_default": null,
+          "families": 1
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 3,
+          "expert_default": null,
+          "families": 1
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "muse-spark-1-1",
@@ -6324,7 +8340,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -6553,7 +8641,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -6716,7 +8876,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -6909,7 +9141,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -7074,7 +9378,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -7231,7 +9607,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -7350,7 +9798,79 @@
         }
       },
       "status": "ga",
-      "adoption": "moderate"
+      "adoption": "moderate",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -7509,7 +10029,79 @@
       "status": "ga",
       "adoption": "moderate",
       "price_input": 0.09,
-      "price_output": 0.18
+      "price_output": 0.18,
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -7646,7 +10238,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": 10,
+          "usage_share": 1.07,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -7824,7 +10488,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -7978,7 +10714,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -8131,7 +10939,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -8290,7 +11170,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -8467,7 +11419,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -8598,7 +11622,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -8773,7 +11869,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -8977,7 +12145,79 @@
         "openrouter": null
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -9202,7 +12442,79 @@
         }
       },
       "status": "ga",
-      "adoption": "broad"
+      "adoption": "broad",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": 4,
+          "usage_share": 2.07,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -9332,7 +12644,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -9538,7 +12922,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -9755,7 +13211,79 @@
         }
       },
       "status": "ga",
-      "adoption": "moderate"
+      "adoption": "moderate",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -9893,7 +13421,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -10030,7 +13630,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -10175,7 +13847,79 @@
         }
       },
       "status": "ga",
-      "adoption": "broad"
+      "adoption": "broad",
+      "signals": {
+        "coding": {
+          "usage_rank": 5,
+          "usage_share": 4.59,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "agents": {
+          "usage_rank": 8,
+          "usage_share": 2.7,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "bulk": {
+          "usage_rank": 8,
+          "usage_share": 1.82,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": 8,
+          "usage_share": 1.71,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "qwen3-8-max",
@@ -10330,7 +14074,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 2,
+          "expert_default": null,
+          "families": 1
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 4,
+          "expert_default": null,
+          "families": 1
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -10454,7 +14270,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -10584,7 +14472,79 @@
         }
       },
       "status": "preview",
-      "adoption": "broad"
+      "adoption": "broad",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": 3,
+          "usage_share": 4.64,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 1
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -10691,7 +14651,79 @@
         }
       },
       "status": "ga",
-      "adoption": "low"
+      "adoption": "low",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "benchmarks": {
@@ -10903,7 +14935,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "muse-spark-1-3-contributor",
@@ -11070,7 +15174,79 @@
         }
       },
       "status": "ga",
-      "adoption": "moderate"
+      "adoption": "moderate",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "muse-spark-1-3",
@@ -11267,7 +15443,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "gemini-3-8-flash",
@@ -11503,7 +15751,79 @@
         }
       },
       "status": "ga",
-      "adoption": "moderate"
+      "adoption": "moderate",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 3,
+          "expert_default": true,
+          "families": 2
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 3,
+          "expert_default": null,
+          "families": 1
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 4,
+          "expert_default": null,
+          "families": 1
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 3,
+          "expert_default": null,
+          "families": 1
+        }
+      }
     },
     {
       "id": "gpt-6-astra",
@@ -11651,7 +15971,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 1,
+          "expert_default": null,
+          "families": 1
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "gpt-6-astra-pro",
@@ -11856,7 +16248,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "claude-fable-5-1",
@@ -12101,7 +16565,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 1,
+          "expert_default": true,
+          "families": 2
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 4,
+          "expert_default": null,
+          "families": 1
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": true,
+          "families": 1
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 2,
+          "expert_default": null,
+          "families": 1
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 2,
+          "expert_default": true,
+          "families": 2
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": 2,
+          "expert_default": true,
+          "families": 2
+        }
+      }
     },
     {
       "id": "muse-spark-1-2-contributor",
@@ -12268,7 +16804,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "deepseek-v4-flash-vision-exp",
@@ -12392,7 +17000,79 @@
         }
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "deepseek-v4-pro-0813",
@@ -12510,7 +17190,79 @@
         "openrouter": null
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     },
     {
       "id": "deepseek-v4-flash-0731",
@@ -12628,7 +17380,79 @@
         "openrouter": null
       },
       "status": "ga",
-      "adoption": "new"
+      "adoption": "new",
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      }
     }
   ],
   "releases": [
