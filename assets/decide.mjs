@@ -396,10 +396,6 @@ export function filterCandidates(taskId, input, data) {
   return { candidates, vol };
 }
 
-/** Drop any candidate strictly dominated by a cheaper-or-equal, at-least-as-fit candidate —
- * guarantees the eventual shortlist never contains a pricier model with a lower (or equal)
- * fit than a cheaper one. Candidates with an unknown cost can't be compared either way, so
- * they're never dropped by this step. */
 /** y dominates x only if y's judged tier (band, then confidence) is AT LEAST AS GOOD as x's —
  * a 'capable' model can never dominate-and-eliminate a 'strong' one just by being cheaper or
  * carrying a higher raw fit number, or the exact bug this whole rewrite exists to kill (a number
@@ -428,6 +424,10 @@ export function dominates(y, x) {
   const strictlyBetter = !sameBandConfidence || y.monthly_cost_usd < x.monthly_cost_usd || y.fit > x.fit;
   return cheaperOrEqual && atLeastAsFit && strictlyBetter;
 }
+/** Drop any candidate dominated by another per dominates() above — guarantees the eventual
+ * shortlist never contains a pricier, lower-fit model when a better-or-equal-tier, cheaper
+ * alternative already covers it. Candidates with an unknown cost can't be compared either way,
+ * so they're never dropped by this step. */
 export function dropDominated(list) {
   return list.filter((x) => !list.some((y) => dominates(y, x)));
 }
