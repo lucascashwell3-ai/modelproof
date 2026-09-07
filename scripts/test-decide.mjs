@@ -15,7 +15,6 @@ const models = readJson('data/models.json').models;
 const plans = readJson('data/plans.json').plans;
 const presets = readJson('data/usage-presets.json').presets;
 const vendors = readJson('data/vendors.json').vendors;
-const situations = readJson('data/eval/situations.json').situations;
 const data = { models, plans, presets, vendors };
 
 // ---------------------------------------------------------------------------------------------
@@ -30,14 +29,8 @@ test('registry: WHY_FIELDS keys and derive-task-fit BASIS_TOKENS are the same se
   assert.deepEqual(whyKeys, basisTokens);
 });
 
-// ---------------------------------------------------------------------------------------------
-// Sanity: every task id used in data/eval/situations.json is one derive-task-fit.mjs knows.
-// ---------------------------------------------------------------------------------------------
-test('eval situations only reference real task ids', () => {
-  for (const s of situations) {
-    for (const t of s.input.tasks) assert.ok(TASK_IDS.includes(t), `situation "${s.id}" uses unknown task "${t}"`);
-  }
-});
+// (the "situations only reference real task ids" sanity check now lives in
+// scripts/test-eval-situations.mjs, alongside the rest of the situations.json-driven eval)
 
 // ---------------------------------------------------------------------------------------------
 // The situations eval used to live here as a hard-coded 20-case test. It's superseded (2026-09-07)
