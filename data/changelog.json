@@ -1189,5 +1189,127 @@
       "https://openrouter.ai/~deepseek/deepseek-v4-flash-latest"
     ],
     "note": "community re-host (~deepseek) of the \"latest\" alias pointer — duplicates DeepSeek V4 Flash 0731; not a vendor listing"
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.anthropic.com/claude/fable"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-6 Astra",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://platform.openai.com/docs/models/gpt-6-astra.md"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.8 Flash",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://deepmind.google/models/gemini/flash/"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Grok 4.6",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://x.ai/news/grok-4-6"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GLM-5.3",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://docs.z.ai/guides/llm/glm-5.3"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4 Pro 0813",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813/raw/main/README.md"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4 Flash 0731",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731/raw/main/README.md"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4 Flash Vision Exp",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp/raw/main/README.md"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 Flash",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/Qwen/Qwen3.8-Flash-Next/raw/main/README.md"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 2.4T A95B",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.marktechpost.com/2026/07/19/alibaba-previews-qwen3-8-max-a-2-4-trillion-parameter-multimodal-model-days-after-moonshots-kimi-k3-open-weight-launch/",
+      "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy4 preview",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.tencent.com/tencent-releases-and-open-sources-tencent-hy4-preview/",
+      "https://technode.com/2026/08/28/tencent-open-sources-hy4-preview-with-770b-parameters-and-a-1m-token-context/"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Nemotron 3.5 Lightning",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.cnbc.com/2026/08/11/nvidia-releases-nemotron-3point5-lightning-open-source-ai-model-.html"
+    ]
   }
 ]

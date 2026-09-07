@@ -245,3 +245,62 @@ Premium tiers share a JS-toggled price display with their base tier). Google, An
 GitHub Copilot's own pages, by contrast, render every number server-side. Every entry carries the
 `source_url` it was read from and an `as_of` date; `scripts/validate-data.mjs` rejects any entry
 with a price and no source, or a non-URL `source_url`.
+
+## Judged task fit + usage (added 2026-09-06/07, engine round 3)
+
+Two more fields, same rule: sourced or blank.
+
+**`task_fit_judged{}`** on every model — a per-task, sourced qualitative fit (band + confidence +
+`claims[]`) that fills the gap when `task_fit`'s quantitative score is null (`scripts/refresh-judge.md`
+carries the full writing rules; `scripts/validate-data.mjs` gates the shape and bans relative
+phrasing in the Judge's own prose; `scripts/check-sources.mjs` is the separate live-fetch gate that
+confirms every `quote` is actually on its cited page — the one no wording rule alone can enforce,
+since a well-formed claim can still misquote or fabricate a source). `assets/decide.mjs`'s rule 3
+uses this only when the quantitative score is missing; see that file for the exact precedence and
+scoring.
+
+**`usage.openrouter`** — per-model token-volume share + rank, the machine-readable usage source
+this schema asked for. What was tried, in order:
+
+1. **`openrouter.ai/api/v1/models`** (the existing Tier-A price/model-id feed, `scripts/sources.json`) —
+   confirmed to carry pricing and model metadata only, no usage/volume field. Ruled out immediately.
+2. **`openrouter.ai/rankings`** (the public rankings page) — HTML only in its initial response, no
+   embedded JSON blob (`__NEXT_DATA__` or similar) to read instead of scraping the rendered page.
+   Scraping brittle HTML is explicitly against this file's own rule — ruled out.
+3. **`openrouter.ai/api/frontend/v1/rankings/models`** — found by reading the network requests the
+   rankings page itself makes (the same JSON the page renders from). Confirmed live 2026-09-06:
+   unauthenticated `GET`, returns `{"data": [{"date", "model_permaslug", "variant",
+   "total_prompt_tokens", "total_completion_tokens", "count", ...}]}` — one row per
+   (model, variant) for the day, across OpenRouter's **entire** tracked catalog. **Used.** It is
+   the JSON the task explicitly named as a candidate ("a JSON behind openrouter.ai/rankings"), and
+   every field it returns is copied, not scraped from rendered markup.
+
+   **Caveat, stated plainly:** unlike `/api/v1/models`, this endpoint is not documented at
+   `openrouter.ai/docs` — it's the frontend's own internal API, discovered rather than published,
+   so it carries no stability guarantee and could change shape or disappear without notice.
+   `scripts/derive-usage.mjs` treats a failed/reshaped fetch as "nothing to report this run," never
+   as "usage dropped to zero" (same fill-vs-change spirit as availability above). If this endpoint
+   ever breaks for good, the fallback is back to option 2 (a real HTML scrape) or watching for
+   OpenRouter to document a real usage API — worth a note in the PR that finds it broken.
+
+   **The arithmetic** (why this is collection, not judgment, under this file's "provenance, not
+   field type" rule): `share` is one model's `(total_prompt_tokens + total_completion_tokens)` as a
+   percentage of that same sum across every row the endpoint returns that day — one division of
+   two directly-fetched numbers, not an average, interpolation, or reconciliation across sources.
+   `rank` is that model's position sorted by the same total among the **whole** feed, including
+   rows that never match our catalog — a more honest "where does this model sit" than ranking only
+   among the ~65 models we happen to track. `category` is always `"overall"`: the endpoint reports
+   total volume, not a task-specific breakdown (a `?category=` query param was tried and returned
+   identical data regardless of value — not a real filter, so never assume one), and inventing a
+   per-task split the source doesn't give would be exactly the kind of guess this file exists to
+   forbid.
+
+   Collected every full Collect run (`scripts/auto-refresh.mjs`, right after availability); the
+   first live pass (2026-09-06) matched 58 of the catalog's 67 models.
+
+## How to run these two
+
+```
+node scripts/derive-usage.mjs          # usage.openrouter only, standalone (also runs inside auto-refresh.mjs)
+node scripts/check-sources.mjs         # the anti-fabrication gate — fetches every judged-fit claim's source_url
+```

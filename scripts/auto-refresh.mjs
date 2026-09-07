@@ -24,7 +24,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { isNotablePriceChange, priceEntry, addEntry } from './timeline.mjs';
 import { deriveAvailabilityForModel, availabilityEquals, fetchBedrockModelKeys } from './derive-availability.mjs';
-import { deriveTaskFit } from './derive-task-fit.mjs';
+import { deriveUsageForCatalog, fetchOpenRouterRankings } from './derive-usage.mjs';
+import { deriveTaskFit, TASK_IDS } from './derive-task-fit.mjs';
 import { fileURLToPath } from 'node:url';
 import { canonicalVendor, bareModelName, modelId, isCommunityListing, AUTO_ADMIT_VENDORS } from './naming.mjs';
 
@@ -37,12 +38,17 @@ const worklistUrl = new URL('data/refresh/worklist.json', ROOT);
 const receiptUrl = new URL('data/refresh/receipt-collect.json', ROOT);
 
 const MAX_WORKLIST = 15;
-const WORKLIST_PRIORITY = { 'new-model': 0, conflict: 1, deprecation: 2, benchmark: 3, ladder: 4, release: 5, guidance: 6 };
+const WORKLIST_PRIORITY = { 'new-model': 0, conflict: 1, deprecation: 2, benchmark: 3, ladder: 4, release: 5, guidance: 6, 'judged-fit': 7 };
 // Usage guidance (best_for + use_well) is what the advisor skill ranks on; Collect can't write
 // prose, so blank models rotate through the Judge a few at a time. They get RESERVED slots
 // inside the 15 — a live dry-run (2026-08-22) showed ~45 higher-priority candidates every run,
 // so "lowest priority" alone meant guidance would never reach the Judge. 24 of 49 were blank.
 const GUIDANCE_PER_RUN = 3;
+// Judged task fit (2026-09-06, scripts/refresh-judge.md): same rotation logic as guidance, same
+// reserved-slot reasoning — a model with a null quantitative task_fit for every task is common
+// (51 of 67 in the catalog as of this pass) and would otherwise never surface past higher-priority
+// conflict/new-model candidates.
+const JUDGED_FIT_PER_RUN = 3;
 
 const OR_URL = 'https://openrouter.ai/api/v1/models';
 const LITELLM_URL = 'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json';
@@ -397,6 +403,82 @@ export function guidanceItem(m, today) {
   };
 }
 
+/**
+ * Every (model, taskId) pair that could use a Judge-researched judged fit: the quantitative
+ * task_fit for that task is null AND no judged record already covers it. Doesn't distinguish
+ * WHICH null tasks are "worth" judging (some, like vision's yes/no tag match, aren't a judgment
+ * call at all) — the Judge's own instructions (scripts/refresh-judge.md) decide that per model;
+ * this just decides which MODEL gets a turn.
+ */
+export function needsJudgedFit(m) {
+  if (m.deprecated) return false;
+  const tf = m.task_fit || {};
+  const tfj = m.task_fit_judged || {};
+  return TASK_IDS.some((t) => tf[t]?.score == null && tfj[t] == null);
+}
+
+/**
+ * Rotating pick, same shape as pickGuidance: sort candidate ids, start after the last one
+ * attempted (state.judgedFitCursor), wrap around, take JUDGED_FIT_PER_RUN. "Highest-usage/newest
+ * first" (the spec's ordering ask) is applied as the sort key ahead of the plain id sort — usage
+ * share when sourced (usually not, yet — see scripts/derive-usage.mjs), else release date, so a
+ * just-launched or already-popular model reaches the Judge before an old, obscure one with the
+ * same gap. Same state + same models -> same picks (idempotent).
+ */
+export function pickJudgedFit(models, state, perRun = JUDGED_FIT_PER_RUN) {
+  const usageShare = (m) => m.usage?.openrouter?.share ?? -1;
+  const releasedTime = (m) => (m.released ? Date.parse(m.released) : -Infinity);
+  const byId = new Map(models.map((m) => [m.id, m]));
+  const ids = models.filter(needsJudgedFit).map((m) => m.id).sort((a, b) => {
+    const ma = byId.get(a), mb = byId.get(b);
+    return (usageShare(mb) - usageShare(ma)) || (releasedTime(mb) - releasedTime(ma)) || a.localeCompare(b);
+  });
+  if (!ids.length) return { picked: [], cursor: state.judgedFitCursor ?? null };
+  const cursor = state.judgedFitCursor ?? null;
+  let start = cursor ? ids.findIndex((id) => id === cursor) + 1 : 0;
+  if (start < 0 || start >= ids.length) start = 0;
+  const picked = [];
+  for (let i = 0; i < Math.min(perRun, ids.length); i++) picked.push(ids[(start + i) % ids.length]);
+  return { picked, cursor: picked[picked.length - 1] };
+}
+
+export function judgedFitItem(m, today) {
+  const tf = m.task_fit || {};
+  const tfj = m.task_fit_judged || {};
+  const openTasks = TASK_IDS.filter((t) => tf[t]?.score == null && tfj[t] == null);
+  return {
+    id: `${m.id}:judged-fit`, model: m.name, kind: 'judged-fit', field: 'task_fit_judged', current: null,
+    observations: [{ source: 'auto-refresh', url: OR_URL, value: null, date: today }],
+    ask: `${m.name} has no quantitative task fit for: ${openTasks.join(', ')}. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: band (strong/capable/weak/unknown) + confidence + claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words) — absolute and dated, never a relative claim like "best available" or "the top model". Hold if you can't source a claim for a given task.`,
+  };
+}
+
+/**
+ * A same-vendor successor landing means any OTHER model from that vendor that already carries a
+ * judged-fit record may now be stale next to its newer sibling — queue it for re-judge instead of
+ * leaving an old verdict standing unexamined. Called once per newly admitted model (both Collect's
+ * own auto-admit path and, for the cloud Judge's new-model judgments, whoever reviews the
+ * resulting worklist — see scripts/refresh-judge.md's "successor lands -> re-judge predecessor"
+ * rule). Every affected (model, task) pair becomes its own worklist item so it competes for a slot
+ * on the same terms as any other judged-fit candidate, rather than being force-inserted.
+ */
+export function reJudgeWorklistItems(newModel, allModels, today) {
+  const items = [];
+  for (const m of allModels) {
+    if (m.id === newModel.id || m.vendor !== newModel.vendor || !m.task_fit_judged) continue;
+    for (const taskId of Object.keys(m.task_fit_judged)) {
+      const rec = m.task_fit_judged[taskId];
+      if (!rec) continue;
+      items.push({
+        id: `${m.id}:${taskId}:re-judge`, model: m.name, kind: 'judged-fit', field: 'task_fit_judged', current: rec.band,
+        observations: [{ source: 'auto-refresh', url: OR_URL, value: null, date: today }],
+        ask: `${newModel.name} just shipped from the same vendor as ${m.name}, whose "${taskId}" judged fit (${rec.band}, as of ${rec.as_of}) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for "${taskId}" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason.`,
+      });
+    }
+  }
+  return items;
+}
+
 // --- effort ladders: CursorBench from Epoch AI's CC-BY export (tier A, exact values) ----------
 const EPOCH_ZIP_URL = 'https://epoch.ai/data/benchmark_data.zip';
 const CURSORBENCH_LADDER_ID = 'cursorbench-agentic-coding';
@@ -488,8 +570,10 @@ export function buildWorklist(items) {
     return String(a.id).localeCompare(String(b.id));
   };
   const guidance = items.filter((i) => i.kind === 'guidance').sort(byPriority).slice(0, GUIDANCE_PER_RUN);
-  const rest = items.filter((i) => i.kind !== 'guidance').sort(byPriority).slice(0, MAX_WORKLIST - guidance.length);
-  return [...rest, ...guidance].sort(byPriority);
+  const judgedFit = items.filter((i) => i.kind === 'judged-fit').sort(byPriority).slice(0, JUDGED_FIT_PER_RUN);
+  const rest = items.filter((i) => i.kind !== 'guidance' && i.kind !== 'judged-fit')
+    .sort(byPriority).slice(0, MAX_WORKLIST - guidance.length - judgedFit.length);
+  return [...rest, ...guidance, ...judgedFit].sort(byPriority);
 }
 
 /**
@@ -633,6 +717,20 @@ async function main() {
     `aws_bedrock=${availCounts.aws_bedrock || 0} open_weights=${availCounts.open_weights || 0}` +
     (bedrockKeys ? '' : ' (AWS Bedrock check skipped — fetch failed, prior values kept)'));
 
+  // --- usage.openrouter: token-volume share + rank from OpenRouter's own rankings JSON (see
+  // scripts/derive-usage.mjs's header for the source and the exact arithmetic). Best-effort like
+  // the Epoch/Bedrock feeds above — an unreachable or reshaped endpoint just leaves prior values
+  // in place, never regresses a sourced fact to null.
+  console.log('usage: fetching OpenRouter rankings...');
+  const rankingRows = await fetchOpenRouterRankings();
+  const usageMap = deriveUsageForCatalog(rankingRows, data.models, aliases);
+  const usageUpdates = [];
+  for (const m of data.models) {
+    const next = usageMap.get(m.id);
+    if (next && JSON.stringify(m.usage?.openrouter) !== JSON.stringify(next)) usageUpdates.push({ id: m.id, openrouter: next });
+  }
+  console.log(`usage: ${rankingRows.length} row(s) fetched, ${usageMap.size} matched, ${usageUpdates.length} updated.`);
+
   const applied = [];
   const held = [];
   const confirmed = [];
@@ -703,7 +801,7 @@ async function main() {
         logDrop(c.id, `id "${id}" is already in the catalog`);
         continue;
       }
-      newModels.push({
+      const nm = {
         id,
         name,
         vendor,
@@ -724,8 +822,16 @@ async function main() {
         coding_confidence: 'low',
         use_well: [],
         task_copy: {},
+        task_fit_judged: null,
+        usage: { openrouter: null },
         auto_added: today,
-      });
+      };
+      newModels.push(nm);
+      // Same-vendor successor -> queue every judged-fit record that vendor's OTHER models
+      // already carry for re-judge (scripts/refresh-judge.md's "successor lands -> re-judge
+      // predecessor" rule). Checked against the pre-this-run catalog (data.models doesn't yet
+      // include nm) — a brand-new model can't be its own predecessor.
+      worklistItems.push(...reJudgeWorklistItems(nm, data.models, today));
     } else {
       const reason = admissionFailReasons({ sourceCount, hasPricing, vendorKnown }).join(', ');
       logDrop(c.id, `${reason} — queued for Judge review`);
@@ -769,6 +875,16 @@ async function main() {
   }
   nextState.guidanceCursor = guidance.cursor;
 
+  // Judged task fit — a rotating handful of models with a null quantitative task_fit somewhere,
+  // queued for the Judge's own research pass (scripts/refresh-judge.md). Same reserved-slot
+  // pattern as guidance above.
+  const judgedFit = pickJudgedFit(data.models, nextState);
+  for (const id of judgedFit.picked) {
+    const m = data.models.find((x) => x.id === id);
+    if (m) worklistItems.push(judgedFitItem(m, today));
+  }
+  nextState.judgedFitCursor = judgedFit.cursor;
+
   // Remember every candidate this run already looked at (admitted or held) so the cheap early-exit
   // check on the next 2h cycle doesn't force another full run for the same still-unresolved id.
   nextState.seenCandidateIds = Array.from(new Set([...(state.seenCandidateIds || []), ...newCandidates.map((c) => c.key)]));
@@ -783,6 +899,13 @@ async function main() {
       const m = data.models.find((x) => x.id === u.id);
       if (!m) continue;
       m.availability = u.availability;
+      changed = true;
+    }
+    for (const u of usageUpdates) {
+      const m = data.models.find((x) => x.id === u.id);
+      if (!m) continue;
+      m.usage = m.usage || { openrouter: null };
+      m.usage.openrouter = u.openrouter;
       changed = true;
     }
     for (const a of applied) {
@@ -824,6 +947,7 @@ async function main() {
       for (const m of data.models) {
         m.task_fit = taskFitById.get(m.id);
         if (!('task_fit_judged' in m)) m.task_fit_judged = null; // reserved for a future Judge pass — never overwritten once set
+        if (!('usage' in m) || m.usage == null || typeof m.usage !== 'object') m.usage = { openrouter: null };
       }
     }
     // best_for_line: deterministic template, added to every model missing it (strengths untouched).
@@ -865,7 +989,7 @@ async function main() {
     writeFileSync(receiptUrl, JSON.stringify({
       job: 'collect', ran_at: new Date().toISOString(), applied: applied.length, held: held.length,
       confirmed: confirmed.length, new_models: newModels.length, dropped: dropped.length,
-      worklist_items: worklist.items.length, availability_changed: availabilityUpdates.length,
+      worklist_items: worklist.items.length, availability_changed: availabilityUpdates.length, usage_changed: usageUpdates.length,
       ok: gateOk, ...(gateOk ? {} : { error: 'honesty gate failed' }),
     }, null, 2) + '\n');
 

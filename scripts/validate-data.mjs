@@ -15,6 +15,36 @@ const VOCAB = ['reasoning', 'agentic', 'coding', 'research', 'long-context', 'wr
 const BENCHES = ['swe_bench', 'gpqa', 'aime', 'mmlu_pro'];   // lmarena_elo dropped 2026-08-22
 const num = (v) => v === null || v === undefined || Number.isNaN(v);
 
+// --- judged task fit (task_fit_judged) — the qualitative-evidence gate ------------------------
+// A judged record is a fit band + confidence backed by claims a human (the Judge) actually read.
+// This block checks SHAPE ONLY: every claim carries the required fields, dates are real dates,
+// enums are in-vocab, and no claim/reconciliation sentence uses relative/superlative language a
+// newer model would immediately falsify ("best available", "the top model" — see BANNED_RELATIVE
+// below). It does NOT confirm a quote is actually on the page; that live check is
+// scripts/check-sources.mjs, which fetches every claim's source_url and can't run inside this
+// synchronous, offline gate. The two are complementary, not redundant: this catches a malformed
+// or dishonestly-worded claim before it's even written; check-sources.mjs catches a well-formed
+// claim that quotes something the page doesn't actually say.
+export const JUDGED_BAND_VALUES = ['strong', 'capable', 'weak', 'unknown'];
+export const CLAIM_TIERS = ['lab', 'reported', 'measured', 'usage'];
+// Absolute, dated facts only — a record must stay true after a newer model supersedes this one.
+// Applied to OUR OWN prose (claim.sentence, reconciliation) — never to `quote`, which is verbatim
+// text copied from the source and reproduced as a quotation, not asserted as our own claim.
+export const BANNED_RELATIVE_PATTERNS = [
+  /\bbest available\b/i, /\bthe top model\b/i, /\btop model\b/i, /\bbest[- ]in[- ]class\b/i,
+  /\bstate[- ]of[- ]the[- ]art\b/i, /\bmost capable\b/i, /\bmost advanced\b/i,
+  /\bindustry[- ]leading\b/i, /\bworld'?s best\b/i, /\bunmatched\b/i, /\bunrivale?d\b/i,
+  /\bsuperior to\b/i, /\bbetter than (any|all|every)\b/i, /\bleading model\b/i,
+  /\bcutting[- ]edge\b/i, /\bnumber one\b/i, /\b#1\b/, /\btop[- ]tier\b/i, /\bpremier\b/i,
+  /\bbest model\b/i, /\bthe best\b/i,
+];
+export function bannedPhraseIn(text) {
+  const hit = BANNED_RELATIVE_PATTERNS.find((re) => re.test(String(text || '')));
+  return hit ? hit.source : null;
+}
+export const wordCount = (s) => String(s || '').trim().split(/\s+/).filter(Boolean).length;
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
 export function validate(data, registry) {
   const errors = [], warnings = [];
   const E = (m) => errors.push(m);
@@ -173,10 +203,72 @@ export function validate(data, registry) {
         E(`${id}: task_fit.${t} has a score but an empty basis[] — every score must trace to at least one field`);
       }
     }
-    // task_fit_judged is reserved for a future Judge override (scripts/derive-task-fit.mjs's
-    // header) that doesn't exist yet — v1 must keep it null, or a stray value would silently
-    // start overriding rule-based fit with nothing behind it.
-    if (m.task_fit_judged !== null) E(`${id}: task_fit_judged must be null in v1 (no Judge pass exists yet) — got ${JSON.stringify(m.task_fit_judged)}`);
+  }
+
+  // 10b. task_fit_judged (sourced qualitative fit, scripts/refresh-judge.md): null (no judged
+  // records yet) or an object keyed by a SUBSET of TASK_IDS — unlike task_fit, judged fit is
+  // sparse by design; most models will only ever have a judged record for the handful of tasks
+  // someone actually researched. Every record needs band + confidence (both enumerated) and a
+  // non-empty claims[], each claim carrying source_url + tier + date + a verbatim quote of at
+  // most 25 words. See the BANNED_RELATIVE comment above for why sentence/reconciliation get a
+  // phrase gate here — the "is this quote real" gate is scripts/check-sources.mjs's job.
+  for (const m of data.models) {
+    const id = m.name || m.id || '(unnamed)';
+    const tfj = m.task_fit_judged;
+    if (tfj == null) continue; // valid: no judged records for this model yet
+    if (typeof tfj !== 'object' || Array.isArray(tfj)) { E(`${id}: task_fit_judged must be null or an object keyed by task id`); continue; }
+    for (const taskId of Object.keys(tfj)) {
+      const rec = tfj[taskId];
+      const label = `${id}: task_fit_judged.${taskId}`;
+      if (!TASK_IDS.includes(taskId)) { E(`${label} — "${taskId}" is not one of ${TASK_IDS.join(', ')}`); continue; }
+      if (!rec || typeof rec !== 'object') { E(`${label} must be an object`); continue; }
+      if (!JUDGED_BAND_VALUES.includes(rec.band)) E(`${label}.band "${rec.band}" must be one of ${JUDGED_BAND_VALUES.join(', ')}`);
+      if (!CONF.includes(rec.confidence)) E(`${label}.confidence "${rec.confidence}" must be one of ${CONF.join(', ')}`);
+      if (!rec.as_of || !DATE_RE.test(rec.as_of)) E(`${label}.as_of "${rec.as_of}" must be a YYYY-MM-DD date`);
+      if (rec.reconciliation != null) {
+        if (typeof rec.reconciliation !== 'string') E(`${label}.reconciliation must be a string or null`);
+        else {
+          const hit = bannedPhraseIn(rec.reconciliation);
+          if (hit) E(`${label}.reconciliation uses a banned relative phrase (/${hit}/) — statements must be absolute and dated, never relative`);
+        }
+      }
+      if (!Array.isArray(rec.claims) || !rec.claims.length) { E(`${label}.claims must be a non-empty array`); continue; }
+      rec.claims.forEach((c, i) => {
+        const cl = `${label}.claims[${i}]`;
+        if (!c || typeof c !== 'object') { E(`${cl} must be an object`); return; }
+        if (!c.sentence || typeof c.sentence !== 'string') E(`${cl}.sentence is required`);
+        else {
+          const hit = bannedPhraseIn(c.sentence);
+          if (hit) E(`${cl}.sentence uses a banned relative phrase (/${hit}/) — write an absolute, dated fact instead`);
+        }
+        if (!c.source_url || !/^https?:\/\//i.test(c.source_url)) E(`${cl}.source_url "${c.source_url}" must be http(s)`);
+        if (!CLAIM_TIERS.includes(c.tier)) E(`${cl}.tier "${c.tier}" must be one of ${CLAIM_TIERS.join(', ')}`);
+        if (!c.date || !DATE_RE.test(c.date)) E(`${cl}.date "${c.date}" must be a YYYY-MM-DD date`);
+        if (!c.quote || typeof c.quote !== 'string') E(`${cl}.quote is required (verbatim text copied from source_url)`);
+        else if (wordCount(c.quote) > 25) E(`${cl}.quote is ${wordCount(c.quote)} word(s) — must be ≤25 words, copied verbatim from the source`);
+      });
+    }
+  }
+
+  // 10c. usage.openrouter (added with judged task fit, 2026-09-06) — same honesty rule as
+  // everything else: sourced or null, never guessed. Every model needs the field (even
+  // all-null), mirroring availability{}'s always-present-but-sourced-or-null shape. "category"
+  // is free text in v1 (e.g. "overall") rather than a fixed vocab, because the only feed found
+  // so far (scripts/data-sources.md, added 2026-09-06) reports total token volume, not a
+  // per-task breakdown — never invent a task split the source doesn't give.
+  for (const m of data.models) {
+    const id = m.name || m.id || '(unnamed)';
+    const u = m.usage;
+    if (u == null || typeof u !== 'object' || Array.isArray(u)) { E(`${id}: usage{} is required (openrouter: null | {...}) — every model needs the field, even all-null`); continue; }
+    if (!('openrouter' in u)) { E(`${id}: usage.openrouter is required (null when not sourced)`); continue; }
+    const or = u.openrouter;
+    if (or == null) continue;
+    if (typeof or !== 'object' || Array.isArray(or)) { E(`${id}: usage.openrouter must be null or an object`); continue; }
+    if (!or.category || typeof or.category !== 'string') E(`${id}: usage.openrouter.category is required`);
+    if (typeof or.share !== 'number' || Number.isNaN(or.share) || or.share < 0 || or.share > 100) E(`${id}: usage.openrouter.share "${or.share}" must be 0-100`);
+    if (!Number.isInteger(or.rank) || or.rank < 1) E(`${id}: usage.openrouter.rank "${or.rank}" must be a positive integer`);
+    if (!or.as_of || !DATE_RE.test(or.as_of)) E(`${id}: usage.openrouter.as_of "${or.as_of}" must be a YYYY-MM-DD date`);
+    if (!or.source_url || !/^https?:\/\//i.test(or.source_url)) E(`${id}: usage.openrouter.source_url must be http(s)`);
   }
 
   return { errors, warnings };

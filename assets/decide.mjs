@@ -60,12 +60,18 @@
    2. Data rule — dataRule.noChinaHosted drops any model whose vendor's data/vendors.json
       country is exactly "China". A vendor with no country on file is KEPT (unknown is never
       treated as a match) and the caller is told so in that task's assumptions[].
-   3. Capability floor — drop any model with no sourced fit score for this task at all
-      (model.task_fit[taskId].score == null). This is the whole floor in v1: "has a real basis"
-      rather than "clears some invented numeric bar" — a numeric threshold beyond that would be
-      an opinion this data doesn't support. model.task_fit_judged[taskId], once a Judge exists
-      to write it, would override the rule-based score here; today it is always null so this is
-      a no-op.
+   3. Capability floor — drop any model with no sourced fit for this task at all. Quantitative
+      fit (model.task_fit[taskId].score) wins whenever it's sourced — a real number outranks a
+      qualitative one every time. When it's null, a judged fit (model.task_fit_judged[taskId],
+      scripts/refresh-judge.md) fills the gap: "strong" or "capable" clears the floor with a
+      score standing in for the band (JUDGED_BAND_SCORE below); "weak" or "unknown" doesn't clear
+      it, same as no basis at all. This is still "has a real basis" rather than "clears some
+      invented numeric bar" — judged fit is real, sourced evidence (claims[], each with a
+      source_url + tier + quote), just not a benchmark number. Every shortlist item carries
+      `basis: 'measured' | 'reported' | 'lab-stated'` so the caller always knows which kind of
+      evidence it's looking at — 'reported' when at least one backing claim is a named
+      third-party source, 'lab-stated' when every claim is the vendor's own (see
+      basisFromClaims()). taskFitFor() is the one place this precedence is decided.
    4. Rank by stance, ties -> cheaper (see rankByStance). Before ranking, any model strictly
       dominated by a cheaper-or-equal, at-least-as-fit model already in the candidate set is
       dropped (dropDominated) — so the returned shortlist can never contain a pricier model
@@ -155,10 +161,45 @@ export function passesDataRule(model, dataRule, vendorsList) {
 // -----------------------------------------------------------------------------------------
 // Rule 3 — capability floor (task fit)
 // -----------------------------------------------------------------------------------------
+// A judged band stands in for a score only when it actually clears the floor. "weak"/"unknown"
+// are real judged outcomes too (the Judge looked and found thin/negative evidence) — they must
+// never be silently promoted to a passing score. The two numbers below are v1's only invented
+// constants in this whole file: a deliberate mid-table placement (well above "weak", well below
+// most sourced coding_score leaders) so a judged model can rank sensibly next to measured ones
+// without a bare qualitative band ever reading as equivalent to a benchmarked 95.
+export const JUDGED_BAND_SCORE = { strong: 88, capable: 68, weak: null, unknown: null };
+
+/** 'reported' when at least one claim backing the band names a third party (reported/measured/
+ * usage tier); 'lab-stated' when every claim is the vendor's own — see task_fit_judged's `tier`
+ * field (scripts/refresh-judge.md). */
+export function basisFromClaims(claims) {
+  return (claims || []).some((c) => c && c.tier && c.tier !== 'lab') ? 'reported' : 'lab-stated';
+}
+
+/** { score, basis, reason?, source: 'measured'|'reported'|'lab-stated', judged: record|null } —
+ * quantitative fit wins whenever it's sourced; a judged record only ever fills a gap, never
+ * overrides a real number. */
 export function taskFitFor(model, taskId) {
+  const quant = model.task_fit?.[taskId];
+  if (quant && quant.score != null) return { score: quant.score, basis: quant.basis || [], source: 'measured', judged: null };
   const judged = model.task_fit_judged?.[taskId];
-  if (judged && judged.score != null) return judged; // Judge override — not implemented v1
-  return model.task_fit?.[taskId] ?? { score: null, basis: [], reason: `task "${taskId}" is not in this model's task_fit` };
+  const bandScore = judged ? JUDGED_BAND_SCORE[judged.band] : null;
+  if (judged && bandScore != null) {
+    return { score: bandScore, basis: [], source: basisFromClaims(judged.claims), judged };
+  }
+  if (quant) return { score: null, basis: quant.basis || [], reason: quant.reason, source: 'measured', judged: null };
+  return { score: null, basis: [], reason: `task "${taskId}" is not in this model's task_fit`, source: 'measured', judged: null };
+}
+
+/** `why` text for a judged-fit shortlist item — deliberately generic (never echoes a claim's own
+ * wording), so it can never accidentally mention a WHY_FIELDS phrase (GPQA, context, etc.) that
+ * isn't in fit_basis. The actual claims (sentence + source link) render separately — see
+ * lab.html — this is just the one-line summary next to the pick. */
+export function buildJudgedWhy(item) {
+  const n = (item.claims || []).length;
+  const band = item.judgedBand || 'unknown';
+  const confidence = item.judgedConfidence || 'unknown';
+  return `Judged ${band} fit (${confidence} confidence) from ${n} sourced claim${n === 1 ? '' : 's'}, not a benchmark score.`;
 }
 
 // -----------------------------------------------------------------------------------------
@@ -219,6 +260,11 @@ export function filterCandidates(taskId, input, data) {
       model,
       fit: fit.score,
       fit_basis: fit.basis,
+      basis: fit.source,
+      claims: fit.judged?.claims || [],
+      reconciliation: fit.judged?.reconciliation ?? null,
+      judgedBand: fit.judged?.band ?? null,
+      judgedConfidence: fit.judged?.confidence ?? null,
       monthly_cost_usd: monthlyCost(model, vol),
       seat_plan_alternative: findSeatPlanAlternative(model, input.have, data.plans),
       unknownCountryVendor: dr.unknownCountry ? model.vendor : null,
@@ -308,10 +354,13 @@ export function decide(input, data) {
       id: item.model.id,
       name: item.model.name,
       tag: tagFor(item, top, have),
-      why: buildWhy(item.model, item.fit_basis),
+      why: item.basis === 'measured' ? buildWhy(item.model, item.fit_basis) : buildJudgedWhy(item),
       monthly_cost_usd: item.monthly_cost_usd,
       fit: item.fit,
       fit_basis: item.fit_basis,
+      basis: item.basis,
+      claims: item.claims,
+      reconciliation: item.reconciliation,
       start_here: idx === 0,
       seat_plan_alternative: item.seat_plan_alternative,
     }));

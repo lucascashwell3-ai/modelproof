@@ -106,10 +106,10 @@
       "description": "Automation builder with xAI access only, strongest agentic pick.",
       "input": { "tasks": ["agents"], "have": ["xai"], "stance": "best", "volume": "typical", "dataRule": {} },
       "expected": {
-        "start_here_any_of": ["grok-4-5"],
-        "must_not_include": ["grok-4-6"]
+        "start_here_any_of": ["grok-4-6"],
+        "must_not_include": []
       },
-      "rationale": "Agents fit needs a coding_score baseline; Grok 4.5 has one, Grok 4.6 doesn't (and also isn't confirmed reachable yet — its direct_api flag is unsourced), so it fails on two independent rules at once."
+      "rationale": "Updated 2026-09-07 (engine round 3, judged task fit): Grok 4.6 now carries a sourced judged-fit record for agents (xAI's own launch post, matching GPT-5.6 Sol on the Artificial Analysis Intelligence Index) — a real basis where before there was none. At the same price as Grok 4.5 ($2/$6) but a higher fit (88 judged vs. 72 measured), it strictly dominates Grok 4.5, which drops from the shortlist entirely rather than merely losing the top spot."
     },
     {
       "id": "compliance-google-no-china-extraction-balanced",

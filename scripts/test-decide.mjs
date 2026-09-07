@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   decide, filterCandidates, isReachable, vendorCountry, WHY_FIELDS, VENDOR_KEY_DISPLAY, STANCES,
+  taskFitFor, basisFromClaims,
 } from '../assets/decide.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
 
@@ -220,4 +221,79 @@ test('VENDOR_KEY_DISPLAY matches the canonical spellings scripts/naming.mjs uses
   for (const [key, display] of Object.entries(VENDOR_KEY_DISPLAY)) {
     assert.equal(canonicalVendor(key), display, `have-key "${key}" should map to naming.mjs's canonical "${canonicalVendor(key)}"`);
   }
+});
+
+// ---------------------------------------------------------------------------------------------
+// Judged task fit (2026-09-06): a model with no quantitative task_fit for a task can still clear
+// rule 3's floor on a judged band, and it must always carry a 'reported'/'lab-stated' basis (not
+// 'measured') plus the claims that back it — see assets/decide.mjs's taskFitFor()/JUDGED_BAND_SCORE.
+// ---------------------------------------------------------------------------------------------
+const JUDGED_CLAIM = {
+  sentence: 'Acme Corp published a coding benchmark score of 82% for Judged Test Model on August 1, 2026.',
+  source_url: 'https://vendor.example/judged-test-model',
+  tier: 'reported',
+  date: '2026-08-01',
+  quote: 'Judged Test Model scores 82% on our internal coding benchmark.',
+};
+function judgedFixtureModel(overrides = {}) {
+  return {
+    id: 'judged-test-model', name: 'Judged Test Model', vendor: 'Acme',
+    price_input: 0.1, price_output: 0.1, context_window: 100000,
+    benchmarks: {}, best_for: [], availability: { openrouter: true, sources: [] },
+    task_fit: Object.fromEntries(TASK_IDS.map((t) => [t, { score: null, basis: [], reason: 'fixture — no quantitative basis' }])),
+    task_fit_judged: { coding: { band: 'strong', confidence: 'high', claims: [JUDGED_CLAIM], reconciliation: null, as_of: '2026-09-01' } },
+    ...overrides,
+  };
+}
+
+test('taskFitFor: quantitative fit always wins over a judged band when both exist', () => {
+  const m = judgedFixtureModel({ task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 71, basis: ['coding_score'] } } });
+  const fit = taskFitFor(m, 'coding');
+  assert.equal(fit.source, 'measured');
+  assert.equal(fit.score, 71);
+});
+
+test('taskFitFor: "weak"/"unknown" judged bands never clear the floor (score stays null)', () => {
+  for (const band of ['weak', 'unknown']) {
+    const m = judgedFixtureModel({ task_fit_judged: { coding: { band, confidence: 'low', claims: [JUDGED_CLAIM], reconciliation: null, as_of: '2026-09-01' } } });
+    const fit = taskFitFor(m, 'coding');
+    assert.equal(fit.score, null, `band "${band}" must not clear the floor`);
+  }
+});
+
+test('basisFromClaims: "lab-stated" when every claim is the vendor\'s own, "reported" when any claim names a third party', () => {
+  assert.equal(basisFromClaims([{ tier: 'lab' }, { tier: 'lab' }]), 'lab-stated');
+  assert.equal(basisFromClaims([{ tier: 'lab' }, { tier: 'reported' }]), 'reported');
+  assert.equal(basisFromClaims([{ tier: 'measured' }]), 'reported');
+});
+
+test('judged fit: a model with only a judged band appears in the shortlist with a non-measured basis and its claims', () => {
+  const fixture = judgedFixtureModel();
+  const judgedData = { models: [fixture], plans, presets, vendors };
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, judgedData);
+  const item = out.tasks.coding.shortlist.find((x) => x.id === 'judged-test-model');
+  assert.ok(item, 'expected the judged-only model to clear the floor and appear in the shortlist');
+  assert.equal(item.basis, 'reported');
+  assert.notEqual(item.basis, 'measured');
+  assert.equal(item.claims.length, 1);
+  assert.equal(item.claims[0].source_url, JUDGED_CLAIM.source_url);
+  assert.match(item.why, /judged/i);
+});
+
+test('judged fit: a "weak" band never appears in the shortlist (same as no basis at all)', () => {
+  const fixture = judgedFixtureModel({ task_fit_judged: { coding: { band: 'weak', confidence: 'medium', claims: [JUDGED_CLAIM], reconciliation: null, as_of: '2026-09-01' } } });
+  const judgedData = { models: [fixture], plans, presets, vendors };
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, judgedData);
+  assert.equal(out.tasks.coding.shortlist.length, 0);
+});
+
+test('usage field never changes ranking: two otherwise-identical models rank the same with or without usage set', () => {
+  const base = models.find((m) => m.task_fit?.chat?.score != null && typeof m.price_output === 'number');
+  assert.ok(base, 'fixture assumption: at least one catalog model has a chat fit and a price');
+  const withUsage = { ...base, usage: { openrouter: { category: 'overall', share: 42.5, rank: 1, as_of: '2026-09-01', source_url: 'https://openrouter.ai/api/frontend/v1/rankings/models' } } };
+  const input = { tasks: ['chat'], have: ['any'], stance: 'balanced', volume: 'typical', dataRule: {} };
+  const outA = decide(input, { ...data, models: [base] });
+  const outB = decide(input, { ...data, models: [withUsage] });
+  const strip = (shortlist) => shortlist.map((x) => ({ id: x.id, fit: x.fit, cost: x.monthly_cost_usd, tag: x.tag }));
+  assert.deepEqual(strip(outA.tasks.chat.shortlist), strip(outB.tasks.chat.shortlist));
 });
