@@ -3076,5 +3076,240 @@
       "https://thenewstack.io/openai-gpt6-astra-benchmarks/",
       "https://openrouter.ai/api/frontend/v1/rankings/models"
     ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4-Pro",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.buildfastwithai.com/blogs/deepseek-v4-pro-review-2026",
+      "https://llm-stats.com/benchmarks/swe-bench-verified",
+      "https://artificialanalysis.ai/models/deepseek-v4-pro",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4-Pro",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.buildfastwithai.com/blogs/deepseek-v4-pro-review-2026",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4-Pro",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.buildfastwithai.com/blogs/deepseek-v4-pro-review-2026",
+      "https://artificialanalysis.ai/models/deepseek-v4-pro",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4-Pro",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://artificialanalysis.ai/models/deepseek-v4-pro",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Kimi K2.6",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.kimi.ai/blog/kimi-k2-6",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Kimi K2.6",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.kimi.ai/blog/kimi-k2-6",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Kimi K2.6",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.kimi.ai/blog/kimi-k2-6",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Llama 4 Maverick",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://tokenmix.ai/blog/llama-4-maverick-review",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Llama 4 Maverick",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://tokenmix.ai/blog/llama-4-maverick-review",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "o4-mini",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/openai/o4-mini",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "o4-mini",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/openai/o4-mini",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "o4-mini",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/openai/o4-mini",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.5 Flash",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://o-mega.ai/articles/gemini-3-5-flash-benchmarks-cost-and-guide",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.5 Flash",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://o-mega.ai/articles/gemini-3-5-flash-benchmarks-cost-and-guide",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.5 Flash",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://o-mega.ai/articles/gemini-3-5-flash-benchmarks-cost-and-guide",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.5 Flash",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://o-mega.ai/articles/gemini-3-5-flash-benchmarks-cost-and-guide",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 2.5 Flash-Lite",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://artificialanalysis.ai/models/gemini-2-5-flash-lite",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3-Max",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://artificialanalysis.ai/articles/qwen3-max-thinking-everything-you-need-to-know",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3-Max",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://artificialanalysis.ai/articles/qwen3-max-thinking-everything-you-need-to-know",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3-Coder-Plus",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://tokenmix.ai/blog/qwen3-coder-plus-review-benchmark-2026",
+      "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3-Coder-Plus",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://tokenmix.ai/blog/qwen3-coder-plus-review-benchmark-2026",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
   }
 ]
