@@ -956,7 +956,7 @@ async function main() {
     // `changed` — a model's usage.openrouter.share can cross an adoption bucket boundary on a run
     // that touched nothing else about that model.
     {
-      const statusAdoption = deriveStatusAdoptionForCatalog(data.models);
+      const statusAdoption = deriveStatusAdoptionForCatalog(data.models, data.as_of);
       for (const m of data.models) {
         const next = statusAdoption.get(m.id);
         if (m.status !== next.status || m.adoption !== next.adoption) changed = true;

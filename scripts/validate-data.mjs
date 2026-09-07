@@ -287,7 +287,7 @@ export function validate(data, registry) {
     if (!ADOPTION_VALUES.includes(m.adoption)) { E(`${id}: adoption "${m.adoption}" must be one of ${ADOPTION_VALUES.join(', ')}`); continue; }
     const wantStatus = deriveStatus(m).status;
     if (m.status !== wantStatus) E(`${id}: status "${m.status}" doesn't match what deriveStatus() computes from this model's own name/deprecated flag ("${wantStatus}") — re-run scripts/derive-status-adoption.mjs`);
-    const wantAdoption = deriveAdoption(m).adoption;
+    const wantAdoption = deriveAdoption(m, data.as_of).adoption;
     if (m.adoption !== wantAdoption) E(`${id}: adoption "${m.adoption}" doesn't match what deriveAdoption() computes from usage.openrouter.share ("${wantAdoption}") — re-run scripts/derive-status-adoption.mjs`);
   }
 

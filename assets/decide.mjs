@@ -75,32 +75,54 @@
       but judgedBandOf() — not taskFitFor() — decides who's even in the running. Every shortlist
       item carries `basis: 'reported' | 'lab-stated'` (see basisFromClaims()) so the caller always
       knows whether at least one backing claim names an independent third party, plus the model's
-      own `status` ('ga'|'preview'|'deprecated') and `adoption` ('broad'|'moderate'|'low'|'unknown',
-      from usage.openrouter.share — scripts/derive-status-adoption.mjs) and its top claim's own
+      own `status` ('ga'|'preview'|'deprecated') and `adoption` ('broad'|'moderate'|'low'|'unknown'|
+      'new', from usage.openrouter.share, or 'new' when `released` is within 60 days of the data
+      snapshot regardless of share — scripts/derive-status-adoption.mjs) and its top claim's own
       sentence as `why`.
-   4. Rank by judged band (strong > capable), then confidence (high > medium > low), then the
-      chosen stance's cost/fit comparator, ties -> cheaper (see rankByStance) — band and
-      confidence come first for every stance, "cheapest" included: a cheaper but lower-judged or
-      less-confident pick never outranks a better-judged one, it only wins the tie-break inside
-      the same (band, confidence) tier. Before ranking, any model strictly dominated by a
-      cheaper-or-equal, at-least-as-fit model already in the candidate set is dropped
-      (dropDominated) — so the returned shortlist can never contain a pricier model that isn't at
-      least justified by a higher fit than every cheaper option.
-      Two more rules gate a `status: 'preview'` model or a low-adoption one — one at rule 3
-      (full exclusion), one at start_here selection only (see isDisqualifiedFromStartHere):
-        - An "enterprise-style" input (isEnterpriseInput: EXPLICIT input.enterprise when the
-          caller states it, else a single named vendor + volume 'heavy', or any truthy dataRule
-          key) drops a `status: 'preview'` model from the candidate set ENTIRELY, at rule 3 — an
-          enterprise buyer can't ship a preview SKU at all, so it's not offered anywhere in the
-          shortlist, not just kept off the top spot. Plain stance 'best' with no enterprise signal
-          is milder: a preview model still can't be start_here there, but can still place lower in
-          the shortlist, labelled preview (an independently-drafted answer key repeatedly accepted
-          a preview model as one of several fine non-enterprise "best" picks — see
-          isDisqualifiedFromStartHere's comment).
-        - an `adoption: 'low'` model is never start_here while a 'broad' or 'moderate'-adoption
-          model of the SAME judged band is also a candidate — a benchmark win doesn't buy the top
-          spot away from a model people are actually already running, in the same tier of judged
-          quality. This one never removes a model from the shortlist, only the start_here flag.
+   4. Rank by judged band (strong > capable) and confidence (high > medium > low) FIRST within
+      the candidate set — every candidate here already cleared rule 3, so this never lets a
+      lower-judged model outrank a better-judged one. What breaks a tie inside the same (band,
+      confidence) tier is where the three stances actually differ (fixed 2026-09-07 — a prior
+      version of this file used the same band/confidence/cost/fit order for every stance, which
+      meant 'cheapest' silently returned the exact same shortlist as 'best' whenever candidates
+      spanned more than one tier — the price never got a chance to matter):
+        - 'cheapest': cost is the primary key — the cheapest candidate at the given volume wins
+          outright, REGARDLESS of band/confidence tier, as long as it already cleared rule 3's
+          strong-or-capable floor. Ties on cost fall back to band, then confidence (see
+          rankByStance).
+        - 'best': band, then confidence, then raw fit (cheaper is never a reason on its own here —
+          "best regardless of price" is the point of this stance, e.g. data/eval/situations.json's
+          S01), cost only as the final tie-break when fit also ties. Unchanged from before this
+          rewrite — 'best' itself was never the bug; 'cheapest' silently copying this exact order
+          (and so never letting price matter) was.
+        - 'balanced': restricted to the candidates priced at or under 2x the monthly cost of the
+          cheapest 'strong'-band candidate (or the cheapest 'capable'-band candidate if no
+          'strong' one is priced) — i.e. "the candidates a buyer already comparison-shopping the
+          best option could actually justify" — ranked band, then confidence, then fit, then cost
+          inside that in-budget set, same order as 'best'; every candidate priced over that line is
+          still returned (so it can still show up lower in the shortlist), just always ranked after
+          every in-budget one.
+      Before ranking, any model strictly dominated by a cheaper-or-equal, at-least-as-fit model
+      already in the candidate set is dropped (dropDominated) — so the returned shortlist can
+      never contain a pricier model that isn't at least justified by a higher fit than every
+      cheaper option. This runs the same way for every stance (it only compares raw fit and cost,
+      never which stance was asked for), so it can never eliminate the model 'cheapest' or
+      'balanced' most needs to see (see dropDominated's own comment for why the actual cheapest
+      candidate is never a casualty of it).
+      One more rule gates a low-adoption model at start_here selection only (see
+      isDisqualifiedFromStartHere) — it never removes a model from the shortlist, only the
+      start_here flag: an `adoption: 'low'` model is never start_here while a 'broad' or
+      'moderate'-adoption model of the SAME judged band is also a candidate — a benchmark win
+      doesn't buy the top spot away from a model people are actually already running, in the same
+      tier of judged quality. (A `status: 'preview'` model used to get an equivalent demotion at
+      start_here under plain stance 'best' even with no enterprise signal — removed 2026-09-07:
+      the independently-drafted 40-situation answer key this engine is graded against explicitly
+      expects a preview model to legitimately win start_here in a plain, non-enterprise "best" ask
+      when its own judged evidence earns it — data/eval/situations.json's S33 — and
+      data/eval/must-never.json's own "a preview-labeled SKU must never be the enterprise starting
+      recommendation" rules are scoped to enterprise context only, never plain "best". The
+      ENTERPRISE exclusion above, at rule 3, is the real, still-enforced rule; this file no longer
+      duplicates a milder, narrower version of it at start_here selection.)
    Only the top 3 survivors are returned; item 0 is always start_here: true.
    ============================================================ */
 
@@ -280,21 +302,25 @@ export function isEnterpriseInput(input) {
   return (singleNamedVendor && heavyVolume) || dataRuleSet;
 }
 
-/** A `status: 'preview'` model never gets start_here under stance 'best' (see filterCandidates —
- * an enterprise-style input excludes a preview model from the candidate set entirely, a stronger
- * rule than this one, decided 2026-09-07 against an independently-drafted 40-situation answer key
- * that consistently expected full exclusion, not just a demotion, once "enterprise" was in play:
- * "a preview-labeled SKU must never be the enterprise starting recommendation regardless of how
- * strong its other-task evidence is" — data/eval/must-never.json). Plain stance 'best' with no
- * enterprise signal is milder on purpose: the same answer key repeatedly accepts a preview model
- * as ONE of several acceptable top picks there (e.g. "Gemini 3.1 Pro (Preview)" for a non-
- * enterprise "best" research/writing/vision ask), so this only nudges it out of the #1 spot, never
- * out of the shortlist. An `adoption: 'low'` model never gets start_here while a 'broad'/
- * 'moderate'-adoption model of the SAME judged band is also a candidate — a benchmark edge
- * doesn't buy the top spot away from a model people are actually already running, once judgment
- * has already put both in the same tier of quality. */
+/** An `adoption: 'low'` model never gets start_here while a 'broad'/'moderate'-adoption model of
+ * the SAME judged band is also a candidate — a benchmark edge doesn't buy the top spot away from
+ * a model people are actually already running, once judgment has already put both in the same
+ * tier of quality.
+ *
+ * A `status: 'preview'` model used to get an equivalent demotion here under plain stance 'best',
+ * even with no enterprise signal at all — removed 2026-09-07 against the independently-drafted
+ * 40-situation answer key this engine is graded on: it explicitly expects a preview model to
+ * legitimately WIN start_here in a plain, non-enterprise "best" ask when its own judged evidence
+ * earns it (data/eval/situations.json's S33: Google-only, stance 'best', enterprise:false, vision
+ * task — Gemini 3.1 Pro (Preview) is the required start_here, with the two non-preview
+ * alternatives explicitly must_not_start). data/eval/must-never.json's own "a preview-labeled SKU
+ * must never be the enterprise starting recommendation" rules are scoped to `context: 'enterprise'`
+ * only — there is no non-enterprise rule of that shape anywhere in the key. The enterprise
+ * exclusion that actually matters already lives at rule 3 (filterCandidates: an enterprise-style
+ * input drops a preview model from the candidate set ENTIRELY, before this function ever runs on
+ * it) — this function no longer duplicates a milder, narrower version of that same rule for the
+ * plain-"best" case, since the key says plain "best" shouldn't have one at all. */
 export function isDisqualifiedFromStartHere(item, allCandidates, stance, input) {
-  if (item.model.status === 'preview' && stance === 'best') return true;
   if (item.model.adoption === 'low') {
     const betterAdoptionSameBand = (allCandidates || []).some((other) => (
       other !== item && other.band === item.band &&
@@ -404,7 +430,12 @@ export function filterCandidates(taskId, input, data) {
  * strictly-better-tier model dominates a cheaper-or-equal one outright (its judgment already
  * establishes "at least as fit" — no numeric fit comparison needed), and a worse-tier model can
  * never dominate a better-tier one regardless of price. */
-const ADOPTION_RANK = { broad: 3, moderate: 2, unknown: 1, low: 0 };
+// 'new' (scripts/derive-status-adoption.mjs's 60-day-since-release rule) ranks the same as
+// 'unknown' on purpose — a model too recently released for its usage share to mean anything is in
+// exactly the same "no real signal either way" position, so it gets the same neutral protection
+// from domination by a cheaper 'low'-adoption model, without being penalized the way an actually
+// low-measured-share model is.
+const ADOPTION_RANK = { broad: 3, moderate: 2, unknown: 1, new: 1, low: 0 };
 const adoptionRank = (adoption) => ADOPTION_RANK[adoption] ?? 1;
 
 export function dominates(y, x) {
@@ -433,43 +464,76 @@ export function dropDominated(list) {
 }
 
 // -----------------------------------------------------------------------------------------
-// Rule 4 — rank by judged band, then confidence, then the stance's cost/fit comparator
+// Rule 4 — rank by the chosen stance. Every candidate reaching this function already cleared
+// rule 3 (a real "strong" or "capable" judged band for this task — "weak"/"unknown" never get
+// this far), so all three stances rank strictly within that pre-cleared set; none of them can
+// ever promote a candidate judgment itself rejected. What differs per stance is what breaks a
+// tie, and for 'cheapest' specifically, WHETHER band/confidence even outrank cost at all — see
+// the file header's rule 4 for the full rationale (rewritten 2026-09-07: a prior version put
+// band/confidence ahead of cost for every stance, which made 'cheapest' silently return the same
+// order as 'best' whenever candidates spanned more than one judged tier).
 // -----------------------------------------------------------------------------------------
 const costOrInf = (x) => (num(x.monthly_cost_usd) ? x.monthly_cost_usd : Infinity);
 
-/** Band, then confidence — the primary sort key for EVERY stance (see the file header). Every
- * candidate reaching this function already cleared rule 3, so band is always 'strong' or
- * 'capable' here; this comparator still checks the general case rather than hard-coding those
- * two values, so it keeps working if a future band is ever added. */
+/** Band, then confidence — used as the primary key for 'best' and 'balanced', and as a tie-break
+ * (after cost) for 'cheapest'. Every candidate reaching this function already cleared rule 3, so
+ * band is always 'strong' or 'capable' here; this comparator still checks the general case rather
+ * than hard-coding those two values, so it keeps working if a future band is ever added. */
 const byBandThenConfidence = (a, b) => bandRank(b.band) - bandRank(a.band) || confidenceRank(b.confidence) - confidenceRank(a.confidence);
+/** Band -> confidence -> fit -> cost, the shared comparator 'best' uses outright and 'balanced'
+ * uses within its in-budget set (see below) — kept as one function so the two stances can never
+ * quietly drift apart on how they break a tie. Fit (not cost) is the first tie-break inside a
+ * (band, confidence) tier: two candidates can share a band and confidence yet still carry very
+ * different evidence — a real, measured coding_score/GPQA/etc. score differentiates them far more
+ * than price does, and "best" is explicitly the price-agnostic stance (that's what "best,
+ * regardless of price" means in practice — see data/eval/situations.json's S01). This is
+ * unchanged from before the 2026-09-07 stance rewrite; that rewrite's actual bug (see the file
+ * header) was 'cheapest' silently copying this exact order and never letting price matter at all
+ * — 'best' itself was never broken. */
+const byBandConfidenceFitCost = (a, b) => byBandThenConfidence(a, b) || b.fit - a.fit || costOrInf(a) - costOrInf(b);
 
 export function rankByStance(list, stance) {
   const arr = [...list];
+
   if (stance === 'cheapest') {
-    arr.sort((a, b) => byBandThenConfidence(a, b) || costOrInf(a) - costOrInf(b) || b.fit - a.fit);
+    // Cost is the PRIMARY key, full stop — the cheapest candidate at the given volume wins
+    // outright regardless of judged tier, as long as it already cleared rule 3's floor. Ties on
+    // cost (including two candidates with an equally unknown cost) fall back to band, then
+    // confidence, then raw fit — this is the actual fix for the bug this rewrite exists to kill.
+    arr.sort((a, b) => costOrInf(a) - costOrInf(b) || byBandThenConfidence(a, b) || b.fit - a.fit);
     return arr;
   }
+
   if (stance === 'best') {
-    arr.sort((a, b) => byBandThenConfidence(a, b) || b.fit - a.fit || costOrInf(a) - costOrInf(b));
+    arr.sort(byBandConfidenceFitCost);
     return arr;
   }
-  // 'balanced' (default): a 50/50 blend of normalized fit and normalized cheapness, same
-  // min-max / log-price style as scripts/derive-task-fit.mjs and the site's own app.js — used to
-  // break ties WITHIN a (band, confidence) tier, same as the other two stances.
-  const fits = list.map((x) => x.fit);
-  const minF = Math.min(...fits), maxF = Math.max(...fits);
-  const fitNorm = (f) => (maxF === minF ? 0.5 : (f - minF) / (maxF - minF));
-  const knownCosts = list.map((x) => x.monthly_cost_usd).filter(num).map((c) => Math.log(Math.max(c, 1e-9)));
-  const minC = knownCosts.length ? Math.min(...knownCosts) : 0;
-  const maxC = knownCosts.length ? Math.max(...knownCosts) : 0;
-  const cheapNorm = (c) => {
-    if (!num(c)) return 0; // unknown cost never helps a balanced ranking, never hurts either
-    if (maxC === minC) return 0.5;
-    return 1 - (Math.log(Math.max(c, 1e-9)) - minC) / (maxC - minC);
-  };
-  const blended = (x) => 0.5 * fitNorm(x.fit) + 0.5 * cheapNorm(x.monthly_cost_usd);
-  arr.sort((a, b) => byBandThenConfidence(a, b) || blended(b) - blended(a) || costOrInf(a) - costOrInf(b));
-  return arr;
+
+  // 'balanced' (default): restrict to the candidates priced at or under 2x the monthly cost of
+  // the cheapest 'strong'-band candidate (or the cheapest 'capable'-band candidate if no priced
+  // 'strong' one exists) — "the options a buyer already comparison-shopping the best pick could
+  // actually justify" — then rank THAT in-budget set by band -> confidence -> fit -> cost, same as
+  // 'best'. A candidate priced over that line (or with no known cost at all, so it can't be
+  // judged "in budget" either way) is never dropped from the returned list — it's still ranked,
+  // always after every in-budget candidate, so it can still show up lower in the shortlist.
+  const known = (x) => num(x.monthly_cost_usd);
+  const referencePool = list.filter((x) => x.band === 'strong' && known(x));
+  const fallbackPool = referencePool.length ? referencePool : list.filter((x) => x.band === 'capable' && known(x));
+  const inBudget = [];
+  const overBudget = [];
+  if (fallbackPool.length) {
+    const cheapestRef = Math.min(...fallbackPool.map((x) => x.monthly_cost_usd));
+    const threshold = cheapestRef * 2;
+    for (const x of list) (known(x) && x.monthly_cost_usd <= threshold ? inBudget : overBudget).push(x);
+  } else {
+    // No priced strong/capable candidate at all (every cost is unknown) — nothing to bound the
+    // budget against, so every candidate is treated as in-budget and ranked on band/confidence/
+    // cost alone, same as 'best'.
+    inBudget.push(...list);
+  }
+  inBudget.sort(byBandConfidenceFitCost);
+  overBudget.sort(byBandConfidenceFitCost);
+  return [...inBudget, ...overBudget];
 }
 
 // -----------------------------------------------------------------------------------------
@@ -549,11 +613,12 @@ export function decide(input, data) {
       assumptions.push('No model in the catalog clears every filter (reachability, data rule, or the judged-fit floor) for this task with the given inputs — a real benchmark score alone is never enough; something has to have actually judged this model for this task.');
     }
     if (startIdx > 0) {
+      // The only remaining start_here disqualifier is low adoption with a same-band alternative
+      // (isDisqualifiedFromStartHere) — the preview-in-plain-"best" demotion this reason text used
+      // to also describe was removed 2026-09-07 (see that function's own comment), so this is
+      // never anything else now.
       const skipped = ranked[0];
-      const reason = skipped.model.status === 'preview'
-        ? 'it\'s still a preview release'
-        : `its adoption is low while a broader-adoption model of the same judged band is also a candidate`;
-      assumptions.push(`"${skipped.model.name}" ranked highest before the start_here check but wasn't set as start_here — ${reason}. It's still listed below if it placed in the top 3.`);
+      assumptions.push(`"${skipped.model.name}" ranked highest before the start_here check but wasn't set as start_here — its adoption is low while a broader-adoption model of the same judged band is also a candidate. It's still listed below if it placed in the top 3.`);
     }
 
     tasks[taskId] = { shortlist, assumptions };

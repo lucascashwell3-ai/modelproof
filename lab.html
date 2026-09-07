@@ -65,6 +65,7 @@
     .pick__badge--preview { color: var(--warn); }
     .pick__badge--deprecated { color: var(--warn); }
     .pick__badge--adoption-low { color: var(--low); }
+    .pick__badge--adoption-new { color: var(--low); }
     .pick__claims { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
     .pick__claims li { color: var(--ink-3); font-size: 11.5px; line-height: 1.4; padding-left: 12px; position: relative; }
     .pick__claims li::before { content: "\2013"; position: absolute; left: 0; color: var(--ink-4); }
@@ -212,16 +213,20 @@
         ${item.reconciliation ? `<div class="pick__reconciliation">${esc(item.reconciliation)}</div>` : ''}`;
     }
 
-    // status ('ga'|'preview'|'deprecated') and adoption ('broad'|'moderate'|'low'|'unknown') are
-    // the two facts that can keep a top-fit pick from being start_here (assets/decide.mjs's
+    // status ('ga'|'preview'|'deprecated') and adoption ('broad'|'moderate'|'low'|'unknown'|'new')
+    // are the two facts that can keep a top-fit pick from being start_here (assets/decide.mjs's
     // isDisqualifiedFromStartHere) — only the noteworthy values get a badge; a plain 'ga' /
     // 'broad'/'moderate'/'unknown' model shows nothing extra, so a badge always means "read this
-    // before you commit to it."
+    // before you commit to it." 'new' (scripts/derive-status-adoption.mjs's 60-day recency rule,
+    // added 2026-09-07) gets its own badge, not the 'low adoption' one — the whole point of that
+    // bucket is "too recent to say" is a different claim from "measured and it's genuinely low",
+    // and decide.mjs never demotes a 'new' model the way it demotes a 'low' one.
     function renderBadges(item) {
       const badges = [];
       if (item.status === 'preview') badges.push('<span class="pick__badge pick__badge--preview">preview</span>');
       if (item.status === 'deprecated') badges.push('<span class="pick__badge pick__badge--deprecated">deprecated</span>');
       if (item.adoption === 'low') badges.push('<span class="pick__badge pick__badge--adoption-low">low adoption</span>');
+      if (item.adoption === 'new') badges.push('<span class="pick__badge pick__badge--adoption-new">new — adoption not yet measurable</span>');
       return badges.length ? `<div class="pick__badges">${badges.join('')}</div>` : '';
     }
 

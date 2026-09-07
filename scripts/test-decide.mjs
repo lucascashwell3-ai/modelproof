@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import {
   decide, filterCandidates, isReachable, vendorCountry, WHY_FIELDS, VENDOR_KEY_DISPLAY, STANCES,
   taskFitFor, basisFromClaims, judgedBandOf, bandRank, confidenceRank, isEnterpriseInput,
-  isDisqualifiedFromStartHere, topClaimSentence, rankByStance, dominates,
+  isDisqualifiedFromStartHere, topClaimSentence, rankByStance, dominates, dropDominated,
 } from '../assets/decide.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
 
@@ -86,32 +86,39 @@ test(`full grid: ${TASK_IDS.length} tasks x ${HAVE_OPTIONS.length} have x ${STAN
               }
             }
 
-            // (c) under 'cheapest', start_here is the cheapest model WITHIN THE TOP (band,
-            //     confidence) tier among candidates (rule 4, rewritten 2026-09-07: band and
-            //     confidence come before any stance's cost/fit comparator, "cheapest" included —
-            //     a cheaper but lower-judged model never outranks a better-judged one). Recomputed
-            //     independently from the full pre-ranking candidate set, not just the top 3.
+            // (c) under 'cheapest', start_here is the overall cheapest candidate ACROSS EVERY
+            //     (band, confidence) tier (rule 4, rewritten 2026-09-07: 'cheapest' now sorts on
+            //     cost first, regardless of tier, as long as the candidate already cleared rule
+            //     3's strong-or-capable floor — ties fall back to band, then confidence. A prior
+            //     version of this rule put band/confidence ahead of cost for every stance, which
+            //     made 'cheapest' silently identical to 'best' whenever candidates spanned more
+            //     than one tier). Recomputed independently from the full pre-ranking candidate
+            //     set (after the same domination pruning decide() itself applies), not just the
+            //     top 3.
             if (stance === 'cheapest') {
               const { candidates } = filterCandidates(taskId, input, data);
               if (candidates.length) {
-                const topBand = Math.max(...candidates.map((c) => bandRank(c.band)));
-                const topConfidence = Math.max(...candidates.filter((c) => bandRank(c.band) === topBand).map((c) => confidenceRank(c.confidence)));
-                const topTier = candidates.filter((c) => bandRank(c.band) === topBand && confidenceRank(c.confidence) === topConfidence);
-                const withCost = topTier.filter((c) => typeof c.monthly_cost_usd === 'number');
+                const pruned = dropDominated(candidates);
+                const withCost = pruned.filter((c) => typeof c.monthly_cost_usd === 'number');
                 const startHere = shortlist.find((x) => x.start_here);
                 if (!startHere) {
                   failures.push(`${label}: candidates exist but no start_here was returned`);
                 } else if (withCost.length) {
                   const minCost = Math.min(...withCost.map((c) => c.monthly_cost_usd));
-                  // start_here can legitimately be pricier than minCost only if the actual
-                  // cheapest-in-tier model(s) were disqualified from start_here (preview/low
+                  // start_here can legitimately be pricier than the overall cheapest only if
+                  // every candidate at or under that cost was disqualified from start_here (low
                   // adoption) — never for any other reason.
                   if (Math.abs(startHere.monthly_cost_usd - minCost) > 1e-9) {
-                    const ranked = rankByStance(candidates, stance);
-                    const cheapestInTier = topTier.find((c) => Math.abs(c.monthly_cost_usd - minCost) < 1e-9);
-                    const cheapestDisqualified = cheapestInTier && isDisqualifiedFromStartHere(cheapestInTier, ranked, stance, input);
-                    if (!cheapestDisqualified) {
-                      failures.push(`${label}: start_here "${startHere.id}" costs ${startHere.monthly_cost_usd}, cheapest in its (band,confidence) tier is ${minCost} and wasn't disqualified`);
+                    // Disqualification is checked against the FULL pre-domination candidate set,
+                    // exactly like decide() itself does — a same-band broad/moderate alternative
+                    // that dropDominated later pruned on pure price/fit still has to count here,
+                    // or this check would wrongly flag a start_here decide() got right.
+                    const cheaperCandidates = pruned.filter((c) => (
+                      typeof c.monthly_cost_usd === 'number' && c.monthly_cost_usd < startHere.monthly_cost_usd - 1e-9
+                    ));
+                    const allCheaperDisqualified = cheaperCandidates.every((c) => isDisqualifiedFromStartHere(c, candidates, stance, input));
+                    if (!allCheaperDisqualified) {
+                      failures.push(`${label}: start_here "${startHere.id}" costs ${startHere.monthly_cost_usd}, a cheaper undisqualified candidate exists (cheapest overall: ${minCost})`);
                     }
                   }
                 }
@@ -148,19 +155,10 @@ test(`full grid: ${TASK_IDS.length} tasks x ${HAVE_OPTIONS.length} have x ${STAN
               if (item.adoption == null) failures.push(`${label}: "${item.id}" is missing adoption`);
             }
 
-            // (f) NEW RULE — status:'preview' never gets start_here under stance 'best' or an
-            // enterprise-style input, UNLESS every candidate is preview-disqualified (nothing
-            // better to prefer).
-            if (stance === 'best' || isEnterpriseInput(input)) {
-              const startHere = shortlist.find((x) => x.start_here);
-              if (startHere && startHere.status === 'preview') {
-                const { candidates } = filterCandidates(taskId, input, data);
-                const hadNonPreviewAlternative = candidates.some((c) => c.model.status !== 'preview');
-                if (hadNonPreviewAlternative) {
-                  failures.push(`${label}: start_here "${startHere.id}" is a preview model but a non-preview candidate existed`);
-                }
-              }
-            }
+            // (f) a plain stance 'best' with NO enterprise signal may legitimately pick a preview
+            // model as start_here (removed 2026-09-07 — see isDisqualifiedFromStartHere's own
+            // comment and data/eval/situations.json's S33). The only remaining preview rule is the
+            // enterprise-style full exclusion, checked below as (f2).
 
             // (f2) NEW RULE — an enterprise-style input excludes status:'preview' from the
             // shortlist ENTIRELY, not just from start_here.
@@ -365,11 +363,23 @@ test('adoption gate: a low-adoption model DOES get start_here when no broad/mode
   assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'lonely-low-adopt');
 });
 
-test('preview gate: a preview model never gets start_here under stance "best" when a non-preview candidate exists', () => {
+test('preview gate: a plain, non-enterprise stance "best" CAN pick a preview model as start_here when its own evidence earns it (removed 2026-09-07 — see isDisqualifiedFromStartHere\'s comment and data/eval/situations.json\'s S33, where a preview model is the required start_here for a plain, non-enterprise "best" ask)', () => {
   const preview = bandedFixture('preview-model', { status: 'preview', price_output: 10, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 99, basis: ['coding_score'] } } });
   const ga = bandedFixture('ga-model', { status: 'ga', price_output: 0.1, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 60, basis: ['coding_score'] } } });
   const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, { models: [preview, ga], plans, presets, vendors });
-  assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'ga-model');
+  // Same (band, confidence) tier for both fixtures, so 'best' falls back to fit — the preview
+  // model's real, measured coding_score (99) beats the GA model's (60), and nothing about being
+  // "preview" should hide that from a plain, non-enterprise "best" ask any more.
+  assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'preview-model');
+});
+
+test('preview gate: an enterprise-style input still prefers the non-preview candidate — the real exclusion (rule 3) still applies even though the plain-"best" demotion above was removed', () => {
+  const preview = bandedFixture('preview-model-ent', { status: 'preview', vendor: 'Acme', price_output: 10, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 99, basis: ['coding_score'] } } });
+  const ga = bandedFixture('ga-model-ent', { status: 'ga', vendor: 'Acme', price_output: 0.1, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 60, basis: ['coding_score'] } } });
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {}, enterprise: true }, { models: [preview, ga], plans, presets, vendors });
+  const shortlist = out.tasks.coding.shortlist;
+  assert.equal(shortlist.find((x) => x.start_here)?.id, 'ga-model-ent');
+  assert.ok(!shortlist.some((x) => x.id === 'preview-model-ent'), 'enterprise:true still fully excludes the preview model at rule 3, regardless of its fit');
 });
 
 test('preview gate: stance "cheapest" with no enterprise-style input does NOT disqualify a preview model', () => {
@@ -425,4 +435,44 @@ test('topClaimSentence: prefers a non-usage claim over a usage claim, falls back
   const mixed = [{ tier: 'usage', sentence: 'usage sentence' }, { tier: 'lab', sentence: 'lab sentence' }];
   assert.equal(topClaimSentence(mixed), 'lab sentence');
   assert.equal(topClaimSentence([]), 'No sourced claim on file for this pick.');
+});
+
+// ---------------------------------------------------------------------------------------------
+// Stance rewrite (2026-09-07): the actual bug this rewrite exists to fix was 'cheapest' silently
+// returning the exact same shortlist order as 'best' for every task, because band/confidence sat
+// ahead of cost for every stance — price never got a chance to matter. These two tests run
+// against the REAL catalog (have: ['any'], so every task has its full candidate pool) and check
+// the property the fix is actually supposed to establish, not one hand-picked example.
+// ---------------------------------------------------------------------------------------------
+test("stance rewrite: for every task, 'cheapest' start_here never costs more than 'best' start_here", () => {
+  const failures = [];
+  for (const taskId of TASK_IDS) {
+    const input = (stance) => ({ tasks: [taskId], have: ['any'], stance, volume: 'typical', dataRule: {} });
+    const cheapest = decide(input('cheapest'), data).tasks[taskId].shortlist.find((x) => x.start_here);
+    const best = decide(input('best'), data).tasks[taskId].shortlist.find((x) => x.start_here);
+    if (!cheapest || !best) continue; // no candidate at all for this task — nothing to compare
+    if (typeof cheapest.monthly_cost_usd !== 'number' || typeof best.monthly_cost_usd !== 'number') continue; // unknown cost can't be compared either way
+    if (cheapest.monthly_cost_usd > best.monthly_cost_usd + 1e-9) {
+      failures.push(`${taskId}: cheapest start_here "${cheapest.id}" costs ${cheapest.monthly_cost_usd} > best start_here "${best.id}" at ${best.monthly_cost_usd}`);
+    }
+  }
+  assert.equal(failures.length, 0, failures.join('\n'));
+});
+
+test("stance rewrite: 'cheapest' and 'best' pick a genuinely different shortlist order for at least half of the real tasks — proof 'cheapest' is no longer a silent copy of 'best'", () => {
+  let taskCount = 0;
+  let differByOrder = 0;
+  for (const taskId of TASK_IDS) {
+    const input = (stance) => ({ tasks: [taskId], have: ['any'], stance, volume: 'typical', dataRule: {} });
+    const cheapestList = decide(input('cheapest'), data).tasks[taskId].shortlist.map((x) => x.id);
+    const bestList = decide(input('best'), data).tasks[taskId].shortlist.map((x) => x.id);
+    if (cheapestList.length < 2 && bestList.length < 2) continue; // fewer than 2 candidates: no order to compare
+    taskCount++;
+    if (JSON.stringify(cheapestList) !== JSON.stringify(bestList)) differByOrder++;
+  }
+  assert.ok(taskCount > 0, 'fixture assumption: at least one real task has >= 2 candidates for have: [\'any\']');
+  assert.ok(
+    differByOrder >= Math.ceil(taskCount / 2),
+    `expected cheapest != best for at least half of the ${taskCount} comparable tasks, got ${differByOrder}`,
+  );
 });

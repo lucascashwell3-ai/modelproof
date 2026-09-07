@@ -18,13 +18,29 @@
        rather than being guessed into a status the name doesn't actually say.
      - 'ga' otherwise — the default for a model with no first-party signal that it's anything else.
 
-   adoption: 'broad' | 'moderate' | 'low' | 'unknown' — a pure, deterministic bucketing of the
-   model's own `usage.openrouter.share` (already a sourced fact — scripts/derive-usage.mjs), never
-   a second opinion on it:
+   adoption: 'broad' | 'moderate' | 'low' | 'unknown' | 'new' — a pure, deterministic bucketing of
+   the model's own `usage.openrouter.share` (already a sourced fact — scripts/derive-usage.mjs):
      share >= 2       -> 'broad'
      0.5 <= share < 2  -> 'moderate'
      share < 0.5       -> 'low'
      no usage.openrouter.share sourced -> 'unknown' (never a guessed bucket)
+   ...EXCEPT: a share that would otherwise land on 'low' or 'unknown' is overridden to 'new' when
+   the model was released within RECENCY_WINDOW_DAYS (60) days of the data snapshot's own `as_of`.
+   Fixed 2026-09-07: claude-fable-5-1 (released 2026-09-01, 6 days before as_of 2026-09-07) was
+   landing on 'low' from its 0.26% share and getting demoted below older, better-established
+   models by assets/decide.mjs's low-adoption start_here gate — a thin, launch-week share number
+   is noise, not evidence the model hasn't caught on; there simply hasn't been time for a real
+   number to form. 'new' is a distinct bucket from 'low' specifically so a caller can tell "too
+   early to measure" apart from "measured and it's genuinely low" — see assets/decide.mjs's
+   ADOPTION_RANK and isDisqualifiedFromStartHere, which only ever demote 'low', never 'new'.
+   The override is deliberately one-directional: it never touches a 'broad' or 'moderate' result.
+   A model that already shows real, substantial share in its first days (e.g. a vendor's flagship
+   launch) has adoption that IS measured and IS strong — calling that "not yet measurable" would
+   be as dishonest in the other direction as calling a genuinely-thin number "new" isn't. Recency
+   only ever rescues a THIN reading from being misread as a verdict; it never overrides a good one.
+   Needs a real, full YYYY-MM-DD `released` date to fire at all — see daysSinceRelease: a model
+   with only a year (or month, quarter, or "unknown") on file can't be checked against a day-level
+   window, so it falls through to the plain share-based bucket above instead of guessing 'new'.
 
    Both are pure functions of fields the catalog already carries, so — like derive-task-fit.mjs —
    this is deterministic and safe to re-run on every refresh (scripts/auto-refresh.mjs calls
@@ -35,9 +51,27 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 
 export const STATUS_VALUES = ['ga', 'preview', 'deprecated'];
-export const ADOPTION_VALUES = ['broad', 'moderate', 'low', 'unknown'];
+export const ADOPTION_VALUES = ['broad', 'moderate', 'low', 'unknown', 'new'];
+export const RECENCY_WINDOW_DAYS = 60;
 
 const num = (v) => typeof v === 'number' && Number.isFinite(v);
+const FULL_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Days between a model's own `released` date and the data snapshot's own `as_of` date (both
+ * required to be a full YYYY-MM-DD date), or null when either isn't one — a partial date
+ * (year-only "2026", month-only "2026-07", quarter "2026-Q1") or the literal string "unknown"
+ * can't be checked against a day-level window without guessing, so null reads the same as "no
+ * date on file": unknown recency, never 'new'. A negative result (released logged after as_of,
+ * which shouldn't happen in real data but isn't this function's job to police) still counts as
+ * "within the window" — see deriveAdoption. */
+export function daysSinceRelease(released, asOf) {
+  if (typeof released !== 'string' || !FULL_DATE_RE.test(released)) return null;
+  if (typeof asOf !== 'string' || !FULL_DATE_RE.test(asOf)) return null;
+  const releasedMs = Date.parse(`${released}T00:00:00Z`);
+  const asOfMs = Date.parse(`${asOf}T00:00:00Z`);
+  if (Number.isNaN(releasedMs) || Number.isNaN(asOfMs)) return null;
+  return Math.round((asOfMs - releasedMs) / 86_400_000);
+}
 
 /** { status, reason } — reason is plain-English provenance, not stored on the model (the model's
  * own name/deprecated field IS the source), just for the refresh log. */
@@ -47,22 +81,31 @@ export function deriveStatus(model) {
   return { status: 'ga', reason: 'no preview/deprecated signal in the model\'s own name or deprecated flag' };
 }
 
-/** { adoption, share } — share is the raw number (or null) so a caller can cite it in a `why`. */
-export function deriveAdoption(model) {
+/** { adoption, share } — share is the raw number (or null) so a caller can cite it in a `why`.
+ * `asOf` is the data snapshot's own as_of date (data/models.json's top-level `as_of`); omit it
+ * (or pass anything that isn't a full YYYY-MM-DD date) to fall back to pure share-based bucketing
+ * with no recency override at all — see daysSinceRelease. The recency override only ever rescues
+ * an otherwise-'low'/'unknown' result into 'new'; a 'broad'/'moderate' share stands as-is (see the
+ * file header for why). */
+export function deriveAdoption(model, asOf) {
   const share = model.usage?.openrouter?.share;
-  if (!num(share)) return { adoption: 'unknown', share: null };
-  if (share >= 2) return { adoption: 'broad', share };
-  if (share >= 0.5) return { adoption: 'moderate', share };
-  return { adoption: 'low', share };
+  const known = num(share);
+  const base = !known ? 'unknown' : share >= 2 ? 'broad' : share >= 0.5 ? 'moderate' : 'low';
+  if (base === 'low' || base === 'unknown') {
+    const days = daysSinceRelease(model?.released, asOf);
+    if (days != null && days <= RECENCY_WINDOW_DAYS) return { adoption: 'new', share: known ? share : null };
+  }
+  return { adoption: base, share: known ? share : null };
 }
 
-/** Derive both for the whole catalog. Pure — does not mutate `models`. Returns
+/** Derive both for the whole catalog. Pure — does not mutate `models`. `asOf` is the data
+ * snapshot's own as_of date, forwarded to deriveAdoption for the 60-day recency rule. Returns
  * Map<modelId, {status, adoption, share}>. */
-export function deriveStatusAdoptionForCatalog(models) {
+export function deriveStatusAdoptionForCatalog(models, asOf) {
   const out = new Map();
   for (const m of models || []) {
     const { status } = deriveStatus(m);
-    const { adoption, share } = deriveAdoption(m);
+    const { adoption, share } = deriveAdoption(m, asOf);
     out.set(m.id, { status, adoption, share });
   }
   return out;
@@ -77,7 +120,7 @@ async function main() {
   const dataUrl = new URL('data/models.json', ROOT);
   const data = JSON.parse(readFileSync(dataUrl));
 
-  const derived = deriveStatusAdoptionForCatalog(data.models);
+  const derived = deriveStatusAdoptionForCatalog(data.models, data.as_of);
   let changed = 0;
   for (const m of data.models) {
     const next = derived.get(m.id);

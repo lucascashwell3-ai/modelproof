@@ -220,7 +220,7 @@ export function applyOne(data, j, today) {
       sources: Array.from(new Set([...(j.value.sources || []), ...j.sources.map((s) => s.url)])),
     };
     nm.status = deriveStatus(nm).status;
-    nm.adoption = deriveAdoption(nm).adoption;
+    nm.adoption = deriveAdoption(nm, data.as_of).adoption;
     data.models.push(nm);
     // every admitted model gets a timeline entry (2026-08-22: Judge-admitted models used to skip
     // the timeline — Grok 4.6 and Gemini 3.7 Flash were in the catalog with no "what changed" line).
@@ -276,7 +276,7 @@ export function applyOne(data, j, today) {
     if (existing && existing.as_of && existing.as_of > today) return null;
     m.usage = m.usage || { openrouter: null };
     m.usage.openrouter = { category: j.value.category, share: j.value.share, rank: j.value.rank, as_of: today, source_url: j.sources[0].url };
-    m.adoption = deriveAdoption(m).adoption;
+    m.adoption = deriveAdoption(m, data.as_of).adoption;
     m.sources = Array.from(new Set([...(m.sources || []), ...j.sources.map((s) => s.url)]));
     return { date: today, model: m.name, field: 'usage.openrouter', old: existing ? existing.rank : null, new: j.value.rank, sources: j.sources.map((s) => s.url), reason: j.reason };
   }
