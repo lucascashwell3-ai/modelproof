@@ -374,14 +374,29 @@ test('adoption gate: a low-adoption model DOES get start_here when no broad/mode
   assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'lonely-low-adopt');
 });
 
-test('preview gate: a plain, non-enterprise stance "best" CAN pick a preview model as start_here when its own evidence earns it (removed 2026-09-07 — see isDisqualifiedFromStartHere\'s comment and data/eval/situations.json\'s S33, where a preview model is the required start_here for a plain, non-enterprise "best" ask)', () => {
+test('preview gate: GA never loses start_here to a preview model in the SAME band, even when the preview has a higher raw fit (reintroduced 2026-09-07, narrower than the blanket rule removed earlier that day — see isDisqualifiedFromStartHere\'s comment; this is the exact shape of bug the real catalog showed for "writing": gemini-3-1-pro outranking claude-sonnet-5 on a families/fit tie-break despite both being "capable")', () => {
   const preview = bandedFixture('preview-model', { status: 'preview', price_output: 10, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 99, basis: ['coding_score'] } } });
   const ga = bandedFixture('ga-model', { status: 'ga', price_output: 0.1, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 60, basis: ['coding_score'] } } });
   const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, { models: [preview, ga], plans, presets, vendors });
-  // Same (band, confidence) tier for both fixtures, so 'best' falls back to fit — the preview
-  // model's real, measured coding_score (99) beats the GA model's (60), and nothing about being
-  // "preview" should hide that from a plain, non-enterprise "best" ask any more.
-  assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'preview-model');
+  const shortlist = out.tasks.coding.shortlist;
+  // Same band for both fixtures ('strong') — GA wins start_here regardless of the preview
+  // model's higher measured coding_score (99 vs 60); the preview model still appears lower in
+  // the shortlist, just never as start_here.
+  assert.equal(shortlist.find((x) => x.start_here)?.id, 'ga-model');
+  assert.ok(shortlist.some((x) => x.id === 'preview-model'), 'the preview model should still appear in the shortlist, just not first');
+});
+
+test('preview gate: a preview model DOES win start_here under plain "best" when no GA model shares its band (data/eval/situations.json\'s S33 — Google-only vision, no GA candidate even clears the judged floor there)', () => {
+  // families: 2 keeps the default 'strong' judged band from being calibration-downgraded to
+  // 'capable' (rule 3b needs >= 2 real-world signal families for a claimed 'strong' to survive
+  // as 'strong') — without it, this fixture's 'strong' would collapse to 'capable' same as the
+  // GA rival below, defeating the point of this different-band test.
+  const preview = bandedFixture('lonely-preview-strong', { status: 'preview', signals: { coding: { families: 2 } } });
+  const gaOtherBand = bandedFixture('ga-weaker-band', { status: 'ga', task_fit_judged: { coding: { band: 'capable', confidence: 'high', claims: [{ ...JUDGED_CLAIM, sentence: 'ga-weaker-band claim' }], reconciliation: null, as_of: '2026-09-01' } } });
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, { models: [preview, gaOtherBand], plans, presets, vendors });
+  // Different bands ('strong' vs 'capable') — band still outranks status, so the preview model
+  // legitimately wins start_here; the new GA-before-preview rule only ever applies WITHIN a band.
+  assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'lonely-preview-strong');
 });
 
 test('preview gate: an enterprise-style input still prefers the non-preview candidate — the real exclusion (rule 3) still applies even though the plain-"best" demotion above was removed', () => {
@@ -486,4 +501,73 @@ test("stance rewrite: 'cheapest' and 'best' pick a genuinely different shortlist
     differByOrder >= Math.ceil(taskCount / 2),
     `expected cheapest != best for at least half of the ${taskCount} comparable tasks, got ${differByOrder}`,
   );
+});
+
+// ---------------------------------------------------------------------------------------------
+// Cost coverage (2026-09-07): monthly_cost_usd must be a real number whenever a candidate has
+// both price_input/price_output on file and a resolved volume preset — null only when a price
+// is genuinely missing from data/models.json (see decide()'s missing-price assumption line,
+// which fires per shortlist item that's still null for that reason). This is the regression test
+// for the exact failure mode a malformed caller used to trigger SILENTLY: passing the whole
+// parsed data/usage-presets.json file (with its _readme/as_of wrapper) as `data.presets` instead
+// of that file's own `presets` sub-object made every monthly_cost_usd null, with no error
+// anywhere — and because 'cheapest' has nothing left to break a tie on when cost is always null,
+// it also silently collapsed to the exact same order as 'best' (see the two "stance rewrite"
+// tests above, which already assert the other two halves of this: cheapest.start_here never
+// costs more than best.start_here, and their orders differ for at least half the real tasks).
+// unwrapPresets() in resolveVolume() now guards the specific caller mistake that caused this.
+// ---------------------------------------------------------------------------------------------
+test('cost coverage: for have=any/typical, at least 90% of shortlist items across every task carry a numeric monthly_cost_usd', () => {
+  let total = 0;
+  let withCost = 0;
+  const missing = [];
+  for (const taskId of TASK_IDS) {
+    const out = decide({ tasks: [taskId], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, data);
+    for (const item of out.tasks[taskId].shortlist) {
+      total++;
+      if (typeof item.monthly_cost_usd === 'number') withCost++;
+      else missing.push(`${taskId}: "${item.id}"`);
+    }
+  }
+  assert.ok(total > 0, 'fixture assumption: at least one task returns a shortlist item for have=any');
+  const coverage = withCost / total;
+  assert.ok(
+    coverage >= 0.9,
+    `only ${withCost}/${total} shortlist items (${(coverage * 100).toFixed(1)}%) have a numeric cost, want >= 90%: ${missing.join(', ')}`,
+  );
+});
+
+// ---------------------------------------------------------------------------------------------
+// GA-before-preview invariant (2026-09-07): within the SAME calibrated judged band, a
+// status:'preview' item must never rank ahead of a GA item in the returned shortlist, for any
+// stance except 'cheapest' (which stays cost-primary by design — see isDisqualifiedFromStartHere
+// and byBandThenConfidence's own comments). Run against the real catalog, not a hand-built
+// fixture, so it actually catches a real (task, stance) combination going stale — this is exactly
+// how the bug surfaced originally (gemini-3-1-pro over claude-sonnet-5 for "writing").
+// ---------------------------------------------------------------------------------------------
+test("invariant: a GA shortlist item is never ranked below a preview item of the SAME judged band, for every task and every stance except 'cheapest'", () => {
+  const failures = [];
+  const bandOf = (taskId, id) => {
+    const m = models.find((x) => x.id === id);
+    const raw = judgedBandOf(m, taskId);
+    return calibrateBand(m, taskId, raw.band).band;
+  };
+  for (const taskId of TASK_IDS) {
+    for (const stance of STANCES) {
+      if (stance === 'cheapest') continue;
+      const out = decide({ tasks: [taskId], have: ['any'], stance, volume: 'typical', dataRule: {} }, data);
+      const shortlist = out.tasks[taskId].shortlist;
+      for (let i = 0; i < shortlist.length; i++) {
+        if (shortlist[i].status !== 'preview') continue;
+        const previewBand = bandOf(taskId, shortlist[i].id);
+        for (let j = i + 1; j < shortlist.length; j++) {
+          if (shortlist[j].status === 'preview') continue;
+          if (bandOf(taskId, shortlist[j].id) === previewBand) {
+            failures.push(`${taskId}/${stance}: GA "${shortlist[j].id}" ranked BELOW preview "${shortlist[i].id}" (both band "${previewBand}")`);
+          }
+        }
+      }
+    }
+  }
+  assert.equal(failures.length, 0, failures.join('\n'));
 });

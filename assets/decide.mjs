@@ -23,7 +23,9 @@
                    // task_fit_judged and availability — see scripts/derive-task-fit.mjs and
                    // scripts/derive-availability.mjs)
        plans,      // data/plans.json's `plans` array
-       presets,    // data/usage-presets.json's `presets` object ({light, typical, heavy})
+       presets,    // data/usage-presets.json's `presets` object ({light, typical, heavy}) —
+                   // resolveVolume() also tolerates the whole parsed file (with its _readme/
+                   // as_of wrapper) being passed here by mistake; see unwrapPresets() below
        vendors,    // data/vendors.json's `vendors` array — NOT in the original three-field
                    // spec for this function, but rule 2 (the noChinaHosted data rule) can't be
                    // implemented without a vendor -> country map, so it's a required fourth
@@ -146,20 +148,27 @@
       never which stance was asked for), so it can never eliminate the model 'cheapest' or
       'balanced' most needs to see (see dropDominated's own comment for why the actual cheapest
       candidate is never a casualty of it).
-      One more rule gates a low-adoption model at start_here selection only (see
-      isDisqualifiedFromStartHere) — it never removes a model from the shortlist, only the
-      start_here flag: an `adoption: 'low'` model is never start_here while a 'broad' or
-      'moderate'-adoption model of the SAME judged band is also a candidate — a benchmark win
-      doesn't buy the top spot away from a model people are actually already running, in the same
-      tier of judged quality. (A `status: 'preview'` model used to get an equivalent demotion at
-      start_here under plain stance 'best' even with no enterprise signal — removed 2026-09-07:
-      the independently-drafted 40-situation answer key this engine is graded against explicitly
-      expects a preview model to legitimately win start_here in a plain, non-enterprise "best" ask
-      when its own judged evidence earns it — data/eval/situations.json's S33 — and
-      data/eval/must-never.json's own "a preview-labeled SKU must never be the enterprise starting
-      recommendation" rules are scoped to enterprise context only, never plain "best". The
-      ENTERPRISE exclusion above, at rule 3, is the real, still-enforced rule; this file no longer
-      duplicates a milder, narrower version of it at start_here selection.)
+      Two rules gate start_here selection only (see isDisqualifiedFromStartHere) — neither ever
+      removes a model from the shortlist, only the start_here flag:
+        - an `adoption: 'low'` model is never start_here while a 'broad' or 'moderate'-adoption
+          model of the SAME judged band is also a candidate — a benchmark win doesn't buy the top
+          spot away from a model people are actually already running, in the same tier of judged
+          quality.
+        - (added 2026-09-07) GA before preview, in ranking too: within the SAME band, a
+          status:'preview' model never outranks a GA/deprecated one any more (rankByStance's
+          byBandThenConfidence, ahead of families/confidence/fit) — before this, a preview SKU
+          with slightly more real-world signal families than its GA rivals could still take #2/#3
+          under plain 'best' (e.g. gemini-3-1-pro over claude-sonnet-5 for "writing", both
+          'capable'). At start_here specifically, a preview model is disqualified whenever ANY GA
+          model shares its band, checked against the full pre-domination candidate pool (same
+          reasoning as the adoption rule above). Scoped OUT of 'cheapest': that stance stays
+          cost-primary, full stop — if the actual cheapest candidate is a preview SKU, 'cheapest'
+          still recommends it. This does NOT reintroduce the blanket preview demotion removed
+          earlier that day: a preview model with NO same-band GA rival — including gemini-3-1-pro
+          under data/eval/situations.json's S33 (Google-only vision, no GA model even clears the
+          judged floor there) — still legitimately wins start_here under plain "best" when its
+          own judged evidence earns it. The absolute preview bar stays the enterprise-style full
+          exclusion at rule 3 above; this file never duplicates a milder version of it here again.
    Only the top 3 survivors are returned; item 0 is always start_here: true.
    ============================================================ */
 
@@ -369,19 +378,30 @@ export function isEnterpriseInput(input) {
  * a model people are actually already running, once judgment has already put both in the same
  * tier of quality.
  *
- * A `status: 'preview'` model used to get an equivalent demotion here under plain stance 'best',
- * even with no enterprise signal at all — removed 2026-09-07 against the independently-drafted
- * 40-situation answer key this engine is graded on: it explicitly expects a preview model to
- * legitimately WIN start_here in a plain, non-enterprise "best" ask when its own judged evidence
- * earns it (data/eval/situations.json's S33: Google-only, stance 'best', enterprise:false, vision
- * task — Gemini 3.1 Pro (Preview) is the required start_here, with the two non-preview
- * alternatives explicitly must_not_start). data/eval/must-never.json's own "a preview-labeled SKU
- * must never be the enterprise starting recommendation" rules are scoped to `context: 'enterprise'`
- * only — there is no non-enterprise rule of that shape anywhere in the key. The enterprise
- * exclusion that actually matters already lives at rule 3 (filterCandidates: an enterprise-style
- * input drops a preview model from the candidate set ENTIRELY, before this function ever runs on
- * it) — this function no longer duplicates a milder, narrower version of that same rule for the
- * plain-"best" case, since the key says plain "best" shouldn't have one at all. */
+ * A blanket `status: 'preview'` demotion used to live here under plain stance 'best', even with
+ * no enterprise signal at all — removed 2026-09-07 against the independently-drafted 40-situation
+ * answer key this engine is graded on: it explicitly expects a preview model to legitimately WIN
+ * start_here in a plain, non-enterprise "best" ask when its own judged evidence earns it
+ * (data/eval/situations.json's S33: Google-only, stance 'best', enterprise:false, vision task —
+ * Gemini 3.1 Pro (Preview) is the required start_here, with no GA model even clearing the judged
+ * floor for that task under that access).
+ *
+ * A narrower version comes back below (2026-09-07, same day): GA never loses start_here to a
+ * preview model that shares its SAME judged band — S33 still passes because Google-only vision
+ * has no GA candidate in gemini-3-1-pro's 'capable' band at all, so the "no GA rival in this
+ * band" escape hatch below still lets it through. What this closes is the case S33 never covered:
+ * plain 'best'/'balanced' where a preview SKU AND a GA model both clear the SAME band (e.g.
+ * gemini-3-1-pro vs. claude-sonnet-5, both 'capable', for "writing") — a reader who can't pin a
+ * preview model's version shouldn't be told to start there when an equally-judged GA option
+ * exists. Scoped OUT of 'cheapest' on purpose: that stance is cost-primary, full stop (rule 4) —
+ * if the actual cheapest candidate is a preview SKU, 'cheapest' still recommends it; the absolute
+ * bar on preview stays the enterprise-style full exclusion at rule 3
+ * (filterCandidates — an enterprise-style input drops a preview model from the candidate set
+ * ENTIRELY before this function ever runs on it), not this start_here-only rule. Checked against
+ * the FULL pre-dropDominated `allCandidates`, exactly like the adoption gate above and for the
+ * same reason: a same-band GA rival that dropDominated later pruned on pure price/fit must still
+ * count as "a real alternative existed," or a numeric domination check would silently undo this
+ * judgment-based rule. */
 export function isDisqualifiedFromStartHere(item, allCandidates, stance, input) {
   if (item.model.adoption === 'low') {
     const betterAdoptionSameBand = (allCandidates || []).some((other) => (
@@ -390,13 +410,33 @@ export function isDisqualifiedFromStartHere(item, allCandidates, stance, input) 
     ));
     if (betterAdoptionSameBand) return true;
   }
+  if (item.model.status === 'preview' && stance !== 'cheapest') {
+    const gaSameBand = (allCandidates || []).some((other) => (
+      other !== item && other.band === item.band && other.model.status !== 'preview'
+    ));
+    if (gaSameBand) return true;
+  }
   return false;
 }
 
 // -----------------------------------------------------------------------------------------
 // Cost
 // -----------------------------------------------------------------------------------------
-export function resolveVolume(volume, presets) {
+// Defensive unwrap (2026-09-07): every real caller (lab.html, scripts/test-*.mjs) already
+// passes data/usage-presets.json's `presets` sub-object as `data.presets`, per this file's own
+// header contract — but a caller that instead hands over the WHOLE parsed file (with its
+// _readme/as_of wrapper) silently gets `presets?.[key]` === undefined for every key, which
+// makes monthlyCost() return null for every model with no error anywhere to catch it. The
+// three named bands (light/typical/heavy) never collide with the wrapper's own keys, so
+// unwrapping is unambiguous and a no-op for every caller already doing it right.
+function unwrapPresets(presets) {
+  if (presets && typeof presets === 'object' && !presets.light && !presets.typical && !presets.heavy
+    && presets.presets && typeof presets.presets === 'object') {
+    return presets.presets;
+  }
+  return presets;
+}
+export function resolveVolume(volume, presetsIn) {
   if (volume && typeof volume === 'object' && num(volume.tokens_in_month) && num(volume.tokens_out_month)) {
     return {
       tokens_in_month: volume.tokens_in_month,
@@ -404,6 +444,7 @@ export function resolveVolume(volume, presets) {
       assumption: `Custom usage: ${fmtTokens(volume.tokens_in_month)} in / ${fmtTokens(volume.tokens_out_month)} out tokens per month, as given.`,
     };
   }
+  const presets = unwrapPresets(presetsIn);
   const key = typeof volume === 'string' && presets?.[volume] ? volume : 'typical';
   const preset = presets?.[key];
   if (!preset) return null;
@@ -577,13 +618,24 @@ export function dropDominated(list) {
 // -----------------------------------------------------------------------------------------
 const costOrInf = (x) => (num(x.monthly_cost_usd) ? x.monthly_cost_usd : Infinity);
 
-/** Band, then calibration's own `families` count (rule 3b — more independent real-world signal
- * outranks less, inside the same band), then confidence — used as the primary key for 'best' and
- * 'balanced', and as a tie-break (after cost) for 'cheapest'. Every candidate reaching this
- * function already cleared rule 3, so band is always 'strong' or 'capable' here; this comparator
- * still checks the general case rather than hard-coding those two values, so it keeps working if
- * a future band is ever added. */
-const byBandThenConfidence = (a, b) => bandRank(b.band) - bandRank(a.band) || (b.families ?? 0) - (a.families ?? 0) || confidenceRank(b.confidence) - confidenceRank(a.confidence);
+// GA-before-preview (2026-09-07): within the SAME band, a status:'preview' model never
+// outranks a GA (or deprecated) one, full stop — no families/confidence/fit count can buy it
+// back. Before this, families/confidence sat ahead of status, so a preview SKU with slightly
+// more real-world signal (e.g. gemini-3-1-pro's 2 families vs. a GA rival's 1) could still take
+// the #2/#3 spot under plain 'best' over a GA model people can actually pin a version of. This
+// is a RANKING rule, not a filter — a preview model with no same-band GA rival (or a genuinely
+// higher band) is untouched (see isDisqualifiedFromStartHere for the matching start_here rule,
+// which also has to look at the full pre-domination candidate pool, not just survivors here).
+const statusRank = (status) => (status === 'preview' ? 0 : 1);
+/** Band, then GA-before-preview, then calibration's own `families` count (rule 3b — more
+ * independent real-world signal outranks less, inside the same band+status), then confidence —
+ * used as the primary key for 'best' and 'balanced', and as a tie-break (after cost) for
+ * 'cheapest'. Every candidate reaching this function already cleared rule 3, so band is always
+ * 'strong' or 'capable' here; this comparator still checks the general case rather than
+ * hard-coding those two values, so it keeps working if a future band is ever added. */
+const byBandThenConfidence = (a, b) => bandRank(b.band) - bandRank(a.band)
+  || statusRank(b.model.status) - statusRank(a.model.status)
+  || (b.families ?? 0) - (a.families ?? 0) || confidenceRank(b.confidence) - confidenceRank(a.confidence);
 /** Band -> confidence -> fit -> cost, the shared comparator 'best' uses outright and 'balanced'
  * uses within its in-budget set (see below) — kept as one function so the two stances can never
  * quietly drift apart on how they break a tie. Fit (not cost) is the first tie-break inside a
@@ -725,12 +777,20 @@ export function decide(input, data) {
       assumptions.push('No model in the catalog clears every filter (reachability, data rule, or the judged-fit floor) for this task with the given inputs — a real benchmark score alone is never enough; something has to have actually judged this model for this task.');
     }
     if (startIdx > 0) {
-      // The only remaining start_here disqualifier is low adoption with a same-band alternative
-      // (isDisqualifiedFromStartHere) — the preview-in-plain-"best" demotion this reason text used
-      // to also describe was removed 2026-09-07 (see that function's own comment), so this is
-      // never anything else now.
+      // Two start_here disqualifiers exist now (isDisqualifiedFromStartHere): low adoption with a
+      // same-band broader-adoption alternative, or (2026-09-07) preview status with a same-band GA
+      // alternative. Re-derive which one actually applied for the reason text — both can't fire on
+      // the same skipped item's OWN attributes at once (adoption and status are independent facts),
+      // so checking adoption first and falling back to preview is unambiguous.
       const skipped = ranked[0];
-      assumptions.push(`"${skipped.model.name}" ranked highest before the start_here check but wasn't set as start_here — its adoption is low while a broader-adoption model of the same judged band is also a candidate. It's still listed below if it placed in the top 3.`);
+      const reason = skipped.model.adoption === 'low'
+        ? 'its adoption is low while a broader-adoption model of the same judged band is also a candidate'
+        : 'it\'s a preview-status model and a GA model of the same judged band is also a candidate — pin a version before you\'d actually rely on a preview SKU';
+      assumptions.push(`"${skipped.model.name}" ranked highest before the start_here check but wasn't set as start_here — ${reason}. It's still listed below if it placed in the top 3.`);
+    }
+    const missingPrice = top.filter((item) => item.monthly_cost_usd == null);
+    for (const item of missingPrice) {
+      assumptions.push(`"${item.model.name}" has no monthly cost shown — its price isn't on file in data/models.json (price_input/price_output missing), not a computation gap; cost comparisons involving it are unavailable until that's sourced.`);
     }
 
     tasks[taskId] = { shortlist, assumptions };

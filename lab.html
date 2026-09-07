@@ -234,7 +234,7 @@
     // and decide.mjs never demotes a 'new' model the way it demotes a 'low' one.
     function renderBadges(item) {
       const badges = [];
-      if (item.status === 'preview') badges.push('<span class="pick__badge pick__badge--preview">preview</span>');
+      if (item.status === 'preview') badges.push('<span class="pick__badge pick__badge--preview">preview — pin the version</span>');
       if (item.status === 'deprecated') badges.push('<span class="pick__badge pick__badge--deprecated">deprecated</span>');
       if (item.adoption === 'low') badges.push('<span class="pick__badge pick__badge--adoption-low">low adoption</span>');
       if (item.adoption === 'new') badges.push('<span class="pick__badge pick__badge--adoption-new">new — adoption not yet measurable</span>');
