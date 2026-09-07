@@ -7507,7 +7507,9 @@
         }
       },
       "status": "ga",
-      "adoption": "moderate"
+      "adoption": "moderate",
+      "price_input": 0.09,
+      "price_output": 0.18
     },
     {
       "benchmarks": {
@@ -8319,8 +8321,8 @@
       "vendor": "Poolside",
       "released": "2026-07-02",
       "context_window": 256000,
-      "price_input": 0.1,
-      "price_output": 0.2,
+      "price_input": 0.06,
+      "price_output": 0.12,
       "sources": [
         "https://poolside.ai/blog/introducing-laguna-xs-2-1",
         "https://huggingface.co/poolside/Laguna-XS.2",
@@ -8621,7 +8623,7 @@
       "released": "2026-08-14",
       "context_window": 262144,
       "price_input": null,
-      "price_output": null,
+      "price_output": 3,
       "sources": [
         "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
         "https://venturebeat.com/technology/qwen3-8-27b-runs-frontier-class-coding-agents-and-reasoning-locally-no-cloud-api-required",
@@ -9224,8 +9226,8 @@
       "vendor": "Thinking Machines Lab",
       "released": "2026-07-15",
       "context_window": 1048576,
-      "price_input": null,
-      "price_output": null,
+      "price_input": 1,
+      "price_output": 4.05,
       "sources": [
         "https://thinkingmachines.ai/model-card/inkling/",
         "https://techcrunch.com/2026/07/15/thinking-machines-amps-up-its-bet-against-one-size-fits-all-ai-with-its-first-open-model-inkling/",
@@ -12274,8 +12276,8 @@
       "vendor": "DeepSeek",
       "released": "2026-08-21",
       "context_window": 1048576,
-      "price_input": 0.22,
-      "price_output": 0.66,
+      "price_input": 0.44,
+      "price_output": 1.32,
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": null,
@@ -13034,6 +13036,42 @@
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/deepseek/deepseek-v4-flash-0731",
       "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "price",
+      "date": "2026-09-07",
+      "vendor": "Poolside",
+      "title": "Laguna XS 2.1 input price cut — $0.10 → $0.06 per 1M (-40%)",
+      "summary": "Poolside now lists Laguna XS 2.1 at $0.06 per 1M input tokens, from $0.10. Confirmed by two independent price feeds.",
+      "source": "https://openrouter.ai/api/v1/models",
+      "why": "Re-run any cost-per-task maths that used Laguna XS 2.1 — the old number overstates it by 40%."
+    },
+    {
+      "kind": "price",
+      "date": "2026-09-07",
+      "vendor": "Poolside",
+      "title": "Laguna XS 2.1 output price cut — $0.20 → $0.12 per 1M (-40%)",
+      "summary": "Poolside now lists Laguna XS 2.1 at $0.12 per 1M output tokens, from $0.20. Confirmed by two independent price feeds.",
+      "source": "https://openrouter.ai/api/v1/models",
+      "why": "Re-run any cost-per-task maths that used Laguna XS 2.1 — the old number overstates it by 40%."
+    },
+    {
+      "kind": "price",
+      "date": "2026-09-07",
+      "vendor": "DeepSeek",
+      "title": "DeepSeek V4 Flash Vision Exp input price rise — $0.22 → $0.44 per 1M (+100%)",
+      "summary": "DeepSeek now lists DeepSeek V4 Flash Vision Exp at $0.44 per 1M input tokens, from $0.22. Confirmed by two independent price feeds.",
+      "source": "https://openrouter.ai/api/v1/models",
+      "why": "Budgets built on the old DeepSeek V4 Flash Vision Exp price are now 100% short. Check whether a cheaper tier covers the job."
+    },
+    {
+      "kind": "price",
+      "date": "2026-09-07",
+      "vendor": "DeepSeek",
+      "title": "DeepSeek V4 Flash Vision Exp output price rise — $0.66 → $1.32 per 1M (+100%)",
+      "summary": "DeepSeek now lists DeepSeek V4 Flash Vision Exp at $1.32 per 1M output tokens, from $0.66. Confirmed by two independent price feeds.",
+      "source": "https://openrouter.ai/api/v1/models",
+      "why": "Budgets built on the old DeepSeek V4 Flash Vision Exp price are now 100% short. Check whether a cheaper tier covers the job."
     }
   ],
   "benchmarks_legend": {
