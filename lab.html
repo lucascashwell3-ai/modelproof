@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Modelproof — Decision lab</title>
-  <meta name="description" content="The shared rule engine behind Modelproof's model advisor, run in the open — 20 realistic situations plus a form to run your own. Every pick traces to a named field; a missing fact stays null." />
+  <meta name="description" content="The shared rule engine behind Modelproof's model advisor, run in the open — 40 realistic situations plus a form to run your own. A judged band gates every pick; a benchmark number only breaks ties inside it." />
   <meta name="theme-color" content="#0a0b0f" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%230a0b0f'/%3E%3Ccircle cx='12' cy='12' r='9.2' fill='none' stroke='%23f2c14e' stroke-opacity='0.5' stroke-width='1.4'/%3E%3Cpath d='M7.6 12.4l3 3 5.8-6.6' fill='none' stroke='%23f2c14e' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
@@ -50,11 +50,21 @@
       color: var(--gold); border: 1px solid var(--gold-line); background: var(--gold-soft);
       border-radius: 999px; padding: 2px 8px; margin-bottom: 2px; }
 
-    /* Judged (qualitative) task fit: a "reported use, not measured" badge plus the claims that
+    /* Judged (qualitative) task fit: a "reported"/"lab-stated" badge plus the claims that
        actually back the band — sentence + source link — never asserted with no way to check it. */
     .pick__basis { display: inline-block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.03em;
       color: var(--ink-3); border: 1px solid var(--line-soft); border-radius: 999px; padding: 1px 7px;
       margin-top: 6px; }
+
+    /* Status/adoption badges (2026-09-07): the two facts that can keep a pick from being
+       start_here even when its judged band and cost look great — a preview SKU or a model
+       almost nobody has actually adopted. --warn/--low are the site's existing status colors. */
+    .pick__badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+    .pick__badge { display: inline-block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.03em;
+      border-radius: 999px; padding: 1px 7px; border: 1px solid currentColor; }
+    .pick__badge--preview { color: var(--warn); }
+    .pick__badge--deprecated { color: var(--warn); }
+    .pick__badge--adoption-low { color: var(--low); }
     .pick__claims { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
     .pick__claims li { color: var(--ink-3); font-size: 11.5px; line-height: 1.4; padding-left: 12px; position: relative; }
     .pick__claims li::before { content: "\2013"; position: absolute; left: 0; color: var(--ink-4); }
@@ -86,7 +96,7 @@
       <div class="hero__scrim" aria-hidden="true"></div>
       <span class="hero__eyebrow">Decision lab</span>
       <h1 class="pagehead__title" id="phTitle">The rules, run in the open</h1>
-      <p class="pagehead__sub">The same shared engine behind the model advisor — reachability, a no-China-hosted option, a capability floor, then ranked by cheapest / balanced / best. Every pick names the exact fields it's based on; a missing fact stays blank, never guessed.</p>
+      <p class="pagehead__sub">The same shared engine behind the model advisor — reachability, a no-China-hosted option, then a judged capability floor: a real, sourced judgment call, not a benchmark score alone. Ranked by judged band, then confidence, then cheapest / balanced / best. Every pick names the claims it's based on; a missing judgment stays blank, never guessed.</p>
     </section>
 
     <section class="panel" id="try">
@@ -143,7 +153,7 @@
     <section class="panel" id="situations">
       <div class="panel__head">
         <div>
-          <h2 class="panel__title">20 realistic situations</h2>
+          <h2 class="panel__title">40 realistic situations</h2>
           <p class="panel__desc">Drafted by running the engine against the live catalog, not from opinion — see each rationale. <span class="dim">A future data refresh that changes these enough to flip an expectation fails the automated test suite (scripts/test-decide.mjs), on purpose.</span></p>
         </div>
       </div>
@@ -165,7 +175,7 @@
       </div>
       <div class="foot__col">
         <h3>Rule order</h3>
-        <p>Reachable with what you have → clears the data rule → clears the task's capability floor → ranked by stance, ties broken by price. See <code>assets/decide.mjs</code> for the exact order.</p>
+        <p>Reachable with what you have → clears the data rule → clears the task's judged capability floor (a real judgment call, not a benchmark number alone) → ranked by judged band, then confidence, then stance, ties broken by price. A preview-status or low-adoption pick can lose the top spot to a same-band alternative. See <code>assets/decide.mjs</code> for the exact order.</p>
       </div>
       <div class="foot__col">
         <h3>Freshness</h3>
@@ -188,17 +198,31 @@
     const fmtUSD = (n) => (typeof n === 'number' ? `$${n.toFixed(2)}/mo` : 'cost unknown');
     const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-    // A shortlist item's `basis` ('measured' | 'reported' | 'lab-stated') says what kind of
-    // evidence backs its fit score — a real benchmark number, or a sourced qualitative claim
-    // (scripts/refresh-judge.md). Anything other than 'measured' gets the same plain badge text
-    // and its claims rendered underneath, so a reader never mistakes a judged band for a score.
+    // A shortlist item's `basis` ('reported' | 'lab-stated') says what kind of judged evidence
+    // backs its band (scripts/refresh-judge.md) — 'reported' when at least one claim names an
+    // independent third party, 'lab-stated' when every claim is the vendor's own. Every candidate
+    // now clears the floor on a judged record (assets/decide.mjs rule 3, rewritten 2026-09-07), so
+    // this always has claims to show — a reader can click through and check every one.
     function renderBasis(item) {
-      if (item.basis === 'measured' || !item.claims || !item.claims.length) return '';
+      if (!item.claims || !item.claims.length) return '';
       const claims = item.claims.map((c) => `<li>${esc(c.sentence)} <a href="${esc(c.source_url)}" target="_blank" rel="noopener noreferrer">source</a></li>`).join('');
       return `
-        <span class="pick__basis">reported use, not measured</span>
+        <span class="pick__basis">${esc(item.basis)}</span>
         <ul class="pick__claims">${claims}</ul>
         ${item.reconciliation ? `<div class="pick__reconciliation">${esc(item.reconciliation)}</div>` : ''}`;
+    }
+
+    // status ('ga'|'preview'|'deprecated') and adoption ('broad'|'moderate'|'low'|'unknown') are
+    // the two facts that can keep a top-fit pick from being start_here (assets/decide.mjs's
+    // isDisqualifiedFromStartHere) — only the noteworthy values get a badge; a plain 'ga' /
+    // 'broad'/'moderate'/'unknown' model shows nothing extra, so a badge always means "read this
+    // before you commit to it."
+    function renderBadges(item) {
+      const badges = [];
+      if (item.status === 'preview') badges.push('<span class="pick__badge pick__badge--preview">preview</span>');
+      if (item.status === 'deprecated') badges.push('<span class="pick__badge pick__badge--deprecated">deprecated</span>');
+      if (item.adoption === 'low') badges.push('<span class="pick__badge pick__badge--adoption-low">low adoption</span>');
+      return badges.length ? `<div class="pick__badges">${badges.join('')}</div>` : '';
     }
 
     function renderShortlist(shortlist) {
@@ -211,6 +235,7 @@
             <span class="pick__cost">${esc(fmtUSD(item.monthly_cost_usd))}</span>
           </div>
           <div class="pick__why">${esc(item.why)} <span class="dim">(fit ${item.fit}/100)</span></div>
+          ${renderBadges(item)}
           ${renderBasis(item)}
           ${item.seat_plan_alternative
             ? `<div class="pick__seat">Seat plan alternative: ${esc(item.seat_plan_alternative.plan)} — $${item.seat_plan_alternative.price_usd_month}/mo</div>`
@@ -251,7 +276,7 @@
       const taskSelect = document.getElementById('fTask');
       taskSelect.innerHTML = tasksFile.tasks.map((t) => `<option value="${esc(t.id)}">${esc(t.label)}</option>`).join('');
 
-      // -------- 20 situations --------
+      // -------- 40 situations --------
       const list = document.getElementById('situationsList');
       list.innerHTML = situationsFile.situations.map((s) => {
         const taskId = s.input.tasks[0];

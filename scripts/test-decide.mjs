@@ -160,6 +160,14 @@ test(`full grid: ${TASK_IDS.length} tasks x ${HAVE_OPTIONS.length} have x ${STAN
               }
             }
 
+            // (f2) NEW RULE — an enterprise-style input excludes status:'preview' from the
+            // shortlist ENTIRELY, not just from start_here.
+            if (isEnterpriseInput(input)) {
+              for (const item of shortlist) {
+                if (item.status === 'preview') failures.push(`${label}: "${item.id}" is a preview model but the input is enterprise-style — it must be fully excluded, not just demoted`);
+              }
+            }
+
             // (g) NEW RULE — adoption:'low' never gets start_here while a broad/moderate model of
             // the SAME judged band is also a candidate.
             {
@@ -368,11 +376,30 @@ test('preview gate: stance "cheapest" with no enterprise-style input does NOT di
   assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'preview-cheapest-ok');
 });
 
-test('preview gate: an enterprise-style input (single named vendor + heavy volume) disqualifies preview even under "balanced"', () => {
+test('preview gate: an enterprise-style input (single named vendor + heavy volume) EXCLUDES preview entirely, not just from start_here', () => {
+  // (2026-09-07, against the independently-drafted 40-situation answer key: enterprise + preview
+  // must be a full exclusion — "must_not_include", not just "must_not_start" — see
+  // data/eval/must-never.json's "a preview-labeled SKU must never be the enterprise starting
+  // recommendation" entries.)
   const preview = bandedFixture('preview-enterprise', { status: 'preview', vendor: 'Anthropic', price_output: 10, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 99, basis: ['coding_score'] } } });
   const ga = bandedFixture('ga-enterprise', { status: 'ga', vendor: 'Anthropic', price_output: 0.1, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 60, basis: ['coding_score'] } } });
   const out = decide({ tasks: ['coding'], have: ['anthropic'], stance: 'balanced', volume: 'heavy', dataRule: {} }, { models: [preview, ga], plans, presets, vendors });
-  assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'ga-enterprise');
+  const shortlist = out.tasks.coding.shortlist;
+  assert.equal(shortlist.find((x) => x.start_here)?.id, 'ga-enterprise');
+  assert.ok(!shortlist.some((x) => x.id === 'preview-enterprise'), 'a preview model must not appear anywhere in an enterprise-style shortlist');
+});
+
+test('isEnterpriseInput: an explicit input.enterprise overrides the heuristic in both directions', () => {
+  // true overrides a heuristic that would otherwise say false (openrouter-anything + a custom volume)
+  assert.equal(isEnterpriseInput({ enterprise: true, have: ['openrouter'], volume: { tokens_in_month: 1, tokens_out_month: 1 }, dataRule: {} }), true);
+  // false overrides a heuristic that would otherwise say true (a dataRule is set)
+  assert.equal(isEnterpriseInput({ enterprise: false, have: ['any'], volume: 'typical', dataRule: { noChinaHosted: true } }), false);
+});
+
+test('preview gate: explicit input.enterprise:true excludes preview entirely even when the heuristic alone would not', () => {
+  const preview = bandedFixture('preview-explicit-enterprise', { status: 'preview' });
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'balanced', volume: 'typical', dataRule: {}, enterprise: true }, { models: [preview], plans, presets, vendors });
+  assert.equal(out.tasks.coding.shortlist.length, 0, 'the only candidate is a preview model excluded by explicit enterprise:true, so the shortlist is empty');
 });
 
 test('isEnterpriseInput: single named vendor needs BOTH the vendor and heavy volume; a dataRule alone is enough on its own', () => {

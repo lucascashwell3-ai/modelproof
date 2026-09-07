@@ -86,17 +86,21 @@
       cheaper-or-equal, at-least-as-fit model already in the candidate set is dropped
       (dropDominated) — so the returned shortlist can never contain a pricier model that isn't at
       least justified by a higher fit than every cheaper option.
-      Two more rules decide which survivor gets `start_here: true` (see isDisqualifiedFromStartHere):
-        - a `status: 'preview'` model is never start_here under stance 'best', or on an
-          "enterprise-style" input (isEnterpriseInput: a single named vendor + volume 'heavy',
-          or any truthy dataRule key) — it can still place lower in the shortlist, labelled preview.
+      Two more rules gate a `status: 'preview'` model or a low-adoption one — one at rule 3
+      (full exclusion), one at start_here selection only (see isDisqualifiedFromStartHere):
+        - An "enterprise-style" input (isEnterpriseInput: EXPLICIT input.enterprise when the
+          caller states it, else a single named vendor + volume 'heavy', or any truthy dataRule
+          key) drops a `status: 'preview'` model from the candidate set ENTIRELY, at rule 3 — an
+          enterprise buyer can't ship a preview SKU at all, so it's not offered anywhere in the
+          shortlist, not just kept off the top spot. Plain stance 'best' with no enterprise signal
+          is milder: a preview model still can't be start_here there, but can still place lower in
+          the shortlist, labelled preview (an independently-drafted answer key repeatedly accepted
+          a preview model as one of several fine non-enterprise "best" picks — see
+          isDisqualifiedFromStartHere's comment).
         - an `adoption: 'low'` model is never start_here while a 'broad' or 'moderate'-adoption
           model of the SAME judged band is also a candidate — a benchmark win doesn't buy the top
           spot away from a model people are actually already running, in the same tier of judged
-          quality.
-      Neither rule removes a model from the shortlist — it only decides which of the top 3 gets
-      the start_here flag; a disqualified model that still ranks in the top 3 stays there, just
-      not first.
+          quality. This one never removes a model from the shortlist, only the start_here flag.
    Only the top 3 survivors are returned; item 0 is always start_here: true.
    ============================================================ */
 
@@ -258,11 +262,17 @@ export function topClaimSentence(claims) {
 // `start_here: true` (see decide()'s reordering step).
 // -----------------------------------------------------------------------------------------
 
-/** "Enterprise-style" input, for the preview-status rule: a single named vendor at heavy volume
- * (a team standardizing on one vendor's paid tier, not shopping around), or any data rule turned
- * on (noChinaHosted today — a compliance-flavored ask). 'any'/'openrouter' don't count as "a
- * single vendor" — they're explicitly the opposite of standardizing on one vendor's own paid API. */
+/** "Enterprise-style" input, for the preview-status rule: EXPLICIT input.enterprise (true/false)
+ * wins outright when the caller states it — the eval harness (data/eval/situations.json, built
+ * from an independently-drafted answer key) tells us plainly per situation, and there's no reason
+ * to argue with a caller who already knows their own context. Only when the caller doesn't say
+ * does this fall back to the heuristic: a single named vendor at heavy volume (a team
+ * standardizing on one vendor's paid tier, not shopping around), or any data rule turned on
+ * (noChinaHosted today — a compliance-flavored ask). 'any'/'openrouter' don't count as "a single
+ * vendor" — they're explicitly the opposite of standardizing on one vendor's own paid API. */
 export function isEnterpriseInput(input) {
+  if (input?.enterprise === true) return true;
+  if (input?.enterprise === false) return false;
   const have = Array.isArray(input?.have) ? input.have : [];
   const singleNamedVendor = have.length === 1 && Object.keys(VENDOR_KEY_DISPLAY).includes(String(have[0] || '').toLowerCase());
   const heavyVolume = input?.volume === 'heavy';
@@ -270,14 +280,21 @@ export function isEnterpriseInput(input) {
   return (singleNamedVendor && heavyVolume) || dataRuleSet;
 }
 
-/** A `status: 'preview'` model never gets start_here under stance 'best' or an enterprise-style
- * input — a team explicitly asking for "the best" or standardizing on one vendor at scale
- * shouldn't be pointed at a SKU the vendor itself hasn't finished shipping. An `adoption: 'low'`
- * model never gets start_here while a 'broad'/'moderate'-adoption model of the SAME judged band
- * is also a candidate — a benchmark edge doesn't buy the top spot away from a model people are
- * actually already running, once judgment has already put both in the same tier of quality. */
+/** A `status: 'preview'` model never gets start_here under stance 'best' (see filterCandidates —
+ * an enterprise-style input excludes a preview model from the candidate set entirely, a stronger
+ * rule than this one, decided 2026-09-07 against an independently-drafted 40-situation answer key
+ * that consistently expected full exclusion, not just a demotion, once "enterprise" was in play:
+ * "a preview-labeled SKU must never be the enterprise starting recommendation regardless of how
+ * strong its other-task evidence is" — data/eval/must-never.json). Plain stance 'best' with no
+ * enterprise signal is milder on purpose: the same answer key repeatedly accepts a preview model
+ * as ONE of several acceptable top picks there (e.g. "Gemini 3.1 Pro (Preview)" for a non-
+ * enterprise "best" research/writing/vision ask), so this only nudges it out of the #1 spot, never
+ * out of the shortlist. An `adoption: 'low'` model never gets start_here while a 'broad'/
+ * 'moderate'-adoption model of the SAME judged band is also a candidate — a benchmark edge
+ * doesn't buy the top spot away from a model people are actually already running, once judgment
+ * has already put both in the same tier of quality. */
 export function isDisqualifiedFromStartHere(item, allCandidates, stance, input) {
-  if (item.model.status === 'preview' && (stance === 'best' || isEnterpriseInput(input))) return true;
+  if (item.model.status === 'preview' && stance === 'best') return true;
   if (item.model.adoption === 'low') {
     const betterAdoptionSameBand = (allCandidates || []).some((other) => (
       other !== item && other.band === item.band &&
@@ -340,6 +357,11 @@ export function filterCandidates(taskId, input, data) {
     if (!isReachable(model, input.have)) continue;
     const dr = passesDataRule(model, input.dataRule, data.vendors);
     if (!dr.ok) continue;
+    // An enterprise-style input excludes a preview-status model ENTIRELY, not just from
+    // start_here — see isDisqualifiedFromStartHere's comment for why this is stronger than the
+    // plain-"best" case. An enterprise buyer can't ship a preview SKU at all, so it shouldn't be
+    // offered lower in the shortlist either.
+    if (model.status === 'preview' && isEnterpriseInput(input)) continue;
     // Rule 3 — the judgment IS the gate (see the file header). A judged record for THIS task is
     // required to be a candidate at all; a quantitative score with no judged band never gets in
     // on its own any more.
