@@ -328,7 +328,7 @@ same discipline the rest of this file already holds sources to.
 | LMArena / Arena.ai | coding, agents, writing, research, extraction, chat, vision, frontend, exec-summaries | signal-only (live site unlicensed; legacy Apache-2.0 mirror dead since 2025-08-04) | 15 / — | signal-only |
 | OpenRouter task/category spend & usage | coding, agents, bulk, writing, research, extraction, chat, frontend, exec-summaries | signal-only (undocumented internal API) | 58 / 554 | use |
 | Artificial Analysis | coding, research, agents (descriptive only) | signal-only (redistribution gated, internal use not) | — (API paid-gated) | signal-only |
-| ARC Prize Foundation — ARC-AGI-2 Evaluations | research | signal-only (commercial republishing needs written permission; requested 2026-08-22, no reply) | 12 / 247 | signal-only |
+| ARC Prize Foundation — ARC-AGI-2 Evaluations | research | display-ok (terms restrict commercial republishing only; this site is non-commercial; courtesy request sent 2026-08-22) | 12 / 247 | use |
 
 Notes on how to read this table:
 
