@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-09-07",
+  "as_of": "2026-09-08",
   "models": [
     {
       "id": "claude-opus-5",
@@ -3141,7 +3141,8 @@
       "verdict": "Listed because it exists and its list price is published. Figures pending — nothing here is a recommendation yet.",
       "confidence": "low",
       "sources": [
-        "https://docs.z.ai/guides/overview/pricing"
+        "https://docs.z.ai/guides/overview/pricing",
+        "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
       ],
       "coding_score": null,
       "coding_basis": "No independently published coding score for this model yet.",
@@ -6830,18 +6831,30 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "coding",
+        "agentic",
+        "vision",
+        "long-context"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/anthropic/claude-fable-5.1"
+        "https://openrouter.ai/anthropic/claude-fable-5.1",
+        "https://platform.claude.com/docs/en/models/fable-5-1/overview",
+        "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Default to effort `high`; save `xhigh` for only your most capability-sensitive workloads — even `low` effort on Fable 5.1 often beats `xhigh` on Claude Opus 4.8.",
+        "Prompt-cache reads cost just $0.25/MTok on Fable 5.1 — 2.5% of the input price, versus 10% on other Claude models — so lean harder on caching for long-running or repeated-context agent work.",
+        "It declines offensive-cybersecurity and biology/life-sciences requests outright, even benign ones, with stop_reason: refusal — configure a fallback to Claude Opus 4.8 to auto-reroute.",
+        "Built for multi-day autonomous runs and parallel subagent delegation — hand it harder tasks than you'd assign prior models and let it scope its own plan."
+      ],
       "task_copy": {},
       "auto_added": "2026-09-06",
       "best_for_line": "Priciest Anthropic model · 1M ctx · $10/$50",

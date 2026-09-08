@@ -91,50 +91,6 @@
       "ask": "DeepSeek V4 Flash 0731 price output is currently 0.1; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
     },
     {
-      "id": "deepseek-v4-flash:price_input",
-      "model": "DeepSeek V4-Flash",
-      "kind": "conflict",
-      "field": "price_input",
-      "current": 0.44,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.088606,
-          "date": "2026-09-07"
-        },
-        {
-          "source": "litellm",
-          "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-          "value": 0.19,
-          "date": "2026-09-07"
-        }
-      ],
-      "ask": "DeepSeek V4-Flash price input is currently 0.44; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
-    },
-    {
-      "id": "deepseek-v4-flash:price_output",
-      "model": "DeepSeek V4-Flash",
-      "kind": "conflict",
-      "field": "price_output",
-      "current": 1.32,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.177212,
-          "date": "2026-09-07"
-        },
-        {
-          "source": "litellm",
-          "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-          "value": 0.51,
-          "date": "2026-09-07"
-        }
-      ],
-      "ask": "DeepSeek V4-Flash price output is currently 1.32; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
-    },
-    {
       "id": "deepseek-v4-pro-0813:price_input",
       "model": "DeepSeek V4 Pro 0813",
       "kind": "conflict",
@@ -179,72 +135,6 @@
       "ask": "DeepSeek V4 Pro 0813 price output is currently 1.74; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
     },
     {
-      "id": "deepseek-v4-pro:price_input",
-      "model": "DeepSeek V4-Pro",
-      "kind": "conflict",
-      "field": "price_input",
-      "current": 1.32,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 1.04226,
-          "date": "2026-09-07"
-        },
-        {
-          "source": "litellm",
-          "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-          "value": 1.74,
-          "date": "2026-09-07"
-        }
-      ],
-      "ask": "DeepSeek V4-Pro price input is currently 1.32; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
-    },
-    {
-      "id": "deepseek-v4-pro:price_output",
-      "model": "DeepSeek V4-Pro",
-      "kind": "conflict",
-      "field": "price_output",
-      "current": 3.96,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 2.08452,
-          "date": "2026-09-07"
-        },
-        {
-          "source": "litellm",
-          "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-          "value": 3.48,
-          "date": "2026-09-07"
-        }
-      ],
-      "ask": "DeepSeek V4-Pro price output is currently 3.96; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
-    },
-    {
-      "id": "glm-5-2:price_input",
-      "model": "GLM-5.2",
-      "kind": "conflict",
-      "field": "price_input",
-      "current": 1.4,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.966,
-          "date": "2026-09-07"
-        },
-        {
-          "source": "litellm",
-          "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-          "value": 1.4,
-          "date": "2026-09-07"
-        }
-      ],
-      "ask": "GLM-5.2 price input is currently 1.4; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
-    },
-    {
       "id": "aion-3-0-mini:guidance",
       "model": "Aion-3.0-Mini",
       "kind": "guidance",
@@ -275,22 +165,6 @@
         }
       ],
       "ask": "Aion-3.0 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
-    },
-    {
-      "id": "claude-fable-5-1:guidance",
-      "model": "Claude Fable 5.1",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
-      "observations": [
-        {
-          "source": "auto-refresh",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": null,
-          "date": "2026-09-07"
-        }
-      ],
-      "ask": "Claude Fable 5.1 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     }
   ]
 }
