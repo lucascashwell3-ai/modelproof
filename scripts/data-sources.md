@@ -304,3 +304,60 @@ this schema asked for. What was tried, in order:
 node scripts/derive-usage.mjs          # usage.openrouter only, standalone (also runs inside auto-refresh.mjs)
 node scripts/check-sources.mjs         # the anti-fabrication gate — fetches every judged-fit claim's source_url
 ```
+
+## Tester registry (added 2026-09-07, brain v2 step 1)
+
+**The rule this section exists to serve: the AI never ranks a model.** Everything above this
+section is about sourcing individual facts (price, a benchmark score, availability). Ranking is a
+different problem — and the plan is that ranking never comes from this codebase's own judgment.
+Instead, a future ranking is meant to come from **agreement across the named, independent testers
+below, plus human votes, plus real usage** — three things that already exist in the world, none of
+them invented here. `data/testers.json` is the machine-readable registry backing that plan: every
+entry was actually fetched (curl, or a headless browser where a site is JS-rendered) and dated, the
+same discipline the rest of this file already holds sources to.
+
+| Tester | Tasks covered | Licence class | Mapped / feed models | Verdict |
+|---|---|---|---|---|
+| Epoch AI Benchmarking Hub | research, frontend, coding, agents, writing, vision, exec-summaries | display-ok (CC-BY-4.0 for Epoch's own runs; external mirrors keep upstream terms — see `data/testers.json`) | 37 / 902 | use |
+| Aider Polyglot Leaderboard | coding | display-ok (Apache-2.0) | 2 / 68 | exclude — frozen since 2025-10-04 |
+| LiveBench | coding, research, extraction, writing, exec-summaries | unknown | 32 / 56 | use |
+| Terminal-Bench 2.0 | agents | display-ok (Apache-2.0, via Epoch's mirror) | 3 / 48 | use |
+| SWE-bench Verified leaderboard | coding | unknown | 1 / 83 | signal-only |
+| Scale AI SEAL Leaderboards | agents, research, vision, chat | banned (all rights reserved) | 13 / 44 | signal-only |
+| Vals AI | coding, research, extraction (descriptive only) | banned (proprietary) | — (no feed found) | exclude |
+| LMArena / Arena.ai | coding, agents, writing, research, extraction, chat, vision, frontend, exec-summaries | signal-only (live site unlicensed; legacy Apache-2.0 mirror dead since 2025-08-04) | 15 / — | signal-only |
+| OpenRouter task/category spend & usage | coding, agents, bulk, writing, research, extraction, chat, frontend, exec-summaries | signal-only (undocumented internal API) | 58 / 554 | use |
+| Artificial Analysis | coding, research, agents (descriptive only) | signal-only (redistribution gated, internal use not) | — (API paid-gated) | signal-only |
+| ARC Prize Foundation — ARC-AGI-2 Evaluations | research | display-ok (terms restrict commercial republishing only; this site is non-commercial; courtesy request sent 2026-08-22) | 12 / 247 | use |
+
+Notes on how to read this table:
+
+- **"Mapped / feed models"** is how many of this catalog's models (`data/models.json`) a tester's
+  own feed names contain, out of that feed's total distinct model names — computed by a throwaway
+  matcher (`scripts/_audit/map-names.mjs`) that strips only *known* reasoning-effort/date suffixes
+  before comparing. It never guesses a fuzzy match; a real alias goes into `model-aliases.json`
+  only after a human confirms it. A low ratio here usually means the tester tracks a long history
+  of superseded models this catalog no longer lists, not that the tester is thin.
+- **Licence class** follows the same display-ok / signal-only / banned / unknown scale as the rest
+  of this file (`unknown` is a real, allowed answer — never a guessed licence).
+- **OpenRouter's usage row is not a "tester" in the same sense as the other ten** — it is the
+  **real-usage** leg of the three-legged plan (agreement + votes + usage), included because the
+  brief that built this registry named it as a candidate to check.
+- Full detail — feed URLs, exact licence quotes, independence citations, refresh cadence, and the
+  unmapped-name samples behind each ratio — lives in `data/testers.json`. Nothing in that file was
+  invented: a number not fetched is recorded as `null` with a note, per this file's own rule above.
+- **Epoch's 37 / 902 is a feed-wide total across ~80 benchmark CSVs**, not one number for one
+  table — `data/testers.json`'s `epoch-ai.mapping.per_benchmark` breaks it down file by file
+  (catalog models matched, feed models, which of this catalog's 10 tasks it maps to, and its own
+  licence: Epoch's own runs are CC-BY, Aider Polyglot and Terminal-Bench are Apache-2.0, everything
+  else Epoch mirrors carries unstated upstream terms). Two mirrored sets — Video-MME and Epoch's
+  own LiveBench mirror (`live_bench_external.csv`, separate from the standalone LiveBench row
+  above) — matched zero catalog models each because both are frozen at snapshots older than this
+  catalog, not because the matcher failed.
+- **ARC Prize's 12 / 247 undercounts the real match rate.** Its feed names use a hyphen-joined
+  vendor prefix (`anthropic-claude-fable-5-1-high`) that the shared matcher's provider-prefix
+  stripper doesn't recognize (it only strips a prefix followed by `/` or `.`) — a naming-convention
+  gap in `scripts/auto-refresh.mjs`, not fixed here since this pass is research-only. Epoch's own
+  mirror of the same ARC-AGI-2 data matches 22 / 203 with the same unmodified matcher, which is a
+  partial cross-check that ARC Prize's true rate is well above 12 / 247.
+
