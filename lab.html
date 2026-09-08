@@ -336,7 +336,19 @@
     }
     function renderStandingsTable(models, taskId) {
       const body = document.getElementById('stBody');
-      const rows = [...models].sort((a, b) => a.name.localeCompare(b.name));
+      // Models with evidence first: best measured rank, then chosen rank, then preferred rank, then name.
+      const keyOf = (m) => {
+        const s = m.standings?.[taskId] || { measured: [], chosen: null, preferred: null };
+        const best = s.measured.length ? Math.min(...s.measured.map((r) => r.rank / r.n_models)) : Infinity;
+        const chosen = s.chosen?.rank ?? Infinity;
+        const preferred = s.preferred?.n_models ? s.preferred.rank / s.preferred.n_models : Infinity;
+        return [best, chosen, preferred];
+      };
+      const rows = [...models].sort((a, b) => {
+        const ka = keyOf(a), kb = keyOf(b);
+        for (let i = 0; i < 3; i++) if (ka[i] !== kb[i]) return ka[i] - kb[i];
+        return a.name.localeCompare(b.name);
+      });
       body.innerHTML = rows.map((m) => {
         const s = m.standings?.[taskId] || { measured: [], chosen: null, preferred: null };
         return `<tr>
