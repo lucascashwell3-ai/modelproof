@@ -1,0 +1,302 @@
+{
+  "_readme": "Registry of independent model testers — every entry below was actually fetched (curl or a headless browser where a site is JS-rendered) on the date in `as_of`, not assumed from memory. Design + the rule this file exists to serve: the AI never ranks a model. Ranking is planned to come from agreement across the testers named here, plus human votes, plus real usage (OpenRouter) — never from a judgment this codebase makes up. `mapping` reports how many of this catalog's models (data/models.json) each tester's feed names contain, using a throwaway matcher (scripts/_audit/map-names.mjs) that only strips KNOWN reasoning-effort/date suffixes before comparing — it never guesses a fuzzy match. `licence.class` is one of display-ok (redistributable), signal-only (usable to inform an internal decision, never republished raw), banned (explicit terms or copyright notice against reuse), or unknown (no terms found — never guessed). `verdict` is this audit's own call: use | signal-only | exclude, each with a one-line reason in that tester's own `verdict_reason`.",
+  "as_of": "2026-09-07",
+  "testers": [
+    {
+      "id": "epoch-ai",
+      "name": "Epoch AI Benchmarking Hub",
+      "url": "https://epoch.ai/benchmarks",
+      "feed_url": "https://epoch.ai/data/benchmark_data.zip",
+      "format": "zip-of-csv",
+      "fetch": { "http_status": 200, "fetched_at": "2026-09-07", "row_count": 74 },
+      "licence": {
+        "class": "display-ok",
+        "url": "https://epoch.ai/benchmarks/use-this-data",
+        "quote": "free to use, distribute, and reproduce provided the source and authors are credited under the Creative Commons Attribution license"
+      },
+      "tasks": {
+        "coding": ["CursorBench (per-effort cost/score ladder)", "SWE-bench Verified (Epoch self-run)", "Aider Polyglot (mirrored, Apache-2.0 sub-licence)"],
+        "agents": ["Terminal-Bench 2.x (mirrored, Apache-2.0 sub-licence)"],
+        "research": ["GPQA Diamond (Epoch self-run)", "FrontierMath (Epoch self-run, OpenAI-funded dataset — disclosed conflict)"]
+      },
+      "refresh": "rolling; Epoch adds/updates CSVs on its own schedule. Already wired into this repo's Collect pass via scripts/collect-epoch.mjs, which proposes but never writes.",
+      "independence": "Runs several evals itself (GPQA Diamond, SWE-bench Verified, FrontierMath, MATH L5) but mirrors others published by interested parties: CursorBench is published by Cursor, which ships its own coding model; OpenAI funded Epoch's FrontierMath with dataset access, disclosed only after the fact. https://epoch.ai/benchmarks/use-this-data",
+      "mapping": {
+        "feed_models": 74,
+        "mapped_models": 15,
+        "unmapped_sample": [
+          "claude-opus-4-7_max (no matching catalog model — Opus 4.7 predates/differs from our tracked Opus 4.8)",
+          "claude-sonnet-4-6_max (older Sonnet generation, not in catalog)"
+        ]
+      },
+      "verdict": "use",
+      "notes": "Already Tier A in scripts/sources.json and already the collector this repo runs (scripts/collect-epoch.mjs). Re-run live for this audit: 15 model series had >=2 effort rungs and matched our catalog (script output as_of 2026-09-08 UTC per this session's clock; recorded here as 2026-09-07 to match the rest of this file). feed_models=74 counts CursorBench's own distinct model-version strings; other mirrored files (aider_polyglot_external.csv: 77 rows through 2025-10-03 only; terminalbench_external.csv: 204 rows through 2026-04-23; swe_bench_verified.csv: 35 rows) were spot-checked directly from the zip and are each frozen at different, older dates than CursorBench — confirms Aider Polyglot's staleness (see that entry) via a second, independent path."
+    },
+    {
+      "id": "aider-polyglot",
+      "name": "Aider Polyglot Leaderboard",
+      "url": "https://aider.chat/docs/leaderboards/",
+      "feed_url": "https://raw.githubusercontent.com/Aider-AI/aider/main/aider/website/_data/polyglot_leaderboard.yml",
+      "format": "yaml",
+      "fetch": { "http_status": 200, "fetched_at": "2026-09-07", "row_count": 69 },
+      "licence": {
+        "class": "display-ok",
+        "url": "https://github.com/Aider-AI/aider/blob/main/LICENSE.txt",
+        "quote": "repo license: Apache-2.0 (GitHub API license field, checked 2026-09-07); also already treated as Apache-2.0 in scripts/sources.json's epoch-ai entry, which mirrors this same file"
+      },
+      "tasks": {
+        "coding": ["Aider polyglot benchmark (multi-language code-editing pass rate)"]
+      },
+      "refresh": "frozen: last commit that touched this file was 2025-10-04 (GitHub commit history, checked 2026-09-07), even though the Aider repo itself is active (last repo commit 2026-05-22). The leaderboard specifically has not been refreshed in 11 months.",
+      "independence": "Open-source CLI tool (aider), not a lab. Results are run by the maintainer/community and submitted via PR against real model releases — no known commercial conflict. https://github.com/Aider-AI/aider",
+      "mapping": {
+        "feed_models": 68,
+        "mapped_models": 2,
+        "unmapped_sample": [
+          "gemini-2-0-pro-exp-02-05", "deepseek-chat-v2-5", "gemini-2-0-flash-exp",
+          "deepseek-chat-v3-prev", "deepseek-r1", "deepseek-r1-claude-3-5-sonnet-20241022",
+          "gemini-2-0-flash-thinking-exp-01-21", "deepseek-v3-0324",
+          "gemini-2-5-pro-preview-03-25", "gemini-2-5-flash-preview-04-17-default"
+        ]
+      },
+      "verdict": "exclude",
+      "notes": "Matched llama-4-maverick and o4-mini (via 'o4-mini (high)'); every other entry predates this catalog's current generation (newest row: DeepSeek R1 / GPT-4o / Gemini-2.0 era, Oct 2025). Confirmed stale two ways: the raw GitHub file (last touched 2025-10-04) and Epoch AI's independent mirror of the same benchmark (aider_polyglot_external.csv, latest eval date 2025-10-03). Revisit only if either source shows a newer date."
+    },
+    {
+      "id": "livebench",
+      "name": "LiveBench",
+      "url": "https://livebench.ai/",
+      "feed_url": "https://livebench.ai/table_2026_06_25.csv",
+      "format": "csv",
+      "fetch": { "http_status": 200, "fetched_at": "2026-09-07", "row_count": 56 },
+      "licence": {
+        "class": "unknown",
+        "url": "https://raw.githubusercontent.com/LiveBench/livebench/main/LICENSE",
+        "quote": "the GitHub repo (LiveBench/livebench) carries an Apache License (copied from lm-sys/FastChat), but that covers the evaluation CODE — no separate licence or terms statement was found on livebench.ai itself for the live table_*.csv this audit fetched, so the DATA's own terms are left unknown rather than assumed from the code licence"
+      },
+      "tasks": {
+        "coding": ["Coding category (code_generation, code_completion, python, javascript, typescript)"],
+        "research": ["Reasoning category (connections, logic_with_navigation, zebra_puzzle, spatial, theory_of_mind); Math category (AMPS_Hard, math_comp, olympiad, integrals_with_game)"],
+        "extraction": ["Data Analysis category (tablejoin, tablereformat, consecutive_events)"],
+        "writing": ["Language category (typos, paraphrase, plot_unscrambling, story_generation)"],
+        "exec-summaries": ["summarize (Language category)"]
+      },
+      "refresh": "irregular. The site's own release-date selector (read out of its JS bundle) tops out at 2026-06-25 — about 2.5 months stale as of this audit — even though the question-bank changelog shows edits into January 2026. Its HuggingFace dataset mirror (livebench/model_judgment, livebench/model_answer) is far more stale: last updated 2025-04-07 and 2024-10-22 respectively, confirmed via the HF commits API — do not use that HF mirror as a model-score source; the live table_*.csv the site itself serves is the current one.",
+      "independence": "Run by the LiveBench team (academic + Abacus.AI-affiliated maintainers per GitHub commit authorship); questions are deliberately refreshed to resist training-set contamination. No known eval-for-hire conflict found. https://livebench.ai/",
+      "mapping": {
+        "feed_models": 56,
+        "mapped_models": 32,
+        "unmapped_sample": [
+          "claude-opus-4-5-20251101-thinking-64k-high-effort", "claude-opus-4-6-thinking-auto-high-effort",
+          "claude-opus-4-7-xhigh-effort", "claude-sonnet-4-6-thinking-auto-medium-effort",
+          "kimi-k2-7-code", "qwen3-7-max", "gemini-3-5-flash-lite-high", "glm-5-3-flash",
+          "qwen3-8-flash-next", "nemotron-3-ultra-550b-a55b"
+        ]
+      },
+      "verdict": "use",
+      "notes": "Best mapping rate of any benchmark tester audited (32/56). The public site is a create-react-app SPA that fetches `./table_<date>.csv` (dates found by reading the site's own compiled JS, not documented anywhere) — genuinely machine-readable once you know the filename pattern, but not a stated/stable API; treat as discovered, not published, same caveat this repo already carries for OpenRouter's rankings endpoints. A documented 'agentic coding' category exists per the project's changelog (added 2025-05-30, SWE-Agent/Mini-SWE-Agent harness) but its columns were not present in the table_2026_06_25.csv pulled here — likely served as a separate export not fetched in this pass; flagged for follow-up rather than guessed at."
+    },
+    {
+      "id": "terminal-bench",
+      "name": "Terminal-Bench 2.0",
+      "url": "https://www.tbench.ai/leaderboard/terminal-bench/2.0",
+      "feed_url": "https://www.tbench.ai/leaderboard/terminal-bench/2.0",
+      "format": "html (Next.js RSC payload embedded in the page response; no documented separate API — confirmed via network capture, no XHR/fetch call beyond the initial page load)",
+      "fetch": { "http_status": 200, "fetched_at": "2026-09-07", "row_count": 137 },
+      "licence": {
+        "class": "display-ok",
+        "url": "https://huggingface.co/datasets/harborframework/terminal-bench-2.0",
+        "quote": "license: apache-2.0 (dataset card tag, checked 2026-09-07)"
+      },
+      "tasks": {
+        "agents": ["Terminal-Bench 2.0 (terminal/CLI agentic tasks, resolution rate ± 95% CI, by model x agent-harness)"]
+      },
+      "refresh": "live/rolling on tbench.ai — entries as recent as May 14, 2026 (checked today). Epoch AI's Apache-2.0 CSV mirror (terminalbench_external.csv, part of the epoch-ai entry above) lags about a month behind (through Apr 23, 2026) but is the cleaner machine-readable route since tbench.ai itself has no documented API.",
+      "independence": "Hosted by Stanford / Harbor Framework / Laude Institute (academic + open-source consortium), not a single lab. Agent harnesses are submitted by many labs and third-party teams and audited before listing (footer: 'Hosted by Stanford / Harbor / Laude Institute'). https://tbench.ai",
+      "mapping": {
+        "feed_models": 48,
+        "mapped_models": 3,
+        "unmapped_sample": [
+          "claude-opus-4-7", "claude-opus-4-6", "gemini-3-pro", "gemini-3-flash",
+          "claude-opus-4-5", "claude-sonnet-4-6", "glm-5", "gpt-5", "claude-sonnet-4-5", "kimi-k2-5"
+        ]
+      },
+      "verdict": "use",
+      "notes": "Already Tier A in scripts/sources.json. Matched gpt-5-5, gemini-3-1-pro, claude-haiku-4-5. Low mapping rate reflects that Terminal-Bench keeps a full historical leaderboard (137 model x agent-harness rows going back to Aug 2025) while this catalog tracks only the current model per vendor generation — most of the 48 distinct model names are older, already-superseded point releases, not aliases of anything current."
+    },
+    {
+      "id": "swe-bench-verified",
+      "name": "SWE-bench Verified leaderboard",
+      "url": "https://www.swebench.com/",
+      "feed_url": "https://www.swebench.com/ (embedded JSON: <script type=\"application/json\" id=\"leaderboard-data\">, 'Verified' array)",
+      "format": "json (static, embedded in the page's own HTML — no separate API call needed; confirmed by curling the raw page)",
+      "fetch": { "http_status": 200, "fetched_at": "2026-09-07", "row_count": 180 },
+      "licence": {
+        "class": "unknown",
+        "url": "https://www.swebench.com/",
+        "quote": "no licence or terms statement found on swebench.com for the leaderboard-data JSON itself; the underlying SWE-bench benchmark code (github.com/SWE-bench/SWE-bench) is MIT-licensed, but that does not by itself license the submitted-results table"
+      },
+      "tasks": {
+        "coding": ["SWE-bench Verified (real GitHub-issue patch resolution, 500 human-filtered instances)"]
+      },
+      "refresh": "submitter-driven, not scheduled — anyone can open a PR with a new result. Most recent 'Verified' entry in today's snapshot is dated 2026-02-26 (about 6 months stale); other leaderboards on the same page (Multilingual, Lite, Multimodal) have their own independent submission cadences.",
+      "independence": "SWE-bench is an academic benchmark (Princeton/Stanford-affiliated originators). Most rows are self-reported by the submitting team (agent vendor or lab) with logs/trajectories attached for audited ('checked') entries — the same open-submission trust model most public agent leaderboards use, not a third party re-running every submission itself. https://www.swebench.com/",
+      "mapping": {
+        "feed_models": 83,
+        "mapped_models": 1,
+        "unmapped_sample": [
+          "Llama 4 Maverick Instruct", "Claude 4.6 Opus", "GPT 5.2 Codex", "Gemini 3 Pro",
+          "Kimi K2.5", "GLM 5", "MiniMax M2.5", "DeepSeek V3.2", "Qwen3-Coder-480B-A35B-Instruct",
+          "Claude 4.5 Opus"
+        ]
+      },
+      "verdict": "signal-only",
+      "notes": "'Llama 4 Maverick Instruct' is a strong likely alias for our llama-4-maverick (Meta's own models are canonically suffixed '-Instruct'; scripts/model-aliases.json currently has no '-instruct' variant on that id) — flagged for a human to confirm and add, not auto-matched here. Only o4-mini matched cleanly. Licence unknown (not banned, not confirmed open) is why this sits at signal-only rather than use, despite being a real, machine-readable, live-fetched feed."
+    },
+    {
+      "id": "scale-seal",
+      "name": "Scale AI SEAL Leaderboards",
+      "url": "https://labs.scale.com/leaderboard",
+      "feed_url": "https://labs.scale.com/leaderboard (data embedded in the page's Next.js RSC payload; no documented API or separate JSON endpoint found)",
+      "format": "html (Next.js RSC payload; not a stable/published feed)",
+      "fetch": { "http_status": 200, "fetched_at": "2026-09-07", "row_count": 26 },
+      "licence": {
+        "class": "banned",
+        "url": "https://labs.scale.com/leaderboard",
+        "quote": "\"Copyright 2026 Scale Inc. All rights reserved.\" (page footer, checked 2026-09-07) — no redistribution or reuse grant found anywhere on the page"
+      },
+      "tasks": {
+        "agents": ["SWE Atlas - Refactoring", "SWE Atlas - Test Writing", "SWE Atlas - Codebase QnA", "SWE-Bench Pro (Public Dataset)", "SWE-Bench Pro (Private Dataset)", "DrugDiscoveryBench", "Remote Labor Index"],
+        "research": ["Humanity's Last Exam", "Humanity's Last Exam (Text Only)", "SciPredict", "EnigmaEval"],
+        "vision": ["VisualToolBench (VTB)", "VISTA"],
+        "chat": ["MultiChallenge", "MultiNRC", "HiL-Bench (Human-in-Loop Benchmark)"]
+      },
+      "refresh": "rolling — several entries carried a 'NEW' badge as of today (2026-09-07); no fixed cadence stated. A 'Show Deprecated Leaderboards' toggle implies boards get retired over time.",
+      "independence": "Scale AI is a major commercial vendor of data-labeling, RLHF, and evaluation services to frontier labs (OpenAI, Meta, Google, and others) — the same conflict class as Artificial Analysis and Vals AI, arguably deeper given the breadth of Scale's lab contracts. The page itself invites vendors in: 'If you'd like to add your model to this leaderboard... contact leaderboards@scale.com.' https://labs.scale.com/leaderboard",
+      "mapping": {
+        "feed_models": 44,
+        "mapped_models": 13,
+        "unmapped_sample": [
+          "gpt-5-5-mini-swe-agent-xhigh", "claude-sonnet-5-mini-swe-agent-max",
+          "gemini-3-5-flash-gemini-cli-high", "muse-spark", "claude-opus-4-6-thinking",
+          "gemini-3-pro-preview", "claude-opus-4-5-20251101", "claude-opus-4-1-20250805",
+          "claude-opus-4-6-non-thinking", "claude-sonnet-4-20250514"
+        ]
+      },
+      "verdict": "signal-only",
+      "notes": "Sample drawn only from the homepage's top-3-per-benchmark cards (26 benchmarks x ~3 rows); full per-benchmark rankings sit one click deeper behind 'View Full Ranking' and were not fetched in this pass — real mapped/feed numbers across full tables would likely differ from 13/44. Several unmatched names bundle the agent/harness into the model string ('GPT-5.5 (mini-SWE-agent) xhigh') in a way this audit's suffix-stripper doesn't parse — a naming-convention gap, not a data gap. 'All rights reserved' plus the direct lab-contract conflict keeps this at signal-only despite genuinely broad, current, catalog-matching coverage."
+    },
+    {
+      "id": "vals-ai",
+      "name": "Vals AI",
+      "url": "https://www.vals.ai/benchmarks",
+      "feed_url": null,
+      "format": "html-only (client-rendered SPA; no public API or embedded data blob found; /models redirects 302)",
+      "fetch": { "http_status": 200, "fetched_at": "2026-09-07", "row_count": null },
+      "licence": {
+        "class": "banned",
+        "url": "https://www.vals.ai/benchmarks",
+        "quote": "\"PROPRIETARY\" label shown on every benchmark card (Vals Index, RSI Index, Web Search Index, Legal Research Bench, LegalBench, Harvey's Legal Agent Benchmark, etc.), checked 2026-09-07"
+      },
+      "tasks": {
+        "coding": ["Vals Index (composite: finance/coding/legal, GDP-weighted) — descriptive only, never ingested"],
+        "research": ["RSI Index (autonomous LLM R&D) — descriptive only, never ingested"],
+        "extraction": ["Legal Research Bench, LegalBench — descriptive only, never ingested"]
+      },
+      "refresh": "live — cards show explicit update dates (e.g. 'UPDATED: 9/5/2026'), so the underlying evals are actively maintained even though nothing is fetchable.",
+      "independence": "Sells private evaluation infrastructure/services to labs — same conflict class as Artificial Analysis and Scale AI (matches scripts/sources.json's existing 'vals-ai' entry). https://www.vals.ai",
+      "mapping": { "feed_models": null, "mapped_models": null, "unmapped_sample": [] },
+      "verdict": "exclude",
+      "notes": "No machine-readable feed found — page is a client-rendered SPA with no embedded JSON and no public API, and is explicitly marked PROPRIETARY throughout. This audit requires a real, fetched, machine-readable feed for a 'use' or 'signal-only' verdict; Vals AI has neither, so it's excluded outright rather than left at 'watch' — stricter than scripts/data-sources.md's existing 'watch, don't ingest' language for the same reason."
+    },
+    {
+      "id": "lmarena",
+      "name": "LMArena / Arena.ai",
+      "url": "https://arena.ai/leaderboard",
+      "feed_url": null,
+      "format": "html-only (live site is React/JS-rendered, no API — re-confirmed 2026-09-07). A legacy machine-readable route exists: the Hugging Face Space lmarena-ai/arena-leaderboard (Apache-2.0, static SDK) serves dated leaderboard_table_YYYYMMDD.csv / elo_results_YYYYMMDD.pkl files, but its most recent file is dated 2025-08-04 — frozen for over 13 months.",
+      "fetch": { "http_status": 200, "fetched_at": "2026-09-07", "row_count": null },
+      "licence": {
+        "class": "signal-only",
+        "url": "https://huggingface.co/spaces/lmarena-ai/arena-leaderboard",
+        "quote": "cardData.license: apache-2.0 (HF Space card, checked 2026-09-07) — but that covers the dead legacy mirror; no equivalent licence statement was found anywhere on the current arena.ai site"
+      },
+      "tasks": {
+        "coding": ["Text-Arena \"Coding\" leaderboard"],
+        "agents": ["Overview tab, \"Agent\" top-10 card"],
+        "writing": ["Text-Arena \"Creative Writing\" leaderboard"],
+        "research": ["Overview tab, \"Search\" top-10 card (grounded web search — closest available proxy)"],
+        "extraction": ["Overview tab, \"Document\" top-10 card"],
+        "chat": ["Text-Arena \"Overall\" (general chat quality) top-10"],
+        "vision": ["Overview tab, \"Vision\" top-10 card"],
+        "frontend": ["Overview tab, \"WebDev\" top-10 card"],
+        "exec-summaries": ["Text-Arena rank matrix, \"Longer Query\" column (proxy — no dedicated summarization category)"]
+      },
+      "refresh": "no live refresh path exists for this repo to hit. Reuses the one-time headless-browser snapshot already captured today at data/signals/arena-2026-09.json (as_of 2026-09-07) — see that file and scripts/refresh.md's 'signals refresh' section for the manual replacement procedure; not re-captured separately for this audit to avoid duplicating that work.",
+      "independence": "Human-preference voting platform (academic origin, UC Berkeley LMSYS, now arena.ai). No known pay-for-eval conflict, but it measures preference, not correctness, and per-board vote counts aren't uniformly disclosed. https://arena.ai",
+      "mapping": {
+        "feed_models": null,
+        "mapped_models": 15,
+        "unmapped_sample": []
+      },
+      "verdict": "signal-only",
+      "notes": "feed_models is left null rather than guessed — the full Arena catalog varies per category (395 models on the Coding board, 398 on Creative Writing, per data/signals/arena-2026-09.json's own text), so there's no single honest 'total feed size' number. mapped_models=15 is the count of distinct catalog ids appearing anywhere across that file's 9 mapped task categories. Already the verdict in effect via scripts/derive-signals.mjs's 'families' calibration — never displayed raw, only counted as one of up to three agreement signals."
+    },
+    {
+      "id": "openrouter-usage",
+      "name": "OpenRouter task/category spend & usage rankings",
+      "url": "https://openrouter.ai/rankings",
+      "feed_url": "https://openrouter.ai/api/frontend/v1/rankings/models ; https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "format": "json (undocumented internal frontend API — not listed at openrouter.ai/docs)",
+      "fetch": { "http_status": 200, "fetched_at": "2026-09-07", "row_count": 554 },
+      "licence": {
+        "class": "signal-only",
+        "url": "https://openrouter.ai/docs",
+        "quote": "these two endpoints are not documented at openrouter.ai/docs — discovered by reading the rankings page's own network requests rather than published, so they carry no stability guarantee (scripts/data-sources.md, 2026-09-06). OpenRouter's DOCUMENTED endpoint, /api/v1/models, is separately public-api licensed and already Tier A in scripts/sources.json for pricing/model-id purposes."
+      },
+      "tasks": {
+        "coding": ["task_spend_tag: code:general_impl"],
+        "agents": ["task_spend_tag: agent:workflow_execution"],
+        "bulk": ["token_volume (raw completion-token volume, not spend share — see data/tasks.json)"],
+        "writing": ["task_spend_tag: content_writing"],
+        "research": ["task_spend_tag: research_report"],
+        "extraction": ["task_spend_tag: data:extraction"],
+        "chat": ["task_spend_tag: conversational_reply"],
+        "frontend": ["task_spend_tag: code:frontend_ui"],
+        "exec-summaries": ["task_spend_tag: summarization"]
+      },
+      "refresh": "daily; already fetched every full Collect run via scripts/derive-usage.mjs and scripts/derive-signals.mjs.",
+      "independence": "This is real usage/spend data, not an independent grader's benchmark — it is the 'real usage' leg of the planned ranking (agreement across testers + human votes + real usage), listed here because the task brief named it as a candidate, not because it belongs in the same category as the other nine entries. OpenRouter is a routing marketplace, not a lab, so there's no eval-selling conflict — but usage reflects what's cheap/popular on one router, not necessarily what performs best. https://openrouter.ai",
+      "mapping": {
+        "feed_models": 554,
+        "mapped_models": 58,
+        "unmapped_sample": []
+      },
+      "verdict": "use",
+      "notes": "Already fully wired into the pipeline (scripts/derive-usage.mjs, scripts/derive-signals.mjs) and confirmed live again today: rankings/models returned 554 rows, rankings/task-spend returned data with the expected 'spend'/'tokens' keys. mapped_models=58 reuses the figure scripts/data-sources.md already documented from its own 2026-09-06 first pass rather than re-deriving it here, to avoid duplicating that script's own accounting. `vision` has no task_spend_tag (documented gap in data/tasks.json, not an oversight)."
+    },
+    {
+      "id": "artificial-analysis",
+      "name": "Artificial Analysis",
+      "url": "https://artificialanalysis.ai",
+      "feed_url": "https://artificialanalysis.ai/api/v2/data/llms/models",
+      "format": "json (a real API exists but requires a paid key — unauthenticated request returns 401)",
+      "fetch": { "http_status": 401, "fetched_at": "2026-09-07", "row_count": null },
+      "licence": {
+        "class": "signal-only",
+        "url": "https://artificialanalysis.ai/pricing",
+        "quote": "\"For data redistribution or external use, contact us.\" (artificialanalysis.ai/pricing, checked 2026-09-07) — this gates redistribution/external use specifically; it does not gate internal, non-redistributed use, which is the condition this audit was asked to check before allowing signal-only"
+      },
+      "tasks": {
+        "coding": ["Intelligence Index (composite, includes coding sub-scores, per reasoning-effort)"],
+        "research": ["Intelligence Index (composite, includes reasoning/knowledge sub-scores)"],
+        "agents": ["Intelligence Index (composite, includes agentic-task sub-scores)"]
+      },
+      "refresh": "live/rolling per their own site; not fetched further here since the API is paid-gated.",
+      "independence": "Runs paid pre-release evaluations WITH the labs it also ranks — disclosed for Claude Opus 5 itself (scripts/sources.json's existing artificial-analysis entry). A direct commercial relationship with graded parties. https://artificialanalysis.ai",
+      "mapping": { "feed_models": null, "mapped_models": null, "unmapped_sample": [] },
+      "verdict": "signal-only",
+      "notes": "Display-BANNED stands (08-23 ruling, scripts/data-sources.md) — this entry only confirms the narrower question the task asked: whether the published terms allow signal-only (internal, non-redistributed) use. They do, per the redistribution-note line quoted above. No model-name mapping was attempted: the API is paid-gated (401 without a key), and scraping the free public pages at catalog scale would itself be the kind of systematic collection their terms reserve for a paid tier."
+    }
+  ]
+}

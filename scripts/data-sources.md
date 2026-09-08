@@ -304,3 +304,45 @@ this schema asked for. What was tried, in order:
 node scripts/derive-usage.mjs          # usage.openrouter only, standalone (also runs inside auto-refresh.mjs)
 node scripts/check-sources.mjs         # the anti-fabrication gate — fetches every judged-fit claim's source_url
 ```
+
+## Tester registry (added 2026-09-07, brain v2 step 1)
+
+**The rule this section exists to serve: the AI never ranks a model.** Everything above this
+section is about sourcing individual facts (price, a benchmark score, availability). Ranking is a
+different problem — and the plan is that ranking never comes from this codebase's own judgment.
+Instead, a future ranking is meant to come from **agreement across the named, independent testers
+below, plus human votes, plus real usage** — three things that already exist in the world, none of
+them invented here. `data/testers.json` is the machine-readable registry backing that plan: every
+entry was actually fetched (curl, or a headless browser where a site is JS-rendered) and dated, the
+same discipline the rest of this file already holds sources to.
+
+| Tester | Tasks covered | Licence class | Mapped / feed models | Verdict |
+|---|---|---|---|---|
+| Epoch AI Benchmarking Hub | coding, agents, research | display-ok (CC-BY-4.0) | 15 / 74 | use |
+| Aider Polyglot Leaderboard | coding | display-ok (Apache-2.0) | 2 / 68 | exclude — frozen since 2025-10-04 |
+| LiveBench | coding, research, extraction, writing, exec-summaries | unknown | 32 / 56 | use |
+| Terminal-Bench 2.0 | agents | display-ok (Apache-2.0, via Epoch's mirror) | 3 / 48 | use |
+| SWE-bench Verified leaderboard | coding | unknown | 1 / 83 | signal-only |
+| Scale AI SEAL Leaderboards | agents, research, vision, chat | banned (all rights reserved) | 13 / 44 | signal-only |
+| Vals AI | coding, research, extraction (descriptive only) | banned (proprietary) | — (no feed found) | exclude |
+| LMArena / Arena.ai | coding, agents, writing, research, extraction, chat, vision, frontend, exec-summaries | signal-only (live site unlicensed; legacy Apache-2.0 mirror dead since 2025-08-04) | 15 / — | signal-only |
+| OpenRouter task/category spend & usage | coding, agents, bulk, writing, research, extraction, chat, frontend, exec-summaries | signal-only (undocumented internal API) | 58 / 554 | use |
+| Artificial Analysis | coding, research, agents (descriptive only) | signal-only (redistribution gated, internal use not) | — (API paid-gated) | signal-only |
+
+Notes on how to read this table:
+
+- **"Mapped / feed models"** is how many of this catalog's models (`data/models.json`) a tester's
+  own feed names contain, out of that feed's total distinct model names — computed by a throwaway
+  matcher (`scripts/_audit/map-names.mjs`) that strips only *known* reasoning-effort/date suffixes
+  before comparing. It never guesses a fuzzy match; a real alias goes into `model-aliases.json`
+  only after a human confirms it. A low ratio here usually means the tester tracks a long history
+  of superseded models this catalog no longer lists, not that the tester is thin.
+- **Licence class** follows the same display-ok / signal-only / banned / unknown scale as the rest
+  of this file (`unknown` is a real, allowed answer — never a guessed licence).
+- **OpenRouter's usage row is not a "tester" in the same sense as the other nine** — it is the
+  **real-usage** leg of the three-legged plan (agreement + votes + usage), included because the
+  brief that built this registry named it as a candidate to check.
+- Full detail — feed URLs, exact licence quotes, independence citations, refresh cadence, and the
+  unmapped-name samples behind each ratio — lives in `data/testers.json`. Nothing in that file was
+  invented: a number not fetched is recorded as `null` with a note, per this file's own rule above.
+
