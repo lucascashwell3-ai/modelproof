@@ -5,7 +5,7 @@ import {
   decide, filterCandidates, isReachable, vendorCountry, WHY_FIELDS, VENDOR_KEY_DISPLAY, STANCES,
   taskFitFor, basisFromClaims, judgedBandOf, bandRank, confidenceRank, isEnterpriseInput,
   isDisqualifiedFromStartHere, topClaimSentence, rankByStance, dominates, dropDominated,
-  calibrateBand,
+  calibrateBand, evidenceFamilySet,
 } from '../assets/decide.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
 
@@ -126,31 +126,38 @@ test(`full grid: ${TASK_IDS.length} tasks x ${HAVE_OPTIONS.length} have x ${STAN
               }
             }
 
-            // (d) never a pricier, lower-fit model dominated by a cheaper one IN THE SAME JUDGED
-            // TIER (band, then confidence) — rewritten 2026-09-07 alongside dropDominated/
-            // dominates(): a pricier model with a lower raw fit number can legitimately survive
-            // now if its judged band is higher (that's the whole point of the rewrite — a
-            // 'capable' model can never eliminate a 'strong' one just by being cheaper), so the
-            // old "pricier AND lower-fit" check only still applies within one (band, confidence)
-            // tier, where dominates() falls back to exactly that comparison.
-            // Rule 3b calibration (2026-09-07): decide() ranks/gates/dominates on the CALIBRATED
-            // band (a claimed "strong" with fewer than 2 signal families downgrades to
-            // "capable" — see calibrateBand), never the raw judged record's own band, so this
-            // re-derivation has to apply the same calibration or it would flag a domination
-            // "violation" against a band decide() itself never actually used.
-            const bandOf = (id) => {
+            // (d) never a pricier model dominated by a cheaper one — rewritten 2026-09-07
+            // alongside dropDominated/dominates(), TWICE the same day: first so a pricier model
+            // with a lower raw fit number could survive if its judged band is higher (a
+            // 'capable' model can never eliminate a 'strong' one just by being cheaper), then
+            // again so real-world evidence (usage_rank, and WHICH families back a model, not
+            // just how many) also has to favor the cheaper model before it can erase a pricier
+            // one — see dominates()'s own comment for the concrete bug (Kimi K3 erasing Claude
+            // Opus 5 and GPT-5.6 Sol from "coding") this second rewrite exists to fix. This
+            // re-derivation must rebuild the SAME fields decide()'s own filterCandidates puts on
+            // a real candidate — calibrated band, usage_rank, familyTypes, fitSource — or it's
+            // comparing against a model dominates() was never actually asked to judge, which is
+            // exactly the false-positive this comment used to produce before those fields were
+            // added here.
+            const infoFor = (id) => {
               const mm = models.find((x) => x.id === id);
               const raw = judgedBandOf(mm, taskId);
               const { band } = calibrateBand(mm, taskId, raw.band);
-              return { band, confidence: raw.confidence };
+              const fit = taskFitFor(mm, taskId);
+              return {
+                band, confidence: raw.confidence,
+                usage_rank: mm.signals?.[taskId]?.usage_rank ?? null,
+                familyTypes: evidenceFamilySet(mm, taskId),
+                fitSource: fit.source,
+              };
             };
             for (const a of shortlist) {
               for (const b of shortlist) {
                 if (a === b || typeof a.monthly_cost_usd !== 'number' || typeof b.monthly_cost_usd !== 'number') continue;
-                const ba = bandOf(a.id), bb = bandOf(b.id);
-                const shaped = (item, band) => ({ ...item, band: band.band, confidence: band.confidence, model: { adoption: item.adoption } });
-                if (dominates(shaped(b, bb), shaped(a, ba))) {
-                  failures.push(`${label}: "${a.id}" ($${a.monthly_cost_usd}, fit ${a.fit}, band ${ba.band}) is dominated by "${b.id}" ($${b.monthly_cost_usd}, fit ${b.fit}, band ${bb.band}) but both survived to the shortlist`);
+                const ia = infoFor(a.id), ib = infoFor(b.id);
+                const shaped = (item, info) => ({ ...item, ...info, model: { adoption: item.adoption } });
+                if (dominates(shaped(b, ib), shaped(a, ia), stance)) {
+                  failures.push(`${label}: "${a.id}" ($${a.monthly_cost_usd}, fit ${a.fit}, band ${ia.band}) is dominated by "${b.id}" ($${b.monthly_cost_usd}, fit ${b.fit}, band ${ib.band}) but both survived to the shortlist`);
                 }
               }
             }
@@ -564,6 +571,61 @@ test("invariant: a GA shortlist item is never ranked below a preview item of the
           if (shortlist[j].status === 'preview') continue;
           if (bandOf(taskId, shortlist[j].id) === previewBand) {
             failures.push(`${taskId}/${stance}: GA "${shortlist[j].id}" ranked BELOW preview "${shortlist[i].id}" (both band "${previewBand}")`);
+          }
+        }
+      }
+    }
+  }
+  assert.equal(failures.length, 0, failures.join('\n'));
+});
+
+// ---------------------------------------------------------------------------------------------
+// Evidence-domination regression (2026-09-07): the concrete bug that motivated redefining
+// dominates()/dropDominated with real-world evidence (usage_rank, family SET) instead of just
+// cost+fit — see dominates()'s own comment for the full story. Before this fix, Kimi K3 (cheaper,
+// one point higher on coding_score, same strong/high/families:2 tier) silently erased BOTH Claude
+// Opus 5 (the actual #1 real-usage pick for "coding" — usage_rank 1 at 37% of OpenRouter coding
+// spend) and GPT-5.6 Sol (usage_rank 3, a DIFFERENT family mix — usage+expert, not Kimi's
+// usage+arena) from the shortlist entirely, purely on a lower price and a marginally higher score.
+// ---------------------------------------------------------------------------------------------
+test('evidence domination: "coding"/have=any/"best" keeps Claude Opus 5 AND GPT-5.6 Sol in the shortlist alongside Kimi K3', () => {
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, data);
+  const ids = out.tasks.coding.shortlist.map((x) => x.id);
+  assert.ok(ids.includes('claude-opus-5'), `expected claude-opus-5 in the shortlist, got [${ids.join(', ')}]`);
+  assert.ok(ids.includes('gpt-5-6-sol'), `expected gpt-5-6-sol in the shortlist, got [${ids.join(', ')}]`);
+  assert.equal(
+    out.tasks.coding.shortlist.find((x) => x.start_here)?.id,
+    'claude-opus-5',
+    'the actual #1 real-usage pick (usage_rank 1) should win start_here over a merely-higher-scoring rival',
+  );
+});
+
+// ---------------------------------------------------------------------------------------------
+// General invariant, run over the whole real catalog: a model that is the #1 real-usage pick for
+// a task (signals[taskId].usage_rank === 1) and clears the judged floor at the (calibrated)
+// 'strong' band can never be dominated away by a cheaper rival — dominates() requires a
+// dominator's usage_rank to be <= the dominated model's, and nothing can be <= 1 except another
+// rank 1, which can't coexist for the same task (scripts/derive-signals.mjs ranks are unique per
+// task) — so such a model must never be ABSENT from that task's 'best' shortlist whenever it's
+// reachable, across every access/volume/data-rule combination this file's full-grid test already
+// exercises.
+// ---------------------------------------------------------------------------------------------
+test('evidence domination invariant: a band-strong, usage_rank-1 model is never absent from its task\'s "best" shortlist when reachable', () => {
+  const failures = [];
+  for (const taskId of TASK_IDS) {
+    for (const have of HAVE_OPTIONS) {
+      for (const volume of VOLUME_OPTIONS) {
+        for (const dataRule of DATA_RULE_OPTIONS) {
+          const input = { tasks: [taskId], have, stance: 'best', volume, dataRule };
+          const { candidates } = filterCandidates(taskId, input, data);
+          const mustHave = candidates.filter((c) => c.usage_rank === 1 && c.band === 'strong');
+          if (!mustHave.length) continue;
+          const out = decide(input, data);
+          const ids = out.tasks[taskId].shortlist.map((x) => x.id);
+          for (const c of mustHave) {
+            if (!ids.includes(c.model.id)) {
+              failures.push(`task=${taskId} have=${JSON.stringify(have)} volume=${volume} noChina=${!!dataRule.noChinaHosted}: "${c.model.id}" (usage_rank 1, band strong) is absent from the shortlist [${ids.join(', ')}]`);
+            }
           }
         }
       }

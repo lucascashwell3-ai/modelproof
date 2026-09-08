@@ -129,25 +129,41 @@
           outright, REGARDLESS of band/confidence tier, as long as it already cleared rule 3's
           strong-or-capable floor. Ties on cost fall back to band, then confidence (see
           rankByStance).
-        - 'best': band, then confidence, then raw fit (cheaper is never a reason on its own here —
-          "best regardless of price" is the point of this stance, e.g. data/eval/situations.json's
-          S01), cost only as the final tie-break when fit also ties. Unchanged from before this
-          rewrite — 'best' itself was never the bug; 'cheapest' silently copying this exact order
-          (and so never letting price matter) was.
+        - 'best': band, then GA-before-preview status, then families, then usage_rank (lower is
+          better — see below), then confidence, then raw fit (cheaper is never a reason on its own
+          here — "best regardless of price" is the point of this stance, e.g.
+          data/eval/situations.json's S01), cost only as the final tie-break when fit also ties.
         - 'balanced': restricted to the candidates priced at or under 2x the monthly cost of the
           cheapest 'strong'-band candidate (or the cheapest 'capable'-band candidate if no
           'strong' one is priced) — i.e. "the candidates a buyer already comparison-shopping the
-          best option could actually justify" — ranked band, then confidence, then fit, then cost
-          inside that in-budget set, same order as 'best'; every candidate priced over that line is
-          still returned (so it can still show up lower in the shortlist), just always ranked after
-          every in-budget one.
-      Before ranking, any model strictly dominated by a cheaper-or-equal, at-least-as-fit model
-      already in the candidate set is dropped (dropDominated) — so the returned shortlist can
-      never contain a pricier model that isn't at least justified by a higher fit than every
-      cheaper option. This runs the same way for every stance (it only compares raw fit and cost,
-      never which stance was asked for), so it can never eliminate the model 'cheapest' or
-      'balanced' most needs to see (see dropDominated's own comment for why the actual cheapest
-      candidate is never a casualty of it).
+          best option could actually justify" — ranked the same way as 'best' inside that in-budget
+          set; every candidate priced over that line is still returned (so it can still show up
+          lower in the shortlist), just always ranked after every in-budget one.
+      Before ranking, dropDominated removes any candidate a cheaper-or-equal rival already covers —
+      but what counts as "covers" now depends on the stance (rewritten AGAIN 2026-09-07, same day
+      as the ranking-order change above — see dominates()'s own comment for the full story and the
+      concrete catalog bug this fixes):
+        - 'best'/'balanced': y (the candidate that would survive) may only eliminate x when y is
+          at least as good as x on EVERY evidence dimension — band, confidence, usage_rank
+          (scripts/derive-signals.mjs; lower is better, no rank on file counts as worse than any
+          real rank), families as a SET (evidenceFamilySet/familiesAtLeastAsGood — WHICH of the
+          three real-world signal families back a model, not merely how many; two models can share
+          the same families COUNT while backing entirely different, non-overlapping claims), and
+          quantitative fit ONLY when both candidates carry a real measured score (a flat
+          JUDGED_BAND_SCORE placeholder is never treated as "quantitative fit" for this purpose) —
+          AND y is cheaper-or-equal, with at least one of those comparisons strict. Before this,
+          domination compared only band/confidence/fit/cost, which let a cheaper, marginally
+          higher-scoring model erase a rival with just as much real-world standing but a different
+          evidence profile (Kimi K3 was erasing BOTH Claude Opus 5 — the actual usage_rank-1 pick
+          for "coding" at 37% of OpenRouter spend — and GPT-5.6 Sol, a differently-evidenced
+          same-tier peer, from the shortlist entirely).
+        - 'cheapest': keeps the plain, tier-scoped cheaper-and-at-least-as-fit check this stance
+          has always used (this stance is explicitly cost-primary and does not apply the fuller
+          evidence check above) — but with one added guard: it may never fully eliminate a
+          'strong'-band candidate that carries MORE families (a plain count here) than the cheaper
+          candidate trying to dominate it. That candidate can still rank far below the cheapest
+          pick — 'cheapest' stays cost-first, full stop — but it must remain in the returned list,
+          not disappear from it.
       Two rules gate start_here selection only (see isDisqualifiedFromStartHere) — neither ever
       removes a model from the shortlist, only the start_here flag:
         - an `adoption: 'low'` model is never start_here while a 'broad' or 'moderate'-adoption
@@ -477,6 +493,43 @@ export function findSeatPlanAlternative(model, have, plans) {
 }
 
 // -----------------------------------------------------------------------------------------
+// Evidence-family SET (2026-09-07, dropDominated evidence rewrite) — WHICH of the three
+// real-world signal families (scripts/derive-signals.mjs: usage-top-10, arena-top-10,
+// expert-default) actually back a model for this task, not just how many. Two models can share
+// the exact same `families` COUNT while backing entirely different claims — e.g. one model's 2
+// families are {usage, arena} and another's are {usage, expert} — and a count alone can't tell
+// those apart. dominates() below needs the real set: a count tie must never let a model missing
+// one family (say, expert-default backing) be treated as "at least as evidenced" as a model that
+// actually has it, just because both happen to total 2.
+// -----------------------------------------------------------------------------------------
+export function evidenceFamilySet(model, taskId) {
+  const sig = model?.signals?.[taskId];
+  const set = new Set();
+  if (!sig) return set;
+  if (num(sig.usage_rank)) set.add('usage');
+  if (num(sig.arena_rank)) set.add('arena');
+  if (sig.expert_default) set.add('expert');
+  return set;
+}
+/** true when every family backing `x` also backs `y` (y's set is a superset of x's, ties
+ * included) — the "at least as good on families" half of dominates()'s evidence check. */
+export function familiesAtLeastAsGood(ySet, xSet) {
+  if (!xSet || !xSet.size) return true;
+  if (!ySet) return false;
+  for (const f of xSet) if (!ySet.has(f)) return false;
+  return true;
+}
+/** usage_rank comparison for dominates()/ranking — lower is better; no rank on file (null)
+ * counts as worse than any real rank, so nothing can be "at least as good" as an actual #1 except
+ * another #1 (which can't coexist for the same task). */
+export function usageRankAtLeastAsGood(yRank, xRank) {
+  if (!num(xRank)) return true;
+  if (!num(yRank)) return false;
+  return yRank <= xRank;
+}
+const usageRankValue = (item) => (num(item.usage_rank) ? item.usage_rank : Infinity);
+
+// -----------------------------------------------------------------------------------------
 // Candidate filtering (rules 1-3) and domination pruning
 // -----------------------------------------------------------------------------------------
 export function filterCandidates(taskId, input, data) {
@@ -551,6 +604,11 @@ export function filterCandidates(taskId, input, data) {
       // judged record exists), but falls back to the band constant rather than ever sorting on a
       // NaN if that guarantee is ever violated by a future edit.
       fit: fitScore,
+      // Whether `fit` above is a real, sourced measurement (fit.source === 'measured', e.g. a
+      // coding_score) or the flat JUDGED_BAND_SCORE placeholder standing in for a judged record
+      // with no number of its own. dominates() below only ever compares fit as a domination axis
+      // when BOTH sides carry a real measurement — see dominates()'s own comment for why.
+      fitSource: fit.source,
       fit_basis: fit.basis,
       basis: basisFromClaims(judged.claims),
       claims: judged.claims,
@@ -560,6 +618,10 @@ export function filterCandidates(taskId, input, data) {
       monthly_cost_usd: monthlyCost(model, vol),
       seat_plan_alternative: findSeatPlanAlternative(model, input.have, data.plans),
       unknownCountryVendor: dr.unknownCountry ? model.vendor : null,
+      // Rule 4 domination/ranking now also weigh usage_rank and WHICH real-world signal families
+      // (not merely how many) back a candidate — see evidenceFamilySet()/dominates() below.
+      usage_rank: num(model.signals?.[taskId]?.usage_rank) ? model.signals[taskId].usage_rank : null,
+      familyTypes: evidenceFamilySet(model, taskId),
     });
   }
   return { candidates, vol };
@@ -581,29 +643,100 @@ export function filterCandidates(taskId, input, data) {
 const ADOPTION_RANK = { broad: 3, moderate: 2, unknown: 1, new: 1, low: 0 };
 const adoptionRank = (adoption) => ADOPTION_RANK[adoption] ?? 1;
 
-export function dominates(y, x) {
+/** y dominates x only if y's judged tier (band, then confidence) is AT LEAST AS GOOD as x's — a
+ * 'capable' model can never dominate-and-eliminate a 'strong' one just by being cheaper or
+ * carrying a higher raw fit number.
+ *
+ * REWRITTEN AGAIN 2026-09-07, same day: the ABOVE guarantee (tier can't be bought back with
+ * price/fit) turned out not to be enough — within the SAME tier, this function used to compare
+ * only cost and fit, which let a cheaper, marginally-higher-fit model erase a rival with just as
+ * much real-world standing but a different profile. Concretely, for "coding" under 'best': Kimi
+ * K3 ($28.50/mo, coding_score 96, both strong/high, families:2) was dominating BOTH Claude Opus 5
+ * ($47.50/mo, score 95, families:2, usage_rank 1 at 37% of OpenRouter coding spend — the actual
+ * #1 real-usage pick) and GPT-5.6 Sol ($38/mo, score 90, families:2, usage_rank 3) — erasing them
+ * from the shortlist entirely on nothing but a slightly higher score and a lower price. Now, for
+ * 'best'/'balanced' (see the 'cheapest' branch below for that stance's own, narrower rule), y
+ * must be at least as good as x on EVERY one of these before cost/fit ever gets a vote:
+ *   - band, confidence — as before.
+ *   - usage_rank (usageRankAtLeastAsGood — lower is better, no rank counts as worse than any
+ *     real one). This alone protects Opus 5: nothing can be "at least as good" as its usage_rank
+ *     1 except another rank 1, which can't coexist for the same task — so a rank-1 model can
+ *     never be dominated away by anything, at any price.
+ *   - families, as a SET, not a count (familiesAtLeastAsGood/evidenceFamilySet). Kimi K3 and
+ *     GPT-5.6 Sol both show families:2, but Kimi's are {usage, arena} and Sol's are {usage,
+ *     expert} — different, independently-collected evidence, not "the same support, just less of
+ *     it". A families-COUNT tie would still have let Kimi erase Sol; the SET check means Kimi is
+ *     missing Sol's expert-default backing, so Kimi is not "at least as good" on this axis either.
+ *   - quantitative fit — but ONLY when BOTH candidates carry a real measured score
+ *     (fitSource === 'measured' on both, see filterCandidates). A flat JUDGED_BAND_SCORE
+ *     placeholder is not "quantitative fit"; comparing it as if it were would let one judged-only
+ *     model's arbitrary placeholder outrank another's, so this axis is simply skipped (treated as
+ *     satisfied) whenever either side is unmeasured.
+ * Within the SAME (band, confidence) tier this is exactly the old fit+cost comparison, now with
+ * usage_rank/families added as further required axes; across tiers, a strictly-better-tier model
+ * still dominates a cheaper-or-equal one outright (its judgment already establishes "at least as
+ * fit" on band/confidence — but it must still clear the usage_rank/families/fit axes too, now
+ * that those are checked regardless of tier), and a worse-tier model can never dominate a
+ * better-tier one regardless of price. */
+export function dominates(y, x, stance = 'best') {
   if (y === x || !num(x.monthly_cost_usd) || !num(y.monthly_cost_usd)) return false;
-  const sameBandConfidence = bandRank(y.band) === bandRank(x.band) && confidenceRank(y.confidence) === confidenceRank(x.confidence);
-  const yTierAtLeastAsGood = bandRank(y.band) > bandRank(x.band) ||
-    (bandRank(y.band) === bandRank(x.band) && confidenceRank(y.confidence) >= confidenceRank(x.confidence));
-  if (!yTierAtLeastAsGood) return false;
+
+  if (stance === 'cheapest') {
+    // Cost-primary stance — keep the plain, tier-scoped cheaper+at-least-as-fit check this stance
+    // has always used (not the fuller evidence check below; 'cheapest' is explicitly allowed to
+    // recommend the actual cheapest candidate regardless of its evidence profile). The ONE guard
+    // added here (2026-09-07): never let this simpler check fully ERASE a 'strong'-band candidate
+    // that carries MORE families (a plain count, unlike the set check above — see this
+    // function's own header) than the cheaper candidate trying to dominate it. It may still rank
+    // far below the cheapest pick — this stance stays cost-first, full stop — but it must remain
+    // in the returned list, not disappear from it.
+    if (x.band === 'strong' && (x.families ?? 0) > (y.families ?? 0)) return false;
+    const sameBandConfidence = bandRank(y.band) === bandRank(x.band) && confidenceRank(y.confidence) === confidenceRank(x.confidence);
+    const yTierAtLeastAsGood = bandRank(y.band) > bandRank(x.band) ||
+      (bandRank(y.band) === bandRank(x.band) && confidenceRank(y.confidence) >= confidenceRank(x.confidence));
+    if (!yTierAtLeastAsGood) return false;
+    if (sameBandConfidence && adoptionRank(y.model.adoption) < adoptionRank(x.model.adoption)) return false;
+    const cheaperOrEqual = y.monthly_cost_usd <= x.monthly_cost_usd;
+    const atLeastAsFit = sameBandConfidence ? y.fit >= x.fit : true;
+    const strictlyBetter = !sameBandConfidence || y.monthly_cost_usd < x.monthly_cost_usd || y.fit > x.fit;
+    return cheaperOrEqual && atLeastAsFit && strictlyBetter;
+  }
+
+  // 'best' / 'balanced' — every evidence dimension below must favor (or tie) y before cost/fit
+  // ever gets a vote; failing any one of them blocks domination outright.
+  if (bandRank(y.band) < bandRank(x.band)) return false;
+  if (confidenceRank(y.confidence) < confidenceRank(x.confidence)) return false;
+  if (!usageRankAtLeastAsGood(y.usage_rank, x.usage_rank)) return false;
+  if (!familiesAtLeastAsGood(y.familyTypes, x.familyTypes)) return false;
+  const bothMeasured = y.fitSource === 'measured' && x.fitSource === 'measured';
+  if (bothMeasured && y.fit < x.fit) return false;
+
   // Within the SAME (band, confidence) tier, a lower-adoption model can never dominate-and-
   // eliminate a higher-adoption one either — otherwise a cheap, low-adoption model could erase
   // the very broader-adoption alternative the start_here adoption gate exists to prefer, before
   // that gate ever runs (2026-09-07 regression, caught by the vision task's own catalog: a
   // $0.93/mo low-adoption model was dominating a $1.90/mo moderate-adoption one at equal fit).
+  const sameBandConfidence = bandRank(y.band) === bandRank(x.band) && confidenceRank(y.confidence) === confidenceRank(x.confidence);
   if (sameBandConfidence && adoptionRank(y.model.adoption) < adoptionRank(x.model.adoption)) return false;
-  const cheaperOrEqual = y.monthly_cost_usd <= x.monthly_cost_usd;
-  const atLeastAsFit = sameBandConfidence ? y.fit >= x.fit : true;
-  const strictlyBetter = !sameBandConfidence || y.monthly_cost_usd < x.monthly_cost_usd || y.fit > x.fit;
-  return cheaperOrEqual && atLeastAsFit && strictlyBetter;
+
+  if (y.monthly_cost_usd > x.monthly_cost_usd) return false;
+
+  const strictlyBetter = y.monthly_cost_usd < x.monthly_cost_usd
+    || bandRank(y.band) > bandRank(x.band)
+    || confidenceRank(y.confidence) > confidenceRank(x.confidence)
+    || (num(y.usage_rank) && (!num(x.usage_rank) || y.usage_rank < x.usage_rank))
+    || (y.familyTypes?.size ?? 0) > (x.familyTypes?.size ?? 0)
+    || (bothMeasured && y.fit > x.fit);
+  return strictlyBetter;
 }
 /** Drop any candidate dominated by another per dominates() above — guarantees the eventual
- * shortlist never contains a pricier, lower-fit model when a better-or-equal-tier, cheaper
- * alternative already covers it. Candidates with an unknown cost can't be compared either way,
- * so they're never dropped by this step. */
-export function dropDominated(list) {
-  return list.filter((x) => !list.some((y) => dominates(y, x)));
+ * shortlist never contains a pricier model that isn't at least justified by evidence over every
+ * cheaper option (see dominates()'s own comment for exactly which evidence dimensions that now
+ * covers, and how 'cheapest' differs). Candidates with an unknown cost can't be compared either
+ * way, so they're never dropped by this step. `stance` must match whatever rankByStance() will
+ * be called with right after — dominates()'s behavior genuinely differs by stance now. */
+export function dropDominated(list, stance = 'best') {
+  return list.filter((x) => !list.some((y) => dominates(y, x, stance)));
 }
 
 // -----------------------------------------------------------------------------------------
@@ -628,14 +761,20 @@ const costOrInf = (x) => (num(x.monthly_cost_usd) ? x.monthly_cost_usd : Infinit
 // which also has to look at the full pre-domination candidate pool, not just survivors here).
 const statusRank = (status) => (status === 'preview' ? 0 : 1);
 /** Band, then GA-before-preview, then calibration's own `families` count (rule 3b — more
- * independent real-world signal outranks less, inside the same band+status), then confidence —
- * used as the primary key for 'best' and 'balanced', and as a tie-break (after cost) for
- * 'cheapest'. Every candidate reaching this function already cleared rule 3, so band is always
- * 'strong' or 'capable' here; this comparator still checks the general case rather than
- * hard-coding those two values, so it keeps working if a future band is ever added. */
+ * independent real-world signal outranks less, inside the same band+status), then usage_rank
+ * (2026-09-07, evidence rewrite — lower is better, no rank counts as worse than any real one;
+ * this is what puts Claude Opus 5, the actual #1 real-usage pick for "coding" at 37% of
+ * OpenRouter spend, ahead of Kimi K3's one-point-higher raw score within their shared strong/high/
+ * families:2 tier), then confidence — used as the primary key for 'best' and 'balanced', and as a
+ * tie-break (after cost) for 'cheapest'. Every candidate reaching this function already cleared
+ * rule 3, so band is always 'strong' or 'capable' here; this comparator still checks the general
+ * case rather than hard-coding those two values, so it keeps working if a future band is ever
+ * added. */
 const byBandThenConfidence = (a, b) => bandRank(b.band) - bandRank(a.band)
   || statusRank(b.model.status) - statusRank(a.model.status)
-  || (b.families ?? 0) - (a.families ?? 0) || confidenceRank(b.confidence) - confidenceRank(a.confidence);
+  || (b.families ?? 0) - (a.families ?? 0)
+  || usageRankValue(a) - usageRankValue(b)
+  || confidenceRank(b.confidence) - confidenceRank(a.confidence);
 /** Band -> confidence -> fit -> cost, the shared comparator 'best' uses outright and 'balanced'
  * uses within its in-budget set (see below) — kept as one function so the two stances can never
  * quietly drift apart on how they break a tie. Fit (not cost) is the first tie-break inside a
@@ -718,7 +857,7 @@ export function decide(input, data) {
   const tasks = {};
   for (const taskId of input?.tasks || []) {
     const { candidates, vol } = filterCandidates(taskId, { ...input, stance }, data);
-    const pruned = dropDominated(candidates);
+    const pruned = dropDominated(candidates, stance);
     const ranked = rankByStance(pruned, stance);
 
     // start_here eligibility (see isDisqualifiedFromStartHere / the file header): find the
