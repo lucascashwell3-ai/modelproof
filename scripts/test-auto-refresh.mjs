@@ -7,6 +7,7 @@ import {
   buildWorklist, bestForLine, needsGuidance, pickGuidance, guidanceItem, parseCsv, refreshCursorBench,
   releaseTitle, isKnownCandidate, findKnownModel, admissionFailReasons, formatDropLine,
   normalizeDisplayName, findNewCandidateIds, decideRefreshRun, DAILY_FULL_RUN_HOUR_UTC,
+  needsJudgedFit, pickJudgedFit, judgedFitItem, reJudgeWorklistItems,
 } from './auto-refresh.mjs';
 import { modelId, canonicalVendor, bareModelName, isCommunityListing, namingProblems, VENDORS, isCanonicalVendor } from './naming.mjs';
 import { validate } from './validate-data.mjs';
@@ -427,6 +428,14 @@ test('buildWorklist orders new-model > conflict > deprecation > benchmark > ladd
   assert.deepEqual(out.map((i) => i.kind), ['new-model', 'conflict', 'deprecation', 'benchmark', 'ladder', 'release']);
 });
 
+test('buildWorklist places judged-fit after guidance, both below every other kind', () => {
+  const items = [
+    { id: 'j1', kind: 'judged-fit' }, { id: 'g1', kind: 'guidance' }, { id: 'r1', kind: 'release' },
+  ];
+  const out = buildWorklist(items);
+  assert.deepEqual(out.map((i) => i.kind), ['release', 'guidance', 'judged-fit']);
+});
+
 test('buildWorklist caps at 15 items, keeping highest priority', () => {
   const items = [];
   for (let i = 0; i < 20; i++) items.push({ id: `release-${i}`, kind: 'release' });
@@ -521,6 +530,73 @@ test('guidance items sort last, keep their reserved slots when conflicts overflo
   assert.equal(out.filter((i) => i.kind === 'conflict').length, 12);
   // with no guidance candidates the full 15 go to the rest
   assert.equal(buildWorklist(many).length, 15);
+});
+
+// --- judged task fit rotation (2026-09-06) --------------------------------------------------
+const TF_NULL = (reason) => ({ score: null, basis: [], reason });
+const J = (id, extra = {}) => ({
+  id, name: id, price_input: 1, price_output: 2,
+  task_fit: Object.fromEntries(TASK_IDS.map((t) => [t, TF_NULL('fixture')])),
+  task_fit_judged: null,
+  ...extra,
+});
+test('needsJudgedFit: a model with any null task and no judged record needs one; fully covered or deprecated models don\'t', () => {
+  assert.equal(needsJudgedFit(J('a')), true);
+  assert.equal(needsJudgedFit(J('b', { deprecated: true })), false);
+  const fullyJudged = J('c', { task_fit_judged: Object.fromEntries(TASK_IDS.map((t) => [t, { band: 'capable', confidence: 'low', claims: [], reconciliation: null, as_of: '2026-09-01' }])) });
+  assert.equal(needsJudgedFit(fullyJudged), false);
+  const oneTaskLeft = J('d', { task_fit: { ...J('d').task_fit, coding: { score: 80, basis: ['coding_score'] } } });
+  assert.equal(needsJudgedFit(oneTaskLeft), true); // still 9 other null tasks
+});
+test('pickJudgedFit takes at most perRun, newest-released first when usage is unsourced, then rotates by id', () => {
+  const models = [J('m1', { released: '2026-01-01' }), J('m2', { released: '2026-06-01' }), J('m3', { released: '2026-03-01' })];
+  const { picked, cursor } = pickJudgedFit(models, {}, 2);
+  assert.deepEqual(picked, ['m2', 'm3']); // newest two by released date
+  assert.equal(cursor, 'm3');
+});
+test('pickJudgedFit prefers a sourced usage share over release date', () => {
+  const models = [
+    J('old-but-popular', { released: '2026-01-01', usage: { openrouter: { share: 40 } } }),
+    J('new-but-obscure', { released: '2026-08-01' }),
+  ];
+  const { picked } = pickJudgedFit(models, {}, 1);
+  assert.deepEqual(picked, ['old-but-popular']);
+});
+test('pickJudgedFit rotates: the next run resumes after the cursor and wraps around', () => {
+  const models = ['m1', 'm2', 'm3'].map((id) => J(id));
+  const r1 = pickJudgedFit(models, {}, 2);
+  assert.deepEqual(r1.picked, ['m1', 'm2']);
+  const r2 = pickJudgedFit(models, { judgedFitCursor: r1.cursor }, 2);
+  assert.deepEqual(r2.picked, ['m3', 'm1']);
+});
+test('pickJudgedFit: models with every task judged drop out; empty catalog returns nothing', () => {
+  const fullyJudged = J('done', { task_fit_judged: Object.fromEntries(TASK_IDS.map((t) => [t, { band: 'weak', confidence: 'low', claims: [], reconciliation: null, as_of: '2026-09-01' }])) });
+  assert.deepEqual(pickJudgedFit([fullyJudged, J('open')], {}, 5).picked, ['open']);
+  assert.deepEqual(pickJudgedFit([], {}, 5).picked, []);
+});
+test('judgedFitItem names exactly the tasks still missing a basis, and is a judged-fit worklist item', () => {
+  const m = J('m1', { name: 'M One', task_fit: { ...J('m1').task_fit, coding: { score: 80, basis: ['coding_score'] } } });
+  const item = judgedFitItem(m, '2026-09-06');
+  assert.equal(item.kind, 'judged-fit');
+  assert.equal(item.id, 'm1:judged-fit');
+  assert.doesNotMatch(item.ask, /\bcoding\b,/); // coding already has a quantitative score — not asked about
+  assert.match(item.ask, /agents/);
+});
+test('reJudgeWorklistItems: a same-vendor successor queues every judged task the OTHER model already carries, and only that vendor', () => {
+  const predecessor = J('old-1', { name: 'Old One', vendor: 'Acme', task_fit_judged: { coding: { band: 'capable', confidence: 'medium', claims: [], reconciliation: null, as_of: '2026-08-01' } } });
+  const otherVendor = J('other-1', { name: 'Other One', vendor: 'OtherCo', task_fit_judged: { coding: { band: 'strong', confidence: 'high', claims: [], reconciliation: null, as_of: '2026-08-01' } } });
+  const noJudgedYet = J('old-2', { name: 'Old Two', vendor: 'Acme', task_fit_judged: null });
+  const newModel = J('new-1', { name: 'New One', vendor: 'Acme' });
+  const items = reJudgeWorklistItems(newModel, [predecessor, otherVendor, noJudgedYet, newModel], '2026-09-06');
+  assert.equal(items.length, 1);
+  assert.equal(items[0].model, 'Old One');
+  assert.equal(items[0].kind, 'judged-fit');
+  assert.match(items[0].ask, /New One/);
+  assert.match(items[0].ask, /coding/);
+});
+test('reJudgeWorklistItems: no items when nothing from that vendor has a judged record yet', () => {
+  const newModel = J('new-1', { name: 'New One', vendor: 'Acme' });
+  assert.deepEqual(reJudgeWorklistItems(newModel, [J('sibling', { vendor: 'Acme' }), newModel], '2026-09-06'), []);
 });
 
 // --- CursorBench ladder refresh from Epoch's CSV (2026-08-22) ----------------------------------
@@ -677,8 +753,9 @@ const REGISTRY = { sources: [] };
 // task_fit{} + task_fit_judged so the (separate) task_fit gate never fires here and each test
 // stays about the one naming rule it names.
 const BLANK_TASK_FIT = Object.fromEntries(TASK_IDS.map((t) => [t, { score: null, basis: [], reason: 'naming-rule test fixture — task fit not exercised here' }]));
+const BLANK_SIGNALS = Object.fromEntries(TASK_IDS.map((t) => [t, { usage_rank: null, usage_share: null, arena_rank: null, expert_default: null, families: 0 }]));
 const cleanData = (models) => ({
-  models: models.map((m) => ({ task_fit: BLANK_TASK_FIT, task_fit_judged: null, ...m })),
+  models: models.map((m) => ({ task_fit: BLANK_TASK_FIT, task_fit_judged: null, usage: { openrouter: null }, status: 'ga', adoption: 'unknown', signals: BLANK_SIGNALS, ...m })),
   releases: [],
   effort_ladders: [],
 });

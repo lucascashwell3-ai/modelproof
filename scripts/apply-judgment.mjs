@@ -4,7 +4,8 @@
    anything the honesty gate would reject, and it re-runs the gate itself as a second check.
 
    Input file: an array of judgments, each:
-     { id, kind: "conflict"|"benchmark"|"ladder"|"new-model"|"release", field?, value, sources: [{url, date}], reason }
+     { id, kind: "conflict"|"benchmark"|"ladder"|"new-model"|"release"|"guidance"|"deprecation"
+              |"judged-fit"|"usage", field?, value, sources: [{url, date}], reason }
    A judgment may instead be a hold: { id, hold: true, reason } — recorded, nothing applied.
 
    Rules enforced here (reject the whole run on any violation — never apply half a judgments file):
@@ -13,15 +14,27 @@
      - numeric fields must carry a number, never a string or null.
      - sources[] must be non-empty and every url must be http(s).
      - reason must be >= 12 characters — "trust me" is not a citation.
+     - judged-fit: value {taskId, band, confidence, claims:[{sentence, source_url, tier, date,
+       quote}], reconciliation}. Same shape scripts/validate-data.mjs gates once written — see
+       that file's BANNED_RELATIVE_PATTERNS/bannedPhraseIn/wordCount, imported here so the two
+       never drift apart. Growth-only: an incoming record never overwrites one already on file
+       with a newer as_of (applyOne no-ops in that case, doesn't error).
+     - usage: value {category, share, rank}. Same growth-only rule.
    On success: writes data/models.json, appends data/changelog.json (with sources), removes the
-   applied ids from data/refresh/worklist.json, runs the honesty gate. On gate failure: restores
-   the pre-write file content and exits 1 — nothing half-published.
+   applied ids from data/refresh/worklist.json, runs the honesty gate, THEN (only when this run
+   wrote at least one judged-fit claim) runs scripts/check-sources.mjs against the whole file — the
+   anti-fabrication gate that confirms every claim's quote is actually on its cited page. On
+   either gate's failure: restores the pre-write file content and exits 1 — nothing
+   half-published, and a fabricated/misquoted citation can never reach main through this path.
 
    Usage:
      node scripts/apply-judgment.mjs <judgments.json> [--dry-run]
 */
 import { isNotablePriceChange, priceEntry, retiredEntry, addEntry } from './timeline.mjs';
 import { canonicalVendor, bareModelName, modelId as idFromName } from './naming.mjs';
+import { TASK_IDS } from './derive-task-fit.mjs';
+import { bannedPhraseIn, wordCount, JUDGED_BAND_VALUES, CLAIM_TIERS } from './validate-data.mjs';
+import { deriveStatus, deriveAdoption } from './derive-status-adoption.mjs';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -46,7 +59,7 @@ export function validateJudgment(j) {
     if (!j.reason || j.reason.length < 12) errs.push(`${j.id}: hold reason must be >= 12 chars`);
     return errs;
   }
-  if (!j.kind || !['conflict', 'benchmark', 'ladder', 'new-model', 'release', 'guidance', 'deprecation'].includes(j.kind)) {
+  if (!j.kind || !['conflict', 'benchmark', 'ladder', 'new-model', 'release', 'guidance', 'deprecation', 'judged-fit', 'usage'].includes(j.kind)) {
     errs.push(`${j.id}: bad or missing kind "${j.kind}"`);
   }
   if (!j.reason || j.reason.length < 12) errs.push(`${j.id}: reason must be >= 12 chars ("${j.reason || ''}")`);
@@ -96,6 +109,45 @@ export function validateJudgment(j) {
     else for (const t of v.use_well) if (typeof t !== 'string' || t.length < 20 || t.length > 240) errs.push(`${j.id}: use_well tip must be 20–240 chars`);
     if (v.strengths != null && (!Array.isArray(v.strengths) || v.strengths.some((t) => typeof t !== 'string'))) errs.push(`${j.id}: strengths must be string[]`);
     for (const k of Object.keys(v)) if (!['best_for', 'use_well', 'strengths'].includes(k)) errs.push(`${j.id}: guidance can't set "${k}"`);
+  } else if (j.kind === 'judged-fit') {
+    // value: { taskId, band, confidence, claims:[{sentence, source_url, tier, date, quote}], reconciliation? }
+    // Same shape scripts/validate-data.mjs gates once written (JUDGED_BAND_VALUES/CLAIM_TIERS/
+    // bannedPhraseIn/wordCount all imported from there) — failing here is earlier and clearer,
+    // exactly like BEST_FOR_VOCAB above mirrors validate-data.mjs's own vocab.
+    const v = j.value;
+    if (!v || typeof v !== 'object') { errs.push(`${j.id}: judged-fit value must be an object`); return errs; }
+    if (!TASK_IDS.includes(v.taskId)) errs.push(`${j.id}: judged-fit taskId "${v.taskId}" must be one of ${TASK_IDS.join(', ')}`);
+    if (!JUDGED_BAND_VALUES.includes(v.band)) errs.push(`${j.id}: judged-fit band "${v.band}" must be one of ${JUDGED_BAND_VALUES.join(', ')}`);
+    if (!['high', 'medium', 'low'].includes(v.confidence)) errs.push(`${j.id}: judged-fit confidence "${v.confidence}" must be high|medium|low`);
+    if (v.reconciliation != null) {
+      if (typeof v.reconciliation !== 'string') errs.push(`${j.id}: judged-fit reconciliation must be a string or null`);
+      else {
+        const hit = bannedPhraseIn(v.reconciliation);
+        if (hit) errs.push(`${j.id}: judged-fit reconciliation uses a banned relative phrase (/${hit}/) — statements must be absolute and dated`);
+      }
+    }
+    if (!Array.isArray(v.claims) || !v.claims.length) errs.push(`${j.id}: judged-fit needs a non-empty claims[]`);
+    else v.claims.forEach((c, i) => {
+      const cl = `${j.id}: judged-fit claims[${i}]`;
+      if (!c || typeof c !== 'object') { errs.push(`${cl} must be an object`); return; }
+      if (!c.sentence || typeof c.sentence !== 'string') errs.push(`${cl}.sentence is required`);
+      else {
+        const hit = bannedPhraseIn(c.sentence);
+        if (hit) errs.push(`${cl}.sentence uses a banned relative phrase (/${hit}/) — write an absolute, dated fact instead`);
+      }
+      if (!c.source_url || !/^https?:\/\//i.test(c.source_url)) errs.push(`${cl}.source_url must be http(s)`);
+      if (!CLAIM_TIERS.includes(c.tier)) errs.push(`${cl}.tier must be one of ${CLAIM_TIERS.join(', ')}`);
+      if (!c.date) errs.push(`${cl}.date is required`);
+      if (!c.quote || typeof c.quote !== 'string') errs.push(`${cl}.quote is required (verbatim from source_url)`);
+      else if (wordCount(c.quote) > 25) errs.push(`${cl}.quote is ${wordCount(c.quote)} word(s) — must be ≤25`);
+    });
+  } else if (j.kind === 'usage') {
+    // value: { category, share (0-100), rank (>=1) } — usage.openrouter on the matching model.
+    const v = j.value;
+    if (!v || typeof v !== 'object') { errs.push(`${j.id}: usage value must be an object`); return errs; }
+    if (!v.category || typeof v.category !== 'string') errs.push(`${j.id}: usage.category is required`);
+    if (typeof v.share !== 'number' || Number.isNaN(v.share) || v.share < 0 || v.share > 100) errs.push(`${j.id}: usage.share must be 0-100`);
+    if (!Number.isInteger(v.rank) || v.rank < 1) errs.push(`${j.id}: usage.rank must be a positive integer`);
   } else if (j.kind === 'ladder') {
     const v = j.value;
     if (!v || typeof v !== 'object' || !Array.isArray(v.series) || !v.series.length) {
@@ -140,6 +192,7 @@ export function applyOne(data, j, today) {
     if (!m) throw new Error(`${j.id}: no model with id "${modelId}"`);
     const old = !!m.deprecated;
     m.deprecated = true;
+    m.status = deriveStatus(m).status;
     m.sources = Array.from(new Set([...(m.sources || []), ...j.sources.map((s) => s.url)]));
     addEntry(data, retiredEntry(m, j.sources[0].url, today, j.reason));
     return { date: today, model: m.name, field: 'deprecated', old, new: true, sources: j.sources.map((s) => s.url), reason: j.reason };
@@ -161,10 +214,13 @@ export function applyOne(data, j, today) {
       benchmarks: { swe_bench: null, gpqa: null, aime: null, mmlu_pro: null },
       best_for: [], strengths: [], weaknesses: [], verdict: null, confidence: 'low',
       coding_score: null, coding_basis: null, coding_confidence: 'low', use_well: [], task_copy: {},
+      task_fit_judged: null, usage: { openrouter: null },
       ...j.value,
       id, name, vendor,
       sources: Array.from(new Set([...(j.value.sources || []), ...j.sources.map((s) => s.url)])),
     };
+    nm.status = deriveStatus(nm).status;
+    nm.adoption = deriveAdoption(nm, data.as_of).adoption;
     data.models.push(nm);
     // every admitted model gets a timeline entry (2026-08-22: Judge-admitted models used to skip
     // the timeline — Grok 4.6 and Gemini 3.7 Flash were in the catalog with no "what changed" line).
@@ -197,6 +253,32 @@ export function applyOne(data, j, today) {
     if (!filled.length) return null;   // nothing was empty — a no-op, not an overwrite
     m.sources = Array.from(new Set([...(m.sources || []), ...j.sources.map((s) => s.url)]));
     return { date: today, model: m.name, field: filled.join('+'), old: null, new: 'usage guidance', sources: j.sources.map((s) => s.url), reason: j.reason };
+  }
+  if (j.kind === 'judged-fit') {
+    // growth-only: an incoming record never overwrites one already on file with a NEWER as_of —
+    // a re-judge (same-vendor successor rule, scripts/refresh-judge.md) always carries today's
+    // date, so this only ever blocks a genuinely out-of-order/backdated write, never normal use.
+    const m = data.models.find((x) => x.id === modelId);
+    if (!m) throw new Error(`${j.id}: no model with id "${modelId}"`);
+    const { taskId, band, confidence, claims, reconciliation } = j.value;
+    const existing = m.task_fit_judged && m.task_fit_judged[taskId];
+    if (existing && existing.as_of && existing.as_of > today) return null; // a newer record already on file — no-op
+    m.task_fit_judged = m.task_fit_judged || {};
+    m.task_fit_judged[taskId] = { band, confidence, claims, reconciliation: reconciliation ?? null, as_of: today };
+    m.sources = Array.from(new Set([...(m.sources || []), ...j.sources.map((s) => s.url)]));
+    return { date: today, model: m.name, field: `task_fit_judged.${taskId}`, old: existing ? existing.band : null, new: band, sources: j.sources.map((s) => s.url), reason: j.reason };
+  }
+  if (j.kind === 'usage') {
+    // growth-only, same as judged-fit above.
+    const m = data.models.find((x) => x.id === modelId);
+    if (!m) throw new Error(`${j.id}: no model with id "${modelId}"`);
+    const existing = m.usage && m.usage.openrouter;
+    if (existing && existing.as_of && existing.as_of > today) return null;
+    m.usage = m.usage || { openrouter: null };
+    m.usage.openrouter = { category: j.value.category, share: j.value.share, rank: j.value.rank, as_of: today, source_url: j.sources[0].url };
+    m.adoption = deriveAdoption(m, data.as_of).adoption;
+    m.sources = Array.from(new Set([...(m.sources || []), ...j.sources.map((s) => s.url)]));
+    return { date: today, model: m.name, field: 'usage.openrouter', old: existing ? existing.rank : null, new: j.value.rank, sources: j.sources.map((s) => s.url), reason: j.reason };
   }
   if (j.kind === 'ladder') {
     data.effort_ladders = data.effort_ladders || [];
@@ -256,8 +338,12 @@ async function main() {
   if (dryRun) return;
   if (!applied.length) { console.log('nothing to apply — worklist/data unchanged.'); return; }
 
+  // changelog.json is deliberately NOT written yet — only data/models.json, which both gates
+  // below check and restore on failure. Writing the changelog here too (as a prior version of
+  // this script did) left a stale, permanent entry behind every time a gate failed: the entry
+  // describes a change that never actually published. It's written once, after both gates pass,
+  // alongside the rest of the "everything succeeded" bookkeeping.
   writeFileSync(dataUrl, JSON.stringify(data, null, 2) + '\n');
-  writeFileSync(changelogUrl, JSON.stringify(changelog, null, 2) + '\n');
 
   const { execFileSync } = await import('node:child_process');
   let gateOk = true;
@@ -275,6 +361,35 @@ async function main() {
     process.exitCode = 1;
     return;
   }
+
+  // Anti-fabrication gate (scripts/check-sources.mjs): only when this run actually wrote a
+  // judged-fit claim — a live network fetch per source_url on every ordinary price-conflict
+  // apply would be needless network I/O for nothing this run touched. It checks the WHOLE file
+  // (not just what changed), so a pre-existing claim whose source page changed out from under it
+  // also blocks — same "so the cloud Judge's output can't publish fabricated citations"
+  // guarantee scripts/refresh-judge.md promises.
+  if (applied.some((a) => a.field && a.field.startsWith('task_fit_judged.'))) {
+    console.log('\nrunning the anti-fabrication gate (scripts/check-sources.mjs) on judged-fit claims...');
+    let sourcesOk = true;
+    try {
+      execFileSync('node', [fileURLToPath(new URL('scripts/check-sources.mjs', ROOT))], { stdio: 'inherit' });
+    } catch {
+      sourcesOk = false;
+    }
+    if (!sourcesOk) {
+      writeFileSync(dataUrl, originalText); // restore — a fabricated/misquoted citation must never publish
+      console.error('check-sources.mjs failed — restored data/models.json, nothing published.');
+      writeFileSync(receiptUrl, JSON.stringify({
+        job: 'judge', ran_at: new Date().toISOString(), applied: 0, held: held.length, ok: false, error: 'check-sources gate failed',
+      }, null, 2) + '\n');
+      process.exitCode = 1;
+      return;
+    }
+  }
+
+  // Both gates passed — now it's real. Write the changelog (see the comment above data's own
+  // write for why this happens here and not earlier).
+  writeFileSync(changelogUrl, JSON.stringify(changelog, null, 2) + '\n');
 
   // remove applied ids from worklist.json
   if (existsSync(worklistUrl)) {

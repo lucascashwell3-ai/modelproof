@@ -60,6 +60,12 @@ page — a `null` price means the page didn't show that number in static HTML, n
 - **Pricing** traces to official vendor pages (standard tier, USD per 1M tokens).
   Verify anything cost-critical against the vendor's own pricing page before relying on it.
 - **Benchmarks** are directional, cited, and confidence-flagged — never treated as truth.
+- **Where no benchmark exists yet, a judged fit fills the gap — never a guess.** A model missing a
+  quantitative score for a task can still carry a sourced qualitative fit (a band + confidence +
+  claims, each with a source link and a verbatim quote); the site labels these "reported use, not
+  measured" so a reader never mistakes one for a benchmark. Every quote is checked against its
+  live source before publish ([`scripts/check-sources.mjs`](scripts/check-sources.mjs)) — a claim
+  that can't be verified on the page it cites is rejected, not softened.
 - **A blank (—) means "not reliably sourced," never a guess.** The validator
   ([`scripts/validate-data.mjs`](scripts/validate-data.mjs)) blocks any publish that breaks
   schema or sourcing rules.
@@ -81,7 +87,8 @@ Switzer / JetBrains Mono. Restrained, GPU-friendly motion; no build tooling anyw
 
 ## Roadmap
 
-- [ ] Per-model usage volumes (OpenRouter rankings) as a data layer.
+- [x] Per-model usage volumes (OpenRouter rankings) as a data layer — `usage.openrouter` on every
+      model, collected from OpenRouter's own rankings feed (`scripts/derive-usage.mjs`).
 - [ ] More effort ladders as labs publish them (one pending a permissions reply).
 - [ ] "Build my stack" — a multi-tool breakdown for teams paying for several AI tools at once.
 

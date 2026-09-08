@@ -37,7 +37,7 @@ jobs:
           node-version: 20
 
       - name: Unit test the check-stage rules
-        run: node --test scripts/test-auto-refresh.mjs scripts/test-apply-judgment.mjs scripts/test-derive-availability.mjs scripts/test-derive-task-fit.mjs scripts/test-decide.mjs
+        run: node --test scripts/test-auto-refresh.mjs scripts/test-apply-judgment.mjs scripts/test-derive-availability.mjs scripts/test-derive-task-fit.mjs scripts/test-decide.mjs scripts/test-check-sources.mjs scripts/test-derive-usage.mjs
 
       - name: Run collect (feed -> check -> publish -> worklist -> report)
         id: run
@@ -56,6 +56,14 @@ jobs:
         # Runs BEFORE "Commit and push" so a red run here blocks publish, not just notifies after
         # the fact.
         run: node --test scripts/test-*.mjs
+
+      - name: Anti-fabrication gate — verify judged-fit citations (scripts/check-sources.mjs)
+        # apply-judgment.mjs already runs this automatically whenever the cloud Judge writes a
+        # judged-fit claim (so a fabricated/misquoted citation can't reach main through that path
+        # at all) — this step is the second line of defense for Collect's own commits, and it also
+        # catches a claim that was fine when written but whose source page later changed or
+        # disappeared (link rot). A failure here blocks "Commit and push" below.
+        run: node scripts/check-sources.mjs
 
       - name: Commit and push straight to main
         env:

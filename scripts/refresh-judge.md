@@ -54,8 +54,65 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
      the vendor actually published; if the vendor publishes nothing concrete, hold. Never copy a
      marketing line; never infer a capability from the model's name or size. Guidance only fills
      empty fields — it can't overwrite what's already there.
+   - **`judged-fit` items** (up to 3 per run — a model with a null quantitative `task_fit` for one
+     or more of the ten tasks in `data/tasks.json`, queued by Collect's own rotation
+     — `scripts/auto-refresh.mjs`'s `pickJudgedFit`). This is the qualitative counterpart to a
+     benchmark number: the brain considering a model on real, sourced evidence when no number
+     exists yet. `value`:
+     `{"taskId", "band": "strong"|"capable"|"weak"|"unknown", "confidence": "high"|"medium"|"low",
+     "claims": [{"sentence", "source_url", "tier": "lab"|"reported"|"measured"|"usage", "date",
+     "quote"}], "reconciliation": string|null}`.
+     - **One task per judgment.** The item's `ask` lists every open task for that model; submit a
+       separate `judged-fit` judgment (or hold) for each one you can actually source — never one
+       judgment covering several tasks.
+     - **`claims[]` is the evidence, not decoration.** Each claim is ONE carefully worded factual
+       sentence you write, backed by a `source_url` you actually opened, a `tier` naming who said
+       it (`lab` = the model's own maker; `reported` = a named, credible third party — a major
+       outlet, Epoch, a documented leaderboard with a licence that allows citing, never an
+       anonymous aggregator; `measured` = an independent run you can point to; `usage` = a
+       popularity/volume signal), the `date` you confirmed it, and a `quote` — text **copied
+       verbatim** from that exact page, at most 25 words. **The quote is checked by machine
+       (`scripts/check-sources.mjs` fetches the page and confirms the quote is really there) —
+       paraphrasing, combining two sentences, or fixing a typo in the source's own wording will
+       fail the gate and your whole submission is discarded.** Never write a claim you can't quote.
+     - **Absolute and dated, never relative.** Your own `sentence` (and `reconciliation`, if any)
+       must never say "best available," "the top model," "state of the art," "most capable,"
+       "industry-leading," or anything else that reads as a ranking against everything else that
+       exists — that kind of claim is false the day a better model ships. Say what the evidence
+       actually shows, dated: "DeepSeek's own model card (Sept 2026) reports X scoring 87.9 on
+       Terminal Bench 2.1, ahead of Y's 85.0" is fine — it names the specific comparison and stays
+       true forever. This rule is enforced on your `sentence`/`reconciliation` text, never on a
+       `quote` — if the source itself uses one of those phrases, quote it as-is; you are not
+       asserting it, you are citing it.
+     - **A maker's claim and independent evidence disagree → record both, plus one reconciling
+       sentence.** Two claims (each fully sourced, one likely `tier: lab` and one `reported` or
+       `measured`), and `reconciliation` states plainly what actually happened — e.g. a vendor's
+       launch-day claim was later narrowed by its own official listing (see the batch example:
+       Qwen's July preview claim vs. its own later QwenCloud page). Never silently pick a side;
+       never leave two contradictory claims with no reconciling line.
+     - **Band is honest, not generous.** `strong` needs real, credible evidence the model leads or
+       matches recognized peers on something real — a named comparator, a real number, ideally
+       corroborated. `capable` is the default for "genuinely evidenced, not exceptional." `weak` or
+       `unknown` are real answers — use them (or hold) rather than stretching thin evidence into
+       `capable`. `weak`/`unknown` never clear the site's capability floor (same as no evidence at
+       all), so there's no pressure to inflate a band just to make a model "count."
+     - **A same-vendor successor queues its predecessor for re-judge**, not a rewrite. When a
+       `new-model` item you're admitting is from a vendor that already has a judged-fit record on
+       file for another of its models, Collect will queue that OTHER model's record for re-judge
+       automatically next run (`scripts/auto-refresh.mjs`'s `reJudgeWorklistItems`) — you don't
+       need to do anything extra here beyond admitting the new model normally.
+     - Hold (per task) if you can't find a real claim with a quotable source — never invent one to
+       fill the slot.
+   - **`usage` items**: `value: {"category", "share" (0–100), "rank" (>=1)}` — written to the
+     model's `usage.openrouter`. In practice Collect derives this itself from OpenRouter's own
+     rankings JSON (`scripts/derive-usage.mjs`) every full run, so you should rarely see one of
+     these on the worklist; if you do, treat it the same as any other sourced numeric fact — a
+     real number from a real page, or hold.
 5. Run `node scripts/apply-judgment.mjs judgments.json`. It enforces the schema, applies, runs
-   the honesty gate, and restores the file if the gate fails — trust its exit code.
+   the honesty gate, and — if this run wrote at least one `judged-fit` claim — the anti-fabrication
+   gate (`scripts/check-sources.mjs`), which lives-fetches every claim's `source_url` and confirms
+   the `quote` is really on the page. It restores the file and exits non-zero if any gate fails —
+   trust its exit code either way.
 6. If it exits 0: `git add data/` (data/ files only — models.json, changelog.json,
    refresh/worklist.json, refresh/receipt-judge.json). Commit, `git pull --rebase origin main`, then
    `git push origin HEAD:main`. Retry the pull/push up to 3 times on conflict.

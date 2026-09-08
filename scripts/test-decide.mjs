@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   decide, filterCandidates, isReachable, vendorCountry, WHY_FIELDS, VENDOR_KEY_DISPLAY, STANCES,
+  taskFitFor, basisFromClaims, judgedBandOf, bandRank, confidenceRank, isEnterpriseInput,
+  isDisqualifiedFromStartHere, topClaimSentence, rankByStance, dominates, dropDominated,
+  calibrateBand, evidenceFamilySet,
 } from '../assets/decide.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
 
@@ -13,7 +16,6 @@ const models = readJson('data/models.json').models;
 const plans = readJson('data/plans.json').plans;
 const presets = readJson('data/usage-presets.json').presets;
 const vendors = readJson('data/vendors.json').vendors;
-const situations = readJson('data/eval/situations.json').situations;
 const data = { models, plans, presets, vendors };
 
 // ---------------------------------------------------------------------------------------------
@@ -28,44 +30,17 @@ test('registry: WHY_FIELDS keys and derive-task-fit BASIS_TOKENS are the same se
   assert.deepEqual(whyKeys, basisTokens);
 });
 
-// ---------------------------------------------------------------------------------------------
-// Sanity: every task id used in data/eval/situations.json is one derive-task-fit.mjs knows.
-// ---------------------------------------------------------------------------------------------
-test('eval situations only reference real task ids', () => {
-  for (const s of situations) {
-    for (const t of s.input.tasks) assert.ok(TASK_IDS.includes(t), `situation "${s.id}" uses unknown task "${t}"`);
-  }
-});
+// (the "situations only reference real task ids" sanity check now lives in
+// scripts/test-eval-situations.mjs, alongside the rest of the situations.json-driven eval)
 
 // ---------------------------------------------------------------------------------------------
-// The 20-situation eval. Each situation's `expected` was drafted by running decide() against the
-// live catalog (see data/eval/situations.json's _readme) — this is deliberately a trip-wire: a
-// data refresh that changes prices/scores/availability enough to flip one of these SHOULD fail
-// this test, which is exactly why it's wired into .github/workflows/auto-refresh.yml after Collect.
+// The situations eval used to live here as a hard-coded 20-case test. It's superseded (2026-09-07)
+// by scripts/test-eval-situations.mjs, which runs every situation in data/eval/situations.json
+// PLUS data/eval/must-never.json and prints a pass rate — situations.json itself now holds a cold
+// answer key (drafted by a separate pass with no visibility into this engine's internals, not by
+// running decide() and reading off the winner) precisely so this eval can't grade its own
+// homework. See that file for the real eval; this file keeps the structural/property tests below.
 // ---------------------------------------------------------------------------------------------
-test('eval: 20 realistic situations match their drafted expectations', () => {
-  const failures = [];
-  for (const s of situations) {
-    const taskId = s.input.tasks[0];
-    const out = decide(s.input, data);
-    const shortlist = out.tasks[taskId]?.shortlist || [];
-    const { start_here_any_of, must_not_include } = s.expected;
-
-    if (start_here_any_of.length === 0) {
-      if (shortlist.length !== 0) failures.push(`${s.id}: expected an empty shortlist, got [${shortlist.map((x) => x.id)}]`);
-    } else {
-      const startHere = shortlist.find((x) => x.start_here);
-      if (!startHere) failures.push(`${s.id}: no start_here item in shortlist`);
-      else if (!start_here_any_of.includes(startHere.id)) {
-        failures.push(`${s.id}: start_here "${startHere.id}" not in expected [${start_here_any_of}]`);
-      }
-    }
-    for (const id of must_not_include || []) {
-      if (shortlist.some((x) => x.id === id)) failures.push(`${s.id}: "${id}" must not appear in the shortlist but does`);
-    }
-  }
-  assert.equal(failures.length, 0, `\n${failures.join('\n')}`);
-});
 
 // ---------------------------------------------------------------------------------------------
 // Full-grid property test: task (10) x have (7) x stance (3) x volume (3) x dataRule (2)
@@ -112,39 +87,121 @@ test(`full grid: ${TASK_IDS.length} tasks x ${HAVE_OPTIONS.length} have x ${STAN
               }
             }
 
-            // (c) under 'cheapest', start_here is the cheapest model that clears every filter
-            //     (recomputed independently from the full pre-ranking candidate set, not just
-            //     the top 3, so this checks against the WHOLE eligible universe).
+            // (c) under 'cheapest', start_here is the overall cheapest candidate ACROSS EVERY
+            //     (band, confidence) tier (rule 4, rewritten 2026-09-07: 'cheapest' now sorts on
+            //     cost first, regardless of tier, as long as the candidate already cleared rule
+            //     3's strong-or-capable floor — ties fall back to band, then confidence. A prior
+            //     version of this rule put band/confidence ahead of cost for every stance, which
+            //     made 'cheapest' silently identical to 'best' whenever candidates spanned more
+            //     than one tier). Recomputed independently from the full pre-ranking candidate
+            //     set (after the same domination pruning decide() itself applies), not just the
+            //     top 3.
             if (stance === 'cheapest') {
               const { candidates } = filterCandidates(taskId, input, data);
-              const withCost = candidates.filter((c) => typeof c.monthly_cost_usd === 'number');
-              if (withCost.length) {
-                const minCost = Math.min(...withCost.map((c) => c.monthly_cost_usd));
+              if (candidates.length) {
+                const pruned = dropDominated(candidates);
+                const withCost = pruned.filter((c) => typeof c.monthly_cost_usd === 'number');
                 const startHere = shortlist.find((x) => x.start_here);
-                if (!startHere) failures.push(`${label}: candidates exist but no start_here was returned`);
-                else if (Math.abs(startHere.monthly_cost_usd - minCost) > 1e-9) {
-                  failures.push(`${label}: start_here "${startHere.id}" costs ${startHere.monthly_cost_usd}, cheapest eligible is ${minCost}`);
+                if (!startHere) {
+                  failures.push(`${label}: candidates exist but no start_here was returned`);
+                } else if (withCost.length) {
+                  const minCost = Math.min(...withCost.map((c) => c.monthly_cost_usd));
+                  // start_here can legitimately be pricier than the overall cheapest only if
+                  // every candidate at or under that cost was disqualified from start_here (low
+                  // adoption) — never for any other reason.
+                  if (Math.abs(startHere.monthly_cost_usd - minCost) > 1e-9) {
+                    // Disqualification is checked against the FULL pre-domination candidate set,
+                    // exactly like decide() itself does — a same-band broad/moderate alternative
+                    // that dropDominated later pruned on pure price/fit still has to count here,
+                    // or this check would wrongly flag a start_here decide() got right.
+                    const cheaperCandidates = pruned.filter((c) => (
+                      typeof c.monthly_cost_usd === 'number' && c.monthly_cost_usd < startHere.monthly_cost_usd - 1e-9
+                    ));
+                    const allCheaperDisqualified = cheaperCandidates.every((c) => isDisqualifiedFromStartHere(c, candidates, stance, input));
+                    if (!allCheaperDisqualified) {
+                      failures.push(`${label}: start_here "${startHere.id}" costs ${startHere.monthly_cost_usd}, a cheaper undisqualified candidate exists (cheapest overall: ${minCost})`);
+                    }
+                  }
                 }
-              } else if (candidates.length && shortlist.length === 0) {
-                failures.push(`${label}: candidates existed (all unpriced) but shortlist was empty`);
               }
             }
 
-            // (d) never a pricier model with a lower fit than a cheaper one in the same shortlist
+            // (d) never a pricier model dominated by a cheaper one — rewritten 2026-09-07
+            // alongside dropDominated/dominates(), TWICE the same day: first so a pricier model
+            // with a lower raw fit number could survive if its judged band is higher (a
+            // 'capable' model can never eliminate a 'strong' one just by being cheaper), then
+            // again so real-world evidence (usage_rank, and WHICH families back a model, not
+            // just how many) also has to favor the cheaper model before it can erase a pricier
+            // one — see dominates()'s own comment for the concrete bug (Kimi K3 erasing Claude
+            // Opus 5 and GPT-5.6 Sol from "coding") this second rewrite exists to fix. This
+            // re-derivation must rebuild the SAME fields decide()'s own filterCandidates puts on
+            // a real candidate — calibrated band, usage_rank, familyTypes, fitSource — or it's
+            // comparing against a model dominates() was never actually asked to judge, which is
+            // exactly the false-positive this comment used to produce before those fields were
+            // added here.
+            const infoFor = (id) => {
+              const mm = models.find((x) => x.id === id);
+              const raw = judgedBandOf(mm, taskId);
+              const { band } = calibrateBand(mm, taskId, raw.band);
+              const fit = taskFitFor(mm, taskId);
+              return {
+                band, confidence: raw.confidence,
+                usage_rank: mm.signals?.[taskId]?.usage_rank ?? null,
+                familyTypes: evidenceFamilySet(mm, taskId),
+                fitSource: fit.source,
+              };
+            };
             for (const a of shortlist) {
               for (const b of shortlist) {
                 if (a === b || typeof a.monthly_cost_usd !== 'number' || typeof b.monthly_cost_usd !== 'number') continue;
-                if (a.monthly_cost_usd > b.monthly_cost_usd && a.fit < b.fit) {
-                  failures.push(`${label}: "${a.id}" ($${a.monthly_cost_usd}, fit ${a.fit}) is pricier AND lower-fit than "${b.id}" ($${b.monthly_cost_usd}, fit ${b.fit})`);
+                const ia = infoFor(a.id), ib = infoFor(b.id);
+                const shaped = (item, info) => ({ ...item, ...info, model: { adoption: item.adoption } });
+                if (dominates(shaped(b, ib), shaped(a, ia), stance)) {
+                  failures.push(`${label}: "${a.id}" ($${a.monthly_cost_usd}, fit ${a.fit}, band ${ia.band}) is dominated by "${b.id}" ($${b.monthly_cost_usd}, fit ${b.fit}, band ${ib.band}) but both survived to the shortlist`);
                 }
               }
             }
 
-            // (e) every `why` mentions only fields present in that item's fit_basis
+            // (e) every shortlist item carries a real basis/status/adoption/why — the judgment-
+            // first shape every candidate must have now that a judged record is mandatory to be
+            // a candidate at all (rule 3, rewritten 2026-09-07).
             for (const item of shortlist) {
-              const mentioned = Object.entries(WHY_FIELDS).filter(([, v]) => v.mention.test(item.why)).map(([k]) => k);
-              const extra = mentioned.filter((k) => !item.fit_basis.includes(k));
-              if (extra.length) failures.push(`${label}: "${item.id}" why="${item.why}" mentions ${extra} not in fit_basis [${item.fit_basis}]`);
+              if (!['reported', 'lab-stated'].includes(item.basis)) failures.push(`${label}: "${item.id}" basis "${item.basis}" must be reported|lab-stated now that judgment gates every candidate`);
+              if (!item.claims || !item.claims.length) failures.push(`${label}: "${item.id}" has no claims backing its judged band`);
+              if (typeof item.why !== 'string' || !item.why.length) failures.push(`${label}: "${item.id}" has no why text`);
+              if (item.status == null) failures.push(`${label}: "${item.id}" is missing status`);
+              if (item.adoption == null) failures.push(`${label}: "${item.id}" is missing adoption`);
+            }
+
+            // (f) a plain stance 'best' with NO enterprise signal may legitimately pick a preview
+            // model as start_here (removed 2026-09-07 — see isDisqualifiedFromStartHere's own
+            // comment and data/eval/situations.json's S33). The only remaining preview rule is the
+            // enterprise-style full exclusion, checked below as (f2).
+
+            // (f2) NEW RULE — an enterprise-style input excludes status:'preview' from the
+            // shortlist ENTIRELY, not just from start_here.
+            if (isEnterpriseInput(input)) {
+              for (const item of shortlist) {
+                if (item.status === 'preview') failures.push(`${label}: "${item.id}" is a preview model but the input is enterprise-style — it must be fully excluded, not just demoted`);
+              }
+            }
+
+            // (g) NEW RULE — adoption:'low' never gets start_here while a broad/moderate model of
+            // the SAME judged band is also a candidate.
+            {
+              const startHere = shortlist.find((x) => x.start_here);
+              if (startHere && startHere.adoption === 'low') {
+                const { candidates } = filterCandidates(taskId, input, data);
+                // band isn't on the shortlist item itself — look it back up from the candidate set.
+                const startHereCandidate = candidates.find((c) => c.model.id === startHere.id);
+                const hadBetterAdoptionSameBand = startHereCandidate && candidates.some((c) => (
+                  c !== startHereCandidate && c.band === startHereCandidate.band &&
+                  (c.model.adoption === 'broad' || c.model.adoption === 'moderate')
+                ));
+                if (hadBetterAdoptionSameBand) {
+                  failures.push(`${label}: start_here "${startHere.id}" has low adoption but a broader-adoption same-band candidate existed`);
+                }
+              }
             }
           }
         }
@@ -220,4 +277,359 @@ test('VENDOR_KEY_DISPLAY matches the canonical spellings scripts/naming.mjs uses
   for (const [key, display] of Object.entries(VENDOR_KEY_DISPLAY)) {
     assert.equal(canonicalVendor(key), display, `have-key "${key}" should map to naming.mjs's canonical "${canonicalVendor(key)}"`);
   }
+});
+
+// ---------------------------------------------------------------------------------------------
+// Judged task fit (2026-09-06): a model with no quantitative task_fit for a task can still clear
+// rule 3's floor on a judged band, and it must always carry a 'reported'/'lab-stated' basis (not
+// 'measured') plus the claims that back it — see assets/decide.mjs's taskFitFor()/JUDGED_BAND_SCORE.
+// ---------------------------------------------------------------------------------------------
+const JUDGED_CLAIM = {
+  sentence: 'Acme Corp published a coding benchmark score of 82% for Judged Test Model on August 1, 2026.',
+  source_url: 'https://vendor.example/judged-test-model',
+  tier: 'reported',
+  date: '2026-08-01',
+  quote: 'Judged Test Model scores 82% on our internal coding benchmark.',
+};
+function judgedFixtureModel(overrides = {}) {
+  return {
+    id: 'judged-test-model', name: 'Judged Test Model', vendor: 'Acme',
+    price_input: 0.1, price_output: 0.1, context_window: 100000,
+    benchmarks: {}, best_for: [], availability: { openrouter: true, sources: [] },
+    task_fit: Object.fromEntries(TASK_IDS.map((t) => [t, { score: null, basis: [], reason: 'fixture — no quantitative basis' }])),
+    task_fit_judged: { coding: { band: 'strong', confidence: 'high', claims: [JUDGED_CLAIM], reconciliation: null, as_of: '2026-09-01' } },
+    ...overrides,
+  };
+}
+
+test('taskFitFor: quantitative fit always wins over a judged band when both exist', () => {
+  const m = judgedFixtureModel({ task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 71, basis: ['coding_score'] } } });
+  const fit = taskFitFor(m, 'coding');
+  assert.equal(fit.source, 'measured');
+  assert.equal(fit.score, 71);
+});
+
+test('taskFitFor: "weak"/"unknown" judged bands never clear the floor (score stays null)', () => {
+  for (const band of ['weak', 'unknown']) {
+    const m = judgedFixtureModel({ task_fit_judged: { coding: { band, confidence: 'low', claims: [JUDGED_CLAIM], reconciliation: null, as_of: '2026-09-01' } } });
+    const fit = taskFitFor(m, 'coding');
+    assert.equal(fit.score, null, `band "${band}" must not clear the floor`);
+  }
+});
+
+test('basisFromClaims: "lab-stated" when every claim is the vendor\'s own, "reported" when any claim names a third party', () => {
+  assert.equal(basisFromClaims([{ tier: 'lab' }, { tier: 'lab' }]), 'lab-stated');
+  assert.equal(basisFromClaims([{ tier: 'lab' }, { tier: 'reported' }]), 'reported');
+  assert.equal(basisFromClaims([{ tier: 'measured' }]), 'reported');
+});
+
+test('judged fit: a model with only a judged band appears in the shortlist with a non-measured basis and its claims', () => {
+  const fixture = judgedFixtureModel();
+  const judgedData = { models: [fixture], plans, presets, vendors };
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, judgedData);
+  const item = out.tasks.coding.shortlist.find((x) => x.id === 'judged-test-model');
+  assert.ok(item, 'expected the judged-only model to clear the floor and appear in the shortlist');
+  assert.equal(item.basis, 'reported');
+  assert.notEqual(item.basis, 'measured');
+  assert.equal(item.claims.length, 1);
+  assert.equal(item.claims[0].source_url, JUDGED_CLAIM.source_url);
+  // why (rewritten 2026-09-07): the record's own top claim sentence, verbatim — not a generic
+  // "judged X fit" restatement.
+  assert.equal(item.why, JUDGED_CLAIM.sentence);
+});
+
+test('judged fit: a "weak" band never appears in the shortlist (same as no basis at all)', () => {
+  const fixture = judgedFixtureModel({ task_fit_judged: { coding: { band: 'weak', confidence: 'medium', claims: [JUDGED_CLAIM], reconciliation: null, as_of: '2026-09-01' } } });
+  const judgedData = { models: [fixture], plans, presets, vendors };
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, judgedData);
+  assert.equal(out.tasks.coding.shortlist.length, 0);
+});
+
+// ---------------------------------------------------------------------------------------------
+// Judged-ranking rewrite (2026-09-07): the whole point of this change is that adoption/status —
+// NOT just a benchmark number — now DOES change ranking (the opposite of the pre-rewrite
+// invariant this test file used to assert). This is the regression test for the exact bug the
+// rewrite exists to fix: a low-adoption preview model must never win start_here over a
+// broad/moderate-adoption GA model of the SAME judged band on fit/price alone.
+// ---------------------------------------------------------------------------------------------
+function bandedFixture(id, overrides = {}) {
+  return judgedFixtureModel({
+    id, name: overrides.name || id,
+    price_input: 0.1, price_output: 0.1,
+    task_fit_judged: { coding: { band: 'strong', confidence: 'high', claims: [{ ...JUDGED_CLAIM, sentence: `${id} claim` }], reconciliation: null, as_of: '2026-09-01' } },
+    status: 'ga', adoption: 'unknown',
+    ...overrides,
+  });
+}
+
+test('adoption gate: a low-adoption model never gets start_here over a broad/moderate model of the SAME band, even with a higher raw fit', () => {
+  // Priced so neither dominates the other (dropDominated would otherwise remove whichever one
+  // has both a lower-or-equal fit AND a lower-or-equal cost, defeating the point of this test) —
+  // the higher-fit model costs more, the broader-adoption model costs less.
+  const low = bandedFixture('low-adopt-strong', { adoption: 'low', price_output: 10, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 99, basis: ['coding_score'] } } });
+  const broad = bandedFixture('broad-adopt-strong', { adoption: 'broad', price_output: 0.1, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 60, basis: ['coding_score'] } } });
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, { models: [low, broad], plans, presets, vendors });
+  const shortlist = out.tasks.coding.shortlist;
+  const startHere = shortlist.find((x) => x.start_here);
+  assert.equal(startHere.id, 'broad-adopt-strong', 'the higher-fit but low-adoption model must not win start_here over a same-band broad-adoption model');
+  assert.ok(shortlist.some((x) => x.id === 'low-adopt-strong'), 'the low-adoption model should still appear in the shortlist, just not first');
+});
+
+test('adoption gate: a low-adoption model DOES get start_here when no broad/moderate model of the same band exists', () => {
+  const low = bandedFixture('lonely-low-adopt', { adoption: 'low' });
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, { models: [low], plans, presets, vendors });
+  assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'lonely-low-adopt');
+});
+
+test('preview gate: GA never loses start_here to a preview model in the SAME band, even when the preview has a higher raw fit (reintroduced 2026-09-07, narrower than the blanket rule removed earlier that day — see isDisqualifiedFromStartHere\'s comment; this is the exact shape of bug the real catalog showed for "writing": gemini-3-1-pro outranking claude-sonnet-5 on a families/fit tie-break despite both being "capable")', () => {
+  const preview = bandedFixture('preview-model', { status: 'preview', price_output: 10, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 99, basis: ['coding_score'] } } });
+  const ga = bandedFixture('ga-model', { status: 'ga', price_output: 0.1, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 60, basis: ['coding_score'] } } });
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, { models: [preview, ga], plans, presets, vendors });
+  const shortlist = out.tasks.coding.shortlist;
+  // Same band for both fixtures ('strong') — GA wins start_here regardless of the preview
+  // model's higher measured coding_score (99 vs 60); the preview model still appears lower in
+  // the shortlist, just never as start_here.
+  assert.equal(shortlist.find((x) => x.start_here)?.id, 'ga-model');
+  assert.ok(shortlist.some((x) => x.id === 'preview-model'), 'the preview model should still appear in the shortlist, just not first');
+});
+
+test('preview gate: a preview model DOES win start_here under plain "best" when no GA model shares its band (data/eval/situations.json\'s S33 — Google-only vision, no GA candidate even clears the judged floor there)', () => {
+  // families: 2 keeps the default 'strong' judged band from being calibration-downgraded to
+  // 'capable' (rule 3b needs >= 2 real-world signal families for a claimed 'strong' to survive
+  // as 'strong') — without it, this fixture's 'strong' would collapse to 'capable' same as the
+  // GA rival below, defeating the point of this different-band test.
+  const preview = bandedFixture('lonely-preview-strong', { status: 'preview', signals: { coding: { families: 2 } } });
+  const gaOtherBand = bandedFixture('ga-weaker-band', { status: 'ga', task_fit_judged: { coding: { band: 'capable', confidence: 'high', claims: [{ ...JUDGED_CLAIM, sentence: 'ga-weaker-band claim' }], reconciliation: null, as_of: '2026-09-01' } } });
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, { models: [preview, gaOtherBand], plans, presets, vendors });
+  // Different bands ('strong' vs 'capable') — band still outranks status, so the preview model
+  // legitimately wins start_here; the new GA-before-preview rule only ever applies WITHIN a band.
+  assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'lonely-preview-strong');
+});
+
+test('preview gate: an enterprise-style input still prefers the non-preview candidate — the real exclusion (rule 3) still applies even though the plain-"best" demotion above was removed', () => {
+  const preview = bandedFixture('preview-model-ent', { status: 'preview', vendor: 'Acme', price_output: 10, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 99, basis: ['coding_score'] } } });
+  const ga = bandedFixture('ga-model-ent', { status: 'ga', vendor: 'Acme', price_output: 0.1, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 60, basis: ['coding_score'] } } });
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {}, enterprise: true }, { models: [preview, ga], plans, presets, vendors });
+  const shortlist = out.tasks.coding.shortlist;
+  assert.equal(shortlist.find((x) => x.start_here)?.id, 'ga-model-ent');
+  assert.ok(!shortlist.some((x) => x.id === 'preview-model-ent'), 'enterprise:true still fully excludes the preview model at rule 3, regardless of its fit');
+});
+
+test('preview gate: stance "cheapest" with no enterprise-style input does NOT disqualify a preview model', () => {
+  const preview = bandedFixture('preview-cheapest-ok', { status: 'preview', price_output: 0.01 });
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'cheapest', volume: 'typical', dataRule: {} }, { models: [preview], plans, presets, vendors });
+  assert.equal(out.tasks.coding.shortlist.find((x) => x.start_here)?.id, 'preview-cheapest-ok');
+});
+
+test('preview gate: an enterprise-style input (single named vendor + heavy volume) EXCLUDES preview entirely, not just from start_here', () => {
+  // (2026-09-07, against the independently-drafted 40-situation answer key: enterprise + preview
+  // must be a full exclusion — "must_not_include", not just "must_not_start" — see
+  // data/eval/must-never.json's "a preview-labeled SKU must never be the enterprise starting
+  // recommendation" entries.)
+  const preview = bandedFixture('preview-enterprise', { status: 'preview', vendor: 'Anthropic', price_output: 10, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 99, basis: ['coding_score'] } } });
+  const ga = bandedFixture('ga-enterprise', { status: 'ga', vendor: 'Anthropic', price_output: 0.1, task_fit: { ...judgedFixtureModel().task_fit, coding: { score: 60, basis: ['coding_score'] } } });
+  const out = decide({ tasks: ['coding'], have: ['anthropic'], stance: 'balanced', volume: 'heavy', dataRule: {} }, { models: [preview, ga], plans, presets, vendors });
+  const shortlist = out.tasks.coding.shortlist;
+  assert.equal(shortlist.find((x) => x.start_here)?.id, 'ga-enterprise');
+  assert.ok(!shortlist.some((x) => x.id === 'preview-enterprise'), 'a preview model must not appear anywhere in an enterprise-style shortlist');
+});
+
+test('isEnterpriseInput: an explicit input.enterprise overrides the heuristic in both directions', () => {
+  // true overrides a heuristic that would otherwise say false (openrouter-anything + a custom volume)
+  assert.equal(isEnterpriseInput({ enterprise: true, have: ['openrouter'], volume: { tokens_in_month: 1, tokens_out_month: 1 }, dataRule: {} }), true);
+  // false overrides a heuristic that would otherwise say true (a dataRule is set)
+  assert.equal(isEnterpriseInput({ enterprise: false, have: ['any'], volume: 'typical', dataRule: { noChinaHosted: true } }), false);
+});
+
+test('preview gate: explicit input.enterprise:true excludes preview entirely even when the heuristic alone would not', () => {
+  const preview = bandedFixture('preview-explicit-enterprise', { status: 'preview' });
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'balanced', volume: 'typical', dataRule: {}, enterprise: true }, { models: [preview], plans, presets, vendors });
+  assert.equal(out.tasks.coding.shortlist.length, 0, 'the only candidate is a preview model excluded by explicit enterprise:true, so the shortlist is empty');
+});
+
+test('isEnterpriseInput: single named vendor needs BOTH the vendor and heavy volume; a dataRule alone is enough on its own', () => {
+  assert.equal(isEnterpriseInput({ have: ['anthropic'], volume: 'heavy', dataRule: {} }), true);
+  assert.equal(isEnterpriseInput({ have: ['anthropic'], volume: 'typical', dataRule: {} }), false);
+  assert.equal(isEnterpriseInput({ have: ['any'], volume: 'heavy', dataRule: {} }), false);
+  assert.equal(isEnterpriseInput({ have: ['openrouter'], volume: 'heavy', dataRule: {} }), false);
+  assert.equal(isEnterpriseInput({ have: ['any'], volume: 'light', dataRule: { noChinaHosted: true } }), true);
+});
+
+test('judgedBandOf: no task_fit_judged record at all reads the same as an explicit "unknown" band', () => {
+  assert.deepEqual(judgedBandOf({ task_fit_judged: null }, 'coding'), { band: 'unknown', confidence: null, judged: null });
+  assert.deepEqual(judgedBandOf({ task_fit_judged: {} }, 'coding'), { band: 'unknown', confidence: null, judged: null });
+  const rec = { band: 'strong', confidence: 'high', claims: [] };
+  assert.deepEqual(judgedBandOf({ task_fit_judged: { coding: rec } }, 'coding'), { band: 'strong', confidence: 'high', judged: rec });
+});
+
+test('topClaimSentence: prefers a non-usage claim over a usage claim, falls back to usage if that\'s all there is', () => {
+  const usageOnly = [{ tier: 'usage', sentence: 'usage sentence' }];
+  assert.equal(topClaimSentence(usageOnly), 'usage sentence');
+  const mixed = [{ tier: 'usage', sentence: 'usage sentence' }, { tier: 'lab', sentence: 'lab sentence' }];
+  assert.equal(topClaimSentence(mixed), 'lab sentence');
+  assert.equal(topClaimSentence([]), 'No sourced claim on file for this pick.');
+});
+
+// ---------------------------------------------------------------------------------------------
+// Stance rewrite (2026-09-07): the actual bug this rewrite exists to fix was 'cheapest' silently
+// returning the exact same shortlist order as 'best' for every task, because band/confidence sat
+// ahead of cost for every stance — price never got a chance to matter. These two tests run
+// against the REAL catalog (have: ['any'], so every task has its full candidate pool) and check
+// the property the fix is actually supposed to establish, not one hand-picked example.
+// ---------------------------------------------------------------------------------------------
+test("stance rewrite: for every task, 'cheapest' start_here never costs more than 'best' start_here", () => {
+  const failures = [];
+  for (const taskId of TASK_IDS) {
+    const input = (stance) => ({ tasks: [taskId], have: ['any'], stance, volume: 'typical', dataRule: {} });
+    const cheapest = decide(input('cheapest'), data).tasks[taskId].shortlist.find((x) => x.start_here);
+    const best = decide(input('best'), data).tasks[taskId].shortlist.find((x) => x.start_here);
+    if (!cheapest || !best) continue; // no candidate at all for this task — nothing to compare
+    if (typeof cheapest.monthly_cost_usd !== 'number' || typeof best.monthly_cost_usd !== 'number') continue; // unknown cost can't be compared either way
+    if (cheapest.monthly_cost_usd > best.monthly_cost_usd + 1e-9) {
+      failures.push(`${taskId}: cheapest start_here "${cheapest.id}" costs ${cheapest.monthly_cost_usd} > best start_here "${best.id}" at ${best.monthly_cost_usd}`);
+    }
+  }
+  assert.equal(failures.length, 0, failures.join('\n'));
+});
+
+test("stance rewrite: 'cheapest' and 'best' pick a genuinely different shortlist order for at least half of the real tasks — proof 'cheapest' is no longer a silent copy of 'best'", () => {
+  let taskCount = 0;
+  let differByOrder = 0;
+  for (const taskId of TASK_IDS) {
+    const input = (stance) => ({ tasks: [taskId], have: ['any'], stance, volume: 'typical', dataRule: {} });
+    const cheapestList = decide(input('cheapest'), data).tasks[taskId].shortlist.map((x) => x.id);
+    const bestList = decide(input('best'), data).tasks[taskId].shortlist.map((x) => x.id);
+    if (cheapestList.length < 2 && bestList.length < 2) continue; // fewer than 2 candidates: no order to compare
+    taskCount++;
+    if (JSON.stringify(cheapestList) !== JSON.stringify(bestList)) differByOrder++;
+  }
+  assert.ok(taskCount > 0, 'fixture assumption: at least one real task has >= 2 candidates for have: [\'any\']');
+  assert.ok(
+    differByOrder >= Math.ceil(taskCount / 2),
+    `expected cheapest != best for at least half of the ${taskCount} comparable tasks, got ${differByOrder}`,
+  );
+});
+
+// ---------------------------------------------------------------------------------------------
+// Cost coverage (2026-09-07): monthly_cost_usd must be a real number whenever a candidate has
+// both price_input/price_output on file and a resolved volume preset — null only when a price
+// is genuinely missing from data/models.json (see decide()'s missing-price assumption line,
+// which fires per shortlist item that's still null for that reason). This is the regression test
+// for the exact failure mode a malformed caller used to trigger SILENTLY: passing the whole
+// parsed data/usage-presets.json file (with its _readme/as_of wrapper) as `data.presets` instead
+// of that file's own `presets` sub-object made every monthly_cost_usd null, with no error
+// anywhere — and because 'cheapest' has nothing left to break a tie on when cost is always null,
+// it also silently collapsed to the exact same order as 'best' (see the two "stance rewrite"
+// tests above, which already assert the other two halves of this: cheapest.start_here never
+// costs more than best.start_here, and their orders differ for at least half the real tasks).
+// unwrapPresets() in resolveVolume() now guards the specific caller mistake that caused this.
+// ---------------------------------------------------------------------------------------------
+test('cost coverage: for have=any/typical, at least 90% of shortlist items across every task carry a numeric monthly_cost_usd', () => {
+  let total = 0;
+  let withCost = 0;
+  const missing = [];
+  for (const taskId of TASK_IDS) {
+    const out = decide({ tasks: [taskId], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, data);
+    for (const item of out.tasks[taskId].shortlist) {
+      total++;
+      if (typeof item.monthly_cost_usd === 'number') withCost++;
+      else missing.push(`${taskId}: "${item.id}"`);
+    }
+  }
+  assert.ok(total > 0, 'fixture assumption: at least one task returns a shortlist item for have=any');
+  const coverage = withCost / total;
+  assert.ok(
+    coverage >= 0.9,
+    `only ${withCost}/${total} shortlist items (${(coverage * 100).toFixed(1)}%) have a numeric cost, want >= 90%: ${missing.join(', ')}`,
+  );
+});
+
+// ---------------------------------------------------------------------------------------------
+// GA-before-preview invariant (2026-09-07): within the SAME calibrated judged band, a
+// status:'preview' item must never rank ahead of a GA item in the returned shortlist, for any
+// stance except 'cheapest' (which stays cost-primary by design — see isDisqualifiedFromStartHere
+// and byBandThenConfidence's own comments). Run against the real catalog, not a hand-built
+// fixture, so it actually catches a real (task, stance) combination going stale — this is exactly
+// how the bug surfaced originally (gemini-3-1-pro over claude-sonnet-5 for "writing").
+// ---------------------------------------------------------------------------------------------
+test("invariant: a GA shortlist item is never ranked below a preview item of the SAME judged band, for every task and every stance except 'cheapest'", () => {
+  const failures = [];
+  const bandOf = (taskId, id) => {
+    const m = models.find((x) => x.id === id);
+    const raw = judgedBandOf(m, taskId);
+    return calibrateBand(m, taskId, raw.band).band;
+  };
+  for (const taskId of TASK_IDS) {
+    for (const stance of STANCES) {
+      if (stance === 'cheapest') continue;
+      const out = decide({ tasks: [taskId], have: ['any'], stance, volume: 'typical', dataRule: {} }, data);
+      const shortlist = out.tasks[taskId].shortlist;
+      for (let i = 0; i < shortlist.length; i++) {
+        if (shortlist[i].status !== 'preview') continue;
+        const previewBand = bandOf(taskId, shortlist[i].id);
+        for (let j = i + 1; j < shortlist.length; j++) {
+          if (shortlist[j].status === 'preview') continue;
+          if (bandOf(taskId, shortlist[j].id) === previewBand) {
+            failures.push(`${taskId}/${stance}: GA "${shortlist[j].id}" ranked BELOW preview "${shortlist[i].id}" (both band "${previewBand}")`);
+          }
+        }
+      }
+    }
+  }
+  assert.equal(failures.length, 0, failures.join('\n'));
+});
+
+// ---------------------------------------------------------------------------------------------
+// Evidence-domination regression (2026-09-07): the concrete bug that motivated redefining
+// dominates()/dropDominated with real-world evidence (usage_rank, family SET) instead of just
+// cost+fit — see dominates()'s own comment for the full story. Before this fix, Kimi K3 (cheaper,
+// one point higher on coding_score, same strong/high/families:2 tier) silently erased BOTH Claude
+// Opus 5 (the actual #1 real-usage pick for "coding" — usage_rank 1 at 37% of OpenRouter coding
+// spend) and GPT-5.6 Sol (usage_rank 3, a DIFFERENT family mix — usage+expert, not Kimi's
+// usage+arena) from the shortlist entirely, purely on a lower price and a marginally higher score.
+// ---------------------------------------------------------------------------------------------
+test('evidence domination: "coding"/have=any/"best" keeps Claude Opus 5 AND GPT-5.6 Sol in the shortlist alongside Kimi K3', () => {
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, data);
+  const ids = out.tasks.coding.shortlist.map((x) => x.id);
+  assert.ok(ids.includes('claude-opus-5'), `expected claude-opus-5 in the shortlist, got [${ids.join(', ')}]`);
+  assert.ok(ids.includes('gpt-5-6-sol'), `expected gpt-5-6-sol in the shortlist, got [${ids.join(', ')}]`);
+  assert.equal(
+    out.tasks.coding.shortlist.find((x) => x.start_here)?.id,
+    'claude-opus-5',
+    'the actual #1 real-usage pick (usage_rank 1) should win start_here over a merely-higher-scoring rival',
+  );
+});
+
+// ---------------------------------------------------------------------------------------------
+// General invariant, run over the whole real catalog: a model that is the #1 real-usage pick for
+// a task (signals[taskId].usage_rank === 1) and clears the judged floor at the (calibrated)
+// 'strong' band can never be dominated away by a cheaper rival — dominates() requires a
+// dominator's usage_rank to be <= the dominated model's, and nothing can be <= 1 except another
+// rank 1, which can't coexist for the same task (scripts/derive-signals.mjs ranks are unique per
+// task) — so such a model must never be ABSENT from that task's 'best' shortlist whenever it's
+// reachable, across every access/volume/data-rule combination this file's full-grid test already
+// exercises.
+// ---------------------------------------------------------------------------------------------
+test('evidence domination invariant: a band-strong, usage_rank-1 model is never absent from its task\'s "best" shortlist when reachable', () => {
+  const failures = [];
+  for (const taskId of TASK_IDS) {
+    for (const have of HAVE_OPTIONS) {
+      for (const volume of VOLUME_OPTIONS) {
+        for (const dataRule of DATA_RULE_OPTIONS) {
+          const input = { tasks: [taskId], have, stance: 'best', volume, dataRule };
+          const { candidates } = filterCandidates(taskId, input, data);
+          const mustHave = candidates.filter((c) => c.usage_rank === 1 && c.band === 'strong');
+          if (!mustHave.length) continue;
+          const out = decide(input, data);
+          const ids = out.tasks[taskId].shortlist.map((x) => x.id);
+          for (const c of mustHave) {
+            if (!ids.includes(c.model.id)) {
+              failures.push(`task=${taskId} have=${JSON.stringify(have)} volume=${volume} noChina=${!!dataRule.noChinaHosted}: "${c.model.id}" (usage_rank 1, band strong) is absent from the shortlist [${ids.join(', ')}]`);
+            }
+          }
+        }
+      }
+    }
+  }
+  assert.equal(failures.length, 0, failures.join('\n'));
 });
