@@ -433,6 +433,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 5 rows)",
+              "rank": 14,
+              "n_models": 124,
+              "score": 0.5567,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 2,
+              "n_models": 110,
+              "score": 2164.57,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror) (best of 3 rows)",
+              "rank": 4,
+              "n_models": 156,
+              "score": 0.9178,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: max)",
+              "rank": 3,
+              "n_models": 26,
+              "score": 0.7365,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 4,
@@ -468,7 +508,28 @@
           }
         },
         "agents": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "APEX-Agents (Epoch mirror)",
+              "rank": 5,
+              "n_models": 63,
+              "score": 0.435,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/apex-agents-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OSWorld 2.0 (Epoch mirror) (best rung: max)",
+              "rank": 1,
+              "n_models": 10,
+              "score": 0.3143,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/osworld-2-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": {
             "rank": 1,
             "share": 13.02,
@@ -484,11 +545,11 @@
             "url": "https://openrouter.ai/rankings"
           },
           "preferred": {
-            "board": "Overview tab, \"Agent\" top-10 card",
+            "board": "Agent Arena · Overall (59 models)",
             "rank": 2,
-            "n_models": 10,
+            "n_models": 59,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/agent"
           }
         },
         "bulk": {
@@ -558,6 +619,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 7,
+              "n_models": 99,
+              "score": 0.8561,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 9,
+              "n_models": 55,
+              "score": 0.7317,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror)",
+              "rank": 2,
+              "n_models": 64,
+              "score": 0.99,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
+              "rank": 10,
+              "n_models": 268,
+              "score": 0.9889,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 5 rows)",
+              "rank": 7,
+              "n_models": 135,
+              "score": 0.2914,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 4,
@@ -595,6 +706,16 @@
         "extraction": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 9,
+              "n_models": 34,
+              "score": 0.24,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
               "rank": 28,
@@ -618,11 +739,11 @@
             "url": "https://openrouter.ai/rankings"
           },
           "preferred": {
-            "board": "Overview tab, \"Document\" top-10 card",
+            "board": "Document Arena (39 models, 322,650 votes)",
             "rank": 1,
-            "n_models": 10,
+            "n_models": 39,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/document"
           }
         },
         "chat": {
@@ -651,26 +772,15 @@
           "measured": [],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"Vision\" top-10 card",
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
             "rank": 9,
-            "n_models": 10,
+            "n_models": 148,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/vision"
           }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror) (best of 2 rows)",
-              "rank": 3,
-              "n_models": 117,
-              "score": 1690.64,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": {
             "rank": 1,
             "share": 38.53,
@@ -682,11 +792,13 @@
             "url": "https://openrouter.ai/rankings"
           },
           "preferred": {
-            "board": "Overview tab, \"WebDev\" top-10 card",
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
             "rank": 3,
-            "n_models": 10,
+            "n_models": 117,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
           }
         },
         "exec-summaries": {
@@ -1094,6 +1206,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 2 rows)",
+              "rank": 5,
+              "n_models": 124,
+              "score": 0.5868,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 11,
+              "n_models": 110,
+              "score": 1524.47,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 9,
+              "n_models": 156,
+              "score": 0.8257,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: max)",
+              "rank": 8,
+              "n_models": 26,
+              "score": 0.6851,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 6,
@@ -1145,11 +1297,11 @@
             "url": "https://openrouter.ai/rankings"
           },
           "preferred": {
-            "board": "Overview tab, \"Agent\" top-10 card",
+            "board": "Agent Arena · Overall (59 models)",
             "rank": 7,
-            "n_models": 10,
+            "n_models": 59,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/agent"
           }
         },
         "bulk": {
@@ -1219,6 +1371,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 15,
+              "n_models": 99,
+              "score": 0.7218,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 18,
+              "n_models": 55,
+              "score": 0.3902,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
+              "rank": 18,
+              "n_models": 268,
+              "score": 0.9722,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 2 rows)",
+              "rank": 12,
+              "n_models": 135,
+              "score": 0.234,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 35,
@@ -1255,6 +1447,16 @@
         },
         "extraction": {
           "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 15,
+              "n_models": 34,
+              "score": 0.19,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
@@ -1308,18 +1510,7 @@
           "preferred": null
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 4,
-              "n_models": 117,
-              "score": 1673.7,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": {
             "rank": 2,
             "share": 8.32,
@@ -1331,11 +1522,13 @@
             "url": "https://openrouter.ai/rankings"
           },
           "preferred": {
-            "board": "Overview tab, \"WebDev\" top-10 card",
-            "rank": 5,
-            "n_models": 10,
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 4,
+            "n_models": 117,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
           }
         },
         "exec-summaries": {
@@ -1802,6 +1995,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 2,
+              "n_models": 124,
+              "score": 0.6019,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 4,
+              "n_models": 110,
+              "score": 2041.3,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror) (best of 2 rows)",
+              "rank": 3,
+              "n_models": 156,
+              "score": 0.9194,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: xhigh)",
+              "rank": 5,
+              "n_models": 26,
+              "score": 0.6991,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 3,
@@ -1832,15 +2065,25 @@
               "as_of": "2026-09-08",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
               "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "APEX-Agents (Epoch mirror)",
+              "rank": 3,
+              "n_models": 63,
+              "score": 0.45,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/apex-agents-external",
+              "licence": "display-ok"
             }
           ],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"Agent\" top-10 card",
+            "board": "Agent Arena · Overall (59 models)",
             "rank": 4,
-            "n_models": 10,
+            "n_models": 59,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/agent"
           }
         },
         "bulk": {
@@ -1893,6 +2136,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 5,
+              "n_models": 99,
+              "score": 0.8702,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 2,
+              "n_models": 55,
+              "score": 0.902,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror) (best rung: max)",
+              "rank": 4,
+              "n_models": 64,
+              "score": 0.95,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
+              "rank": 4,
+              "n_models": 268,
+              "score": 1,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 8,
+              "n_models": 135,
+              "score": 0.2857,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 6,
@@ -1915,15 +2208,25 @@
           ],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"Search\" top-10 card (grounded web search — closest proxy; Arena has no dedicated research/analysis category)",
+            "board": "Search Arena (34 models, 1,110,523 votes) — grounded web search, closest proxy; Arena has no dedicated research/analysis category",
             "rank": 5,
-            "n_models": 10,
+            "n_models": 34,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/search"
           }
         },
         "extraction": {
           "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 4,
+              "n_models": 34,
+              "score": 0.298,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
@@ -1937,11 +2240,11 @@
           ],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"Document\" top-10 card",
+            "board": "Document Arena (39 models, 322,650 votes)",
             "rank": 4,
-            "n_models": 10,
+            "n_models": 39,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/document"
           }
         },
         "chat": {
@@ -1959,11 +2262,11 @@
           "measured": [],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"Vision\" top-10 card",
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
             "rank": 1,
-            "n_models": 10,
+            "n_models": 148,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/vision"
           }
         },
         "frontend": {
@@ -2310,6 +2613,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 21,
+              "n_models": 124,
+              "score": 0.5347,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 10,
+              "n_models": 110,
+              "score": 1563.83,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror) (best of 2 rows)",
+              "rank": 8,
+              "n_models": 156,
+              "score": 0.8289,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: max)",
+              "rank": 14,
+              "n_models": 26,
+              "score": 0.5897,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 28,
@@ -2340,15 +2683,35 @@
               "as_of": "2026-09-08",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
               "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "APEX-Agents (Epoch mirror)",
+              "rank": 6,
+              "n_models": 63,
+              "score": 0.425,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/apex-agents-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OSWorld 2.0 (Epoch mirror) (best rung: max)",
+              "rank": 3,
+              "n_models": 10,
+              "score": 0.206,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/osworld-2-external",
+              "licence": "display-ok"
             }
           ],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"Agent\" top-10 card",
+            "board": "Agent Arena · Overall (59 models)",
             "rank": 6,
-            "n_models": 10,
+            "n_models": 59,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/agent"
           }
         },
         "bulk": {
@@ -2411,6 +2774,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 11,
+              "n_models": 99,
+              "score": 0.8,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 14,
+              "n_models": 55,
+              "score": 0.561,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror) (best rung: max)",
+              "rank": 9,
+              "n_models": 64,
+              "score": 0.69,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
+              "rank": 13,
+              "n_models": 268,
+              "score": 0.9833,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 13,
+              "n_models": 135,
+              "score": 0.2086,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
               "rank": 9,
@@ -2422,10 +2835,26 @@
             }
           ],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Search Arena (34 models, 1,110,523 votes) — grounded web search, closest proxy; Arena has no dedicated research/analysis category",
+            "rank": 12,
+            "n_models": 34,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/search"
+          }
         },
         "extraction": {
           "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 8,
+              "n_models": 34,
+              "score": 0.24,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
@@ -2438,7 +2867,13 @@
             }
           ],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Document Arena (39 models, 322,650 votes)",
+            "rank": 12,
+            "n_models": 39,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/document"
+          }
         },
         "chat": {
           "measured": [],
@@ -2454,23 +2889,26 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 12,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 18,
-              "n_models": 117,
-              "score": 1563.49,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 18,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -2904,6 +3342,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 2 rows)",
+              "rank": 20,
+              "n_models": 124,
+              "score": 0.5359,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 14,
+              "n_models": 110,
+              "score": 1463.12,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 26,
+              "n_models": 156,
+              "score": 0.6878,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: max)",
+              "rank": 17,
+              "n_models": 26,
+              "score": 0.5385,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 9,
@@ -2955,11 +3433,11 @@
             "url": "https://openrouter.ai/rankings"
           },
           "preferred": {
-            "board": "Overview tab, \"Agent\" top-10 card",
+            "board": "Agent Arena · Overall (59 models)",
             "rank": 8,
-            "n_models": 10,
+            "n_models": 59,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/agent"
           }
         },
         "bulk": {
@@ -3029,6 +3507,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 22,
+              "n_models": 99,
+              "score": 0.6561,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 25,
+              "n_models": 55,
+              "score": 0.2927,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror) (best rung: max)",
+              "rank": 7,
+              "n_models": 64,
+              "score": 0.77,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
+              "rank": 30,
+              "n_models": 268,
+              "score": 0.9472,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 2 rows)",
+              "rank": 24,
+              "n_models": 135,
+              "score": 0.1686,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
               "rank": 16,
@@ -3078,7 +3606,13 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "Document Arena (39 models, 322,650 votes)",
+            "rank": 14,
+            "n_models": 39,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/document"
+          }
         },
         "chat": {
           "measured": [],
@@ -3105,21 +3639,16 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 29,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 28,
-              "n_models": 117,
-              "score": 1538.58,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": {
             "rank": 4,
             "share": 3.45,
@@ -3130,7 +3659,15 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 28,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -3439,6 +3976,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 5 rows)",
+              "rank": 13,
+              "n_models": 124,
+              "score": 0.5613,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror) (best of 2 rows)",
+              "rank": 6,
+              "n_models": 110,
+              "score": 1942.97,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror) (best of 2 rows)",
+              "rank": 7,
+              "n_models": 156,
+              "score": 0.8491,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: xhigh)",
+              "rank": 11,
+              "n_models": 26,
+              "score": 0.6704,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 21,
@@ -3474,7 +4051,28 @@
           }
         },
         "agents": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "APEX-Agents (Epoch mirror)",
+              "rank": 12,
+              "n_models": 63,
+              "score": 0.385,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/apex-agents-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OSWorld 2.0 (Epoch mirror) (best rung: xhigh)",
+              "rank": 5,
+              "n_models": 10,
+              "score": 0.13,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/osworld-2-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": {
             "rank": 9,
             "share": 1.17,
@@ -3490,11 +4088,11 @@
             "url": "https://openrouter.ai/rankings"
           },
           "preferred": {
-            "board": "Overview tab, \"Agent\" top-10 card",
+            "board": "Agent Arena · Overall (59 models)",
             "rank": 9,
-            "n_models": 10,
+            "n_models": 59,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/agent"
           }
         },
         "bulk": {
@@ -3574,6 +4172,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2 (best of 2 rows)",
+              "rank": 8,
+              "n_models": 99,
+              "score": 0.8526,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2 (best of 2 rows)",
+              "rank": 10,
+              "n_models": 55,
+              "score": 0.725,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror) (best rung: xhigh)",
+              "rank": 17,
+              "n_models": 64,
+              "score": 0.5,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
+              "rank": 72,
+              "n_models": 268,
+              "score": 0.8444,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 5 rows)",
+              "rank": 9,
+              "n_models": 135,
+              "score": 0.2714,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 7,
@@ -3611,6 +4259,16 @@
         "extraction": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 5,
+              "n_models": 34,
+              "score": 0.26,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
               "rank": 2,
@@ -3623,11 +4281,11 @@
           ],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"Document\" top-10 card",
+            "board": "Document Arena (39 models, 322,650 votes)",
             "rank": 7,
-            "n_models": 10,
+            "n_models": 39,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/document"
           }
         },
         "chat": {
@@ -3644,23 +4302,26 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 11,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror) (best of 2 rows)",
-              "rank": 39,
-              "n_models": 117,
-              "score": 1508.35,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 39,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -4082,6 +4743,46 @@
         "coding": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 3,
+              "n_models": 124,
+              "score": 0.5891,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 33,
+              "n_models": 110,
+              "score": 1160.6,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 22,
+              "n_models": 156,
+              "score": 0.7207,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: high)",
+              "rank": 26,
+              "n_models": 26,
+              "score": 0.1173,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 43,
@@ -4132,10 +4833,26 @@
               "as_of": "2026-09-08",
               "url": "https://epoch.ai/benchmarks/metr-time-horizons-external",
               "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "APEX-Agents (Epoch mirror)",
+              "rank": 21,
+              "n_models": 63,
+              "score": 0.335,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/apex-agents-external",
+              "licence": "display-ok"
             }
           ],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 43,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -4224,6 +4941,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 26,
+              "n_models": 99,
+              "score": 0.5965,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 28,
+              "n_models": 55,
+              "score": 0.2683,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror) (best rung: high)",
+              "rank": 31,
+              "n_models": 64,
+              "score": 0.26,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
+              "rank": 23,
+              "n_models": 268,
+              "score": 0.956,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 22,
+              "n_models": 135,
+              "score": 0.1771,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 14,
@@ -4250,6 +5017,16 @@
         "extraction": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror) (best of 2 rows)",
+              "rank": 18,
+              "n_models": 34,
+              "score": 0.17,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
               "rank": 16,
@@ -4272,7 +5049,13 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "Document Arena (39 models, 322,650 votes)",
+            "rank": 24,
+            "n_models": 39,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/document"
+          }
         },
         "chat": {
           "measured": [],
@@ -4299,23 +5082,26 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 24,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 55,
-              "n_models": 117,
-              "score": 1446.46,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 55,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -4691,6 +5477,36 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 4 rows)",
+              "rank": 32,
+              "n_models": 124,
+              "score": 0.5,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 40,
+              "n_models": 110,
+              "score": 1006.08,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror) (best of 2 rows)",
+              "rank": 63,
+              "n_models": 156,
+              "score": 0.489,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 51,
@@ -4741,7 +5557,13 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 32,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -4797,6 +5619,56 @@
               "score": 0.4699,
               "as_of": "2026-09-08",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 40,
+              "n_models": 99,
+              "score": 0.4526,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 49,
+              "n_models": 55,
+              "score": 0.0244,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror) (best rung: max)",
+              "rank": 43,
+              "n_models": 64,
+              "score": 0.16,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
+              "rank": 19,
+              "n_models": 268,
+              "score": 0.9667,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 2 rows)",
+              "rank": 32,
+              "n_models": 135,
+              "score": 0.1286,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
               "licence": "display-ok"
             },
             {
@@ -4868,20 +5740,17 @@
           "preferred": null
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 49,
-              "n_models": 117,
-              "score": 1463.8,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 49,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -5211,6 +6080,36 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 22,
+              "n_models": 124,
+              "score": 0.5347,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 36,
+              "n_models": 110,
+              "score": 1092.67,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 48,
+              "n_models": 156,
+              "score": 0.5586,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 37,
@@ -5241,10 +6140,36 @@
               "as_of": "2026-09-08",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
               "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "APEX-Agents (Epoch mirror)",
+              "rank": 37,
+              "n_models": 63,
+              "score": 0.189,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/apex-agents-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OSWorld 2.0 (Epoch mirror) (best rung: enabled)",
+              "rank": 9,
+              "n_models": 10,
+              "score": 0.046,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/osworld-2-external",
+              "licence": "display-ok"
             }
           ],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 36,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -5303,6 +6228,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 31,
+              "n_models": 99,
+              "score": 0.5719,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 31,
+              "n_models": 55,
+              "score": 0.2564,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror)",
+              "rank": 41,
+              "n_models": 64,
+              "score": 0.16,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 20,
+              "n_models": 268,
+              "score": 0.9611,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 43,
+              "n_models": 135,
+              "score": 0.08,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
               "rank": 45,
@@ -5319,6 +6294,16 @@
         "extraction": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 27,
+              "n_models": 34,
+              "score": 0.12,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
               "rank": 49,
@@ -5330,7 +6315,13 @@
             }
           ],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Document Arena (39 models, 322,650 votes)",
+            "rank": 22,
+            "n_models": 39,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/document"
+          }
         },
         "chat": {
           "measured": [],
@@ -5346,23 +6337,26 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 33,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 38,
-              "n_models": 117,
-              "score": 1508.71,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 38,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -5965,12 +6959,22 @@
           "measured": [
             {
               "tester": "epoch-ai",
-              "benchmark": "Aider Polyglot (Epoch mirror)",
-              "rank": 18,
-              "n_models": 70,
-              "score": 72,
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 53,
+              "n_models": 110,
+              "score": 826.17,
               "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/aider-polyglot-external",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 54,
+              "n_models": 156,
+              "score": 0.5256,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
               "licence": "display-ok"
             }
           ],
@@ -6059,6 +7063,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2 (best of 3 rows)",
+              "rank": 49,
+              "n_models": 99,
+              "score": 0.3614,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 47,
+              "n_models": 55,
+              "score": 0.0488,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
+              "rank": 86,
+              "n_models": 268,
+              "score": 0.8167,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 82,
+              "n_models": 135,
+              "score": 0.006,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 85,
@@ -6091,7 +7135,13 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 75,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
           "measured": [],
@@ -6383,7 +7433,18 @@
       "standings": {
         "as_of": "2026-09-08",
         "coding": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 77,
+              "n_models": 156,
+              "score": 0.454,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": null,
           "preferred": {
             "board": "Text-Arena \"Coding\" (395 models, 1,680,917 votes)",
@@ -6458,6 +7519,16 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 185,
+              "n_models": 268,
+              "score": 0.3583,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 143,
@@ -6474,7 +7545,13 @@
         "extraction": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Document Arena (39 models, 322,650 votes)",
+            "rank": 31,
+            "n_models": 39,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/document"
+          }
         },
         "chat": {
           "measured": [],
@@ -6493,20 +7570,17 @@
           "preferred": null
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 102,
-              "n_models": 117,
-              "score": 1286,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 102,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [],
@@ -6906,6 +7980,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 5 rows)",
+              "rank": 8,
+              "n_models": 124,
+              "score": 0.5694,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 1,
+              "n_models": 110,
+              "score": 2176.88,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror) (best of 2 rows)",
+              "rank": 6,
+              "n_models": 156,
+              "score": 0.8876,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: max)",
+              "rank": 4,
+              "n_models": 26,
+              "score": 0.7267,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 11,
@@ -6941,7 +8055,28 @@
           }
         },
         "agents": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "APEX-Agents (Epoch mirror) (best of 2 rows)",
+              "rank": 10,
+              "n_models": 63,
+              "score": 0.399,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/apex-agents-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OSWorld 2.0 (Epoch mirror) (best rung: max)",
+              "rank": 2,
+              "n_models": 10,
+              "score": 0.2734,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/osworld-2-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": {
             "rank": 3,
             "share": 8.39,
@@ -6957,11 +8092,11 @@
             "url": "https://openrouter.ai/rankings"
           },
           "preferred": {
-            "board": "Overview tab, \"Agent\" top-10 card",
+            "board": "Agent Arena · Overall (59 models)",
             "rank": 5,
-            "n_models": 10,
+            "n_models": 59,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/agent"
           }
         },
         "bulk": {
@@ -7031,6 +8166,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 3,
+              "n_models": 99,
+              "score": 0.8912,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 5,
+              "n_models": 55,
+              "score": 0.8293,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror) (best rung: max)",
+              "rank": 6,
+              "n_models": 64,
+              "score": 0.83,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
+              "rank": 3,
+              "n_models": 268,
+              "score": 1,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 5 rows)",
+              "rank": 1,
+              "n_models": 135,
+              "score": 0.323,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 3,
@@ -7064,15 +8249,25 @@
             "url": "https://openrouter.ai/rankings"
           },
           "preferred": {
-            "board": "Overview tab, \"Search\" top-10 card (grounded web search — closest proxy; Arena has no dedicated research/analysis category)",
+            "board": "Search Arena (34 models, 1,110,523 votes) — grounded web search, closest proxy; Arena has no dedicated research/analysis category",
             "rank": 1,
-            "n_models": 10,
+            "n_models": 34,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/search"
           }
         },
         "extraction": {
           "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 2,
+              "n_models": 34,
+              "score": 0.307,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
@@ -7096,7 +8291,13 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "Document Arena (39 models, 322,650 votes)",
+            "rank": 11,
+            "n_models": 39,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/document"
+          }
         },
         "chat": {
           "measured": [],
@@ -7123,21 +8324,16 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 17,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 8,
-              "n_models": 117,
-              "score": 1618.71,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": {
             "rank": 5,
             "share": 3,
@@ -7148,7 +8344,15 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 8,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -7466,6 +8670,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 5 rows)",
+              "rank": 19,
+              "n_models": 124,
+              "score": 0.5394,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 5,
+              "n_models": 110,
+              "score": 1951.42,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 11,
+              "n_models": 156,
+              "score": 0.7827,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: max)",
+              "rank": 6,
+              "n_models": 26,
+              "score": 0.6962,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 23,
@@ -7501,7 +8745,13 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 25,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -7570,6 +8820,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 6,
+              "n_models": 99,
+              "score": 0.8596,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 11,
+              "n_models": 55,
+              "score": 0.7073,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror) (best rung: xhigh)",
+              "rank": 8,
+              "n_models": 64,
+              "score": 0.74,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
+              "rank": 7,
+              "n_models": 268,
+              "score": 0.9972,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 5 rows)",
+              "rank": 6,
+              "n_models": 135,
+              "score": 0.3,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 12,
@@ -7607,6 +8907,16 @@
         "extraction": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 7,
+              "n_models": 34,
+              "score": 0.247,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
               "rank": 11,
@@ -7630,11 +8940,11 @@
             "url": "https://openrouter.ai/rankings"
           },
           "preferred": {
-            "board": "Overview tab, \"Document\" top-10 card",
+            "board": "Document Arena (39 models, 322,650 votes)",
             "rank": 10,
-            "n_models": 10,
+            "n_models": 39,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/document"
           }
         },
         "chat": {
@@ -7651,21 +8961,16 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 32,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 33,
-              "n_models": 117,
-              "score": 1519.87,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": {
             "rank": 7,
             "share": 2.72,
@@ -7676,7 +8981,15 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 33,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -7999,6 +9312,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 5 rows)",
+              "rank": 27,
+              "n_models": 124,
+              "score": 0.5255,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 7,
+              "n_models": 110,
+              "score": 1667.4,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 37,
+              "n_models": 156,
+              "score": 0.6086,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: max)",
+              "rank": 10,
+              "n_models": 26,
+              "score": 0.6719,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 30,
@@ -8049,7 +9402,13 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 28,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -8118,6 +9477,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2 (best of 2 rows)",
+              "rank": 10,
+              "n_models": 99,
+              "score": 0.8211,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 12,
+              "n_models": 55,
+              "score": 0.6098,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror) (best rung: max)",
+              "rank": 10,
+              "n_models": 64,
+              "score": 0.6,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
+              "rank": 12,
+              "n_models": 268,
+              "score": 0.9833,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 5 rows)",
+              "rank": 15,
+              "n_models": 135,
+              "score": 0.206,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 37,
@@ -8144,6 +9553,16 @@
         "extraction": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 13,
+              "n_models": 34,
+              "score": 0.227,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
               "rank": 21,
@@ -8166,7 +9585,13 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "Document Arena (39 models, 322,650 votes)",
+            "rank": 19,
+            "n_models": 39,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/document"
+          }
         },
         "chat": {
           "measured": [],
@@ -8182,23 +9607,26 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 38,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 34,
-              "n_models": 117,
-              "score": 1517.6,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 34,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -8552,6 +9980,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 24,
+              "n_models": 124,
+              "score": 0.5313,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 48,
+              "n_models": 110,
+              "score": 911.02,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 35,
+              "n_models": 156,
+              "score": 0.6264,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: medium)",
+              "rank": 23,
+              "n_models": 26,
+              "score": 0.3739,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 35,
@@ -8574,7 +10042,13 @@
         "agents": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 41,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -8643,6 +10117,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 25,
+              "n_models": 99,
+              "score": 0.6281,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 30,
+              "n_models": 55,
+              "score": 0.2683,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror) (best rung: high)",
+              "rank": 29,
+              "n_models": 64,
+              "score": 0.31,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
+              "rank": 26,
+              "n_models": 268,
+              "score": 0.9556,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 31,
+              "n_models": 135,
+              "score": 0.1314,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 19,
@@ -8669,6 +10193,16 @@
         "extraction": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 25,
+              "n_models": 34,
+              "score": 0.14,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
               "rank": 50,
@@ -8680,7 +10214,13 @@
             }
           ],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Document Arena (39 models, 322,650 votes)",
+            "rank": 17,
+            "n_models": 39,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/document"
+          }
         },
         "chat": {
           "measured": [],
@@ -8696,23 +10236,26 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 14,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror) (best of 2 rows)",
-              "rank": 41,
-              "n_models": 117,
-              "score": 1498.59,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 41,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -9310,6 +10853,36 @@
         "coding": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 18,
+              "n_models": 124,
+              "score": 0.5405,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 21,
+              "n_models": 110,
+              "score": 1309.28,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: high)",
+              "rank": 18,
+              "n_models": 26,
+              "score": 0.5376,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 33,
@@ -9332,7 +10905,13 @@
         "agents": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 13,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -9391,6 +10970,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 30,
+              "n_models": 99,
+              "score": 0.5719,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 33,
+              "n_models": 55,
+              "score": 0.2439,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror) (best rung: high)",
+              "rank": 28,
+              "n_models": 64,
+              "score": 0.31,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 16,
+              "n_models": 268,
+              "score": 0.9778,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 26,
+              "n_models": 135,
+              "score": 0.1543,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 44,
@@ -9413,15 +11042,25 @@
           ],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"Search\" top-10 card (grounded web search — closest proxy; Arena has no dedicated research/analysis category)",
+            "board": "Search Arena (34 models, 1,110,523 votes) — grounded web search, closest proxy; Arena has no dedicated research/analysis category",
             "rank": 8,
-            "n_models": 10,
+            "n_models": 34,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/search"
           }
         },
         "extraction": {
           "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 23,
+              "n_models": 34,
+              "score": 0.14,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
@@ -9434,7 +11073,13 @@
             }
           ],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Document Arena (39 models, 322,650 votes)",
+            "rank": 21,
+            "n_models": 39,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/document"
+          }
         },
         "chat": {
           "measured": [],
@@ -9450,7 +11095,13 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 18,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
           "measured": [],
@@ -9725,6 +11376,36 @@
         "coding": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 3 rows)",
+              "rank": 51,
+              "n_models": 124,
+              "score": 0.4491,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 71,
+              "n_models": 110,
+              "score": 678.2,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror) (best of 2 rows)",
+              "rank": 75,
+              "n_models": 156,
+              "score": 0.4563,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 55,
@@ -9775,7 +11456,13 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 24,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -9823,6 +11510,16 @@
         },
         "research": {
           "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 2 rows)",
+              "rank": 45,
+              "n_models": 135,
+              "score": 0.0714,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
@@ -9903,18 +11600,7 @@
           "preferred": null
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 64,
-              "n_models": 117,
-              "score": 1431.07,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": {
             "rank": 6,
             "share": 2.76,
@@ -9925,7 +11611,15 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 64,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -10205,7 +11899,18 @@
       "standings": {
         "as_of": "2026-09-08",
         "coding": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 95,
+              "n_models": 110,
+              "score": 370.45,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": null,
           "preferred": {
             "board": "Text-Arena \"Coding\" (395 models, 1,680,917 votes)",
@@ -10274,6 +11979,26 @@
               "score": 0.4875,
               "as_of": "2026-09-08",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 75,
+              "n_models": 99,
+              "score": 0.1895,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 105,
+              "n_models": 268,
+              "score": 0.7333,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
               "licence": "display-ok"
             }
           ],
@@ -10573,7 +12298,18 @@
       "standings": {
         "as_of": "2026-09-08",
         "coding": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 91,
+              "n_models": 110,
+              "score": 456.5,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": null,
           "preferred": null
         },
@@ -10882,6 +12618,16 @@
               "score": 0.4179,
               "as_of": "2026-09-08",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 233,
+              "n_models": 268,
+              "score": 0.0611,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
               "licence": "display-ok"
             }
           ],
@@ -11456,6 +13202,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 26,
+              "n_models": 124,
+              "score": 0.5266,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 69,
+              "n_models": 110,
+              "score": 715.52,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 47,
+              "n_models": 156,
+              "score": 0.561,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: high)",
+              "rank": 21,
+              "n_models": 26,
+              "score": 0.4668,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 42,
@@ -11493,7 +13279,13 @@
         "agents": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 42,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -11552,6 +13344,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 28,
+              "n_models": 99,
+              "score": 0.5895,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 34,
+              "n_models": 55,
+              "score": 0.2195,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
+              "rank": 33,
+              "n_models": 268,
+              "score": 0.9417,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 36,
+              "n_models": 135,
+              "score": 0.1057,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 36,
@@ -11577,6 +13409,16 @@
         },
         "extraction": {
           "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 24,
+              "n_models": 34,
+              "score": 0.14,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
@@ -11605,23 +13447,26 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 13,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 27,
-              "n_models": 117,
-              "score": 1538.91,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 27,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -11930,6 +13775,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 29,
+              "n_models": 124,
+              "score": 0.5046,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror) (best of 2 rows)",
+              "rank": 38,
+              "n_models": 110,
+              "score": 1046.95,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror) (best of 2 rows)",
+              "rank": 24,
+              "n_models": 156,
+              "score": 0.7012,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: max)",
+              "rank": 22,
+              "n_models": 26,
+              "score": 0.4378,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 29,
@@ -11980,7 +13865,13 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 12,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -12046,6 +13937,56 @@
               "score": 0.342,
               "as_of": "2026-09-08",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2 (best of 2 rows)",
+              "rank": 27,
+              "n_models": 99,
+              "score": 0.5921,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 26,
+              "n_models": 55,
+              "score": 0.2927,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror) (best rung: max)",
+              "rank": 27,
+              "n_models": 64,
+              "score": 0.35,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
+              "rank": 68,
+              "n_models": 268,
+              "score": 0.8639,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 14,
+              "n_models": 135,
+              "score": 0.2086,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
               "licence": "display-ok"
             },
             {
@@ -12138,18 +14079,7 @@
           "preferred": null
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 12,
-              "n_models": 117,
-              "score": 1593.25,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": {
             "rank": 3,
             "share": 7.56,
@@ -12160,7 +14090,15 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 12,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -12413,6 +14351,36 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 3 rows)",
+              "rank": 7,
+              "n_models": 124,
+              "score": 0.5787,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 49,
+              "n_models": 110,
+              "score": 904.3,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: medium)",
+              "rank": 12,
+              "n_models": 26,
+              "score": 0.6549,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 15,
@@ -12435,7 +14403,13 @@
         "agents": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 35,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -12494,6 +14468,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 16,
+              "n_models": 99,
+              "score": 0.7158,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 19,
+              "n_models": 55,
+              "score": 0.3659,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 17,
+              "n_models": 268,
+              "score": 0.9722,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 3 rows)",
+              "rank": 29,
+              "n_models": 135,
+              "score": 0.1429,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 8,
@@ -12519,6 +14533,16 @@
         },
         "extraction": {
           "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror) (best of 2 rows)",
+              "rank": 10,
+              "n_models": 34,
+              "score": 0.238,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
@@ -12550,20 +14574,17 @@
           "preferred": null
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 13,
-              "n_models": 117,
-              "score": 1587.04,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 13,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -12818,6 +14839,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 4 rows)",
+              "rank": 15,
+              "n_models": 124,
+              "score": 0.5463,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 13,
+              "n_models": 110,
+              "score": 1508.08,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 27,
+              "n_models": 156,
+              "score": 0.6729,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: medium)",
+              "rank": 9,
+              "n_models": 26,
+              "score": 0.6748,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 22,
@@ -12868,7 +14929,13 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 19,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -12927,6 +14994,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 20,
+              "n_models": 99,
+              "score": 0.6596,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 21,
+              "n_models": 55,
+              "score": 0.3171,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
+              "rank": 9,
+              "n_models": 268,
+              "score": 0.9917,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 4 rows)",
+              "rank": 17,
+              "n_models": 135,
+              "score": 0.1971,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 26,
@@ -12964,6 +15071,16 @@
         "extraction": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror) (best of 2 rows)",
+              "rank": 17,
+              "n_models": 34,
+              "score": 0.172,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
               "rank": 32,
@@ -12994,25 +15111,16 @@
           "preferred": null
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 6,
-              "n_models": 117,
-              "score": 1628.84,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"WebDev\" top-10 card",
-            "rank": 10,
-            "n_models": 10,
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 6,
+            "n_models": 117,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
           }
         },
         "exec-summaries": {
@@ -13286,6 +15394,36 @@
         "coding": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 12,
+              "n_models": 124,
+              "score": 0.5637,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 42,
+              "n_models": 156,
+              "score": 0.603,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: xhigh)",
+              "rank": 16,
+              "n_models": 26,
+              "score": 0.5487,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 20,
@@ -13308,7 +15446,13 @@
         "agents": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 34,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -13357,6 +15501,26 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror)",
+              "rank": 23,
+              "n_models": 64,
+              "score": 0.43,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 23,
+              "n_models": 135,
+              "score": 0.1771,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
               "rank": 13,
@@ -13372,6 +15536,16 @@
         },
         "extraction": {
           "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror) (best of 2 rows)",
+              "rank": 19,
+              "n_models": 34,
+              "score": 0.16,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
@@ -13401,28 +15575,25 @@
           "measured": [],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"Vision\" top-10 card",
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
             "rank": 8,
-            "n_models": 10,
+            "n_models": 148,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/vision"
           }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 30,
-              "n_models": 117,
-              "score": 1533.68,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 30,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -13729,6 +15900,26 @@
         "coding": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 6,
+              "n_models": 124,
+              "score": 0.5822,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: xhigh)",
+              "rank": 19,
+              "n_models": 26,
+              "score": 0.5332,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 18,
@@ -13759,10 +15950,26 @@
               "as_of": "2026-09-08",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
               "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "APEX-Agents (Epoch mirror)",
+              "rank": 7,
+              "n_models": 63,
+              "score": 0.419,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/apex-agents-external",
+              "licence": "display-ok"
             }
           ],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 37,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -13811,6 +16018,26 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror) (best rung: xhigh)",
+              "rank": 24,
+              "n_models": 64,
+              "score": 0.39,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 28,
+              "n_models": 135,
+              "score": 0.151,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
               "rank": 25,
@@ -13827,6 +16054,16 @@
         "extraction": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror) (best of 2 rows)",
+              "rank": 20,
+              "n_models": 34,
+              "score": 0.15,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
               "rank": 36,
@@ -13838,7 +16075,13 @@
             }
           ],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Document Arena (39 models, 322,650 votes)",
+            "rank": 13,
+            "n_models": 39,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/document"
+          }
         },
         "chat": {
           "measured": [],
@@ -13854,23 +16097,26 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 22,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 26,
-              "n_models": 117,
-              "score": 1539.02,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 26,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -16240,6 +18486,26 @@
               "as_of": "2026-09-08",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
               "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 73,
+              "n_models": 99,
+              "score": 0.193,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 64,
+              "n_models": 268,
+              "score": 0.8667,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
             }
           ],
           "chosen": null,
@@ -18267,6 +20533,16 @@
         "coding": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 3 rows)",
+              "rank": 53,
+              "n_models": 124,
+              "score": 0.4468,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 12,
@@ -18289,7 +20565,13 @@
         "agents": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 30,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -18327,6 +20609,26 @@
         },
         "research": {
           "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror)",
+              "rank": 44,
+              "n_models": 64,
+              "score": 0.16,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 3 rows)",
+              "rank": 48,
+              "n_models": 135,
+              "score": 0.0543,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
@@ -18371,23 +20673,26 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 40,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 11,
-              "n_models": 117,
-              "score": 1594.78,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 11,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -19048,7 +21353,13 @@
         "agents": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 40,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -19317,6 +21628,36 @@
         "coding": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 46,
+              "n_models": 124,
+              "score": 0.4606,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 43,
+              "n_models": 110,
+              "score": 946,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 130,
+              "n_models": 156,
+              "score": 0.3229,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 39,
@@ -19339,7 +21680,13 @@
         "agents": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 50,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -19398,6 +21745,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 55,
+              "n_models": 99,
+              "score": 0.3333,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 46,
+              "n_models": 55,
+              "score": 0.0488,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror)",
+              "rank": 64,
+              "n_models": 64,
+              "score": 0,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 54,
+              "n_models": 268,
+              "score": 0.8889,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 47,
+              "n_models": 135,
+              "score": 0.0543,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
               "rank": 42,
@@ -19444,20 +21841,17 @@
           "preferred": null
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 67,
-              "n_models": 117,
-              "score": 1407.6,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 67,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -19757,7 +22151,18 @@
       "standings": {
         "as_of": "2026-09-08",
         "coding": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 38,
+              "n_models": 124,
+              "score": 0.4873,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": null,
           "preferred": {
             "board": "Text-Arena \"Coding\" (395 models, 1,680,917 votes)",
@@ -19770,7 +22175,13 @@
         "agents": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 48,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -19816,6 +22227,56 @@
               "as_of": "2026-09-08",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
               "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 39,
+              "n_models": 99,
+              "score": 0.4632,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 38,
+              "n_models": 55,
+              "score": 0.1707,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror) (best rung: 0.99)",
+              "rank": 56,
+              "n_models": 64,
+              "score": 0.06,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 50,
+              "n_models": 268,
+              "score": 0.9,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 42,
+              "n_models": 135,
+              "score": 0.0829,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
             }
           ],
           "chosen": null,
@@ -19840,23 +22301,26 @@
         "vision": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+            "rank": 70,
+            "n_models": 148,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/vision"
+          }
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 69,
-              "n_models": 117,
-              "score": 1401.56,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 69,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [],
@@ -20169,7 +22633,13 @@
         "agents": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 51,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -20992,6 +23462,46 @@
         "coding": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 10,
+              "n_models": 124,
+              "score": 0.5648,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 20,
+              "n_models": 110,
+              "score": 1317.4,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 20,
+              "n_models": 156,
+              "score": 0.754,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: max)",
+              "rank": 7,
+              "n_models": 26,
+              "score": 0.6896,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 7,
@@ -21042,7 +23552,13 @@
             "as_of": "2026-09-08",
             "url": "https://openrouter.ai/rankings"
           },
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 22,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -21111,6 +23627,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 18,
+              "n_models": 99,
+              "score": 0.6877,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 24,
+              "n_models": 55,
+              "score": 0.2927,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror)",
+              "rank": 20,
+              "n_models": 64,
+              "score": 0.49,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 46,
+              "n_models": 268,
+              "score": 0.9111,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 19,
+              "n_models": 135,
+              "score": 0.1914,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
               "rank": 30,
@@ -21157,20 +23723,17 @@
           "preferred": null
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 10,
-              "n_models": 117,
-              "score": 1598.6,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 10,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -21421,6 +23984,16 @@
         "coding": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: xhigh)",
+              "rank": 15,
+              "n_models": 26,
+              "score": 0.5746,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 8,
@@ -21443,7 +24016,13 @@
         "agents": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 16,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -21502,6 +24081,36 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 13,
+              "n_models": 99,
+              "score": 0.7474,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 16,
+              "n_models": 55,
+              "score": 0.4634,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 8,
+              "n_models": 268,
+              "score": 0.9944,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
               "rank": 17,
@@ -21528,6 +24137,16 @@
         },
         "extraction": {
           "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 11,
+              "n_models": 34,
+              "score": 0.232,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            },
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
@@ -21557,11 +24176,11 @@
           "measured": [],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"Vision\" top-10 card",
+            "board": "Vision Arena · Overall (148 models, 1,258,468 votes)",
             "rank": 3,
-            "n_models": 10,
+            "n_models": 148,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/vision"
           }
         },
         "frontend": {
@@ -22061,11 +24680,11 @@
           "measured": [],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"Agent\" top-10 card",
+            "board": "Agent Arena · Overall (59 models)",
             "rank": 10,
-            "n_models": 10,
+            "n_models": 59,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/agent"
           }
         },
         "bulk": {
@@ -23723,6 +26342,26 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 3 rows)",
+              "rank": 17,
+              "n_models": 124,
+              "score": 0.544,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: high)",
+              "rank": 2,
+              "n_models": 26,
+              "score": 0.7383,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 32,
@@ -23745,7 +26384,13 @@
         "agents": {
           "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "Agent Arena · Overall (59 models)",
+            "rank": 17,
+            "n_models": 59,
+            "as_of": "2026-09-08",
+            "url": "https://arena.ai/leaderboard/agent"
+          }
         },
         "bulk": {
           "measured": [],
@@ -23783,6 +26428,16 @@
         },
         "research": {
           "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 3 rows)",
+              "rank": 20,
+              "n_models": 135,
+              "score": 0.1829,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
@@ -23830,20 +26485,17 @@
           "preferred": null
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 16,
-              "n_models": 117,
-              "score": 1567.33,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 16,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -24093,6 +26745,36 @@
         "coding": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 5 rows)",
+              "rank": 11,
+              "n_models": 124,
+              "score": 0.5648,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 2,
+              "n_models": 156,
+              "score": 0.9287,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "DeepSWE (Epoch mirror, mini-swe-agent harness) (best rung: xhigh)",
+              "rank": 1,
+              "n_models": 26,
+              "score": 0.7412,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/deepswe-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 14,
@@ -24177,6 +26859,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 1,
+              "n_models": 99,
+              "score": 0.9368,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2 (best of 5 rows)",
+              "rank": 1,
+              "n_models": 55,
+              "score": 0.976,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 2,
+              "n_models": 268,
+              "score": 1,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 5 rows)",
+              "rank": 2,
+              "n_models": 135,
+              "score": 0.3171,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 2,
@@ -24227,25 +26949,16 @@
           "preferred": null
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 1,
-              "n_models": 117,
-              "score": 1797.04,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"WebDev\" top-10 card",
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
             "rank": 1,
-            "n_models": 10,
+            "n_models": 117,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
           }
         },
         "exec-summaries": {
@@ -24943,6 +27656,36 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror) (best of 5 rows)",
+              "rank": 1,
+              "n_models": 124,
+              "score": 0.6204,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 3,
+              "n_models": 110,
+              "score": 2143.2,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror) (best of 2 rows)",
+              "rank": 1,
+              "n_models": 156,
+              "score": 0.929,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 1,
@@ -24963,14 +27706,25 @@
           }
         },
         "agents": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "APEX-Agents (Epoch mirror)",
+              "rank": 4,
+              "n_models": 63,
+              "score": 0.444,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/apex-agents-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"Agent\" top-10 card",
+            "board": "Agent Arena · Overall (59 models)",
             "rank": 1,
-            "n_models": 10,
+            "n_models": 59,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://arena.ai/leaderboard/agent"
           }
         },
         "bulk": {
@@ -25030,6 +27784,56 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 2,
+              "n_models": 99,
+              "score": 0.9018,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 3,
+              "n_models": 55,
+              "score": 0.878,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror)",
+              "rank": 1,
+              "n_models": 64,
+              "score": 1,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 1,
+              "n_models": 268,
+              "score": 1,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror) (best of 5 rows)",
+              "rank": 3,
+              "n_models": 135,
+              "score": 0.3114,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 5,
@@ -25086,25 +27890,16 @@
           "preferred": null
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 2,
-              "n_models": 117,
-              "score": 1765.37,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
           "preferred": {
-            "board": "Overview tab, \"WebDev\" top-10 card",
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
             "rank": 2,
-            "n_models": 10,
+            "n_models": 117,
             "as_of": "2026-09-08",
-            "url": "https://arena.ai/leaderboard"
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
           }
         },
         "exec-summaries": {
@@ -25935,6 +28730,36 @@
         "coding": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 35,
+              "n_models": 124,
+              "score": 0.4919,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 16,
+              "n_models": 110,
+              "score": 1403.15,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror)",
+              "rank": 29,
+              "n_models": 156,
+              "score": 0.6622,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 24,
@@ -25997,6 +28822,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 23,
+              "n_models": 99,
+              "score": 0.6456,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 27,
+              "n_models": 55,
+              "score": 0.2683,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 11,
+              "n_models": 268,
+              "score": 0.9861,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 21,
+              "n_models": 135,
+              "score": 0.18,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 33,
@@ -26047,20 +28912,17 @@
           "preferred": null
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 14,
-              "n_models": 117,
-              "score": 1581.64,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 14,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [
@@ -26274,6 +29136,36 @@
         "coding": {
           "measured": [
             {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 34,
+              "n_models": 124,
+              "score": 0.4988,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ALE-Bench (Epoch mirror)",
+              "rank": 22,
+              "n_models": 110,
+              "score": 1306.08,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/ale-bench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "WeirdML (Epoch mirror) (best of 2 rows)",
+              "rank": 34,
+              "n_models": 156,
+              "score": 0.6296,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/weirdml-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
               "rank": 38,
@@ -26336,6 +29228,46 @@
               "licence": "display-ok"
             },
             {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 29,
+              "n_models": 99,
+              "score": 0.5754,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 32,
+              "n_models": 55,
+              "score": 0.2439,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 31,
+              "n_models": 268,
+              "score": 0.9444,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 25,
+              "n_models": 135,
+              "score": 0.1657,
+              "as_of": "2026-09-08",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            },
+            {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 32,
@@ -26386,20 +29318,17 @@
           "preferred": null
         },
         "frontend": {
-          "measured": [
-            {
-              "tester": "epoch-ai",
-              "benchmark": "WebDev Arena (Epoch mirror)",
-              "rank": 15,
-              "n_models": 117,
-              "score": 1579.1,
-              "as_of": "2026-09-08",
-              "url": "https://epoch.ai/benchmarks/webdev-arena-external",
-              "licence": "display-ok"
-            }
-          ],
+          "measured": [],
           "chosen": null,
-          "preferred": null
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 15,
+            "n_models": 117,
+            "as_of": "2026-09-08",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
         },
         "exec-summaries": {
           "measured": [

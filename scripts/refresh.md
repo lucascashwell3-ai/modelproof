@@ -255,9 +255,66 @@ equivalent DOM access) — read-only, no login, no vote submitted:
 
 **What's been captured so far:** `coding` → Text-Arena "Coding" (full, 395 models); `writing` →
 Text-Arena "Creative Writing" (full, 398 models); `chat` → Text-Arena "Overall" (full, 400
-models, used as the general-chat-quality proxy); `agents`/`frontend`/`vision`/`extraction`/
-`research` → their respective Overview top-10 cards (Agent/WebDev/Vision/Document/Search).
+models, used as the general-chat-quality proxy); `agents` → Agent Arena (full, 59 models);
+`vision` → Vision Arena (full, 148 models); `extraction` → Document Arena (full, 39 models);
+`research` → Search Arena (full, 34 models, used as the closest available proxy — Arena has no
+dedicated research/analysis category); `frontend` → still the Overview "WebDev" top-10 card (no
+dedicated full-board route exists for it — see below).
 `exec-summaries` (Text-Arena rank-matrix "Longer Query" column — no dedicated summarization
 category) and `bulk` (no Arena coverage at all — preference/quality by vote, not cost) were **not**
-recaptured 2026-09-07; `exec-summaries` still carries its original top-5 snapshot from the first
-capture. Recapturing either is the next thing to do here, not a design decision to leave undone.
+recaptured; `exec-summaries` still carries its original top-5 snapshot from the first capture.
+Recapturing either is the next thing to do here, not a design decision to leave undone.
+
+### A better capture method, discovered 2026-09-07 (brain v2 step 2)
+
+While checking whether `agents`/`vision`/`extraction`/`research` (all top-10 cards until this
+pass) had grown a full-board page, it turned out arena.ai now serves **dedicated per-category
+routes** — `/leaderboard/vision`, `/leaderboard/document`, `/leaderboard/agent`,
+`/leaderboard/search` — and, unlike `/leaderboard` (Overview) and `/leaderboard/text`
+(Text-Arena), **these render the entire leaderboard table server-side, directly into the HTML
+response.** A plain `curl` (or any read-only HTTP GET) returns the whole `<table>` with every
+`<tr>` populated — no headless browser, no JS execution, no login, no vote, and no risk of a
+scroll-triggered pagination cutting the capture short. Checked by diffing a `curl` fetch against
+the rendered DOM for the same URL: identical rows.
+
+Parse the returned HTML directly (Python's `html.parser`/BeautifulSoup or an equivalent):
+
+```python
+from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'html.parser')
+tbody = soup.find('table').find('tbody')
+for tr in tbody.find_all('tr', recursive=False):
+    tds = tr.find_all('td', recursive=False)
+    rank = int(tds[0].get_text(strip=True))          # vision/document/search layout
+    name_span = tds[2].select_one('a span[title]')
+    model = name_span.get('title') if name_span else tds[2].get_text(strip=True)
+    score, votes = tds[3].get_text(strip=True), tds[4].get_text(strip=True)
+```
+
+**One board has a different column layout** — Agent Arena's table has no single Elo+votes pair
+(it reports Net Improvement / Confirmed Success / Praise vs Complaint / Steerability / etc. per
+model instead), and its rank/model cells sit one column earlier and use a nested `<span>` for the
+rank rather than the cell's own direct text:
+
+```python
+rank = int(tds[0].find('span').get_text(strip=True))
+name_span = tds[1].find('a').select_one('span[title]')
+model = name_span.get('title') if name_span else tds[1].get_text(strip=True)
+```
+
+Total row count = the table's own row count (no separate "N models" label is disclosed on these
+four pages, unlike the older Text-Arena boards) — confirmed complete by checking the last row's
+rank equals the row count and that no "load more"/pagination control exists.
+
+**Still no dedicated route for WebDev** — `/leaderboard/webdev` 404s (the site's own "Leaderboard
+Not Found" page), checked the same day. `frontend` stays the Overview top-10 card as this
+snapshot's fallback; its PRIMARY preferred evidence as of this pass is Epoch's own WebDev Arena
+mirror (`scripts/derive-standings.mjs`, `data/testers.json`'s `webdev_arena_external.csv` entry,
+`kind: "preferred"`) — see that file and `scripts/data-sources.md` for how the two combine (mirror
+first, this card only for a model the mirror itself lacks).
+
+The Overview (`/leaderboard`) and Text-Arena (`/leaderboard/text`) pages remain genuinely
+client-rendered (curl still gets nav/footer only there) — the headless-browser method documented
+above them in this section is still the right tool for those two and for any future board that
+turns out to work the same way. Check both ways on a future recapture; don't assume one method
+covers every board just because it worked for four of them this time.

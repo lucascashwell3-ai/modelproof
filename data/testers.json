@@ -24,26 +24,39 @@
           "GPQA Diamond (Epoch self-run)",
           "SimpleQA Verified (Epoch self-run)",
           "HLE (mirrored)",
-          "DeepResearch Bench (mirrored)"
+          "DeepResearch Bench (mirrored)",
+          "FrontierMath Tiers 1-3 v2 (Epoch self-run)",
+          "FrontierMath Tier 4 v2 (Epoch self-run)",
+          "ProofBench (mirrored — Lean 4 formal proof-writing)",
+          "OTIS Mock AIME 2024-2025 (Epoch self-run)",
+          "CritPt (mirrored — open-ended research-level physics problems)"
         ],
         "frontend": [
-          "WebDev Arena (mirrored)"
+          "WebDev Arena (mirrored — human blind-vote leaderboard, not a test; feeds `preferred`, not `measured`, brain v2 step 2)"
         ],
         "coding": [
           "CursorBench (mirrored, per-effort cost/score ladder)",
           "SWE-bench Verified (Epoch self-run)",
-          "Aider Polyglot (mirrored, Apache-2.0)"
+          "SciCode (mirrored — research-level scientific coding)",
+          "ALE-Bench (mirrored — long-horizon algorithm engineering / combinatorial optimization)",
+          "WeirdML (mirrored — novel ML-engineering coding problems)",
+          "DeepSWE (mirrored — SWE-bench-style agentic coding, fixed mini-swe-agent harness across models)"
         ],
         "agents": [
           "Terminal-Bench (mirrored, Apache-2.0)",
           "Vending-Bench 2 (mirrored)",
-          "METR time horizons (mirrored)"
+          "METR time horizons (mirrored)",
+          "APEX-Agents (mirrored — long-horizon cross-application professional-services tasks)",
+          "OSWorld 2.0 (mirrored — computer-use / GUI agent tasks)"
         ],
         "writing": [
           "Lech Mazur Writing (mirrored)"
         ],
         "vision": [
           "Video-MME (mirrored; 0 catalog models matched — see notes)"
+        ],
+        "extraction": [
+          "GDP.pdf (mirrored — real-world professional PDF document comprehension)"
         ],
         "exec-summaries": [
           "GDPval (mirrored)"
@@ -89,7 +102,8 @@
             "catalog_models": 29,
             "feed_models": 120,
             "task": "frontend",
-            "licence": "upstream (unstated)"
+            "licence": "upstream (unstated)",
+            "kind": "preferred"
           },
           "cursorbench_external.csv": {
             "catalog_models": 16,
@@ -103,11 +117,29 @@
             "task": "coding",
             "licence": "CC-BY"
           },
-          "aider_polyglot_external.csv": {
-            "catalog_models": 1,
-            "feed_models": 70,
+          "scicode_external.csv": {
+            "catalog_models": 30,
+            "feed_models": 165,
             "task": "coding",
-            "licence": "Apache-2.0"
+            "licence": "upstream (unstated)"
+          },
+          "ale_bench_external.csv": {
+            "catalog_models": 27,
+            "feed_models": 112,
+            "task": "coding",
+            "licence": "upstream (unstated)"
+          },
+          "weirdml_external.csv": {
+            "catalog_models": 26,
+            "feed_models": 169,
+            "task": "coding",
+            "licence": "upstream (unstated)"
+          },
+          "deepswe_external.csv": {
+            "catalog_models": 22,
+            "feed_models": 69,
+            "task": "coding",
+            "licence": "upstream (unstated)"
           },
           "terminalbench_external.csv": {
             "catalog_models": 2,
@@ -127,10 +159,58 @@
             "task": "agents",
             "licence": "upstream (unstated)"
           },
+          "apex_agents_external.csv": {
+            "catalog_models": 9,
+            "feed_models": 65,
+            "task": "agents",
+            "licence": "upstream (unstated)"
+          },
+          "osworld_2_external.csv": {
+            "catalog_models": 5,
+            "feed_models": 14,
+            "task": "agents",
+            "licence": "upstream (unstated)"
+          },
           "lech_mazur_writing_external.csv": {
             "catalog_models": 1,
             "feed_models": 49,
             "task": "writing",
+            "licence": "upstream (unstated)"
+          },
+          "frontiermath_tiers_1_3_v2.csv": {
+            "catalog_models": 29,
+            "feed_models": 104,
+            "task": "research",
+            "licence": "CC-BY"
+          },
+          "frontiermath_tier_4_v2.csv": {
+            "catalog_models": 27,
+            "feed_models": 60,
+            "task": "research",
+            "licence": "CC-BY"
+          },
+          "proofbench_external.csv": {
+            "catalog_models": 21,
+            "feed_models": 64,
+            "task": "research",
+            "licence": "upstream (unstated)"
+          },
+          "otis_mock_aime_2024_2025.csv": {
+            "catalog_models": 31,
+            "feed_models": 288,
+            "task": "research",
+            "licence": "CC-BY"
+          },
+          "critpt_external.csv": {
+            "catalog_models": 31,
+            "feed_models": 177,
+            "task": "research",
+            "licence": "upstream (unstated)"
+          },
+          "gdp_pdf_external.csv": {
+            "catalog_models": 18,
+            "feed_models": 39,
+            "task": "extraction",
             "licence": "upstream (unstated)"
           },
           "gdpval_external.csv": {
@@ -142,7 +222,7 @@
         }
       },
       "verdict": "use",
-      "notes": "Corrected 2026-09-07 (brain v2 step 1 continued): the prior pass only counted CursorBench's own ladder (15/74) and missed that benchmark_data.zip holds 80 benchmark CSVs (82 files minus 2 metadata-only ones). Recomputed feed-wide with scripts/_audit/map-names.mjs on every CSV's 'Model version' column: 926 raw names, 902 after slug-dedup, 37 distinct catalog models matched — independently re-derived and cross-checked against the full-feed union, both agree. 36 of the 37 are covered by the 14 per_benchmark sets above; the 37th (qwen3-coder-plus) only appears in ale_bench_external.csv, a set outside this catalog's 10 task ids, so it isn't in the table. video_mme_external.csv (50 feed models) is this catalog's only Video-MME/vision source but matches 0 catalog models, noted inline in `tasks.vision` rather than in the table; live_bench_external.csv (52 feed models) also matches 0 and doesn't map to any of the 10 task ids, so it's absent from both `tasks` and the table. Checked why both are 0 — not a matcher bug: live_bench_external's newest rows are gpt-5.1/o3-mini/claude-3.7-era (frozen before this catalog's current models existed); video_mme_external is a dedicated open-source video-LLM leaderboard that has never carried a current frontier model. FrontierMath stays in `independence` above for its disclosed OpenAI conflict but is dropped from `tasks` — it doesn't map to any of this catalog's 10 task ids either."
+      "notes": "Corrected 2026-09-07 (brain v2 step 1 continued): the prior pass only counted CursorBench's own ladder (15/74) and missed that benchmark_data.zip holds 80 benchmark CSVs (82 files minus 2 metadata-only ones). Recomputed feed-wide with scripts/_audit/map-names.mjs on every CSV's 'Model version' column: 926 raw names, 902 after slug-dedup, 37 distinct catalog models matched — independently re-derived and cross-checked against the full-feed union, both agree. video_mme_external.csv (50 feed models) is this catalog's only Video-MME/vision source but matches 0 catalog models, noted inline in `tasks.vision` rather than in the table; live_bench_external.csv (52 feed models) also matches 0 and doesn't map to any of the 10 task ids, so it's absent from both `tasks` and the table. Checked why both are 0 — not a matcher bug: live_bench_external's newest rows are gpt-5.1/o3-mini/claude-3.7-era (frozen before this catalog's current models existed); video_mme_external is a dedicated open-source video-LLM leaderboard that has never carried a current frontier model. FrontierMath (the un-versioned base file) stays in `independence` above for its disclosed OpenAI conflict but is dropped from `tasks` — superseded by the versioned `frontiermath_tiers_1_3_v2.csv` / `frontiermath_tier_4_v2.csv` sets added below (brain v2 step 2), which map to `research` and ARE in the table.\n\nBrain v2 step 2 (fix round, 2026-09-07): widened this table from 14 entries (13 wired measured sets, since `arc_agi_2_external.csv` stays skipped/superseded) to 25 entries (24 wired: 23 measured + `webdev_arena_external.csv` reclassified `preferred`) — added scicode_external (SciCode, research-level scientific coding), ale_bench_external (ALE-Bench, long-horizon algorithm engineering), weirdml_external (WeirdML, novel ML-engineering coding), deepswe_external (DeepSWE — checked its own `Harness` column: constant \"mini-swe-agent\" across every row, so this varies the MODEL under a fixed scaffold, a genuine SWE-bench-style per-model coding run, not a fixed-agent product) to `coding`; apex_agents_external (APEX-Agents — confirmed via Epoch's own page: long-horizon cross-application professional-services tasks) and osworld_2_external (OSWorld 2.0, computer-use) to `agents`; frontiermath_tiers_1_3_v2 / frontiermath_tier_4_v2 (Epoch's own self-run FrontierMath, versioned — no `_external` suffix, licence CC-BY like Epoch's other self-run sets), proofbench_external (ProofBench — confirmed via vals.ai's own page: Lean-4 formal proof-writing), otis_mock_aime_2024_2025 (Epoch self-run — confirmed via Epoch's own page: 45 competition-style math problems), and critpt_external (CritPt — confirmed via Epoch's own page: open-ended research-level physics problems) to `research`; gdp_pdf_external (GDP.pdf — confirmed via Surge AI's own page: real-world professional PDF document comprehension) as this catalog's first `extraction` Epoch set. Every one of these fetched and matched against the live zip (2026-09-07), same matcher, same rule: a fit confirmed against the source's own description first, never assumed from the filename alone. `aider_polyglot_external.csv` (1 catalog model, frozen since 2025-10-04) was DROPPED from `coding` to match the standalone `aider-polyglot` tester's own `exclude` verdict below — the same stale leaderboard, reached two ways, should get the same verdict; kept out of `EPOCH_FILE_CONFIG` too (`scripts/derive-standings.mjs`'s `EPOCH_SKIP_FILES`), same pattern as the ARC-AGI-2 supersession. `webdev_arena_external.csv` was reclassified `kind: \"preferred\"` (was `measured`) — it mirrors arena.ai's WebDev Arena, a blind human-vote board, not an independent test; see `scripts/derive-standings.mjs` and `scripts/refresh.md` for how that now feeds `standings.frontend.preferred` instead."
     },
     {
       "id": "aider-polyglot",

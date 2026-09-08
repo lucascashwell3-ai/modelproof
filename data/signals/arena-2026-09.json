@@ -1,9 +1,13 @@
 {
-  "_readme": "Human-vote leaderboard signal (arena.ai, formerly LMArena/Chatbot Arena) for scripts/derive-signals.mjs's `families` calibration in assets/decide.mjs. Arena's leaderboard tables render client-side via JS — curl gets nav/footer only (verified by diffing curl output against a headless-browser render of the same URL), so this is NOT a live-fetched Collect input like usage.openrouter or this same signals pipeline's OpenRouter task-spend data. It is a DATED, MANUAL snapshot: fetched once via a headless browser (Claude_Browser, read-only) on 2026-09-07 against a page self-dated 'Sep 2, 2026', with the raw captures kept alongside the research batch that built it. `rank` is this model's position within the mapped-to-catalog cut for that task/category (1st mapped = rank 1, etc.) — NOT its raw position on Arena's own (much longer, mostly-unmapped) leaderboard; effort-level variants of the same base model (e.g. claude-opus-5-high / claude-opus-5-max) were de-duplicated to their best-ranked variant before this cut was taken. `category` names the actual Arena leaderboard or column used as each task's proxy — several tasks have no dedicated Arena category and use the closest available one (documented per task below and in eval/signals.md, which is the primary methodology doc this file was distilled from). Refresh procedure: scripts/refresh.md's 'Arena preferred boards' section — replace this file's `tasks` block and bump `as_of`; there is no automated refresh for this source.",
+  "_readme": "Human-vote leaderboard signal (arena.ai, formerly LMArena/Chatbot Arena) for scripts/derive-signals.mjs's `families` calibration in assets/decide.mjs. Arena's leaderboard tables render client-side via JS — curl gets nav/footer only (verified by diffing curl output against a headless-browser render of the same URL), so this is NOT a live-fetched Collect input like usage.openrouter or this same signals pipeline's OpenRouter task-spend data. It is a DATED, MANUAL snapshot: fetched once via a headless browser (Claude_Browser, read-only) on 2026-09-07 against a page self-dated 'Sep 2, 2026', with the raw captures kept alongside the research batch that built it. `rank` is this model's position within the mapped-to-catalog cut for that task/category (1st mapped = rank 1, etc.) — NOT its raw position on Arena's own (much longer, mostly-unmapped) leaderboard; effort-level variants of the same base model (e.g. claude-opus-5-high / claude-opus-5-max) were de-duplicated to their best-ranked variant before this cut was taken. `category` names the actual Arena leaderboard or column used as each task's proxy — several tasks have no dedicated Arena category and use the closest available one (documented per task below and in eval/signals.md, which is the primary methodology doc this file was distilled from). Refresh procedure: scripts/refresh.md's 'Arena preferred boards' section — replace this file's `tasks` block and bump `as_of`; there is no automated refresh for this source. UPDATE 2026-09-07 (brain v2 step 2): the /leaderboard/vision, /leaderboard/document, /leaderboard/agent, and /leaderboard/search pages turned out to be a DIFFERENT case — arena.ai now serves these as dedicated per-category routes with the full leaderboard table rendered server-side directly into the HTML response (confirmed by diffing a plain `curl` fetch against the rendered DOM: identical rows), so those four were captured with a plain read-only GET, no headless browser needed. The Overview (/leaderboard) and Text-Arena (/leaderboard/text) pages, and the /leaderboard/webdev route (which doesn't exist — 404), remain client-rendered / absent as described above; check both ways on any future recapture rather than assuming one method covers every board.",
   "as_of": "2026-09-07",
   "source_urls": [
     "https://arena.ai/leaderboard",
-    "https://arena.ai/leaderboard/text"
+    "https://arena.ai/leaderboard/text",
+    "https://arena.ai/leaderboard/vision",
+    "https://arena.ai/leaderboard/document",
+    "https://arena.ai/leaderboard/agent",
+    "https://arena.ai/leaderboard/search"
   ],
   "tasks": {
     "coding": {
@@ -185,10 +189,10 @@
       ]
     },
     "agents": {
-      "category": "Overview tab, \"Agent\" top-10 card",
-      "board_url": "https://arena.ai/leaderboard",
-      "n_models": 10,
-      "capture": "top-10 card (this overview card does not disclose a full-board total anywhere on the page)",
+      "category": "Agent Arena · Overall (59 models)",
+      "board_url": "https://arena.ai/leaderboard/agent",
+      "n_models": 59,
+      "capture": "full board (same server-rendered per-category page; this board reports Net Improvement/Confirmed Success/etc. per model rather than a single Elo+votes pair, so ranks[] carries no votes field for this task)",
       "ranks": [
         {
           "model_id": "claude-fable-5-1",
@@ -225,6 +229,94 @@
         {
           "model_id": "hy4-preview",
           "rank": 10
+        },
+        {
+          "model_id": "glm-5-2",
+          "rank": 12
+        },
+        {
+          "model_id": "grok-4-5",
+          "rank": 13
+        },
+        {
+          "model_id": "qwen3-8-max",
+          "rank": 16
+        },
+        {
+          "model_id": "gemini-3-8-flash",
+          "rank": 17
+        },
+        {
+          "model_id": "grok-4-6",
+          "rank": 19
+        },
+        {
+          "model_id": "glm-5-3",
+          "rank": 22
+        },
+        {
+          "model_id": "deepseek-v4-flash",
+          "rank": 24
+        },
+        {
+          "model_id": "gpt-5-6-terra",
+          "rank": 25
+        },
+        {
+          "model_id": "gpt-5-6-luna",
+          "rank": 28
+        },
+        {
+          "model_id": "qwen3-8-27b",
+          "rank": 30
+        },
+        {
+          "model_id": "deepseek-v4-pro",
+          "rank": 32
+        },
+        {
+          "model_id": "muse-spark-1-2",
+          "rank": 34
+        },
+        {
+          "model_id": "gemini-3-7-flash",
+          "rank": 35
+        },
+        {
+          "model_id": "kimi-k2-6",
+          "rank": 36
+        },
+        {
+          "model_id": "muse-spark-1-1",
+          "rank": 37
+        },
+        {
+          "model_id": "hy3",
+          "rank": 40
+        },
+        {
+          "model_id": "gemini-3-5-flash",
+          "rank": 41
+        },
+        {
+          "model_id": "gemini-3-6-flash",
+          "rank": 42
+        },
+        {
+          "model_id": "gemini-3-1-pro",
+          "rank": 43
+        },
+        {
+          "model_id": "inkling-small",
+          "rank": 48
+        },
+        {
+          "model_id": "inkling",
+          "rank": 50
+        },
+        {
+          "model_id": "solar-pro-4",
+          "rank": 51
         }
       ]
     },
@@ -415,46 +507,108 @@
       ]
     },
     "research": {
-      "category": "Overview tab, \"Search\" top-10 card (grounded web search — closest proxy; Arena has no dedicated research/analysis category)",
-      "board_url": "https://arena.ai/leaderboard",
-      "n_models": 10,
-      "capture": "top-10 card",
+      "category": "Search Arena (34 models, 1,110,523 votes) — grounded web search, closest proxy; Arena has no dedicated research/analysis category",
+      "board_url": "https://arena.ai/leaderboard/search",
+      "n_models": 34,
+      "capture": "full board (same server-rendered per-category page); most rows are \"-search\"/\"-grounding\" tagged product variants of a base model rather than the base model itself, correctly left unmatched rather than force-mapped — see scripts/refresh.md",
       "ranks": [
         {
           "model_id": "gpt-5-6-sol",
-          "rank": 1
+          "rank": 1,
+          "votes": "29,663"
         },
         {
           "model_id": "claude-fable-5",
-          "rank": 5
+          "rank": 5,
+          "votes": "41,795"
         },
         {
           "model_id": "grok-4-5",
-          "rank": 8
+          "rank": 8,
+          "votes": "31,505"
+        },
+        {
+          "model_id": "claude-opus-4-8",
+          "rank": 12,
+          "votes": "70,998"
         }
       ]
     },
     "extraction": {
-      "category": "Overview tab, \"Document\" top-10 card",
-      "board_url": "https://arena.ai/leaderboard",
-      "n_models": 10,
-      "capture": "top-10 card",
+      "category": "Document Arena (39 models, 322,650 votes)",
+      "board_url": "https://arena.ai/leaderboard/document",
+      "n_models": 39,
+      "capture": "full board (same server-rendered per-category page as vision/agent/search below; discovered 2026-09-07)",
       "ranks": [
         {
           "model_id": "claude-opus-5",
-          "rank": 1
+          "rank": 1,
+          "votes": "1,663"
         },
         {
           "model_id": "claude-fable-5",
-          "rank": 4
+          "rank": 4,
+          "votes": "5,792"
         },
         {
           "model_id": "gpt-5-5",
-          "rank": 7
+          "rank": 7,
+          "votes": "16,816"
         },
         {
           "model_id": "gpt-5-6-terra",
-          "rank": 10
+          "rank": 10,
+          "votes": "1,969"
+        },
+        {
+          "model_id": "gpt-5-6-sol",
+          "rank": 11,
+          "votes": "1,152"
+        },
+        {
+          "model_id": "claude-opus-4-8",
+          "rank": 12,
+          "votes": "8,388"
+        },
+        {
+          "model_id": "muse-spark-1-1",
+          "rank": 13,
+          "votes": "2,054"
+        },
+        {
+          "model_id": "claude-sonnet-5",
+          "rank": 14,
+          "votes": "3,601"
+        },
+        {
+          "model_id": "gemini-3-5-flash",
+          "rank": 17,
+          "votes": "1,372"
+        },
+        {
+          "model_id": "gpt-5-6-luna",
+          "rank": 19,
+          "votes": "1,888"
+        },
+        {
+          "model_id": "grok-4-5",
+          "rank": 21,
+          "votes": "2,435"
+        },
+        {
+          "model_id": "kimi-k2-6",
+          "rank": 22,
+          "votes": "11,181"
+        },
+        {
+          "model_id": "gemini-3-1-pro",
+          "rank": 24,
+          "votes": "45,162"
+        },
+        {
+          "model_id": "claude-haiku-4-5",
+          "rank": 31,
+          "votes": "30,937"
         }
       ]
     },
@@ -637,26 +791,105 @@
       ]
     },
     "vision": {
-      "category": "Overview tab, \"Vision\" top-10 card",
-      "board_url": "https://arena.ai/leaderboard",
-      "n_models": 10,
-      "capture": "top-10 card",
+      "category": "Vision Arena · Overall (148 models, 1,258,468 votes)",
+      "board_url": "https://arena.ai/leaderboard/vision",
+      "n_models": 148,
+      "capture": "full board (arena.ai now serves a dedicated per-category page — /leaderboard/vision — with the whole table server-rendered directly into the HTML response; read via a plain GET, no JS execution needed, still read-only/no login/no vote; discovered 2026-09-07 while checking whether the other top-10-card tasks now have a full-board route too)",
       "ranks": [
         {
           "model_id": "claude-fable-5",
-          "rank": 1
+          "rank": 1,
+          "votes": "10,002"
         },
         {
           "model_id": "qwen3-8-max",
-          "rank": 3
+          "rank": 3,
+          "votes": "7,244"
         },
         {
           "model_id": "muse-spark-1-2",
-          "rank": 8
+          "rank": 8,
+          "votes": "1,844"
         },
         {
           "model_id": "claude-opus-5",
-          "rank": 9
+          "rank": 9,
+          "votes": "8,271"
+        },
+        {
+          "model_id": "gpt-5-5",
+          "rank": 11,
+          "votes": "21,389"
+        },
+        {
+          "model_id": "claude-opus-4-8",
+          "rank": 12,
+          "votes": "13,521"
+        },
+        {
+          "model_id": "gemini-3-6-flash",
+          "rank": 13,
+          "votes": "3,816"
+        },
+        {
+          "model_id": "gemini-3-5-flash",
+          "rank": 14,
+          "votes": "8,259"
+        },
+        {
+          "model_id": "gpt-5-6-sol",
+          "rank": 17,
+          "votes": "5,837"
+        },
+        {
+          "model_id": "grok-4-5",
+          "rank": 18,
+          "votes": "6,401"
+        },
+        {
+          "model_id": "muse-spark-1-1",
+          "rank": 22,
+          "votes": "6,769"
+        },
+        {
+          "model_id": "gemini-3-1-pro",
+          "rank": 24,
+          "votes": "39,412"
+        },
+        {
+          "model_id": "claude-sonnet-5",
+          "rank": 29,
+          "votes": "8,522"
+        },
+        {
+          "model_id": "gpt-5-6-terra",
+          "rank": 32,
+          "votes": "5,774"
+        },
+        {
+          "model_id": "kimi-k2-6",
+          "rank": 33,
+          "votes": "15,378"
+        },
+        {
+          "model_id": "gpt-5-6-luna",
+          "rank": 38,
+          "votes": "5,857"
+        },
+        {
+          "model_id": "qwen3-8-27b",
+          "rank": 40,
+          "votes": "2,954"
+        },
+        {
+          "model_id": "inkling-small",
+          "rank": 70,
+          "votes": "3,524"
+        },
+        {
+          "model_id": "o4-mini",
+          "rank": 75,
+          "votes": "41,375"
         }
       ]
     },
@@ -664,7 +897,7 @@
       "category": "Overview tab, \"WebDev\" top-10 card",
       "board_url": "https://arena.ai/leaderboard",
       "n_models": 10,
-      "capture": "top-10 card",
+      "capture": "top-10 card — checked 2026-09-07 for a dedicated /leaderboard/webdev route (arena.ai now serves one for vision/document/agent/search); none exists, the URL returns the site's own \"Leaderboard Not Found\" page, so this stays the Overview top-10 card. As of the same date this task's PRIMARY preferred evidence is Epoch's WebDev Arena mirror (standings.frontend.preferred, scripts/derive-standings.mjs) — this card is now only the fallback for a model the mirror itself lacks.",
       "ranks": [
         {
           "model_id": "gpt-6-astra",

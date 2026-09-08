@@ -14,10 +14,14 @@ import { STATUS_VALUES, ADOPTION_VALUES, deriveStatus, deriveAdoption } from './
 // data/testers.json's own tester ids — every standings.measured[].tester must name one of these
 // (scripts/derive-standings.mjs). Read once at module load, same as every other
 // static registry this gate cross-checks against (BENCHES, VENDOR, etc.).
-const TESTER_IDS = new Set(
-  JSON.parse(readFileSync(new URL('../data/testers.json', import.meta.url))).testers.map((t) => t.id)
-);
+const TESTERS_FILE = JSON.parse(readFileSync(new URL('../data/testers.json', import.meta.url)));
+const TESTER_IDS = new Set(TESTERS_FILE.testers.map((t) => t.id));
 export const STANDINGS_LICENCE_VALUES = ['display-ok', 'signal-only'];
+// scripts/derive-standings.mjs's EPOCH_FILE_CONFIG entries route by this field on their own
+// data/testers.json per_benchmark entry — "measured" (default, absent counts as this) or
+// "preferred" (a mirrored blind-vote board like webdev_arena_external, brain v2 step 2). Any other
+// value is a typo, not a third kind — this file has never defined one.
+export const EPOCH_PER_BENCHMARK_KIND_VALUES = ['measured', 'preferred'];
 
 const CONF = ['low', 'medium', 'high'];
 const VOCAB = ['reasoning', 'agentic', 'coding', 'research', 'long-context', 'writing', 'cheap-bulk', 'speed', 'vision'];
@@ -387,7 +391,25 @@ export function validate(data, registry) {
           else if (!Number.isInteger(p.rank) || p.rank < 1 || p.rank > p.n_models) E(`${pl}.rank "${p.rank}" must be an integer between 1 and n_models (${p.n_models})`);
           if (!p.as_of || !DATE_RE.test(p.as_of)) E(`${pl}.as_of "${p.as_of}" must be a YYYY-MM-DD date`);
           if (!p.url || !/^https?:\/\//i.test(p.url)) E(`${pl}.url "${p.url}" must be http(s)`);
+          // licence/score are OPTIONAL on preferred (a plain arena.ai capture carries neither) —
+          // only present when the evidence actually came from a licensed/scored feed reused as
+          // preferred (e.g. an Epoch mirror, brain v2 step 2). Same honesty rule as measured's
+          // signal-only row above: a signal-only preferred entry may never carry a real score.
+          if (p.licence !== undefined && !STANDINGS_LICENCE_VALUES.includes(p.licence)) E(`${pl}.licence "${p.licence}" must be one of ${STANDINGS_LICENCE_VALUES.join(', ')}`);
+          if (p.score !== undefined && p.score !== null && typeof p.score !== 'number') E(`${pl}.score "${p.score}" must be null or a number`);
+          if (p.licence === 'signal-only' && p.score !== null && p.score !== undefined) E(`${pl}.score must be null for a signal-only preferred entry — cite it, never republish its number`);
         }
+      }
+    }
+  }
+
+  // 10g. data/testers.json's own per_benchmark `kind` field (scripts/derive-standings.mjs's
+  // EPOCH_FILE_CONFIG reads this to route a set into measured vs. preferred — see 10f above).
+  // Absent means "measured"; anything present that isn't one of the two known values is a typo.
+  for (const tester of TESTERS_FILE.testers) {
+    for (const [file, meta] of Object.entries(tester.mapping?.per_benchmark || {})) {
+      if (meta.kind !== undefined && !EPOCH_PER_BENCHMARK_KIND_VALUES.includes(meta.kind)) {
+        E(`data/testers.json: ${tester.id}.mapping.per_benchmark["${file}"].kind "${meta.kind}" must be one of ${EPOCH_PER_BENCHMARK_KIND_VALUES.join(', ')} (or absent, meaning "measured")`);
       }
     }
   }

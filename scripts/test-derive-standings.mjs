@@ -4,6 +4,7 @@ import {
   matchTesterModel, rankBenchmarkRows, unmatchedNames, parseCsvRobust,
   extractLiveBenchDates, livebenchCompositeScore, rankLivebenchTask,
   mergeChosenForTags, chosenForBulk, rankArcPrizeRows, preferredForTask,
+  epochPreferredFromRanked, mergePreferredFallback,
   assembleStandings, epochBenchmarkUrl, EPOCH_FILE_CONFIG, EPOCH_SKIP_FILES,
   LIVEBENCH_TASK_COLUMNS, ARC_PRIZE_DATASET_ID,
 } from './derive-standings.mjs';
@@ -268,10 +269,54 @@ test('assembleStandings carries chosen.tags and preferred.board through from the
   assert.deepEqual(coding.preferred, { board: 'Text-Arena "Coding"', rank: 8, n_models: 395, as_of: '2026-09-07', url: 'https://arena.ai/leaderboard/text' });
 });
 
+// --- Epoch-mirror preferred (WebDev Arena reclassification, brain v2 step 2) -------------------
+test('epochPreferredFromRanked reshapes a ranked Epoch file into signal-only preferred records, score always null', () => {
+  const ranked = new Map([['claude-opus-5', { rank: 2, n_models: 117, score: 1450 }]]);
+  const out = epochPreferredFromRanked(ranked, 'webdev_arena_external.csv', 'WebDev Arena (Epoch mirror)');
+  assert.deepEqual(out.get('claude-opus-5'), {
+    board: 'WebDev Arena (Epoch mirror)', rank: 2, n_models: 117,
+    url: 'https://epoch.ai/benchmarks/webdev-arena-external', licence: 'signal-only', score: null,
+  });
+});
+test('mergePreferredFallback keeps the primary (mirror) record and only fills gaps from the fallback (arena card)', () => {
+  const primary = new Map([['claude-opus-5', { board: 'mirror', rank: 1, n_models: 117 }]]);
+  const fallback = new Map([
+    ['claude-opus-5', { board: 'card', rank: 9, n_models: 10 }], // primary wins, never overwritten
+    ['gemini-3-7-flash', { board: 'card', rank: 3, n_models: 10 }], // mirror lacks this one — kept
+  ]);
+  const out = mergePreferredFallback(primary, fallback);
+  assert.equal(out.get('claude-opus-5').board, 'mirror');
+  assert.equal(out.get('claude-opus-5').rank, 1);
+  assert.equal(out.get('gemini-3-7-flash').board, 'card');
+});
+test('assembleStandings routes a "preferred"-kind Epoch file into .preferred, never .measured, and carries its licence/score through', () => {
+  const epochRanked = new Map([['webdev_arena_external.csv', new Map([['claude-opus-5', { rank: 3, n_models: 117, score: 1450, rung: null, rungCount: 1 }]])]]);
+  const epochTaskOf = new Map([['webdev_arena_external.csv', 'frontend']]);
+  const epochKindOf = new Map([['webdev_arena_external.csv', 'preferred']]);
+  const preferredByTask = new Map([['frontend', epochPreferredFromRanked(epochRanked.get('webdev_arena_external.csv'), 'webdev_arena_external.csv', 'WebDev Arena (Epoch mirror)')]]);
+  const out = assembleStandings(MODELS, { epochRanked, epochTaskOf, epochKindOf, preferredByTask, asOf: '2026-09-07' });
+  const frontend = out.get('claude-opus-5').frontend;
+  assert.deepEqual(frontend.measured, []); // never measured — that's the whole point of the reclassification
+  assert.deepEqual(frontend.preferred, {
+    board: 'WebDev Arena (Epoch mirror)', rank: 3, n_models: 117,
+    as_of: '2026-09-07', url: 'https://epoch.ai/benchmarks/webdev-arena-external',
+    licence: 'signal-only', score: null,
+  });
+});
+test('assembleStandings leaves a plain arena.ai-native preferred record with exactly its original 5 keys (no licence/score added)', () => {
+  const preferredByTask = new Map([['coding', new Map([['claude-opus-5', { board: 'Text-Arena "Coding"', rank: 8, n_models: 395, url: 'https://arena.ai/leaderboard/text' }]])]]);
+  const out = assembleStandings(MODELS, { preferredByTask, asOf: '2026-09-07' });
+  assert.deepEqual(Object.keys(out.get('claude-opus-5').coding.preferred).sort(), ['as_of', 'board', 'n_models', 'rank', 'url']);
+});
+
 // --- sanity on the static config tables (never let one drift silently) -----------------------
 test('EPOCH_SKIP_FILES excludes the ARC-AGI-2 mirror (arc-prize is the primary source instead)', () => {
   assert.ok(EPOCH_SKIP_FILES.has('arc_agi_2_external.csv'));
   assert.ok(!('arc_agi_2_external.csv' in EPOCH_FILE_CONFIG));
+});
+test('EPOCH_SKIP_FILES excludes aider_polyglot_external (matches the standalone Aider tester\'s own exclude verdict)', () => {
+  assert.ok(EPOCH_SKIP_FILES.has('aider_polyglot_external.csv'));
+  assert.ok(!('aider_polyglot_external.csv' in EPOCH_FILE_CONFIG));
 });
 test('epochBenchmarkUrl builds a stable epoch.ai benchmarks-page slug from the CSV filename', () => {
   assert.equal(epochBenchmarkUrl('swe_bench_verified.csv'), 'https://epoch.ai/benchmarks/swe-bench-verified');

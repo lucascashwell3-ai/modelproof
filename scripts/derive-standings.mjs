@@ -31,7 +31,13 @@
        "measured" source at all here; it is PREFERRED (blind human votes), a different kind of
        evidence, read from the checked-in data/signals/arena-2026-09.json snapshot (this script
        never fetches arena.ai itself — see scripts/refresh.md's "Arena preferred boards" section
-       for how that snapshot is captured/replaced).
+       for how that snapshot is captured/replaced). Same rule applies one level down: Epoch's
+       webdev_arena_external.csv mirrors that SAME blind-vote board (WebDev Arena), just through a
+       second party, so it is ALSO preferred, never measured — data/testers.json marks it
+       `kind: "preferred"` and epochPreferredFromRanked()/mergePreferredFallback() route it into
+       standings.frontend.preferred (mirror first, the arena.ai snapshot as fallback for a model
+       the mirror lacks), with `licence: 'signal-only'` and `score: null` always — cite the rank,
+       never republish a vote-derived number as if it were display-ok.
      - "chosen" reuses the same OpenRouter task-spend endpoint scripts/derive-signals.mjs already
        fetches (https://openrouter.ai/api/frontend/v1/rankings/task-spend), merging every tag
        data/tasks.json's `openrouter_signal.tags` lists for a task, weighted by each tag's own
@@ -190,21 +196,46 @@ export const EPOCH_ZIP_URL = 'https://epoch.ai/data/benchmark_data.zip';
 
 // Superseded by ARC Prize's own primary-source fetch (data/testers.json's epoch-ai entry: "the
 // primary source" for ARC-AGI-2 is arc-prize, not this mirror) — never double-counted.
-export const EPOCH_SKIP_FILES = new Set(['arc_agi_2_external.csv']);
+// aider_polyglot_external.csv: dropped 2026-09-07 (brain v2 step 2 fix round) — matches the
+// standalone `aider-polyglot` tester's own "exclude" verdict (data/testers.json: frozen since
+// 2025-10-04, 1 catalog model). The same stale leaderboard reached two ways gets the same verdict.
+export const EPOCH_SKIP_FILES = new Set(['arc_agi_2_external.csv', 'aider_polyglot_external.csv']);
 
 export const EPOCH_FILE_CONFIG = {
   'gpqa_diamond.csv': { scoreCol: 'mean_score', label: 'GPQA Diamond' },
   'simpleqa_verified.csv': { scoreCol: 'mean_score', label: 'SimpleQA Verified' },
   'hle_external.csv': { scoreCol: 'Accuracy', label: "Humanity's Last Exam (Epoch mirror)" },
   'deepresearchbench_external.csv': { scoreCol: 'Average score', label: 'DeepResearch Bench (Epoch mirror)' },
+  // webdev_arena_external's own per_benchmark entry carries kind: "preferred" (data/testers.json)
+  // — WebDev Arena is a blind human-vote board, not a test, so this config is only used to RANK
+  // the mirror's rows; assembleStandings() routes its result into standings.frontend.preferred,
+  // never .measured (see epochKindOf below).
   'webdev_arena_external.csv': { scoreCol: 'Arena Score', label: 'WebDev Arena (Epoch mirror)' },
   'cursorbench_external.csv': { scoreCol: 'Score', label: 'CursorBench', rungCol: 'Reasoning level' },
   'swe_bench_verified.csv': { scoreCol: 'mean_score', label: 'SWE-bench Verified (Epoch mirror)' },
-  'aider_polyglot_external.csv': { scoreCol: 'Percent correct', label: 'Aider Polyglot (Epoch mirror)' },
+  // Added 2026-09-07 (brain v2 step 2) — each fit confirmed against the benchmark's own page
+  // before wiring it in (data/testers.json's epoch-ai notes carries the one-line confirmation):
+  'scicode_external.csv': { scoreCol: 'Score', label: 'SciCode (Epoch mirror)' },
+  'ale_bench_external.csv': { scoreCol: 'Performance', label: 'ALE-Bench (Epoch mirror)' },
+  'weirdml_external.csv': { scoreCol: 'Accuracy', label: 'WeirdML (Epoch mirror)' },
+  // DeepSWE's own `Harness` column is constant ("mini-swe-agent") across every row — the model
+  // varies, the scaffold doesn't, so this is a genuine per-model SWE-bench-style run, not a
+  // fixed-agent product being scored (checked before wiring in, per the fix-round instructions).
+  'deepswe_external.csv': { scoreCol: 'Pass@1', label: 'DeepSWE (Epoch mirror, mini-swe-agent harness)', rungCol: 'Reasoning effort' },
   'terminalbench_external.csv': { scoreCol: 'Accuracy mean', label: 'Terminal-Bench 2.0 (Epoch mirror)', rungCol: 'Agent' },
   'vending_bench_2_external.csv': { scoreCol: 'Score', label: 'Vending-Bench 2 (Epoch mirror)' },
   'metr_time_horizons_external.csv': { scoreCol: 'Time horizon', label: 'METR time horizons (Epoch mirror)' },
+  'apex_agents_external.csv': { scoreCol: 'Pass@1 score', label: 'APEX-Agents (Epoch mirror)' },
+  'osworld_2_external.csv': { scoreCol: 'Binary accuracy', label: 'OSWorld 2.0 (Epoch mirror)', rungCol: 'Reasoning' },
   'lech_mazur_writing_external.csv': { scoreCol: 'Mean score', label: 'Lech Mazur Writing (Epoch mirror)' },
+  // FrontierMath's versioned self-run sets (no `_external` suffix — Epoch's own run, like gpqa/
+  // simpleqa above) supersede the un-versioned frontiermath.csv, which never mapped to a task id.
+  'frontiermath_tiers_1_3_v2.csv': { scoreCol: 'mean_score', label: 'FrontierMath Tiers 1-3 v2' },
+  'frontiermath_tier_4_v2.csv': { scoreCol: 'mean_score', label: 'FrontierMath Tier 4 v2' },
+  'proofbench_external.csv': { scoreCol: 'Accuracy', label: 'ProofBench (Epoch mirror)', rungCol: 'Reasoning effort' },
+  'otis_mock_aime_2024_2025.csv': { scoreCol: 'mean_score', label: 'OTIS Mock AIME 2024-2025' },
+  'critpt_external.csv': { scoreCol: 'Accuracy', label: 'CritPt (Epoch mirror)' },
+  'gdp_pdf_external.csv': { scoreCol: 'GDP.pdf score', label: 'GDP.pdf (Epoch mirror)' },
   'gdpval_external.csv': { scoreCol: 'Win Rate (%)', label: 'GDPval (Epoch mirror)' },
 };
 
@@ -517,6 +548,33 @@ export function preferredForTask(arenaFile, taskId) {
   return out;
 }
 
+/** Reshape one already-ranked Epoch file (an epochRanked.get(file) result) into a "preferred"
+ * evidence map — used for a per_benchmark set whose own `kind` is "preferred" (webdev_arena_
+ * external, brain v2 step 2), never for a plain measured set. `licence: 'signal-only'` and
+ * `score: null` always, regardless of what the mirror's own licence class says elsewhere in
+ * data/testers.json — this is Arena's blind-vote number reused through a THIRD party's mirror, not
+ * something this codebase has any standing to redistribute as a display-ok figure; cite the rank,
+ * never republish the score. Pure. Returns Map<catalogId, {board, rank, n_models, url, licence,
+ * score}>. */
+export function epochPreferredFromRanked(ranked, file, label) {
+  const out = new Map();
+  for (const [id, rec] of ranked || new Map()) {
+    out.set(id, { board: label, rank: rec.rank, n_models: rec.n_models, url: epochBenchmarkUrl(file), licence: 'signal-only', score: null });
+  }
+  return out;
+}
+
+/** Merge two per-task preferred maps for the SAME task, primary first: a model present in
+ * `primary` (e.g. the Epoch mirror) keeps its primary record; a model only in `fallback` (e.g. the
+ * arena.ai top-10 card) is kept as-is so it isn't silently dropped just because a fuller primary
+ * source doesn't happen to carry it. Pure. Never used to average or reconcile — one record per
+ * model, whichever source actually has it. */
+export function mergePreferredFallback(primary, fallback) {
+  const out = new Map(primary);
+  for (const [id, rec] of fallback || new Map()) if (!out.has(id)) out.set(id, rec);
+  return out;
+}
+
 // -------------------------------------------------------------------------------------------
 // assembly — pure given every already-ranked ingredient (unit-tested with fixtures)
 // -------------------------------------------------------------------------------------------
@@ -528,14 +586,22 @@ export function preferredForTask(arenaFile, taskId) {
  *
  * `epochRanked`     Map<epochFile, Map<catalogId, {rank,n_models,score,rung,rungCount}>>
  * `epochTaskOf`     Map<epochFile, taskId>              (from data/testers.json's per_benchmark)
+ * `epochKindOf`     Map<epochFile, "measured"|"preferred">  (per_benchmark's own `kind`, default
+ *                   "measured" — a "preferred" file, e.g. webdev_arena_external, is ranked exactly
+ *                   like any other Epoch file but its result is routed into `preferred`, never
+ *                   `measured`; it never appears in this loop's `measured` array at all)
  * `arcRanked`       Map<catalogId, {rank,n_models,score}>              (research only)
  * `livebenchByTask` Map<taskId, Map<catalogId, {rank,n_models,score}>>
  * `chosenByTask`    Map<taskId, Map<catalogId, {rank,share,n_models,as_of?}>>
  * `chosenTagsOf`    Map<taskId, string[]>                 (data/tasks.json's own tags[], or [])
- * `preferredByTask` Map<taskId, Map<catalogId, {board,rank,n_models,url}>>
+ * `preferredByTask` Map<taskId, Map<catalogId, {board,rank,n_models,url,licence?,score?}>> — the
+ *                   `licence`/`score` keys are only ever present on a preferred record that was
+ *                   itself built from a licensed/scored feed (e.g. an Epoch mirror routed here via
+ *                   `epochKindOf`); a genuine arena.ai-native capture carries neither key, and this
+ *                   function never adds one that wasn't already on the input record.
  */
 export function assembleStandings(models, {
-  epochRanked = new Map(), epochTaskOf = new Map(), arcRanked = new Map(),
+  epochRanked = new Map(), epochTaskOf = new Map(), epochKindOf = new Map(), arcRanked = new Map(),
   livebenchByTask = new Map(), chosenByTask = new Map(), chosenTagsOf = new Map(),
   preferredByTask = new Map(), asOf = today(),
 } = {}) {
@@ -546,6 +612,7 @@ export function assembleStandings(models, {
       const measured = [];
       for (const [file, cfg] of Object.entries(EPOCH_FILE_CONFIG)) {
         if (epochTaskOf.get(file) !== taskId) continue;
+        if ((epochKindOf.get(file) || 'measured') !== 'measured') continue;
         const rec = epochRanked.get(file)?.get(m.id);
         if (!rec) continue;
         const rungNote = cfg.rungCol && rec.rung ? ` (best rung: ${rec.rung})`
@@ -585,6 +652,10 @@ export function assembleStandings(models, {
       const preferred = prefRec ? {
         board: prefRec.board, rank: prefRec.rank, n_models: prefRec.n_models,
         as_of: asOf, url: prefRec.url,
+        // only ever set when the input record itself carried one (see the JSDoc above) — never
+        // invented here, so a plain arena.ai capture's preferred object keeps its original 5 keys.
+        ...(prefRec.licence !== undefined ? { licence: prefRec.licence } : {}),
+        ...(prefRec.score !== undefined ? { score: prefRec.score } : {}),
       } : null;
 
       standings[taskId] = { measured, chosen, preferred };
@@ -617,9 +688,11 @@ async function main() {
   // --- Epoch ---
   const epochTester = testersFile.testers.find((t) => t.id === 'epoch-ai');
   const epochTaskOf = new Map();
+  const epochKindOf = new Map(); // file -> per_benchmark's own "kind" ("measured" default | "preferred")
   for (const [file, meta] of Object.entries(epochTester?.mapping?.per_benchmark || {})) {
     if (EPOCH_SKIP_FILES.has(file) || !EPOCH_FILE_CONFIG[file]) continue;
     epochTaskOf.set(file, meta.task);
+    epochKindOf.set(file, meta.kind || 'measured');
   }
   const epochDir = await fetchEpochZip();
   const epochRawByFile = readEpochFiles(epochDir);
@@ -671,8 +744,19 @@ async function main() {
   const preferredByTask = new Map();
   for (const taskId of TASK_IDS) preferredByTask.set(taskId, preferredForTask(arenaFile, taskId));
 
+  // --- Epoch-mirror preferred (kind: "preferred" sets, e.g. webdev_arena_external) — the mirror
+  // is the PRIMARY source for its task's preferred evidence; the arena.ai snapshot captured just
+  // above is kept only as a fallback for a model the mirror itself doesn't carry, per the fix
+  // round's own rule ("keep the card as fallback only if the mirror lacks the model").
+  for (const [file, kind] of epochKindOf) {
+    if (kind !== 'preferred') continue;
+    const taskId = epochTaskOf.get(file);
+    const mirrorPreferred = epochPreferredFromRanked(epochRanked.get(file), file, `${EPOCH_FILE_CONFIG[file].label} (mirrors arena.ai's blind human votes)`);
+    preferredByTask.set(taskId, mergePreferredFallback(mirrorPreferred, preferredByTask.get(taskId)));
+  }
+
   // --- assemble + write ---
-  const standingsMap = assembleStandings(models, { epochRanked, epochTaskOf, arcRanked, livebenchByTask, chosenByTask, chosenTagsOf, preferredByTask, asOf });
+  const standingsMap = assembleStandings(models, { epochRanked, epochTaskOf, epochKindOf, arcRanked, livebenchByTask, chosenByTask, chosenTagsOf, preferredByTask, asOf });
   for (const m of models) m.standings = standingsMap.get(m.id);
 
   // --- coverage table ---
