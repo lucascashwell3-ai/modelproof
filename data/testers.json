@@ -8,29 +8,45 @@
       "url": "https://epoch.ai/benchmarks",
       "feed_url": "https://epoch.ai/data/benchmark_data.zip",
       "format": "zip-of-csv",
-      "fetch": { "http_status": 200, "fetched_at": "2026-09-07", "row_count": 74 },
+      "fetch": { "http_status": 200, "fetched_at": "2026-09-07", "row_count": 80 },
       "licence": {
         "class": "display-ok",
         "url": "https://epoch.ai/benchmarks/use-this-data",
-        "quote": "free to use, distribute, and reproduce provided the source and authors are credited under the Creative Commons Attribution license"
+        "quote": "free to use, distribute, and reproduce provided the source and authors are credited under the Creative Commons Attribution license — Epoch AI's own runs. 'This hub also includes data sourced from external projects, which retains its original licensing' (same page, checked 2026-09-07): Aider Polyglot and Terminal-Bench are confirmed Apache-2.0 via their own repos; every other `*_external` set's upstream terms are unstated here — see mapping.per_benchmark."
       },
       "tasks": {
-        "coding": ["CursorBench (per-effort cost/score ladder)", "SWE-bench Verified (Epoch self-run)", "Aider Polyglot (mirrored, Apache-2.0 sub-licence)"],
-        "agents": ["Terminal-Bench 2.x (mirrored, Apache-2.0 sub-licence)"],
-        "research": ["GPQA Diamond (Epoch self-run)", "FrontierMath (Epoch self-run, OpenAI-funded dataset — disclosed conflict)"]
+        "research": ["ARC-AGI-2 (mirrored — see arc-prize entry for the primary source)", "GPQA Diamond (Epoch self-run)", "SimpleQA Verified (Epoch self-run)", "HLE (mirrored)", "DeepResearch Bench (mirrored)"],
+        "frontend": ["WebDev Arena (mirrored)"],
+        "coding": ["CursorBench (mirrored, per-effort cost/score ladder)", "SWE-bench Verified (Epoch self-run)", "Aider Polyglot (mirrored, Apache-2.0)"],
+        "agents": ["Terminal-Bench (mirrored, Apache-2.0)", "Vending-Bench 2 (mirrored)", "METR time horizons (mirrored)"],
+        "writing": ["Lech Mazur Writing (mirrored)"],
+        "vision": ["Video-MME (mirrored; 0 catalog models matched — see notes)"],
+        "exec-summaries": ["GDPval (mirrored)"]
       },
       "refresh": "rolling; Epoch adds/updates CSVs on its own schedule. Already wired into this repo's Collect pass via scripts/collect-epoch.mjs, which proposes but never writes.",
-      "independence": "Runs several evals itself (GPQA Diamond, SWE-bench Verified, FrontierMath, MATH L5) but mirrors others published by interested parties: CursorBench is published by Cursor, which ships its own coding model; OpenAI funded Epoch's FrontierMath with dataset access, disclosed only after the fact. https://epoch.ai/benchmarks/use-this-data",
+      "independence": "Runs several evals itself (GPQA Diamond, SimpleQA Verified, SWE-bench Verified, FrontierMath, MATH L5) but mirrors others published by interested parties: CursorBench is published by Cursor, which ships its own coding model; WebDev Arena and Video-MME are community/third-party leaderboards Epoch mirrors, not runs; OpenAI funded Epoch's FrontierMath with dataset access, disclosed only after the fact. https://epoch.ai/benchmarks/use-this-data",
       "mapping": {
-        "feed_models": 74,
-        "mapped_models": 15,
-        "unmapped_sample": [
-          "claude-opus-4-7_max (no matching catalog model — Opus 4.7 predates/differs from our tracked Opus 4.8)",
-          "claude-sonnet-4-6_max (older Sonnet generation, not in catalog)"
-        ]
+        "feed_models": 902,
+        "mapped_models": 37,
+        "per_benchmark": {
+          "arc_agi_2_external.csv": { "catalog_models": 22, "feed_models": 203, "task": "research", "licence": "upstream (unstated)" },
+          "gpqa_diamond.csv": { "catalog_models": 30, "feed_models": 311, "task": "research", "licence": "CC-BY" },
+          "simpleqa_verified.csv": { "catalog_models": 31, "feed_models": 78, "task": "research", "licence": "CC-BY" },
+          "hle_external.csv": { "catalog_models": 3, "feed_models": 47, "task": "research", "licence": "upstream (unstated)" },
+          "deepresearchbench_external.csv": { "catalog_models": 4, "feed_models": 41, "task": "research", "licence": "upstream (unstated)" },
+          "webdev_arena_external.csv": { "catalog_models": 29, "feed_models": 120, "task": "frontend", "licence": "upstream (unstated)" },
+          "cursorbench_external.csv": { "catalog_models": 16, "feed_models": 74, "task": "coding", "licence": "upstream (unstated)" },
+          "swe_bench_verified.csv": { "catalog_models": 4, "feed_models": 33, "task": "coding", "licence": "CC-BY" },
+          "aider_polyglot_external.csv": { "catalog_models": 1, "feed_models": 70, "task": "coding", "licence": "Apache-2.0" },
+          "terminalbench_external.csv": { "catalog_models": 2, "feed_models": 59, "task": "agents", "licence": "Apache-2.0" },
+          "vending_bench_2_external.csv": { "catalog_models": 6, "feed_models": 60, "task": "agents", "licence": "upstream (unstated)" },
+          "metr_time_horizons_external.csv": { "catalog_models": 2, "feed_models": 50, "task": "agents", "licence": "upstream (unstated)" },
+          "lech_mazur_writing_external.csv": { "catalog_models": 1, "feed_models": 49, "task": "writing", "licence": "upstream (unstated)" },
+          "gdpval_external.csv": { "catalog_models": 1, "feed_models": 11, "task": "exec-summaries", "licence": "upstream (unstated)" }
+        }
       },
       "verdict": "use",
-      "notes": "Already Tier A in scripts/sources.json and already the collector this repo runs (scripts/collect-epoch.mjs). Re-run live for this audit: 15 model series had >=2 effort rungs and matched our catalog (script output as_of 2026-09-08 UTC per this session's clock; recorded here as 2026-09-07 to match the rest of this file). feed_models=74 counts CursorBench's own distinct model-version strings; other mirrored files (aider_polyglot_external.csv: 77 rows through 2025-10-03 only; terminalbench_external.csv: 204 rows through 2026-04-23; swe_bench_verified.csv: 35 rows) were spot-checked directly from the zip and are each frozen at different, older dates than CursorBench — confirms Aider Polyglot's staleness (see that entry) via a second, independent path."
+      "notes": "Corrected 2026-09-07 (brain v2 step 1 continued): the prior pass only counted CursorBench's own ladder (15/74) and missed that benchmark_data.zip holds 80 benchmark CSVs (82 files minus 2 metadata-only ones). Recomputed feed-wide with scripts/_audit/map-names.mjs on every CSV's 'Model version' column: 926 raw names, 902 after slug-dedup, 37 distinct catalog models matched — independently re-derived and cross-checked against the full-feed union, both agree. 36 of the 37 are covered by the 14 per_benchmark sets above; the 37th (qwen3-coder-plus) only appears in ale_bench_external.csv, a set outside this catalog's 10 task ids, so it isn't in the table. video_mme_external.csv (50 feed models) is this catalog's only Video-MME/vision source but matches 0 catalog models, noted inline in `tasks.vision` rather than in the table; live_bench_external.csv (52 feed models) also matches 0 and doesn't map to any of the 10 task ids, so it's absent from both `tasks` and the table. Checked why both are 0 — not a matcher bug: live_bench_external's newest rows are gpt-5.1/o3-mini/claude-3.7-era (frozen before this catalog's current models existed); video_mme_external is a dedicated open-source video-LLM leaderboard that has never carried a current frontier model. FrontierMath stays in `independence` above for its disclosed OpenAI conflict but is dropped from `tasks` — it doesn't map to any of this catalog's 10 task ids either."
     },
     {
       "id": "aider-polyglot",
@@ -297,6 +313,34 @@
       "mapping": { "feed_models": null, "mapped_models": null, "unmapped_sample": [] },
       "verdict": "signal-only",
       "notes": "Display-BANNED stands (08-23 ruling, scripts/data-sources.md) — this entry only confirms the narrower question the task asked: whether the published terms allow signal-only (internal, non-redistributed) use. They do, per the redistribution-note line quoted above. No model-name mapping was attempted: the API is paid-gated (401 without a key), and scraping the free public pages at catalog scale would itself be the kind of systematic collection their terms reserve for a paid tier."
+    },
+    {
+      "id": "arc-prize",
+      "name": "ARC Prize Foundation — ARC-AGI-2 Evaluations",
+      "url": "https://arcprize.org/leaderboard",
+      "feed_url": "https://arcprize.org/media/data/evaluations.json",
+      "format": "json",
+      "fetch": { "http_status": 200, "fetched_at": "2026-09-07", "row_count": 925 },
+      "licence": {
+        "class": "signal-only",
+        "url": "https://arcprize.org/terms",
+        "quote": "\"no part of the Services and no Content or Marks may be copied, reproduced, aggregated, republished, uploaded, posted, publicly displayed, encoded, translated, transmitted, distributed, sold, licensed, or otherwise exploited for any commercial purpose whatsoever, without our express prior written permission\" (Terms and Conditions, last updated 2024-06-03, checked 2026-09-07) — permission requested from team@arcprize.org 2026-08-22, no reply on file."
+      },
+      "tasks": {
+        "research": ["ARC-AGI-2 semi-private evaluation (score + cost-per-task by model, run by the ARC Prize Foundation itself)"]
+      },
+      "refresh": "rolling — the Foundation updates this JSON as new model runs land; the same file also carries older ARC-AGI-1 (v1_*) evaluations alongside the ARC-AGI-2 (v2_*/v3_*) ones.",
+      "independence": "Nonprofit that designs, runs, and pays for the ARC-AGI evaluation itself rather than selling evaluation services to the labs it grades — no vendor pays for placement here. https://arcprize.org/about",
+      "mapping": {
+        "feed_models": 247,
+        "mapped_models": 12,
+        "unmapped_sample": [
+          "anthropic-claude-fable-5-1-high", "anthropic-claude-opus-5-high", "google-gemini-3-1-pro-preview",
+          "google-gemini-3-7-flash-high", "claude-sonnet-4-20250514", "claude_sonnet_4_6_high"
+        ]
+      },
+      "verdict": "signal-only",
+      "notes": "Class is signal-only pending the 2026-08-22 permission request to team@arcprize.org (no reply on file) — arcprize.org's terms ban republishing for any commercial purpose without written permission, so this feed can inform an internal decision but nothing from it gets displayed raw until permission lands. Mapped live via scripts/_audit/map-names.mjs against the 247 distinct modelId strings in evaluations.json: only 12 distinct catalog models matched, and that's a real undercount, not the true rate. This feed's ids use a hyphen-joined vendor prefix ('anthropic-claude-fable-5-1-high', 'google-gemini-3-7-flash-high') that scripts/auto-refresh.mjs's stripProviderPrefix doesn't strip — its PROVIDER_PREFIX regex only recognizes a vendor prefix followed by '/' or '.', not '-'. Left unfixed here (out of scope for a research-only pass; a real fix belongs in auto-refresh.mjs, not this throwaway audit script). Epoch's arc_agi_2_external.csv mirrors this same ARC-AGI-2 data and matches 22/203 with the same unmodified matcher (see epoch-ai entry) — a partial cross-check that the true match rate on this feed is well above 12/247. GitHub repos, both confirmed via the GitHub API 2026-09-07: arcprize/arc-agi-benchmarking (MIT — harness/config code only, no results data) and arcprize/ARC-AGI-2 (Apache-2.0 — the dataset itself, not the leaderboard results)."
     }
   ]
 }
