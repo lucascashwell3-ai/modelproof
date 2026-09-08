@@ -115,6 +115,51 @@ export function bareModelName(name, vendor) {
 /** Lowercase slug: runs of non-alphanumerics -> "-", trimmed. */
 export const slug = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
+/** Known trailing tokens an independent TESTER hangs off a bare model name — reasoning effort,
+ * thinking-mode flags, run/snapshot dates ("-max-effort", "-thinking-auto-high-effort",
+ * "-20251101", "_high"). Stripped one at a time, longest-acting pattern first, so
+ * "claude-opus-4-5-20251101-thinking-64k-high-effort" peels down to "claude-opus-4-5". Promoted
+ * out of scripts/_audit/map-names.mjs (a throwaway tester-registry audit helper) into shared code
+ * here so derive-standings.mjs's benchmark-row matching doesn't reimplement the same list a third
+ * time; naming.mjs already owns "what does a bare model name look like", so this rule about a
+ * tester's own suffix noise belongs next to it, not duplicated per collector. */
+const EFFORT_DATE_SUFFIX_RE = [
+  /-\d{8}$/, // trailing run/snapshot date: -20251101
+  /-\d{4}-\d{2}-\d{2}$/, // -2025-12-11
+  /-thinking-auto-(low|medium|high)-effort$/,
+  /-thinking-\d+k-(low|medium|high|xhigh|max)-effort$/,
+  /-(low|medium|high|xhigh|extra-high)-effort$/,
+  /-max-effort$/,
+  /-(low|medium|high|xhigh|extra-high|max|auto|instant)$/,
+  /-thinking$/,
+  /-preview$/,
+  /_(low|medium|high|xhigh|extra high|max)$/,
+];
+
+/** Every stage of peeling a slugged string down through EFFORT_DATE_SUFFIX_RE, starting with the
+ * input itself unstripped — a name matcher tries these in order so a partial strip can match
+ * where a full strip would over-strip (and vice versa). Pure, no I/O. */
+export function effortDateSuffixCandidates(s) {
+  const s0 = String(s || '');
+  const out = new Set([s0]);
+  let cur = s0;
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const re of EFFORT_DATE_SUFFIX_RE) {
+      const next = cur.replace(re, '');
+      if (next !== cur && next.length > 1) { cur = next; out.add(cur); changed = true; break; }
+    }
+  }
+  return [...out];
+}
+
+/** The fully-peeled form only (the last candidate effortDateSuffixCandidates produces). */
+export function stripEffortDateSuffix(s) {
+  const all = effortDateSuffixCandidates(s);
+  return all[all.length - 1];
+}
+
 /** The id a model with this display name must carry. Any leading label and any "(…)" are dropped. */
 export function modelId(name) {
   const bare = String(name || '').replace(LEADING_LABEL, '').replace(/\s*\([^)]*\)/g, ' ');

@@ -7,9 +7,9 @@ import {
   buildWorklist, bestForLine, needsGuidance, pickGuidance, guidanceItem, parseCsv, refreshCursorBench,
   releaseTitle, isKnownCandidate, findKnownModel, admissionFailReasons, formatDropLine,
   normalizeDisplayName, findNewCandidateIds, decideRefreshRun, DAILY_FULL_RUN_HOUR_UTC,
-  needsJudgedFit, pickJudgedFit, judgedFitItem, reJudgeWorklistItems,
+  needsJudgedFit, pickJudgedFit, judgedFitItem, reJudgeWorklistItems, stripProviderPrefix,
 } from './auto-refresh.mjs';
-import { modelId, canonicalVendor, bareModelName, isCommunityListing, namingProblems, VENDORS, isCanonicalVendor } from './naming.mjs';
+import { modelId, canonicalVendor, bareModelName, isCommunityListing, namingProblems, VENDORS, isCanonicalVendor, effortDateSuffixCandidates, stripEffortDateSuffix } from './naming.mjs';
 import { validate } from './validate-data.mjs';
 import { TASK_IDS } from './derive-task-fit.mjs';
 
@@ -742,6 +742,43 @@ test('canonicalKey strips ANY routing segment, so a clean id still meets its Ope
   assert.equal(matchAlias('tencent/hy4-preview', models, {}), 'hy4-preview');
 });
 
+// --- stripProviderPrefix: hyphen-joined vendor prefixes (2026-09-07) ---------------------------
+// ARC Prize's own modelId strings ("anthropic-claude-fable-5-1-high") join the vendor with a
+// hyphen instead of a "/" or a ".", which the pre-fix PROVIDER_PREFIX regex never matched
+// (data/testers.json's arc-prize entry flagged this live, 2026-09-07).
+test('stripProviderPrefix strips a hyphen-joined vendor prefix ARC Prize actually publishes', () => {
+  assert.equal(stripProviderPrefix('anthropic-claude-fable-5-1-high'), 'claude-fable-5-1-high');
+  assert.equal(stripProviderPrefix('google-gemini-3-7-flash-high'), 'gemini-3-7-flash-high');
+  assert.equal(stripProviderPrefix('x-ai-grok-4-6'), 'grok-4-6');
+  assert.equal(stripProviderPrefix('meta-muse-spark-1-2'), 'muse-spark-1-2');
+});
+test('stripProviderPrefix never strips a vendor word that is also a real catalog id\'s own first word', () => {
+  // "gemini"/"deepseek"/"qwen" are both vendor aliases AND the literal first word of a real
+  // catalog id — stripping them here would corrupt canonicalKey for our own models.
+  assert.equal(stripProviderPrefix('gemini-3-1-pro'), 'gemini-3-1-pro');
+  assert.equal(stripProviderPrefix('deepseek-v4-pro'), 'deepseek-v4-pro');
+  assert.equal(stripProviderPrefix('qwen-turbo'), 'qwen-turbo');
+  assert.equal(canonicalKey('gemini-3-1-pro'), canonicalKey('Gemini 3.1 Pro'));
+  assert.equal(canonicalKey('deepseek-v4-pro'), canonicalKey('DeepSeek V4 Pro'));
+});
+test('stripProviderPrefix still strips the existing slash/dot forms unchanged', () => {
+  assert.equal(stripProviderPrefix('anthropic/claude-opus-5'), 'claude-opus-5');
+  assert.equal(stripProviderPrefix('vertex_ai.gemini-3.5-flash'), 'gemini-3.5-flash');
+});
+
+// --- effortDateSuffixCandidates / stripEffortDateSuffix (promoted from scripts/_audit/map-names.mjs) ---
+test('stripEffortDateSuffix peels reasoning-effort, thinking-mode and date suffixes down to a bare slug', () => {
+  assert.equal(stripEffortDateSuffix('claude-opus-4-5-20251101-thinking-64k-high-effort'), 'claude-opus-4-5');
+  assert.equal(stripEffortDateSuffix('claude-fable-5-1_high'), 'claude-fable-5-1');
+  assert.equal(stripEffortDateSuffix('gemini-3-7-flash-high'), 'gemini-3-7-flash');
+  assert.equal(stripEffortDateSuffix('gpt-5-6-sol'), 'gpt-5-6-sol'); // no known suffix — unchanged
+});
+test('effortDateSuffixCandidates includes every intermediate peel, starting with the input itself', () => {
+  const cands = effortDateSuffixCandidates('claude-fable-5-1-max-effort');
+  assert.ok(cands.includes('claude-fable-5-1-max-effort'));
+  assert.ok(cands.includes('claude-fable-5-1'));
+});
+
 test('namingProblems: a clean record has none', () => {
   assert.deepEqual(namingProblems({ id: 'gemini-3-8-flash', name: 'Gemini 3.8 Flash', vendor: 'Google' }), []);
   assert.deepEqual(namingProblems({ id: 'gemini-3-1-pro', name: 'Gemini 3.1 Pro (Preview)', vendor: 'Google' }), []);
@@ -754,8 +791,9 @@ const REGISTRY = { sources: [] };
 // stays about the one naming rule it names.
 const BLANK_TASK_FIT = Object.fromEntries(TASK_IDS.map((t) => [t, { score: null, basis: [], reason: 'naming-rule test fixture — task fit not exercised here' }]));
 const BLANK_SIGNALS = Object.fromEntries(TASK_IDS.map((t) => [t, { usage_rank: null, usage_share: null, arena_rank: null, expert_default: null, families: 0 }]));
+const BLANK_STANDINGS = { as_of: '2026-09-07', ...Object.fromEntries(TASK_IDS.map((t) => [t, { measured: [], chosen: null, preferred: null }])) };
 const cleanData = (models) => ({
-  models: models.map((m) => ({ task_fit: BLANK_TASK_FIT, task_fit_judged: null, usage: { openrouter: null }, status: 'ga', adoption: 'unknown', signals: BLANK_SIGNALS, ...m })),
+  models: models.map((m) => ({ task_fit: BLANK_TASK_FIT, task_fit_judged: null, usage: { openrouter: null }, status: 'ga', adoption: 'unknown', signals: BLANK_SIGNALS, standings: BLANK_STANDINGS, ...m })),
   releases: [],
   effort_ladders: [],
 });

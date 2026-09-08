@@ -318,7 +318,7 @@ same discipline the rest of this file already holds sources to.
 
 | Tester | Tasks covered | Licence class | Mapped / feed models | Verdict |
 |---|---|---|---|---|
-| Epoch AI Benchmarking Hub | research, frontend, coding, agents, writing, vision, exec-summaries | display-ok (CC-BY-4.0 for Epoch's own runs; external mirrors keep upstream terms — see `data/testers.json`) | 37 / 902 | use |
+| Epoch AI Benchmarking Hub | research, frontend (preferred only — see note), coding, agents, writing, vision, extraction, exec-summaries | display-ok (CC-BY-4.0 for Epoch's own runs; external mirrors keep upstream terms — see `data/testers.json`) | 37 / 902 | use |
 | Aider Polyglot Leaderboard | coding | display-ok (Apache-2.0) | 2 / 68 | exclude — frozen since 2025-10-04 |
 | LiveBench | coding, research, extraction, writing, exec-summaries | unknown | 32 / 56 | use |
 | Terminal-Bench 2.0 | agents | display-ok (Apache-2.0, via Epoch's mirror) | 3 / 48 | use |
@@ -354,6 +354,25 @@ Notes on how to read this table:
   own LiveBench mirror (`live_bench_external.csv`, separate from the standalone LiveBench row
   above) — matched zero catalog models each because both are frozen at snapshots older than this
   catalog, not because the matcher failed.
+- **Widened 2026-09-07 (brain v2 step 2 fix round): 14 → 25 wired `per_benchmark` entries.** Added
+  SciCode, ALE-Bench, WeirdML, and DeepSWE to `coding`; APEX-Agents and OSWorld 2.0 to `agents`;
+  Epoch's own versioned FrontierMath (Tiers 1-3 v2, Tier 4 v2), ProofBench, OTIS Mock AIME
+  2024-2025, and CritPt to `research`; GDP.pdf as this catalog's first Epoch `extraction` set —
+  each one's fit against its own listed task was confirmed against the benchmark's own page (or
+  its CSV's `Source` column) before wiring it in, never assumed from the filename alone; the one
+  line each got is in `data/testers.json`'s `epoch-ai.notes`. Dropped `aider_polyglot_external.csv`
+  from `coding` (1 matched model, frozen since 2025-10-04) to match the standalone Aider Polyglot
+  row's own `exclude` verdict above — the same stale leaderboard reached two ways now gets one
+  answer.
+- **WebDev Arena reclassified `measured` → `preferred` (2026-09-07).** WebDev Arena is a blind
+  human-vote leaderboard, not an independent test — it never belonged in `measured` at all,
+  Epoch's own mirror of it notwithstanding. `webdev_arena_external.csv`'s `per_benchmark` entry now
+  carries `kind: "preferred"`; `scripts/derive-standings.mjs` reads that field (default
+  `"measured"` when absent) to route a set's ranked rows into `standings.<task>.preferred` instead
+  of `.measured`, with `licence: "signal-only"` and `score: null` always — the rank is cited, the
+  vote-derived number itself is not republished. `frontend.measured` is honestly `[]` for every
+  model now; `frontend.preferred` prefers the mirror's own rank (out of the whole mirrored board)
+  and falls back to the arena.ai top-10 card snapshot only for a model the mirror itself lacks.
 - **ARC Prize's 12 / 247 undercounts the real match rate.** Its feed names use a hyphen-joined
   vendor prefix (`anthropic-claude-fable-5-1-high`) that the shared matcher's provider-prefix
   stripper doesn't recognize (it only strips a prefix followed by `/` or `.`) — a naming-convention
