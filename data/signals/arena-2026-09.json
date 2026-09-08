@@ -1,112 +1,728 @@
 {
-  "_readme": "Human-vote leaderboard signal (arena.ai, formerly LMArena/Chatbot Arena) for scripts/derive-signals.mjs's `families` calibration in assets/decide.mjs. Arena's leaderboard tables render client-side via JS — curl gets nav/footer only (verified by diffing curl output against a headless-browser render of the same URL), so this is NOT a live-fetched Collect input like usage.openrouter or this same signals pipeline's OpenRouter task-spend data. It is a DATED, MANUAL snapshot: fetched once via a headless browser (Claude_Browser, read-only) on 2026-09-07 against a page self-dated 'Sep 2, 2026', with the raw captures kept alongside the research batch that built it. `rank` is this model's position within the mapped-to-catalog cut for that task/category (1st mapped = rank 1, etc.) — NOT its raw position on Arena's own (much longer, mostly-unmapped) leaderboard; effort-level variants of the same base model (e.g. claude-opus-5-high / claude-opus-5-max) were de-duplicated to their best-ranked variant before this cut was taken. `category` names the actual Arena leaderboard or column used as each task's proxy — several tasks have no dedicated Arena category and use the closest available one (documented per task below and in eval/signals.md, which is the primary methodology doc this file was distilled from). Refresh procedure: scripts/refresh.md's 'signals refresh' section — replace this file's `tasks` block and bump `as_of`; there is no automated refresh for this source.",
+  "_readme": "Human-vote leaderboard signal (arena.ai, formerly LMArena/Chatbot Arena) for scripts/derive-signals.mjs's `families` calibration in assets/decide.mjs. Arena's leaderboard tables render client-side via JS — curl gets nav/footer only (verified by diffing curl output against a headless-browser render of the same URL), so this is NOT a live-fetched Collect input like usage.openrouter or this same signals pipeline's OpenRouter task-spend data. It is a DATED, MANUAL snapshot: fetched once via a headless browser (Claude_Browser, read-only) on 2026-09-07 against a page self-dated 'Sep 2, 2026', with the raw captures kept alongside the research batch that built it. `rank` is this model's position within the mapped-to-catalog cut for that task/category (1st mapped = rank 1, etc.) — NOT its raw position on Arena's own (much longer, mostly-unmapped) leaderboard; effort-level variants of the same base model (e.g. claude-opus-5-high / claude-opus-5-max) were de-duplicated to their best-ranked variant before this cut was taken. `category` names the actual Arena leaderboard or column used as each task's proxy — several tasks have no dedicated Arena category and use the closest available one (documented per task below and in eval/signals.md, which is the primary methodology doc this file was distilled from). Refresh procedure: scripts/refresh.md's 'Arena preferred boards' section — replace this file's `tasks` block and bump `as_of`; there is no automated refresh for this source.",
   "as_of": "2026-09-07",
-  "source_urls": ["https://arena.ai/leaderboard", "https://arena.ai/leaderboard/text"],
+  "source_urls": [
+    "https://arena.ai/leaderboard",
+    "https://arena.ai/leaderboard/text"
+  ],
   "tasks": {
     "coding": {
-      "category": "Text-Arena \"Coding\" (395 models, 1.68M votes)",
-      "source_url": "https://arena.ai/leaderboard/text",
+      "category": "Text-Arena \"Coding\" (395 models, 1,680,917 votes)",
+      "board_url": "https://arena.ai/leaderboard/text",
+      "n_models": 395,
+      "capture": "full board (headless browser, DOM table read — every row was present client-side, no pagination/virtualization to scroll through)",
       "ranks": [
-        { "model_id": "claude-fable-5", "rank": 1 },
-        { "model_id": "kimi-k3", "rank": 2 },
-        { "model_id": "gemini-3-8-flash", "rank": 3 },
-        { "model_id": "claude-opus-4-8", "rank": 4 },
-        { "model_id": "muse-spark-1-2", "rank": 5 }
+        {
+          "model_id": "claude-fable-5",
+          "rank": 3,
+          "votes": 7293
+        },
+        {
+          "model_id": "kimi-k3",
+          "rank": 6,
+          "votes": 4719
+        },
+        {
+          "model_id": "gemini-3-8-flash",
+          "rank": 7,
+          "votes": 1456
+        },
+        {
+          "model_id": "claude-opus-4-8",
+          "rank": 8,
+          "votes": 13439
+        },
+        {
+          "model_id": "muse-spark-1-2",
+          "rank": 10,
+          "votes": 935
+        },
+        {
+          "model_id": "claude-opus-5",
+          "rank": 11,
+          "votes": 9354
+        },
+        {
+          "model_id": "muse-spark-1-1",
+          "rank": 12,
+          "votes": 6988
+        },
+        {
+          "model_id": "gpt-5-6-sol",
+          "rank": 14,
+          "votes": 6534
+        },
+        {
+          "model_id": "glm-5-3",
+          "rank": 16,
+          "votes": 2008
+        },
+        {
+          "model_id": "grok-4-5",
+          "rank": 22,
+          "votes": 7383
+        },
+        {
+          "model_id": "gemini-3-7-flash",
+          "rank": 23,
+          "votes": 1740
+        },
+        {
+          "model_id": "claude-sonnet-5",
+          "rank": 24,
+          "votes": 8653
+        },
+        {
+          "model_id": "gemini-3-1-pro",
+          "rank": 25,
+          "votes": 28473
+        },
+        {
+          "model_id": "gpt-5-5",
+          "rank": 28,
+          "votes": 17668
+        },
+        {
+          "model_id": "qwen3-8-max",
+          "rank": 30,
+          "votes": 3867
+        },
+        {
+          "model_id": "gpt-5-6-terra",
+          "rank": 31,
+          "votes": 6686
+        },
+        {
+          "model_id": "gemini-3-6-flash",
+          "rank": 33,
+          "votes": 6629
+        },
+        {
+          "model_id": "claude-fable-5-1",
+          "rank": 34,
+          "votes": 553
+        },
+        {
+          "model_id": "kimi-k2-6",
+          "rank": 36,
+          "votes": 10421
+        },
+        {
+          "model_id": "grok-4-6",
+          "rank": 45,
+          "votes": 839
+        },
+        {
+          "model_id": "glm-5-2",
+          "rank": 48,
+          "votes": 9550
+        },
+        {
+          "model_id": "gemini-3-5-flash",
+          "rank": 52,
+          "votes": 9940
+        },
+        {
+          "model_id": "deepseek-v4-pro",
+          "rank": 56,
+          "votes": 1609
+        },
+        {
+          "model_id": "hy3",
+          "rank": 61,
+          "votes": 1947
+        },
+        {
+          "model_id": "gpt-5-6-luna",
+          "rank": 70,
+          "votes": 6918
+        },
+        {
+          "model_id": "qwen3-8-27b",
+          "rank": 74,
+          "votes": 2006
+        },
+        {
+          "model_id": "inkling",
+          "rank": 77,
+          "votes": 6353
+        },
+        {
+          "model_id": "deepseek-v4-flash",
+          "rank": 90,
+          "votes": 14341
+        },
+        {
+          "model_id": "qwen3-max",
+          "rank": 94,
+          "votes": 5309
+        },
+        {
+          "model_id": "claude-haiku-4-5",
+          "rank": 96,
+          "votes": 32074
+        },
+        {
+          "model_id": "inkling-small",
+          "rank": 100,
+          "votes": 4303
+        },
+        {
+          "model_id": "solar-pro-4",
+          "rank": 142,
+          "votes": 684
+        },
+        {
+          "model_id": "o4-mini",
+          "rank": 165,
+          "votes": 8596
+        },
+        {
+          "model_id": "granite-4-2-8b",
+          "rank": 237,
+          "votes": 803
+        }
       ]
     },
     "agents": {
       "category": "Overview tab, \"Agent\" top-10 card",
-      "source_url": "https://arena.ai/leaderboard",
+      "board_url": "https://arena.ai/leaderboard",
+      "n_models": 10,
+      "capture": "top-10 card (this overview card does not disclose a full-board total anywhere on the page)",
       "ranks": [
-        { "model_id": "claude-fable-5-1", "rank": 1 },
-        { "model_id": "claude-opus-5", "rank": 2 },
-        { "model_id": "claude-fable-5", "rank": 3 },
-        { "model_id": "gpt-5-6-sol", "rank": 4 },
-        { "model_id": "claude-opus-4-8", "rank": 5 }
+        {
+          "model_id": "claude-fable-5-1",
+          "rank": 1
+        },
+        {
+          "model_id": "claude-opus-5",
+          "rank": 2
+        },
+        {
+          "model_id": "claude-fable-5",
+          "rank": 4
+        },
+        {
+          "model_id": "gpt-5-6-sol",
+          "rank": 5
+        },
+        {
+          "model_id": "claude-opus-4-8",
+          "rank": 6
+        },
+        {
+          "model_id": "kimi-k3",
+          "rank": 7
+        },
+        {
+          "model_id": "claude-sonnet-5",
+          "rank": 8
+        },
+        {
+          "model_id": "gpt-5-5",
+          "rank": 9
+        },
+        {
+          "model_id": "hy4-preview",
+          "rank": 10
+        }
       ]
     },
     "bulk": {
       "category": null,
       "source_url": null,
       "note": "Arena measures preference/quality by blind vote, not cost or throughput — no coverage for a cost-defined task. Documented gap, not an oversight (eval/signals.md).",
-      "ranks": []
+      "ranks": [],
+      "n_models": 0,
+      "capture": "no coverage — Arena measures preference/quality by blind vote, not cost (documented gap, unchanged this pass)"
     },
     "writing": {
-      "category": "Text-Arena \"Creative Writing\" (398 models, 1.23M votes)",
-      "source_url": "https://arena.ai/leaderboard/text",
+      "category": "Text-Arena \"Creative Writing\" (398 models, 1,231,955 votes)",
+      "board_url": "https://arena.ai/leaderboard/text",
+      "n_models": 398,
+      "capture": "full board",
       "ranks": [
-        { "model_id": "claude-fable-5", "rank": 1 },
-        { "model_id": "gemini-3-7-flash", "rank": 2 },
-        { "model_id": "gemini-3-8-flash", "rank": 3 },
-        { "model_id": "claude-fable-5-1", "rank": 4 },
-        { "model_id": "gemini-3-1-pro", "rank": 5 }
+        {
+          "model_id": "claude-fable-5",
+          "rank": 1,
+          "votes": 5480
+        },
+        {
+          "model_id": "gemini-3-7-flash",
+          "rank": 3,
+          "votes": 1203
+        },
+        {
+          "model_id": "gemini-3-8-flash",
+          "rank": 4,
+          "votes": 1086
+        },
+        {
+          "model_id": "claude-fable-5-1",
+          "rank": 6,
+          "votes": 608
+        },
+        {
+          "model_id": "gemini-3-1-pro",
+          "rank": 10,
+          "votes": 17972
+        },
+        {
+          "model_id": "gpt-5-6-sol",
+          "rank": 11,
+          "votes": 4670
+        },
+        {
+          "model_id": "claude-opus-5",
+          "rank": 12,
+          "votes": 7630
+        },
+        {
+          "model_id": "gemini-3-6-flash",
+          "rank": 14,
+          "votes": 4485
+        },
+        {
+          "model_id": "gemini-3-5-flash",
+          "rank": 16,
+          "votes": 6242
+        },
+        {
+          "model_id": "glm-5-3",
+          "rank": 17,
+          "votes": 1719
+        },
+        {
+          "model_id": "qwen3-8-max",
+          "rank": 18,
+          "votes": 2604
+        },
+        {
+          "model_id": "claude-opus-4-8",
+          "rank": 19,
+          "votes": 9218
+        },
+        {
+          "model_id": "kimi-k3",
+          "rank": 25,
+          "votes": 3577
+        },
+        {
+          "model_id": "grok-4-6",
+          "rank": 26,
+          "votes": 650
+        },
+        {
+          "model_id": "gpt-5-5",
+          "rank": 28,
+          "votes": 4104
+        },
+        {
+          "model_id": "glm-5-2",
+          "rank": 31,
+          "votes": 6493
+        },
+        {
+          "model_id": "grok-4-5",
+          "rank": 32,
+          "votes": 5150
+        },
+        {
+          "model_id": "muse-spark-1-2",
+          "rank": 33,
+          "votes": 615
+        },
+        {
+          "model_id": "muse-spark-1-1",
+          "rank": 43,
+          "votes": 4735
+        },
+        {
+          "model_id": "deepseek-v4-pro",
+          "rank": 45,
+          "votes": 9029
+        },
+        {
+          "model_id": "claude-sonnet-5",
+          "rank": 53,
+          "votes": 6150
+        },
+        {
+          "model_id": "kimi-k2-6",
+          "rank": 62,
+          "votes": 5834
+        },
+        {
+          "model_id": "gpt-5-6-terra",
+          "rank": 68,
+          "votes": 4957
+        },
+        {
+          "model_id": "hy3",
+          "rank": 70,
+          "votes": 1325
+        },
+        {
+          "model_id": "deepseek-v4-flash",
+          "rank": 79,
+          "votes": 8018
+        },
+        {
+          "model_id": "gpt-5-6-luna",
+          "rank": 80,
+          "votes": 4923
+        },
+        {
+          "model_id": "qwen3-max",
+          "rank": 106,
+          "votes": 1133
+        },
+        {
+          "model_id": "claude-haiku-4-5",
+          "rank": 120,
+          "votes": 20147
+        },
+        {
+          "model_id": "inkling",
+          "rank": 128,
+          "votes": 4553
+        },
+        {
+          "model_id": "qwen3-8-27b",
+          "rank": 145,
+          "votes": 1359
+        },
+        {
+          "model_id": "o4-mini",
+          "rank": 179,
+          "votes": 5746
+        },
+        {
+          "model_id": "inkling-small",
+          "rank": 207,
+          "votes": 3138
+        },
+        {
+          "model_id": "solar-pro-4",
+          "rank": 236,
+          "votes": 531
+        },
+        {
+          "model_id": "granite-4-2-8b",
+          "rank": 307,
+          "votes": 586
+        }
       ]
     },
     "research": {
       "category": "Overview tab, \"Search\" top-10 card (grounded web search — closest proxy; Arena has no dedicated research/analysis category)",
-      "source_url": "https://arena.ai/leaderboard",
+      "board_url": "https://arena.ai/leaderboard",
+      "n_models": 10,
+      "capture": "top-10 card",
       "ranks": [
-        { "model_id": "gpt-5-6-sol", "rank": 1 },
-        { "model_id": "gpt-5-5", "rank": 2 },
-        { "model_id": "claude-fable-5", "rank": 3 },
-        { "model_id": "grok-4-5", "rank": 4 },
-        { "model_id": "gemini-3-1-pro", "rank": 5 }
+        {
+          "model_id": "gpt-5-6-sol",
+          "rank": 1
+        },
+        {
+          "model_id": "claude-fable-5",
+          "rank": 5
+        },
+        {
+          "model_id": "grok-4-5",
+          "rank": 8
+        }
       ]
     },
     "extraction": {
       "category": "Overview tab, \"Document\" top-10 card",
-      "source_url": "https://arena.ai/leaderboard",
-      "note": "Only 4 of the top-10 card's entries mapped to a catalog id; the rest were off-catalog/older SKUs.",
+      "board_url": "https://arena.ai/leaderboard",
+      "n_models": 10,
+      "capture": "top-10 card",
       "ranks": [
-        { "model_id": "claude-opus-5", "rank": 1 },
-        { "model_id": "claude-fable-5", "rank": 2 },
-        { "model_id": "gpt-5-5", "rank": 3 },
-        { "model_id": "gpt-5-6-terra", "rank": 4 }
+        {
+          "model_id": "claude-opus-5",
+          "rank": 1
+        },
+        {
+          "model_id": "claude-fable-5",
+          "rank": 4
+        },
+        {
+          "model_id": "gpt-5-5",
+          "rank": 7
+        },
+        {
+          "model_id": "gpt-5-6-terra",
+          "rank": 10
+        }
       ]
     },
     "chat": {
-      "category": "Text-Arena \"Overall\" (general chat quality) top-10",
-      "source_url": "https://arena.ai/leaderboard/text",
+      "category": "Text-Arena \"Overall\" (400 models, 7,999,020 votes)",
+      "board_url": "https://arena.ai/leaderboard/text",
+      "n_models": 400,
+      "capture": "full board",
       "ranks": [
-        { "model_id": "claude-fable-5", "rank": 1 },
-        { "model_id": "claude-fable-5-1", "rank": 2 },
-        { "model_id": "muse-spark-1-2", "rank": 3 },
-        { "model_id": "gemini-3-8-flash", "rank": 4 },
-        { "model_id": "claude-opus-5", "rank": 5 }
+        {
+          "model_id": "claude-fable-5",
+          "rank": 1,
+          "votes": 27189
+        },
+        {
+          "model_id": "claude-fable-5-1",
+          "rank": 3,
+          "votes": 2906
+        },
+        {
+          "model_id": "muse-spark-1-2",
+          "rank": 5,
+          "votes": 3240
+        },
+        {
+          "model_id": "gemini-3-8-flash",
+          "rank": 8,
+          "votes": 5125
+        },
+        {
+          "model_id": "claude-opus-5",
+          "rank": 9,
+          "votes": 35174
+        },
+        {
+          "model_id": "muse-spark-1-1",
+          "rank": 10,
+          "votes": 24064
+        },
+        {
+          "model_id": "gemini-3-7-flash",
+          "rank": 11,
+          "votes": 5682
+        },
+        {
+          "model_id": "kimi-k3",
+          "rank": 12,
+          "votes": 18090
+        },
+        {
+          "model_id": "gemini-3-1-pro",
+          "rank": 15,
+          "votes": 102999
+        },
+        {
+          "model_id": "gpt-5-6-sol",
+          "rank": 17,
+          "votes": 23413
+        },
+        {
+          "model_id": "claude-opus-4-8",
+          "rank": 18,
+          "votes": 48727
+        },
+        {
+          "model_id": "gpt-5-5",
+          "rank": 19,
+          "votes": 63547
+        },
+        {
+          "model_id": "glm-5-3",
+          "rank": 20,
+          "votes": 7668
+        },
+        {
+          "model_id": "gemini-3-6-flash",
+          "rank": 21,
+          "votes": 22286
+        },
+        {
+          "model_id": "qwen3-8-max",
+          "rank": 22,
+          "votes": 13346
+        },
+        {
+          "model_id": "gemini-3-5-flash",
+          "rank": 23,
+          "votes": 34180
+        },
+        {
+          "model_id": "glm-5-2",
+          "rank": 37,
+          "votes": 33966
+        },
+        {
+          "model_id": "grok-4-5",
+          "rank": 38,
+          "votes": 26158
+        },
+        {
+          "model_id": "gpt-5-6-terra",
+          "rank": 43,
+          "votes": 24200
+        },
+        {
+          "model_id": "claude-sonnet-5",
+          "rank": 48,
+          "votes": 31387
+        },
+        {
+          "model_id": "grok-4-6",
+          "rank": 49,
+          "votes": 3453
+        },
+        {
+          "model_id": "kimi-k2-6",
+          "rank": 50,
+          "votes": 37568
+        },
+        {
+          "model_id": "deepseek-v4-pro",
+          "rank": 52,
+          "votes": 5557
+        },
+        {
+          "model_id": "hy3",
+          "rank": 60,
+          "votes": 6958
+        },
+        {
+          "model_id": "gpt-5-6-luna",
+          "rank": 65,
+          "votes": 24740
+        },
+        {
+          "model_id": "inkling",
+          "rank": 83,
+          "votes": 22229
+        },
+        {
+          "model_id": "deepseek-v4-flash",
+          "rank": 85,
+          "votes": 48691
+        },
+        {
+          "model_id": "qwen3-8-27b",
+          "rank": 89,
+          "votes": 6913
+        },
+        {
+          "model_id": "qwen3-max",
+          "rank": 92,
+          "votes": 27194
+        },
+        {
+          "model_id": "claude-haiku-4-5",
+          "rank": 131,
+          "votes": 125243
+        },
+        {
+          "model_id": "inkling-small",
+          "rank": 139,
+          "votes": 15183
+        },
+        {
+          "model_id": "o4-mini",
+          "rank": 158,
+          "votes": 44632
+        },
+        {
+          "model_id": "solar-pro-4",
+          "rank": 175,
+          "votes": 2437
+        },
+        {
+          "model_id": "granite-4-2-8b",
+          "rank": 278,
+          "votes": 3111
+        }
       ]
     },
     "vision": {
       "category": "Overview tab, \"Vision\" top-10 card",
-      "source_url": "https://arena.ai/leaderboard",
+      "board_url": "https://arena.ai/leaderboard",
+      "n_models": 10,
+      "capture": "top-10 card",
       "ranks": [
-        { "model_id": "claude-fable-5", "rank": 1 },
-        { "model_id": "qwen3-8-max", "rank": 2 },
-        { "model_id": "muse-spark-1-2", "rank": 3 },
-        { "model_id": "claude-opus-5", "rank": 4 },
-        { "model_id": "gemini-3-1-pro", "rank": 5 }
+        {
+          "model_id": "claude-fable-5",
+          "rank": 1
+        },
+        {
+          "model_id": "qwen3-8-max",
+          "rank": 3
+        },
+        {
+          "model_id": "muse-spark-1-2",
+          "rank": 8
+        },
+        {
+          "model_id": "claude-opus-5",
+          "rank": 9
+        }
       ]
     },
     "frontend": {
       "category": "Overview tab, \"WebDev\" top-10 card",
-      "source_url": "https://arena.ai/leaderboard",
+      "board_url": "https://arena.ai/leaderboard",
+      "n_models": 10,
+      "capture": "top-10 card",
       "ranks": [
-        { "model_id": "gpt-6-astra", "rank": 1 },
-        { "model_id": "claude-fable-5-1", "rank": 2 },
-        { "model_id": "claude-opus-5", "rank": 3 },
-        { "model_id": "qwen3-8-max", "rank": 4 },
-        { "model_id": "kimi-k3", "rank": 5 }
+        {
+          "model_id": "gpt-6-astra",
+          "rank": 1
+        },
+        {
+          "model_id": "claude-fable-5-1",
+          "rank": 2
+        },
+        {
+          "model_id": "claude-opus-5",
+          "rank": 3
+        },
+        {
+          "model_id": "kimi-k3",
+          "rank": 5
+        },
+        {
+          "model_id": "qwen3-8-max",
+          "rank": 6
+        },
+        {
+          "model_id": "claude-fable-5",
+          "rank": 8
+        },
+        {
+          "model_id": "grok-4-6",
+          "rank": 10
+        }
       ]
     },
     "exec-summaries": {
       "category": "Text-Arena rank matrix, \"Longer Query\" column (proxy — Arena has no dedicated summarization category)",
       "source_url": "https://arena.ai/leaderboard/text",
       "ranks": [
-        { "model_id": "claude-fable-5", "rank": 1 },
-        { "model_id": "claude-fable-5-1", "rank": 2 },
-        { "model_id": "gemini-3-8-flash", "rank": 3 },
-        { "model_id": "claude-opus-5", "rank": 4 },
-        { "model_id": "kimi-k3", "rank": 5 }
-      ]
+        {
+          "model_id": "claude-fable-5",
+          "rank": 1
+        },
+        {
+          "model_id": "claude-fable-5-1",
+          "rank": 2
+        },
+        {
+          "model_id": "gemini-3-8-flash",
+          "rank": 3
+        },
+        {
+          "model_id": "claude-opus-5",
+          "rank": 4
+        },
+        {
+          "model_id": "kimi-k3",
+          "rank": 5
+        }
+      ],
+      "n_models": 5,
+      "capture": "not recaptured this pass (budget) — kept from the prior top-5 snapshot; see report for what did not fit"
     }
   }
 }

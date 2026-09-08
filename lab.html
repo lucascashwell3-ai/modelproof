@@ -87,6 +87,22 @@
     .assumptions li { color: var(--ink-3); font-size: 12px; padding-left: 14px; position: relative; line-height: 1.5; }
     .assumptions li::before { content: "—"; position: absolute; left: 0; color: var(--ink-4); }
     .empty-note { color: var(--ink-3); font-size: 13px; font-style: italic; }
+
+    /* Standings (2026-09-07): three kinds of evidence per model x task, kept
+       separate and never averaged — measured (independent tests), chosen (real OpenRouter
+       spend), preferred (arena.ai blind human votes). Reuses the site's existing .table-wrap/.tbl
+       table look; the only new rules are the left-aligned multi-line evidence cells. */
+    .standings-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .standings-head label { font-size: 11.5px; font-weight: 500; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
+    .standings-head select { font-family: var(--font); font-size: 13.5px; color: var(--ink);
+      background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 9px 10px; }
+    .tbl.tbl-standings td, .tbl.tbl-standings th { text-align: left; }
+    .tbl.tbl-standings td { vertical-align: top; }
+    .std-cell { display: flex; flex-direction: column; gap: 4px; }
+    .std-row { font-size: 12.5px; line-height: 1.4; }
+    .std-row a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 2px; }
+    .std-row .dim { color: var(--ink-4); }
+    .std-none { color: var(--ink-4); font-size: 12.5px; }
   </style>
 </head>
 <body data-page="lab">
@@ -170,6 +186,33 @@
         </div>
       </div>
       <div id="situationsList"></div>
+    </section>
+
+    <section class="panel" id="standings">
+      <div class="panel__head">
+        <div>
+          <h2 class="panel__title">Standings</h2>
+          <p class="panel__desc">The AI never ranks. For every model x task this site publishes three kinds of evidence, kept separate, never averaged: <strong>measured</strong> — rank out of n on a named, independent benchmark; <strong>chosen</strong> — real spend share on OpenRouter for that task; <strong>preferred</strong> — blind human-vote rank on arena.ai. <span class="dim">"—" means nobody has published that kind of evidence for this model on this task yet — never a guess. See scripts/derive-standings.mjs for exactly how each column is sourced.</span></p>
+        </div>
+      </div>
+      <div class="standings-head">
+        <label for="stTask">Task</label>
+        <select id="stTask"></select>
+        <span class="dim" id="stAsOf"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="tbl tbl-standings" id="stTable">
+          <thead>
+            <tr>
+              <th class="col-model">Model</th>
+              <th>Measured</th>
+              <th>Chosen</th>
+              <th>Preferred</th>
+            </tr>
+          </thead>
+          <tbody id="stBody"></tbody>
+        </table>
+      </div>
     </section>
   </main>
 
@@ -274,6 +317,37 @@
       return `<ul class="assumptions">${assumptions.map((a) => `<li>${esc(a)}</li>`).join('')}</ul>`;
     }
 
+    // -------- standings (measured / chosen / preferred) --------
+    // Three kinds of evidence, kept separate, never averaged — see data/models.json's own
+    // `standings` field (written by scripts/derive-standings.mjs) for exactly what backs each one.
+    function renderMeasured(rows) {
+      if (!rows || !rows.length) return '<span class="std-none">—</span>';
+      return `<div class="std-cell">${rows.map((r) => `
+        <div class="std-row"><a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.rank)}/${esc(r.n_models)}</a> · ${esc(r.benchmark)}${r.score != null ? ` <span class="dim">(${esc(r.score)})</span>` : ''}</div>
+      `).join('')}</div>`;
+    }
+    function renderChosen(c) {
+      if (!c) return '<span class="std-none">—</span>';
+      return `<div class="std-cell"><div class="std-row"><a href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">${esc(c.rank)}/${esc(c.n_models)}</a> · ${esc(c.share)}% spend <span class="dim">(${c.tags.map(esc).join(', ')})</span></div></div>`;
+    }
+    function renderPreferred(p) {
+      if (!p) return '<span class="std-none">—</span>';
+      return `<div class="std-cell"><div class="std-row"><a href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${esc(p.rank)}/${esc(p.n_models)}</a> · ${esc(p.board)}</div></div>`;
+    }
+    function renderStandingsTable(models, taskId) {
+      const body = document.getElementById('stBody');
+      const rows = [...models].sort((a, b) => a.name.localeCompare(b.name));
+      body.innerHTML = rows.map((m) => {
+        const s = m.standings?.[taskId] || { measured: [], chosen: null, preferred: null };
+        return `<tr>
+          <td class="cell-model">${esc(m.name)}</td>
+          <td>${renderMeasured(s.measured)}</td>
+          <td>${renderChosen(s.chosen)}</td>
+          <td>${renderPreferred(s.preferred)}</td>
+        </tr>`;
+      }).join('');
+    }
+
     function inputSummary(input) {
       const parts = [
         `tasks: ${input.tasks.join(', ')}`,
@@ -301,6 +375,13 @@
 
       const taskSelect = document.getElementById('fTask');
       taskSelect.innerHTML = tasksFile.tasks.map((t) => `<option value="${esc(t.id)}">${esc(t.label)}</option>`).join('');
+
+      // -------- standings --------
+      const stTaskSelect = document.getElementById('stTask');
+      stTaskSelect.innerHTML = tasksFile.tasks.map((t) => `<option value="${esc(t.id)}">${esc(t.label)}</option>`).join('');
+      document.getElementById('stAsOf').textContent = `standings as of ${models.models[0]?.standings?.as_of || models.as_of}`;
+      stTaskSelect.addEventListener('change', () => renderStandingsTable(data.models, stTaskSelect.value));
+      renderStandingsTable(data.models, stTaskSelect.value);
 
       // -------- 40 situations --------
       const list = document.getElementById('situationsList');

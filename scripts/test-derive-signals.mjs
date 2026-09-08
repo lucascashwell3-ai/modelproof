@@ -91,7 +91,11 @@ test('rankBulkTokenVolume: zero/negative completion tokens never occupy a rank',
 test('arenaRanksForTask: reads the static snapshot for a real task, empty for a task with no coverage', () => {
   const coding = arenaRanksForTask(arenaFile, 'coding');
   assert.ok(coding.size > 0);
-  assert.equal(coding.get('claude-fable-5'), 1);
+  // 2026-09-07 expanded this snapshot's coding/writing/chat tasks from a
+  // top-5 card to the FULL Text-Arena "Coding" board (395 models) — `rank` is now the model's
+  // TRUE position on that board (claude-fable-5 is 3rd, beaten by two Anthropic siblings), not
+  // "1st of the 5 rows this file happened to keep".
+  assert.equal(coding.get('claude-fable-5'), 3);
   const bulk = arenaRanksForTask(arenaFile, 'bulk');
   assert.equal(bulk.size, 0); // documented gap — arena has no bulk/cost coverage
 });
@@ -126,12 +130,13 @@ const taskSpendByTag = new Map([
 test('deriveSignalsForCatalog: families is the count of the 3 families that actually hit, 0-3, never invented', () => {
   const derived = deriveSignalsForCatalog(models, aliases, tasksFile, taskSpendByTag, [], arenaFile, expertFile);
   const opusCoding = derived.get('claude-opus-5').coding;
-  // usage (task-spend, rank 1) + expert_default (both Cursor and Anthropic name Opus for coding) = 2;
-  // arena's coding snapshot doesn't include claude-opus-5 (see data/signals/arena-2026-09.json).
+  // usage (task-spend, rank 1) + expert_default (both Cursor and Anthropic name Opus for coding) +
+  // arena_rank (2026-09-07 expanded the coding snapshot to the full 395-model Text-Arena
+  // board, which DOES include claude-opus-5 at rank 11 — the old top-5 card didn't) = 3.
   assert.equal(opusCoding.usage_rank, 1);
   assert.equal(opusCoding.expert_default, true);
-  assert.equal(opusCoding.arena_rank, null);
-  assert.equal(opusCoding.families, 2);
+  assert.equal(opusCoding.arena_rank, 11);
+  assert.equal(opusCoding.families, 3);
 });
 
 test('deriveSignalsForCatalog: a model with zero support in any family gets families: 0, not null', () => {

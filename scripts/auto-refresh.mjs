@@ -75,10 +75,23 @@ export const stripVariantSuffix = (s) => String(s || '').replace(/\s*\((fast|bat
 // never carry the vendor (scripts/naming.mjs), so "tencent/hy4-preview" must meet "hy4-preview".
 // The dotted form ("anthropic.claude-opus-5") is a Bedrock spelling and only has a fixed list.
 const PROVIDER_PREFIX = /^(?:~?[a-z0-9_.-]+\/|(?:anthropic|openai|google|gemini|vertex_ai|bedrock|xai|x-ai|meta-llama|mistralai|deepseek)\.)/i;
+// A second, narrower prefix for the hyphen-joined vendor form some feeds use instead of a slash or
+// a dot ("anthropic-claude-fable-5-1-high", "google-gemini-3-7-flash-high" — ARC Prize's own
+// modelId strings, data/testers.json's arc-prize entry, 2026-09-07). This can't reuse the
+// PROVIDER_PREFIX token list above as-is: "gemini" and "deepseek" are both vendor aliases AND the
+// literal first word of a real catalog id ("gemini-3-1-pro", "deepseek-v4-pro") — stripping
+// "gemini-"/"deepseek-" here would corrupt those ids' own canonicalKey. Only tokens confirmed
+// (checked against every id in data/models.json, 2026-09-07) to never start a real catalog id are
+// listed. "qwen" is deliberately excluded too — "qwen-turbo" is a real catalog id.
+const HYPHEN_VENDOR_PREFIX = /^(?:anthropic|google|openai|xai|x-ai|meta-llama|meta|mistralai|bedrock|vertex_ai)-/i;
 /** Strip a trailing snapshot/date suffix: "-20260723", "@20260723". */
 const DATE_SUFFIX = /[-@]\d{8}$/;
 
-export const stripProviderPrefix = (s) => String(s || '').trim().replace(PROVIDER_PREFIX, '');
+export const stripProviderPrefix = (s) => {
+  const t = String(s || '').trim();
+  const noSlashOrDot = t.replace(PROVIDER_PREFIX, '');
+  return noSlashOrDot === t ? t.replace(HYPHEN_VENDOR_PREFIX, '') : noSlashOrDot;
+};
 export const stripDateSuffix = (s) => String(s || '').replace(DATE_SUFFIX, '');
 
 /**

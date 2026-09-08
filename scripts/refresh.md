@@ -193,3 +193,71 @@ benchmarks and never pushes to `main`:
 **One-time enablement (repo owner):** repo Settings → Actions → General → "Allow GitHub Actions to
 create and approve pull requests"; branch protection on `main` requiring 1 review. Per-model usage
 volumes (OpenRouter *rankings*) need an API-key secret — deferred with the usage view.
+
+## Arena preferred boards (added 2026-09-07)
+
+`data/signals/arena-2026-09.json` backs every model's `standings.<task>.preferred` field
+(`scripts/derive-standings.mjs`) — arena.ai's leaderboard tables render client-side with no
+documented API (curl gets nav/footer only, confirmed both times this file has been captured), so
+this is a **dated, manual snapshot**, not a live Collect fetch. `scripts/derive-standings.mjs`
+only *reads* this file; it never touches arena.ai itself.
+
+Three of this catalog's tasks (`coding`, `writing`, `chat`) map to a **full Text-Arena board**
+(hundreds of models); the rest map to an Overview-tab **top-10 card**. Both are captured the same
+way, with a headless browser (Claude_Browser / any MCP browser tool with `javascript_tool` or
+equivalent DOM access) — read-only, no login, no vote submitted:
+
+1. Navigate to `https://arena.ai/leaderboard/text` (for a Text-Arena board) or
+   `https://arena.ai/leaderboard/` (for the Overview top-10 cards).
+2. For a Text-Arena board: click the category in the left sidebar (`Overall`, `Coding`,
+   `Creative Writing`, …). The page header shows the board's own disclosed totals — quote them
+   verbatim into `category` and `n_models`, never recompute a total yourself.
+3. Run this in the page (a full Text-Arena board renders EVERY row client-side at once — no
+   scroll-triggered pagination was needed for any of the three boards captured 2026-09-07, up to
+   400 rows in one `document.querySelector('table')`):
+   ```js
+   function extractBoard() {
+     const table = document.querySelector('table');
+     const rows = [...table.querySelectorAll('tbody tr')];
+     return rows.map((tr, i) => {
+       const tds = [...tr.querySelectorAll('td')];
+       const rankTxt = tds[0]?.textContent.trim();
+       const modelTd = tds[2];
+       const nameSpan = modelTd?.querySelector('a span[title]');
+       const modelName = nameSpan ? nameSpan.getAttribute('title') : (modelTd?.querySelector('a')?.textContent.trim() || null);
+       const vendorLicense = modelTd?.querySelector('span.text-text-secondary')?.textContent.trim() || null;
+       const scoreTxt = tds[3]?.textContent.trim() || null;
+       const scoreMatch = scoreTxt ? scoreTxt.match(/^-?\d+(\.\d+)?/) : null;
+       const votesTxt = tds[4]?.textContent.trim() || null;
+       return { rank: rankTxt ? parseInt(rankTxt, 10) : (i + 1), model: modelName, vendorLicense,
+                score: scoreMatch ? parseFloat(scoreMatch[0]) : null, votes: votesTxt };
+     });
+   }
+   JSON.stringify(extractBoard());
+   ```
+   For an Overview top-10 card, use the card's own `[role="figure"][aria-label*="top 10 models"]`
+   element instead of `table` — see the git history of this file / `scripts/derive-standings.mjs`
+   for the exact selector used per card (rank/model/score sit in `order-1`/`[title]`/`order-4`
+   spans inside each card row).
+4. The result is large enough that a full-board capture usually gets saved to a file by the tool
+   rather than returned inline — read it back with `python3`/`jq`, not by re-running the query.
+5. Match each row's raw `model` string to a catalog id with
+   `scripts/derive-standings.mjs`'s `matchTesterModel()` (same name-matching rule every other
+   tester uses) — keep the row's **true rank as captured** (its position in the full/`top-10`
+   ordering), never renumber after dropping unmatched rows. A name that doesn't match is simply
+   left out, never guessed.
+6. Write the result into that task's `tasks.<id>` entry: `category` (the page's own disclosed
+   label, verbatim), `board_url`, `n_models` (the page's own disclosed total for a full board; for
+   a top-10 card with no disclosed total, `10` — the count actually captured, not a guess),
+   `capture` (a one-line note: full board vs. top-10 card, and why), `ranks: [{model_id, rank,
+   votes?}]`.
+7. Bump the file's own `as_of` to the capture date and re-run `node scripts/validate-data.mjs`.
+
+**What's been captured so far:** `coding` → Text-Arena "Coding" (full, 395 models); `writing` →
+Text-Arena "Creative Writing" (full, 398 models); `chat` → Text-Arena "Overall" (full, 400
+models, used as the general-chat-quality proxy); `agents`/`frontend`/`vision`/`extraction`/
+`research` → their respective Overview top-10 cards (Agent/WebDev/Vision/Document/Search).
+`exec-summaries` (Text-Arena rank-matrix "Longer Query" column — no dedicated summarization
+category) and `bulk` (no Arena coverage at all — preference/quality by vote, not cost) were **not**
+recaptured 2026-09-07; `exec-summaries` still carries its original top-5 snapshot from the first
+capture. Recapturing either is the next thing to do here, not a design decision to leave undone.

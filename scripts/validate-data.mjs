@@ -11,6 +11,14 @@ import { namingProblems, canonicalVendor, VENDORS } from './naming.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
 import { STATUS_VALUES, ADOPTION_VALUES, deriveStatus, deriveAdoption } from './derive-status-adoption.mjs';
 
+// data/testers.json's own tester ids — every standings.measured[].tester must name one of these
+// (scripts/derive-standings.mjs). Read once at module load, same as every other
+// static registry this gate cross-checks against (BENCHES, VENDOR, etc.).
+const TESTER_IDS = new Set(
+  JSON.parse(readFileSync(new URL('../data/testers.json', import.meta.url))).testers.map((t) => t.id)
+);
+export const STANDINGS_LICENCE_VALUES = ['display-ok', 'signal-only'];
+
 const CONF = ['low', 'medium', 'high'];
 const VOCAB = ['reasoning', 'agentic', 'coding', 'research', 'long-context', 'writing', 'cheap-bulk', 'speed', 'vision'];
 const BENCHES = ['swe_bench', 'gpqa', 'aime', 'mmlu_pro'];   // lmarena_elo dropped 2026-08-22
@@ -319,6 +327,68 @@ export function validate(data, registry) {
       if (rec.expert_default !== null && rec.expert_default !== true) E(`${label}.expert_default is "${rec.expert_default}" — must be true or null (never false — absence isn't confirmed rejection)`);
       const wantFamilies = (rec.usage_rank !== null ? 1 : 0) + (rec.arena_rank !== null ? 1 : 0) + (rec.expert_default === true ? 1 : 0);
       if (rec.families !== wantFamilies) E(`${label}.families "${rec.families}" doesn't match the count of its own usage_rank/arena_rank/expert_default fields (${wantFamilies}) — re-run scripts/derive-signals.mjs`);
+    }
+  }
+
+  // 10f. standings (scripts/derive-standings.mjs, 2026-09-07) — the three kinds
+  // of evidence (measured / chosen / preferred), kept separate, that later feed a ranking this
+  // gate does not itself compute. Same honesty rule as everywhere else: a task with no evidence
+  // gets measured: [] (never a missing key) and chosen/preferred: null (never a guessed object);
+  // every measured row must name a real tester (data/testers.json), a real rank inside its own
+  // n_models, a real date, a real URL, and a licence class that is display-ok or signal-only —
+  // "banned" must never appear here (a banned tester is excluded from standings entirely, not
+  // downgraded); a signal-only row may never carry a score (that's the whole point of
+  // signal-only — cite the tester, never republish its number).
+  for (const m of data.models) {
+    const id = m.name || m.id || '(unnamed)';
+    const st = m.standings;
+    if (st == null || typeof st !== 'object' || Array.isArray(st)) { E(`${id}: missing standings{} (scripts/derive-standings.mjs) — every model needs one, keyed by every task id`); continue; }
+    if (!st.as_of || !DATE_RE.test(st.as_of)) E(`${id}: standings.as_of "${st.as_of}" must be a YYYY-MM-DD date`);
+    for (const t of TASK_IDS) if (!(t in st)) E(`${id}: standings missing "${t}"`);
+    for (const t of Object.keys(st)) if (t !== 'as_of' && !TASK_IDS.includes(t)) E(`${id}: standings has unknown task "${t}" — not one of ${TASK_IDS.join(', ')}`);
+    for (const taskId of TASK_IDS) {
+      const rec = st[taskId];
+      const label = `${id}: standings.${taskId}`;
+      if (rec == null || typeof rec !== 'object') { E(`${label} must be an object`); continue; }
+      if (!Array.isArray(rec.measured)) { E(`${label}.measured must be an array (empty when nothing was found — never a missing key)`); }
+      else rec.measured.forEach((row, i) => {
+        const rl = `${label}.measured[${i}]`;
+        if (!row || typeof row !== 'object') { E(`${rl} must be an object`); return; }
+        if (!TESTER_IDS.has(row.tester)) E(`${rl}.tester "${row.tester}" does not name a tester id in data/testers.json`);
+        if (!row.benchmark || typeof row.benchmark !== 'string') E(`${rl}.benchmark is required`);
+        if (!Number.isInteger(row.n_models) || row.n_models < 1) E(`${rl}.n_models "${row.n_models}" must be a positive integer`);
+        else if (!Number.isInteger(row.rank) || row.rank < 1 || row.rank > row.n_models) E(`${rl}.rank "${row.rank}" must be an integer between 1 and n_models (${row.n_models})`);
+        if (!row.as_of || !DATE_RE.test(row.as_of)) E(`${rl}.as_of "${row.as_of}" must be a YYYY-MM-DD date`);
+        if (!row.url || !/^https?:\/\//i.test(row.url)) E(`${rl}.url "${row.url}" must be http(s)`);
+        if (!STANDINGS_LICENCE_VALUES.includes(row.licence)) E(`${rl}.licence "${row.licence}" must be one of ${STANDINGS_LICENCE_VALUES.join(', ')} — a banned tester must never appear in standings at all`);
+        if (row.licence === 'signal-only' && row.score !== null) E(`${rl}.score must be null for a signal-only tester — cite it, never republish its number`);
+        if (row.score !== null && typeof row.score !== 'number') E(`${rl}.score "${row.score}" must be a number or null`);
+      });
+      if (rec.chosen != null) {
+        const c = rec.chosen;
+        const cl = `${label}.chosen`;
+        if (typeof c !== 'object') E(`${cl} must be null or an object`);
+        else {
+          if (!Number.isInteger(c.n_models) || c.n_models < 1) E(`${cl}.n_models "${c.n_models}" must be a positive integer`);
+          else if (!Number.isInteger(c.rank) || c.rank < 1 || c.rank > c.n_models) E(`${cl}.rank "${c.rank}" must be an integer between 1 and n_models (${c.n_models})`);
+          if (typeof c.share !== 'number' || Number.isNaN(c.share) || c.share < 0 || c.share > 100) E(`${cl}.share "${c.share}" must be 0-100`);
+          if (!Array.isArray(c.tags)) E(`${cl}.tags must be an array (may be empty for bulk's token-volume rule)`);
+          if (!c.as_of || !DATE_RE.test(c.as_of)) E(`${cl}.as_of "${c.as_of}" must be a YYYY-MM-DD date`);
+          if (!c.url || !/^https?:\/\//i.test(c.url)) E(`${cl}.url "${c.url}" must be http(s)`);
+        }
+      }
+      if (rec.preferred != null) {
+        const p = rec.preferred;
+        const pl = `${label}.preferred`;
+        if (typeof p !== 'object') E(`${pl} must be null or an object`);
+        else {
+          if (!p.board || typeof p.board !== 'string') E(`${pl}.board is required`);
+          if (!Number.isInteger(p.n_models) || p.n_models < 1) E(`${pl}.n_models "${p.n_models}" must be a positive integer`);
+          else if (!Number.isInteger(p.rank) || p.rank < 1 || p.rank > p.n_models) E(`${pl}.rank "${p.rank}" must be an integer between 1 and n_models (${p.n_models})`);
+          if (!p.as_of || !DATE_RE.test(p.as_of)) E(`${pl}.as_of "${p.as_of}" must be a YYYY-MM-DD date`);
+          if (!p.url || !/^https?:\/\//i.test(p.url)) E(`${pl}.url "${p.url}" must be http(s)`);
+        }
+      }
     }
   }
 

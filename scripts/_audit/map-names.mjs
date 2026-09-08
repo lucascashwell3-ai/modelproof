@@ -11,10 +11,15 @@
      names.json: a plain JSON array of raw name/id strings pulled from one tester's feed.
    Prints: { feed_models, mapped_models, matches: [[raw, our_id]], unmapped_sample: [...] }
    "unmapped_sample" is the top 10 unmapped names whose slug shares a prefix with one of our
-   catalog ids or names — i.e. plausible future alias candidates — never a guessed match. */
+   catalog ids or names — i.e. plausible future alias candidates — never a guessed match.
+
+   The effort/date-suffix stripping this file used to own locally now lives in
+   scripts/naming.mjs (effortDateSuffixCandidates) — promoted so
+   scripts/derive-standings.mjs's benchmark-row matching shares the same rule instead of a third
+   copy. This file only reads it. */
 import { readFileSync } from 'node:fs';
 import { matchAlias, canonicalKey, stripProviderPrefix } from '../auto-refresh.mjs';
-import { slug } from '../naming.mjs';
+import { slug, effortDateSuffixCandidates } from '../naming.mjs';
 
 const modelsFile = JSON.parse(readFileSync(new URL('../../data/models.json', import.meta.url)));
 const aliases = JSON.parse(readFileSync(new URL('../model-aliases.json', import.meta.url)));
@@ -24,35 +29,9 @@ const namesPath = process.argv[2];
 if (!namesPath) { console.error('usage: node map-names.mjs <names.json>'); process.exit(1); }
 const rawNames = JSON.parse(readFileSync(namesPath, 'utf8'));
 
-// Known trailing tokens testers hang off a bare model name — reasoning effort, agent/harness
-// scaffolding words, thinking-mode flags, run dates. Stripped one at a time, longest-first, so
-// "claude-opus-4-5-20251101-thinking-64k-high-effort" peels down to "claude-opus-4-5".
-const SUFFIX_RE = [
-  /-\d{8}$/, // trailing run/snapshot date: -20251101
-  /-\d{4}-\d{2}-\d{2}$/, // -2025-12-11
-  /-thinking-auto-(low|medium|high)-effort$/,
-  /-thinking-\d+k-(low|medium|high|xhigh|max)-effort$/,
-  /-(low|medium|high|xhigh|extra-high)-effort$/,
-  /-max-effort$/,
-  /-(low|medium|high|xhigh|extra-high|max|auto|instant)$/,
-  /-thinking$/,
-  /-preview$/,
-  /_(low|medium|high|xhigh|extra high|max)$/,
-];
-
 function baseCandidates(raw) {
   const s0 = slug(stripProviderPrefix(String(raw || '')));
-  const out = new Set([s0]);
-  let cur = s0;
-  let changed = true;
-  while (changed) {
-    changed = false;
-    for (const re of SUFFIX_RE) {
-      const next = cur.replace(re, '');
-      if (next !== cur && next.length > 1) { cur = next; out.add(cur); changed = true; break; }
-    }
-  }
-  return [...out];
+  return effortDateSuffixCandidates(s0);
 }
 
 const catalogSlugs = models.map((m) => ({ id: m.id, s: slug(m.name) }));
