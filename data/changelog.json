@@ -1348,5 +1348,68 @@
       "https://platform.claude.com/docs/en/models/fable-5-1/overview",
       "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1"
     ]
+  },
+  {
+    "date": "2026-09-11",
+    "model": "GLM 5.3 Flash",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://technode.com/2026/08/27/zhipu-identifies-ox-alpha-as-glm-5-3-flash-and-releases-model-weights/",
+      "https://docs.z.ai/guides/llm/glm-5.3-flash",
+      "https://felloai.com/glm-5-3-flash/"
+    ]
+  },
+  {
+    "date": "2026-09-11",
+    "model": "Ling 3.0 Flash Fin",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://huggingface.co/inclusionAI/Ling-3.0-flash-Fin",
+      "https://emergent.sh/news/inclusionai-launches-ling-3-0-flash-fin-model"
+    ]
+  },
+  {
+    "date": "2026-09-11",
+    "model": "Aion-3.0-Mini",
+    "field": "best_for+use_well+strengths",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://www.aionlabs.ai/docs/models"
+    ]
+  },
+  {
+    "date": "2026-09-11",
+    "model": "Aion-3.0",
+    "field": "best_for+use_well+strengths",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://www.aionlabs.ai/docs/models"
+    ]
+  },
+  {
+    "date": "2026-09-11",
+    "model": "Aion-3.0-Mini",
+    "field": "best_for+use_well+strengths",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://www.aionlabs.ai/docs/models"
+    ]
+  },
+  {
+    "date": "2026-09-11",
+    "model": "Aion-3.0",
+    "field": "best_for+use_well+strengths",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://www.aionlabs.ai/docs/models"
+    ]
   }
 ]

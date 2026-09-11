@@ -133,38 +133,6 @@
         }
       ],
       "ask": "DeepSeek V4 Pro 0813 price output is currently 1.74; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
-    },
-    {
-      "id": "aion-3-0-mini:guidance",
-      "model": "Aion-3.0-Mini",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
-      "observations": [
-        {
-          "source": "auto-refresh",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": null,
-          "date": "2026-09-07"
-        }
-      ],
-      "ask": "Aion-3.0-Mini has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
-    },
-    {
-      "id": "aion-3-0:guidance",
-      "model": "Aion-3.0",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
-      "observations": [
-        {
-          "source": "auto-refresh",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": null,
-          "date": "2026-09-07"
-        }
-      ],
-      "ask": "Aion-3.0 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     }
   ]
 }

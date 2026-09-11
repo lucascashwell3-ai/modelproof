@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-09-08",
+  "as_of": "2026-09-11",
   "models": [
     {
       "id": "claude-opus-5",
@@ -4492,15 +4492,24 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
-      "strengths": [],
+      "best_for": [
+        "writing"
+      ],
+      "strengths": [
+        "Stronger narrative structure and tension in collaborative storytelling",
+        "Nuanced handling of mature and darker themes"
+      ],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Aion-3.0 is a multi-model system built on the GLM family, purpose-built for character-driven fiction and roleplay, not general reasoning or coding tasks.",
+        "Use it when you need stronger narrative structure, tension, and nuanced handling of mature or darker themes — its stated strengths — not for short factual Q&A.",
+        "Output is capped at 32K tokens per response, so continue long-form scenes across multiple calls rather than expecting one giant completion."
+      ],
       "task_copy": {},
       "id": "aion-3-0",
       "name": "Aion-3.0",
@@ -4513,7 +4522,8 @@
         "https://www.aionlabs.ai/",
         "https://openrouter.ai/aion-labs/aion-3.0",
         "https://writingmate.ai/models/aion-labs/aion-3.0",
-        "https://designforonline.com/ai-models/aionlabs-aion-3-0/"
+        "https://designforonline.com/ai-models/aionlabs-aion-3-0/",
+        "https://www.aionlabs.ai/docs/models"
       ],
       "best_for_line": "Priciest AionLabs model · 131K ctx · $3/$6",
       "availability": {
@@ -4589,15 +4599,24 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
-      "strengths": [],
+      "best_for": [
+        "writing"
+      ],
+      "strengths": [
+        "Stronger narrative structure and tension in collaborative storytelling",
+        "Nuanced handling of mature and darker themes"
+      ],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Aion-3.0-Mini is a multi-model system built on the DeepSeek family, aimed at character-driven fiction and roleplay rather than general reasoning or coding.",
+        "Reach for Mini instead of the full Aion-3.0 when you don't need the priciest tier — it targets the same narrative use case on a cheaper DeepSeek-based backbone.",
+        "Output tops out at 32K tokens per response, so plan multi-call continuations for longer scenes rather than one giant completion."
+      ],
       "task_copy": {},
       "id": "aion-3-0-mini",
       "name": "Aion-3.0-Mini",
@@ -4609,7 +4628,8 @@
       "sources": [
         "https://www.aionlabs.ai/",
         "https://openrouter.ai/aion-labs/aion-3.0-mini",
-        "https://designforonline.com/ai-models/aionlabs-aion-3-0-mini/"
+        "https://designforonline.com/ai-models/aionlabs-aion-3-0-mini/",
+        "https://www.aionlabs.ai/docs/models"
       ],
       "best_for_line": "Cheapest AionLabs model · 131K ctx · $0.7/$1.4",
       "availability": {
