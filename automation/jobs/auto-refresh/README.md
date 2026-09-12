@@ -14,7 +14,16 @@ day (see "Release watching" below), Judge + Verify stay Tue/Fri, 45 min end to e
 legitimate data change can never turn CI red. After Collect writes real data, `scripts/validate-data.mjs`
 + `scripts/check-live-data.mjs` check the live file — schema/honesty rules plus a small set of
 invariants (decide() still runs, ids are real, `must_not_include` still holds, model count and
-`as_of` look sane) — never an expected winner.
+`as_of` look sane, and no key field's non-null count dropped more than 15% since the committed
+version — catches a feed silently starting to return empty instead of erroring loud) — never an
+expected winner.
+
+**Dry run / UAT:** every change to `.github/workflows/auto-refresh.yml` is proven on a real GitHub
+Actions run before merge — `gh workflow run auto-refresh.yml --ref <branch> -f dry_run=true`. It
+runs the real feeds and both gates exactly as a live pass would, but skips the GitHub issue write
+(no token), the commit, the push, and the live-site verify — a branch dispatch is always a dry run
+regardless of the flag, since a bot must never push code to main from anywhere but main. Ends with
+a `$GITHUB_STEP_SUMMARY` showing gate result, changed data files, and `as_of` before/after.
 
 **Release watching (added 2026-09-06, cadence fixed 2026-09-12):** Collect's workflow schedule is
 06:00 + 18:00 UTC — one workflow, two cron entries a day, no second job. The 18:00 cycle only
