@@ -79,14 +79,16 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SCRIPTS_DIR = fileURLToPath(new URL('.', import.meta.url));
-const REAL_DATA = fileURLToPath(new URL('../data/models.json', import.meta.url));
-const REAL_PLANS = fileURLToPath(new URL('../data/plans.json', import.meta.url));
-const REAL_VENDORS = fileURLToPath(new URL('../data/vendors.json', import.meta.url));
-const REAL_PRESETS = fileURLToPath(new URL('../data/usage-presets.json', import.meta.url));
+// Frozen fixture, not live data/ — see scripts/fixtures/README.md.
+const REAL_DATA = fileURLToPath(new URL('./fixtures/models.json', import.meta.url));
+const REAL_PLANS = fileURLToPath(new URL('./fixtures/plans.json', import.meta.url));
+const REAL_VENDORS = fileURLToPath(new URL('./fixtures/vendors.json', import.meta.url));
+const REAL_PRESETS = fileURLToPath(new URL('./fixtures/usage-presets.json', import.meta.url));
 
 function withSandbox(fn) {
   // apply-judgment.mjs resolves paths relative to its own file (../data/models.json etc), so we
-  // run it against a throwaway copy of the repo's scripts+data dirs to avoid touching the real files.
+  // run it against a throwaway copy of scripts+data seeded from the frozen fixtures, never the
+  // repo's real data/ files.
   const dir = mktempRepo();
   try {
     fn(dir);

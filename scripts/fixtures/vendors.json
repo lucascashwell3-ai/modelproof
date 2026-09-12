@@ -1,0 +1,30 @@
+{
+  "_readme": "Vendor -> headquarters-country map, built for the decision layer's noChinaHosted data rule (assets/decide.mjs). Unlike models.json's prices/benchmarks, these facts are NOT refreshed by the automated Collect pipeline — they're a one-time editorial pass (2026-09-06) citing each vendor's Wikipedia infobox (or, where no independent article exists, the company's own LinkedIn/About page). Spot-check before leaning on this for a compliance decision. country is one of the ISO-ish plain-English labels below, or null when no source could confirm one — a null is kept OUT of any noChinaHosted exclusion (unknown is never treated as a match), and assets/decide.mjs surfaces that as an assumption line so the caller knows the filter didn't fully clear that vendor. Every vendor in scripts/naming.mjs's VENDORS list has an entry here; a vendor added there later needs a row here too, or the noChinaHosted rule silently treats it as unknown (which is safe, but worth noticing).",
+  "as_of": "2026-09-06",
+  "vendors": [
+    { "vendor": "Anthropic", "country": "United States", "source": "https://en.wikipedia.org/wiki/Anthropic" },
+    { "vendor": "OpenAI", "country": "United States", "source": "https://en.wikipedia.org/wiki/OpenAI" },
+    { "vendor": "Google", "country": "United States", "source": "https://en.wikipedia.org/wiki/Google" },
+    { "vendor": "xAI", "country": "United States", "source": "https://en.wikipedia.org/wiki/XAI_(company)" },
+    { "vendor": "Meta", "country": "United States", "source": "https://en.wikipedia.org/wiki/Meta_Platforms" },
+    { "vendor": "Mistral AI", "country": "France", "source": "https://en.wikipedia.org/wiki/Mistral_AI" },
+    { "vendor": "DeepSeek", "country": "China", "source": "https://en.wikipedia.org/wiki/DeepSeek" },
+    { "vendor": "Alibaba (Qwen)", "country": "China", "source": "https://en.wikipedia.org/wiki/Alibaba_Group" },
+    { "vendor": "Moonshot AI", "country": "China", "source": "https://en.wikipedia.org/wiki/Moonshot_AI" },
+    { "vendor": "Z.ai (Zhipu)", "country": "China", "source": "https://en.wikipedia.org/wiki/Z.ai" },
+    { "vendor": "Tencent", "country": "China", "source": "https://en.wikipedia.org/wiki/Tencent" },
+    { "vendor": "IBM", "country": "United States", "source": "https://en.wikipedia.org/wiki/IBM" },
+    { "vendor": "InclusionAI (Ant Group)", "country": "China", "source": "https://en.wikipedia.org/wiki/Ant_Group" },
+    { "vendor": "Kwaipilot", "country": "China", "source": "https://en.wikipedia.org/wiki/Kuaishou", "note": "Kwaipilot is Kuaishou's coding-model line; the source describes the parent company, Beijing-headquartered." },
+    { "vendor": "Meituan", "country": "China", "source": "https://en.wikipedia.org/wiki/Meituan" },
+    { "vendor": "NVIDIA", "country": "United States", "source": "https://en.wikipedia.org/wiki/Nvidia" },
+    { "vendor": "Poolside", "country": "United States", "source": "https://en.wikipedia.org/wiki/Poolside_AI", "note": "Reported plans to relocate HQ to Paris have not, as of this pass, superseded its San Francisco headquarters in company-profile sources." },
+    { "vendor": "ByteDance", "country": "China", "source": "https://en.wikipedia.org/wiki/ByteDance" },
+    { "vendor": "AionLabs", "country": "Israel", "source": "https://il.linkedin.com/company/aion-labs", "note": "No independent Wikipedia article found as of this pass; sourced from the company's own LinkedIn page (HQ: Rehovot, Israel)." },
+    { "vendor": "Sakana AI", "country": "Japan", "source": "https://en.wikipedia.org/wiki/Sakana_AI" },
+    { "vendor": "Thinking Machines Lab", "country": "United States", "source": "https://en.wikipedia.org/wiki/Thinking_Machines_Lab" },
+    { "vendor": "Upstage", "country": "South Korea", "source": "https://en.wikipedia.org/wiki/Upstage_(company)" },
+    { "vendor": "Amazon", "country": "United States", "source": "https://en.wikipedia.org/wiki/Amazon_(company)" },
+    { "vendor": "Cohere", "country": "Canada", "source": "https://en.wikipedia.org/wiki/Cohere" }
+  ]
+}

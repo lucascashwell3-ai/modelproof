@@ -6,15 +6,19 @@ name: Modelproof collect (v1.1)
 # issue. Publish is followed by a live verify against GitHub Pages; a mismatch reverts and fails
 # loud. Standalone Verify piece: .github/workflows/refresh-verify.yml.
 #
-# Runs every 2h (one workflow, one schedule — no second job) so a launch-day model is caught
-# within ~2h instead of waiting for the old Tue/Fri cadence. Most cycles are a cheap id-only
-# check inside scripts/auto-refresh.mjs that exits before touching the network for anything
-# beyond the OpenRouter/LiteLLM lists; the full collect (price facts, worklist, publish) only
-# runs when that check finds a genuinely new candidate, or at the daily 06:00 UTC full-run hour.
+# Runs twice a day: 06:00 UTC (the full pass — scripts/auto-refresh.mjs's DAILY_FULL_RUN_HOUR_UTC)
+# and 18:00 UTC (a cheap id-only check that exits before touching the network for anything beyond
+# the OpenRouter/LiteLLM lists, unless it finds a genuinely new candidate, in which case it runs
+# the full collect early).
 on:
   schedule:
-    - cron: "0 */2 * * *"   # every 2 hours — see scripts/auto-refresh.mjs's early-exit for what actually runs
-  workflow_dispatch: {}
+    - cron: "0 6,18 * * *"   # 06:00 + 18:00 UTC — see scripts/auto-refresh.mjs's early-exit for what actually runs
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Run everything except the push and the live-site verify"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -27,6 +31,11 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    # A branch dispatch is always a dry run — a bot must never push code to main. Only a
+    # workflow_dispatch on main with dry_run left false (or the schedule trigger, which always
+    # fires on main) is a live run.
+    env:
+      DRY_RUN: ${{ inputs.dry_run == true || github.ref != 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,27 +46,60 @@ jobs:
           node-version: 20
 
       - name: Unit test the check-stage rules
-        run: node --test scripts/test-auto-refresh.mjs scripts/test-apply-judgment.mjs scripts/test-derive-availability.mjs scripts/test-derive-task-fit.mjs scripts/test-decide.mjs
+        # Runs on the frozen fixture (scripts/fixtures/), never on live data — see
+        # scripts/fixtures/README.md. The live catalog is checked separately, after Collect,
+        # below.
+        run: node --test scripts/test-*.mjs
 
       - name: Run collect (feed -> check -> publish -> worklist -> report)
         id: run
-        env:
-          GH_TOKEN: ${{ secrets.MODELPROOF_AUTOREFRESH_TOKEN || github.token }}
         run: |
           before=$(python3 -c "import json;print(json.load(open('data/models.json'))['as_of'])")
           echo "AS_OF_BEFORE=$before" >> "$GITHUB_ENV"
-          node scripts/auto-refresh.mjs
+          if [ "$DRY_RUN" = "true" ]; then
+            # Force the full pipeline so a branch run exercises the real feeds, not the cheap
+            # id-only early exit. No GH_TOKEN: auto-refresh.mjs's reportIssue() skips writing
+            # (needs both GH_TOKEN/GITHUB_TOKEN and GITHUB_REPOSITORY) when the token is missing,
+            # so a dry run touches nothing remote beyond the read-only feed fetches.
+            echo "dry run: REFRESH_FORCE_FULL=1, no GH_TOKEN — issue-writing stays skipped"
+            REFRESH_FORCE_FULL=1 node scripts/auto-refresh.mjs
+          else
+            GH_TOKEN="${{ secrets.MODELPROOF_AUTOREFRESH_TOKEN || github.token }}" node scripts/auto-refresh.mjs
+          fi
 
-      - name: Re-run the full suite against the refreshed data (decision-layer eval included)
+      - name: Check the refreshed live data (invariants only, never expected winners)
         # scripts/auto-refresh.mjs's own internal honesty gate (validate-data.mjs) already blocks
-        # a schema-invalid refresh from writing at all — this step catches the class that gate
-        # can't: a refresh that's perfectly valid but changes prices/scores/availability enough to
-        # flip one of data/eval/situations.json's drafted expectations (scripts/test-decide.mjs).
-        # Runs BEFORE "Commit and push" so a red run here blocks publish, not just notifies after
-        # the fact.
-        run: node --test scripts/test-*.mjs
+        # a schema-invalid refresh from writing at all; validate-data.mjs here is a second,
+        # standalone run of that same gate against what's now on disk. check-live-data.mjs adds
+        # the checks a schema gate can't make: decide() still runs clean for every task, every
+        # shortlisted id is real, situations.json's must_not_include rules still hold, the model
+        # count didn't jump or collapse, and as_of is a sane date. It never asserts which model
+        # should win — a refresh that legitimately changes prices/scores/availability is expected
+        # to change winners, and must not fail CI for it. Runs BEFORE "Commit and push" so a red
+        # run here blocks publish, not just notifies after the fact.
+        run: node scripts/validate-data.mjs && node scripts/check-live-data.mjs
+
+      - name: Dry-run summary (no push, no live verify)
+        if: env.DRY_RUN == 'true'
+        run: |
+          after=$(python3 -c "import json;print(json.load(open('data/models.json'))['as_of'])")
+          n=$(git diff --name-only data/ | wc -l | tr -d ' ')
+          echo "as_of: $AS_OF_BEFORE -> $after"
+          git diff --stat data/ || true
+          {
+            echo "### DRY RUN — gates passed, $n data file(s) would change, nothing pushed"
+            echo ""
+            echo "as_of: $AS_OF_BEFORE -> $after"
+            echo ""
+            echo '```'
+            git diff --stat data/ || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Commit and push straight to main
+        # Belt-and-suspenders on top of DRY_RUN (which already folds in this same ref check):
+        # this step must only ever run on main, full stop — a bot must never push code to a branch.
+        if: env.DRY_RUN != 'true' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.MODELPROOF_AUTOREFRESH_TOKEN || github.token }}
         run: |
@@ -83,7 +125,7 @@ jobs:
           fi
 
       - name: Wait for Pages deploy, then verify as_of matches
-        if: env.PUBLISHED == '1'
+        if: env.DRY_RUN != 'true' && env.PUBLISHED == '1'
         run: |
           after=$(python3 -c "import json;print(json.load(open('data/models.json'))['as_of'])")
           url="https://lucascashwell3-ai.github.io/modelproof/data/models.json"
