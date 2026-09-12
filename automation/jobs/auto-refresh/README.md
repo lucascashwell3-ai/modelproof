@@ -1,22 +1,30 @@
 # Modelproof refresh v1.1 — owner file
 
-`automation/PIPELINE_V1.md` "Modelproof refresh — v1.1". Three pieces; Collect now checks in
-every 2h (see "Release watching" below), Judge + Verify stay Tue/Fri, 45 min end to end.
+`automation/PIPELINE_V1.md` "Modelproof refresh — v1.1". Three pieces; Collect checks in twice a
+day (see "Release watching" below), Judge + Verify stay Tue/Fri, 45 min end to end.
 
 | UTC | Piece | Runs on | Does |
 |---|---|---|---|
-| every 2h; full pass at 06:00 daily | **Collect** | GitHub Actions (`.github/workflows/auto-refresh.yml`) | Cheap id check most cycles (see below); on a full pass, pulls OpenRouter + LiteLLM + Epoch's benchmark export, applies 2-source-agreement facts, writes `data/refresh/worklist.json` for anything it can't settle (new models, conflicts, benchmarks, ladders, releases) |
+| 06:00 (full pass) + 18:00 (id check) | **Collect** | GitHub Actions (`.github/workflows/auto-refresh.yml`) | Cheap id check at 18:00 (see below); at 06:00, pulls OpenRouter + LiteLLM + Epoch's benchmark export, applies 2-source-agreement facts, writes `data/refresh/worklist.json` for anything it can't settle (new models, conflicts, benchmarks, ladders, releases) |
 | 06:30 Tue/Fri | **Judge** | claude.ai cloud routine, Sonnet | Reads only `worklist.json`, researches the open web, writes `judgments.json`, applies via `scripts/apply-judgment.mjs`, pushes to main. Instructions: `scripts/refresh-judge.md`. |
 | 07:15 Tue/Fri | **Verify** | GitHub Actions (`.github/workflows/refresh-verify.yml`) | Confirms live `as_of` ≥ collect's receipt date and the gate passes on the live file; reverts + fails loud on mismatch |
 
-**Release watching (added 2026-09-06):** Collect's workflow schedule is every 2h — one workflow,
-one cron entry, no second job. Most cycles it only fetches the OpenRouter + LiteLLM id lists and
-compares them against `data/models.json` + `data/_auto_refresh_state.json`'s already-flagged
-candidates (`findNewCandidateIds` / `decideRefreshRun` in `scripts/auto-refresh.mjs`); with no
-genuinely new id and it's not 06:00 UTC, it logs `no new models — skipping full run` and exits
-without touching the network further or writing anything. A new candidate id, or the 06:00 UTC
-hour itself, runs the full Collect pass exactly as before — this is what catches a launch-day
-model within about 2h instead of waiting for the next scheduled pass.
+**Gate (fixed 2026-09-12 — see `scripts/fixtures/README.md`):** the unit suite
+(`scripts/test-*.mjs`) runs on a frozen fixture (`scripts/fixtures/`), never on live `data/`, so a
+legitimate data change can never turn CI red. After Collect writes real data, `scripts/validate-data.mjs`
++ `scripts/check-live-data.mjs` check the live file — schema/honesty rules plus a small set of
+invariants (decide() still runs, ids are real, `must_not_include` still holds, model count and
+`as_of` look sane) — never an expected winner.
+
+**Release watching (added 2026-09-06, cadence fixed 2026-09-12):** Collect's workflow schedule is
+06:00 + 18:00 UTC — one workflow, two cron entries a day, no second job. The 18:00 cycle only
+fetches the OpenRouter + LiteLLM id lists and compares them against `data/models.json` +
+`data/_auto_refresh_state.json`'s already-flagged candidates (`findNewCandidateIds` /
+`decideRefreshRun` in `scripts/auto-refresh.mjs`); with no genuinely new id, it logs `no new
+models — skipping full run` and exits without touching the network further or writing anything. A
+new candidate id, or the 06:00 UTC hour itself, runs the full Collect pass exactly as before —
+this is what catches a launch-day model within about 12h instead of waiting for the next scheduled
+pass.
 
 **Sources:** OpenRouter models API + LiteLLM price table (Tier A, public, no key) + Epoch AI's
 CC-BY benchmark export (ladders). LMArena dropped 2026-08-22: feed 404s and its terms forbid republishing. Judge also
@@ -85,6 +93,7 @@ reporter reads these for the board and missed-tick detection.
 - `REFRESH_FORCE_FULL=1 node scripts/auto-refresh.mjs --dry-run` — force a full pass regardless of
   the early-exit check (testing only). `REFRESH_FORCE_SKIP=1` forces the skip path the same way.
 - `node scripts/apply-judgment.mjs judgments.json --dry-run` — judge apply, prints only.
-- `node --test scripts/test-auto-refresh.mjs scripts/test-apply-judgment.mjs` — unit tests.
+- `node --test scripts/test-*.mjs` — unit tests (frozen fixture).
+- `node scripts/validate-data.mjs && node scripts/check-live-data.mjs` — live-data gate.
 
 **Last known good:** 2026-08-16 — Collect 31966006991 (15 queued) → Judge cse_01UTBzYskvNx5YYeHgimPGzS (Sonnet; +9 models cited, 6 held → issue #13) → Verify 31966363872 green. 38 models live.

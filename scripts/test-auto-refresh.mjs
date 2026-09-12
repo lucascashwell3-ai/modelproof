@@ -720,11 +720,13 @@ test('honesty gate REJECTS a release whose vendor is a feed spelling', () => {
   assert.ok(errors.some((x) => /vendor "google" must be written "Google"/.test(x)));
 });
 
-test('honesty gate passes a clean record and the live catalog', () => {
+test('honesty gate passes a clean record and the frozen fixture catalog', () => {
   assert.deepEqual(errorsFor({ id: 'gemini-3-8-flash', name: 'Gemini 3.8 Flash', vendor: 'Google' }), []);
-  const live = JSON.parse(readFileSync(new URL('../data/models.json', import.meta.url)));
+  // Frozen fixture, not live data/ — see scripts/fixtures/README.md. sources.json is static
+  // config (not written by Collect), so reading it directly here is fine.
+  const frozen = JSON.parse(readFileSync(new URL('./fixtures/models.json', import.meta.url)));
   const reg = JSON.parse(readFileSync(new URL('./sources.json', import.meta.url)));
-  assert.deepEqual(validate(live, reg).errors, []);
+  assert.deepEqual(validate(frozen, reg).errors, []);
 });
 
 test('the admission shape: a feed candidate becomes a clean id + bare name + canonical vendor', () => {

@@ -1,0 +1,21 @@
+{
+  "_readme": "Monthly token volumes for the three named usage bands assets/decide.mjs offers alongside a custom {tokens_in_month, tokens_out_month}. These are stated assumptions, not sourced facts about any specific model or vendor — each carries its own one-line rationale, and every rationale is echoed back in decide()'s assumptions[] output so a reader always sees which band they're being costed against and why. The 70/30 in/out split is itself an assumption (most work here is 'read a lot, write less' — long context in, a shorter answer out) applied uniformly across all three bands for consistency; it is not separately sourced.",
+  "as_of": "2026-09-06",
+  "presets": {
+    "light": {
+      "tokens_in_month": 300000,
+      "tokens_out_month": 130000,
+      "rationale": "Occasional use — a few questions or short tasks most days, roughly a tenth of the 'typical' band. An assumption, not a measured figure."
+    },
+    "typical": {
+      "tokens_in_month": 3000000,
+      "tokens_out_month": 1300000,
+      "rationale": "A regular daily user — one tenth of the sourced 'heavy' anchor below. An assumption, not a measured figure."
+    },
+    "heavy": {
+      "tokens_in_month": 21000000,
+      "tokens_out_month": 9000000,
+      "rationale": "Anchored to a heavy analyst-style user reporting ~30M tokens over a 30-day window; split 70/30 in/out (this dataset's own assumption, not part of that report) since analyst work is mostly reading long source material and writing a shorter answer."
+    }
+  }
+}

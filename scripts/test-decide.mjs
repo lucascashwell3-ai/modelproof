@@ -6,14 +6,16 @@ import {
 } from '../assets/decide.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
 
-const ROOT = new URL('../', import.meta.url);
-const readJson = (p) => JSON.parse(readFileSync(new URL(p, ROOT)));
+// This suite runs on a frozen fixture, never on live data/ (scripts/fixtures/README.md) — a
+// data refresh must never make CI red on a golden-value test.
+const FIXTURES = new URL('./fixtures/', import.meta.url);
+const readJson = (p) => JSON.parse(readFileSync(new URL(p, FIXTURES)));
 
-const models = readJson('data/models.json').models;
-const plans = readJson('data/plans.json').plans;
-const presets = readJson('data/usage-presets.json').presets;
-const vendors = readJson('data/vendors.json').vendors;
-const situations = readJson('data/eval/situations.json').situations;
+const models = readJson('models.json').models;
+const plans = readJson('plans.json').plans;
+const presets = readJson('usage-presets.json').presets;
+const vendors = readJson('vendors.json').vendors;
+const situations = readJson('eval/situations.json').situations;
 const data = { models, plans, presets, vendors };
 
 // ---------------------------------------------------------------------------------------------
@@ -29,7 +31,7 @@ test('registry: WHY_FIELDS keys and derive-task-fit BASIS_TOKENS are the same se
 });
 
 // ---------------------------------------------------------------------------------------------
-// Sanity: every task id used in data/eval/situations.json is one derive-task-fit.mjs knows.
+// Sanity: every task id used in the frozen situations fixture is one derive-task-fit.mjs knows.
 // ---------------------------------------------------------------------------------------------
 test('eval situations only reference real task ids', () => {
   for (const s of situations) {
@@ -39,9 +41,10 @@ test('eval situations only reference real task ids', () => {
 
 // ---------------------------------------------------------------------------------------------
 // The 20-situation eval. Each situation's `expected` was drafted by running decide() against the
-// live catalog (see data/eval/situations.json's _readme) — this is deliberately a trip-wire: a
-// data refresh that changes prices/scores/availability enough to flip one of these SHOULD fail
-// this test, which is exactly why it's wired into .github/workflows/auto-refresh.yml after Collect.
+// catalog frozen in scripts/fixtures/ (see data/eval/situations.json's _readme for how the
+// numbers were picked). This runs on that frozen snapshot only — it is a code-contract test on
+// decide()'s logic, not a check on live data. The live catalog after a Collect is checked
+// separately, by invariants only, in scripts/check-live-data.mjs.
 // ---------------------------------------------------------------------------------------------
 test('eval: 20 realistic situations match their drafted expectations', () => {
   const failures = [];
