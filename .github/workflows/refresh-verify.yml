@@ -1,8 +1,11 @@
 name: Modelproof verify
 # v1.1 "Verify" piece (automation/PIPELINE_V1.md "Modelproof refresh — v1.1"). Confirms the
-# Collect + Judge pieces actually published: live data/models.json on Pages must have as_of >=
-# today's collect receipt date, and the gate must pass on the live file. On failure, reverts the
-# data commit(s) made since Collect ran and pushes, then fails loud.
+# Collect + Judge pieces actually published: live data/models.json on Pages must show the
+# collect receipt's date, and the gate must pass on the live file. Uses scripts/verify-live.mjs
+# (shared with auto-refresh.yml) so a Pages deploy that's merely slow — not broken — is never
+# treated as a failed publish: it polls up to 30 min and only reverts on an actual failed or
+# wrong deploy, never on a still-pending one. On a real failure it reverts the data commit(s)
+# made since Collect ran and pushes, then fails loud.
 on:
   schedule:
     - cron: "15 7 * * 2,5"   # Tue/Fri 07:15 UTC — 75 min after Collect, well past the Judge window
@@ -10,6 +13,7 @@ on:
 
 permissions:
   contents: write
+  actions: read
 
 concurrency:
   group: modelproof-verify
@@ -27,31 +31,55 @@ jobs:
         with:
           node-version: 20
 
-      - name: Fetch live data/models.json and check as_of + gate
+      - name: Wait for Pages deploy, then check as_of + gate
+        # scripts/verify-live.mjs polls (up to 30 min) rather than checking once, and tells a
+        # merely-slow Pages deploy apart from an actually broken one. want = the collect
+        # receipt's date (falls back to today if the receipt is missing, as before); sha = HEAD,
+        # i.e. whatever Collect (+ Judge) last pushed to main. Four outcomes -> three results:
+        #   exit 0                -> RESULT=ok (still runs the schema/gate check below)
+        #   exit 2 or 3           -> RESULT=revert (deploy failed, or deployed but wrong)
+        #   exit 4 (still pending)-> RESULT=timeout (fail loud, but main is left alone)
+        #   anything else         -> RESULT=revert (fail safe: unexpected is treated as broken)
         id: check
         run: |
-          set -e
+          set +e
           url="https://lucascashwell3-ai.github.io/modelproof/data/models.json"
-          live=$(curl -fsS "$url")
-          echo "$live" > /tmp/live-models.json
-          live_as_of=$(python3 -c "import json;print(json.load(open('/tmp/live-models.json'))['as_of'])")
           collect_date=$(python3 -c "import json;print(json.load(open('data/refresh/receipt-collect.json'))['ran_at'][:10])" 2>/dev/null || date -u +%Y-%m-%d)
-          today=$(date -u +%Y-%m-%d)
-          echo "live as_of=$live_as_of, collect receipt date=$collect_date, today=$today"
+          echo "collect receipt date (want) = $collect_date"
 
-          ok=1
-          python3 -c "import sys,datetime as d; sys.exit(0 if d.date.fromisoformat('$live_as_of') >= d.date.fromisoformat('$collect_date') else 1)" || ok=0
+          GH_TOKEN="${{ github.token }}" node scripts/verify-live.mjs \
+            --want "$collect_date" \
+            --sha "$(git rev-parse HEAD)" \
+            --repo "$GITHUB_REPOSITORY" \
+            --url "$url"
+          vcode=$?
+          echo "verify-live.mjs exit code: $vcode"
 
-          cp /tmp/live-models.json data/models.json
-          node scripts/validate-data.mjs || ok=0
+          if [ "$vcode" = "0" ]; then
+            result="ok"
+            curl -fsS "$url" -o /tmp/live-models.json
+            cp /tmp/live-models.json data/models.json
+            node scripts/validate-data.mjs || result="revert"
+          elif [ "$vcode" = "4" ]; then
+            result="timeout"
+          else
+            result="revert"
+          fi
 
-          echo "OK=$ok" >> "$GITHUB_OUTPUT"
+          echo "RESULT=$result" >> "$GITHUB_OUTPUT"
+          set -e
 
       - name: Restore working tree (verify only reads, never keeps the live copy)
         run: git checkout -- data/models.json
 
+      - name: Fail loud on a still-pending deploy (no revert — main may still be fine)
+        if: steps.check.outputs.RESULT == 'timeout'
+        run: |
+          echo "::error title=modelproof verify timed out::site not updated within 30 min — data stays on main, next run re-verifies"
+          exit 1
+
       - name: Revert on failure
-        if: steps.check.outputs.OK != '1'
+        if: steps.check.outputs.RESULT == 'revert'
         run: |
           git config user.name "modelproof-verify"
           git config user.email "actions@users.noreply.github.com"
@@ -76,14 +104,16 @@ jobs:
         run: |
           node -e "
             const fs = require('fs');
-            const ok = process.env.OK === '1';
+            const result = process.env.RESULT || 'unknown';
+            const ok = result === 'ok';
+            const errors = { revert: 'live as_of/gate check failed', timeout: 'site not updated within 30 min (not reverted)', unknown: 'verify step did not report a result' };
             fs.mkdirSync('data/refresh', { recursive: true });
             fs.writeFileSync('data/refresh/receipt-verify.json', JSON.stringify({
-              job: 'verify', ran_at: new Date().toISOString(), ok, ...(ok ? {} : { error: 'live as_of/gate check failed' }),
+              job: 'verify', ran_at: new Date().toISOString(), ok, ...(ok ? {} : { error: errors[result] || errors.unknown }),
             }, null, 2) + '\n');
           "
         env:
-          OK: ${{ steps.check.outputs.OK }}
+          RESULT: ${{ steps.check.outputs.RESULT }}
 
       - name: Commit verify receipt
         if: always()

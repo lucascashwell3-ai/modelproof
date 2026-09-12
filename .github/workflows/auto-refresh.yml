@@ -23,6 +23,7 @@ on:
 permissions:
   contents: write
   issues: write
+  actions: read
 
 concurrency:
   group: auto-refresh
@@ -125,19 +126,36 @@ jobs:
           fi
 
       - name: Wait for Pages deploy, then verify as_of matches
+        # Four outcomes from scripts/verify-live.mjs (see automation/jobs/auto-refresh/README.md
+        # "Failure behavior"): 0 verified, nothing else to do. 2 (deploy failed) or 3 (deployed
+        # but content still wrong past the grace period) mean the publish is actually broken —
+        # revert as before. 4 (still pending at 30 min) means Pages just hasn't caught up yet —
+        # fail loud so it's visible, but do NOT revert; the data on main is good and the next run
+        # re-verifies it. Any other exit is treated the same as 4: fail loud, never revert.
         if: env.DRY_RUN != 'true' && env.PUBLISHED == '1'
         run: |
           after=$(python3 -c "import json;print(json.load(open('data/models.json'))['as_of'])")
-          url="https://lucascashwell3-ai.github.io/modelproof/data/models.json"
-          ok=0
-          for i in $(seq 1 30); do
-            live=$(curl -fsS "$url" | python3 -c "import json,sys;print(json.load(sys.stdin)['as_of'])" 2>/dev/null || echo "-1")
-            if [ "$live" = "$after" ]; then ok=1; break; fi
-            echo "attempt $i: live as_of=$live want=$after — waiting for Pages"
-            sleep 10
-          done
-          if [ "$ok" != "1" ]; then
-            echo "::error title=auto-refresh verify failed::live as_of never matched (before=$AS_OF_BEFORE after=$after) — reverting"
+          set +e
+          GH_TOKEN="${{ secrets.MODELPROOF_AUTOREFRESH_TOKEN || github.token }}" \
+            node scripts/verify-live.mjs \
+              --want "$after" \
+              --sha "$(git rev-parse HEAD)" \
+              --repo "$GITHUB_REPOSITORY" \
+              --url "https://lucascashwell3-ai.github.io/modelproof/data/models.json"
+          code=$?
+          set -e
+          if [ "$code" = "0" ]; then
+            echo "verified: live as_of = $after"
+            exit 0
+          fi
+          if [ "$code" = "4" ]; then
+            echo "::error title=auto-refresh verify timed out::site not updated within 30 min — data stays on main, next run re-verifies"
+            exit 1
+          fi
+          if [ "$code" = "2" ] || [ "$code" = "3" ]; then
+            reason="deploy failed"
+            [ "$code" = "3" ] && reason="deployed but content still wrong"
+            echo "::error title=auto-refresh verify failed::$reason (before=$AS_OF_BEFORE after=$after) — reverting"
             git config user.name "modelproof-auto-refresh"
             git config user.email "actions@users.noreply.github.com"
             git revert --no-edit HEAD
@@ -150,4 +168,5 @@ jobs:
             [ "$ok2" = "1" ] || echo "::error title=auto-refresh revert push failed::manual revert needed"
             exit 1
           fi
-          echo "verified: live as_of = $after"
+          echo "::error title=auto-refresh verify failed::verify-live.mjs exited $code (unexpected) — not reverting"
+          exit 1

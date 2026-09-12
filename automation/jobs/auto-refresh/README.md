@@ -94,6 +94,12 @@ Judge, on any error. Verify reverts the data commit(s) since Collect on a live-m
 gate failure and fails loud. Held items collect into one GitHub issue ("Held for review — modelproof
 data refresh", via `scripts/held-review-issue.mjs`), closed automatically when empty.
 
+Both Collect's post-push check and the standalone Verify piece use `scripts/verify-live.mjs`,
+which polls the live site for up to 30 minutes instead of checking once: matched → publish
+confirmed; Pages build failed, or built but content still wrong after a short grace period →
+revert; still pending at 30 min → fail loud with main untouched (the next run re-verifies).
+**Only a failed or wrong deploy ever reverts — a deploy that's merely slow never does.**
+
 **Receipts:** each piece writes `data/refresh/receipt-<piece>.json (collect / judge / verify)` (`{job, ran_at, ..., ok}`) — the
 reporter reads these for the board and missed-tick detection.
 
