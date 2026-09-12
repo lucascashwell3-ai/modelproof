@@ -1,6 +1,51 @@
 {
-  "generated": "2026-09-07",
+  "generated": "2026-09-12",
   "items": [
+    {
+      "id": "new:deepseekv41flash",
+      "model": "DeepSeek: DeepSeek V4.1 Flash",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.15,
+          "date": "2026-09-12"
+        }
+      ],
+      "ask": "\"DeepSeek: DeepSeek V4.1 Flash\" showed up on OpenRouter but single source — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:fugumax",
+      "model": "Sakana: Fugu Max",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 2,
+          "date": "2026-09-12"
+        }
+      ],
+      "ask": "\"Sakana: Fugu Max\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:fuguultrav2",
+      "model": "Sakana: Fugu Ultra v2",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 5,
+          "date": "2026-09-12"
+        }
+      ],
+      "ask": "\"Sakana: Fugu Ultra v2\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
+    },
     {
       "id": "new:glm53flash",
       "model": "Z.ai: GLM 5.3 Flash",
@@ -10,8 +55,8 @@
         {
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.075,
-          "date": "2026-09-07"
+          "value": 0.15,
+          "date": "2026-09-12"
         }
       ],
       "ask": "\"Z.ai: GLM 5.3 Flash\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -26,14 +71,29 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.06,
-          "date": "2026-09-07"
+          "date": "2026-09-12"
         }
       ],
       "ask": "\"inclusionAI: Ling 3.0 Flash Fin\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
-      "id": "new:mercury25preview",
-      "model": "Inception: Mercury 2.5 Preview",
+      "id": "new:ling30flashvl",
+      "model": "inclusionAI: Ling 3.0 Flash VL",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.06,
+          "date": "2026-09-12"
+        }
+      ],
+      "ask": "\"inclusionAI: Ling 3.0 Flash VL\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:mercury25",
+      "model": "Inception: Mercury 2.5",
       "kind": "new-model",
       "current": null,
       "observations": [
@@ -41,10 +101,40 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.04,
-          "date": "2026-09-07"
+          "date": "2026-09-12"
         }
       ],
-      "ask": "\"Inception: Mercury 2.5 Preview\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
+      "ask": "\"Inception: Mercury 2.5\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:schematronv2small",
+      "model": "Inference.net: Schematron V2 Small",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.049999999999999996,
+          "date": "2026-09-12"
+        }
+      ],
+      "ask": "\"Inference.net: Schematron V2 Small\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:schematronv2turbo",
+      "model": "Inference.net: Schematron V2 Turbo",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.03,
+          "date": "2026-09-12"
+        }
+      ],
+      "ask": "\"Inference.net: Schematron V2 Turbo\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
       "id": "deepseek-v4-flash-0731:price_input",
@@ -56,14 +146,14 @@
         {
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.14,
-          "date": "2026-09-07"
+          "value": 0.04,
+          "date": "2026-09-12"
         },
         {
           "source": "litellm",
           "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "value": 0.44,
-          "date": "2026-09-07"
+          "date": "2026-09-12"
         }
       ],
       "ask": "DeepSeek V4 Flash 0731 price input is currently 0.05; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
@@ -78,61 +168,87 @@
         {
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.28,
-          "date": "2026-09-07"
+          "value": 0.08,
+          "date": "2026-09-12"
         },
         {
           "source": "litellm",
           "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "value": 1.32,
-          "date": "2026-09-07"
+          "date": "2026-09-12"
         }
       ],
       "ask": "DeepSeek V4 Flash 0731 price output is currently 0.1; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
     },
     {
-      "id": "deepseek-v4-pro-0813:price_input",
-      "model": "DeepSeek V4 Pro 0813",
+      "id": "deepseek-v4-flash-vision-exp:price_input",
+      "model": "DeepSeek V4 Flash Vision Exp",
       "kind": "conflict",
       "field": "price_input",
-      "current": 0.58,
+      "current": 0.44,
       "observations": [
         {
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
-          "value": 1.1154,
-          "date": "2026-09-07"
+          "value": 0.22,
+          "date": "2026-09-12"
         },
         {
           "source": "litellm",
           "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-          "value": 1.32,
-          "date": "2026-09-07"
+          "value": 0.44,
+          "date": "2026-09-12"
         }
       ],
-      "ask": "DeepSeek V4 Pro 0813 price input is currently 0.58; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
+      "ask": "DeepSeek V4 Flash Vision Exp price input is currently 0.44; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
     },
     {
-      "id": "deepseek-v4-pro-0813:price_output",
-      "model": "DeepSeek V4 Pro 0813",
-      "kind": "conflict",
-      "field": "price_output",
-      "current": 1.74,
+      "id": "deepseek-v4-flash-0731:guidance",
+      "model": "DeepSeek V4 Flash 0731",
+      "kind": "guidance",
+      "field": "use_well",
+      "current": null,
       "observations": [
         {
-          "source": "openrouter",
+          "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
-          "value": 3.3461999999999996,
-          "date": "2026-09-07"
-        },
-        {
-          "source": "litellm",
-          "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-          "value": 3.9600000000000004,
-          "date": "2026-09-07"
+          "value": null,
+          "date": "2026-09-12"
         }
       ],
-      "ask": "DeepSeek V4 Pro 0813 price output is currently 1.74; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
+      "ask": "DeepSeek V4 Flash 0731 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+    },
+    {
+      "id": "deepseek-v4-flash-vision-exp:guidance",
+      "model": "DeepSeek V4 Flash Vision Exp",
+      "kind": "guidance",
+      "field": "use_well",
+      "current": null,
+      "observations": [
+        {
+          "source": "auto-refresh",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": null,
+          "date": "2026-09-12"
+        }
+      ],
+      "ask": "DeepSeek V4 Flash Vision Exp has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+    },
+    {
+      "id": "deepseek-v4-pro-0813:guidance",
+      "model": "DeepSeek V4 Pro 0813",
+      "kind": "guidance",
+      "field": "use_well",
+      "current": null,
+      "observations": [
+        {
+          "source": "auto-refresh",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": null,
+          "date": "2026-09-12"
+        }
+      ],
+      "ask": "DeepSeek V4 Pro 0813 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     }
   ]
 }

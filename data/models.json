@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-09-11",
+  "as_of": "2026-09-12",
   "models": [
     {
       "id": "claude-opus-5",
@@ -6103,7 +6103,7 @@
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
-        "open_weights": null,
+        "open_weights": true,
         "eu_hosting": null,
         "sources": [
           "https://openrouter.ai/api/v1/models"
@@ -6879,7 +6879,7 @@
       "auto_added": "2026-09-06",
       "best_for_line": "Priciest Anthropic model · 1M ctx · $10/$50",
       "availability": {
-        "direct_api": null,
+        "direct_api": true,
         "openrouter": true,
         "aws_bedrock": null,
         "google_vertex": null,
@@ -6887,7 +6887,8 @@
         "open_weights": null,
         "eu_hosting": null,
         "sources": [
-          "https://openrouter.ai/api/v1/models"
+          "https://openrouter.ai/api/v1/models",
+          "https://platform.claude.com/docs/en/models/fable-5-1/overview"
         ]
       },
       "task_fit": {
@@ -6927,9 +6928,10 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         },
         "vision": {
-          "score": null,
-          "basis": [],
-          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+          "score": 100,
+          "basis": [
+            "best_for:vision"
+          ]
         },
         "frontend": {
           "score": null,
