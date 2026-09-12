@@ -26,7 +26,7 @@
   "glm-5-2": 0,
   "ling-3-0-flash": 0,
   "kat-coder-pro-v2-5": 0,
-  "kat-coder-air-v2-5": 5,
+  "kat-coder-air-v2-5": 4,
   "longcat-2-0": 0,
   "muse-glimmer-30b": 0,
   "nemotron-3-5-lightning": 0,
@@ -44,7 +44,7 @@
   "inkling-small": 0,
   "solar-pro-4": 0,
   "glm-5-3": 0,
-  "guidanceCursor": "deepseek-v4-pro-0813",
+  "guidanceCursor": "claude-fable-5-1",
   "granite-4-2-8b": 0,
   "gemini-3-7-flash": 0,
   "grok-4-6": 0,
@@ -71,13 +71,6 @@
     "qwenqwen38max0902",
     "inceptionmercury25preview",
     "inclusionailing30flashfin",
-    "zaiglm53flash",
-    "inferencenetschematronv2turbo",
-    "inferencenetschematronv2small",
-    "sakanafuguultrav2",
-    "sakanafugumax",
-    "inclusionailing30flashvl",
-    "deepseekdeepseekv41flash",
-    "inceptionmercury25"
+    "zaiglm53flash"
   ]
 }
