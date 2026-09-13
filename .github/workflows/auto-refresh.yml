@@ -80,6 +80,14 @@ jobs:
         # run here blocks publish, not just notifies after the fact.
         run: node scripts/validate-data.mjs && node scripts/check-live-data.mjs
 
+      - name: Eval report (informational — never a gate)
+        # scripts/eval-report.mjs runs the 40-situation cold answer key + 15 must-never rules
+        # against the just-refreshed live data and prints a pass rate, every disagreement with
+        # its reason, and a top-3-per-task table for 'best'/'cheapest'. Always exits 0 — this is
+        # visibility into how the standings-based ranking is doing against an independently-
+        # drafted key, never a publish gate (that's validate-data.mjs + check-live-data.mjs above).
+        run: node scripts/eval-report.mjs >> "$GITHUB_STEP_SUMMARY"
+
       - name: Dry-run summary (no push, no live verify)
         if: env.DRY_RUN == 'true'
         run: |
@@ -106,11 +114,11 @@ jobs:
         run: |
           git config user.name "modelproof-auto-refresh"
           git config user.email "actions@users.noreply.github.com"
-          if git diff --quiet data/models.json data/changelog.json data/_auto_refresh_state.json data/refresh/worklist.json data/refresh/receipt-collect.json 2>/dev/null; then
+          if git diff --quiet data/models.json data/changelog.json data/_auto_refresh_state.json data/refresh/worklist.json data/refresh/receipt-collect.json docs/standings-unmapped.md 2>/dev/null; then
             echo "no changes — nothing to publish"
             exit 0
           fi
-          git add data/models.json data/changelog.json data/_auto_refresh_state.json data/refresh/worklist.json data/refresh/receipt-collect.json 2>/dev/null || true
+          git add data/models.json data/changelog.json data/_auto_refresh_state.json data/refresh/worklist.json data/refresh/receipt-collect.json docs/standings-unmapped.md 2>/dev/null || true
           git commit -m "modelproof collect $(date -u +%Y-%m-%d)"
           echo "PUBLISHED=1" >> "$GITHUB_ENV"
           ok=0

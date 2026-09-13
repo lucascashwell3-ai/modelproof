@@ -666,25 +666,16 @@ export function assembleStandings(models, {
 }
 
 // ---------------------------------------------------------------------------------------------
-// standalone runner
+// refreshStandingsForCatalog — the whole fetch -> rank -> assemble pass, factored out of main()
+// so scripts/auto-refresh.mjs (the Collect run) can call it IN-PROCESS with data it already has
+// loaded, instead of shelling out to a second process that re-reads data/models.json from disk.
+// Mutates every model's own `standings` field in place (same pattern deriveSignalsForCatalog/
+// deriveStatusAdoptionForCatalog use) and returns the coverage + unmapped-names reporting the CLI
+// runner below (and auto-refresh.mjs) both need. Network calls are the same best-effort fetches
+// as ever — a single feed failing degrades that source only (its own console.log already says
+// so); nothing here throws the whole pass down for one feed being unreachable.
 // ---------------------------------------------------------------------------------------------
-async function main() {
-  const dryRun = process.argv.includes('--dry-run');
-  const dataUrl = new URL('data/models.json', ROOT);
-  const aliasUrl = new URL('scripts/model-aliases.json', ROOT);
-  const testersUrl = new URL('data/testers.json', ROOT);
-  const tasksUrl = new URL('data/tasks.json', ROOT);
-  const arenaUrl = new URL('data/signals/arena-2026-09.json', ROOT);
-  const unmappedUrl = new URL('docs/standings-unmapped.md', ROOT);
-
-  const data = JSON.parse(readFileSync(dataUrl));
-  const aliases = JSON.parse(readFileSync(aliasUrl));
-  const testersFile = JSON.parse(readFileSync(testersUrl));
-  const tasksFile = JSON.parse(readFileSync(tasksUrl));
-  const arenaFile = JSON.parse(readFileSync(arenaUrl));
-  const models = data.models;
-  const asOf = today();
-
+export async function refreshStandingsForCatalog(models, aliases, testersFile, tasksFile, arenaFile, { asOf = today() } = {}) {
   // --- Epoch ---
   const epochTester = testersFile.testers.find((t) => t.id === 'epoch-ai');
   const epochTaskOf = new Map();
@@ -755,11 +746,11 @@ async function main() {
     preferredByTask.set(taskId, mergePreferredFallback(mirrorPreferred, preferredByTask.get(taskId)));
   }
 
-  // --- assemble + write ---
+  // --- assemble ---
   const standingsMap = assembleStandings(models, { epochRanked, epochTaskOf, epochKindOf, arcRanked, livebenchByTask, chosenByTask, chosenTagsOf, preferredByTask, asOf });
   for (const m of models) m.standings = standingsMap.get(m.id);
 
-  // --- coverage table ---
+  // --- coverage table (as printable lines, for either caller's own log) ---
   const coverage = Object.fromEntries(TASK_IDS.map((t) => [t, { measured: 0, chosen: 0, preferred: 0 }]));
   for (const m of models) {
     for (const taskId of TASK_IDS) {
@@ -769,14 +760,49 @@ async function main() {
       if (s.preferred) coverage[taskId].preferred++;
     }
   }
-  console.log(`standings: ${models.length} model(s) x ${TASK_IDS.length} task(s).`);
-  console.log('task           | measured | chosen | preferred (of ' + models.length + ')');
-  for (const taskId of TASK_IDS) {
-    const c = coverage[taskId];
-    console.log(`${taskId.padEnd(14)} | ${String(c.measured).padStart(8)} | ${String(c.chosen).padStart(6)} | ${String(c.preferred).padStart(9)}`);
-  }
+  const coverageLines = [
+    `standings: ${models.length} model(s) x ${TASK_IDS.length} task(s).`,
+    'task           | measured | chosen | preferred (of ' + models.length + ')',
+    ...TASK_IDS.map((taskId) => {
+      const c = coverage[taskId];
+      return `${taskId.padEnd(14)} | ${String(c.measured).padStart(8)} | ${String(c.chosen).padStart(6)} | ${String(c.preferred).padStart(9)}`;
+    }),
+  ];
 
-  // --- docs/standings-unmapped.md ---
+  // --- docs/standings-unmapped.md body (header-less — the caller adds its own header/date) ---
+  const unmappedLines = [];
+  for (const [label, set] of unmappedBySource) {
+    if (!set.size) continue;
+    unmappedLines.push(`## ${label} (${set.size})`, '', ...[...set].sort().map((n) => `- \`${n}\``), '');
+  }
+  if (unmappedBySource.size === 0 || [...unmappedBySource.values()].every((s) => !s.size)) unmappedLines.push('Nothing unmapped this run.');
+
+  return { coverageLines, unmappedLines };
+}
+
+// ---------------------------------------------------------------------------------------------
+// standalone runner
+// ---------------------------------------------------------------------------------------------
+async function main() {
+  const dryRun = process.argv.includes('--dry-run');
+  const dataUrl = new URL('data/models.json', ROOT);
+  const aliasUrl = new URL('scripts/model-aliases.json', ROOT);
+  const testersUrl = new URL('data/testers.json', ROOT);
+  const tasksUrl = new URL('data/tasks.json', ROOT);
+  const arenaUrl = new URL('data/signals/arena-2026-09.json', ROOT);
+  const unmappedUrl = new URL('docs/standings-unmapped.md', ROOT);
+
+  const data = JSON.parse(readFileSync(dataUrl));
+  const aliases = JSON.parse(readFileSync(aliasUrl));
+  const testersFile = JSON.parse(readFileSync(testersUrl));
+  const tasksFile = JSON.parse(readFileSync(tasksUrl));
+  const arenaFile = JSON.parse(readFileSync(arenaUrl));
+  const models = data.models;
+  const asOf = today();
+
+  const { coverageLines, unmappedLines } = await refreshStandingsForCatalog(models, aliases, testersFile, tasksFile, arenaFile, { asOf });
+  coverageLines.forEach((l) => console.log(l));
+
   const lines = [
     '# Standings — unmapped tester names',
     '',
@@ -785,12 +811,8 @@ async function main() {
     'appears in any model\'s `standings`. A future run re-checks all of these; add an alias to',
     '`scripts/model-aliases.json` only after confirming the feed name really is that model.',
     '',
+    ...unmappedLines,
   ];
-  for (const [label, set] of unmappedBySource) {
-    if (!set.size) continue;
-    lines.push(`## ${label} (${set.size})`, '', ...[...set].sort().map((n) => `- \`${n}\``), '');
-  }
-  if (unmappedBySource.size === 0 || [...unmappedBySource.values()].every((s) => !s.size)) lines.push('Nothing unmapped this run.');
 
   if (!dryRun) {
     writeFileSync(dataUrl, JSON.stringify(data, null, 2) + '\n');
