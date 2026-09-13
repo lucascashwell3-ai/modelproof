@@ -1,15 +1,19 @@
 # Test fixtures
 
-Frozen snapshot of `data/` on main, taken 2026-09-13 (brain v2 step 3 — standings-based ranking).
-The unit test suite (`scripts/test-*.mjs`) runs on this snapshot, never on live `data/`. Refresh it
-deliberately, in a PR a person reviews — never from an automated job.
+Frozen snapshot of `data/` on main, taken 2026-09-13 (brain v2 step 3 — standings-based ranking,
+round 2 of that same PR). The unit test suite (`scripts/test-*.mjs`) runs on this snapshot, never
+on live `data/`. Refresh it deliberately, in a PR a person reviews — never from an automated job.
 
-Refreshed this pass:
-- `models.json` — now carries `standings` (scripts/derive-standings.mjs), `signals`
-  (scripts/derive-signals.mjs), and `status`/`adoption` (scripts/derive-status-adoption.mjs) on
-  every model; the previous frozen copy predated all three and had none of them. This is the one
-  place expected test values are allowed to change, and it happened by hand in this PR, after the
-  new ranking (assets/decide.mjs) was final.
+Refreshed this pass (round 2, after the near-top-formula/tier-numbering fixes, the alias/naming
+coverage fixes, the deliberate 2026-09-13 Collect run, and the live-feed-claims migration were all
+final):
+- `models.json` — re-copied from live `data/models.json` one more time: it now also carries the
+  round-2 alias/naming coverage fixes (scripts/model-aliases.json, scripts/naming.mjs — Claude
+  Haiku 4.5's usage/standings are no longer null), the 2026-09-13 Collect refresh (68 models, one
+  new admission), and the scripts/migrate-claims-2026-09.mjs pass (every task_fit_judged claim
+  citing a live feed — OpenRouter's rankings API or arena.ai — removed; the same evidence lives on
+  in `standings`). This is the one place expected test values are allowed to change, and it
+  happened by hand in this PR.
 - `eval/situations.json` — replaced the old 20-situation snapshot with the full, current
   40-situation cold answer key (data/eval/situations.json).
 - `eval/must-never.json` — added (new file): the 15 absolute "must never start here" rules
@@ -21,5 +25,6 @@ Refreshed this pass:
   data/signals/*): the two checked-in snapshots scripts/derive-signals.mjs reads for the
   arena/expert-default families; scripts/test-derive-signals.mjs previously read the live copies.
 
-`plans.json`, `usage-presets.json`, `vendors.json` are unchanged this pass (diffed byte-for-byte
-against live `data/` before this refresh — nothing to update).
+`plans.json`, `usage-presets.json`, `vendors.json`, `eval/situations.json`, `eval/must-never.json`,
+`tasks.json`, `signals/*` are unchanged since the round-1 refresh (diffed byte-for-byte against
+live `data/` before this round-2 refresh — nothing to update; only `models.json` moved).
