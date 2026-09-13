@@ -20,172 +20,157 @@
      }
      data: {
        models,     // data/models.json's `models` array (each already carrying task_fit,
-                   // task_fit_judged and availability — see scripts/derive-task-fit.mjs and
-                   // scripts/derive-availability.mjs)
+                   // task_fit_judged, signals, standings, status and adoption — see
+                   // scripts/derive-task-fit.mjs, scripts/derive-standings.mjs,
+                   // scripts/derive-signals.mjs, scripts/derive-status-adoption.mjs)
        plans,      // data/plans.json's `plans` array
        presets,    // data/usage-presets.json's `presets` object ({light, typical, heavy}) —
                    // resolveVolume() also tolerates the whole parsed file (with its _readme/
                    // as_of wrapper) being passed here by mistake; see unwrapPresets() below
-       vendors,    // data/vendors.json's `vendors` array — NOT in the original three-field
-                   // spec for this function, but rule 2 (the noChinaHosted data rule) can't be
-                   // implemented without a vendor -> country map, so it's a required fourth
-                   // key here. Documented as a deliberate addition, not an oversight.
+       vendors,    // data/vendors.json's `vendors` array — a vendor -> country map for rule 2
+                   // (the noChinaHosted data rule).
      }
    returns { tasks: { <taskId>: { shortlist: [...], assumptions: [...] } } }
 
-   RULE ORDER (fixed — this is the one thing every caller can rely on staying stable)
+   THE RANKING RULE (brain v2, step 3 — replaces the AI-judged "band" ranking entirely)
    -----------------------------------------------------------------------------------------
-   1. Reachability — drop any model the caller cannot actually reach with `have`.
-        have includes 'any'        -> no filter, every model passes this step.
-        have includes 'openrouter' -> keep if model.availability.openrouter === true.
-        have includes a vendor key -> keep if model.vendor is that vendor's canonical name
-                                       (VENDOR_KEY_DISPLAY, mirroring scripts/naming.mjs's
-                                       canonical spelling). A vendor sells its own models
-                                       through its own API by definition, so no availability
-                                       flag can veto that — model.availability.direct_api is a
-                                       sourced fact about whether the pipeline found that
-                                       vendor's own pricing-page URL (see
-                                       scripts/derive-availability.mjs), not about whether the
-                                       model is reachable, and treating an unsourced direct_api
-                                       as "unreachable" wrongly hid a vendor's own brand-new
-                                       model before that page got indexed (fixed 2026-09-06 —
-                                       e.g. claude-fable-5-1, gpt-6-astra, gpt-6-astra-pro,
-                                       gemini-3-8-flash, grok-4-6, all real/sellable/direct_api:
-                                       null). direct_api stays a supporting signal only for a
-                                       model of some OTHER vendor that the chosen vendor
-                                       resells (e.g. a marketplace reselling a third party's
-                                       model) — no such cross-vendor field exists in this data
-                                       yet, so today this case never fires; add it back here if
-                                       that data ever lands.
-       A model passes step 1 if ANY key in `have` clears it (the array is "everything you
-       have", not "all of these at once").
-   2. Data rule — dataRule.noChinaHosted drops any model whose vendor's data/vendors.json
-      country is exactly "China". A vendor with no country on file is KEPT (unknown is never
-      treated as a match) and the caller is told so in that task's assumptions[].
-   3. Capability floor — THE JUDGMENT IS THE GATE (rewritten 2026-09-07; see the PR this
-      shipped in for why). A model needs a real, sourced judged band for THIS task
-      (model.task_fit_judged[taskId], scripts/refresh-judge.md) to be a candidate at all —
-      "strong" or "capable" clears the floor, "weak" or no record at all ("unknown") doesn't,
-      full stop. A high quantitative score with no judged record NEVER creates a candidate on
-      its own any more — that was the exact bug that let a 0.16%-usage-share preview SKU
-      ("Gemini 3.1 Pro (Preview)", rank 53 of ~380 on OpenRouter) top "research" purely because
-      its GPQA was high: the brain was asking for judgment only on the models that HAD no
-      number, so a number alone could always win. Quantitative fit (model.task_fit[taskId].score)
-      still matters — see rule 4 — but only as a tie-breaker among models a judged record already
-      cleared, never as a way to skip judgment. taskFitFor() still computes the numeric `fit`
-      shown alongside a pick (real score when sourced, else the flat JUDGED_BAND_SCORE constant),
-      but judgedBandOf() — not taskFitFor() — decides who's even in the running. Every shortlist
-      item carries `basis: 'reported' | 'lab-stated'` (see basisFromClaims()) so the caller always
-      knows whether at least one backing claim names an independent third party, plus the model's
-      own `status` ('ga'|'preview'|'deprecated') and `adoption` ('broad'|'moderate'|'low'|'unknown'|
-      'new', from usage.openrouter.share, or 'new' when `released` is within 60 days of the data
-      snapshot regardless of share — scripts/derive-status-adoption.mjs) and its top claim's own
-      sentence as `why`.
-   3b. Calibration — a judged band alone still let a SINGLE vendor benchmark claim buy the exact
-      same "strong" band as a model backed by real usage, human votes, AND vendor guidance (fixed
-      2026-09-07, the PR after the rule-3 rewrite above — e.g. kat-coder-pro-v2-5 and
-      muse-spark-1-3 topped "coding" over claude-opus-5/claude-sonnet-5/gpt-5-6-sol on nothing but
-      their own arXiv paper / vendor listing, with ~0% real usage and zero independent-vote or
-      expert-default presence; see the PR this shipped in, eval/signals.md, and
-      scripts/derive-signals.mjs's header for the full story and the three real-world signal
-      families it collects). `model.signals[taskId]` (scripts/derive-signals.mjs; shape:
-      `{ usage_rank, usage_share, arena_rank, expert_default, families }`) counts how many of
-      THREE independent families back a model for a task — OpenRouter task-spend top-10 (usage),
-      arena.ai human-vote top-10 (arena), and a real tool's own featured/default roster (expert) —
-      `families` is 0-3, never invented; a model with no row in a given family for this task is
-      absent from it, not a zero standing in for evidence. The rule: a judged `strong` band needs
-      `families >= 2` to STAY `strong`; with fewer than 2 it is downgraded to `capable` at
-      decision time (the underlying judged record, its claims, and its `confidence` are untouched
-      — only the effective band this engine ranks and gates on changes), and the shortlist item
-      carries `calibration_note: "strong on vendor evidence; limited real-world signal"` so a
-      reader sees exactly why a pick that reads "strong" in the raw data shows up ranked as
-      `capable` here. `capable` (native OR just-downgraded) then needs its OWN family support —
-      `families >= 1` — to survive as a candidate at all ("or a judged record" is the escape hatch
-      right below, not a free pass): a $0.05/Mtok model whose only "capable" evidence is its own
-      vendor's arXiv paper and a near-zero usage stat must not out-cost-rank real, cross-checked
-      picks just because nobody happened to call it "strong". filterCandidates() applies this in
-      two passes for exactly one reason — a WEAK-COVERAGE escape hatch that mirrors
-      eval/METHOD.md's own rule for the cold answer key this engine is graded against: if NOT ONE
-      otherwise-eligible candidate for a given (task, access) combination has any family support
-      at all, the gap is in what got collected, not in every candidate's quality — collecting
-      OpenRouter/Arena/expert-default data for every (task, vendor-restriction) combination in the
-      catalog was never attempted, and a vendor-restricted ask (e.g. "Google only") can land
-      entirely outside what got sampled. In that one case, and only that case, every `capable`
-      record stands on its judged record alone, same as before this rule existed — that's the "or
-      a judged record" clause. Any (task, access) pair where even ONE candidate has real family
-      signal enforces the floor normally on every other candidate in that pair. `taskFitFor()`'s
-      numeric `fit` is recalculated at the calibrated band (not the raw record's) whenever it's the
-      flat JUDGED_BAND_SCORE placeholder rather than a real measured score — so a downgraded pick's
-      shown fit number is honest about which band it actually ranks in now.
-   4. Rank by judged band (strong > capable), THEN by calibration's own `families` count, THEN by
-      confidence (high > medium > low) — FIRST within
-      the candidate set — every candidate here already cleared rule 3, so this never lets a
-      lower-judged model outrank a better-judged one. What breaks a tie inside the same (band,
-      confidence) tier is where the three stances actually differ (fixed 2026-09-07 — a prior
-      version of this file used the same band/confidence/cost/fit order for every stance, which
-      meant 'cheapest' silently returned the exact same shortlist as 'best' whenever candidates
-      spanned more than one tier — the price never got a chance to matter):
-        - 'cheapest': cost is the primary key — the cheapest candidate at the given volume wins
-          outright, REGARDLESS of band/confidence tier, as long as it already cleared rule 3's
-          strong-or-capable floor. Ties on cost fall back to band, then confidence (see
-          rankByStance).
-        - 'best': band, then GA-before-preview status, then families, then usage_rank (lower is
-          better — see below), then confidence, then raw fit (cheaper is never a reason on its own
-          here — "best regardless of price" is the point of this stance, e.g.
-          data/eval/situations.json's S01), cost only as the final tie-break when fit also ties.
-        - 'balanced': restricted to the candidates priced at or under 2x the monthly cost of the
-          cheapest 'strong'-band candidate (or the cheapest 'capable'-band candidate if no
-          'strong' one is priced) — i.e. "the candidates a buyer already comparison-shopping the
-          best option could actually justify" — ranked the same way as 'best' inside that in-budget
-          set; every candidate priced over that line is still returned (so it can still show up
-          lower in the shortlist), just always ranked after every in-budget one.
-      Before ranking, dropDominated removes any candidate a cheaper-or-equal rival already covers —
-      but what counts as "covers" now depends on the stance (rewritten AGAIN 2026-09-07, same day
-      as the ranking-order change above — see dominates()'s own comment for the full story and the
-      concrete catalog bug this fixes):
-        - 'best'/'balanced': y (the candidate that would survive) may only eliminate x when y is
-          at least as good as x on EVERY evidence dimension — band, confidence, usage_rank
-          (scripts/derive-signals.mjs; lower is better, no rank on file counts as worse than any
-          real rank), families as a SET (evidenceFamilySet/familiesAtLeastAsGood — WHICH of the
-          three real-world signal families back a model, not merely how many; two models can share
-          the same families COUNT while backing entirely different, non-overlapping claims), and
-          quantitative fit ONLY when both candidates carry a real measured score (a flat
-          JUDGED_BAND_SCORE placeholder is never treated as "quantitative fit" for this purpose) —
-          AND y is cheaper-or-equal, with at least one of those comparisons strict. Before this,
-          domination compared only band/confidence/fit/cost, which let a cheaper, marginally
-          higher-scoring model erase a rival with just as much real-world standing but a different
-          evidence profile (Kimi K3 was erasing BOTH Claude Opus 5 — the actual usage_rank-1 pick
-          for "coding" at 37% of OpenRouter spend — and GPT-5.6 Sol, a differently-evidenced
-          same-tier peer, from the shortlist entirely).
-        - 'cheapest': keeps the plain, tier-scoped cheaper-and-at-least-as-fit check this stance
-          has always used (this stance is explicitly cost-primary and does not apply the fuller
-          evidence check above) — but with one added guard: it may never fully eliminate a
-          'strong'-band candidate that carries MORE families (a plain count here) than the cheaper
-          candidate trying to dominate it. That candidate can still rank far below the cheapest
-          pick — 'cheapest' stays cost-first, full stop — but it must remain in the returned list,
-          not disappear from it.
-      Two rules gate start_here selection only (see isDisqualifiedFromStartHere) — neither ever
-      removes a model from the shortlist, only the start_here flag:
-        - an `adoption: 'low'` model is never start_here while a 'broad' or 'moderate'-adoption
-          model of the SAME judged band is also a candidate — a benchmark win doesn't buy the top
-          spot away from a model people are actually already running, in the same tier of judged
-          quality.
-        - (added 2026-09-07) GA before preview, in ranking too: within the SAME band, a
-          status:'preview' model never outranks a GA/deprecated one any more (rankByStance's
-          byBandThenConfidence, ahead of families/confidence/fit) — before this, a preview SKU
-          with slightly more real-world signal families than its GA rivals could still take #2/#3
-          under plain 'best' (e.g. gemini-3-1-pro over claude-sonnet-5 for "writing", both
-          'capable'). At start_here specifically, a preview model is disqualified whenever ANY GA
-          model shares its band, checked against the full pre-domination candidate pool (same
-          reasoning as the adoption rule above). Scoped OUT of 'cheapest': that stance stays
-          cost-primary, full stop — if the actual cheapest candidate is a preview SKU, 'cheapest'
-          still recommends it. This does NOT reintroduce the blanket preview demotion removed
-          earlier that day: a preview model with NO same-band GA rival — including gemini-3-1-pro
-          under data/eval/situations.json's S33 (Google-only vision, no GA model even clears the
-          judged floor there) — still legitimately wins start_here under plain "best" when its
-          own judged evidence earns it. The absolute preview bar stays the enterprise-style full
-          exclusion at rule 3 above; this file never duplicates a milder version of it here again.
-   Only the top 3 survivors are returned; item 0 is always start_here: true.
+   The AI never ranks. A model's grade for a task is AGREEMENT across three kinds of evidence,
+   kept separate, never averaged into one number:
+
+     measured   independent tester standings (data/testers.json's registry, scripts/derive-
+                standings.mjs) — a rank out of n on a named benchmark.
+     chosen     real spend share on OpenRouter for that task.
+     preferred  blind human-vote rank on arena.ai for that task.
+
+   All three live in model.standings[taskId] (measured: [{tester, benchmark, rank, n_models,
+   score, as_of, url, licence}], chosen: {rank, share, n_models, as_of, url, tags}|null,
+   preferred: {rank, n_models, board, as_of, url}|null). A row's `licence` ("display-ok" or
+   "signal-only" — "banned" never appears in this data) only gates whether a number may be
+   shown; it never gates ranking — both licence classes count exactly the same here.
+
+   POSITION — for each evidence kind, every model that HAS that kind of evidence for this task
+   gets a position (1 = best) AMONG JUST THE CATALOG MODELS THAT HAVE IT, independent of what the
+   caller can reach; `of` = how many catalog models have it.
+     measured:   ordering key = median of (rank / n_models) across the model's own measured rows
+                 for this task (lower is better) — ties broken by MORE tester rows winning, then
+                 by the single lowest (best) rank across those rows, then by id.
+     chosen:     ordering key = spend share, descending (re-derived from `share`, not trusted off
+                 the stored `rank` — chosen.rank on a token-volume task like `bulk` is the raw
+                 feed's own rank among the WHOLE tracked ecosystem, not "among catalog models
+                 with chosen evidence"; re-ranking by share sidesteps that regardless of which
+                 source produced the record) — ties broken by the stored rank, then id.
+     preferred:  ordering key = the board rank, ascending — re-positioned among just the catalog
+                 models present on that board (the stored rank is the model's TRUE position on
+                 the full external board, most of which isn't in this catalog) — ties by id.
+   `near top` for a kind = position <= max(10, ceil(0.25 * of)).
+
+   TASK THINNESS — a task is THIN when fewer than 8 catalog models have measured evidence for it
+   (today: chat, frontend, vision, bulk are thin; agents, at 12, is not). Thin tasks never gate on
+   measured at all; the tiers below just skip straight to the two human kinds.
+
+   TIERS (higher-quality tier ranks first — "T1" is the best a pick can be, "T5"/"T3"/"T2" the
+   worst, depending on scheme; `tier` is a plain number, `tier_name` a string, both returned per
+   shortlist item; `label` is the reader-facing caveat, or null):
+
+   Non-thin task — a waterfall on (measured present?, measured near top?, any human kind near
+   top?); every one of these five REQUIRES at least one kind of evidence present (an "untested"
+   model with none at all is excluded before tiering ever runs — see filterCandidates):
+     T1 "agreed"                    measured near top AND >=1 human kind near top.
+     T2 "tests-only"                measured near top, no human kind near top.
+                                     Label: "strong on tests, low real-world use". Never
+                                     start_here while any T1 candidate exists for this task.
+     T3 "tested, people-backed"     measured present, not near top, AND >=1 human kind near top.
+     T4 "tested"                    measured present, not near top, no human kind near top.
+     T5 "not independently tested"  measured ABSENT (any evidence level from chosen/preferred —
+                                     near top or not; a model with a human kind near top simply
+                                     sorts ahead of one without, via the within-tier order below,
+                                     rather than needing its own numbered tier). Label: "not
+                                     independently tested".
+   The five bullets above cover every combination the spec calls out by name; the one combination
+   the spec's prose doesn't spell out (measured absent, some human evidence present, none of it
+   near top) is folded into T5 rather than invented as an unnamed T6 — it's still "not
+   independently tested", it just sorts to the back of that tier via kindsNearTopCount (see
+   withinTierCompare). This is a deliberate implementation choice at an edge the five named tiers
+   don't fully partition; the invariant it satisfies is "any evidence at all is a candidate."
+
+   Thin task, BOTH human kinds exist anywhere in the catalog for this task (chat, frontend):
+     T1  chosen near top AND preferred near top.               Label: "not independently tested".
+     T2  exactly one human kind near top.
+     T3  evidenced, neither human kind near top.
+   (tier_name: "human-agreed" / "one-signal" / "evidenced" — this file's own naming; the spec
+   only names T1's label, not a quoted tier_name, for the thin schemes.)
+
+   Thin task, only ONE human kind exists anywhere in the catalog (vision: no chosen; bulk: no
+   preferred):
+     T1  that one kind near top.                                Label: "one signal only".
+     T2  evidenced, not near top.
+   (tier_name: "single-signal" / "evidenced".)
+
+   NEW-MODEL OVERRIDE — a model with `adoption === 'new'` (released <=60 days ago,
+   scripts/derive-status-adoption.mjs) that would otherwise land in the "measured/one-kind-near-
+   top but no OTHER human backing" tier (non-thin T2, thin-dual T2) is promoted to the TAIL of T1
+   instead — tier_name "early", label "early: too new for usage data" — rather than being read as
+   "only tests well" when the real reason is "too recent for usage/votes to have accumulated at
+   all". It lands at the tail because withinTierCompare's first key (count of kinds near top) sorts
+   every genuine T1 member (>=2 kinds near top) ahead of it (1 kind) automatically — no separate
+   sort step needed. Thin-single tasks have no analogous override (their T1 already covers "the
+   sole kind near top"; there's no second kind to be missing).
+
+   NEGATIVE CLAIMS — if a model.task_fit_judged[taskId].claims[] entry carries an explicit
+   `polarity: 'negative'` marker (a field this pass ADDS support for; no claim in the data carries
+   it yet — see hasNegativeClaim), the model drops one tier (clamped at the worst tier for that
+   task's scheme) — recomputed via the same standard tier_name/label table, never the "early"
+   override. `why`/`claims`/`reconciliation` are untouched; only the ranking bucket moves.
+
+   `band` and `confidence` (the old AI-judged fields) have ZERO ranking authority any more — see
+   scripts/refresh-judge.md for what still writes them (informational claims text only, via
+   basisFromClaims/topClaimSentence below).
+
+   ORDER WITHIN A TIER (best stance first): count of kinds near top (desc) -> measured position
+   (asc, absent = worst) -> best human position (asc, absent = worst) -> GA before preview ->
+   more tester rows -> cheaper -> id. See withinTierCompare/standardCompare.
+
+   STANCES
+     'best'     the order above, full stop.
+     'balanced' among the top tier PRESENT for this task, find the cheapest priced candidate in
+                that tier; every candidate (any tier) priced at or under 2x that reference cost is
+                "in budget" and ranked first (by the order above); everyone else is ranked after
+                (also by the order above) — never dropped, just deprioritized. No priced reference
+                in the top tier -> behaves exactly like 'best'.
+     'cheapest' cost-primary, but only among "qualifying" candidates — tier <= 3 for a non-thin
+                task, tier <= 2 for a thin one (both boundaries exclude any tier that isn't
+                independently tested at all, per the tier tables above); ties fall back to the
+                order above. No qualifying candidate at all -> falls back to cost-primary among
+                EVERY candidate. Non-qualifying candidates are still returned, ranked after by the
+                order above, never dropped.
+   'cheapest' never demotes a preview model at start_here (this stance stays cost-primary,
+   period); every other stance keeps a status:'preview' item from outranking a GA/deprecated one
+   in the SAME final tier, and a preview candidate is fully excluded from an enterprise-style
+   input's candidate pool at rule 3 below (isEnterpriseInput), not merely demoted.
+
+   Rule order before any of the above:
+   1. Reachability — drop any model the caller cannot actually reach with `have` (unchanged from
+      v1: 'any' clears everyone; 'openrouter' needs availability.openrouter === true; a named
+      vendor key always reaches that vendor's own models, since a vendor sells its own models
+      through its own API by definition).
+   2. Data rule — dataRule.noChinaHosted drops any model whose vendor's data/vendors.json country
+      is exactly "China" (unknown is never treated as a match; the caller is told so).
+   3. Enterprise exclusion — an enterprise-style input (isEnterpriseInput) drops every
+      status:'preview' model ENTIRELY, not just from start_here.
+   4. Evidence gate — a model with NO measured/chosen/preferred evidence at all for this task is
+      "untested" and is not a candidate, full stop; a plain assumption line says so when this
+      empties a task's whole candidate pool.
+   Only the top 3 survivors (after tiering + the chosen stance's order) are returned; item 0 is
+   always start_here: true, UNLESS the top-ranked item is disqualified (see
+   isDisqualifiedFromStartHere): a T2 "tests-only" item never starts while a T1 item is also a
+   candidate, and (except under 'cheapest') a preview item never starts while a same-tier GA/
+   deprecated item is also a candidate. Disqualification only ever changes which item gets
+   start_here — it never drops a model from the returned shortlist.
+
+   Kept unchanged from v1 (still exactly what the file header used to say): reachability rule 1's
+   direct_api carve-out, the data rule's unknown-country handling, isEnterpriseInput's heuristic,
+   basisFromClaims/topClaimSentence for the claims text a pick shows, findSeatPlanAlternative,
+   monthlyCost/resolveVolume/unwrapPresets, and the vision-fit assumption line.
    ============================================================ */
 
 const num = (v) => typeof v === 'number' && Number.isFinite(v);
@@ -212,11 +197,12 @@ function fmtTokens(n) {
 }
 
 // -----------------------------------------------------------------------------------------
-// why-text registry — the ONLY fields a `why` string is allowed to mention. Every task's
-// basis[] (written by scripts/derive-task-fit.mjs) is drawn from this exact key set, so a
-// `why` built only from these templates can never mention a field outside fit_basis.
-// scripts/test-decide.mjs imports both this and derive-task-fit.mjs's BASIS_TOKENS to assert
-// the two lists match.
+// why-text registry — the ONLY fields a `why` string is allowed to mention, used as the
+// fallback why-text when a model has no task_fit_judged record for this task (its quantitative
+// task_fit.basis[] still gets an honest sentence instead of nothing). Every task's basis[]
+// (written by scripts/derive-task-fit.mjs) is drawn from this exact key set, so a `why` built
+// only from these templates can never mention a field outside fit_basis. scripts/test-decide.mjs
+// imports both this and derive-task-fit.mjs's BASIS_TOKENS to assert the two lists match.
 // -----------------------------------------------------------------------------------------
 export const WHY_FIELDS = {
   'coding_score': { say: (m) => `coding score ${m.coding_score}/100`, mention: /coding score/i },
@@ -246,7 +232,7 @@ export function reachableVia(model, have) {
   if (list.includes('openrouter') && model.availability?.openrouter === true) via.push('openrouter');
   for (const key of Object.keys(VENDOR_KEY_DISPLAY)) {
     // A vendor's own models are reachable through that vendor's own API by definition — no
-    // availability.direct_api check here (see the rule-1 comment in the file header for why).
+    // availability.direct_api check here (see the file header for why).
     if (list.includes(key) && model.vendor === VENDOR_KEY_DISPLAY[key]) via.push(key);
   }
   return via;
@@ -268,117 +254,46 @@ export function passesDataRule(model, dataRule, vendorsList) {
 }
 
 // -----------------------------------------------------------------------------------------
-// Rule 3 — capability floor (task fit)
+// basis/claims text — unchanged from v1: still how a pick's `why`/`basis`/`claims` are built,
+// just no longer a ranking gate (see the file header — evidence, not judgment, gates now).
 // -----------------------------------------------------------------------------------------
-// A judged band stands in for a score only when it actually clears the floor. "weak"/"unknown"
-// are real judged outcomes too (the Judge looked and found thin/negative evidence) — they must
-// never be silently promoted to a passing score. The two numbers below are v1's only invented
-// constants in this whole file: a deliberate mid-table placement (well above "weak", well below
-// most sourced coding_score leaders) so a judged model can rank sensibly next to measured ones
-// without a bare qualitative band ever reading as equivalent to a benchmarked 95.
-export const JUDGED_BAND_SCORE = { strong: 88, capable: 68, weak: null, unknown: null };
 
-/** 'reported' when at least one claim backing the band names a third party (reported/measured/
- * usage tier); 'lab-stated' when every claim is the vendor's own — see task_fit_judged's `tier`
- * field (scripts/refresh-judge.md). */
+/** 'reported' when at least one claim backing a judged record names a third party (reported/
+ * measured/usage tier); 'lab-stated' when every claim is the vendor's own — see task_fit_judged's
+ * `tier` field (scripts/refresh-judge.md). */
 export function basisFromClaims(claims) {
   return (claims || []).some((c) => c && c.tier && c.tier !== 'lab') ? 'reported' : 'lab-stated';
 }
 
-/** THE gate for rule 3 (see the file header): { band, confidence, judged: record|null }. Looks at
- * model.task_fit_judged[taskId] ONLY — a quantitative task_fit score, however high, is never
- * consulted here, so it can never manufacture a candidate on its own. No record on file reads the
- * same as an explicit "unknown" band: both fail the floor. This is deliberately a different
- * question from taskFitFor() below (which still answers "what number do we show", preferring a
- * real score when one exists) — judgedBandOf answers "is this model even in the running", and
- * only a human/agent judgment call can answer that now. */
-export function judgedBandOf(model, taskId) {
-  const rec = model.task_fit_judged?.[taskId];
-  if (!rec || !rec.band) return { band: 'unknown', confidence: null, judged: null };
-  return { band: rec.band, confidence: rec.confidence ?? null, judged: rec };
-}
-const BAND_RANK = { strong: 3, capable: 2, weak: 1, unknown: 0 };
-const CONFIDENCE_RANK = { high: 3, medium: 2, low: 1 };
-export const bandRank = (band) => BAND_RANK[band] ?? 0;
-export const confidenceRank = (confidence) => CONFIDENCE_RANK[confidence] ?? 0;
-
-// -----------------------------------------------------------------------------------------
-// Rule 3b — calibration (see the file header). A judged `strong` needs real-world signal
-// support (scripts/derive-signals.mjs's `families`, 0-3) to stay `strong`; fewer than 2 families
-// downgrades it to `capable` at decision time. This function only ever computes the DOWNGRADE —
-// whether a `capable` band (native or just-downgraded) also needs its own family support to stay
-// a candidate at all is a SEPARATE decision (see filterCandidates' own "capable floor" step,
-// right after this runs) that needs the whole per-(task, access) candidate pool to answer
-// correctly (the weak-coverage escape hatch below), so it can't be decided per-model in isolation
-// here. families is always read here, even when no downgrade happens, so rule 4 can order by it.
-// -----------------------------------------------------------------------------------------
-export const CALIBRATION_LABEL = 'strong on vendor evidence; limited real-world signal';
-export const STRONG_FAMILIES_FLOOR = 2;
-export const CAPABLE_FAMILIES_FLOOR = 1;
-
-/** { band, families, calibration } — `band` is the post-downgrade band; `calibration` is null
- * unless a downgrade happened, in which case it's `{ downgraded_from: 'strong', families, note:
- * CALIBRATION_LABEL }`. Pure — reads only model.signals[taskId], never mutates the model. */
-export function calibrateBand(model, taskId, rawBand) {
-  const families = model.signals?.[taskId]?.families ?? 0;
-  if (rawBand === 'strong' && families < STRONG_FAMILIES_FLOOR) {
-    return { band: 'capable', families, calibration: { downgraded_from: 'strong', families, note: CALIBRATION_LABEL } };
-  }
-  return { band: rawBand, families, calibration: null };
-}
-
-/** { score, basis, reason?, source: 'measured'|'reported'|'lab-stated', judged: record|null } —
- * quantitative fit wins whenever it's sourced; a judged record only ever fills a gap, never
- * overrides a real number. */
-export function taskFitFor(model, taskId) {
-  const quant = model.task_fit?.[taskId];
-  if (quant && quant.score != null) return { score: quant.score, basis: quant.basis || [], source: 'measured', judged: null };
-  const judged = model.task_fit_judged?.[taskId];
-  const bandScore = judged ? JUDGED_BAND_SCORE[judged.band] : null;
-  if (judged && bandScore != null) {
-    return { score: bandScore, basis: [], source: basisFromClaims(judged.claims), judged };
-  }
-  if (quant) return { score: null, basis: quant.basis || [], reason: quant.reason, source: 'measured', judged: null };
-  return { score: null, basis: [], reason: `task "${taskId}" is not in this model's task_fit`, source: 'measured', judged: null };
-}
-
-/** `why` text for a judged-fit shortlist item — deliberately generic (never echoes a claim's own
- * wording), so it can never accidentally mention a WHY_FIELDS phrase (GPQA, context, etc.) that
- * isn't in fit_basis. The actual claims (sentence + source link) render separately — see
- * lab.html — this is just the one-line summary next to the pick. */
-export function buildJudgedWhy(item) {
-  const n = (item.claims || []).length;
-  const band = item.judgedBand || 'unknown';
-  const confidence = item.judgedConfidence || 'unknown';
-  return `Judged ${band} fit (${confidence} confidence) from ${n} sourced claim${n === 1 ? '' : 's'}, not a benchmark score.`;
-}
-
-/** `why` for the new judgment-first shortlist: the record's own top claim sentence, verbatim —
- * the actual evidence a reader can check, not a generic restatement of the band. "Top" prefers
- * the first claim that ISN'T just a usage/popularity signal (a capability claim says more than
- * "people already use this"), falling back to the first claim of any tier if that's all there
- * is. Every judged record has at least one claim (validate-data.mjs requires a non-empty
- * claims[]), so this only ever returns the fallback string for a malformed/missing record. */
+/** `why` text for a judgment-backed pick: the record's own top claim sentence, verbatim — the
+ * actual evidence a reader can check, not a generic restatement. "Top" prefers the first claim
+ * that ISN'T just a usage/popularity signal (a capability claim says more than "people already
+ * use this"), falling back to the first claim of any tier if that's all there is. */
 export function topClaimSentence(claims) {
   const list = Array.isArray(claims) ? claims : [];
   const top = list.find((c) => c && c.tier !== 'usage' && c.sentence) || list.find((c) => c && c.sentence);
   return top ? top.sentence : 'No sourced claim on file for this pick.';
 }
 
+/** True when this model's task_fit_judged record for this task carries at least one claim
+ * explicitly marked `polarity: 'negative'` — an optional field this pass adds SUPPORT for (no
+ * claim in data/models.json carries it yet; see the file header). A model with such a claim drops
+ * one tier — see classifyModelForTask. */
+export function hasNegativeClaim(model, taskId) {
+  const claims = model.task_fit_judged?.[taskId]?.claims;
+  return Array.isArray(claims) && claims.some((c) => c && c.polarity === 'negative');
+}
+
 // -----------------------------------------------------------------------------------------
-// start_here eligibility — a model can win the shortlist without winning the TOP spot. Neither
-// rule below drops a model from the shortlist; they only decide which of the top 3 gets
-// `start_here: true` (see decide()'s reordering step).
+// Enterprise-style input detection (used by rule 3 — full preview exclusion — and by
+// isDisqualifiedFromStartHere's GA-before-preview check indirectly through filterCandidates).
 // -----------------------------------------------------------------------------------------
 
-/** "Enterprise-style" input, for the preview-status rule: EXPLICIT input.enterprise (true/false)
- * wins outright when the caller states it — the eval harness (data/eval/situations.json, built
- * from an independently-drafted answer key) tells us plainly per situation, and there's no reason
- * to argue with a caller who already knows their own context. Only when the caller doesn't say
- * does this fall back to the heuristic: a single named vendor at heavy volume (a team
- * standardizing on one vendor's paid tier, not shopping around), or any data rule turned on
- * (noChinaHosted today — a compliance-flavored ask). 'any'/'openrouter' don't count as "a single
- * vendor" — they're explicitly the opposite of standardizing on one vendor's own paid API. */
+/** "Enterprise-style" input: EXPLICIT input.enterprise (true/false) wins outright when the
+ * caller states it. Only when the caller doesn't say does this fall back to the heuristic: a
+ * single named vendor at heavy volume (a team standardizing on one vendor's paid tier, not
+ * shopping around), or any data rule turned on (noChinaHosted today — a compliance-flavored
+ * ask). 'any'/'openrouter' don't count as "a single vendor". */
 export function isEnterpriseInput(input) {
   if (input?.enterprise === true) return true;
   if (input?.enterprise === false) return false;
@@ -389,62 +304,16 @@ export function isEnterpriseInput(input) {
   return (singleNamedVendor && heavyVolume) || dataRuleSet;
 }
 
-/** An `adoption: 'low'` model never gets start_here while a 'broad'/'moderate'-adoption model of
- * the SAME judged band is also a candidate — a benchmark edge doesn't buy the top spot away from
- * a model people are actually already running, once judgment has already put both in the same
- * tier of quality.
- *
- * A blanket `status: 'preview'` demotion used to live here under plain stance 'best', even with
- * no enterprise signal at all — removed 2026-09-07 against the independently-drafted 40-situation
- * answer key this engine is graded on: it explicitly expects a preview model to legitimately WIN
- * start_here in a plain, non-enterprise "best" ask when its own judged evidence earns it
- * (data/eval/situations.json's S33: Google-only, stance 'best', enterprise:false, vision task —
- * Gemini 3.1 Pro (Preview) is the required start_here, with no GA model even clearing the judged
- * floor for that task under that access).
- *
- * A narrower version comes back below (2026-09-07, same day): GA never loses start_here to a
- * preview model that shares its SAME judged band — S33 still passes because Google-only vision
- * has no GA candidate in gemini-3-1-pro's 'capable' band at all, so the "no GA rival in this
- * band" escape hatch below still lets it through. What this closes is the case S33 never covered:
- * plain 'best'/'balanced' where a preview SKU AND a GA model both clear the SAME band (e.g.
- * gemini-3-1-pro vs. claude-sonnet-5, both 'capable', for "writing") — a reader who can't pin a
- * preview model's version shouldn't be told to start there when an equally-judged GA option
- * exists. Scoped OUT of 'cheapest' on purpose: that stance is cost-primary, full stop (rule 4) —
- * if the actual cheapest candidate is a preview SKU, 'cheapest' still recommends it; the absolute
- * bar on preview stays the enterprise-style full exclusion at rule 3
- * (filterCandidates — an enterprise-style input drops a preview model from the candidate set
- * ENTIRELY before this function ever runs on it), not this start_here-only rule. Checked against
- * the FULL pre-dropDominated `allCandidates`, exactly like the adoption gate above and for the
- * same reason: a same-band GA rival that dropDominated later pruned on pure price/fit must still
- * count as "a real alternative existed," or a numeric domination check would silently undo this
- * judgment-based rule. */
-export function isDisqualifiedFromStartHere(item, allCandidates, stance, input) {
-  if (item.model.adoption === 'low') {
-    const betterAdoptionSameBand = (allCandidates || []).some((other) => (
-      other !== item && other.band === item.band &&
-      (other.model.adoption === 'broad' || other.model.adoption === 'moderate')
-    ));
-    if (betterAdoptionSameBand) return true;
-  }
-  if (item.model.status === 'preview' && stance !== 'cheapest') {
-    const gaSameBand = (allCandidates || []).some((other) => (
-      other !== item && other.band === item.band && other.model.status !== 'preview'
-    ));
-    if (gaSameBand) return true;
-  }
-  return false;
-}
-
 // -----------------------------------------------------------------------------------------
-// Cost
+// Cost — unchanged from v1.
 // -----------------------------------------------------------------------------------------
-// Defensive unwrap (2026-09-07): every real caller (lab.html, scripts/test-*.mjs) already
-// passes data/usage-presets.json's `presets` sub-object as `data.presets`, per this file's own
-// header contract — but a caller that instead hands over the WHOLE parsed file (with its
-// _readme/as_of wrapper) silently gets `presets?.[key]` === undefined for every key, which
-// makes monthlyCost() return null for every model with no error anywhere to catch it. The
-// three named bands (light/typical/heavy) never collide with the wrapper's own keys, so
-// unwrapping is unambiguous and a no-op for every caller already doing it right.
+// Defensive unwrap: every real caller (lab.html, scripts/test-*.mjs) already passes
+// data/usage-presets.json's `presets` sub-object as `data.presets`, per this file's own header
+// contract — but a caller that instead hands over the WHOLE parsed file (with its _readme/as_of
+// wrapper) silently gets `presets?.[key]` === undefined for every key, which makes monthlyCost()
+// return null for every model with no error anywhere to catch it. The three named bands
+// (light/typical/heavy) never collide with the wrapper's own keys, so unwrapping is unambiguous
+// and a no-op for every caller already doing it right.
 function unwrapPresets(presets) {
   if (presets && typeof presets === 'object' && !presets.light && !presets.typical && !presets.heavy
     && presets.presets && typeof presets.presets === 'object') {
@@ -476,8 +345,8 @@ export function monthlyCost(model, vol) {
 }
 
 // -----------------------------------------------------------------------------------------
-// Seat-plan alternative — only ever set from a real, priced plans.json row whose own
-// `includes` text names this model. Never a guessed price.
+// Seat-plan alternative — unchanged from v1: only ever set from a real, priced plans.json row
+// whose own `includes` text names this model. Never a guessed price.
 // -----------------------------------------------------------------------------------------
 export function findSeatPlanAlternative(model, have, plans) {
   const list = (Array.isArray(have) ? have : []).map((h) => String(h || '').toLowerCase());
@@ -493,354 +362,407 @@ export function findSeatPlanAlternative(model, have, plans) {
 }
 
 // -----------------------------------------------------------------------------------------
-// Evidence-family SET (2026-09-07, dropDominated evidence rewrite) — WHICH of the three
-// real-world signal families (scripts/derive-signals.mjs: usage-top-10, arena-top-10,
-// expert-default) actually back a model for this task, not just how many. Two models can share
-// the exact same `families` COUNT while backing entirely different claims — e.g. one model's 2
-// families are {usage, arena} and another's are {usage, expert} — and a count alone can't tell
-// those apart. dominates() below needs the real set: a count tie must never let a model missing
-// one family (say, expert-default backing) be treated as "at least as evidenced" as a model that
-// actually has it, just because both happen to total 2.
+// Evidence positions — see the file header for the exact ordering key per kind and the "near
+// top" threshold. Every function here is pure, computed once per (taskId, whole catalog) — not
+// per candidate — since a model's position never depends on what the caller has access to.
 // -----------------------------------------------------------------------------------------
-export function evidenceFamilySet(model, taskId) {
-  const sig = model?.signals?.[taskId];
-  const set = new Set();
-  if (!sig) return set;
-  if (num(sig.usage_rank)) set.add('usage');
-  if (num(sig.arena_rank)) set.add('arena');
-  if (sig.expert_default) set.add('expert');
-  return set;
+
+function median(sortedInputArr) {
+  const a = [...sortedInputArr].sort((x, y) => x - y);
+  const n = a.length;
+  if (!n) return null;
+  const mid = Math.floor(n / 2);
+  return n % 2 ? a[mid] : (a[mid - 1] + a[mid]) / 2;
 }
-/** true when every family backing `x` also backs `y` (y's set is a superset of x's, ties
- * included) — the "at least as good on families" half of dominates()'s evidence check. */
-export function familiesAtLeastAsGood(ySet, xSet) {
-  if (!xSet || !xSet.size) return true;
-  if (!ySet) return false;
-  for (const f of xSet) if (!ySet.has(f)) return false;
-  return true;
+
+/** "Near the top" for a kind with `of` catalog models carrying it — max(10, 25% of `of`),
+ * rounded up. `of` <= 0 trivially returns 10, but no position can ever qualify against it since
+ * no model has that kind of evidence at all in that case. */
+export function nearTopThreshold(of) {
+  return Math.max(10, Math.ceil(0.25 * (of || 0)));
 }
-/** usage_rank comparison for dominates()/ranking — lower is better; no rank on file (null)
- * counts as worse than any real rank, so nothing can be "at least as good" as an actual #1 except
- * another #1 (which can't coexist for the same task). */
-export function usageRankAtLeastAsGood(yRank, xRank) {
-  if (!num(xRank)) return true;
-  if (!num(yRank)) return false;
-  return yRank <= xRank;
+
+/** Every catalog model with >=1 measured row for this task, positioned 1..of among just those
+ * models. Ordering key: median of (rank/n_models) across the model's own rows (lower/better) ->
+ * more tester rows wins a tie -> lower single best rank -> id. Returns Map<modelId, {position,
+ * of, rows, best}>; `best` is the one row (tester/benchmark/rank/n_models/url/as_of) with the
+ * best rank/n_models ratio (ties -> lowest rank). Pure — reads only model.standings[taskId]. */
+export function measuredIndexForTask(taskId, models) {
+  const rows = [];
+  for (const m of models || []) {
+    const measured = m.standings?.[taskId]?.measured || [];
+    const ratios = measured
+      .map((r) => (num(r.rank) && num(r.n_models) && r.n_models > 0 ? r.rank / r.n_models : null))
+      .filter((v) => v != null);
+    if (!ratios.length) continue;
+    let bestRow = null, bestRatio = Infinity;
+    for (const r of measured) {
+      const ratio = num(r.rank) && num(r.n_models) && r.n_models > 0 ? r.rank / r.n_models : Infinity;
+      if (ratio < bestRatio || (ratio === bestRatio && bestRow && (r.rank ?? Infinity) < (bestRow.rank ?? Infinity))) {
+        bestRow = r; bestRatio = ratio;
+      }
+    }
+    const bestRank = Math.min(...measured.map((r) => (num(r.rank) ? r.rank : Infinity)));
+    rows.push({ id: m.id, key: median(ratios), rowsCount: measured.length, bestRank, bestRow });
+  }
+  rows.sort((a, b) => (a.key - b.key) || (b.rowsCount - a.rowsCount) || (a.bestRank - b.bestRank) || String(a.id).localeCompare(String(b.id)));
+  const of = rows.length;
+  const out = new Map();
+  rows.forEach((r, i) => out.set(r.id, {
+    position: i + 1, of, rows: r.rowsCount,
+    best: r.bestRow ? {
+      tester: r.bestRow.tester, benchmark: r.bestRow.benchmark, rank: r.bestRow.rank,
+      n_models: r.bestRow.n_models, url: r.bestRow.url, as_of: r.bestRow.as_of,
+    } : null,
+  }));
+  return out;
 }
-const usageRankValue = (item) => (num(item.usage_rank) ? item.usage_rank : Infinity);
+
+/** Every catalog model with a `chosen` record for this task, positioned 1..of among just those
+ * models by spend share descending (re-derived from `share`, never trusted off the stored
+ * `rank` — see the file header for why a stored rank can be the feed's own, uncatalog-scoped
+ * rank). Ties -> the stored rank -> id. Returns Map<modelId, {position, of, rank, share, url}>. */
+export function chosenIndexForTask(taskId, models) {
+  const rows = [];
+  for (const m of models || []) {
+    const c = m.standings?.[taskId]?.chosen;
+    if (!c) continue;
+    rows.push({ id: m.id, share: num(c.share) ? c.share : null, rank: num(c.rank) ? c.rank : null, raw: c });
+  }
+  rows.sort((a, b) => {
+    const as = a.share ?? -Infinity, bs = b.share ?? -Infinity;
+    if (as !== bs) return bs - as;
+    const ar = a.rank ?? Infinity, br = b.rank ?? Infinity;
+    if (ar !== br) return ar - br;
+    return String(a.id).localeCompare(String(b.id));
+  });
+  const of = rows.length;
+  const out = new Map();
+  rows.forEach((r, i) => out.set(r.id, { position: i + 1, of, rank: r.raw.rank ?? null, share: r.raw.share ?? null, url: r.raw.url ?? null }));
+  return out;
+}
+
+/** Every catalog model with a `preferred` record for this task, RE-POSITIONED 1..of among just
+ * those models by the stored board rank ascending (the stored rank is the model's true position
+ * on the full external board, which is mostly not-this-catalog). Ties -> id. Returns
+ * Map<modelId, {position, of, rank, board, url}>. */
+export function preferredIndexForTask(taskId, models) {
+  const rows = [];
+  for (const m of models || []) {
+    const p = m.standings?.[taskId]?.preferred;
+    if (!p) continue;
+    rows.push({ id: m.id, rank: num(p.rank) ? p.rank : Infinity, raw: p });
+  }
+  rows.sort((a, b) => (a.rank - b.rank) || String(a.id).localeCompare(String(b.id)));
+  const of = rows.length;
+  const out = new Map();
+  rows.forEach((r, i) => out.set(r.id, { position: i + 1, of, rank: r.raw.rank ?? null, board: r.raw.board ?? null, url: r.raw.url ?? null }));
+  return out;
+}
+
+/** A task is THIN when fewer than this many catalog models have measured evidence for it —
+ * today: chat/frontend/vision/bulk are thin (0 measured each), agents (12) is not. */
+export const THIN_MEASURED_FLOOR = 8;
+
+/** One task's full evidence index — computed once per (taskId, catalog), not per candidate.
+ * `humanKinds` is which of {chosen, preferred} exist AT ALL anywhere in the catalog for this
+ * task (used only to pick which thin-task tier scheme applies — vision has no chosen, bulk has
+ * no preferred, chat/frontend have both). */
+export function buildEvidenceIndex(taskId, models) {
+  const measured = measuredIndexForTask(taskId, models);
+  const chosen = chosenIndexForTask(taskId, models);
+  const preferred = preferredIndexForTask(taskId, models);
+  const thin = measured.size < THIN_MEASURED_FLOOR;
+  const humanKinds = new Set();
+  if (chosen.size) humanKinds.add('chosen');
+  if (preferred.size) humanKinds.add('preferred');
+  return { measured, chosen, preferred, thin, humanKinds };
+}
 
 // -----------------------------------------------------------------------------------------
-// Candidate filtering (rules 1-3) and domination pruning
+// Tiers — see the file header for the full rationale and the exact waterfall/labels.
+// -----------------------------------------------------------------------------------------
+export const MAX_TIER = { nonThin: 5, thinDual: 3, thinSingle: 2 };
+
+function schemeFor(index) {
+  if (!index.thin) return 'nonThin';
+  return index.humanKinds.size >= 2 ? 'thinDual' : 'thinSingle';
+}
+
+// Standard tier_name/label a model lands on before any new-model promotion or negative-claim
+// demotion — see classifyModelForTask. The prose in "" for non-thin tier names/T1 & T2's labels
+// and T5's label are the spec's own wording; the thin schemes' tier_names are this file's own
+// (the spec only quotes their labels, not tier names — see the file header).
+const NON_THIN_TIER_META = {
+  1: { tier_name: 'agreed', label: null },
+  2: { tier_name: 'tests-only', label: 'strong on tests, low real-world use' },
+  3: { tier_name: 'tested, people-backed', label: null },
+  4: { tier_name: 'tested', label: null },
+  5: { tier_name: 'not independently tested', label: 'not independently tested' },
+};
+const THIN_DUAL_TIER_META = {
+  1: { tier_name: 'human-agreed', label: 'not independently tested' },
+  2: { tier_name: 'one-signal', label: null },
+  3: { tier_name: 'evidenced', label: null },
+};
+const THIN_SINGLE_TIER_META = {
+  1: { tier_name: 'single-signal', label: 'one signal only' },
+  2: { tier_name: 'evidenced', label: null },
+};
+function tierMetaTable(scheme) {
+  return scheme === 'nonThin' ? NON_THIN_TIER_META : scheme === 'thinDual' ? THIN_DUAL_TIER_META : THIN_SINGLE_TIER_META;
+}
+function tierMeta(scheme, tier) {
+  const table = tierMetaTable(scheme);
+  return table[tier] || table[MAX_TIER[scheme]];
+}
+
+/** Base tier number (1 = best), before any new-model/negative-claim adjustment — the waterfall
+ * from the file header, on the three evidence booleans. Only ever called once a model has
+ * already cleared the evidence gate (evidenced === true), so the nonThin "measured absent"
+ * branch always has some human evidence backing it. */
+export function baseTierNumber(scheme, measuredPresent, measuredNearTop, chosenNearTop, preferredNearTop) {
+  const humanNearTop = chosenNearTop || preferredNearTop;
+  if (scheme === 'nonThin') {
+    if (measuredPresent) return measuredNearTop ? (humanNearTop ? 1 : 2) : (humanNearTop ? 3 : 4);
+    return 5;
+  }
+  if (scheme === 'thinDual') {
+    if (chosenNearTop && preferredNearTop) return 1;
+    if (humanNearTop) return 2;
+    return 3;
+  }
+  // thinSingle — the sole existing human kind is whichever of chosenNearTop/preferredNearTop can
+  // ever be true for this task (the other is always false, since that kind has no coverage at
+  // all — see buildEvidenceIndex's humanKinds), so this reduces to "that kind near top?".
+  return humanNearTop ? 1 : 2;
+}
+
+/** { evidenced, tier, tier_name, label, evidence, thin_task, kindsNearTopCount, measuredPosition,
+ * bestHumanPosition, measuredRows } for one model x task, given that task's evidence index.
+ * `evidenced: false` means no measured/chosen/preferred record at all — the caller must exclude
+ * such a model from candidacy entirely (see filterCandidates); every other field is only
+ * meaningful when evidenced is true, except `evidence`/`thin_task`, which are always populated so
+ * the caller can still show what (if anything) was checked. */
+export function classifyModelForTask(model, taskId, index) {
+  const measuredEntry = index.measured.get(model.id) || null;
+  const chosenEntry = index.chosen.get(model.id) || null;
+  const preferredEntry = index.preferred.get(model.id) || null;
+
+  const measuredOf = index.measured.size;
+  const chosenOf = index.chosen.size;
+  const preferredOf = index.preferred.size;
+
+  const measuredPresent = !!measuredEntry;
+  const measuredNearTop = measuredPresent && measuredEntry.position <= nearTopThreshold(measuredOf);
+  const chosenPresent = !!chosenEntry;
+  const chosenNearTop = chosenPresent && chosenEntry.position <= nearTopThreshold(chosenOf);
+  const preferredPresent = !!preferredEntry;
+  const preferredNearTop = preferredPresent && preferredEntry.position <= nearTopThreshold(preferredOf);
+  const evidenced = measuredPresent || chosenPresent || preferredPresent;
+
+  const evidence = {
+    measured: {
+      present: measuredPresent, near_top: measuredNearTop,
+      position: measuredEntry?.position ?? null, of: measuredOf,
+      rows: measuredEntry?.rows ?? 0, best: measuredEntry?.best ?? null,
+    },
+    chosen: chosenPresent ? {
+      present: true, near_top: chosenNearTop, position: chosenEntry.position, of: chosenOf,
+      rank: chosenEntry.rank, share: chosenEntry.share, url: chosenEntry.url,
+    } : null,
+    preferred: preferredPresent ? {
+      present: true, near_top: preferredNearTop, position: preferredEntry.position, of: preferredOf,
+      rank: preferredEntry.rank, board: preferredEntry.board, url: preferredEntry.url,
+    } : null,
+  };
+
+  if (!evidenced) return { evidenced: false, evidence, thin_task: index.thin };
+
+  const scheme = schemeFor(index);
+  const base = baseTierNumber(scheme, measuredPresent, measuredNearTop, chosenNearTop, preferredNearTop);
+  let tier = base;
+  let meta = tierMeta(scheme, base);
+
+  // New-model override (see the file header): a brand-new model that would otherwise read as
+  // "only tests well" / "only one signal" purely for lacking OTHER human backing it hasn't had
+  // time to accumulate is promoted to the tail of T1 instead, with its own label — never applied
+  // to thin-single tasks (no "missing the other kind" state exists there; see baseTierNumber).
+  const promotable = (scheme === 'nonThin' || scheme === 'thinDual') && base === 2;
+  if (model.adoption === 'new' && promotable) {
+    tier = 1;
+    meta = { tier_name: 'early', label: 'early: too new for usage data' };
+  }
+
+  // Negative-claim demotion (see hasNegativeClaim) — drops one tier, clamped at the scheme's
+  // worst tier, and always recomputed from the STANDARD table (never re-applies "early").
+  if (hasNegativeClaim(model, taskId)) {
+    const maxTier = MAX_TIER[scheme];
+    const dropped = Math.min(tier + 1, maxTier);
+    if (dropped !== tier) { tier = dropped; meta = tierMeta(scheme, tier); }
+  }
+
+  const kindsNearTopCount = (measuredNearTop ? 1 : 0) + (chosenNearTop ? 1 : 0) + (preferredNearTop ? 1 : 0);
+
+  return {
+    evidenced: true, tier, tier_name: meta.tier_name, label: meta.label, evidence, thin_task: index.thin,
+    kindsNearTopCount,
+    measuredPosition: measuredEntry?.position ?? null,
+    bestHumanPosition: Math.min(chosenEntry?.position ?? Infinity, preferredEntry?.position ?? Infinity),
+    measuredRows: measuredEntry?.rows ?? 0,
+  };
+}
+
+// -----------------------------------------------------------------------------------------
+// Candidate filtering — rules 1-4 (reachability, data rule, enterprise preview exclusion,
+// evidence gate). No domination-pruning step any more (v1's dropDominated/dominates) — with
+// ranking reduced to (tier, explicit position/cost tie-breaks), a pricier model with strictly
+// worse tier already sorts after every cheaper-or-equal better-tier model, and within a tier the
+// cost tie-break already prefers the cheaper of two otherwise-equal picks; a separate domination
+// pass would only re-derive what the tier/order system already guarantees, so it's dropped
+// rather than kept as dead weight (the brief for this step explicitly allows removing it "if you
+// can[not] express it on (tier, positions, cost)").
 // -----------------------------------------------------------------------------------------
 export function filterCandidates(taskId, input, data) {
   const vol = resolveVolume(input.volume, data.presets);
-  // Pass 1 — everything up through calibration (rules 1-3 + 3b's downgrade), but NOT yet rule
-  // 3b's "capable also needs its own family support" floor — that floor needs to see the WHOLE
-  // pool for this (task, access) combination first, to tell a genuinely thin pick apart from a gap
-  // in what got collected (the weak-coverage escape hatch right below).
-  const preGate = [];
+  const index = buildEvidenceIndex(taskId, data.models || []);
+  const candidates = [];
   for (const model of data.models || []) {
     if (!isReachable(model, input.have)) continue;
     const dr = passesDataRule(model, input.dataRule, data.vendors);
     if (!dr.ok) continue;
-    // An enterprise-style input excludes a preview-status model ENTIRELY, not just from
-    // start_here — see isDisqualifiedFromStartHere's comment for why this is stronger than the
-    // plain-"best" case. An enterprise buyer can't ship a preview SKU at all, so it shouldn't be
-    // offered lower in the shortlist either.
+    // Rule 3 — enterprise-style input excludes a preview-status model ENTIRELY, not just from
+    // start_here (an enterprise buyer can't ship a preview SKU at all).
     if (model.status === 'preview' && isEnterpriseInput(input)) continue;
-    // Rule 3 — the judgment IS the gate (see the file header). A judged record for THIS task is
-    // required to be a candidate at all; a quantitative score with no judged band never gets in
-    // on its own any more.
-    const { band: rawBand, confidence, judged } = judgedBandOf(model, taskId);
-    if (rawBand !== 'strong' && rawBand !== 'capable') continue;
-    // Rule 3b — calibration (see the file header and calibrateBand's own comment): a claimed
-    // `strong` with fewer than 2 real-world signal families downgrades to `capable` here, before
-    // ranking ever sees it. Everything below this line uses the EFFECTIVE (post-calibration)
-    // `band`, never the raw judged record's own band — that's what makes the downgrade actually
-    // stick through domination pruning and ranking, not just cosmetic on the label.
-    const { band, families, calibration } = calibrateBand(model, taskId, rawBand);
-    preGate.push({ model, dr, band, confidence, families, calibration, judged });
-  }
-  // Weak-coverage escape hatch (mirrors eval/METHOD.md's own rule for the cold answer key this
-  // engine is graded against: "a task's coverage counts as weak... when zero reachable candidates
-  // have any family's top-set support... must_not_start is left empty, since there is no
-  // comparative evidence to justify singling any reachable model out"). If NOT ONE otherwise-
-  // eligible candidate for this specific (task, access) combination has any real-world signal
-  // family at all, then nobody collected usage/arena/expert-default data for this corner of the
-  // catalog — that is a gap in what got collected, not evidence every candidate is unproven, so
-  // the "capable needs >=1 family" floor below would be punishing a data gap, not a bad pick.
-  // Widen back to every judged-eligible candidate in that case, exactly as if rule 3b's capable
-  // floor didn't exist for this call. This only ever WIDENS the candidate pool for a (task,
-  // access) pair with literally zero family signal anywhere in it — a pair where even one
-  // candidate has real signal always enforces the floor normally.
-  const hasAnyRealSignal = preGate.some((c) => c.families >= 1);
-  // Pass 2 — rule 3b's capable floor: a `capable` band (native or just-downgraded) also needs its
-  // own family support, unless the weak-coverage escape above applies. `strong` is never subject
-  // to this (it already passed the stricter families >= STRONG_FAMILIES_FLOOR check above).
-  const candidates = [];
-  for (const c of preGate) {
-    if (c.band === 'capable' && c.families < CAPABLE_FAMILIES_FLOOR && hasAnyRealSignal) continue;
-    const { model, dr, band, confidence, families, calibration, judged } = c;
-    // taskFitFor still decides the NUMBER shown alongside the pick (a real score when sourced,
-    // else the flat JUDGED_BAND_SCORE) — but never whether the model is here at all (that's
-    // judgedBandOf, above). Claims/reconciliation always come from the judged record itself
-    // (never from taskFitFor's `judged`, which is null on its 'measured' branch) so a model with
-    // BOTH a real score and a judged record still shows the evidence that actually earned it a
-    // place in the running.
-    const fit = taskFitFor(model, taskId);
-    // A downgraded pick's flat placeholder score is recalculated at the CALIBRATED band (68 for
-    // capable, not 88 for the raw record's strong) — but only when fit.score is itself that flat
-    // placeholder (fit.source !== 'measured'); a real measured quant score (e.g. coding_score) is
-    // never touched by calibration, since it's independent evidence, not the judged claim this
-    // rule exists to discount.
-    const fitScore = calibration && fit.source !== 'measured' ? JUDGED_BAND_SCORE[band] : (fit.score ?? JUDGED_BAND_SCORE[band]);
+
+    // Rule 4 — the evidence gate: no measured/chosen/preferred record anywhere for this task
+    // means "untested", not a candidate, full stop — a real benchmark score alone (task_fit)
+    // never creates a candidate on its own any more; only standings evidence does.
+    const cls = classifyModelForTask(model, taskId, index);
+    if (!cls.evidenced) continue;
+
+    const judged = model.task_fit_judged?.[taskId] || null;
+    const quant = model.task_fit?.[taskId] || null;
+    const fitScore = num(quant?.score) ? quant.score : null;
+    const fitBasis = quant?.basis || [];
+    const basis = judged ? basisFromClaims(judged.claims) : null;
+    const why = judged ? topClaimSentence(judged.claims) : buildWhy(model, fitBasis);
+
     candidates.push({
       model,
-      band,
-      confidence,
-      families,
-      calibration,
-      // Guaranteed non-null in practice (taskFitFor always resolves a score once a strong/capable
-      // judged record exists), but falls back to the band constant rather than ever sorting on a
-      // NaN if that guarantee is ever violated by a future edit.
-      fit: fitScore,
-      // Whether `fit` above is a real, sourced measurement (fit.source === 'measured', e.g. a
-      // coding_score) or the flat JUDGED_BAND_SCORE placeholder standing in for a judged record
-      // with no number of its own. dominates() below only ever compares fit as a domination axis
-      // when BOTH sides carry a real measurement — see dominates()'s own comment for why.
-      fitSource: fit.source,
-      fit_basis: fit.basis,
-      basis: basisFromClaims(judged.claims),
-      claims: judged.claims,
-      reconciliation: judged.reconciliation ?? null,
-      judgedBand: band,
-      judgedConfidence: confidence,
+      tier: cls.tier, tier_name: cls.tier_name, label: cls.label,
+      evidence: cls.evidence, thin_task: cls.thin_task,
+      kindsNearTopCount: cls.kindsNearTopCount,
+      measuredPosition: cls.measuredPosition,
+      bestHumanPosition: cls.bestHumanPosition,
+      measuredRows: cls.measuredRows,
+      fit: fitScore, fit_basis: fitBasis, basis, why,
+      claims: judged?.claims || [],
+      reconciliation: judged?.reconciliation ?? null,
       monthly_cost_usd: monthlyCost(model, vol),
       seat_plan_alternative: findSeatPlanAlternative(model, input.have, data.plans),
       unknownCountryVendor: dr.unknownCountry ? model.vendor : null,
-      // Rule 4 domination/ranking now also weigh usage_rank and WHICH real-world signal families
-      // (not merely how many) back a candidate — see evidenceFamilySet()/dominates() below.
-      usage_rank: num(model.signals?.[taskId]?.usage_rank) ? model.signals[taskId].usage_rank : null,
-      familyTypes: evidenceFamilySet(model, taskId),
     });
   }
-  return { candidates, vol };
-}
-
-/** y dominates x only if y's judged tier (band, then confidence) is AT LEAST AS GOOD as x's —
- * a 'capable' model can never dominate-and-eliminate a 'strong' one just by being cheaper or
- * carrying a higher raw fit number, or the exact bug this whole rewrite exists to kill (a number
- * outranking a judgment) would sneak back in through domination pruning instead of ranking. Within
- * the SAME (band, confidence) tier this is exactly the old fit+cost comparison; across tiers, a
- * strictly-better-tier model dominates a cheaper-or-equal one outright (its judgment already
- * establishes "at least as fit" — no numeric fit comparison needed), and a worse-tier model can
- * never dominate a better-tier one regardless of price. */
-// 'new' (scripts/derive-status-adoption.mjs's 60-day-since-release rule) ranks the same as
-// 'unknown' on purpose — a model too recently released for its usage share to mean anything is in
-// exactly the same "no real signal either way" position, so it gets the same neutral protection
-// from domination by a cheaper 'low'-adoption model, without being penalized the way an actually
-// low-measured-share model is.
-const ADOPTION_RANK = { broad: 3, moderate: 2, unknown: 1, new: 1, low: 0 };
-const adoptionRank = (adoption) => ADOPTION_RANK[adoption] ?? 1;
-
-/** y dominates x only if y's judged tier (band, then confidence) is AT LEAST AS GOOD as x's — a
- * 'capable' model can never dominate-and-eliminate a 'strong' one just by being cheaper or
- * carrying a higher raw fit number.
- *
- * REWRITTEN AGAIN 2026-09-07, same day: the ABOVE guarantee (tier can't be bought back with
- * price/fit) turned out not to be enough — within the SAME tier, this function used to compare
- * only cost and fit, which let a cheaper, marginally-higher-fit model erase a rival with just as
- * much real-world standing but a different profile. Concretely, for "coding" under 'best': Kimi
- * K3 ($28.50/mo, coding_score 96, both strong/high, families:2) was dominating BOTH Claude Opus 5
- * ($47.50/mo, score 95, families:2, usage_rank 1 at 37% of OpenRouter coding spend — the actual
- * #1 real-usage pick) and GPT-5.6 Sol ($38/mo, score 90, families:2, usage_rank 3) — erasing them
- * from the shortlist entirely on nothing but a slightly higher score and a lower price. Now, for
- * 'best'/'balanced' (see the 'cheapest' branch below for that stance's own, narrower rule), y
- * must be at least as good as x on EVERY one of these before cost/fit ever gets a vote:
- *   - band, confidence — as before.
- *   - usage_rank (usageRankAtLeastAsGood — lower is better, no rank counts as worse than any
- *     real one). This alone protects Opus 5: nothing can be "at least as good" as its usage_rank
- *     1 except another rank 1, which can't coexist for the same task — so a rank-1 model can
- *     never be dominated away by anything, at any price.
- *   - families, as a SET, not a count (familiesAtLeastAsGood/evidenceFamilySet). Kimi K3 and
- *     GPT-5.6 Sol both show families:2, but Kimi's are {usage, arena} and Sol's are {usage,
- *     expert} — different, independently-collected evidence, not "the same support, just less of
- *     it". A families-COUNT tie would still have let Kimi erase Sol; the SET check means Kimi is
- *     missing Sol's expert-default backing, so Kimi is not "at least as good" on this axis either.
- *   - quantitative fit — but ONLY when BOTH candidates carry a real measured score
- *     (fitSource === 'measured' on both, see filterCandidates). A flat JUDGED_BAND_SCORE
- *     placeholder is not "quantitative fit"; comparing it as if it were would let one judged-only
- *     model's arbitrary placeholder outrank another's, so this axis is simply skipped (treated as
- *     satisfied) whenever either side is unmeasured.
- * Within the SAME (band, confidence) tier this is exactly the old fit+cost comparison, now with
- * usage_rank/families added as further required axes; across tiers, a strictly-better-tier model
- * still dominates a cheaper-or-equal one outright (its judgment already establishes "at least as
- * fit" on band/confidence — but it must still clear the usage_rank/families/fit axes too, now
- * that those are checked regardless of tier), and a worse-tier model can never dominate a
- * better-tier one regardless of price. */
-export function dominates(y, x, stance = 'best') {
-  if (y === x || !num(x.monthly_cost_usd) || !num(y.monthly_cost_usd)) return false;
-
-  if (stance === 'cheapest') {
-    // Cost-primary stance — keep the plain, tier-scoped cheaper+at-least-as-fit check this stance
-    // has always used (not the fuller evidence check below; 'cheapest' is explicitly allowed to
-    // recommend the actual cheapest candidate regardless of its evidence profile). The ONE guard
-    // added here (2026-09-07): never let this simpler check fully ERASE a 'strong'-band candidate
-    // that carries MORE families (a plain count, unlike the set check above — see this
-    // function's own header) than the cheaper candidate trying to dominate it. It may still rank
-    // far below the cheapest pick — this stance stays cost-first, full stop — but it must remain
-    // in the returned list, not disappear from it.
-    if (x.band === 'strong' && (x.families ?? 0) > (y.families ?? 0)) return false;
-    const sameBandConfidence = bandRank(y.band) === bandRank(x.band) && confidenceRank(y.confidence) === confidenceRank(x.confidence);
-    const yTierAtLeastAsGood = bandRank(y.band) > bandRank(x.band) ||
-      (bandRank(y.band) === bandRank(x.band) && confidenceRank(y.confidence) >= confidenceRank(x.confidence));
-    if (!yTierAtLeastAsGood) return false;
-    if (sameBandConfidence && adoptionRank(y.model.adoption) < adoptionRank(x.model.adoption)) return false;
-    const cheaperOrEqual = y.monthly_cost_usd <= x.monthly_cost_usd;
-    const atLeastAsFit = sameBandConfidence ? y.fit >= x.fit : true;
-    const strictlyBetter = !sameBandConfidence || y.monthly_cost_usd < x.monthly_cost_usd || y.fit > x.fit;
-    return cheaperOrEqual && atLeastAsFit && strictlyBetter;
-  }
-
-  // 'best' / 'balanced' — every evidence dimension below must favor (or tie) y before cost/fit
-  // ever gets a vote; failing any one of them blocks domination outright.
-  if (bandRank(y.band) < bandRank(x.band)) return false;
-  if (confidenceRank(y.confidence) < confidenceRank(x.confidence)) return false;
-  if (!usageRankAtLeastAsGood(y.usage_rank, x.usage_rank)) return false;
-  if (!familiesAtLeastAsGood(y.familyTypes, x.familyTypes)) return false;
-  const bothMeasured = y.fitSource === 'measured' && x.fitSource === 'measured';
-  if (bothMeasured && y.fit < x.fit) return false;
-
-  // Within the SAME (band, confidence) tier, a lower-adoption model can never dominate-and-
-  // eliminate a higher-adoption one either — otherwise a cheap, low-adoption model could erase
-  // the very broader-adoption alternative the start_here adoption gate exists to prefer, before
-  // that gate ever runs (2026-09-07 regression, caught by the vision task's own catalog: a
-  // $0.93/mo low-adoption model was dominating a $1.90/mo moderate-adoption one at equal fit).
-  const sameBandConfidence = bandRank(y.band) === bandRank(x.band) && confidenceRank(y.confidence) === confidenceRank(x.confidence);
-  if (sameBandConfidence && adoptionRank(y.model.adoption) < adoptionRank(x.model.adoption)) return false;
-
-  if (y.monthly_cost_usd > x.monthly_cost_usd) return false;
-
-  const strictlyBetter = y.monthly_cost_usd < x.monthly_cost_usd
-    || bandRank(y.band) > bandRank(x.band)
-    || confidenceRank(y.confidence) > confidenceRank(x.confidence)
-    || (num(y.usage_rank) && (!num(x.usage_rank) || y.usage_rank < x.usage_rank))
-    || (y.familyTypes?.size ?? 0) > (x.familyTypes?.size ?? 0)
-    || (bothMeasured && y.fit > x.fit);
-  return strictlyBetter;
-}
-/** Drop any candidate dominated by another per dominates() above — guarantees the eventual
- * shortlist never contains a pricier model that isn't at least justified by evidence over every
- * cheaper option (see dominates()'s own comment for exactly which evidence dimensions that now
- * covers, and how 'cheapest' differs). Candidates with an unknown cost can't be compared either
- * way, so they're never dropped by this step. `stance` must match whatever rankByStance() will
- * be called with right after — dominates()'s behavior genuinely differs by stance now. */
-export function dropDominated(list, stance = 'best') {
-  return list.filter((x) => !list.some((y) => dominates(y, x, stance)));
+  return { candidates, vol, index };
 }
 
 // -----------------------------------------------------------------------------------------
-// Rule 4 — rank by the chosen stance. Every candidate reaching this function already cleared
-// rule 3 (a real "strong" or "capable" judged band for this task — "weak"/"unknown" never get
-// this far), so all three stances rank strictly within that pre-cleared set; none of them can
-// ever promote a candidate judgment itself rejected. What differs per stance is what breaks a
-// tie, and for 'cheapest' specifically, WHETHER band/confidence even outrank cost at all — see
-// the file header's rule 4 for the full rationale (rewritten 2026-09-07: a prior version put
-// band/confidence ahead of cost for every stance, which made 'cheapest' silently return the same
-// order as 'best' whenever candidates spanned more than one judged tier).
+// start_here eligibility — a model can win the shortlist without winning the TOP spot. Neither
+// rule below drops a model from the shortlist; they only decide which of the top 3 gets
+// `start_here: true`.
+// -----------------------------------------------------------------------------------------
+
+/** A T2 "tests-only" item (non-thin task only — see the file header) never gets start_here while
+ * a T1 "agreed" item is also a candidate for this task: a benchmark-only edge shouldn't buy the
+ * top spot away from a pick real usage AND/OR votes also back. A status:'preview' item never
+ * gets start_here (except under stance 'cheapest', which stays cost-primary) while a GA/
+ * deprecated item shares its SAME final tier — a reader who can't pin a preview model's version
+ * shouldn't be steered to start there when an equally-tiered GA option exists. Checked against the
+ * FULL candidate pool for this task (not just the top 3), same reasoning both times: a same-tier
+ * alternative that later ranked lower still has to count as "a real alternative existed." */
+export function isDisqualifiedFromStartHere(item, allCandidates, stance) {
+  if (!item.thin_task && item.tier === 2 && (allCandidates || []).some((c) => c !== item && c.tier === 1)) return true;
+  if (item.model.status === 'preview' && stance !== 'cheapest') {
+    const gaSameTier = (allCandidates || []).some((c) => c !== item && c.tier === item.tier && c.model.status !== 'preview');
+    if (gaSameTier) return true;
+  }
+  return false;
+}
+
+// -----------------------------------------------------------------------------------------
+// Ranking — tier first, then the within-tier order (see the file header). Every candidate
+// reaching rankByStance already cleared the evidence gate in filterCandidates.
 // -----------------------------------------------------------------------------------------
 const costOrInf = (x) => (num(x.monthly_cost_usd) ? x.monthly_cost_usd : Infinity);
-
-// GA-before-preview (2026-09-07): within the SAME band, a status:'preview' model never
-// outranks a GA (or deprecated) one, full stop — no families/confidence/fit count can buy it
-// back. Before this, families/confidence sat ahead of status, so a preview SKU with slightly
-// more real-world signal (e.g. gemini-3-1-pro's 2 families vs. a GA rival's 1) could still take
-// the #2/#3 spot under plain 'best' over a GA model people can actually pin a version of. This
-// is a RANKING rule, not a filter — a preview model with no same-band GA rival (or a genuinely
-// higher band) is untouched (see isDisqualifiedFromStartHere for the matching start_here rule,
-// which also has to look at the full pre-domination candidate pool, not just survivors here).
+// GA(1) before preview(0) — a ranking tie-break, not a filter; an enterprise-style input already
+// removed every preview model entirely, back in filterCandidates.
 const statusRank = (status) => (status === 'preview' ? 0 : 1);
-/** Band, then GA-before-preview, then calibration's own `families` count (rule 3b — more
- * independent real-world signal outranks less, inside the same band+status), then usage_rank
- * (2026-09-07, evidence rewrite — lower is better, no rank counts as worse than any real one;
- * this is what puts Claude Opus 5, the actual #1 real-usage pick for "coding" at 37% of
- * OpenRouter spend, ahead of Kimi K3's one-point-higher raw score within their shared strong/high/
- * families:2 tier), then confidence — used as the primary key for 'best' and 'balanced', and as a
- * tie-break (after cost) for 'cheapest'. Every candidate reaching this function already cleared
- * rule 3, so band is always 'strong' or 'capable' here; this comparator still checks the general
- * case rather than hard-coding those two values, so it keeps working if a future band is ever
- * added. */
-const byBandThenConfidence = (a, b) => bandRank(b.band) - bandRank(a.band)
-  || statusRank(b.model.status) - statusRank(a.model.status)
-  || (b.families ?? 0) - (a.families ?? 0)
-  || usageRankValue(a) - usageRankValue(b)
-  || confidenceRank(b.confidence) - confidenceRank(a.confidence);
-/** Band -> confidence -> fit -> cost, the shared comparator 'best' uses outright and 'balanced'
- * uses within its in-budget set (see below) — kept as one function so the two stances can never
- * quietly drift apart on how they break a tie. Fit (not cost) is the first tie-break inside a
- * (band, confidence) tier: two candidates can share a band and confidence yet still carry very
- * different evidence — a real, measured coding_score/GPQA/etc. score differentiates them far more
- * than price does, and "best" is explicitly the price-agnostic stance (that's what "best,
- * regardless of price" means in practice — see data/eval/situations.json's S01). This is
- * unchanged from before the 2026-09-07 stance rewrite; that rewrite's actual bug (see the file
- * header) was 'cheapest' silently copying this exact order and never letting price matter at all
- * — 'best' itself was never broken. */
-const byBandConfidenceFitCost = (a, b) => byBandThenConfidence(a, b) || b.fit - a.fit || costOrInf(a) - costOrInf(b);
 
-export function rankByStance(list, stance) {
-  const arr = [...list];
+/** Within-tier tie-break: more kinds of evidence near the top wins first, then a better
+ * (lower) measured position, then a better best-human position, then GA before preview, then
+ * more tester rows, then cheaper, then id (fully deterministic). */
+export function withinTierCompare(a, b) {
+  return (b.kindsNearTopCount - a.kindsNearTopCount)
+    || ((a.measuredPosition ?? Infinity) - (b.measuredPosition ?? Infinity))
+    || ((a.bestHumanPosition ?? Infinity) - (b.bestHumanPosition ?? Infinity))
+    || (statusRank(b.model.status) - statusRank(a.model.status))
+    || (b.measuredRows - a.measuredRows)
+    || (costOrInf(a) - costOrInf(b))
+    || String(a.model.id).localeCompare(String(b.model.id));
+}
+/** Tier ascending (T1 first), then the within-tier order above — the full 'best' order, and the
+ * tie-break every other stance falls back on inside its own budget/qualifying partition. */
+export function standardCompare(a, b) {
+  return (a.tier - b.tier) || withinTierCompare(a, b);
+}
+
+/** Rank a task's candidates by stance — see the file header for the exact semantics of each.
+ * `thinTask` (index.thin) sets 'cheapest'"s qualifying-tier ceiling (<=2 for a thin task, <=3 for
+ * a non-thin one). Never mutates `candidates`. */
+export function rankByStance(candidates, stance, thinTask) {
+  const list = [...(candidates || [])];
+  if (!list.length) return list;
+
+  if (stance === 'best') return list.sort(standardCompare);
 
   if (stance === 'cheapest') {
-    // Cost is the PRIMARY key, full stop — the cheapest candidate at the given volume wins
-    // outright regardless of judged tier, as long as it already cleared rule 3's floor. Ties on
-    // cost (including two candidates with an equally unknown cost) fall back to band, then
-    // confidence, then raw fit — this is the actual fix for the bug this rewrite exists to kill.
-    arr.sort((a, b) => costOrInf(a) - costOrInf(b) || byBandThenConfidence(a, b) || b.fit - a.fit);
-    return arr;
+    const maxTier = thinTask ? 2 : 3;
+    const qualify = list.filter((c) => c.tier <= maxTier);
+    const pool = qualify.length ? qualify : list; // "falling back to any candidate"
+    const rest = qualify.length ? list.filter((c) => c.tier > maxTier) : [];
+    pool.sort((a, b) => (costOrInf(a) - costOrInf(b)) || standardCompare(a, b));
+    rest.sort(standardCompare);
+    return [...pool, ...rest];
   }
 
-  if (stance === 'best') {
-    arr.sort(byBandConfidenceFitCost);
-    return arr;
-  }
-
-  // 'balanced' (default): restrict to the candidates priced at or under 2x the monthly cost of
-  // the cheapest 'strong'-band candidate (or the cheapest 'capable'-band candidate if no priced
-  // 'strong' one exists) — "the options a buyer already comparison-shopping the best pick could
-  // actually justify" — then rank THAT in-budget set by band -> confidence -> fit -> cost, same as
-  // 'best'. A candidate priced over that line (or with no known cost at all, so it can't be
-  // judged "in budget" either way) is never dropped from the returned list — it's still ranked,
-  // always after every in-budget candidate, so it can still show up lower in the shortlist.
-  const known = (x) => num(x.monthly_cost_usd);
-  const referencePool = list.filter((x) => x.band === 'strong' && known(x));
-  const fallbackPool = referencePool.length ? referencePool : list.filter((x) => x.band === 'capable' && known(x));
-  const inBudget = [];
-  const overBudget = [];
-  if (fallbackPool.length) {
-    const cheapestRef = Math.min(...fallbackPool.map((x) => x.monthly_cost_usd));
-    const threshold = cheapestRef * 2;
-    for (const x of list) (known(x) && x.monthly_cost_usd <= threshold ? inBudget : overBudget).push(x);
-  } else {
-    // No priced strong/capable candidate at all (every cost is unknown) — nothing to bound the
-    // budget against, so every candidate is treated as in-budget and ranked on band/confidence/
-    // cost alone, same as 'best'.
-    inBudget.push(...list);
-  }
-  inBudget.sort(byBandConfidenceFitCost);
-  overBudget.sort(byBandConfidenceFitCost);
+  // 'balanced' (default): among the top tier PRESENT, find its cheapest priced member as the
+  // reference cost; everyone (any tier) at or under 2x that cost is "in budget" and ranked first
+  // by the standard order, everyone else is ranked after, also by the standard order — never
+  // dropped, just deprioritized. No priced candidate in the top tier at all -> behave like 'best'.
+  const topTier = Math.min(...list.map((c) => c.tier));
+  const topTierPriced = list.filter((c) => c.tier === topTier && num(c.monthly_cost_usd));
+  if (!topTierPriced.length) return list.sort(standardCompare);
+  const cheapestRef = Math.min(...topTierPriced.map((c) => c.monthly_cost_usd));
+  const threshold = cheapestRef * 2;
+  const inBudget = [], overBudget = [];
+  for (const c of list) (num(c.monthly_cost_usd) && c.monthly_cost_usd <= threshold ? inBudget : overBudget).push(c);
+  inBudget.sort(standardCompare);
+  overBudget.sort(standardCompare);
   return [...inBudget, ...overBudget];
 }
 
 // -----------------------------------------------------------------------------------------
 // Tagging — one of 'cheapest-that-clears' | 'strongest' | 'best-per-dollar' | 'in-your-kit'
-// per shortlist item. Purely descriptive (v1 heuristic): the cheapest item in the shortlist
-// always reads 'cheapest-that-clears', the highest-fit item always reads 'strongest', a model
-// whose vendor the caller already has directly reads 'in-your-kit' when neither of those
-// applies, and everything else reads 'best-per-dollar'.
+// per shortlist item. Purely descriptive (unchanged from v1): the cheapest item in the
+// shortlist always reads 'cheapest-that-clears', the highest quantitative-fit item always reads
+// 'strongest' (falls back to -Infinity when fit is null, e.g. a purely judgment-backed pick with
+// no quantitative task_fit score), a model whose vendor the caller already has directly reads
+// 'in-your-kit' when neither of those applies, and everything else reads 'best-per-dollar'.
 // -----------------------------------------------------------------------------------------
 function tagFor(item, shortlist, have) {
   const cheapest = shortlist.reduce((a, b) => (costOrInf(b) < costOrInf(a) ? b : a));
-  const strongest = shortlist.reduce((a, b) => (b.fit > a.fit ? b : a));
+  const strongest = shortlist.reduce((a, b) => ((b.fit ?? -Infinity) > (a.fit ?? -Infinity) ? b : a));
   if (item === cheapest) return 'cheapest-that-clears';
   if (item === strongest) return 'strongest';
   const list = (Array.isArray(have) ? have : []).map((h) => String(h || '').toLowerCase());
@@ -856,24 +778,15 @@ export function decide(input, data) {
   const stance = STANCES.includes(input?.stance) ? input.stance : 'balanced';
   const tasks = {};
   for (const taskId of input?.tasks || []) {
-    const { candidates, vol } = filterCandidates(taskId, { ...input, stance }, data);
-    const pruned = dropDominated(candidates, stance);
-    const ranked = rankByStance(pruned, stance);
+    const { candidates, vol, index } = filterCandidates(taskId, { ...input, stance }, data);
+    const ranked = rankByStance(candidates, stance, index.thin);
 
-    // start_here eligibility (see isDisqualifiedFromStartHere / the file header): find the
-    // first-ranked candidate that ISN'T disqualified and move it to the front, keeping everyone
-    // else's relative order — a disqualified model still shows up in the top 3 if it ranks there,
-    // it just doesn't get the start_here flag. If every candidate is disqualified there's no
-    // alternative to prefer, so the normal #1 keeps start_here (a rule with nothing better to
-    // point at doesn't block the only option).
-    //
-    // The adoption check is evaluated against the FULL pre-dropDominated `candidates`, not the
-    // pruned/ranked survivors — dropDominated only ever compares raw fit and cost (numbers), so a
-    // broader-adoption same-band model that lost a pure price/fit domination check must still
-    // count as "a real alternative existed" for the adoption gate, or the exact bug this rewrite
-    // exists to kill (a numeric comparison quietly overriding a judgment-based rule) would sneak
-    // back in through domination pruning instead of ranking.
-    let startIdx = ranked.findIndex((item) => !isDisqualifiedFromStartHere(item, candidates, stance, input));
+    // start_here eligibility (see isDisqualifiedFromStartHere): find the first-ranked candidate
+    // that ISN'T disqualified and move it to the front, keeping everyone else's relative order —
+    // a disqualified model still shows up in the top 3 if it ranks there, it just doesn't get the
+    // start_here flag. If every candidate is disqualified there's no alternative to prefer, so
+    // the normal #1 keeps start_here.
+    let startIdx = ranked.findIndex((item) => !isDisqualifiedFromStartHere(item, candidates, stance));
     if (startIdx === -1) startIdx = 0;
     const reordered = startIdx === 0 ? ranked : [ranked[startIdx], ...ranked.slice(0, startIdx), ...ranked.slice(startIdx + 1)];
     const top = reordered.slice(0, 3);
@@ -882,7 +795,7 @@ export function decide(input, data) {
       id: item.model.id,
       name: item.model.name,
       tag: tagFor(item, top, have),
-      why: topClaimSentence(item.claims),
+      why: item.why,
       monthly_cost_usd: item.monthly_cost_usd,
       fit: item.fit,
       fit_basis: item.fit_basis,
@@ -893,14 +806,17 @@ export function decide(input, data) {
       reconciliation: item.reconciliation,
       start_here: idx === 0,
       seat_plan_alternative: item.seat_plan_alternative,
-      // Rule 3b calibration (see the file header): how many of the 3 real-world signal families
-      // (usage-top-10 / arena-top-10 / expert-default — scripts/derive-signals.mjs) back this
-      // model for this task, and, when a claimed "strong" got downgraded to "capable" for lacking
-      // them, the exact label a reader should see next to it. calibration_note is null on every
-      // pick whose band was never downgraded (including a native "capable" record, which was
-      // never a "strong" claim to begin with).
-      families: item.families ?? 0,
-      calibration_note: item.calibration?.note ?? null,
+      // Repurposed v1 field names (kept so no caller field name breaks): families = count of the
+      // three evidence kinds near the top for this pick (0-3); calibration_note = the tier's
+      // label, or null when this tier carries none — same value as the new `label` field below.
+      families: item.kindsNearTopCount,
+      calibration_note: item.label ?? null,
+      // New in this step — see the file header for what each means.
+      tier: item.tier,
+      tier_name: item.tier_name,
+      label: item.label ?? null,
+      evidence: item.evidence,
+      thin_task: item.thin_task,
     }));
 
     const assumptions = [];
@@ -913,18 +829,13 @@ export function decide(input, data) {
       assumptions.push('Vision fit is a yes/no tag match (no graded multimodal score exists in the data) — every vision-tagged model scores the same, and ties break on price.');
     }
     if (!candidates.length) {
-      assumptions.push('No model in the catalog clears every filter (reachability, data rule, or the judged-fit floor) for this task with the given inputs — a real benchmark score alone is never enough; something has to have actually judged this model for this task.');
+      assumptions.push('No catalog model reachable with these inputs has any independent evidence (tester standings, OpenRouter usage share, or Arena votes) for this task — a model with no evidence of any kind is not a candidate at all, regardless of any benchmark score it carries.');
     }
     if (startIdx > 0) {
-      // Two start_here disqualifiers exist now (isDisqualifiedFromStartHere): low adoption with a
-      // same-band broader-adoption alternative, or (2026-09-07) preview status with a same-band GA
-      // alternative. Re-derive which one actually applied for the reason text — both can't fire on
-      // the same skipped item's OWN attributes at once (adoption and status are independent facts),
-      // so checking adoption first and falling back to preview is unambiguous.
       const skipped = ranked[0];
-      const reason = skipped.model.adoption === 'low'
-        ? 'its adoption is low while a broader-adoption model of the same judged band is also a candidate'
-        : 'it\'s a preview-status model and a GA model of the same judged band is also a candidate — pin a version before you\'d actually rely on a preview SKU';
+      const reason = (!skipped.thin_task && skipped.tier === 2 && candidates.some((c) => c.tier === 1))
+        ? 'it only tests well — no real-world usage share or votes back it — while at least one candidate with that real-world backing also exists for this task'
+        : 'it\'s a preview-status model and a GA/deprecated model at the same tier is also a candidate — pin a version before you\'d actually rely on a preview SKU';
       assumptions.push(`"${skipped.model.name}" ranked highest before the start_here check but wasn't set as start_here — ${reason}. It's still listed below if it placed in the top 3.`);
     }
     const missingPrice = top.filter((item) => item.monthly_cost_usd == null);
