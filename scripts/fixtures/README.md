@@ -28,3 +28,20 @@ final):
 `plans.json`, `usage-presets.json`, `vendors.json`, `eval/situations.json`, `eval/must-never.json`,
 `tasks.json`, `signals/*` are unchanged since the round-1 refresh (diffed byte-for-byte against
 live `data/` before this round-2 refresh — nothing to update; only `models.json` moved).
+
+Refreshed again (round 3, after the "early" tier-scope fix — item 1 — and the extended claims
+migration — item 3 — were both final):
+- `models.json` — re-copied once more: the tier-scope fix itself doesn't touch data, but the
+  claims migration extension does (artificialanalysis.ai purged as a display-banned host, plus 6
+  explicitly-confirmed stale third-party quotes — scripts/migrate-claims-2026-09.mjs's
+  `EXPLICIT_STALE_CLAIMS`). `node scripts/check-sources.mjs` against the live catalog: 155/155
+  (100%).
+- `eval/known-disagreements.json` — added (new file, round 3, item 5): the exact set of situation
+  ids the engine misses against THIS fixture, each with a one-line reason.
+  `scripts/test-eval-situations.mjs` now asserts the live miss set equals this file's set exactly
+  (a new miss or a newly-passing situation both fail the test) instead of asserting zero misses —
+  so the 40-situation eval is green AND honest, and any real behavior change gets a person's eyes
+  on it via updating this file deliberately, in the same PR. Current set (10 of 40, all traced to
+  the key's own additional evidence families — vendor expert-default rosters, cited enterprise
+  case studies — that this engine deliberately doesn't rank on): S10, S11, S12, S14, S23, S26,
+  S27, S29, S33, S37. must-never stays a hard 15/15.

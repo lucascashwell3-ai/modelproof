@@ -8,6 +8,17 @@
    fix, or a real, honestly-reported disagreement between the engine's rules and the key's
    judgment call.
 
+   The 40-situation set is graded against scripts/fixtures/eval/known-disagreements.json (round
+   3): the EXACT set of situation ids this engine is expected to miss against this frozen
+   fixture, each with its own one-line reason. The test asserts the live miss set equals that
+   known set EXACTLY — a NEW miss (a regression) and a situation that unexpectedly starts PASSING
+   (the fixture drifted, or a real fix landed) both fail the test, on purpose: either one is a
+   real behavior change that deserves a person's eyes on it, not a silent pass/fail flip. When
+   that happens deliberately (a real fix, or a deliberate fixture refresh), update
+   known-disagreements.json in the SAME PR, with a reason for every entry — never to paper over
+   an unreviewed regression. must-never stays a hard 15/15 (round 3) — those are absolute rules
+   the key draws a hard line at, not open questions.
+
    Runs on the frozen fixture (scripts/fixtures/), never on live data/ — see
    scripts/fixtures/README.md. The live catalog's own must_not_include rules are checked
    separately, by scripts/check-live-data.mjs, after every Collect run; a full pass-rate report
@@ -29,6 +40,9 @@ const presets = readJson('usage-presets.json').presets;
 const vendors = readJson('vendors.json').vendors;
 const situations = readJson('eval/situations.json').situations;
 const mustNever = readJson('eval/must-never.json');
+const knownDisagreements = readJson('eval/known-disagreements.json');
+const knownMissIds = new Set(knownDisagreements.disagreements.map((d) => d.id));
+const reasonFor = (id) => knownDisagreements.disagreements.find((d) => d.id === id)?.reason;
 const data = { models, plans, presets, vendors };
 
 // ---------------------------------------------------------------------------------------------
@@ -74,12 +88,30 @@ test('must-never rules only reference real task ids (or "any")', () => {
   for (const r of mustNever) assert.ok(r.task === 'any' || TASK_IDS.includes(r.task), `must-never rule for "${r.model_id}" uses unknown task "${r.task}"`);
 });
 
-test('eval: 40 cold-answer-key situations — pass rate', () => {
+test('eval: known-disagreements.json only names real situation ids', () => {
+  const realIds = new Set(situations.map((s) => s.id));
+  for (const id of knownMissIds) assert.ok(realIds.has(id), `known-disagreements.json names "${id}", which isn't a situation in situations.json`);
+});
+
+test('eval: 40 cold-answer-key situations — pass rate, miss set matches known-disagreements.json exactly', () => {
   const failed = situationResults.filter((r) => !r.ok);
+  const failedIds = new Set(failed.map((r) => r.id));
   const passRate = ((situationResults.length - failed.length) / situationResults.length * 100).toFixed(1);
   console.log(`\n=== situations: ${situationResults.length - failed.length}/${situationResults.length} passed (${passRate}%) ===`);
   for (const r of failed) console.log(`  FAIL ${r.id} (${r.description}) — start_here=${r.startHere} — ${r.problems.join('; ')}`);
-  assert.equal(failed.length, 0, `\n${failed.map((r) => `${r.id}: ${r.problems.join('; ')}`).join('\n')}`);
+
+  // A NEW miss (a regression) is never acceptable silently.
+  const newMisses = failed.filter((r) => !knownMissIds.has(r.id));
+  // A known miss that unexpectedly starts PASSING is a real behavior change too (a fix landed, or
+  // the fixture drifted) — it must be reviewed and known-disagreements.json updated deliberately,
+  // never silently absorbed as a free win.
+  const newlyPassing = [...knownMissIds].filter((id) => !failedIds.has(id));
+
+  const problems = [
+    ...newMisses.map((r) => `NEW MISS (not in known-disagreements.json): ${r.id} — ${r.problems.join('; ')} — either fix the engine, or add this to known-disagreements.json with a reason, deliberately`),
+    ...newlyPassing.map((id) => `NEWLY PASSING (still listed in known-disagreements.json as "${reasonFor(id)}"): ${id} — remove it from known-disagreements.json in this same PR, deliberately, to record the improvement`),
+  ];
+  assert.equal(problems.length, 0, `\n${problems.join('\n')}`);
 });
 
 // ---------------------------------------------------------------------------------------------
