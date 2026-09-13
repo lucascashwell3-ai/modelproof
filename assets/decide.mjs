@@ -174,10 +174,13 @@
                 qualifying candidate at all -> falls back to cost-primary among EVERY candidate.
                 Non-qualifying candidates are still returned, ranked after by the order above,
                 never dropped.
-   'cheapest' never demotes a preview model at start_here (this stance stays cost-primary,
-   period); every other stance keeps a status:'preview' item from outranking a GA/deprecated one
-   in the SAME final tier, and a preview candidate is fully excluded from an enterprise-style
-   input's candidate pool at rule 3 below (isEnterpriseInput), not merely demoted.
+   'cheapest' never demotes a preview model, OR an "early"/"tests-only" item, at start_here (this
+   stance stays cost-primary, period, fixed 2026-09 round 4 for the early/tests-only case — see
+   isDisqualifiedFromStartHere); every other stance keeps a status:'preview' item from outranking a
+   GA/deprecated one in the SAME final tier, and keeps an "early"/"tests-only" item from starting
+   over a same-task T1 candidate. A preview candidate is fully excluded from an enterprise-style
+   input's candidate pool at rule 3 below (isEnterpriseInput) regardless of stance, not merely
+   demoted.
 
    Rule order before any of the above:
    1. Reachability — drop any model the caller cannot actually reach with `have` (unchanged from
@@ -193,10 +196,11 @@
       empties a task's whole candidate pool.
    Only the top 3 survivors (after tiering + the chosen stance's order) are returned; item 0 is
    always start_here: true, UNLESS the top-ranked item is disqualified (see
-   isDisqualifiedFromStartHere): an "early" or (non-thin only) "tests-only" item never starts
-   while a T1 item is also a candidate, and (except under 'cheapest') a preview item never starts
-   while a same-tier GA/deprecated item is also a candidate. Disqualification only ever changes
-   which item gets start_here — it never drops a model from the returned shortlist.
+   isDisqualifiedFromStartHere): except under stance 'cheapest' (cost-primary, full stop — see
+   rule 4 above), an "early" or (non-thin only) "tests-only" item never starts while a T1 item is
+   also a candidate, and a preview item never starts while a same-tier GA/deprecated item is also
+   a candidate. Disqualification only ever changes which item gets start_here — it never drops a
+   model from the returned shortlist.
 
    Kept unchanged from v1 (still exactly what the file header used to say): reachability rule 1's
    direct_api carve-out, the data rule's unknown-country handling, isEnterpriseInput's heuristic,
@@ -731,17 +735,28 @@ export function filterCandidates(taskId, input, data) {
 // -----------------------------------------------------------------------------------------
 
 /** An "early" item (any scheme — tier 2, tier_name 'early') or a non-thin "tests-only" item never
- * gets start_here while a T1 "agreed" item is also a candidate for this task: neither "too new to
- * say" nor a benchmark-only edge should buy the top spot away from a pick real usage AND/OR votes
- * also back. A status:'preview' item never gets start_here (except under stance 'cheapest', which
- * stays cost-primary) while a GA/deprecated item shares its SAME final tier — a reader who can't
- * pin a preview model's version shouldn't be steered to start there when an equally-tiered GA
- * option exists. Checked against the FULL candidate pool for this task (not just the top 3), same
- * reasoning both times: a same-tier alternative that later ranked lower still has to count as "a
- * real alternative existed." */
+ * gets start_here while a T1 "agreed" item is also a candidate for this task (except under stance
+ * 'cheapest', which stays cost-primary — see below): neither "too new to say" nor a benchmark-only
+ * edge should buy the top spot away from a pick real usage AND/OR votes also back. A
+ * status:'preview' item never gets start_here (also except under 'cheapest') while a GA/
+ * deprecated item shares its SAME final tier — a reader who can't pin a preview model's version
+ * shouldn't be steered to start there when an equally-tiered GA option exists. Checked against the
+ * FULL candidate pool for this task (not just the top 3), same reasoning both times: a same-tier
+ * alternative that later ranked lower still has to count as "a real alternative existed."
+ *
+ * Fixed 2026-09, round 4: the early/tests-only-vs-T1 check used to fire under EVERY stance,
+ * including 'cheapest' — the exact same bug the preview exemption already existed to avoid.
+ * 'cheapest' is cost-primary, full stop (rule 4 in the file header): if the actual cheapest
+ * qualifying candidate happens to be tier 2 "early" or tier 3 "tests-only", 'cheapest' must still
+ * recommend it, even when a pricier T1 candidate also exists — e.g. coding: DeepSeek V4.1 Flash
+ * ($1.23/mo, T2 "early") must win over Gemini 3.8 Flash ($7.13/mo, T4) once a T1 candidate no
+ * longer disqualifies it. The label itself is untouched either way — only start_here eligibility
+ * changes. */
 export function isDisqualifiedFromStartHere(item, allCandidates, stance) {
-  const anyT1 = (allCandidates || []).some((c) => c !== item && c.tier === 1);
-  if (anyT1 && (item.tier_name === 'early' || (!item.thin_task && item.tier_name === 'tests-only'))) return true;
+  if (stance !== 'cheapest') {
+    const anyT1 = (allCandidates || []).some((c) => c !== item && c.tier === 1);
+    if (anyT1 && (item.tier_name === 'early' || (!item.thin_task && item.tier_name === 'tests-only'))) return true;
+  }
   if (item.model.status === 'preview' && stance !== 'cheapest') {
     const gaSameTier = (allCandidates || []).some((c) => c !== item && c.tier === item.tier && c.model.status !== 'preview');
     if (gaSameTier) return true;

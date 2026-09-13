@@ -111,9 +111,11 @@ test(`full grid: ${TASK_IDS.length} tasks x ${HAVE_OPTIONS.length} have x ${STAN
             }
 
             // (f) invariant (d) — "early" or (non-thin only) "tests-only" is never start_here
-            //     while a T1 candidate exists for this (task, access) combination.
+            //     while a T1 candidate exists for this (task, access) combination — EXCEPT under
+            //     stance 'cheapest', which stays cost-primary, full stop (round 4 fix, same
+            //     exemption the preview check already had).
             const startHere = shortlist.find((x) => x.start_here);
-            if (startHere && (startHere.tier_name === 'early' || (!startHere.thin_task && startHere.tier_name === 'tests-only'))) {
+            if (stance !== 'cheapest' && startHere && (startHere.tier_name === 'early' || (!startHere.thin_task && startHere.tier_name === 'tests-only'))) {
               const { candidates } = filterCandidates(taskId, input, data);
               if (candidates.some((c) => c.tier === 1)) {
                 failures.push(`${label}: start_here "${startHere.id}" is tier_name "${startHere.tier_name}" but a tier-1 candidate also exists`);
@@ -653,11 +655,12 @@ test("stance 'balanced': no priced non-\"early\" candidate falls back to plain '
 // ---------------------------------------------------------------------------------------------
 // start_here disqualifiers.
 // ---------------------------------------------------------------------------------------------
-test('isDisqualifiedFromStartHere: a non-thin "tests-only" item is disqualified while a T1 item is also a candidate', () => {
+test('isDisqualifiedFromStartHere: a non-thin "tests-only" item is disqualified while a T1 item is also a candidate, except under "cheapest"', () => {
   const t3 = { tier: 3, tier_name: 'tests-only', thin_task: false, model: { status: 'ga' } };
   const t1 = { tier: 1, tier_name: 'agreed', thin_task: false, model: { status: 'ga' } };
   assert.equal(isDisqualifiedFromStartHere(t3, [t3, t1], 'best'), true);
   assert.equal(isDisqualifiedFromStartHere(t3, [t3], 'best'), false, 'no T1 rival -> not disqualified');
+  assert.equal(isDisqualifiedFromStartHere(t3, [t3, t1], 'cheapest'), false, 'round 4: "cheapest" stays cost-primary, exactly like the preview exemption');
 });
 
 test('isDisqualifiedFromStartHere: "tests-only"-vs-T1 rule never applies on a thin task', () => {
@@ -666,15 +669,21 @@ test('isDisqualifiedFromStartHere: "tests-only"-vs-T1 rule never applies on a th
   assert.equal(isDisqualifiedFromStartHere(t3, [t3, t1], 'best'), false);
 });
 
-test('isDisqualifiedFromStartHere: "early" is disqualified while a T1 item exists, in EVERY scheme (thin or not)', () => {
+test('isDisqualifiedFromStartHere: "early" is disqualified while a T1 item exists, in EVERY scheme (thin or not), except under "cheapest"', () => {
   const early = { tier: 2, tier_name: 'early', thin_task: false, model: { status: 'ga' } };
   const t1 = { tier: 1, tier_name: 'agreed', thin_task: false, model: { status: 'ga' } };
   assert.equal(isDisqualifiedFromStartHere(early, [early, t1], 'best'), true);
   assert.equal(isDisqualifiedFromStartHere(early, [early], 'best'), false, 'no T1 rival -> not disqualified');
+  // Round 4 fix: 'cheapest' is cost-primary, full stop — the exact same exemption the preview
+  // check already had. Real bug this fixes: coding/cheapest started with Gemini 3.8 Flash
+  // ($7.13/mo, T4) while DeepSeek V4.1 Flash ($1.23/mo, T2 "early") sat second, purely because a
+  // T1 candidate existed elsewhere in the pool.
+  assert.equal(isDisqualifiedFromStartHere(early, [early, t1], 'cheapest'), false, "round 4: 'cheapest' stays cost-primary — an early item must not be blocked from start_here here");
 
   const earlyThin = { tier: 2, tier_name: 'early', thin_task: true, model: { status: 'ga' } };
   const t1Thin = { tier: 1, tier_name: 'human-agreed', thin_task: true, model: { status: 'ga' } };
   assert.equal(isDisqualifiedFromStartHere(earlyThin, [earlyThin, t1Thin], 'best'), true, 'unlike "tests-only", the early-vs-T1 rule DOES apply on thin tasks');
+  assert.equal(isDisqualifiedFromStartHere(earlyThin, [earlyThin, t1Thin], 'cheapest'), false, 'the "cheapest" exemption applies on thin tasks too');
 });
 
 test('isDisqualifiedFromStartHere: preview never starts over a same-tier GA/deprecated item, except under "cheapest"', () => {
@@ -690,6 +699,17 @@ test('decide(): enterprise-style input excludes preview entirely at rule 3, befo
   const preview = fixtureModel({ id: 'p', status: 'preview', standings: { coding: { measured: [], chosen: { rank: 1, share: 50, n_models: 5, url: 'u' }, preferred: null } } });
   const out = decide({ tasks: ['coding'], have: ['any'], stance: 'balanced', volume: 'typical', dataRule: {}, enterprise: true }, { models: [preview], plans, presets, vendors });
   assert.equal(out.tasks.coding.shortlist.length, 0);
+});
+
+// Round 4 regression (real fixture): coding/cheapest used to start with a pricier, higher-tier
+// candidate purely because the actual cheapest qualifying candidate was tier 2 "early" and a T1
+// candidate also existed elsewhere in the pool — 'cheapest' must never let that block start_here.
+test('decide(): "cheapest" starts with the cheapest qualifying candidate even when it is "early" and a T1 candidate also exists (real fixture: coding)', () => {
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'cheapest', volume: 'typical', dataRule: {} }, data);
+  const shortlist = out.tasks.coding.shortlist;
+  const startHere = shortlist.find((x) => x.start_here);
+  const cheapestQualifying = [...shortlist].filter((x) => typeof x.monthly_cost_usd === 'number').sort((a, b) => a.monthly_cost_usd - b.monthly_cost_usd)[0];
+  assert.equal(startHere?.id, cheapestQualifying?.id, `start_here should be the cheapest item in the shortlist regardless of tier_name; got start_here="${startHere?.id}" ($${startHere?.monthly_cost_usd}, ${startHere?.tier_name}) vs cheapest="${cheapestQualifying?.id}" ($${cheapestQualifying?.monthly_cost_usd}, ${cheapestQualifying?.tier_name})`);
 });
 
 // ---------------------------------------------------------------------------------------------
