@@ -57,19 +57,26 @@ export function bannedPhraseIn(text) {
 }
 export const wordCount = (s) => String(s || '').trim().split(/\s+/).filter(Boolean).length;
 
-// A claim citing one of these hosts can never stay verified: the page is a live feed this
-// codebase now re-derives every day into model.standings (scripts/derive-standings.mjs) — its
-// quoted numbers change daily, and arena.ai no longer even server-renders its table for
-// scripts/check-sources.mjs to read. 2026-09 migration (scripts/migrate-claims-2026-09.mjs)
-// removed every existing claim citing one of these; this is the permanent gate that stops a new
-// one from being added back in (by apply-judgment.mjs's pre-flight validator, and here, so any
-// other path that writes data/models.json is caught too). The SAME evidence is already the dated,
-// linked standings.chosen/standings.preferred record — a claim citing these hosts was only ever
-// restating that, never independent evidence worth a claim's own citation.
+// A claim citing one of these hosts can never stay verified, for one of two reasons:
+//   - live feed: the page is one this codebase now re-derives every day into model.standings
+//     (scripts/derive-standings.mjs) — its quoted numbers change daily, and arena.ai no longer
+//     even server-renders its table for scripts/check-sources.mjs to read. The SAME evidence is
+//     already the dated, linked standings.chosen/standings.preferred record — a claim citing
+//     these hosts was only ever restating that, never independent evidence worth its own citation.
+//   - display-banned: artificialanalysis.ai's own terms ban DISPLAYING its content outside a paid
+//     tier (data/testers.json's "artificial-analysis" entry: verdict "signal-only", notes
+//     "Display-BANNED stands" — a claim's `sentence`/`quote` displaying its numbers is exactly
+//     the redistribution its terms reserve; added 2026-09, round 3, after check-sources.mjs also
+//     kept failing 4 of its claims for content drift, on top of the licence problem).
+// 2026-09 migration (scripts/migrate-claims-2026-09.mjs) removed every existing claim citing one
+// of these; this is the permanent gate that stops a new one from being added back in (by
+// apply-judgment.mjs's pre-flight validator, and here, so any other path that writes
+// data/models.json is caught too).
 export const LIVE_FEED_URL_PATTERNS = [
   /^https:\/\/openrouter\.ai\/api\/frontend\//,
   /^https:\/\/openrouter\.ai\/rankings/,
   /^https:\/\/arena\.ai\//,
+  /^https:\/\/(?:www\.)?artificialanalysis\.ai\//,
 ];
 export function citesLiveFeed(url) {
   return LIVE_FEED_URL_PATTERNS.some((re) => re.test(String(url || '')));

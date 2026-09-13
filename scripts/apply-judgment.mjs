@@ -136,12 +136,14 @@ export function validateJudgment(j) {
         if (hit) errs.push(`${cl}.sentence uses a banned relative phrase (/${hit}/) — write an absolute, dated fact instead`);
       }
       if (!c.source_url || !/^https?:\/\//i.test(c.source_url)) errs.push(`${cl}.source_url must be http(s)`);
-      // 2026-09 migration (scripts/migrate-claims-2026-09.mjs) removed every claim citing
-      // OpenRouter's rankings API or arena.ai — both are live feeds this codebase already
-      // re-derives daily into model.standings, so their numbers change every day and a claim
-      // quoting them can never stay verified by scripts/check-sources.mjs. Reject a new one here,
-      // at submission time, so the Judge routine can't reintroduce what that migration removed.
-      else if (citesLiveFeed(c.source_url)) errs.push(`${cl}.source_url cites a live feed (OpenRouter rankings/arena.ai) that changes daily and can never stay verified — cite the standings record instead (model.standings[taskId] already carries this exact evidence, dated and linked), or a stable page`);
+      // 2026-09 migrations (scripts/migrate-claims-2026-09.mjs) removed every claim citing
+      // OpenRouter's rankings API, arena.ai, or artificialanalysis.ai — the first two are live
+      // feeds this codebase already re-derives daily into model.standings, so a claim quoting
+      // them can never stay verified by scripts/check-sources.mjs; artificialanalysis.ai's own
+      // terms ban displaying its content outside a paid tier (data/testers.json's own
+      // "Display-BANNED" ruling). Reject a new one here, at submission time, so the Judge routine
+      // can't reintroduce what those migrations removed.
+      else if (citesLiveFeed(c.source_url)) errs.push(`${cl}.source_url cites a live feed or a display-banned source (OpenRouter rankings/arena.ai/artificialanalysis.ai) that can never stay verified — cite the standings record instead (model.standings[taskId] already carries the OpenRouter/arena.ai evidence, dated and linked), or a stable, display-permitted page`);
       if (!CLAIM_TIERS.includes(c.tier)) errs.push(`${cl}.tier must be one of ${CLAIM_TIERS.join(', ')}`);
       if (!c.date) errs.push(`${cl}.date is required`);
       if (!c.quote || typeof c.quote !== 'string') errs.push(`${cl}.quote is required (verbatim from source_url)`);
