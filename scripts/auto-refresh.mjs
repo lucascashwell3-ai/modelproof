@@ -92,10 +92,16 @@ const PROVIDER_PREFIX = /^(?:~?[a-z0-9_.-]+\/|(?:anthropic|openai|google|gemini|
 // literal first word of a real catalog id ("gemini-3-1-pro", "deepseek-v4-pro") — stripping
 // "gemini-"/"deepseek-" here would corrupt those ids' own canonicalKey. Only tokens confirmed
 // (checked against every id in data/models.json, 2026-09-07) to never start a real catalog id are
-// listed. "qwen" is deliberately excluded too — "qwen-turbo" is a real catalog id.
-const HYPHEN_VENDOR_PREFIX = /^(?:anthropic|google|openai|xai|x-ai|meta-llama|meta|mistralai|bedrock|vertex_ai)-/i;
-/** Strip a trailing snapshot/date suffix: "-20260723", "@20260723". */
-const DATE_SUFFIX = /[-@]\d{8}$/;
+// listed. "qwen" is deliberately excluded too — "qwen-turbo" is a real catalog id. "thinky" added
+// 2026-09 fix round (Epoch's own shorthand for Thinking Machines Lab, e.g. "thinky-inkling") —
+// checked against every id in data/models.json the same way; no catalog id starts with "thinky".
+const HYPHEN_VENDOR_PREFIX = /^(?:anthropic|google|openai|xai|x-ai|meta-llama|meta|mistralai|bedrock|vertex_ai|thinky)-/i;
+/** Strip a trailing snapshot/date suffix: "-20260723", "@20260723", or the ISO-hyphenated form
+ * OpenRouter's rankings/models feed uses for some permaslugs ("-2025-04-16") — added 2026-09 fix
+ * round: "openai/o4-mini-2025-04-16" was silently failing to match catalog id "o4-mini" because
+ * only the contiguous-8-digit form was stripped. No real catalog id ends in a full ISO calendar
+ * date, so this is safe to strip unconditionally, same as the contiguous form already was. */
+const DATE_SUFFIX = /[-@]\d{8}$|[-@]\d{4}-\d{2}-\d{2}$/;
 
 export const stripProviderPrefix = (s) => {
   const t = String(s || '').trim();

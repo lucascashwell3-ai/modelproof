@@ -283,6 +283,15 @@ test('canonicalKey strips provider prefixes, date suffixes, and separators', () 
   assert.equal(canonicalKey('deepseek/deepseek-v4-pro'), canonicalKey('deepseek-v4-pro'));
 });
 
+// 2026-09 fix round: OpenRouter's rankings/models feed dates some permaslugs with a full ISO
+// calendar date ("openai/o4-mini-2025-04-16") instead of the contiguous 8-digit form
+// ("anthropic/claude-opus-5-20260723") — both must strip down to the same bare id, or a model's
+// real usage silently reads as null forever (o4-mini's exact bug).
+test('canonicalKey also strips the ISO-hyphenated date form some feeds use ("-2025-04-16")', () => {
+  assert.equal(canonicalKey('openai/o4-mini-2025-04-16'), canonicalKey('o4-mini'));
+  assert.equal(canonicalKey('openai/o4-mini-high-2025-04-16'), canonicalKey('o4-mini-high'));
+});
+
 // --- isKnownCandidate: point releases are NEW models, real aliases still dedupe ----------------
 // Bug (2026-09-06, verified live): isKnownCandidate compared fully-stripped canonicalKey values
 // with substring containment. canonicalKey deletes every separator, so "claude-fable-5" ->
@@ -751,6 +760,9 @@ test('stripProviderPrefix strips a hyphen-joined vendor prefix ARC Prize actuall
   assert.equal(stripProviderPrefix('google-gemini-3-7-flash-high'), 'gemini-3-7-flash-high');
   assert.equal(stripProviderPrefix('x-ai-grok-4-6'), 'grok-4-6');
   assert.equal(stripProviderPrefix('meta-muse-spark-1-2'), 'muse-spark-1-2');
+  // 2026-09 fix round: Epoch's own shorthand for Thinking Machines Lab — no catalog id starts
+  // with "thinky", checked against the whole catalog before adding this.
+  assert.equal(stripProviderPrefix('thinky-inkling'), 'inkling');
 });
 test('stripProviderPrefix never strips a vendor word that is also a real catalog id\'s own first word', () => {
   // "gemini"/"deepseek"/"qwen" are both vendor aliases AND the literal first word of a real
@@ -777,6 +789,41 @@ test('effortDateSuffixCandidates includes every intermediate peel, starting with
   const cands = effortDateSuffixCandidates('claude-fable-5-1-max-effort');
   assert.ok(cands.includes('claude-fable-5-1-max-effort'));
   assert.ok(cands.includes('claude-fable-5-1'));
+});
+
+// 2026-09 fix round: a tester row can carry "no reasoning-effort setting reported" (none/unknown),
+// a vendor-tier noise word (minimal/promax), or a context-window suffix (16k/32k/59k/128k) — all
+// of these were previously left unstripped, silently dropping real coverage (see the PR notes for
+// the exact standings-unmapped.md names this fixes: claude-opus-5_unknown, gpt-5.6-sol_none,
+// claude-haiku-4-5-20251001_32K, etc. — every example below is one of those real names, slugged).
+test('stripEffortDateSuffix: none/unknown/minimal/promax and context-window (…k) suffixes are noise, not part of the id', () => {
+  assert.equal(stripEffortDateSuffix('claude-opus-5-unknown'), 'claude-opus-5');
+  assert.equal(stripEffortDateSuffix('gpt-5-6-sol-none'), 'gpt-5-6-sol');
+  assert.equal(stripEffortDateSuffix('deepseek-v4-flash-none'), 'deepseek-v4-flash');
+  assert.equal(stripEffortDateSuffix('grok-4-5-unknown'), 'grok-4-5');
+  assert.equal(stripEffortDateSuffix('some-model-minimal'), 'some-model');
+  assert.equal(stripEffortDateSuffix('some-model-promax'), 'some-model');
+  assert.equal(stripEffortDateSuffix('claude-haiku-4-5-20251001-32k'), 'claude-haiku-4-5', 'both the date suffix and the context-size suffix peel off, in either order');
+  assert.equal(stripEffortDateSuffix('some-model-16k'), 'some-model');
+  assert.equal(stripEffortDateSuffix('some-model-128k'), 'some-model');
+});
+
+// This is candidate GENERATION only (effortDateSuffixCandidates never asserts a real id exists) —
+// the actual safety comes from matchAlias() requiring an EXACT key match, tested here end to end
+// against real fixture models so a peeled candidate that happens not to be a real catalog id
+// simply matches nothing, and a genuinely different version is never silently conflated with one
+// that merely shares a prefix.
+test('matchAlias safety: a fully-peeled candidate that names a DIFFERENT real version never matches the wrong one', () => {
+  const models = JSON.parse(readFileSync(new URL('./fixtures/models.json', import.meta.url))).models;
+  const aliases = JSON.parse(readFileSync(new URL('./model-aliases.json', import.meta.url)));
+  const peeledButUnreal = [
+    stripEffortDateSuffix('claude-opus-4-5-20251101'), // NOT claude-opus-5
+    stripEffortDateSuffix('gpt-5-2025-08-07'), // NOT gpt-5-5
+  ];
+  for (const cand of peeledButUnreal) assert.equal(matchAlias(cand, models, aliases), null, `"${cand}" must not match any catalog model`);
+  // deepseek-v4-flash-0731 is its OWN catalog id (a 4-digit date, not an 8-digit run/snapshot
+  // date) — the date-suffix regex only strips 8-digit dates, so this must survive unstripped.
+  assert.equal(stripEffortDateSuffix('deepseek-v4-flash-0731'), 'deepseek-v4-flash-0731');
 });
 
 test('namingProblems: a clean record has none', () => {

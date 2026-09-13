@@ -134,6 +134,16 @@ const EFFORT_DATE_SUFFIX_RE = [
   /-thinking$/,
   /-preview$/,
   /_(low|medium|high|xhigh|extra high|max)$/,
+  // 2026-09 fix round: a tester's row can also carry "no reasoning-effort setting reported" or a
+  // vendor-tier noise word, or a context-window suffix — all trailing, all noise, none of them
+  // part of a real catalog id. Every one of these is checked against a real, already-slugged
+  // example row before being added (see the fix-round PR notes); this is candidate GENERATION
+  // only — matchAlias() still requires an EXACT key match against a real catalog id/name/alias,
+  // so a peeled string that happens not to be a real id just never matches anything (no risk of
+  // silently mapping a different version — see the "never map a different version" rule in the
+  // fix-round notes: "-20251101"-style date peeling already existed and is unaffected by this).
+  /-(none|unknown|minimal|promax)$/,
+  /-\d+k$/, // trailing context-window noise a tester sometimes appends: -16k, -32k, -59k, -128k
 ];
 
 /** Every stage of peeling a slugged string down through EFFORT_DATE_SUFFIX_RE, starting with the
