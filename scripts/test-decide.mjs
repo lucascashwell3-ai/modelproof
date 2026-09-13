@@ -5,7 +5,7 @@ import {
   decide, filterCandidates, isReachable, vendorCountry, WHY_FIELDS, VENDOR_KEY_DISPLAY, STANCES,
   basisFromClaims, isEnterpriseInput, isDisqualifiedFromStartHere, topClaimSentence, rankByStance,
   standardCompare, withinTierCompare, nearTopThreshold, buildEvidenceIndex, classifyModelForTask,
-  baseTierNumber, hasNegativeClaim, MAX_TIER, THIN_MEASURED_FLOOR,
+  baseTierNumber, hasNegativeClaim, MAX_TIER, THIN_RULE, CHEAPEST_MAX_TIER, schemeFor,
 } from '../assets/decide.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
 
@@ -110,13 +110,13 @@ test(`full grid: ${TASK_IDS.length} tasks x ${HAVE_OPTIONS.length} have x ${STAN
               }
             }
 
-            // (f) invariant (d) — T2 "tests-only" (non-thin only) is never start_here while a T1
-            //     candidate exists for this (task, access) combination.
+            // (f) invariant (d) — "early" or (non-thin only) "tests-only" is never start_here
+            //     while a T1 candidate exists for this (task, access) combination.
             const startHere = shortlist.find((x) => x.start_here);
-            if (startHere && !startHere.thin_task && startHere.tier === 2) {
+            if (startHere && (startHere.tier_name === 'early' || (!startHere.thin_task && startHere.tier_name === 'tests-only'))) {
               const { candidates } = filterCandidates(taskId, input, data);
               if (candidates.some((c) => c.tier === 1)) {
-                failures.push(`${label}: start_here "${startHere.id}" is tier 2 "tests-only" but a tier-1 candidate also exists`);
+                failures.push(`${label}: start_here "${startHere.id}" is tier_name "${startHere.tier_name}" but a tier-1 candidate also exists`);
               }
             }
           }
@@ -216,27 +216,42 @@ test('isEnterpriseInput: single named vendor needs BOTH the vendor and heavy vol
 });
 
 // ---------------------------------------------------------------------------------------------
-// nearTopThreshold — the exact formula: max(10, ceil(0.25 * of)).
+// nearTopThreshold — the exact formula: max(3, min(10, ceil(of / 4))). Fixed 2026-09, round 2 —
+// the old max(10, ceil(0.25*of)) made every of<=10 trivially "near top" (a frontend chosen
+// position of 7 of 9 was wrongly "near top").
 // ---------------------------------------------------------------------------------------------
-test('nearTopThreshold: max(10, ceil(0.25 * of))', () => {
-  assert.equal(nearTopThreshold(0), 10);
-  assert.equal(nearTopThreshold(4), 10);
-  assert.equal(nearTopThreshold(40), 10);
-  assert.equal(nearTopThreshold(41), 11);
-  assert.equal(nearTopThreshold(56), 14);
+test('nearTopThreshold: max(3, min(10, ceil(of / 4)))', () => {
+  assert.equal(nearTopThreshold(0), 3);
+  assert.equal(nearTopThreshold(1), 3);
+  assert.equal(nearTopThreshold(9), 3, 'ceil(9/4)=3 -> the field is small enough that top-quartile is still only 3, not the old trivial 10');
+  assert.equal(nearTopThreshold(12), 3);
+  assert.equal(nearTopThreshold(13), 4);
+  assert.equal(nearTopThreshold(36), 9);
+  assert.equal(nearTopThreshold(37), 10);
+  assert.equal(nearTopThreshold(56), 10, 'caps at 10 once a quarter of `of` would exceed it');
 });
 
 // ---------------------------------------------------------------------------------------------
 // Task thinness — chat/frontend/vision/bulk are thin (0 measured each in the real catalog);
-// agents (12) and every other task are not. THIN_MEASURED_FLOOR is 8.
+// agents (12) and every other task are not. THIN_RULE is parametric; the shipped default is
+// { minTested: 8, minShareOfCatalog: 0 }.
 // ---------------------------------------------------------------------------------------------
-test('task thinness: chat/frontend/vision/bulk are thin, every other task is not (real catalog)', () => {
-  assert.equal(THIN_MEASURED_FLOOR, 8);
+test('task thinness: chat/frontend/vision/bulk are thin, every other task is not (real catalog, default THIN_RULE)', () => {
+  assert.deepEqual(THIN_RULE, { minTested: 8, minShareOfCatalog: 0 });
   const thin = ['chat', 'frontend', 'vision', 'bulk'];
   for (const taskId of TASK_IDS) {
     const index = buildEvidenceIndex(taskId, models);
     assert.equal(index.thin, thin.includes(taskId), `task "${taskId}": thin=${index.thin}, measured.size=${index.measured.size}`);
   }
+});
+
+test('buildEvidenceIndex: a minShareOfCatalog override can make a normally-non-thin task thin', () => {
+  // agents has 12 measured models in the real catalog (>= the default minTested of 8, so not thin
+  // by default) — a strict enough share requirement makes it thin anyway.
+  const normal = buildEvidenceIndex('agents', models);
+  assert.equal(normal.thin, false);
+  const strict = buildEvidenceIndex('agents', models, { minTested: 8, minShareOfCatalog: 0.5 });
+  assert.equal(strict.thin, true, '12 measured models is well under 50% of a ~67-model catalog');
 });
 
 test('buildEvidenceIndex: vision has no chosen kind at all in the catalog; bulk has no preferred kind at all', () => {
@@ -248,6 +263,12 @@ test('buildEvidenceIndex: vision has no chosen kind at all in the catalog; bulk 
   assert.equal(bulk.preferred.size, 0);
   assert.ok(bulk.chosen.size > 0);
   assert.deepEqual([...bulk.humanKinds], ['chosen']);
+});
+
+test('schemeFor: nonThin / thinDual / thinSingle from an evidence index', () => {
+  assert.equal(schemeFor({ thin: false, humanKinds: new Set() }), 'nonThin');
+  assert.equal(schemeFor({ thin: true, humanKinds: new Set(['chosen', 'preferred']) }), 'thinDual');
+  assert.equal(schemeFor({ thin: true, humanKinds: new Set(['chosen']) }), 'thinSingle');
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -305,13 +326,10 @@ test('preferred position: re-positioned among just catalog models on the board, 
 // Tiers — the exact waterfall from the file header, on synthetic (task, catalog) pairs so each
 // combination can be checked in isolation, independent of the real catalog's own mix.
 //
-// nearTopThreshold floors at 10 (max(10, ceil(0.25*of))), so a tiny synthetic catalog makes
-// EVERY position trivially "near top" (of <= 13 -> threshold 10 -> nothing can be "not near
-// top"). Every test below that needs a genuine "not near top" case uses a background of 15
-// mediocre filler models per evidence kind under test, pushing `of` to 16 and the worst position
-// (16) past the threshold (10) — see FILLER_N below. A test that only needs "near top" cases (or
-// needs the task to merely clear THIN_MEASURED_FLOOR) can use a small catalog directly; near top
-// is easy to satisfy either way.
+// nearTopThreshold caps at 10 and floors at 3, so a background of 15 mediocre filler models per
+// evidence kind under test (pushing `of` to 16, threshold 4) is enough to create a genuine "not
+// near top" case (position 16 > 4) without also accidentally putting a "near top" subject (which
+// always lands at position 1 in these fixtures) past the threshold.
 // ---------------------------------------------------------------------------------------------
 const FILLER_N = 15;
 /** Mediocre background rows for one evidence kind, distinct and worse than any "near top" subject
@@ -369,46 +387,59 @@ test('tier T1 "agreed": measured near top AND a human kind near top', () => {
   assert.equal(cls.label, null);
 });
 
-test('tier T2 "tests-only": measured near top, no human kind near top — carries the spec\'s exact label', () => {
+test('tier T3 "tests-only": measured near top, no human kind near top, NOT new — carries the spec\'s exact label', () => {
   const catalog = [...fillerModels(['measured']), nearTopSubject('x', { measured: true })];
   const index = buildEvidenceIndex('t', catalog);
   const cls = classifyModelForTask(catalog.find((m) => m.id === 'x'), 't', index);
-  assert.equal(cls.tier, 2);
+  assert.equal(cls.tier, 3);
   assert.equal(cls.tier_name, 'tests-only');
   assert.equal(cls.label, 'strong on tests, low real-world use');
 });
 
-test('tier T3 "tested, people-backed": measured present but not near top, AND a human kind near top', () => {
+test('tier T2 "early": measured near top, no human kind near top, adoption "new" — its own tier, not T1\'s tail', () => {
+  const catalog = [...fillerModels(['measured']), nearTopSubject('x', { measured: true, adoption: 'new' })];
+  const index = buildEvidenceIndex('t', catalog);
+  const cls = classifyModelForTask(catalog.find((m) => m.id === 'x'), 't', index);
+  assert.equal(cls.tier, 2);
+  assert.equal(cls.tier_name, 'early');
+  assert.equal(cls.label, 'early: too new for usage data');
+});
+
+test('tier T4 "tested, people-backed": measured present but not near top, AND a human kind near top', () => {
   const catalog = [...fillerModels(['measured']), notNearTopSubject('x', { measured: true, preferred: true })];
   const index = buildEvidenceIndex('t', catalog);
   const cls = classifyModelForTask(catalog.find((m) => m.id === 'x'), 't', index);
-  assert.equal(cls.tier, 3);
+  assert.equal(cls.tier, 4);
   assert.equal(cls.tier_name, 'tested, people-backed');
 });
 
-test('tier T4 "tested": measured present, nothing near top', () => {
+test('tier T5 "tested": measured present, nothing near top', () => {
   const catalog = [...fillerModels(['measured']), notNearTopSubject('x', { measured: true })];
   const index = buildEvidenceIndex('t', catalog);
   const cls = classifyModelForTask(catalog.find((m) => m.id === 'x'), 't', index);
-  assert.equal(cls.tier, 4);
+  assert.equal(cls.tier, 5);
   assert.equal(cls.tier_name, 'tested');
 });
 
-test('tier T5 "not independently tested": measured absent, a human kind near top — carries the spec\'s exact label', () => {
+test('tier T6 "not independently tested": measured absent, a human kind near top — carries the spec\'s exact label', () => {
   const catalog = [...fillerModels(['measured']), nearTopSubject('x', { chosen: true })];
   const index = buildEvidenceIndex('t', catalog);
   const cls = classifyModelForTask(catalog.find((m) => m.id === 'x'), 't', index);
-  assert.equal(cls.tier, 5);
+  assert.equal(cls.tier, 6);
   assert.equal(cls.tier_name, 'not independently tested');
   assert.equal(cls.label, 'not independently tested');
 });
 
-test('tier T5 extension: measured absent, evidenced but no human kind near top either — still T5, sorts to the tail via kindsNearTopCount', () => {
+test('tier T6 extension: measured absent, evidenced but no human kind near top either — still T6, sorts to the tail via kindsNearTopCount', () => {
   const catalog = [...fillerModels(['measured', 'chosen']), notNearTopSubject('x', { chosen: true })];
   const index = buildEvidenceIndex('t', catalog);
   const cls = classifyModelForTask(catalog.find((m) => m.id === 'x'), 't', index);
-  assert.equal(cls.tier, 5);
+  assert.equal(cls.tier, 6);
   assert.equal(cls.kindsNearTopCount, 0);
+});
+
+test('MAX_TIER: 6 non-thin, 4 thin-dual, 3 thin-single (early inserted as its own tier in every scheme)', () => {
+  assert.deepEqual(MAX_TIER, { nonThin: 6, thinDual: 4, thinSingle: 3 });
 });
 
 test('evidence gate: a model with no measured/chosen/preferred record at all is not evidenced (excluded from candidacy)', () => {
@@ -426,14 +457,15 @@ test('decide(): a model with zero evidence anywhere never appears in the shortli
 });
 
 // ---------------------------------------------------------------------------------------------
-// Thin-task tiers. THIN_MEASURED_FLOOR is 8 — none of these catalogs ever add a measured row, so
-// every one of them is thin regardless of size.
+// Thin-task tiers. THIN_RULE's default minTested is 8 — none of these catalogs ever add a
+// measured row, so every one of them is thin regardless of size.
 // ---------------------------------------------------------------------------------------------
-test('thin task, both human kinds in the catalog (dual scheme): T1 chosen+preferred near top, T2 one kind near top, T3 evidenced/none near top', () => {
+test('thin task, both human kinds in the catalog (dual scheme): T1 both near top, T2 early, T3 one kind near top (not new), T4 evidenced/none near top', () => {
   const catalog = [
     ...fillerModels(['chosen', 'preferred']),
     nearTopSubject('a', { chosen: true, preferred: true }),
-    nearTopSubject('b', { chosen: true }), // preferred absent -> only chosen is near top
+    nearTopSubject('b', { chosen: true }), // preferred absent -> only chosen is near top, not new
+    nearTopSubject('new-b', { chosen: true, adoption: 'new' }), // same shape, but new -> "early"
     notNearTopSubject('c', { chosen: true, preferred: true }),
   ];
   const index = buildEvidenceIndex('t', catalog);
@@ -442,59 +474,52 @@ test('thin task, both human kinds in the catalog (dual scheme): T1 chosen+prefer
   const clsFor = (id) => classifyModelForTask(catalog.find((m) => m.id === id), 't', index);
   assert.equal(clsFor('a').tier, 1);
   assert.equal(clsFor('a').label, 'not independently tested');
-  assert.equal(clsFor('b').tier, 2);
-  assert.equal(clsFor('c').tier, 3);
+  assert.equal(clsFor('b').tier, 3);
+  assert.equal(clsFor('b').tier_name, 'one-signal');
+  assert.equal(clsFor('new-b').tier, 2);
+  assert.equal(clsFor('new-b').tier_name, 'early');
+  assert.equal(clsFor('c').tier, 4);
+  assert.equal(clsFor('c').tier_name, 'evidenced');
 });
 
-test('thin task, one human kind in the catalog (single scheme): T1 that kind near top ("one signal only"), T2 evidenced/not near top', () => {
-  const catalog = [...fillerModels(['chosen']), nearTopSubject('a', { chosen: true }), notNearTopSubject('b', { chosen: true })];
+test('thin task, one human kind in the catalog (single scheme): T1 that kind near top ("one signal only"), T2 early, T3 evidenced/not near top', () => {
+  const catalog = [
+    ...fillerModels(['chosen']),
+    nearTopSubject('a', { chosen: true }),
+    notNearTopSubject('b', { chosen: true }),
+    notNearTopSubject('new-b', { chosen: true, adoption: 'new' }),
+  ];
   const index = buildEvidenceIndex('t', catalog);
   assert.equal(index.humanKinds.size, 1);
   const clsFor = (id) => classifyModelForTask(catalog.find((m) => m.id === id), 't', index);
   assert.equal(clsFor('a').tier, 1);
   assert.equal(clsFor('a').label, 'one signal only');
-  assert.equal(clsFor('b').tier, 2);
+  assert.equal(clsFor('b').tier, 3);
+  assert.equal(clsFor('b').tier_name, 'evidenced');
+  // Round 2: thin-single now DOES get the "early" carve-out (round 1 excluded it).
+  assert.equal(clsFor('new-b').tier, 2);
+  assert.equal(clsFor('new-b').tier_name, 'early');
+  assert.equal(clsFor('new-b').label, 'early: too new for usage data');
 });
 
 // ---------------------------------------------------------------------------------------------
-// New-model override — a would-be T2 gets promoted to the tail of T1 with the "too new" label.
+// New-model override ("early") — its own numbered tier in every scheme (round 2; round 1 had it
+// as an overlay promoting a model into the tail of T1, and excluded thin-single entirely).
 // ---------------------------------------------------------------------------------------------
-test('new-model override: adoption "new" promotes a would-be non-thin T2 to the tail of T1', () => {
+test('new-model override: non-thin "early" (T2) sits strictly between "agreed" (T1) and "tests-only" (T3)', () => {
   const catalog = [
     ...fillerModels(['measured']),
-    nearTopSubject('old-t1', { measured: true, chosen: true }),
-    nearTopSubject('new-t2', { measured: true, adoption: 'new' }),
+    nearTopSubject('t1', { measured: true, chosen: true }),
+    nearTopSubject('t2-early', { measured: true, adoption: 'new' }),
+    nearTopSubject('t3-tests-only', { measured: true }),
   ];
   const index = buildEvidenceIndex('t', catalog);
-  const cls = classifyModelForTask(catalog.find((m) => m.id === 'new-t2'), 't', index);
-  assert.equal(cls.tier, 1);
-  assert.equal(cls.tier_name, 'early');
-  assert.equal(cls.label, 'early: too new for usage data');
-  // Sorts to the TAIL of T1 — real T1 members have 2 kinds near top, the promoted one has 1.
-  assert.equal(cls.kindsNearTopCount, 1);
-  const oldCls = classifyModelForTask(catalog.find((m) => m.id === 'old-t1'), 't', index);
-  assert.equal(oldCls.kindsNearTopCount, 2);
-  assert.ok(withinTierCompare(oldCls, cls) < 0, 'the genuine T1 member must sort ahead of the promoted "early" one');
-});
-
-test('new-model override: adoption "new" promotes a would-be thin-dual T2 to the tail of T1; never applies to a thin-single task', () => {
-  const dualCatalog = [
-    ...fillerModels(['chosen', 'preferred']),
-    nearTopSubject('new-one-signal', { chosen: true, adoption: 'new' }), // preferred absent -> one kind only
-    nearTopSubject('filler-preferred-top', { preferred: true }), // ensures humanKinds has BOTH kinds
-  ];
-  const index2 = buildEvidenceIndex('t', dualCatalog);
-  assert.equal(index2.humanKinds.size, 2);
-  const cls = classifyModelForTask(dualCatalog.find((m) => m.id === 'new-one-signal'), 't', index2);
-  assert.equal(cls.tier, 1);
-  assert.equal(cls.tier_name, 'early');
-
-  const singleCatalog = [...fillerModels(['chosen']), notNearTopSubject('new-not-top', { chosen: true, adoption: 'new' })];
-  const singleIndex = buildEvidenceIndex('t', singleCatalog);
-  assert.equal(singleIndex.humanKinds.size, 1);
-  const singleCls = classifyModelForTask(singleCatalog.find((m) => m.id === 'new-not-top'), 't', singleIndex);
-  assert.equal(singleCls.tier, 2, 'thin-single has no "missing the other kind" state to promote out of');
-  assert.notEqual(singleCls.tier_name, 'early');
+  const clsFor = (id) => classifyModelForTask(catalog.find((m) => m.id === id), 't', index);
+  assert.equal(clsFor('t1').tier, 1);
+  assert.equal(clsFor('t2-early').tier, 2);
+  assert.equal(clsFor('t2-early').tier_name, 'early');
+  assert.equal(clsFor('t3-tests-only').tier, 3);
+  assert.ok(standardCompare(clsFor('t2-early'), clsFor('t3-tests-only')) < 0, '"early" must outrank "tests-only" via tier order alone');
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -510,13 +535,15 @@ test('hasNegativeClaim: true only when a claim explicitly carries polarity: "neg
   assert.equal(hasNegativeClaim({}, 't'), false);
 });
 
-test('negative claim: drops a model exactly one tier, clamped at the scheme\'s worst tier, and never reapplies the "early" label', () => {
+test('negative claim: drops a model exactly one tier, clamped at the scheme\'s worst tier', () => {
   const judged = { band: 'strong', confidence: 'high', claims: [{ sentence: 'ok' }, { sentence: 'bad', polarity: 'negative' }] };
   const catalog = [...fillerModels(['measured']), nearTopSubject('x', { measured: true, chosen: true, judged })];
   const index = buildEvidenceIndex('t', catalog);
   const cls = classifyModelForTask(catalog.find((m) => m.id === 'x'), 't', index);
-  assert.equal(cls.tier, 2, 'T1 -> T2 after a one-tier drop');
-  assert.equal(cls.tier_name, 'tests-only', 'must read the standard T2 meta, not the T1 "agreed" one');
+  // T1 "agreed" -> demote by one -> would land on T2 "early", but "x" is NOT adoption:'new', so it
+  // skips past "early" to T3 "tests-only" instead (see the file header's negative-claims guard).
+  assert.equal(cls.tier, 3, 'a non-new model demoted from T1 must skip the "early" slot');
+  assert.equal(cls.tier_name, 'tests-only');
 
   // At the worst tier already — dropping is a clamped no-op.
   const worstJudged = { band: 'strong', confidence: 'high', claims: [{ sentence: 'bad', polarity: 'negative' }] };
@@ -524,6 +551,15 @@ test('negative claim: drops a model exactly one tier, clamped at the scheme\'s w
   const worstIndex = buildEvidenceIndex('t', worst);
   const worstCls = classifyModelForTask(worst.find((m) => m.id === 'y'), 't', worstIndex);
   assert.equal(worstCls.tier, MAX_TIER.nonThin);
+});
+
+test('negative claim: a genuinely NEW model demoted from T1 CAN land on "early" (it really is too new)', () => {
+  const judged = { band: 'strong', confidence: 'high', claims: [{ sentence: 'ok' }, { sentence: 'bad', polarity: 'negative' }] };
+  const catalog = [...fillerModels(['measured']), nearTopSubject('x', { measured: true, chosen: true, adoption: 'new', judged })];
+  const index = buildEvidenceIndex('t', catalog);
+  const cls = classifyModelForTask(catalog.find((m) => m.id === 'x'), 't', index);
+  assert.equal(cls.tier, 2);
+  assert.equal(cls.tier_name, 'early');
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -550,69 +586,96 @@ test('standardCompare: a lower tier number always sorts ahead of a higher one, r
 // ---------------------------------------------------------------------------------------------
 // Stances.
 // ---------------------------------------------------------------------------------------------
-function candidate(id, { tier, cost, status = 'ga' } = {}) {
-  return { tier, monthly_cost_usd: cost, kindsNearTopCount: 0, measuredPosition: null, bestHumanPosition: null, measuredRows: 0, model: { id, status } };
+function candidate(id, { tier, tier_name = 'x', cost, status = 'ga' } = {}) {
+  return { tier, tier_name, monthly_cost_usd: cost, kindsNearTopCount: 0, measuredPosition: null, bestHumanPosition: null, measuredRows: 0, model: { id, status } };
 }
 
-test("stance 'cheapest': cost-primary among qualifying tiers (<=3 non-thin, <=2 thin); non-qualifying candidates are appended, never dropped", () => {
-  const list = [candidate('t4-cheap', { tier: 4, cost: 1 }), candidate('t2-mid', { tier: 2, cost: 10 }), candidate('t1-priciest', { tier: 1, cost: 20 })];
-  const ranked = rankByStance(list, 'cheapest', false);
-  assert.deepEqual(ranked.map((c) => c.model.id), ['t2-mid', 't1-priciest', 't4-cheap'], 'the tier-4 item never qualifies for cheapest (non-thin cap is tier<=3) despite being cheapest overall, but is still returned, ranked last');
+test("stance 'cheapest': cost-primary among qualifying tiers (<=4 non-thin, <=3 thin-dual, <=2 thin-single); non-qualifying candidates are appended, never dropped", () => {
+  const list = [candidate('t5-cheap', { tier: 5, cost: 1 }), candidate('t2-mid', { tier: 2, cost: 10 }), candidate('t1-priciest', { tier: 1, cost: 20 })];
+  const ranked = rankByStance(list, 'cheapest', 'nonThin');
+  assert.deepEqual(ranked.map((c) => c.model.id), ['t2-mid', 't1-priciest', 't5-cheap'], 'the tier-5 item never qualifies for cheapest (non-thin cap is tier<=4) despite being cheapest overall, but is still returned, ranked last');
 });
 
 test("stance 'cheapest': falls back to cost-primary among ANY candidate when none qualify", () => {
-  const list = [candidate('a', { tier: 5, cost: 5 }), candidate('b', { tier: 4, cost: 1 })];
-  const ranked = rankByStance(list, 'cheapest', false);
+  const list = [candidate('a', { tier: 6, cost: 5 }), candidate('b', { tier: 5, cost: 1 })];
+  const ranked = rankByStance(list, 'cheapest', 'nonThin');
   assert.equal(ranked[0].model.id, 'b');
 });
 
-test("stance 'cheapest': thin task caps qualifying tiers at 2, not 3", () => {
-  const list = [candidate('t3-cheap', { tier: 3, cost: 1 }), candidate('t2-mid', { tier: 2, cost: 10 })];
-  const ranked = rankByStance(list, 'cheapest', true);
-  assert.equal(ranked[0].model.id, 't2-mid', 'tier 3 does not qualify for cheapest on a thin task');
+test("stance 'cheapest': thin-dual caps qualifying tiers at 3, thin-single at 2", () => {
+  const dual = [candidate('t4-cheap', { tier: 4, cost: 1 }), candidate('t3-mid', { tier: 3, cost: 10 })];
+  assert.equal(rankByStance(dual, 'cheapest', 'thinDual')[0].model.id, 't3-mid', 'tier 4 does not qualify for cheapest on thin-dual');
+
+  const single = [candidate('t3-cheap', { tier: 3, cost: 1 }), candidate('t2-mid', { tier: 2, cost: 10 })];
+  assert.equal(rankByStance(single, 'cheapest', 'thinSingle')[0].model.id, 't2-mid', 'tier 3 ("evidenced", nothing near top) does not qualify for cheapest on thin-single — the round-2 fix (it used to)');
 });
 
 test("stance 'best': tier order, full stop — the full standardCompare order", () => {
   const list = [candidate('cheap-t2', { tier: 2, cost: 1 }), candidate('pricier-t1', { tier: 1, cost: 100 })];
-  const ranked = rankByStance(list, 'best', false);
+  const ranked = rankByStance(list, 'best', 'nonThin');
   assert.equal(ranked[0].model.id, 'pricier-t1');
 });
 
-test("stance 'balanced': candidates within 2x the cheapest top-tier candidate's cost rank first (by the standard order), everyone else after", () => {
+test("stance 'balanced': candidates within 2x the cheapest NON-early top-tier candidate's cost rank first (by the standard order), everyone else after", () => {
   const list = [
     candidate('top-tier-cheap', { tier: 1, cost: 10 }),
     candidate('top-tier-pricey', { tier: 1, cost: 50 }), // > 2x(10) = 20, over budget
-    candidate('lower-tier-in-budget', { tier: 2, cost: 15 }), // <= 20, in budget
+    candidate('lower-tier-in-budget', { tier: 3, cost: 15 }), // <= 20, in budget
   ];
-  const ranked = rankByStance(list, 'balanced', false);
+  const ranked = rankByStance(list, 'balanced', 'nonThin');
   assert.deepEqual(ranked.map((c) => c.model.id), ['top-tier-cheap', 'lower-tier-in-budget', 'top-tier-pricey']);
 });
 
-test("stance 'balanced': no priced candidate in the top tier falls back to plain 'best' order", () => {
-  const list = [candidate('top-tier-unpriced', { tier: 1, cost: null }), candidate('lower-tier-priced', { tier: 2, cost: 5 })];
-  const ranked = rankByStance(list, 'balanced', false);
+test("stance 'balanced': an \"early\" candidate never sets the budget floor, even if it's the cheapest and only tier-1-equivalent priced item", () => {
+  // "early" (tier 2) is cheaper than the real top tier (tier 1) — the floor must still come from
+  // tier 1, not from "early", even though "early" is numerically the next-best tier present.
+  const list = [
+    candidate('t1-real-floor', { tier: 1, tier_name: 'agreed', cost: 40 }),
+    candidate('early-cheap', { tier: 2, tier_name: 'early', cost: 1 }), // must NOT set the floor
+    candidate('t1-too-pricey', { tier: 1, tier_name: 'agreed', cost: 200 }), // > 2x(40) = 80, over budget
+  ];
+  const ranked = rankByStance(list, 'balanced', 'nonThin');
+  // early-cheap is priced at 1, comfortably within 2x(40)=80, so it's in-budget and ranked by the
+  // standard order (tier asc) alongside t1-real-floor; t1-too-pricey is over budget (ranked last).
+  assert.deepEqual(ranked.map((c) => c.model.id), ['t1-real-floor', 'early-cheap', 't1-too-pricey']);
+});
+
+test("stance 'balanced': no priced non-\"early\" candidate falls back to plain 'best' order", () => {
+  const list = [candidate('top-tier-unpriced', { tier: 1, cost: null }), candidate('lower-tier-priced', { tier: 3, cost: 5 })];
+  const ranked = rankByStance(list, 'balanced', 'nonThin');
   assert.equal(ranked[0].model.id, 'top-tier-unpriced');
 });
 
 // ---------------------------------------------------------------------------------------------
 // start_here disqualifiers.
 // ---------------------------------------------------------------------------------------------
-test('isDisqualifiedFromStartHere: a non-thin T2 "tests-only" item is disqualified while a T1 item is also a candidate', () => {
-  const t2 = { tier: 2, thin_task: false, model: { status: 'ga' } };
-  const t1 = { tier: 1, thin_task: false, model: { status: 'ga' } };
-  assert.equal(isDisqualifiedFromStartHere(t2, [t2, t1], 'best'), true);
-  assert.equal(isDisqualifiedFromStartHere(t2, [t2], 'best'), false, 'no T1 rival -> not disqualified');
+test('isDisqualifiedFromStartHere: a non-thin "tests-only" item is disqualified while a T1 item is also a candidate', () => {
+  const t3 = { tier: 3, tier_name: 'tests-only', thin_task: false, model: { status: 'ga' } };
+  const t1 = { tier: 1, tier_name: 'agreed', thin_task: false, model: { status: 'ga' } };
+  assert.equal(isDisqualifiedFromStartHere(t3, [t3, t1], 'best'), true);
+  assert.equal(isDisqualifiedFromStartHere(t3, [t3], 'best'), false, 'no T1 rival -> not disqualified');
 });
 
-test('isDisqualifiedFromStartHere: the T2-vs-T1 rule never applies on a thin task', () => {
-  const t2 = { tier: 2, thin_task: true, model: { status: 'ga' } };
-  const t1 = { tier: 1, thin_task: true, model: { status: 'ga' } };
-  assert.equal(isDisqualifiedFromStartHere(t2, [t2, t1], 'best'), false);
+test('isDisqualifiedFromStartHere: "tests-only"-vs-T1 rule never applies on a thin task', () => {
+  const t3 = { tier: 3, tier_name: 'tests-only', thin_task: true, model: { status: 'ga' } };
+  const t1 = { tier: 1, tier_name: 'agreed', thin_task: true, model: { status: 'ga' } };
+  assert.equal(isDisqualifiedFromStartHere(t3, [t3, t1], 'best'), false);
+});
+
+test('isDisqualifiedFromStartHere: "early" is disqualified while a T1 item exists, in EVERY scheme (thin or not)', () => {
+  const early = { tier: 2, tier_name: 'early', thin_task: false, model: { status: 'ga' } };
+  const t1 = { tier: 1, tier_name: 'agreed', thin_task: false, model: { status: 'ga' } };
+  assert.equal(isDisqualifiedFromStartHere(early, [early, t1], 'best'), true);
+  assert.equal(isDisqualifiedFromStartHere(early, [early], 'best'), false, 'no T1 rival -> not disqualified');
+
+  const earlyThin = { tier: 2, tier_name: 'early', thin_task: true, model: { status: 'ga' } };
+  const t1Thin = { tier: 1, tier_name: 'human-agreed', thin_task: true, model: { status: 'ga' } };
+  assert.equal(isDisqualifiedFromStartHere(earlyThin, [earlyThin, t1Thin], 'best'), true, 'unlike "tests-only", the early-vs-T1 rule DOES apply on thin tasks');
 });
 
 test('isDisqualifiedFromStartHere: preview never starts over a same-tier GA/deprecated item, except under "cheapest"', () => {
-  const preview = { tier: 1, thin_task: false, model: { status: 'preview' } };
-  const ga = { tier: 1, thin_task: false, model: { status: 'ga' } };
+  const preview = { tier: 1, tier_name: 'agreed', thin_task: false, model: { status: 'preview' } };
+  const ga = { tier: 1, tier_name: 'agreed', thin_task: false, model: { status: 'ga' } };
   assert.equal(isDisqualifiedFromStartHere(preview, [preview, ga], 'best'), true);
   assert.equal(isDisqualifiedFromStartHere(preview, [preview, ga], 'balanced'), true);
   assert.equal(isDisqualifiedFromStartHere(preview, [preview, ga], 'cheapest'), false, "'cheapest' stays cost-primary");
@@ -623,6 +686,17 @@ test('decide(): enterprise-style input excludes preview entirely at rule 3, befo
   const preview = fixtureModel({ id: 'p', status: 'preview', standings: { coding: { measured: [], chosen: { rank: 1, share: 50, n_models: 5, url: 'u' }, preferred: null } } });
   const out = decide({ tasks: ['coding'], have: ['any'], stance: 'balanced', volume: 'typical', dataRule: {}, enterprise: true }, { models: [preview], plans, presets, vendors });
   assert.equal(out.tasks.coding.shortlist.length, 0);
+});
+
+// ---------------------------------------------------------------------------------------------
+// Parametric thin rule end to end (input.thin_rule) — round 2.
+// ---------------------------------------------------------------------------------------------
+test('decide(): input.thin_rule overrides THIN_RULE for that call only, without touching the default', () => {
+  const out = decide({ tasks: ['agents'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {}, thin_rule: { minTested: 8, minShareOfCatalog: 0.5 } }, data);
+  const { index } = filterCandidates('agents', { have: ['any'], stance: 'best', volume: 'typical', dataRule: {}, thin_rule: { minTested: 8, minShareOfCatalog: 0.5 } }, data);
+  assert.equal(index.thin, true, 'agents (12 measured models) must read as thin under a 50%-of-catalog share requirement');
+  assert.deepEqual(THIN_RULE, { minTested: 8, minShareOfCatalog: 0 }, 'the module-level default must be untouched');
+  assert.ok(out.tasks.agents); // sanity: decide() still ran to completion under the override
 });
 
 // ---------------------------------------------------------------------------------------------
@@ -721,18 +795,27 @@ test('invariant: no evidence anywhere -> excluded from candidacy, for every task
 
 // ---------------------------------------------------------------------------------------------
 // baseTierNumber — the raw waterfall function, unit-checked against every named combination in
-// isolation (independent of a whole catalog/index).
+// isolation (independent of a whole catalog/index). Signature (round 2): the 6th arg `isNew`
+// directly determines whether the "near-top-on-one-kind-but-missing-the-other" state reads as
+// "early" or the scheme's normal name for that state.
 // ---------------------------------------------------------------------------------------------
-test('baseTierNumber: every named combination in the file header', () => {
-  assert.equal(baseTierNumber('nonThin', true, true, true, false), 1);
-  assert.equal(baseTierNumber('nonThin', true, true, false, false), 2);
-  assert.equal(baseTierNumber('nonThin', true, false, true, false), 3);
-  assert.equal(baseTierNumber('nonThin', true, false, false, false), 4);
-  assert.equal(baseTierNumber('nonThin', false, false, true, false), 5);
-  assert.equal(baseTierNumber('nonThin', false, false, false, true), 5);
-  assert.equal(baseTierNumber('thinDual', false, false, true, true), 1);
-  assert.equal(baseTierNumber('thinDual', false, false, true, false), 2);
-  assert.equal(baseTierNumber('thinDual', false, false, false, false), 3);
-  assert.equal(baseTierNumber('thinSingle', false, false, true, false), 1);
-  assert.equal(baseTierNumber('thinSingle', false, false, false, false), 2);
+test('baseTierNumber: every named combination in the file header, both isNew=false and isNew=true where it matters', () => {
+  // nonThin: 1 agreed, 2 early, 3 tests-only, 4 tested+people-backed, 5 tested, 6 not-indep-tested
+  assert.equal(baseTierNumber('nonThin', true, true, true, false, false), 1);
+  assert.equal(baseTierNumber('nonThin', true, true, true, false, true), 1, 'isNew never touches "agreed" — it already has full corroboration');
+  assert.equal(baseTierNumber('nonThin', true, true, false, false, false), 3, 'not new -> "tests-only"');
+  assert.equal(baseTierNumber('nonThin', true, true, false, false, true), 2, 'new -> "early"');
+  assert.equal(baseTierNumber('nonThin', true, false, true, false, false), 4);
+  assert.equal(baseTierNumber('nonThin', true, false, false, false, false), 5);
+  assert.equal(baseTierNumber('nonThin', false, false, true, false, false), 6);
+  assert.equal(baseTierNumber('nonThin', false, false, false, true, false), 6);
+  // thinDual: 1 both, 2 early, 3 one-signal, 4 evidenced
+  assert.equal(baseTierNumber('thinDual', false, false, true, true, false), 1);
+  assert.equal(baseTierNumber('thinDual', false, false, true, false, false), 3, 'not new -> "one-signal"');
+  assert.equal(baseTierNumber('thinDual', false, false, true, false, true), 2, 'new -> "early"');
+  assert.equal(baseTierNumber('thinDual', false, false, false, false, false), 4);
+  // thinSingle: 1 near top, 2 early, 3 evidenced
+  assert.equal(baseTierNumber('thinSingle', false, false, true, false, false), 1);
+  assert.equal(baseTierNumber('thinSingle', false, false, false, false, false), 3, 'not new -> "evidenced"');
+  assert.equal(baseTierNumber('thinSingle', false, false, false, false, true), 2, 'new -> "early" (round 2: thin-single now supports this too)');
 });

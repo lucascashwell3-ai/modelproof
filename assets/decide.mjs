@@ -62,65 +62,87 @@
      preferred:  ordering key = the board rank, ascending — re-positioned among just the catalog
                  models present on that board (the stored rank is the model's TRUE position on
                  the full external board, most of which isn't in this catalog) — ties by id.
-   `near top` for a kind = position <= max(10, ceil(0.25 * of)).
+   `near top` for a kind = position <= max(3, min(10, ceil(of / 4))) — top-10 once enough catalog
+   models carry that kind of evidence, top-quartile when fewer do, never below 3 (fixed 2026-09,
+   round 2: the original max(10, ceil(0.25*of)) formula made EVERY model "near top" whenever
+   of <= 10 — e.g. a frontend `chosen` position of 7 of 9 counted as near top, which is really
+   "near the bottom of a small field").
 
-   TASK THINNESS — a task is THIN when fewer than 8 catalog models have measured evidence for it
-   (today: chat, frontend, vision, bulk are thin; agents, at 12, is not). Thin tasks never gate on
-   measured at all; the tiers below just skip straight to the two human kinds.
+   TASK THINNESS — parametric (THIS_RULE below, exported so a caller/report can experiment with
+   the boundary — see scripts/eval-report.mjs's --thin-share flag): a task is thin when its
+   measured-evidence count is below THIN_RULE.minTested, OR below THIN_RULE.minShareOfCatalog *
+   the catalog's own size. The shipped default is `{ minTested: 8, minShareOfCatalog: 0 }` — the
+   share clause is off by default, so the rule is exactly "fewer than 8" unless a caller overrides
+   it via input.thin_rule (today: chat, frontend, vision, bulk are thin under the default;
+   agents, at 12, is not). Thin tasks never gate on measured at all; the tiers below just skip
+   straight to the two human kinds.
 
-   TIERS (higher-quality tier ranks first — "T1" is the best a pick can be, "T5"/"T3"/"T2" the
-   worst, depending on scheme; `tier` is a plain number, `tier_name` a string, both returned per
-   shortlist item; `label` is the reader-facing caveat, or null):
+   TIERS (a LOWER tier number is always better; `tier` is a plain number, `tier_name` a string,
+   both returned per shortlist item; `label` is the reader-facing caveat, or null on tiers that
+   carry none). "early" (see NEW-MODEL OVERRIDE below) is its own numbered tier in every scheme,
+   not an overlay on top of another tier (fixed 2026-09, round 2) — it sits directly below the
+   best tier(s) and above the tier it would otherwise have landed in:
 
    Non-thin task — a waterfall on (measured present?, measured near top?, any human kind near
-   top?); every one of these five REQUIRES at least one kind of evidence present (an "untested"
-   model with none at all is excluded before tiering ever runs — see filterCandidates):
+   top?, is this model new?); every one of these six REQUIRES at least one kind of evidence
+   present (an "untested" model with none at all is excluded before tiering ever runs — see
+   filterCandidates):
      T1 "agreed"                    measured near top AND >=1 human kind near top.
-     T2 "tests-only"                measured near top, no human kind near top.
-                                     Label: "strong on tests, low real-world use". Never
-                                     start_here while any T1 candidate exists for this task.
-     T3 "tested, people-backed"     measured present, not near top, AND >=1 human kind near top.
-     T4 "tested"                    measured present, not near top, no human kind near top.
-     T5 "not independently tested"  measured ABSENT (any evidence level from chosen/preferred —
+     T2 "early"                     measured near top, no human kind near top, adoption: 'new'.
+                                     Label: "early: too new for usage data".
+     T3 "tests-only"                measured near top, no human kind near top, NOT new.
+                                     Label: "strong on tests, low real-world use".
+     T4 "tested, people-backed"     measured present, not near top, AND >=1 human kind near top.
+     T5 "tested"                    measured present, not near top, no human kind near top.
+     T6 "not independently tested"  measured ABSENT (any evidence level from chosen/preferred —
                                      near top or not; a model with a human kind near top simply
                                      sorts ahead of one without, via the within-tier order below,
                                      rather than needing its own numbered tier). Label: "not
                                      independently tested".
-   The five bullets above cover every combination the spec calls out by name; the one combination
-   the spec's prose doesn't spell out (measured absent, some human evidence present, none of it
-   near top) is folded into T5 rather than invented as an unnamed T6 — it's still "not
-   independently tested", it just sorts to the back of that tier via kindsNearTopCount (see
-   withinTierCompare). This is a deliberate implementation choice at an edge the five named tiers
-   don't fully partition; the invariant it satisfies is "any evidence at all is a candidate."
+   T2/T3 both never start_here while any T1 candidate exists for this task (see
+   isDisqualifiedFromStartHere). The six bullets above cover every combination the spec calls out
+   by name; the one combination the spec's prose doesn't spell out (measured absent, some human
+   evidence present, none of it near top) is folded into T6 rather than invented as an unnamed T7
+   — it's still "not independently tested", it just sorts to the back of that tier via
+   kindsNearTopCount (see withinTierCompare). This is a deliberate implementation choice at an
+   edge the six named tiers don't fully partition; the invariant it satisfies is "any evidence at
+   all is a candidate."
 
    Thin task, BOTH human kinds exist anywhere in the catalog for this task (chat, frontend):
      T1  chosen near top AND preferred near top.               Label: "not independently tested".
-     T2  exactly one human kind near top.
-     T3  evidenced, neither human kind near top.
-   (tier_name: "human-agreed" / "one-signal" / "evidenced" — this file's own naming; the spec
-   only names T1's label, not a quoted tier_name, for the thin schemes.)
+     T2  exactly one human kind near top, adoption: 'new'.     Label: "early: too new for usage
+                                                                data".
+     T3  exactly one human kind near top, NOT new.
+     T4  evidenced, neither human kind near top.
+   (tier_name: "human-agreed" / "early" / "one-signal" / "evidenced" — this file's own naming for
+   T1/T3/T4; the spec only names T1's label, not a quoted tier_name, for the thin schemes.)
 
    Thin task, only ONE human kind exists anywhere in the catalog (vision: no chosen; bulk: no
    preferred):
      T1  that one kind near top.                                Label: "one signal only".
-     T2  evidenced, not near top.
-   (tier_name: "single-signal" / "evidenced".)
+     T2  evidenced, not near top, adoption: 'new'.              Label: "early: too new for usage
+                                                                data".
+     T3  evidenced, not near top, NOT new.
+   (tier_name: "single-signal" / "early" / "evidenced".)
 
    NEW-MODEL OVERRIDE — a model with `adoption === 'new'` (released <=60 days ago,
-   scripts/derive-status-adoption.mjs) that would otherwise land in the "measured/one-kind-near-
-   top but no OTHER human backing" tier (non-thin T2, thin-dual T2) is promoted to the TAIL of T1
-   instead — tier_name "early", label "early: too new for usage data" — rather than being read as
-   "only tests well" when the real reason is "too recent for usage/votes to have accumulated at
-   all". It lands at the tail because withinTierCompare's first key (count of kinds near top) sorts
-   every genuine T1 member (>=2 kinds near top) ahead of it (1 kind) automatically — no separate
-   sort step needed. Thin-single tasks have no analogous override (their T1 already covers "the
-   sole kind near top"; there's no second kind to be missing).
+   scripts/derive-status-adoption.mjs) that would otherwise land in the "near-top-on-one-kind-but-
+   no-OTHER-backing" tier (non-thin's tests-only, thin-dual's one-signal, thin-single's evidenced)
+   gets its OWN tier instead — "early", one slot better than where it would have landed — rather
+   than being read as "only tests well"/"just evidenced" when the real reason is "too recent for
+   usage/votes to have accumulated at all". Applies in EVERY scheme, including thin-single (fixed
+   2026-09, round 2 — round 1 excluded thin-single on the theory that its T1 already covered "the
+   sole kind near top"; but a brand-new model that's evidenced-yet-not-near-top on that sole kind
+   deserves the same benefit of the doubt as any other scheme's near-miss case).
 
    NEGATIVE CLAIMS — if a model.task_fit_judged[taskId].claims[] entry carries an explicit
    `polarity: 'negative'` marker (a field this pass ADDS support for; no claim in the data carries
-   it yet — see hasNegativeClaim), the model drops one tier (clamped at the worst tier for that
-   task's scheme) — recomputed via the same standard tier_name/label table, never the "early"
-   override. `why`/`claims`/`reconciliation` are untouched; only the ranking bucket moves.
+   it yet — see hasNegativeClaim), the model drops one tier, clamped at the worst tier for that
+   task's scheme, recomputed via the standard tier_name/label table for wherever it lands. The one
+   guard: a demotion never LANDS a model on the "early" tier unless that model is itself
+   adoption:'new' — "early" is a factual claim about the model's own age, never a generic "one
+   notch down from the top" bucket, so a demoted-but-not-new model skips past it to the next tier
+   down instead. `why`/`claims`/`reconciliation` are untouched; only the ranking bucket moves.
 
    `band` and `confidence` (the old AI-judged fields) have ZERO ranking authority any more — see
    scripts/refresh-judge.md for what still writes them (informational claims text only, via
@@ -132,17 +154,22 @@
 
    STANCES
      'best'     the order above, full stop.
-     'balanced' among the top tier PRESENT for this task, find the cheapest priced candidate in
-                that tier; every candidate (any tier) priced at or under 2x that reference cost is
-                "in budget" and ranked first (by the order above); everyone else is ranked after
-                (also by the order above) — never dropped, just deprioritized. No priced reference
-                in the top tier -> behaves exactly like 'best'.
-     'cheapest' cost-primary, but only among "qualifying" candidates — tier <= 3 for a non-thin
-                task, tier <= 2 for a thin one (both boundaries exclude any tier that isn't
-                independently tested at all, per the tier tables above); ties fall back to the
-                order above. No qualifying candidate at all -> falls back to cost-primary among
-                EVERY candidate. Non-qualifying candidates are still returned, ranked after by the
-                order above, never dropped.
+     'balanced' find the cheapest priced candidate in the top tier PRESENT among the NON-"early"
+                candidates (fixed 2026-09, round 2 — a brand-new cheap model must never set the
+                budget floor just by existing); every candidate (any tier, "early" included) priced
+                at or under 2x that reference cost is "in budget" and ranked first (by the order
+                above); everyone else is ranked after (also by the order above) — never dropped,
+                just deprioritized. No non-"early" candidate at all, or none of them priced ->
+                behaves exactly like 'best'.
+     'cheapest' cost-primary, but only among "qualifying" candidates — a tier counts as qualifying
+                when it has (or stands in for — "early" counts) at least one kind of evidence near
+                the top: tier <= 4 for a non-thin task, tier <= 3 for thin-dual, tier <= 2 for
+                thin-single (fixed 2026-09, round 2 — thin-single previously let its OWN worst tier,
+                "evidenced, not near top", qualify, which is exactly backwards: that tier is the one
+                case in that scheme with NOTHING near top). Ties fall back to the order above. No
+                qualifying candidate at all -> falls back to cost-primary among EVERY candidate.
+                Non-qualifying candidates are still returned, ranked after by the order above,
+                never dropped.
    'cheapest' never demotes a preview model at start_here (this stance stays cost-primary,
    period); every other stance keeps a status:'preview' item from outranking a GA/deprecated one
    in the SAME final tier, and a preview candidate is fully excluded from an enterprise-style
@@ -162,10 +189,10 @@
       empties a task's whole candidate pool.
    Only the top 3 survivors (after tiering + the chosen stance's order) are returned; item 0 is
    always start_here: true, UNLESS the top-ranked item is disqualified (see
-   isDisqualifiedFromStartHere): a T2 "tests-only" item never starts while a T1 item is also a
-   candidate, and (except under 'cheapest') a preview item never starts while a same-tier GA/
-   deprecated item is also a candidate. Disqualification only ever changes which item gets
-   start_here — it never drops a model from the returned shortlist.
+   isDisqualifiedFromStartHere): an "early" or (non-thin only) "tests-only" item never starts
+   while a T1 item is also a candidate, and (except under 'cheapest') a preview item never starts
+   while a same-tier GA/deprecated item is also a candidate. Disqualification only ever changes
+   which item gets start_here — it never drops a model from the returned shortlist.
 
    Kept unchanged from v1 (still exactly what the file header used to say): reachability rule 1's
    direct_api carve-out, the data rule's unknown-country handling, isEnterpriseInput's heuristic,
@@ -375,11 +402,14 @@ function median(sortedInputArr) {
   return n % 2 ? a[mid] : (a[mid - 1] + a[mid]) / 2;
 }
 
-/** "Near the top" for a kind with `of` catalog models carrying it — max(10, 25% of `of`),
- * rounded up. `of` <= 0 trivially returns 10, but no position can ever qualify against it since
- * no model has that kind of evidence at all in that case. */
+/** "Near the top" for a kind with `of` catalog models carrying it — top-10 once `of` is large
+ * enough that a quarter of it exceeds 10, top-quartile (rounded up) when `of` is smaller, and
+ * never below 3 even for a tiny field. Fixed 2026-09 (round 2): the original max(10, ceil(of/4))
+ * made EVERY position "near top" whenever of <= 10 (max(10, anything <= 10) is always 10), which
+ * silently treated "7th of 9" as near the top. `of` <= 0 trivially returns 3, but no position can
+ * ever qualify against it since no model has that kind of evidence at all in that case. */
 export function nearTopThreshold(of) {
-  return Math.max(10, Math.ceil(0.25 * (of || 0)));
+  return Math.max(3, Math.min(10, Math.ceil((of || 0) / 4)));
 }
 
 /** Every catalog model with >=1 measured row for this task, positioned 1..of among just those
@@ -460,19 +490,26 @@ export function preferredIndexForTask(taskId, models) {
   return out;
 }
 
-/** A task is THIN when fewer than this many catalog models have measured evidence for it —
- * today: chat/frontend/vision/bulk are thin (0 measured each), agents (12) is not. */
-export const THIN_MEASURED_FLOOR = 8;
+/** A task is THIN when its measured-evidence count is below THIN_RULE.minTested, OR below
+ * THIN_RULE.minShareOfCatalog * the catalog's own size — parametric (round 2) so a caller can
+ * experiment with the boundary (scripts/eval-report.mjs's --thin-share flag) without touching the
+ * shipped default, which is exactly "fewer than 8" (the share clause is off by default: 0 *
+ * anything is 0, so no catalog size ever fails it on its own). Today, under the default: chat/
+ * frontend/vision/bulk are thin (0 measured each), agents (12) is not. */
+export const THIN_RULE = { minTested: 8, minShareOfCatalog: 0 };
 
 /** One task's full evidence index — computed once per (taskId, catalog), not per candidate.
  * `humanKinds` is which of {chosen, preferred} exist AT ALL anywhere in the catalog for this
  * task (used only to pick which thin-task tier scheme applies — vision has no chosen, bulk has
- * no preferred, chat/frontend have both). */
-export function buildEvidenceIndex(taskId, models) {
+ * no preferred, chat/frontend have both). `thinRule` overrides THIN_RULE for this one call — see
+ * filterCandidates/decide's `input.thin_rule`. */
+export function buildEvidenceIndex(taskId, models, thinRule = THIN_RULE) {
   const measured = measuredIndexForTask(taskId, models);
   const chosen = chosenIndexForTask(taskId, models);
   const preferred = preferredIndexForTask(taskId, models);
-  const thin = measured.size < THIN_MEASURED_FLOOR;
+  const rule = thinRule || THIN_RULE;
+  const catalogSize = (models || []).length;
+  const thin = measured.size < rule.minTested || measured.size < rule.minShareOfCatalog * catalogSize;
   const humanKinds = new Set();
   if (chosen.size) humanKinds.add('chosen');
   if (preferred.size) humanKinds.add('preferred');
@@ -480,34 +517,40 @@ export function buildEvidenceIndex(taskId, models) {
 }
 
 // -----------------------------------------------------------------------------------------
-// Tiers — see the file header for the full rationale and the exact waterfall/labels.
+// Tiers — see the file header for the full rationale and the exact waterfall/labels. "early" is
+// tier 2 in EVERY scheme (round 2) — a real numbered tier, not an overlay on T1.
 // -----------------------------------------------------------------------------------------
-export const MAX_TIER = { nonThin: 5, thinDual: 3, thinSingle: 2 };
+export const MAX_TIER = { nonThin: 6, thinDual: 4, thinSingle: 3 };
 
-function schemeFor(index) {
+export function schemeFor(index) {
   if (!index.thin) return 'nonThin';
   return index.humanKinds.size >= 2 ? 'thinDual' : 'thinSingle';
 }
 
-// Standard tier_name/label a model lands on before any new-model promotion or negative-claim
-// demotion — see classifyModelForTask. The prose in "" for non-thin tier names/T1 & T2's labels
-// and T5's label are the spec's own wording; the thin schemes' tier_names are this file's own
-// (the spec only quotes their labels, not tier names — see the file header).
+// tier_name/label a model lands on before any negative-claim demotion — see classifyModelForTask.
+// The prose in "" for non-thin tier names/labels are the spec's own wording; the thin schemes'
+// tier_names are this file's own (the spec only quotes their labels, not tier names — see the
+// file header). "early"'s tier_name/label are the same string in every scheme on purpose — it's
+// the same fact (too new to have real-world signal yet) regardless of which scheme it's read in.
+const EARLY_META = { tier_name: 'early', label: 'early: too new for usage data' };
 const NON_THIN_TIER_META = {
   1: { tier_name: 'agreed', label: null },
-  2: { tier_name: 'tests-only', label: 'strong on tests, low real-world use' },
-  3: { tier_name: 'tested, people-backed', label: null },
-  4: { tier_name: 'tested', label: null },
-  5: { tier_name: 'not independently tested', label: 'not independently tested' },
+  2: EARLY_META,
+  3: { tier_name: 'tests-only', label: 'strong on tests, low real-world use' },
+  4: { tier_name: 'tested, people-backed', label: null },
+  5: { tier_name: 'tested', label: null },
+  6: { tier_name: 'not independently tested', label: 'not independently tested' },
 };
 const THIN_DUAL_TIER_META = {
   1: { tier_name: 'human-agreed', label: 'not independently tested' },
-  2: { tier_name: 'one-signal', label: null },
-  3: { tier_name: 'evidenced', label: null },
+  2: EARLY_META,
+  3: { tier_name: 'one-signal', label: null },
+  4: { tier_name: 'evidenced', label: null },
 };
 const THIN_SINGLE_TIER_META = {
   1: { tier_name: 'single-signal', label: 'one signal only' },
-  2: { tier_name: 'evidenced', label: null },
+  2: EARLY_META,
+  3: { tier_name: 'evidenced', label: null },
 };
 function tierMetaTable(scheme) {
   return scheme === 'nonThin' ? NON_THIN_TIER_META : scheme === 'thinDual' ? THIN_DUAL_TIER_META : THIN_SINGLE_TIER_META;
@@ -517,25 +560,33 @@ function tierMeta(scheme, tier) {
   return table[tier] || table[MAX_TIER[scheme]];
 }
 
-/** Base tier number (1 = best), before any new-model/negative-claim adjustment — the waterfall
- * from the file header, on the three evidence booleans. Only ever called once a model has
- * already cleared the evidence gate (evidenced === true), so the nonThin "measured absent"
- * branch always has some human evidence backing it. */
-export function baseTierNumber(scheme, measuredPresent, measuredNearTop, chosenNearTop, preferredNearTop) {
+/** Tier number (1 = best), directly incorporating the new-model "early" carve-out — the
+ * waterfall from the file header, on the three evidence booleans plus `isNew`. Only ever called
+ * once a model has already cleared the evidence gate (evidenced === true), so the nonThin
+ * "measured absent" branch always has some human evidence backing it. `isNew` is
+ * model.adoption === 'new'; it only ever matters at the one spot each scheme reserves for it
+ * (the tier a non-thin/thin-dual model lands on when it's near-top-on-one-kind but has no OTHER
+ * human backing, or a thin-single model that's evidenced but not near top on its sole kind) —
+ * every other branch ignores it entirely. */
+export function baseTierNumber(scheme, measuredPresent, measuredNearTop, chosenNearTop, preferredNearTop, isNew = false) {
   const humanNearTop = chosenNearTop || preferredNearTop;
   if (scheme === 'nonThin') {
-    if (measuredPresent) return measuredNearTop ? (humanNearTop ? 1 : 2) : (humanNearTop ? 3 : 4);
-    return 5;
+    if (measuredPresent) {
+      if (measuredNearTop) return humanNearTop ? 1 : (isNew ? 2 : 3);
+      return humanNearTop ? 4 : 5;
+    }
+    return 6;
   }
   if (scheme === 'thinDual') {
     if (chosenNearTop && preferredNearTop) return 1;
-    if (humanNearTop) return 2;
-    return 3;
+    if (humanNearTop) return isNew ? 2 : 3;
+    return 4;
   }
   // thinSingle — the sole existing human kind is whichever of chosenNearTop/preferredNearTop can
   // ever be true for this task (the other is always false, since that kind has no coverage at
   // all — see buildEvidenceIndex's humanKinds), so this reduces to "that kind near top?".
-  return humanNearTop ? 1 : 2;
+  if (humanNearTop) return 1;
+  return isNew ? 2 : 3;
 }
 
 /** { evidenced, tier, tier_name, label, evidence, thin_task, kindsNearTopCount, measuredPosition,
@@ -580,25 +631,19 @@ export function classifyModelForTask(model, taskId, index) {
   if (!evidenced) return { evidenced: false, evidence, thin_task: index.thin };
 
   const scheme = schemeFor(index);
-  const base = baseTierNumber(scheme, measuredPresent, measuredNearTop, chosenNearTop, preferredNearTop);
-  let tier = base;
-  let meta = tierMeta(scheme, base);
-
-  // New-model override (see the file header): a brand-new model that would otherwise read as
-  // "only tests well" / "only one signal" purely for lacking OTHER human backing it hasn't had
-  // time to accumulate is promoted to the tail of T1 instead, with its own label — never applied
-  // to thin-single tasks (no "missing the other kind" state exists there; see baseTierNumber).
-  const promotable = (scheme === 'nonThin' || scheme === 'thinDual') && base === 2;
-  if (model.adoption === 'new' && promotable) {
-    tier = 1;
-    meta = { tier_name: 'early', label: 'early: too new for usage data' };
-  }
+  const isNew = model.adoption === 'new';
+  let tier = baseTierNumber(scheme, measuredPresent, measuredNearTop, chosenNearTop, preferredNearTop, isNew);
+  let meta = tierMeta(scheme, tier);
 
   // Negative-claim demotion (see hasNegativeClaim) — drops one tier, clamped at the scheme's
-  // worst tier, and always recomputed from the STANDARD table (never re-applies "early").
+  // worst tier. The one guard: a demotion never LANDS a model on the "early" tier (always tier 2)
+  // unless that model is itself adoption:'new' — "early" is a factual claim about the model's
+  // own age, not a generic "one notch down" bucket, so a demoted-but-not-new model skips past it
+  // to the next tier down instead (see the file header).
   if (hasNegativeClaim(model, taskId)) {
-    const maxTier = MAX_TIER[scheme];
-    const dropped = Math.min(tier + 1, maxTier);
+    let dropped = tier + 1;
+    if (dropped === 2 && !isNew) dropped = 3;
+    dropped = Math.min(dropped, MAX_TIER[scheme]);
     if (dropped !== tier) { tier = dropped; meta = tierMeta(scheme, tier); }
   }
 
@@ -625,7 +670,9 @@ export function classifyModelForTask(model, taskId, index) {
 // -----------------------------------------------------------------------------------------
 export function filterCandidates(taskId, input, data) {
   const vol = resolveVolume(input.volume, data.presets);
-  const index = buildEvidenceIndex(taskId, data.models || []);
+  // input.thin_rule optionally overrides THIN_RULE for this one call (see the file header and
+  // scripts/eval-report.mjs's --thin-share flag) — never changes the shipped default.
+  const index = buildEvidenceIndex(taskId, data.models || [], input.thin_rule || THIN_RULE);
   const candidates = [];
   for (const model of data.models || []) {
     if (!isReachable(model, input.have)) continue;
@@ -673,16 +720,18 @@ export function filterCandidates(taskId, input, data) {
 // `start_here: true`.
 // -----------------------------------------------------------------------------------------
 
-/** A T2 "tests-only" item (non-thin task only — see the file header) never gets start_here while
- * a T1 "agreed" item is also a candidate for this task: a benchmark-only edge shouldn't buy the
- * top spot away from a pick real usage AND/OR votes also back. A status:'preview' item never
- * gets start_here (except under stance 'cheapest', which stays cost-primary) while a GA/
- * deprecated item shares its SAME final tier — a reader who can't pin a preview model's version
- * shouldn't be steered to start there when an equally-tiered GA option exists. Checked against the
- * FULL candidate pool for this task (not just the top 3), same reasoning both times: a same-tier
- * alternative that later ranked lower still has to count as "a real alternative existed." */
+/** An "early" item (any scheme — tier 2, tier_name 'early') or a non-thin "tests-only" item never
+ * gets start_here while a T1 "agreed" item is also a candidate for this task: neither "too new to
+ * say" nor a benchmark-only edge should buy the top spot away from a pick real usage AND/OR votes
+ * also back. A status:'preview' item never gets start_here (except under stance 'cheapest', which
+ * stays cost-primary) while a GA/deprecated item shares its SAME final tier — a reader who can't
+ * pin a preview model's version shouldn't be steered to start there when an equally-tiered GA
+ * option exists. Checked against the FULL candidate pool for this task (not just the top 3), same
+ * reasoning both times: a same-tier alternative that later ranked lower still has to count as "a
+ * real alternative existed." */
 export function isDisqualifiedFromStartHere(item, allCandidates, stance) {
-  if (!item.thin_task && item.tier === 2 && (allCandidates || []).some((c) => c !== item && c.tier === 1)) return true;
+  const anyT1 = (allCandidates || []).some((c) => c !== item && c.tier === 1);
+  if (anyT1 && (item.tier_name === 'early' || (!item.thin_task && item.tier_name === 'tests-only'))) return true;
   if (item.model.status === 'preview' && stance !== 'cheapest') {
     const gaSameTier = (allCandidates || []).some((c) => c !== item && c.tier === item.tier && c.model.status !== 'preview');
     if (gaSameTier) return true;
@@ -717,17 +766,25 @@ export function standardCompare(a, b) {
   return (a.tier - b.tier) || withinTierCompare(a, b);
 }
 
+// 'cheapest'"s qualifying-tier ceiling per scheme — a tier counts as qualifying when it has (or,
+// for "early", stands in for) at least one kind of evidence near the top; see the file header for
+// why thin-single's ceiling is 2 (its tier 3 "evidenced" is the ONE tier in that scheme with
+// nothing near top — round 2 fix: it used to be 2 under the OLD 2-tier thin-single scheme, which
+// silently included that worst tier once "early" became its own tier and pushed "evidenced" to 3).
+export const CHEAPEST_MAX_TIER = { nonThin: 4, thinDual: 3, thinSingle: 2 };
+
 /** Rank a task's candidates by stance — see the file header for the exact semantics of each.
- * `thinTask` (index.thin) sets 'cheapest'"s qualifying-tier ceiling (<=2 for a thin task, <=3 for
- * a non-thin one). Never mutates `candidates`. */
-export function rankByStance(candidates, stance, thinTask) {
+ * `scheme` (schemeFor(index): 'nonThin' | 'thinDual' | 'thinSingle') sets 'cheapest'"s qualifying-
+ * tier ceiling (CHEAPEST_MAX_TIER) and 'balanced'"s exclusion of "early" from the reference tier.
+ * Never mutates `candidates`. */
+export function rankByStance(candidates, stance, scheme) {
   const list = [...(candidates || [])];
   if (!list.length) return list;
 
   if (stance === 'best') return list.sort(standardCompare);
 
   if (stance === 'cheapest') {
-    const maxTier = thinTask ? 2 : 3;
+    const maxTier = CHEAPEST_MAX_TIER[scheme];
     const qualify = list.filter((c) => c.tier <= maxTier);
     const pool = qualify.length ? qualify : list; // "falling back to any candidate"
     const rest = qualify.length ? list.filter((c) => c.tier > maxTier) : [];
@@ -736,12 +793,17 @@ export function rankByStance(candidates, stance, thinTask) {
     return [...pool, ...rest];
   }
 
-  // 'balanced' (default): among the top tier PRESENT, find its cheapest priced member as the
-  // reference cost; everyone (any tier) at or under 2x that cost is "in budget" and ranked first
-  // by the standard order, everyone else is ranked after, also by the standard order — never
-  // dropped, just deprioritized. No priced candidate in the top tier at all -> behave like 'best'.
-  const topTier = Math.min(...list.map((c) => c.tier));
-  const topTierPriced = list.filter((c) => c.tier === topTier && num(c.monthly_cost_usd));
+  // 'balanced' (default): among the top tier PRESENT among the NON-"early" candidates, find its
+  // cheapest priced member as the reference cost (round 2 fix — a brand-new cheap model must
+  // never set the budget floor just by existing; it can still land in the shortlist within 2x of
+  // whatever the real top tier's floor is). Everyone (any tier, "early" included) at or under 2x
+  // that cost is "in budget" and ranked first by the standard order, everyone else is ranked
+  // after, also by the standard order — never dropped, just deprioritized. No non-"early"
+  // candidate at all, or none of them priced -> behave like 'best'.
+  const nonEarly = list.filter((c) => c.tier_name !== 'early');
+  const referencePool = nonEarly.length ? nonEarly : list;
+  const topTier = Math.min(...referencePool.map((c) => c.tier));
+  const topTierPriced = referencePool.filter((c) => c.tier === topTier && num(c.monthly_cost_usd));
   if (!topTierPriced.length) return list.sort(standardCompare);
   const cheapestRef = Math.min(...topTierPriced.map((c) => c.monthly_cost_usd));
   const threshold = cheapestRef * 2;
@@ -779,7 +841,7 @@ export function decide(input, data) {
   const tasks = {};
   for (const taskId of input?.tasks || []) {
     const { candidates, vol, index } = filterCandidates(taskId, { ...input, stance }, data);
-    const ranked = rankByStance(candidates, stance, index.thin);
+    const ranked = rankByStance(candidates, stance, schemeFor(index));
 
     // start_here eligibility (see isDisqualifiedFromStartHere): find the first-ranked candidate
     // that ISN'T disqualified and move it to the front, keeping everyone else's relative order —
@@ -833,9 +895,15 @@ export function decide(input, data) {
     }
     if (startIdx > 0) {
       const skipped = ranked[0];
-      const reason = (!skipped.thin_task && skipped.tier === 2 && candidates.some((c) => c.tier === 1))
-        ? 'it only tests well — no real-world usage share or votes back it — while at least one candidate with that real-world backing also exists for this task'
-        : 'it\'s a preview-status model and a GA/deprecated model at the same tier is also a candidate — pin a version before you\'d actually rely on a preview SKU';
+      const anyT1 = candidates.some((c) => c.tier === 1);
+      let reason;
+      if (anyT1 && skipped.tier_name === 'early') {
+        reason = 'it\'s too new for real-world usage/votes to have caught up yet, while at least one candidate with that real-world backing already exists for this task';
+      } else if (anyT1 && !skipped.thin_task && skipped.tier_name === 'tests-only') {
+        reason = 'it only tests well — no real-world usage share or votes back it — while at least one candidate with that real-world backing also exists for this task';
+      } else {
+        reason = 'it\'s a preview-status model and a GA/deprecated model at the same tier is also a candidate — pin a version before you\'d actually rely on a preview SKU';
+      }
       assumptions.push(`"${skipped.model.name}" ranked highest before the start_here check but wasn't set as start_here — ${reason}. It's still listed below if it placed in the top 3.`);
     }
     const missingPrice = top.filter((item) => item.monthly_cost_usd == null);
