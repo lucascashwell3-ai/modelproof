@@ -596,10 +596,10 @@ function candidate(id, { tier, tier_name = 'x', cost, status = 'ga' } = {}) {
   return { tier, tier_name, monthly_cost_usd: cost, kindsNearTopCount: 0, measuredPosition: null, bestHumanPosition: null, measuredRows: 0, model: { id, status } };
 }
 
-test("stance 'cheapest': cost-primary among qualifying tiers (<=4 non-thin, <=3 thin-dual, <=2 thin-single); non-qualifying candidates are appended, never dropped", () => {
+test("stance 'cheapest': cost-primary within the best tier present (capped <=4 non-thin, <=3 thin-dual, <=2 thin-single); everyone else is appended, never dropped", () => {
   const list = [candidate('t5-cheap', { tier: 5, cost: 1 }), candidate('t2-mid', { tier: 2, cost: 10 }), candidate('t1-priciest', { tier: 1, cost: 20 })];
   const ranked = rankByStance(list, 'cheapest', 'nonThin');
-  assert.deepEqual(ranked.map((c) => c.model.id), ['t2-mid', 't1-priciest', 't5-cheap'], 'the tier-5 item never qualifies for cheapest (non-thin cap is tier<=4) despite being cheapest overall, but is still returned, ranked last');
+  assert.deepEqual(ranked.map((c) => c.model.id), ['t1-priciest', 't2-mid', 't5-cheap'], '"cheapest that clears": the best tier present (T1) wins on cost within itself; a cheaper T2 or T5 item never outranks a T1 that clears, but all are still returned');
 });
 
 test("stance 'cheapest': falls back to cost-primary among ANY candidate when none qualify", () => {
@@ -708,12 +708,13 @@ test('decide(): enterprise-style input excludes preview entirely at rule 3, befo
 // Round 4 regression (real fixture): coding/cheapest used to start with a pricier, higher-tier
 // candidate purely because the actual cheapest qualifying candidate was tier 2 "early" and a T1
 // candidate also existed elsewhere in the pool — 'cheapest' must never let that block start_here.
-test('decide(): "cheapest" starts with the cheapest qualifying candidate even when it is "early" and a T1 candidate also exists (real fixture: coding)', () => {
+test('decide(): "cheapest" starts with the cheapest candidate of the best tier present — a cheaper lower-tier model never outranks a T1 that clears (real fixture: coding)', () => {
   const out = decide({ tasks: ['coding'], have: ['any'], stance: 'cheapest', volume: 'typical', dataRule: {} }, data);
   const shortlist = out.tasks.coding.shortlist;
   const startHere = shortlist.find((x) => x.start_here);
-  const cheapestQualifying = [...shortlist].filter((x) => typeof x.monthly_cost_usd === 'number').sort((a, b) => a.monthly_cost_usd - b.monthly_cost_usd)[0];
-  assert.equal(startHere?.id, cheapestQualifying?.id, `start_here should be the cheapest item in the shortlist regardless of tier_name; got start_here="${startHere?.id}" ($${startHere?.monthly_cost_usd}, ${startHere?.tier_name}) vs cheapest="${cheapestQualifying?.id}" ($${cheapestQualifying?.monthly_cost_usd}, ${cheapestQualifying?.tier_name})`);
+  assert.equal(startHere?.tier, 1, `coding has T1 candidates on the fixture, so the cheapest pick must be a T1; got "${startHere?.id}" (tier ${startHere?.tier}, ${startHere?.tier_name})`);
+  const t1s = shortlist.filter((x) => x.tier === 1 && typeof x.monthly_cost_usd === 'number');
+  for (const x of t1s) assert.ok(startHere.monthly_cost_usd <= x.monthly_cost_usd, `start_here "${startHere.id}" ($${startHere.monthly_cost_usd}) must be no pricier than T1 rival "${x.id}" ($${x.monthly_cost_usd})`);
 });
 
 // ---------------------------------------------------------------------------------------------
