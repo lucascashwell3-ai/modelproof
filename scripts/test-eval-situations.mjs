@@ -1,11 +1,17 @@
 /* The real eval: 40 situations + 15 "must never" rules, both from an independently-drafted cold
-   answer key (data/eval/situations.json's `expected`, data/eval/must-never.json) — built with real,
-   cited signals (OpenRouter usage/spend, Arena leaderboard votes, vendor guidance, enterprise case
-   studies) and NO visibility into assets/decide.mjs's internals, specifically so this suite can't
-   grade its own homework. This file prints a pass rate for each set and for the combined total;
-   see scripts/refresh-judge.md-adjacent PR notes for the rule: never edit the key to force a pass —
-   a failure here means either the engine needs a fix, or a real, honestly-reported disagreement
-   between the engine's rules and the key's judgment call.
+   answer key (scripts/fixtures/eval/situations.json's `expected`, scripts/fixtures/eval/
+   must-never.json) — built with real, cited signals (OpenRouter usage/spend, Arena leaderboard
+   votes, vendor guidance, enterprise case studies) and NO visibility into assets/decide.mjs's
+   internals, specifically so this suite can't grade its own homework. This file prints a pass
+   rate for each set and for the combined total; see scripts/refresh-judge.md-adjacent PR notes for
+   the rule: never edit the key to force a pass — a failure here means either the engine needs a
+   fix, or a real, honestly-reported disagreement between the engine's rules and the key's
+   judgment call.
+
+   Runs on the frozen fixture (scripts/fixtures/), never on live data/ — see
+   scripts/fixtures/README.md. The live catalog's own must_not_include rules are checked
+   separately, by scripts/check-live-data.mjs, after every Collect run; a full pass-rate report
+   against LIVE data is scripts/eval-report.mjs (informational, never a gate).
 
    Usage: node --test scripts/test-eval-situations.mjs   (also picked up by `node --test scripts/test-*.mjs`) */
 import test from 'node:test';
@@ -14,15 +20,15 @@ import { readFileSync } from 'node:fs';
 import { decide } from '../assets/decide.mjs';
 import { TASK_IDS } from './derive-task-fit.mjs';
 
-const ROOT = new URL('../', import.meta.url);
-const readJson = (p) => JSON.parse(readFileSync(new URL(p, ROOT)));
+const FIXTURES = new URL('./fixtures/', import.meta.url);
+const readJson = (p) => JSON.parse(readFileSync(new URL(p, FIXTURES)));
 
-const models = readJson('data/models.json').models;
-const plans = readJson('data/plans.json').plans;
-const presets = readJson('data/usage-presets.json').presets;
-const vendors = readJson('data/vendors.json').vendors;
-const situations = readJson('data/eval/situations.json').situations;
-const mustNever = readJson('data/eval/must-never.json');
+const models = readJson('models.json').models;
+const plans = readJson('plans.json').plans;
+const presets = readJson('usage-presets.json').presets;
+const vendors = readJson('vendors.json').vendors;
+const situations = readJson('eval/situations.json').situations;
+const mustNever = readJson('eval/must-never.json');
 const data = { models, plans, presets, vendors };
 
 // ---------------------------------------------------------------------------------------------

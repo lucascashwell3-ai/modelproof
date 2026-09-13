@@ -7,14 +7,18 @@ import {
 } from './derive-signals.mjs';
 import { TASK_IDS } from './derive-task-fit.mjs';
 
+// Runs on the frozen fixture (scripts/fixtures/), never on live data/ — see
+// scripts/fixtures/README.md.
 const ROOT = new URL('../', import.meta.url);
+const FIXTURES = new URL('./fixtures/', import.meta.url);
 const readJson = (p) => JSON.parse(readFileSync(new URL(p, ROOT)));
+const readFixture = (p) => JSON.parse(readFileSync(new URL(p, FIXTURES)));
 
-const models = readJson('data/models.json').models;
+const models = readFixture('models.json').models;
 const aliases = readJson('scripts/model-aliases.json');
-const tasksFile = readJson('data/tasks.json');
-const arenaFile = readJson('data/signals/arena-2026-09.json');
-const expertFile = readJson('data/signals/expert-defaults.json');
+const tasksFile = readFixture('tasks.json');
+const arenaFile = readFixture('signals/arena-2026-09.json');
+const expertFile = readFixture('signals/expert-defaults.json');
 
 // ---------------------------------------------------------------------------------------------
 // taskSignalMap

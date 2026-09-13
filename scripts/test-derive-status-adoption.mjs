@@ -6,8 +6,11 @@ import {
   daysSinceRelease, RECENCY_WINDOW_DAYS,
 } from './derive-status-adoption.mjs';
 
-const ROOT = new URL('../', import.meta.url);
-const catalogData = JSON.parse(readFileSync(new URL('data/models.json', ROOT)));
+// Runs on the frozen fixture (scripts/fixtures/), never on live data/ — see
+// scripts/fixtures/README.md. The live catalog's own status/adoption fields are cross-checked by
+// scripts/check-live-data.mjs (via decide() running clean) and scripts/validate-data.mjs instead.
+const FIXTURES = new URL('./fixtures/', import.meta.url);
+const catalogData = JSON.parse(readFileSync(new URL('models.json', FIXTURES)));
 const models = catalogData.models;
 const AS_OF = catalogData.as_of;
 
@@ -60,7 +63,7 @@ test('regression: gemini-3-1-pro is status=preview, adoption=low — the exact c
   assert.equal(m.released, '2026', 'fixture assumption: released is year-only, so the 60-day recency rule can never fire for it (see the "only a year" test below)');
 });
 
-test('data/models.json: every model\'s stored status/adoption already matches the deriver (validate-data.mjs also gates this)', () => {
+test('fixture models.json: every model\'s stored status/adoption already matches the deriver (validate-data.mjs gates live data/models.json the same way)', () => {
   const derived = deriveStatusAdoptionForCatalog(models, AS_OF);
   for (const m of models) {
     const d = derived.get(m.id);
