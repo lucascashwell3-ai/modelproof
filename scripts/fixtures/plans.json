@@ -1,0 +1,330 @@
+{
+  "_readme": "Seat/subscription pricing for the vendors and coding tools in data/models.json. Refreshed manually — see scripts/refresh-plans.md. Every price is read verbatim from the vendor's own pricing page HTML fetched with curl; a null price means the page didn't render that number in static HTML (often a JS-driven toggle) or the plan is contact-sales-only — never a guess. Validated by scripts/validate-data.mjs.",
+  "as_of": "2026-09-06",
+  "plans": [
+    {
+      "vendor": "Anthropic",
+      "plan": "Free",
+      "price_usd_month": 0,
+      "billing": "no billing — free",
+      "includes": "Chat on web/iOS/Android/desktop, code generation, web search, memory across conversations",
+      "source_url": "https://www.anthropic.com/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Anthropic",
+      "plan": "Pro",
+      "price_usd_month": 20,
+      "billing": "monthly; $17/mo ($200 billed up front) if paid annually",
+      "includes": "Everything in Free plus more usage, Claude Code, Claude Cowork, Claude Design, Claude Science, unlimited projects",
+      "source_url": "https://www.anthropic.com/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Anthropic",
+      "plan": "Max 5x",
+      "price_usd_month": 100,
+      "billing": "monthly only",
+      "includes": "Everything in Pro plus 5x more usage, higher output limits, priority access at high-traffic times",
+      "source_url": "https://www.anthropic.com/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Anthropic",
+      "plan": "Max 20x",
+      "price_usd_month": null,
+      "billing": "monthly only (per FAQ) — exact price not in fetched static HTML: the page shows a single \"From $100\" card for Max and splits into 5x/20x behind a client-side toggle",
+      "includes": "Everything in Max 5x plus 20x usage vs Pro (multiplier stated on page; price not)",
+      "source_url": "https://www.anthropic.com/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Anthropic",
+      "plan": "Team (Standard seat)",
+      "price_usd_month": 20,
+      "billing": "per seat/month billed annually; $25/mo per seat if billed monthly",
+      "includes": "All Claude features plus more usage than Pro, Claude Code and Claude Cowork included",
+      "source_url": "https://www.anthropic.com/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Anthropic",
+      "plan": "Team (Premium seat)",
+      "price_usd_month": 100,
+      "billing": "per seat/month billed annually; $125/mo per seat if billed monthly",
+      "includes": "5x more usage than Standard seats, plus Claude Design and Claude Science",
+      "source_url": "https://www.anthropic.com/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Anthropic",
+      "plan": "Enterprise",
+      "price_usd_month": 20,
+      "billing": "per seat/month plus usage billed at API rates; annual billing only",
+      "includes": "All Team features plus SSO, domain capture, SCIM, audit logs, compliance API, custom data retention",
+      "source_url": "https://www.anthropic.com/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "OpenAI",
+      "plan": "Free",
+      "price_usd_month": 0,
+      "billing": "no billing — free",
+      "includes": "Unlimited text chats with GPT-5.6 Luna (abuse guardrails apply); limited uploads, image generation, voice, deep research, memory, Codex",
+      "source_url": "https://openai.com/chatgpt/pricing/",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "OpenAI",
+      "plan": "Go",
+      "price_usd_month": null,
+      "billing": "monthly — price is client-side rendered (JS), not present in the fetched static HTML",
+      "includes": "Everything in Free plus more messages/tools, more uploads, more image creation, more voice, longer memory; plan may include ads",
+      "source_url": "https://openai.com/chatgpt/pricing/",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "OpenAI",
+      "plan": "Plus",
+      "price_usd_month": null,
+      "billing": "monthly — price is client-side rendered (JS), not present in the fetched static HTML",
+      "includes": "Advanced reasoning with GPT-6 Astra and GPT-5.6; expanded messages/uploads/deep research/memory; projects, scheduled tasks, custom GPTs",
+      "source_url": "https://openai.com/chatgpt/pricing/",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "OpenAI",
+      "plan": "Pro",
+      "price_usd_month": null,
+      "billing": "monthly — price is client-side rendered (JS), not present in the fetched static HTML",
+      "includes": "5x or 20x more usage than Plus; Pro reasoning powered by GPT-6 Astra; maximum Codex, deep research, and memory",
+      "source_url": "https://openai.com/chatgpt/pricing/",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "OpenAI",
+      "plan": "Business",
+      "price_usd_month": null,
+      "billing": "per seat/month, starts at 2 users — exact price is client-side rendered (JS), not present in the fetched static HTML",
+      "includes": null,
+      "source_url": "https://openai.com/chatgpt/pricing/",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "OpenAI",
+      "plan": "Enterprise",
+      "price_usd_month": null,
+      "billing": "contact sales",
+      "includes": null,
+      "source_url": "https://openai.com/chatgpt/pricing/",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Google AI (Free)",
+      "price_usd_month": 0,
+      "billing": "no billing — free with a Google Account",
+      "includes": "Gemini app access, base Gemini model",
+      "source_url": "https://gemini.google/subscriptions/",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Google AI Plus",
+      "price_usd_month": 4.99,
+      "billing": "monthly",
+      "includes": "2x higher usage limits than Free, access to more features including video generation and Daily Brief",
+      "source_url": "https://gemini.google/subscriptions/",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Google AI Pro",
+      "price_usd_month": 19.99,
+      "billing": "monthly",
+      "includes": "4x higher usage limits than Free; access to Gemini 3.1 Pro and more",
+      "source_url": "https://gemini.google/subscriptions/",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Google AI Ultra (5x)",
+      "price_usd_month": 99.99,
+      "billing": "monthly — Ultra's lower usage tier",
+      "includes": "5x higher usage limits vs AI Pro; Veo 3.1 video generation, Deep Research, audio overviews",
+      "source_url": "https://gemini.google/subscriptions/",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Google AI Ultra (20x)",
+      "price_usd_month": 199.99,
+      "billing": "monthly — Ultra's higher usage tier",
+      "includes": "20x higher usage limits vs AI Pro; same feature set as Ultra 5x",
+      "source_url": "https://gemini.google/subscriptions/",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "xAI",
+      "plan": "Free",
+      "price_usd_month": 0,
+      "billing": "no billing — free",
+      "includes": "Real-time web and X search, voice mode, connectors",
+      "source_url": "https://x.ai/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "xAI",
+      "plan": "SuperGrok",
+      "price_usd_month": 30,
+      "billing": "monthly",
+      "includes": "Grok 4.6 model, Grok Bot access, higher rate limits across all features, image and video generation",
+      "source_url": "https://x.ai/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "xAI",
+      "plan": "SuperGrok Plus",
+      "price_usd_month": 100,
+      "billing": "monthly",
+      "includes": "Everything in SuperGrok plus 1080p video creation, significantly higher usage, priority access at peak times",
+      "source_url": "https://x.ai/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "xAI",
+      "plan": "SuperGrok Lite",
+      "price_usd_month": null,
+      "billing": "price not present in the fetched static HTML (comparison table lists the tier name only)",
+      "includes": null,
+      "source_url": "https://x.ai/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "xAI",
+      "plan": "SuperGrok Heavy",
+      "price_usd_month": null,
+      "billing": "price not present in the fetched static HTML (comparison table lists the tier name only)",
+      "includes": null,
+      "source_url": "https://x.ai/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "xAI",
+      "plan": "Business",
+      "price_usd_month": null,
+      "billing": "price not present in the fetched static HTML",
+      "includes": null,
+      "source_url": "https://x.ai/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "xAI",
+      "plan": "Enterprise",
+      "price_usd_month": null,
+      "billing": "contact sales",
+      "includes": null,
+      "source_url": "https://x.ai/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Cursor",
+      "plan": "Hobby",
+      "price_usd_month": 0,
+      "billing": "no billing — free",
+      "includes": "Limited Agent requests, access to Composer",
+      "source_url": "https://cursor.com/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Cursor",
+      "plan": "Pro",
+      "price_usd_month": 20,
+      "billing": "per month",
+      "includes": "Extended Agent limits, access to frontier models, MCPs/skills/hooks, cloud agents",
+      "source_url": "https://cursor.com/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Cursor",
+      "plan": "Pro+",
+      "price_usd_month": null,
+      "billing": "price not present in the fetched static HTML (Pro/Pro+/Ultra share a tab-toggled price display)",
+      "includes": "Everything in Pro plus 3x Pro limits on Agent, higher Grok Bot usage",
+      "source_url": "https://cursor.com/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Cursor",
+      "plan": "Ultra",
+      "price_usd_month": null,
+      "billing": "price not present in the fetched static HTML (Pro/Pro+/Ultra share a tab-toggled price display)",
+      "includes": "Everything in Pro plus 20x Pro limits on Agent, highest Grok Bot usage, priority access to new features",
+      "source_url": "https://cursor.com/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Cursor",
+      "plan": "Teams (Standard)",
+      "price_usd_month": 40,
+      "billing": "per user/month",
+      "includes": "Centralized team billing and administration, team marketplace, cloud agents with shared team context, SAML/OIDC SSO",
+      "source_url": "https://cursor.com/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Cursor",
+      "plan": "Teams (Premium)",
+      "price_usd_month": null,
+      "billing": "price not present in the fetched static HTML (Standard/Premium share a tab-toggled price display)",
+      "includes": "Everything in Teams Standard plus 5x Standard limits on Agent",
+      "source_url": "https://cursor.com/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "Cursor",
+      "plan": "Enterprise",
+      "price_usd_month": null,
+      "billing": "custom — contact sales",
+      "includes": null,
+      "source_url": "https://cursor.com/pricing",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "GitHub Copilot",
+      "plan": "Free",
+      "price_usd_month": 0,
+      "billing": "no billing — free",
+      "includes": "Limited chat and agent usage, code completions and next-edit suggestions",
+      "source_url": "https://github.com/features/copilot/plans",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "GitHub Copilot",
+      "plan": "Pro",
+      "price_usd_month": 10,
+      "billing": "per user/month",
+      "includes": "$15/month in included GitHub AI Credits, model selection",
+      "source_url": "https://github.com/features/copilot/plans",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "GitHub Copilot",
+      "plan": "Pro+",
+      "price_usd_month": 39,
+      "billing": "per user/month",
+      "includes": "$70/month in included GitHub AI Credits, access to more models including Opus, audit logs, 4x+ included usage vs Pro",
+      "source_url": "https://github.com/features/copilot/plans",
+      "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "GitHub Copilot",
+      "plan": "Max",
+      "price_usd_month": 100,
+      "billing": "per user/month",
+      "includes": "$200/month in included GitHub AI Credits, for sustained high-volume agent workflows, 2.9x+ included usage vs Pro+",
+      "source_url": "https://github.com/features/copilot/plans",
+      "as_of": "2026-09-06"
+    }
+  ]
+}

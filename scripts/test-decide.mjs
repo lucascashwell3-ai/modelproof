@@ -9,13 +9,16 @@ import {
 } from '../assets/decide.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
 
-const ROOT = new URL('../', import.meta.url);
-const readJson = (p) => JSON.parse(readFileSync(new URL(p, ROOT)));
+// This suite runs on a frozen fixture, never on live data/ (scripts/fixtures/README.md) — a
+// data refresh must never make CI red on a golden-value test.
+const FIXTURES = new URL('./fixtures/', import.meta.url);
+const readJson = (p) => JSON.parse(readFileSync(new URL(p, FIXTURES)));
 
-const models = readJson('data/models.json').models;
-const plans = readJson('data/plans.json').plans;
-const presets = readJson('data/usage-presets.json').presets;
-const vendors = readJson('data/vendors.json').vendors;
+const models = readJson('models.json').models;
+const plans = readJson('plans.json').plans;
+const presets = readJson('usage-presets.json').presets;
+const vendors = readJson('vendors.json').vendors;
+const situations = readJson('eval/situations.json').situations;
 const data = { models, plans, presets, vendors };
 
 // ---------------------------------------------------------------------------------------------
@@ -30,16 +33,21 @@ test('registry: WHY_FIELDS keys and derive-task-fit BASIS_TOKENS are the same se
   assert.deepEqual(whyKeys, basisTokens);
 });
 
-// (the "situations only reference real task ids" sanity check now lives in
-// scripts/test-eval-situations.mjs, alongside the rest of the situations.json-driven eval)
+// ---------------------------------------------------------------------------------------------
+// Sanity: every task id used in the frozen situations fixture is one derive-task-fit.mjs knows.
+// ---------------------------------------------------------------------------------------------
+test('eval situations only reference real task ids', () => {
+  for (const s of situations) {
+    for (const t of s.input.tasks) assert.ok(TASK_IDS.includes(t), `situation "${s.id}" uses unknown task "${t}"`);
+  }
+});
 
 // ---------------------------------------------------------------------------------------------
-// The situations eval used to live here as a hard-coded 20-case test. It's superseded (2026-09-07)
-// by scripts/test-eval-situations.mjs, which runs every situation in data/eval/situations.json
-// PLUS data/eval/must-never.json and prints a pass rate — situations.json itself now holds a cold
-// answer key (drafted by a separate pass with no visibility into this engine's internals, not by
-// running decide() and reading off the winner) precisely so this eval can't grade its own
-// homework. See that file for the real eval; this file keeps the structural/property tests below.
+// The 20-situation eval. Each situation's `expected` was drafted by running decide() against the
+// catalog frozen in scripts/fixtures/ (see data/eval/situations.json's _readme for how the
+// numbers were picked). This runs on that frozen snapshot only — it is a code-contract test on
+// decide()'s logic, not a check on live data. The live catalog after a Collect is checked
+// separately, by invariants only, in scripts/check-live-data.mjs.
 // ---------------------------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------------------------

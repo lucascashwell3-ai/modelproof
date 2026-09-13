@@ -1,0 +1,205 @@
+{
+  "_readme": "Twenty realistic decide() calls used as an eval set by scripts/test-decide.mjs, alongside the full-grid property test. Every `expected` was drafted by RUNNING decide() against the live catalog and reading real fields off the winning models (see each rationale) — never from opinion about which model 'should' win. That also means this file is a trip-wire on purpose: if a future data refresh changes prices, scores, or availability enough to flip one of these, the eval fails loud (see the 'Derive task fit' + test step in .github/workflows/auto-refresh.yml) rather than silently drifting. start_here_any_of: [] means the situation is expected to return an EMPTY shortlist (nothing clears every filter) — test-decide.mjs treats that as its own assertion, not 'any model is fine'. Where the underlying data is thin enough that a refresh could plausibly reorder close scores, start_here_any_of lists more than one acceptable id and the rationale says so.",
+  "situations": [
+    {
+      "id": "solo-dev-openrouter-bulk-cheapest",
+      "description": "Solo developer, OpenRouter only, cheap high-volume batch job.",
+      "input": { "tasks": ["bulk"], "have": ["openrouter"], "stance": "cheapest", "volume": "heavy", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": ["llama-4-maverick"],
+        "must_not_include": ["qwen3-max"]
+      },
+      "rationale": "Llama 4 Maverick is the cheapest OpenRouter-reachable model with a general score (GPQA) to weight against price ($0.22/$0.88). Qwen3 Max has no sourced GPQA or MMLU-Pro, so bulk's floor (a general-capability basis) excludes it even though it's reachable and cheap."
+    },
+    {
+      "id": "enterprise-claude-only-coding-balanced",
+      "description": "Enterprise team paying for Anthropic only, balanced coding pick.",
+      "input": { "tasks": ["coding"], "have": ["anthropic"], "stance": "balanced", "volume": "typical", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": ["claude-sonnet-5"],
+        "must_not_include": ["gpt-5-6-sol", "gemini-3-1-pro"]
+      },
+      "rationale": "Balanced blends normalized coding_score with normalized price; Claude Sonnet 5 (coding_score 85, $19/mo at typical volume) sits between Haiku's cheap-but-weaker and Opus's strongest-but-priciest. OpenAI and Google models are unreachable — 'have' names Anthropic only."
+    },
+    {
+      "id": "cto-no-china-research-best",
+      "description": "CTO wants the strongest researcher, any vendor, no China-hosted models.",
+      "input": { "tasks": ["research"], "have": ["any"], "stance": "best", "volume": "typical", "dataRule": { "noChinaHosted": true } },
+      "expected": {
+        "start_here_any_of": ["gemini-3-1-pro"],
+        "must_not_include": ["deepseek-v4-pro", "kimi-k3"]
+      },
+      "rationale": "Gemini 3.1 Pro has the highest research fit (GPQA 94.3 + 1M context) among non-China-hosted models. DeepSeek (China) and Moonshot AI / Kimi (China) both carry strong GPQA scores that would otherwise be competitive — data/vendors.json marks both China-headquartered, so noChinaHosted must drop them regardless of score."
+    },
+    {
+      "id": "marketing-openai-writing-balanced",
+      "description": "Marketing team on an OpenAI plan, balanced pick for long-form copy.",
+      "input": { "tasks": ["writing"], "have": ["openai"], "stance": "balanced", "volume": "typical", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": ["gpt-5-6-luna"],
+        "must_not_include": ["claude-opus-5"]
+      },
+      "rationale": "Writing fit is GPQA-or-MMLU-Pro as-is; among reachable OpenAI models GPT-5.6 Luna's balance of a high GPQA (91.6) at $1.2/$2.16-per-1M-tokens pricing wins the blended rank. Claude Opus 5 is unreachable — 'have' names OpenAI only."
+    },
+    {
+      "id": "startup-any-extraction-cheapest-light",
+      "description": "Small startup, any vendor, cheapest extraction pipeline at light volume.",
+      "input": { "tasks": ["extraction"], "have": ["any"], "stance": "cheapest", "volume": "light", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": ["llama-4-maverick"],
+        "must_not_include": ["qwen3-max"]
+      },
+      "rationale": "Same floor gap as the bulk case: extraction needs a general score AND a price. Llama 4 Maverick has both and is the cheapest to clear; Qwen3 Max has no sourced GPQA/MMLU-Pro so it never clears the floor no matter how cheap it is."
+    },
+    {
+      "id": "support-bot-google-chat-cheapest",
+      "description": "Customer-support bot builder with a Google-only budget, cheapest chat model.",
+      "input": { "tasks": ["chat"], "have": ["google"], "stance": "cheapest", "volume": "typical", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": ["gemini-3-5-flash"],
+        "must_not_include": ["gpt-5-6-luna"]
+      },
+      "rationale": "Gemini 3.5 Flash is the only reachable Google model that clears chat's floor (a sourced general score) once dominated candidates are dropped. GPT-5.6 Luna is unreachable — 'have' names Google only."
+    },
+    {
+      "id": "xai-only-frontend-best",
+      "description": "Frontend developer with xAI access only, wants the strongest option.",
+      "input": { "tasks": ["frontend"], "have": ["xai"], "stance": "best", "volume": "typical", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": ["grok-4-5"],
+        "must_not_include": ["grok-4-6"]
+      },
+      "rationale": "Grok 4.5 has a sourced coding_score (86); frontend fit is coding_score plus a small best_for:speed bonus. Grok 4.6 has neither a sourced coding_score nor a sourced direct_api flag yet, so it fails both the floor and (separately) reachability."
+    },
+    {
+      "id": "analyst-anthropic-exec-summaries-heavy-balanced",
+      "description": "Analyst on Anthropic, heavy volume, balanced pick for executive summaries.",
+      "input": { "tasks": ["exec-summaries"], "have": ["anthropic"], "stance": "balanced", "volume": "heavy", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": ["claude-sonnet-5"],
+        "must_not_include": ["claude-haiku-4-5"]
+      },
+      "rationale": "exec-summaries fit is the general score as-is; Claude Sonnet 5 has a sourced GPQA where Claude Haiku 4.5 does not, so Haiku fails the floor entirely despite being the cheapest Anthropic model — a same-vendor case showing the floor is about sourced capability, not just reachability."
+    },
+    {
+      "id": "screenshot-qa-any-vision-cheapest",
+      "description": "Screenshot/QA tool, any vendor, cheapest model that actually handles images.",
+      "input": { "tasks": ["vision"], "have": ["any"], "stance": "cheapest", "volume": "typical", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": ["inkling-small"],
+        "must_not_include": ["claude-opus-5"]
+      },
+      "rationale": "Vision fit is a plain yes/no on the best_for:vision tag; every tagged model ties at 100, so the cheapest one (Inkling Small) dominates the rest of the tie and is the only survivor. Claude Opus 5 carries no vision tag in this data, so it's excluded regardless of how capable it may actually be — an unsourced fact stays null, never a guessed yes."
+    },
+    {
+      "id": "openrouter-no-china-coding-balanced",
+      "description": "OpenRouter-only builder, balanced coding pick, no China-hosted models.",
+      "input": { "tasks": ["coding"], "have": ["openrouter"], "stance": "balanced", "volume": "typical", "dataRule": { "noChinaHosted": true } },
+      "expected": {
+        "start_here_any_of": ["gpt-5-6-luna"],
+        "must_not_include": ["kimi-k3", "deepseek-v4-pro"]
+      },
+      "rationale": "The single strongest coding_score reachable via OpenRouter is actually Kimi K3 (96, Moonshot AI) — which is exactly why this case matters: data/vendors.json marks Moonshot AI and DeepSeek China-headquartered, so noChinaHosted must drop both regardless of how high they score, leaving GPT-5.6 Luna's balanced price/capability trade-off on top."
+    },
+    {
+      "id": "xai-only-agents-best",
+      "description": "Automation builder with xAI access only, strongest agentic pick.",
+      "input": { "tasks": ["agents"], "have": ["xai"], "stance": "best", "volume": "typical", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": ["grok-4-5"],
+        "must_not_include": ["grok-4-6"]
+      },
+      "rationale": "Agents fit needs a coding_score baseline; Grok 4.5 has one, Grok 4.6 doesn't (and also isn't confirmed reachable yet — its direct_api flag is unsourced), so it fails on two independent rules at once."
+    },
+    {
+      "id": "compliance-google-no-china-extraction-balanced",
+      "description": "Compliance-sensitive team, Google only, no-China rule (belt-and-suspenders), extraction.",
+      "input": { "tasks": ["extraction"], "have": ["google"], "stance": "balanced", "volume": "typical", "dataRule": { "noChinaHosted": true } },
+      "expected": {
+        "start_here_any_of": ["gemini-3-5-flash"],
+        "must_not_include": ["gemini-3-1-pro"]
+      },
+      "rationale": "Google's own HQ is the United States, so noChinaHosted doesn't change this set — the interesting part is that Gemini 3.1 Pro, despite a strong GPQA, is dropped as dominated (Gemini 3.5 Flash is both cheaper and has an equal-or-better blended extraction fit), leaving one survivor."
+    },
+    {
+      "id": "openrouter-chat-cheapest",
+      "description": "Budget chat app, OpenRouter only, cheapest that clears the floor.",
+      "input": { "tasks": ["chat"], "have": ["openrouter"], "stance": "cheapest", "volume": "typical", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": ["llama-4-maverick"],
+        "must_not_include": ["qwen3-max"]
+      },
+      "rationale": "Same general-score gap again: Llama 4 Maverick is the cheapest OpenRouter model with a sourced general score; Qwen3 Max has none, so it never clears chat's floor."
+    },
+    {
+      "id": "research-lab-any-no-china-best-heavy",
+      "description": "Research lab, any vendor, no-China rule, strongest researcher at heavy volume.",
+      "input": { "tasks": ["research"], "have": ["any"], "stance": "best", "volume": "heavy", "dataRule": { "noChinaHosted": true } },
+      "expected": {
+        "start_here_any_of": ["gemini-3-1-pro"],
+        "must_not_include": ["deepseek-v4-pro"]
+      },
+      "rationale": "Fit ranking (rule 4) doesn't depend on volume — only the displayed monthly_cost_usd does — so this repeats the CTO case's winner at a different cost figure. DeepSeek's GPQA (90.1) would otherwise be in range, but it's China-headquartered."
+    },
+    {
+      "id": "enterprise-anthropic-openai-coding-balanced-heavy",
+      "description": "Enterprise paying for both Anthropic and OpenAI, balanced coding at heavy volume.",
+      "input": { "tasks": ["coding"], "have": ["anthropic", "openai"], "stance": "balanced", "volume": "heavy", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": ["gpt-5-6-luna"],
+        "must_not_include": ["gemini-3-1-pro"]
+      },
+      "rationale": "With two vendors reachable, GPT-5.6 Luna's cheap-but-decent coding_score wins the balanced blend over Anthropic's pricier options at heavy volume. Google is unreachable — 'have' names Anthropic and OpenAI only, not Google."
+    },
+    {
+      "id": "freelancer-openrouter-vision-balanced",
+      "description": "Freelancer on OpenRouter, balanced pick for a vision task.",
+      "input": { "tasks": ["vision"], "have": ["openrouter"], "stance": "balanced", "volume": "typical", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": ["inkling-small"],
+        "must_not_include": ["claude-opus-5"]
+      },
+      "rationale": "Same tie-and-price-dominate pattern as the vision-cheapest case: every vision-tagged, OpenRouter-reachable model ties at fit 100, and Inkling Small is the cheapest of them, so it's the sole survivor under any price-sensitive stance. Claude Opus 5 has no vision tag in this data."
+    },
+    {
+      "id": "freelancer-openrouter-extraction-light-cheapest",
+      "description": "Freelancer on OpenRouter, cheapest extraction pick at light volume.",
+      "input": { "tasks": ["extraction"], "have": ["openrouter"], "stance": "cheapest", "volume": "light", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": ["llama-4-maverick"],
+        "must_not_include": ["qwen3-max"]
+      },
+      "rationale": "Identical floor logic to the other extraction/bulk/chat cases at a different volume — volume changes monthly_cost_usd, not which models clear the general-score floor or which is cheapest per token."
+    },
+    {
+      "id": "solo-builder-anthropic-frontend-cheapest",
+      "description": "Solo builder on Anthropic only, cheapest frontend-capable model.",
+      "input": { "tasks": ["frontend"], "have": ["anthropic"], "stance": "cheapest", "volume": "typical", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": ["claude-haiku-4-5"],
+        "must_not_include": ["gpt-5-6-luna"]
+      },
+      "rationale": "Claude Haiku 4.5 has a sourced coding_score (66) and is the cheapest Anthropic model that clears frontend's floor. GPT-5.6 Luna is unreachable — 'have' names Anthropic only."
+    },
+    {
+      "id": "no-access-coding-balanced",
+      "description": "Edge case: caller has no vendor access at all.",
+      "input": { "tasks": ["coding"], "have": [], "stance": "balanced", "volume": "typical", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": [],
+        "must_not_include": ["claude-opus-5", "gpt-5-6-luna", "gemini-3-1-pro"]
+      },
+      "rationale": "An empty `have` matches nothing under rule 1 (it isn't 'any') — every model is unreachable, so the shortlist must be empty. This is the edge case for 'have provided but grants nothing', distinct from 'any' meaning no filter."
+    },
+    {
+      "id": "anthropic-only-vision-best",
+      "description": "Edge case: the only vendor the caller has doesn't publish a vision-capable model in this data.",
+      "input": { "tasks": ["vision"], "have": ["anthropic"], "stance": "best", "volume": "typical", "dataRule": {} },
+      "expected": {
+        "start_here_any_of": [],
+        "must_not_include": ["claude-opus-5", "claude-sonnet-5"]
+      },
+      "rationale": "No Anthropic model carries a 'vision' best_for tag in this snapshot, so every Anthropic model fails vision's floor and the shortlist is empty — this is a floor failure, not a reachability failure (Anthropic models ARE reachable here for other tasks)."
+    }
+  ]
+}

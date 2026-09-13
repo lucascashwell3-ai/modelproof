@@ -3408,5 +3408,130 @@
       "openrouter",
       "litellm"
     ]
+  },
+  {
+    "date": "2026-09-08",
+    "model": "DeepSeek V4-Flash",
+    "field": "price_input",
+    "old": 0.44,
+    "new": 0.44,
+    "sources": [
+      "https://api-docs.deepseek.com/quick_start/pricing/"
+    ]
+  },
+  {
+    "date": "2026-09-08",
+    "model": "DeepSeek V4-Flash",
+    "field": "price_output",
+    "old": 1.32,
+    "new": 1.32,
+    "sources": [
+      "https://api-docs.deepseek.com/quick_start/pricing/"
+    ]
+  },
+  {
+    "date": "2026-09-08",
+    "model": "DeepSeek V4-Pro",
+    "field": "price_input",
+    "old": 1.32,
+    "new": 1.32,
+    "sources": [
+      "https://api-docs.deepseek.com/quick_start/pricing/"
+    ]
+  },
+  {
+    "date": "2026-09-08",
+    "model": "DeepSeek V4-Pro",
+    "field": "price_output",
+    "old": 3.96,
+    "new": 3.96,
+    "sources": [
+      "https://api-docs.deepseek.com/quick_start/pricing/"
+    ]
+  },
+  {
+    "date": "2026-09-08",
+    "model": "GLM-5.2",
+    "field": "price_input",
+    "old": 1.4,
+    "new": 1.4,
+    "sources": [
+      "https://docs.z.ai/guides/overview/pricing",
+      "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+    ]
+  },
+  {
+    "date": "2026-09-08",
+    "model": "Claude Fable 5.1",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://platform.claude.com/docs/en/models/fable-5-1/overview",
+      "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1"
+    ]
+  },
+  {
+    "date": "2026-09-11",
+    "model": "GLM 5.3 Flash",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://technode.com/2026/08/27/zhipu-identifies-ox-alpha-as-glm-5-3-flash-and-releases-model-weights/",
+      "https://docs.z.ai/guides/llm/glm-5.3-flash",
+      "https://felloai.com/glm-5-3-flash/"
+    ]
+  },
+  {
+    "date": "2026-09-11",
+    "model": "Ling 3.0 Flash Fin",
+    "field": "added",
+    "old": null,
+    "new": "new model (judged)",
+    "sources": [
+      "https://huggingface.co/inclusionAI/Ling-3.0-flash-Fin",
+      "https://emergent.sh/news/inclusionai-launches-ling-3-0-flash-fin-model"
+    ]
+  },
+  {
+    "date": "2026-09-11",
+    "model": "Aion-3.0-Mini",
+    "field": "best_for+use_well+strengths",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://www.aionlabs.ai/docs/models"
+    ]
+  },
+  {
+    "date": "2026-09-11",
+    "model": "Aion-3.0",
+    "field": "best_for+use_well+strengths",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://www.aionlabs.ai/docs/models"
+    ]
+  },
+  {
+    "date": "2026-09-11",
+    "model": "Aion-3.0-Mini",
+    "field": "best_for+use_well+strengths",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://www.aionlabs.ai/docs/models"
+    ]
+  },
+  {
+    "date": "2026-09-11",
+    "model": "Aion-3.0",
+    "field": "best_for+use_well+strengths",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://www.aionlabs.ai/docs/models"
+    ]
   }
 ]

@@ -1,0 +1,31 @@
+name: Tests
+# Runs the unit suite (frozen fixture, scripts/fixtures/ — never live data) plus the two data
+# gates against whatever data/ looks like on this branch, on every push to main and every pull
+# request. This is the fast, always-on check the other workflows' data gates build on.
+on:
+  push:
+    branches: [main]
+  pull_request: {}
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Unit tests (frozen fixture)
+        run: node --test scripts/test-*.mjs
+
+      - name: Honesty gate
+        run: node scripts/validate-data.mjs
+
+      - name: Live-data invariants
+        run: node scripts/check-live-data.mjs
