@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /* Per-model, per-task REAL-WORLD signals — the calibration input assets/decide.mjs's rule 3
-   uses to stop a single vendor benchmark claim from earning the same "strong" judged band as a
+   uses to stop a single vendor benchmark claim from reading as equally strong evidence as a
    model with actual independent evidence behind it (see that file's header for the exact rule).
-   Without this, task_fit_judged's `band` field can't tell "Anthropic's own launch post plus
+   Without this, a claims-only judged record can't tell "Anthropic's own launch post plus
    OpenRouter's #1 usage plus Cursor's featured roster" apart from "one arXiv paper by the same
-   team that trained the model" — both can read `strong`/`high confidence` even though only one
-   has any evidence outside the vendor's own claim. This script writes a THIRD, separate signal
+   team that trained the model" — both are just claims text with no signal of their own. This
+   script writes a THIRD, separate signal
    next to task_fit (quantitative) and task_fit_judged (qualitative claims): a plain count of how
    many independent, real-world signal families back a model for a task.
 

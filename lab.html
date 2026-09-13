@@ -52,9 +52,9 @@
 
     /* Judged (qualitative) task fit: a "reported"/"lab-stated" badge plus the claims that
        actually back the pick's `why` — sentence + source link — never asserted with no way to
-       check it. Only present when the model has a task_fit_judged record for this task; band/
-       confidence carry zero ranking weight any more (brain v2 step 3) — see .pick__tier below for
-       what actually grades a pick now. */
+       check it. Only present when the model has a task_fit_judged record for this task; the
+       record is claims-only (v3, 2026-09 — no band, no confidence) and carries zero ranking
+       weight of its own (brain v2 step 3) — see .pick__tier below for what actually grades a pick. */
     .pick__basis { display: inline-block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.03em;
       color: var(--ink-3); border: 1px solid var(--line-soft); border-radius: 999px; padding: 1px 7px;
       margin-top: 6px; }
