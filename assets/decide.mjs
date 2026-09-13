@@ -79,9 +79,10 @@
 
    TIERS (a LOWER tier number is always better; `tier` is a plain number, `tier_name` a string,
    both returned per shortlist item; `label` is the reader-facing caveat, or null on tiers that
-   carry none). "early" (see NEW-MODEL OVERRIDE below) is its own numbered tier in every scheme,
-   not an overlay on top of another tier (fixed 2026-09, round 2) — it sits directly below the
-   best tier(s) and above the tier it would otherwise have landed in:
+   carry none). "early" (see NEW-MODEL OVERRIDE below) is its own numbered tier in non-thin and
+   thin-dual (fixed 2026-09, round 2) — it sits directly below the best tier(s) and above the tier
+   it would otherwise have landed in — but does NOT exist in thin-single (fixed 2026-09, round 3 —
+   see NEW-MODEL OVERRIDE for why):
 
    Non-thin task — a waterfall on (measured present?, measured near top?, any human kind near
    top?, is this model new?); every one of these six REQUIRES at least one kind of evidence
@@ -118,22 +119,25 @@
    T1/T3/T4; the spec only names T1's label, not a quoted tier_name, for the thin schemes.)
 
    Thin task, only ONE human kind exists anywhere in the catalog (vision: no chosen; bulk: no
-   preferred):
+   preferred) — NO "early" tier (see NEW-MODEL OVERRIDE):
      T1  that one kind near top.                                Label: "one signal only".
-     T2  evidenced, not near top, adoption: 'new'.              Label: "early: too new for usage
-                                                                data".
-     T3  evidenced, not near top, NOT new.
-   (tier_name: "single-signal" / "early" / "evidenced".)
+     T2  evidenced, not near top (adoption plays no role here at all any more).
+   (tier_name: "single-signal" / "evidenced".)
 
    NEW-MODEL OVERRIDE — a model with `adoption === 'new'` (released <=60 days ago,
-   scripts/derive-status-adoption.mjs) that would otherwise land in the "near-top-on-one-kind-but-
-   no-OTHER-backing" tier (non-thin's tests-only, thin-dual's one-signal, thin-single's evidenced)
-   gets its OWN tier instead — "early", one slot better than where it would have landed — rather
-   than being read as "only tests well"/"just evidenced" when the real reason is "too recent for
-   usage/votes to have accumulated at all". Applies in EVERY scheme, including thin-single (fixed
-   2026-09, round 2 — round 1 excluded thin-single on the theory that its T1 already covered "the
-   sole kind near top"; but a brand-new model that's evidenced-yet-not-near-top on that sole kind
-   deserves the same benefit of the doubt as any other scheme's near-miss case).
+   scripts/derive-status-adoption.mjs) that is near the top on AT LEAST ONE kind but would
+   otherwise land in the "near-top-on-one-kind-but-no-OTHER-backing" tier (non-thin's tests-only,
+   thin-dual's one-signal) gets its OWN tier instead — "early", one slot better than where it
+   would have landed — rather than being read as "only tests well" when the real reason is "too
+   recent for usage/votes to have accumulated at all". Fixed 2026-09, round 3: round 2 also
+   applied this to thin-single (any new+not-near-top model, regardless of HOW far from the top it
+   was), which was wrong — "early" was meant to reward a genuine near-miss, not excuse a brand-new
+   model that isn't close to the top on anything (e.g. a bulk model at chosen position 36 of 63
+   read as "early" purely for being new — S13/S11 in the eval situations). thin-single has no
+   intermediate near-miss state to carve "early" out of at all: "near top on the only kind" (T1)
+   is already the most lenient bar that scheme has, so a new-but-not-near-top model there is
+   simply T2 "evidenced", exactly like a non-new one — round 3 removes "early" from thin-single
+   entirely rather than trying to patch its trigger condition.
 
    NEGATIVE CLAIMS — if a model.task_fit_judged[taskId].claims[] entry carries an explicit
    `polarity: 'negative'` marker (a field this pass ADDS support for; no claim in the data carries
@@ -518,9 +522,10 @@ export function buildEvidenceIndex(taskId, models, thinRule = THIN_RULE) {
 
 // -----------------------------------------------------------------------------------------
 // Tiers — see the file header for the full rationale and the exact waterfall/labels. "early" is
-// tier 2 in EVERY scheme (round 2) — a real numbered tier, not an overlay on T1.
+// tier 2 in non-thin and thin-dual (round 2) — a real numbered tier, not an overlay on T1. It does
+// NOT exist in thin-single (round 3 fix — see baseTierNumber's own comment for why).
 // -----------------------------------------------------------------------------------------
-export const MAX_TIER = { nonThin: 6, thinDual: 4, thinSingle: 3 };
+export const MAX_TIER = { nonThin: 6, thinDual: 4, thinSingle: 2 };
 
 export function schemeFor(index) {
   if (!index.thin) return 'nonThin';
@@ -549,8 +554,7 @@ const THIN_DUAL_TIER_META = {
 };
 const THIN_SINGLE_TIER_META = {
   1: { tier_name: 'single-signal', label: 'one signal only' },
-  2: EARLY_META,
-  3: { tier_name: 'evidenced', label: null },
+  2: { tier_name: 'evidenced', label: null },
 };
 function tierMetaTable(scheme) {
   return scheme === 'nonThin' ? NON_THIN_TIER_META : scheme === 'thinDual' ? THIN_DUAL_TIER_META : THIN_SINGLE_TIER_META;
@@ -564,10 +568,16 @@ function tierMeta(scheme, tier) {
  * waterfall from the file header, on the three evidence booleans plus `isNew`. Only ever called
  * once a model has already cleared the evidence gate (evidenced === true), so the nonThin
  * "measured absent" branch always has some human evidence backing it. `isNew` is
- * model.adoption === 'new'; it only ever matters at the one spot each scheme reserves for it
- * (the tier a non-thin/thin-dual model lands on when it's near-top-on-one-kind but has no OTHER
- * human backing, or a thin-single model that's evidenced but not near top on its sole kind) —
- * every other branch ignores it entirely. */
+ * model.adoption === 'new'; it only ever matters at the one spot non-thin/thin-dual each reserve
+ * for it (the tier a model lands on when it's near-top-on-one-kind but has no OTHER human
+ * backing) — every other branch ignores it entirely.
+ *
+ * Round 3 fix: "early" requires being near the top on AT LEAST ONE kind — a brand-new model that
+ * isn't near top on ANYTHING gets no benefit of the doubt; it's graded on the standard table like
+ * anyone else. thin-single has NO "early" tier at all (round 3 — round 2 wrongly gave one to
+ * every new model regardless of position, e.g. a bulk model at position 36 of 63 read as "early"
+ * purely for being new): "near top on the only kind" is already the most lenient bar thin-single
+ * has, so there's no intermediate state left to carve "early" out of. */
 export function baseTierNumber(scheme, measuredPresent, measuredNearTop, chosenNearTop, preferredNearTop, isNew = false) {
   const humanNearTop = chosenNearTop || preferredNearTop;
   if (scheme === 'nonThin') {
@@ -582,11 +592,11 @@ export function baseTierNumber(scheme, measuredPresent, measuredNearTop, chosenN
     if (humanNearTop) return isNew ? 2 : 3;
     return 4;
   }
-  // thinSingle — the sole existing human kind is whichever of chosenNearTop/preferredNearTop can
-  // ever be true for this task (the other is always false, since that kind has no coverage at
-  // all — see buildEvidenceIndex's humanKinds), so this reduces to "that kind near top?".
-  if (humanNearTop) return 1;
-  return isNew ? 2 : 3;
+  // thinSingle — no "early" branch (round 3): the sole existing human kind is whichever of
+  // chosenNearTop/preferredNearTop can ever be true for this task (the other is always false,
+  // since that kind has no coverage at all — see buildEvidenceIndex's humanKinds), so this is
+  // just "that kind near top?" — isNew plays no role here at all any more.
+  return humanNearTop ? 1 : 2;
 }
 
 /** { evidenced, tier, tier_name, label, evidence, thin_task, kindsNearTopCount, measuredPosition,
@@ -767,11 +777,11 @@ export function standardCompare(a, b) {
 }
 
 // 'cheapest'"s qualifying-tier ceiling per scheme — a tier counts as qualifying when it has (or,
-// for "early", stands in for) at least one kind of evidence near the top; see the file header for
-// why thin-single's ceiling is 2 (its tier 3 "evidenced" is the ONE tier in that scheme with
-// nothing near top — round 2 fix: it used to be 2 under the OLD 2-tier thin-single scheme, which
-// silently included that worst tier once "early" became its own tier and pushed "evidenced" to 3).
-export const CHEAPEST_MAX_TIER = { nonThin: 4, thinDual: 3, thinSingle: 2 };
+// for "early", stands in for) at least one kind of evidence near the top. thin-single's ceiling is
+// 1 (round 3 fix — thin-single has no "early" tier any more, so its only qualifying tier is T1
+// "single-signal"; T2 "evidenced" is the one tier in that scheme with nothing near top, same as
+// non-thin's T5/T6 and thin-dual's T4).
+export const CHEAPEST_MAX_TIER = { nonThin: 4, thinDual: 3, thinSingle: 1 };
 
 /** Rank a task's candidates by stance — see the file header for the exact semantics of each.
  * `scheme` (schemeFor(index): 'nonThin' | 'thinDual' | 'thinSingle') sets 'cheapest'"s qualifying-

@@ -438,8 +438,8 @@ test('tier T6 extension: measured absent, evidenced but no human kind near top e
   assert.equal(cls.kindsNearTopCount, 0);
 });
 
-test('MAX_TIER: 6 non-thin, 4 thin-dual, 3 thin-single (early inserted as its own tier in every scheme)', () => {
-  assert.deepEqual(MAX_TIER, { nonThin: 6, thinDual: 4, thinSingle: 3 });
+test('MAX_TIER: 6 non-thin, 4 thin-dual, 2 thin-single ("early" is tier 2 in non-thin/thin-dual only — thin-single has no "early" tier at all, round 3)', () => {
+  assert.deepEqual(MAX_TIER, { nonThin: 6, thinDual: 4, thinSingle: 2 });
 });
 
 test('evidence gate: a model with no measured/chosen/preferred record at all is not evidenced (excluded from candidacy)', () => {
@@ -482,7 +482,7 @@ test('thin task, both human kinds in the catalog (dual scheme): T1 both near top
   assert.equal(clsFor('c').tier_name, 'evidenced');
 });
 
-test('thin task, one human kind in the catalog (single scheme): T1 that kind near top ("one signal only"), T2 early, T3 evidenced/not near top', () => {
+test('thin task, one human kind in the catalog (single scheme): T1 that kind near top ("one signal only"), T2 evidenced/not near top — NO "early" tier at all (round 3)', () => {
   const catalog = [
     ...fillerModels(['chosen']),
     nearTopSubject('a', { chosen: true }),
@@ -494,17 +494,21 @@ test('thin task, one human kind in the catalog (single scheme): T1 that kind nea
   const clsFor = (id) => classifyModelForTask(catalog.find((m) => m.id === id), 't', index);
   assert.equal(clsFor('a').tier, 1);
   assert.equal(clsFor('a').label, 'one signal only');
-  assert.equal(clsFor('b').tier, 3);
+  assert.equal(clsFor('b').tier, 2);
   assert.equal(clsFor('b').tier_name, 'evidenced');
-  // Round 2: thin-single now DOES get the "early" carve-out (round 1 excluded it).
+  // Round 3 fix: thin-single has NO "early" tier — a new-but-not-near-top model reads exactly
+  // like a non-new one (round 2 wrongly gave every new model "early" here regardless of position;
+  // this is the S13/S11 bug: a bulk model at chosen position 36 of 63 read as "early").
   assert.equal(clsFor('new-b').tier, 2);
-  assert.equal(clsFor('new-b').tier_name, 'early');
-  assert.equal(clsFor('new-b').label, 'early: too new for usage data');
+  assert.equal(clsFor('new-b').tier_name, 'evidenced');
+  assert.notEqual(clsFor('new-b').label, 'early: too new for usage data');
 });
 
 // ---------------------------------------------------------------------------------------------
-// New-model override ("early") — its own numbered tier in every scheme (round 2; round 1 had it
-// as an overlay promoting a model into the tail of T1, and excluded thin-single entirely).
+// New-model override ("early") — its own numbered tier in non-thin and thin-dual (round 2; round
+// 1 had it as an overlay promoting a model into the tail of T1). Round 3: thin-single has NO
+// "early" tier at all (round 2 wrongly gave one to any new-but-not-near-top model there,
+// regardless of how far from the top it actually was) — see the dedicated thin-single test above.
 // ---------------------------------------------------------------------------------------------
 test('new-model override: non-thin "early" (T2) sits strictly between "agreed" (T1) and "tests-only" (T3)', () => {
   const catalog = [
@@ -602,12 +606,12 @@ test("stance 'cheapest': falls back to cost-primary among ANY candidate when non
   assert.equal(ranked[0].model.id, 'b');
 });
 
-test("stance 'cheapest': thin-dual caps qualifying tiers at 3, thin-single at 2", () => {
+test("stance 'cheapest': thin-dual caps qualifying tiers at 3, thin-single at 1 (round 3: thin-single has no \"early\" tier, so its only qualifying tier is T1)", () => {
   const dual = [candidate('t4-cheap', { tier: 4, cost: 1 }), candidate('t3-mid', { tier: 3, cost: 10 })];
   assert.equal(rankByStance(dual, 'cheapest', 'thinDual')[0].model.id, 't3-mid', 'tier 4 does not qualify for cheapest on thin-dual');
 
-  const single = [candidate('t3-cheap', { tier: 3, cost: 1 }), candidate('t2-mid', { tier: 2, cost: 10 })];
-  assert.equal(rankByStance(single, 'cheapest', 'thinSingle')[0].model.id, 't2-mid', 'tier 3 ("evidenced", nothing near top) does not qualify for cheapest on thin-single — the round-2 fix (it used to)');
+  const single = [candidate('t2-cheap', { tier: 2, cost: 1 }), candidate('t1-mid', { tier: 1, cost: 10 })];
+  assert.equal(rankByStance(single, 'cheapest', 'thinSingle')[0].model.id, 't1-mid', 'tier 2 ("evidenced", nothing near top) does not qualify for cheapest on thin-single');
 });
 
 test("stance 'best': tier order, full stop — the full standardCompare order", () => {
@@ -814,8 +818,9 @@ test('baseTierNumber: every named combination in the file header, both isNew=fal
   assert.equal(baseTierNumber('thinDual', false, false, true, false, false), 3, 'not new -> "one-signal"');
   assert.equal(baseTierNumber('thinDual', false, false, true, false, true), 2, 'new -> "early"');
   assert.equal(baseTierNumber('thinDual', false, false, false, false, false), 4);
-  // thinSingle: 1 near top, 2 early, 3 evidenced
+  // thinSingle: 1 near top, 2 evidenced — NO "early" tier at all (round 3): isNew is ignored.
   assert.equal(baseTierNumber('thinSingle', false, false, true, false, false), 1);
-  assert.equal(baseTierNumber('thinSingle', false, false, false, false, false), 3, 'not new -> "evidenced"');
-  assert.equal(baseTierNumber('thinSingle', false, false, false, false, true), 2, 'new -> "early" (round 2: thin-single now supports this too)');
+  assert.equal(baseTierNumber('thinSingle', false, false, true, false, true), 1, 'isNew never touches "near top" — already the best thin-single has');
+  assert.equal(baseTierNumber('thinSingle', false, false, false, false, false), 2, 'not new -> "evidenced"');
+  assert.equal(baseTierNumber('thinSingle', false, false, false, false, true), 2, 'new -> STILL "evidenced" (round 3 fix: thin-single has no "early" carve-out at all any more)');
 });
