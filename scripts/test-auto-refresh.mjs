@@ -552,7 +552,7 @@ const J = (id, extra = {}) => ({
 test('needsJudgedFit: a model with any null task and no judged record needs one; fully covered or deprecated models don\'t', () => {
   assert.equal(needsJudgedFit(J('a')), true);
   assert.equal(needsJudgedFit(J('b', { deprecated: true })), false);
-  const fullyJudged = J('c', { task_fit_judged: Object.fromEntries(TASK_IDS.map((t) => [t, { band: 'capable', confidence: 'low', claims: [], reconciliation: null, as_of: '2026-09-01' }])) });
+  const fullyJudged = J('c', { task_fit_judged: Object.fromEntries(TASK_IDS.map((t) => [t, { claims: [{ sentence: 'x', source_url: 'https://acme.example', tier: 'lab', date: '2026-09-01', quote: 'x' }], reconciliation: null, as_of: '2026-09-01' }])) });
   assert.equal(needsJudgedFit(fullyJudged), false);
   const oneTaskLeft = J('d', { task_fit: { ...J('d').task_fit, coding: { score: 80, basis: ['coding_score'] } } });
   assert.equal(needsJudgedFit(oneTaskLeft), true); // still 9 other null tasks
@@ -579,7 +579,7 @@ test('pickJudgedFit rotates: the next run resumes after the cursor and wraps aro
   assert.deepEqual(r2.picked, ['m3', 'm1']);
 });
 test('pickJudgedFit: models with every task judged drop out; empty catalog returns nothing', () => {
-  const fullyJudged = J('done', { task_fit_judged: Object.fromEntries(TASK_IDS.map((t) => [t, { band: 'weak', confidence: 'low', claims: [], reconciliation: null, as_of: '2026-09-01' }])) });
+  const fullyJudged = J('done', { task_fit_judged: Object.fromEntries(TASK_IDS.map((t) => [t, { claims: [{ sentence: 'x', source_url: 'https://acme.example', tier: 'lab', date: '2026-09-01', quote: 'x' }], reconciliation: null, as_of: '2026-09-01' }])) });
   assert.deepEqual(pickJudgedFit([fullyJudged, J('open')], {}, 5).picked, ['open']);
   assert.deepEqual(pickJudgedFit([], {}, 5).picked, []);
 });
@@ -592,8 +592,8 @@ test('judgedFitItem names exactly the tasks still missing a basis, and is a judg
   assert.match(item.ask, /agents/);
 });
 test('reJudgeWorklistItems: a same-vendor successor queues every judged task the OTHER model already carries, and only that vendor', () => {
-  const predecessor = J('old-1', { name: 'Old One', vendor: 'Acme', task_fit_judged: { coding: { band: 'capable', confidence: 'medium', claims: [], reconciliation: null, as_of: '2026-08-01' } } });
-  const otherVendor = J('other-1', { name: 'Other One', vendor: 'OtherCo', task_fit_judged: { coding: { band: 'strong', confidence: 'high', claims: [], reconciliation: null, as_of: '2026-08-01' } } });
+  const predecessor = J('old-1', { name: 'Old One', vendor: 'Acme', task_fit_judged: { coding: { claims: [{ sentence: 'x', source_url: 'https://acme.example', tier: 'lab', date: '2026-08-01', quote: 'x' }], reconciliation: null, as_of: '2026-08-01' } } });
+  const otherVendor = J('other-1', { name: 'Other One', vendor: 'OtherCo', task_fit_judged: { coding: { claims: [{ sentence: 'x', source_url: 'https://acme.example', tier: 'lab', date: '2026-08-01', quote: 'x' }], reconciliation: null, as_of: '2026-08-01' } } });
   const noJudgedYet = J('old-2', { name: 'Old Two', vendor: 'Acme', task_fit_judged: null });
   const newModel = J('new-1', { name: 'New One', vendor: 'Acme' });
   const items = reJudgeWorklistItems(newModel, [predecessor, otherVendor, noJudgedYet, newModel], '2026-09-06');

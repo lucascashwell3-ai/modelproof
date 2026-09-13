@@ -293,7 +293,8 @@ test('applyOne adds a ladder, refuses an unknown model_id, and refuses to overwr
   assert.throws(() => applyOne(data, { ...LADDER, value: { ...LADDER.value, id: 'cursorbench-agentic-coding' } }, '2026-08-25'), /feed-maintained/);
 });
 
-// --- judged-fit + usage judgments (2026-09-06, sourced qualitative evidence) ---------------------
+// --- judged-fit + usage judgments (2026-09-06, sourced qualitative evidence; v3 2026-09: claims
+// only, no band/confidence) --------------------------------------------------------------------
 const GOOD_CLAIM = {
   sentence: 'Acme Corp published a coding benchmark score of 82% for M One on August 1, 2026.',
   source_url: 'https://acme.example/m-one-launch', tier: 'lab', date: '2026-08-01',
@@ -302,15 +303,23 @@ const GOOD_CLAIM = {
 const JUDGED_FIT = {
   id: 'm1:coding:judged-fit', kind: 'judged-fit', reason: 'vendor launch post has a concrete, quoted benchmark claim',
   sources: [{ url: GOOD_CLAIM.source_url, date: GOOD_CLAIM.date }],
-  value: { taskId: 'coding', band: 'capable', confidence: 'medium', claims: [GOOD_CLAIM], reconciliation: null },
+  value: { taskId: 'coding', claims: [GOOD_CLAIM], reconciliation: null },
 };
 test('validateJudgment accepts a well-formed judged-fit judgment', () => {
   assert.deepEqual(validateJudgment(JUDGED_FIT), []);
 });
-test('validateJudgment rejects an unknown taskId, band, or confidence', () => {
+test('validateJudgment rejects an unknown taskId', () => {
   assert.ok(validateJudgment({ ...JUDGED_FIT, value: { ...JUDGED_FIT.value, taskId: 'not-a-task' } }).some((e) => /taskId/.test(e)));
-  assert.ok(validateJudgment({ ...JUDGED_FIT, value: { ...JUDGED_FIT.value, band: 'amazing' } }).some((e) => /band/.test(e)));
-  assert.ok(validateJudgment({ ...JUDGED_FIT, value: { ...JUDGED_FIT.value, confidence: 'super-high' } }).some((e) => /confidence/.test(e)));
+});
+test('validateJudgment rejects a v2 judgment carrying band or confidence, naming the field', () => {
+  assert.ok(validateJudgment({ ...JUDGED_FIT, value: { ...JUDGED_FIT.value, band: 'capable' } }).some((e) => /"band"/.test(e)));
+  assert.ok(validateJudgment({ ...JUDGED_FIT, value: { ...JUDGED_FIT.value, confidence: 'medium' } }).some((e) => /"confidence"/.test(e)));
+});
+test('validateJudgment accepts an optional polarity:"negative" claim, rejects any other polarity value', () => {
+  const negative = { ...GOOD_CLAIM, polarity: 'negative' };
+  assert.deepEqual(validateJudgment({ ...JUDGED_FIT, value: { ...JUDGED_FIT.value, claims: [negative] } }), []);
+  const bad = { ...GOOD_CLAIM, polarity: 'positive' };
+  assert.ok(validateJudgment({ ...JUDGED_FIT, value: { ...JUDGED_FIT.value, claims: [bad] } }).some((e) => /polarity/.test(e)));
 });
 test('validateJudgment rejects a claim with a banned relative phrase in its sentence', () => {
   const bad = { ...GOOD_CLAIM, sentence: 'M One is the best available model for coding as of August 2026.' };
@@ -331,15 +340,15 @@ test('validateJudgment rejects a claim missing source_url, tier, or quote', () =
 test('applyOne writes a judged-fit record onto the matching model\'s task_fit_judged', () => {
   const data = { models: [{ id: 'm1', name: 'M One', task_fit_judged: null, sources: [] }] };
   const entry = applyOne(data, JUDGED_FIT, '2026-09-06');
-  assert.deepEqual(data.models[0].task_fit_judged.coding, { band: 'capable', confidence: 'medium', claims: [GOOD_CLAIM], reconciliation: null, as_of: '2026-09-06' });
+  assert.deepEqual(data.models[0].task_fit_judged.coding, { claims: [GOOD_CLAIM], reconciliation: null, as_of: '2026-09-06' });
   assert.equal(entry.field, 'task_fit_judged.coding');
   assert.ok(data.models[0].sources.includes(GOOD_CLAIM.source_url));
 });
 test('applyOne judged-fit is growth-only: never lets an older-as_of write clobber a newer one on file', () => {
-  const data = { models: [{ id: 'm1', name: 'M One', task_fit_judged: { coding: { band: 'strong', confidence: 'high', claims: [GOOD_CLAIM], reconciliation: null, as_of: '2026-09-10' } }, sources: [] }] };
+  const data = { models: [{ id: 'm1', name: 'M One', task_fit_judged: { coding: { claims: [GOOD_CLAIM], reconciliation: null, as_of: '2026-09-10' } }, sources: [] }] };
   const entry = applyOne(data, JUDGED_FIT, '2026-09-06'); // "today" is BEFORE the existing as_of
   assert.equal(entry, null);
-  assert.equal(data.models[0].task_fit_judged.coding.band, 'strong'); // unchanged
+  assert.deepEqual(data.models[0].task_fit_judged.coding.claims, [GOOD_CLAIM]); // unchanged
 });
 const USAGE_JUDGMENT = {
   id: 'm1:usage', kind: 'usage', reason: 'OpenRouter rankings JSON shows this model\'s token share',

@@ -542,7 +542,7 @@ test('hasNegativeClaim: true only when a claim explicitly carries polarity: "neg
 });
 
 test('negative claim: drops a model exactly one tier, clamped at the scheme\'s worst tier', () => {
-  const judged = { band: 'strong', confidence: 'high', claims: [{ sentence: 'ok' }, { sentence: 'bad', polarity: 'negative' }] };
+  const judged = { claims: [{ sentence: 'ok' }, { sentence: 'bad', polarity: 'negative' }] };
   const catalog = [...fillerModels(['measured']), nearTopSubject('x', { measured: true, chosen: true, judged })];
   const index = buildEvidenceIndex('t', catalog);
   const cls = classifyModelForTask(catalog.find((m) => m.id === 'x'), 't', index);
@@ -552,7 +552,7 @@ test('negative claim: drops a model exactly one tier, clamped at the scheme\'s w
   assert.equal(cls.tier_name, 'tests-only');
 
   // At the worst tier already — dropping is a clamped no-op.
-  const worstJudged = { band: 'strong', confidence: 'high', claims: [{ sentence: 'bad', polarity: 'negative' }] };
+  const worstJudged = { claims: [{ sentence: 'bad', polarity: 'negative' }] };
   const worst = [...fillerModels(['measured']), nearTopSubject('y', { chosen: true, judged: worstJudged })];
   const worstIndex = buildEvidenceIndex('t', worst);
   const worstCls = classifyModelForTask(worst.find((m) => m.id === 'y'), 't', worstIndex);
@@ -560,7 +560,7 @@ test('negative claim: drops a model exactly one tier, clamped at the scheme\'s w
 });
 
 test('negative claim: a genuinely NEW model demoted from T1 CAN land on "early" (it really is too new)', () => {
-  const judged = { band: 'strong', confidence: 'high', claims: [{ sentence: 'ok' }, { sentence: 'bad', polarity: 'negative' }] };
+  const judged = { claims: [{ sentence: 'ok' }, { sentence: 'bad', polarity: 'negative' }] };
   const catalog = [...fillerModels(['measured']), nearTopSubject('x', { measured: true, chosen: true, adoption: 'new', judged })];
   const index = buildEvidenceIndex('t', catalog);
   const cls = classifyModelForTask(catalog.find((m) => m.id === 'x'), 't', index);
