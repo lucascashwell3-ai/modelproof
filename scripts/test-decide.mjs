@@ -5,7 +5,7 @@ import {
   decide, filterCandidates, isReachable, vendorCountry, WHY_FIELDS, VENDOR_KEY_DISPLAY, STANCES,
   basisFromClaims, isEnterpriseInput, isDisqualifiedFromStartHere, topClaimSentence, rankByStance,
   standardCompare, withinTierCompare, nearTopThreshold, buildEvidenceIndex, classifyModelForTask,
-  baseTierNumber, hasNegativeClaim, MAX_TIER, THIN_RULE, CHEAPEST_MAX_TIER, schemeFor,
+  baseTierNumber, hasNegativeClaim, MAX_TIER, THIN_RULE, CHEAPEST_MAX_TIER, WEAK_FIELD_MIN_TIER, schemeFor,
 } from '../assets/decide.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
 
@@ -698,9 +698,36 @@ test('decide(): enterprise-style input excludes preview entirely at rule 3, befo
 test('decide(): input.thin_rule overrides THIN_RULE for that call only, without touching the default', () => {
   const out = decide({ tasks: ['agents'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {}, thin_rule: { minTested: 8, minShareOfCatalog: 0.5 } }, data);
   const { index } = filterCandidates('agents', { have: ['any'], stance: 'best', volume: 'typical', dataRule: {}, thin_rule: { minTested: 8, minShareOfCatalog: 0.5 } }, data);
-  assert.equal(index.thin, true, 'agents (12 measured models) must read as thin under a 50%-of-catalog share requirement');
+  assert.equal(index.thin, true, 'agents\' measured-model count is well under half the catalog, so a 50%-of-catalog share requirement must read it as thin');
   assert.deepEqual(THIN_RULE, { minTested: 8, minShareOfCatalog: 0 }, 'the module-level default must be untouched');
   assert.ok(out.tasks.agents); // sanity: decide() still ran to completion under the override
+});
+
+// ---------------------------------------------------------------------------------------------
+// Weak-field honesty line (round 3, item 2): when the start_here pick's own tier is at or below
+// WEAK_FIELD_MIN_TIER for that task's scheme (non-thin >= T5, thin-dual >= T4, thin-single >= T2
+// — i.e. nothing in this candidate set is near the top on any evidence kind), decide() adds a
+// plain assumption saying so. Real-fixture case: "agents", Google-only + enterprise (excludes the
+// one preview Gemini model), 'best' — gemini-3-5-flash wins at tier 5 "tested", with nothing else
+// in the pool near the top on anything either.
+// ---------------------------------------------------------------------------------------------
+test('decide(): weak-field honesty line fires when start_here itself is below WEAK_FIELD_MIN_TIER (real fixture: agents, Google-only, enterprise)', () => {
+  const out = decide({ tasks: ['agents'], have: ['google'], stance: 'best', volume: 'typical', dataRule: {}, enterprise: true }, data);
+  const shortlist = out.tasks.agents.shortlist;
+  const startHere = shortlist.find((x) => x.start_here);
+  assert.ok(startHere, 'fixture assumption: Google has at least one agents candidate once preview is excluded');
+  assert.ok(startHere.tier >= WEAK_FIELD_MIN_TIER.nonThin, `fixture assumption: start_here "${startHere.id}" should be tier >= ${WEAK_FIELD_MIN_TIER.nonThin} (got ${startHere.tier})`);
+  assert.ok(
+    out.tasks.agents.assumptions.some((a) => a.includes(startHere.name) && /weak field/i.test(a)),
+    `expected a weak-field assumption naming "${startHere.name}", got: ${JSON.stringify(out.tasks.agents.assumptions)}`,
+  );
+});
+
+test('decide(): weak-field honesty line does NOT fire when start_here is near the top on some kind (real fixture: coding, any vendor, best)', () => {
+  const out = decide({ tasks: ['coding'], have: ['any'], stance: 'best', volume: 'typical', dataRule: {} }, data);
+  const startHere = out.tasks.coding.shortlist.find((x) => x.start_here);
+  assert.ok(startHere.tier < WEAK_FIELD_MIN_TIER.nonThin, 'fixture assumption: coding/any/best start_here is a well-evidenced tier');
+  assert.ok(!out.tasks.coding.assumptions.some((a) => /weak field/i.test(a)));
 });
 
 // ---------------------------------------------------------------------------------------------

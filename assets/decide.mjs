@@ -783,6 +783,14 @@ export function standardCompare(a, b) {
 // non-thin's T5/T6 and thin-dual's T4).
 export const CHEAPEST_MAX_TIER = { nonThin: 4, thinDual: 3, thinSingle: 1 };
 
+// The tier at and below which NOTHING is near the top of any evidence kind for this task, per
+// scheme — non-thin's T5 "tested" and T6 "not independently tested" (the honest floor from T5
+// on, even though a T6 pick can technically carry a non-near-top human kind — see the file
+// header's T6 note), thin-dual's T4 "evidenced" (its only tier with nothing near top), thin-
+// single's T2 "evidenced" (ditto, now that thin-single has no "early" tier — round 3). Used only
+// for the "weak field" assumption line in decide() below, round 3 item 2 — never for ranking.
+export const WEAK_FIELD_MIN_TIER = { nonThin: 5, thinDual: 4, thinSingle: 2 };
+
 /** Rank a task's candidates by stance — see the file header for the exact semantics of each.
  * `scheme` (schemeFor(index): 'nonThin' | 'thinDual' | 'thinSingle') sets 'cheapest'"s qualifying-
  * tier ceiling (CHEAPEST_MAX_TIER) and 'balanced'"s exclusion of "early" from the reference tier.
@@ -851,7 +859,8 @@ export function decide(input, data) {
   const tasks = {};
   for (const taskId of input?.tasks || []) {
     const { candidates, vol, index } = filterCandidates(taskId, { ...input, stance }, data);
-    const ranked = rankByStance(candidates, stance, schemeFor(index));
+    const scheme = schemeFor(index);
+    const ranked = rankByStance(candidates, stance, scheme);
 
     // start_here eligibility (see isDisqualifiedFromStartHere): find the first-ranked candidate
     // that ISN'T disqualified and move it to the front, keeping everyone else's relative order —
@@ -919,6 +928,14 @@ export function decide(input, data) {
     const missingPrice = top.filter((item) => item.monthly_cost_usd == null);
     for (const item of missingPrice) {
       assumptions.push(`"${item.model.name}" has no monthly cost shown — its price isn't on file in data/models.json (price_input/price_output missing), not a computation gap; cost comparisons involving it are unavailable until that's sourced.`);
+    }
+    // Weak-field honesty line (round 3, item 2): the start_here pick itself is below the tiers
+    // that have any kind of evidence near the top for this task (WEAK_FIELD_MIN_TIER) — it's the
+    // best of what's here, but "best of a weak field" is a different claim from "a strong pick",
+    // and a reader comparing it against a task where the winner IS near-top somewhere should know
+    // the difference before committing.
+    if (top.length && top[0].tier >= WEAK_FIELD_MIN_TIER[scheme]) {
+      assumptions.push(`"${top[0].model.name}" is the best-evidenced pick here, but no model in this set is near the top on any evidence kind (measured, chosen, or preferred) for this task — this is the strongest pick of a weak field, not a strong pick; widen the vendor set or trial it before committing.`);
     }
 
     tasks[taskId] = { shortlist, assumptions };
