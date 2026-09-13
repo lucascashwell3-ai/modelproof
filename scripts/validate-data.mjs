@@ -29,17 +29,23 @@ const BENCHES = ['swe_bench', 'gpqa', 'aime', 'mmlu_pro'];   // lmarena_elo drop
 const num = (v) => v === null || v === undefined || Number.isNaN(v);
 
 // --- judged task fit (task_fit_judged) — the qualitative-evidence gate ------------------------
-// A judged record is a fit band + confidence backed by claims a human (the Judge) actually read.
-// This block checks SHAPE ONLY: every claim carries the required fields, dates are real dates,
-// enums are in-vocab, and no claim/reconciliation sentence uses relative/superlative language a
-// newer model would immediately falsify ("best available", "the top model" — see BANNED_RELATIVE
-// below). It does NOT confirm a quote is actually on the page; that live check is
+// A judged record (v3, 2026-09) is claims[] + reconciliation + as_of — no grade, no number.
+// `band`/`confidence` were the old AI-judged fields (assets/decide.mjs never read them for
+// ranking even before this — brain v2 step 3, PR #34 — this just removes them from the shape
+// entirely, so the old cloud routine's pre-v3 output can't sneak back in). This block checks
+// SHAPE ONLY: no band/confidence present, every claim carries the required fields, dates are
+// real dates, enums are in-vocab, and no claim/reconciliation sentence uses relative/superlative
+// language a newer model would immediately falsify ("best available", "the top model" — see
+// BANNED_RELATIVE below). It does NOT confirm a quote is actually on the page; that live check is
 // scripts/check-sources.mjs, which fetches every claim's source_url and can't run inside this
 // synchronous, offline gate. The two are complementary, not redundant: this catches a malformed
 // or dishonestly-worded claim before it's even written; check-sources.mjs catches a well-formed
 // claim that quotes something the page doesn't actually say.
-export const JUDGED_BAND_VALUES = ['strong', 'capable', 'weak', 'unknown'];
 export const CLAIM_TIERS = ['lab', 'reported', 'measured', 'usage'];
+// v3 (2026-09): a claim may mark itself a sourced practical drawback (rate limits, latency,
+// tool-call failures, price traps) rather than a strength — assets/decide.mjs's hasNegativeClaim
+// drops a model one tier for a task where any claim carries this. Absent = an ordinary claim.
+export const CLAIM_POLARITY_VALUES = ['negative'];
 // Absolute, dated facts only — a record must stay true after a newer model supersedes this one.
 // Applied to OUR OWN prose (claim.sentence, reconciliation) — never to `quote`, which is verbatim
 // text copied from the source and reproduced as a quotation, not asserted as our own claim.
@@ -246,10 +252,13 @@ export function validate(data, registry) {
   // 10b. task_fit_judged (sourced qualitative fit, scripts/refresh-judge.md): null (no judged
   // records yet) or an object keyed by a SUBSET of TASK_IDS — unlike task_fit, judged fit is
   // sparse by design; most models will only ever have a judged record for the handful of tasks
-  // someone actually researched. Every record needs band + confidence (both enumerated) and a
-  // non-empty claims[], each claim carrying source_url + tier + date + a verbatim quote of at
-  // most 25 words. See the BANNED_RELATIVE comment above for why sentence/reconciliation get a
-  // phrase gate here — the "is this quote real" gate is scripts/check-sources.mjs's job.
+  // someone actually researched. v3 (2026-09): a record is claims[] + reconciliation + as_of —
+  // NO band, NO confidence (see scripts/migrate-judged-v3.mjs); either key present is rejected
+  // outright so the pre-v3 shape can't sneak back in through a stale routine or a hand edit.
+  // Every record needs a non-empty claims[], each claim carrying source_url + tier + date + a
+  // verbatim quote of at most 25 words, and an optional `polarity: "negative"` marker for a sourced
+  // practical drawback. See the BANNED_RELATIVE comment above for why sentence/reconciliation get
+  // a phrase gate here — the "is this quote real" gate is scripts/check-sources.mjs's job.
   for (const m of data.models) {
     const id = m.name || m.id || '(unnamed)';
     const tfj = m.task_fit_judged;
@@ -259,9 +268,10 @@ export function validate(data, registry) {
       const rec = tfj[taskId];
       const label = `${id}: task_fit_judged.${taskId}`;
       if (!TASK_IDS.includes(taskId)) { E(`${label} — "${taskId}" is not one of ${TASK_IDS.join(', ')}`); continue; }
-      if (!rec || typeof rec !== 'object') { E(`${label} must be an object`); continue; }
-      if (!JUDGED_BAND_VALUES.includes(rec.band)) E(`${label}.band "${rec.band}" must be one of ${JUDGED_BAND_VALUES.join(', ')}`);
-      if (!CONF.includes(rec.confidence)) E(`${label}.confidence "${rec.confidence}" must be one of ${CONF.join(', ')}`);
+      if (rec == null) continue; // valid: no judged record for this task (see migrate-judged-v3)
+      if (typeof rec !== 'object') { E(`${label} must be null or an object`); continue; }
+      if (Object.prototype.hasOwnProperty.call(rec, 'band')) E(`${label}.band is present — v3 removed band from the schema (see scripts/migrate-judged-v3.mjs); a record is claims[] + reconciliation + as_of only`);
+      if (Object.prototype.hasOwnProperty.call(rec, 'confidence')) E(`${label}.confidence is present — v3 removed confidence from the schema (see scripts/migrate-judged-v3.mjs); a record is claims[] + reconciliation + as_of only`);
       if (!rec.as_of || !DATE_RE.test(rec.as_of)) E(`${label}.as_of "${rec.as_of}" must be a YYYY-MM-DD date`);
       if (rec.reconciliation != null) {
         if (typeof rec.reconciliation !== 'string') E(`${label}.reconciliation must be a string or null`);
@@ -285,6 +295,7 @@ export function validate(data, registry) {
         if (!c.date || !DATE_RE.test(c.date)) E(`${cl}.date "${c.date}" must be a YYYY-MM-DD date`);
         if (!c.quote || typeof c.quote !== 'string') E(`${cl}.quote is required (verbatim text copied from source_url)`);
         else if (wordCount(c.quote) > 25) E(`${cl}.quote is ${wordCount(c.quote)} word(s) — must be ≤25 words, copied verbatim from the source`);
+        if (c.polarity != null && !CLAIM_POLARITY_VALUES.includes(c.polarity)) E(`${cl}.polarity "${c.polarity}" must be one of ${CLAIM_POLARITY_VALUES.join(', ')}`);
       });
     }
   }

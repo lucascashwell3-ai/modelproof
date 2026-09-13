@@ -479,7 +479,7 @@ export function judgedFitItem(m, today) {
   return {
     id: `${m.id}:judged-fit`, model: m.name, kind: 'judged-fit', field: 'task_fit_judged', current: null,
     observations: [{ source: 'auto-refresh', url: OR_URL, value: null, date: today }],
-    ask: `${m.name} has no quantitative task fit for: ${openTasks.join(', ')}. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: band (strong/capable/weak/unknown) + confidence + claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words) — absolute and dated, never a relative claim like "best available" or "the top model". Hold if you can't source a claim for a given task.`,
+    ask: `${m.name} has no quantitative task fit for: ${openTasks.join(', ')}. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:"negative" for a sourced drawback) — absolute and dated, never a relative claim like "best available" or "the top model". Hold if you can't source a claim for a given task.`,
   };
 }
 
@@ -499,10 +499,11 @@ export function reJudgeWorklistItems(newModel, allModels, today) {
     for (const taskId of Object.keys(m.task_fit_judged)) {
       const rec = m.task_fit_judged[taskId];
       if (!rec) continue;
+      const claimCount = Array.isArray(rec.claims) ? rec.claims.length : 0;
       items.push({
-        id: `${m.id}:${taskId}:re-judge`, model: m.name, kind: 'judged-fit', field: 'task_fit_judged', current: rec.band,
+        id: `${m.id}:${taskId}:re-judge`, model: m.name, kind: 'judged-fit', field: 'task_fit_judged', current: `${claimCount} claim(s) on file, as_of ${rec.as_of}`,
         observations: [{ source: 'auto-refresh', url: OR_URL, value: null, date: today }],
-        ask: `${newModel.name} just shipped from the same vendor as ${m.name}, whose "${taskId}" judged fit (${rec.band}, as of ${rec.as_of}) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for "${taskId}" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason.`,
+        ask: `${newModel.name} just shipped from the same vendor as ${m.name}, whose "${taskId}" judged fit (${claimCount} claim(s) on file, as of ${rec.as_of}) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for "${taskId}" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason.`,
       });
     }
   }
