@@ -165,13 +165,17 @@
                 above); everyone else is ranked after (also by the order above) — never dropped,
                 just deprioritized. No non-"early" candidate at all, or none of them priced ->
                 behaves exactly like 'best'.
-     'cheapest' cost-primary, but only among "qualifying" candidates — a tier counts as qualifying
-                when it has (or stands in for — "early" counts) at least one kind of evidence near
-                the top: tier <= 4 for a non-thin task, tier <= 3 for thin-dual, tier <= 2 for
-                thin-single (fixed 2026-09, round 2 — thin-single previously let its OWN worst tier,
-                "evidenced, not near top", qualify, which is exactly backwards: that tier is the one
-                case in that scheme with NOTHING near top). Ties fall back to the order above. No
-                qualifying candidate at all -> falls back to cost-primary among EVERY candidate.
+     'cheapest' "cheapest that clears": cost-primary within the BEST tier present for this pool
+                (T1 when any T1 exists; otherwise the next tier down, one step at a time), capped
+                at the scheme's qualifying ceiling — a tier qualifies when it has (or stands in
+                for — "early" counts) at least one kind of evidence near the top: tier <= 4 for a
+                non-thin task, tier <= 3 for thin-dual, tier <= 2 for thin-single. A cheaper model
+                in a lower tier never outranks a pricier one that clears the agreement bar. Ties
+                fall back to the order above. No qualifying candidate at all -> cost-primary among
+                EVERY candidate. THIN tasks (chat, frontend, vision, bulk today): one real-people
+                kind near the top is enough — cost-primary across every qualifying tier, and
+                'balanced' takes its reference cost from the same pool (2026-09-13: demanding both
+                kinds made Claude Opus 5 the "cheapest chat" pick over the #1 chat-spend model).
                 Non-qualifying candidates are still returned, ranked after by the order above,
                 never dropped.
    'cheapest' never demotes a preview model, OR an "early"/"tests-only" item, at start_here (this
@@ -823,10 +827,22 @@ export function rankByStance(candidates, stance, scheme) {
   if (stance === 'best') return list.sort(standardCompare);
 
   if (stance === 'cheapest') {
+    // "Cheapest that clears": cost-primary within the BEST tier present (capped at the scheme's
+    // qualifying ceiling), widening one tier at a time only when a better tier is empty for
+    // this pool. A cheaper model in a lower tier never outranks a pricier one that actually
+    // clears the agreement bar — the stance picks the cheapest of the models that clear, not
+    // the cheapest model with any evidence at all.
+    // On a THIN task (fewer than 8 independently tested models) the two real-people kinds are
+    // all there is, and demanding both of them for a cost-driven ask handed the "cheapest chat"
+    // slot to the priciest model in the catalog while the #1 chat-spend model sat below it.
+    // There, one kind near the top is enough: cost-primary across every qualifying tier.
     const maxTier = CHEAPEST_MAX_TIER[scheme];
     const qualify = list.filter((c) => c.tier <= maxTier);
-    const pool = qualify.length ? qualify : list; // "falling back to any candidate"
-    const rest = qualify.length ? list.filter((c) => c.tier > maxTier) : [];
+    const thin = scheme !== 'nonThin';
+    const topTier = qualify.length ? Math.min(...qualify.map((c) => c.tier)) : null;
+    const inPool = (c) => (thin ? c.tier <= maxTier : c.tier === topTier);
+    const pool = qualify.length ? qualify.filter(inPool) : list; // no qualifier at all -> any candidate
+    const rest = qualify.length ? list.filter((c) => !inPool(c)) : [];
     pool.sort((a, b) => (costOrInf(a) - costOrInf(b)) || standardCompare(a, b));
     rest.sort(standardCompare);
     return [...pool, ...rest];
@@ -842,7 +858,10 @@ export function rankByStance(candidates, stance, scheme) {
   const nonEarly = list.filter((c) => c.tier_name !== 'early');
   const referencePool = nonEarly.length ? nonEarly : list;
   const topTier = Math.min(...referencePool.map((c) => c.tier));
-  const topTierPriced = referencePool.filter((c) => c.tier === topTier && num(c.monthly_cost_usd));
+  // Thin task: the reference cost comes from every qualifying tier (one real-people kind near
+  // the top is enough there — same reasoning as 'cheapest' above), not just the top tier.
+  const refTier = scheme !== 'nonThin' ? CHEAPEST_MAX_TIER[scheme] : topTier;
+  const topTierPriced = referencePool.filter((c) => c.tier <= refTier && num(c.monthly_cost_usd));
   if (!topTierPriced.length) return list.sort(standardCompare);
   const cheapestRef = Math.min(...topTierPriced.map((c) => c.monthly_cost_usd));
   const threshold = cheapestRef * 2;
