@@ -84,6 +84,10 @@ const REAL_DATA = fileURLToPath(new URL('./fixtures/models.json', import.meta.ur
 const REAL_PLANS = fileURLToPath(new URL('./fixtures/plans.json', import.meta.url));
 const REAL_VENDORS = fileURLToPath(new URL('./fixtures/vendors.json', import.meta.url));
 const REAL_PRESETS = fileURLToPath(new URL('./fixtures/usage-presets.json', import.meta.url));
+// testers.json is a static registry (like scripts/model-aliases.json), not collected data, so it
+// isn't part of the scripts/fixtures/ snapshot — read straight from the real data/ file, same as
+// SCRIPTS_DIR reads the real scripts/ files below.
+const REAL_TESTERS = fileURLToPath(new URL('../data/testers.json', import.meta.url));
 
 function withSandbox(fn) {
   // apply-judgment.mjs resolves paths relative to its own file (../data/models.json etc), so we
@@ -106,12 +110,14 @@ function mktempRepo() {
   }
   const models = JSON.parse(readFileSync(REAL_DATA));
   writeFileSync(join(dir, 'data', 'models.json'), JSON.stringify(models, null, 2));
-  // validate-data.mjs (copied above) also gates data/plans.json, data/vendors.json and
-  // data/usage-presets.json — give the sandbox the real copies so the honesty-gate subprocess
+  // validate-data.mjs (copied above) also gates data/plans.json, data/vendors.json,
+  // data/usage-presets.json, and (brain v2 step 2+) reads data/testers.json's own tester-id
+  // registry at module load — give the sandbox the real copies so the honesty-gate subprocess
   // it runs doesn't fail on a missing sibling file.
   writeFileSync(join(dir, 'data', 'plans.json'), readFileSync(REAL_PLANS));
   writeFileSync(join(dir, 'data', 'vendors.json'), readFileSync(REAL_VENDORS));
   writeFileSync(join(dir, 'data', 'usage-presets.json'), readFileSync(REAL_PRESETS));
+  writeFileSync(join(dir, 'data', 'testers.json'), readFileSync(REAL_TESTERS));
   writeFileSync(join(dir, 'data', 'changelog.json'), '[]');
   writeFileSync(join(dir, 'data', 'refresh', 'worklist.json'), JSON.stringify({ generated: '2026-08-16', items: [{ id: 'm1:price_input', kind: 'conflict' }] }));
   return dir;
