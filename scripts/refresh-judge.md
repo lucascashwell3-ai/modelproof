@@ -57,17 +57,22 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
    - **`judged-fit` items** (up to 3 per run — a model with a null quantitative `task_fit` for one
      or more of the ten tasks in `data/tasks.json`, queued by Collect's own rotation
      — `scripts/auto-refresh.mjs`'s `pickJudgedFit`). This is the qualitative counterpart to a
-     benchmark number: the brain considering a model on real, sourced evidence when no number
-     exists yet. `value`:
-     `{"taskId", "band": "strong"|"capable"|"weak"|"unknown", "confidence": "high"|"medium"|"low",
-     "claims": [{"sentence", "source_url", "tier": "lab"|"reported"|"measured"|"usage", "date",
-     "quote"}], "reconciliation": string|null}`.
+     benchmark number: real, sourced evidence about how a model behaves for a task in practice,
+     for a reader to weigh themselves — when no benchmark number exists yet. **You write claims
+     only. Never a grade, never a number pulled off a live leaderboard (`standings` already
+     carries those, and ranking is agreement across `standings` alone — see `assets/decide.mjs`'s
+     header), never comparative phrasing.** `value`:
+     `{"taskId", "claims": [{"sentence", "source_url", "tier": "lab"|"reported"|"measured"|"usage",
+     "date", "quote", "polarity"?: "negative"}], "reconciliation": string|null}`. There is no
+     `band` or `confidence` field — a judgment carrying either is rejected outright by
+     `scripts/apply-judgment.mjs`, naming the field.
      - **One task per judgment.** The item's `ask` lists every open task for that model; submit a
        separate `judged-fit` judgment (or hold) for each one you can actually source — never one
        judgment covering several tasks.
-     - **`claims[]` is the evidence, not decoration.** Each claim is ONE carefully worded factual
-       sentence you write, backed by a `source_url` you actually opened, a `tier` naming who said
-       it (`lab` = the model's own maker; `reported` = a named, credible third party — a major
+     - **1 to 4 claims per (model, task).** Each claim is ONE carefully worded factual sentence you
+       write, backed by a `source_url` you actually opened — vendor guidance, an independent
+       review, an enterprise write-up, or a documented limit — and a `tier` naming who said it
+       (`lab` = the model's own maker; `reported` = a named, credible third party — a major
        outlet, Epoch, a documented leaderboard with a licence that allows citing, never an
        anonymous aggregator; `measured` = an independent run you can point to; `usage` = a
        popularity/volume signal), the `date` you confirmed it, and a `quote` — text **copied
@@ -75,6 +80,15 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
        (`scripts/check-sources.mjs` fetches the page and confirms the quote is really there) —
        paraphrasing, combining two sentences, or fixing a typo in the source's own wording will
        fail the gate and your whole submission is discarded.** Never write a claim you can't quote.
+     - **A good negative claim (`polarity: "negative"`) is a sourced, practical drawback** — a rate
+       limit, added latency, a documented tool-call failure mode, or a pricing trap (e.g. a cheap
+       per-token rate that hides an expensive minimum-batch or overage tier) — never a vague
+       "some users report issues" or a competitor's marketing dig. Use it when the vendor's own
+       docs, an independent review, or an enterprise write-up documents a real limitation that
+       affects this specific task; skip it if all you have is a rumor or a single complaint with no
+       specifics. `assets/decide.mjs`'s `hasNegativeClaim` drops the model one tier for that task
+       when any claim on the record carries it — so only mark a claim negative when the drawback
+       is real and task-relevant, never to pad the claims count.
      - **Absolute and dated, never relative.** Your own `sentence` (and `reconciliation`, if any)
        must never say "best available," "the top model," "state of the art," "most capable,"
        "industry-leading," or anything else that reads as a ranking against everything else that
@@ -90,14 +104,6 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
        launch-day claim was later narrowed by its own official listing (see the batch example:
        Qwen's July preview claim vs. its own later QwenCloud page). Never silently pick a side;
        never leave two contradictory claims with no reconciling line.
-     - **Band is honest, not generous.** `strong` needs real, credible evidence the model leads or
-       matches recognized peers on something real — a named comparator, a real number, ideally
-       corroborated. `capable` is the default for "genuinely evidenced, not exceptional." `weak` or
-       `unknown` are real answers — use them (or hold) rather than stretching thin evidence into
-       `capable`. Band/confidence carry no ranking weight in `assets/decide.mjs` any more (a
-       model's candidacy and ranking come entirely from `standings` — measured/chosen/preferred —
-       never this record), so there's no pressure to inflate a band to make a model "count"; write
-       what the evidence actually supports.
      - **A same-vendor successor queues its predecessor for re-judge**, not a rewrite. When a
        `new-model` item you're admitting is from a vendor that already has a judged-fit record on
        file for another of its models, Collect will queue that OTHER model's record for re-judge

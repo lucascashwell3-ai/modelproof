@@ -1436,8 +1436,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
@@ -1451,8 +1449,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own Claude Code model-config docs name Claude Fable 5 (with Fable 5.1) for tasks larger than a single sitting, describing both as sustaining long autonomous sessions, checked 2026-09-06.",
@@ -1466,8 +1462,6 @@
           "as_of": "2026-09-07"
         },
         "writing": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
@@ -1481,8 +1475,6 @@
           "as_of": "2026-09-07"
         },
         "research": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
@@ -1496,8 +1488,6 @@
           "as_of": "2026-09-07"
         },
         "extraction": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
@@ -1511,8 +1501,6 @@
           "as_of": "2026-09-07"
         },
         "chat": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
@@ -1526,8 +1514,6 @@
           "as_of": "2026-09-07"
         },
         "vision": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
@@ -1541,8 +1527,6 @@
           "as_of": "2026-09-07"
         },
         "frontend": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
@@ -1556,8 +1540,6 @@
           "as_of": "2026-09-07"
         },
         "exec-summaries": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
@@ -2227,8 +2209,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own Claude Sonnet 5 launch post recommends Claude Opus 4.8 specifically for cybersecurity work needing reduced guardrails, checked 2026-09-06.",
@@ -2242,8 +2222,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own Claude Sonnet 5 launch post recommends Claude Opus 4.8 specifically for cybersecurity work needing reduced guardrails, checked 2026-09-06 -- general corroborating evidence of a recognized strength, not task-specific.",
@@ -2257,8 +2235,6 @@
           "as_of": "2026-09-07"
         },
         "extraction": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own Claude Sonnet 5 launch post recommends Claude Opus 4.8 specifically for cybersecurity work needing reduced guardrails, checked 2026-09-06 -- general corroborating evidence of a recognized strength, not task-specific.",
@@ -4730,8 +4706,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "strong",
-          "confidence": "high",
           "claims": [
             {
               "sentence": "llm-stats.com's SWE-Bench Verified leaderboard (checked 2026-09-07) lists DeepSeek's max-reasoning-effort configuration of V4-Pro at a 0.806 score, rank 8 of the 113 models it tracks.",
@@ -5283,8 +5257,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "strong",
-          "confidence": "high",
           "claims": [
             {
               "sentence": "Moonshot AI's own Kimi K2.6 tech blog (checked 2026-09-07) states the model shows strong improvements in long-horizon coding tasks with generalization across languages including Rust, Go, and Python.",
@@ -5298,8 +5270,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "strong",
-          "confidence": "high",
           "claims": [
             {
               "sentence": "Moonshot AI's Kimi K2.6 blog (checked 2026-09-07) reports measurable gains in real-world reliability including API interpretation and stability during extended tool-using tasks.",
@@ -5313,8 +5283,6 @@
           "as_of": "2026-09-07"
         },
         "bulk": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Moonshot AI's Kimi K2.6 blog (checked 2026-09-07) documents evaluations run with a context length of 262,144 tokens, relevant to processing large inputs in one pass.",
@@ -5857,8 +5825,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "TokenMix's review (checked 2026-09-07) reports Llama 4 Maverick scoring 91.5% on HumanEval, near the 92.0% it cites for GPT-5.4, and 89.5% on MBPP.",
@@ -5872,8 +5838,6 @@
           "as_of": "2026-09-07"
         },
         "bulk": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "TokenMix's review (checked 2026-09-07) estimates a 10,000-document/day analysis workload costs $390/month on Maverick via Groq versus the $5,250 it cites for GPT-5.4, a factor relevant to bulk processing.",
@@ -6218,8 +6182,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model page (checked 2026-09-07) states o4-mini demonstrates competitive reasoning and coding performance on benchmarks including AIME and SWE-bench.",
@@ -6233,8 +6195,6 @@
           "as_of": "2026-09-07"
         },
         "vision": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model page (checked 2026-09-07) states that despite its smaller size, o4-mini exhibits high accuracy on visual problem-solving benchmarks including MathVista and MMMU.",
@@ -6248,8 +6208,6 @@
           "as_of": "2026-09-07"
         },
         "bulk": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model page (checked 2026-09-07) describes o4-mini as especially well-suited for high-throughput scenarios where latency or cost is critical.",
@@ -6687,8 +6645,6 @@
       },
       "task_fit_judged": {
         "extraction": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own model-selection guide names Claude Haiku 4.5 for real-time, high-volume intelligent processing and cost-sensitive deployments, checked 2026-09-06.",
@@ -6702,8 +6658,6 @@
           "as_of": "2026-09-07"
         },
         "chat": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own model-selection guide names Claude Haiku 4.5 for real-time, high-volume intelligent processing and cost-sensitive deployments, checked 2026-09-06.",
@@ -6717,8 +6671,6 @@
           "as_of": "2026-09-07"
         },
         "bulk": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Anthropic's own Claude Haiku 4.5 launch post (Oct 15, 2025) says it gives similar coding performance to Claude Sonnet 4 at one-third the cost and more than twice the speed, checked 2026-09-06.",
@@ -9012,8 +8964,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "strong",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "o-mega.ai's benchmark writeup (checked 2026-09-07), citing Artificial Analysis data, states Gemini 3.5 Flash surpasses Gemini 3.1 Pro on the Terminal-Bench 2.1 coding benchmark.",
@@ -9027,8 +8977,6 @@
           "as_of": "2026-09-07"
         },
         "bulk": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "o-mega.ai's writeup (checked 2026-09-07) states Gemini 3.5 Flash's 1M-token context window matches the prior Flash generation, half the 2M window it cites for Gemini 3.1 Pro.",
@@ -10374,8 +10322,6 @@
       },
       "task_fit_judged": {
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Lindy's own migration write-up describes moving its managed-agent traffic (previously Claude/Sonnet- and Gemini-backed) to DeepSeek V4-Flash, checked 2026-09-06.",
@@ -10389,8 +10335,6 @@
           "as_of": "2026-09-07"
         },
         "bulk": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "Lindy reports that on the agent traffic it migrated to DeepSeek V4-Flash, inference costs fell by about 90%, checked 2026-09-06.",
@@ -11234,8 +11178,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "TokenMix's review (checked 2026-09-07) describes Qwen3-Coder-Plus as Alibaba's dedicated coding model, fine-tuned on 18 trillion code tokens across 300+ programming languages, separate from general Qwen3-Max.",
@@ -11256,8 +11198,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "TokenMix's review (checked 2026-09-07) states Qwen3-Coder-Plus ships optimized for function calling and tool use, relevant to agent-style coding workflows.",
@@ -11539,8 +11479,6 @@
       },
       "task_fit_judged": {
         "bulk": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "Alibaba Cloud's Model Studio pricing page (checked 2026-09-07) prices Qwen-Turbo's international endpoint at $0.05 per million input tokens and $0.2 per million output tokens, and notes a discount for batch calls, which fits high-volume low-cost workloads.",
@@ -11843,8 +11781,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "strong",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model page for Mistral Medium 3.1 (checked 2026-09-07) states it offers competitive accuracy relative to larger models including Claude Sonnet 3.5/3.7, Llama 4 Maverick, and Command R+, and lists coding among its strong domains.",
@@ -11858,8 +11794,6 @@
           "as_of": "2026-09-07"
         },
         "bulk": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's pricing FAQ for Mistral Medium 3.1 (checked 2026-09-07) lists the model at $0.40 per million input tokens and $2.00 per million output tokens, with cache-read priced separately at $0.04 per million tokens.",
@@ -11873,8 +11807,6 @@
           "as_of": "2026-09-07"
         },
         "writing": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "OpenRouter's top-apps ranking for Mistral Medium 3.1 (checked 2026-09-07) lists novelcrafter, a novel-writing tool, among the applications built on the model.",
@@ -13691,8 +13623,6 @@
       },
       "task_fit_judged": {
         "agents": {
-          "band": "strong",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "xAI's own launch post (Aug 12, 2026) says Grok 4.6 matches GPT-5.6 Sol on the Artificial Analysis Intelligence Index, a composite of nine benchmarks, and improves on Grok 4.5's chart score of 56 with a score of 61.",
@@ -14653,8 +14583,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model description for Muse Spark 1.1 (checked 2026-09-07) relays Meta's claim of strong performance on real-world coding across large codebases, computer-use workflows, and visual-to-code generation.",
@@ -14668,8 +14596,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model description for Muse Spark 1.1 (checked 2026-09-07) says it is built to orchestrate multi-agent workflows as either a main planning agent or a subagent, and to generalize to new tools and MCP servers without extra training.",
@@ -14683,8 +14609,6 @@
           "as_of": "2026-09-07"
         },
         "vision": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model description for Muse Spark 1.1 (checked 2026-09-07) states it accepts text, images, video, audio, and PDF documents as input with a 1M-token context window.",
@@ -14698,8 +14622,6 @@
           "as_of": "2026-09-07"
         },
         "research": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model description for Muse Spark 1.1 (checked 2026-09-07) says it supports structured output, parallel function calling, built-in search with citations, and configurable reasoning effort, which fits research-style tasks.",
@@ -15145,8 +15067,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "InclusionAI's own Hugging Face model card for Ling-3.0-flash (checked 2026-09-07) states the model matches or exceeds its predecessor Ring-2.6-1T across key benchmarks while activating far fewer parameters per token.",
@@ -15167,8 +15087,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "InclusionAI's Hugging Face model card (checked 2026-09-07) says Ling-3.0-flash activates only 5.1B parameters per token while providing reasoning, instruction-following, and long-context capabilities meant to power complex agentic workflows in production.",
@@ -15189,8 +15107,6 @@
           "as_of": "2026-09-07"
         },
         "bulk": {
-          "band": "strong",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "InclusionAI's Hugging Face model card (checked 2026-09-07) says Ling-3.0-flash is engineered for speed and compute efficiency and claims it performs well against larger competing models and its own previous-generation flagships.",
@@ -15204,8 +15120,6 @@
           "as_of": "2026-09-07"
         },
         "research": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "InclusionAI's Hugging Face model card (checked 2026-09-07) credits Ling-3.0-flash with long-context capabilities meant to support complex, multi-step workflows.",
@@ -15463,8 +15377,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "strong",
-          "confidence": "high",
           "claims": [
             {
               "sentence": "The KAT-Coder-V2.5 technical report on arXiv (checked 2026-09-07) states the model ranks second only to Opus 4.8 on repository-level software engineering benchmarks.",
@@ -15485,8 +15397,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "strong",
-          "confidence": "high",
           "claims": [
             {
               "sentence": "The KAT-Coder-V2.5 technical report on arXiv (checked 2026-09-07) credits the model with the highest PinchBench agentic tool-use score among the models the KwaiKAT team evaluated.",
@@ -15731,8 +15641,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model description for KAT-Coder-Air V2.5 (checked 2026-09-07) says it can take an entire issue or business workflow and autonomously locate and make the needed code changes inside the actual repository.",
@@ -15746,8 +15654,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model description for KAT-Coder-Air V2.5 (checked 2026-09-07) describes it as able to complete an entire process autonomously inside a real repository rather than a single-turn edit.",
@@ -15761,8 +15667,6 @@
           "as_of": "2026-09-07"
         },
         "frontend": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model description for KAT-Coder-Air V2.5 (checked 2026-09-07) says it retains the front-end aesthetic generation capability of the prior V2 model through an integrated mixture of experts.",
@@ -15776,8 +15680,6 @@
           "as_of": "2026-09-07"
         },
         "bulk": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Puter's developer listing for KAT-Coder-Air V2.5 (checked 2026-09-07) prices it at $0.15 per million input tokens and $0.6 per million output tokens.",
@@ -16017,8 +15919,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Meituan's LongCat-2.0 GitHub README (checked 2026-09-07) states the model's architecture and post-training give it strong performance on coding and agentic tasks.",
@@ -16039,8 +15939,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Meituan's LongCat-2.0 GitHub README (checked 2026-09-07) says the model is deeply integrated with harnesses such as Claude Code, OpenClaw, and Hermes for repository-level edits and automated task execution.",
@@ -16299,8 +16197,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Meta's Hugging Face model card for Muse Glimmer 30B (checked 2026-09-07) lists coding agent work as an intended use case, covering writing, debugging, and resolving software engineering tasks.",
@@ -16321,8 +16217,6 @@
           "as_of": "2026-09-07"
         },
         "vision": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "Meta's Hugging Face model card (checked 2026-09-07) lists multimodal reasoning over screenshots, charts, documents, and images as an intended use case for Muse Glimmer 30B.",
@@ -16574,8 +16468,6 @@
       },
       "task_fit_judged": {
         "agents": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "CNBC reported on August 11, 2026 that Nvidia said Nemotron 3.5 Lightning was developed particularly for agents, AI programs that run autonomously in the background, and that CrowdStrike, CodeRabbit, and Harvey have tested and customized the model.",
@@ -16827,8 +16719,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "high",
           "claims": [
             {
               "sentence": "Poolside's July 21, 2026 launch blog post for Laguna S 2.1 (checked 2026-09-07) states the model is a 118B total parameter Mixture-of-Experts model with 8B activated parameters per token.",
@@ -16849,8 +16739,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Poolside's launch blog post (checked 2026-09-07) describes Laguna S 2.1 as a step forward in developing models that pursue longer-horizon work and make effective use of reasoning.",
@@ -17106,8 +16994,6 @@
       },
       "task_fit_judged": {
         "bulk": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Independent review site eesel.ai (checked 2026-09-07) recommends Qwen3.7 Flash specifically for high-volume multimodal work where an occasional wrong answer is tolerable, such as tagging and classification.",
@@ -17396,8 +17282,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "ByteDance's Seed 2.1 page (checked 2026-09-07) states that in code engineering the model strengthens end-to-end delivery with more reliable requirement understanding, coding, debugging, and validation.",
@@ -17411,8 +17295,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "ByteDance's Seed 2.1 page (checked 2026-09-07) states the model reliably handles multi-step tasks ranging from project planning and file processing to tool use.",
@@ -17426,8 +17308,6 @@
           "as_of": "2026-09-07"
         },
         "exec-summaries": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "ByteDance's Seed 2.1 page (checked 2026-09-07) states the model reliably handles multi-step tasks for high-value office work and complex everyday consultations.",
@@ -17700,8 +17580,6 @@
       },
       "task_fit_judged": {
         "writing": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model listing for Aion-3.0 (checked 2026-09-07) describes it as a multi-model roleplaying and storytelling system built on the GLM family of models.",
@@ -17715,8 +17593,6 @@
           "as_of": "2026-09-07"
         },
         "chat": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model page for Aion-3.0 (checked 2026-09-07) lists Janitor AI, a character chatbot platform, as its top application by token volume.",
@@ -17981,8 +17857,6 @@
       },
       "task_fit_judged": {
         "writing": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model listing for Aion-3.0-Mini (checked 2026-09-07) describes it as a multi-model roleplaying and storytelling system built on the DeepSeek family of models.",
@@ -17996,8 +17870,6 @@
           "as_of": "2026-09-07"
         },
         "chat": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's model page for Aion-3.0-Mini (checked 2026-09-07) lists HammerAI, a character-chat app, as its top application by token volume.",
@@ -18251,8 +18123,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "ByteDance's official Seed 2.0 launch blog post (checked 2026-09-07) confirms Seed 2.0 includes a dedicated Code model alongside the general-purpose Pro, Lite, and Mini variants.",
@@ -18273,8 +18143,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "HowAIWorks.ai's model page for Doubao Seed 2.0 Code (checked 2026-09-07) recommends it for agentic feature implementation, described as multi-step work where the model must plan, execute, observe results, and revise the plan.",
@@ -18539,8 +18407,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Poolside's July 2, 2026 blog post introducing Laguna XS 2.1 (checked 2026-09-07) states it is a 33B total parameter Mixture-of-Experts model with 3B activated parameters per token, up 5.4 points to 63.1% on SWE-bench Multilingual versus the prior XS.2 release.",
@@ -18561,8 +18427,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Poolside's blog post for Laguna XS 2.1 (checked 2026-09-07) states it is designed for agentic coding and long-horizon work on a local machine.",
@@ -18824,8 +18688,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "MarkTechPost reported on July 19, 2026 that Alibaba's Qwen team described its newly previewed 2.4-trillion-parameter Qwen3.8 model as ranking second only to Claude Fable 5 among the systems it benchmarked.",
@@ -19087,8 +18949,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "strong",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Alibaba's Qwen3.8-27B announcement (checked 2026-09-06) states the 27B model delivers excellent capabilities in coding, professional work, research, and long-horizon agentic tasks while matching the performance of the much larger Qwen3.7-plus MoE model.",
@@ -19102,8 +18962,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "strong",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Alibaba's Qwen3.8-27B announcement (checked 2026-09-06) states the model is designed to execute complex, multi-step tasks to completion with high reliability, positioning it for agentic workloads.",
@@ -19117,8 +18975,6 @@
           "as_of": "2026-09-07"
         },
         "research": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "Alibaba's Qwen3.8-27B announcement (checked 2026-09-06) lists research among the tasks the model handles with excellent capability while matching Qwen3.7-plus performance.",
@@ -19495,8 +19351,6 @@
       },
       "task_fit_judged": {
         "research": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Sakana AI's Namazu launch page (checked 2026-09-06) describes an automated market-research use case where the model runs an entire research job on its own each Monday morning.",
@@ -19524,8 +19378,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "Sakana AI's Namazu page (checked 2026-09-06) attributes its long, multi-stage market-research workflow to agentic ability inherited from the Kimi K2.6 base model plus a built-in web-search tool.",
@@ -19539,8 +19391,6 @@
           "as_of": "2026-09-07"
         },
         "writing": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "Sakana AI's Namazu launch page (checked 2026-09-06) states the model drafts and writes a market-research report end to end, including web searches and cross-checking, without human involvement.",
@@ -19554,8 +19404,6 @@
           "as_of": "2026-09-07"
         },
         "chat": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "Sakana AI's Namazu page (checked 2026-09-06) describes the Japanese-specialized model handling customer-support conversations end to end, from answering inquiries to aggregating order data.",
@@ -19809,8 +19657,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Tencent's official HY3 launch announcement (checked 2026-09-06) states HY3 made particularly notable progress in productivity tasks including software development and financial modeling compared with the HY3 preview.",
@@ -19824,8 +19670,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Tencent's HY3 launch announcement (checked 2026-09-06) states HY3 improves task planning and tool coordination in agent scenarios, citing WorkBuddy/CodeBuddy, Yuanbao, and Marvis as products using it as an agent.",
@@ -19846,8 +19690,6 @@
           "as_of": "2026-09-07"
         },
         "frontend": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "Tencent's HY3 announcement (checked 2026-09-06) lists front-end design among the productivity tasks where HY3 made particularly notable progress relative to the HY3 preview.",
@@ -19861,8 +19703,6 @@
           "as_of": "2026-09-07"
         },
         "bulk": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "TechNode reported (checked 2026-09-06) that Tencent prices HY3 API access at RMB 1 ($0.15) per million input tokens and RMB 4 ($0.59) per million output tokens.",
@@ -19876,8 +19716,6 @@
           "as_of": "2026-09-07"
         },
         "writing": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "Tencent's HY3 announcement (checked 2026-09-06) states HY3 strengthened IMA's knowledge-base Q&A to produce more structured, complete, and usable outputs for long-form writing.",
@@ -20155,8 +19993,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "TechCrunch reported (checked 2026-09-06) that on one benchmark, Inkling uses a third as many tokens as Nvidia's Nemotron 3 Ultra to hit the same coding performance, per Thinking Machines.",
@@ -20618,8 +20454,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "strong",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Thinking Machines' Inkling-Small announcement (checked 2026-09-06) states the model exceeds 80% on SWE-bench Verified, ahead of the 77.6% Inkling's own model card reports for the larger Inkling model on the same benchmark.",
@@ -20640,8 +20474,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Thinking Machines' Inkling-Small announcement (checked 2026-09-06) attributes Inkling-Small's edge over Inkling on agentic benchmarks to continued agentic-coding reinforcement learning built on an on-policy-distilled checkpoint.",
@@ -20662,8 +20494,6 @@
           "as_of": "2026-09-07"
         },
         "vision": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Thinking Machines' Inkling-Small announcement (checked 2026-09-06) states the model features native reasoning over audio and images with a context window of up to 1M tokens.",
@@ -21054,8 +20884,6 @@
       },
       "task_fit_judged": {
         "agents": {
-          "band": "strong",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Seoul Economic Daily reported (checked 2026-09-06) that Solar Pro 4 scored 42 on an Artificial Analysis benchmark, topping the scores of Nvidia's Nemotron 3 Ultra (38) and Google's Gemini 3.5 Flash-Lite (37).",
@@ -21076,8 +20904,6 @@
           "as_of": "2026-09-07"
         },
         "research": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Upstage's Solar Pro 4 blog post (checked 2026-09-06) reports a long-document-reasoning (AA-LCR) score of 71, describing the benchmark as reasoning across roughly 100K tokens of reports and filings to synthesize answers scattered across multiple documents.",
@@ -21098,8 +20924,6 @@
           "as_of": "2026-09-07"
         },
         "extraction": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Seoul Economic Daily reported (checked 2026-09-06) that Solar Pro 4's AA-LCR benchmark specifically measures the ability to extract information from large volumes of long documents and reason toward answers.",
@@ -21120,8 +20944,6 @@
           "as_of": "2026-09-07"
         },
         "exec-summaries": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Upstage's Solar Pro 4 blog post (checked 2026-09-06) demonstrates the model turning market data into an Excel workbook, a review report, and a slide deck across three prompts in one session.",
@@ -21400,8 +21222,6 @@
       },
       "task_fit_judged": {
         "bulk": {
-          "band": "strong",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Tencent's Hy-MT2 GitHub README (checked 2026-09-06) states the 1.8B model surpasses mainstream commercial translation APIs from providers such as Microsoft and Doubao overall, aimed at low-cost, high-volume translation.",
@@ -21655,8 +21475,6 @@
       },
       "task_fit_judged": {
         "bulk": {
-          "band": "strong",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Tencent's Hy-MT2 GitHub README (checked 2026-09-06) states the 30B-A3B model outperforms open-source models such as DeepSeek-V4-Pro and Kimi K2.6 in fast-thinking translation mode.",
@@ -22864,8 +22682,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "Qwen's Hugging Face model card for Qwen3.8-Flash-Next, the preview architecture Qwen's own docs say Qwen3.8-Flash is officially built on, reports a SWE-bench Pro score of 62.5, evaluated with the Claude Code harness.",
@@ -23119,8 +22935,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "strong",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "Tencent's own press release (Aug 28, 2026) reports Hy4 preview scoring 2.99 out of 4.00 in an internal blind evaluation of 163 experts across 203 engineering tasks, versus 2.92 for GLM-5.3 and 2.94 for Kimi K3.",
@@ -23629,8 +23443,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "IBM's Granite 4.2 announcement blog states the 8B and 30B models were trained with a dedicated agentic-RL phase aimed at software engineering and terminal-based coding tasks, published 2026-08-25.",
@@ -23658,8 +23470,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "IBM's Granite 4.2 8B model card states the model reasons about which tools to call before invoking them.",
@@ -23687,8 +23497,6 @@
           "as_of": "2026-09-07"
         },
         "research": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "IBM's Granite 4.2 blog describes the models' built-in reasoning as planning before acting, aimed at multi-step analytical work.",
@@ -23968,8 +23776,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "OpenRouter describes Muse Spark 1.3 Contributor as the low-cost tier of Meta's model built for early-stage agentic, multi-agent, and coding workflows.",
@@ -23990,8 +23796,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "OpenRouter describes Muse Spark 1.3 Contributor as the low-cost tier of Meta's model built for early-stage agentic, multi-agent, and coding workflows.",
@@ -24254,8 +24058,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "strong",
-          "confidence": "high",
           "claims": [
             {
               "sentence": "MarkTechPost reported Meta's benchmark numbers showing Muse Spark 1.3 beating Claude Opus 5 and GPT-5.6 Sol on the DeepSWE v1.1 coding benchmark.",
@@ -24276,8 +24078,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "MarkTechPost reported Muse Spark 1.3 is designed to ask clarifying questions and pull users in when it stalls during agentic tasks.",
@@ -24298,8 +24098,6 @@
           "as_of": "2026-09-07"
         },
         "bulk": {
-          "band": "strong",
-          "confidence": "high",
           "claims": [
             {
               "sentence": "MarkTechPost reported Muse Spark 1.3 scoring far above GPT-5.6 Sol on the MRCR v2 long-context retrieval benchmark at both 512K and 1M token ranges.",
@@ -24619,8 +24417,6 @@
       },
       "task_fit_judged": {
         "agents": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "Google DeepMind's own product page describes Gemini 3.8 Flash as optimized for high performance across software engineering, long-horizon, and knowledge-work tasks, with reliable agentic execution for coding and real-world issues.",
@@ -25071,8 +24867,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "low",
           "claims": [
             {
               "sentence": "OpenAI's own documentation states GPT-6 Astra is built for the hardest end-to-end work, covering complex reasoning, coding, computer use, research, and document creation, with a 1,050,000-token context window.",
@@ -25561,8 +25355,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter states GPT-6 Astra Pro serves the same underlying GPT-6 Astra model at a higher reasoning effort for complex tasks.",
@@ -25576,8 +25368,6 @@
           "as_of": "2026-09-07"
         },
         "research": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter states GPT-6 Astra Pro runs the underlying model at a higher reasoning effort intended for complex analytical tasks.",
@@ -25591,8 +25381,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "The New Stack reported OpenAI's own OSWorld V2-Offline desktop-agent benchmark score for Astra improved over its predecessor GPT-5.6 Sol.",
@@ -26362,8 +26150,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's listing states Muse Spark 1.2 Contributor is a lower-cost Meta reasoning model aimed at developers who want to build cheaply.",
@@ -26384,8 +26170,6 @@
           "as_of": "2026-09-07"
         },
         "agents": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "OpenRouter's listing describes Muse Spark 1.2 Contributor as a Meta reasoning model tailored for complex agentic tasks.",
@@ -26647,8 +26431,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "capable",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "DeepSeek's own model card reports DeepSeek-V4-Flash-Vision-Exp scoring 83.9 on Terminal Bench 2.1, slightly above the text-only DeepSeek-V4-Flash-0731's 82.7, while adding multimodal input support.",
@@ -26958,8 +26740,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "strong",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "DeepSeek's own model card reports DeepSeek-V4-Pro-0813 scoring 87.9 on Terminal Bench 2.1, ahead of Claude Opus-4.8's 85.0 and close to Kimi K3's 88.3, in a table comparing it with DeepSeek-V4-Pro (Preview), GLM-5.2, Kimi K3, and Opus-4.8.",
@@ -27374,8 +27154,6 @@
       },
       "task_fit_judged": {
         "coding": {
-          "band": "strong",
-          "confidence": "medium",
           "claims": [
             {
               "sentence": "DeepSeek's own model card reports DeepSeek-V4-Flash-0731 scoring 82.7 on Terminal Bench 2.1, close to GLM-5.2's 81.0 and Claude Opus-4.8's 85.0, in a table comparing it with DeepSeek-V4-Pro (Preview), GLM-5.2, and Opus-4.8.",

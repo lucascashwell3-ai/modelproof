@@ -14,11 +14,13 @@
      - numeric fields must carry a number, never a string or null.
      - sources[] must be non-empty and every url must be http(s).
      - reason must be >= 12 characters — "trust me" is not a citation.
-     - judged-fit: value {taskId, band, confidence, claims:[{sentence, source_url, tier, date,
-       quote}], reconciliation}. Same shape scripts/validate-data.mjs gates once written — see
-       that file's BANNED_RELATIVE_PATTERNS/bannedPhraseIn/wordCount, imported here so the two
-       never drift apart. Growth-only: an incoming record never overwrites one already on file
-       with a newer as_of (applyOne no-ops in that case, doesn't error).
+     - judged-fit (v3, 2026-09): value {taskId, claims:[{sentence, source_url, tier, date, quote,
+       polarity?}], reconciliation}. NO band, NO confidence — a v2 judgment carrying either field
+       is rejected outright, naming the field, so a stale routine can't write the old shape back
+       in. Same shape scripts/validate-data.mjs gates once written — see that file's
+       BANNED_RELATIVE_PATTERNS/bannedPhraseIn/wordCount, imported here so the two never drift
+       apart. Growth-only: an incoming record never overwrites one already on file with a newer
+       as_of (applyOne no-ops in that case, doesn't error).
      - usage: value {category, share, rank}. Same growth-only rule.
    On success: writes data/models.json, appends data/changelog.json (with sources), removes the
    applied ids from data/refresh/worklist.json, runs the honesty gate, THEN (only when this run
@@ -33,7 +35,7 @@
 import { isNotablePriceChange, priceEntry, retiredEntry, addEntry } from './timeline.mjs';
 import { canonicalVendor, bareModelName, modelId as idFromName } from './naming.mjs';
 import { TASK_IDS } from './derive-task-fit.mjs';
-import { bannedPhraseIn, wordCount, JUDGED_BAND_VALUES, CLAIM_TIERS, citesLiveFeed } from './validate-data.mjs';
+import { bannedPhraseIn, wordCount, CLAIM_TIERS, CLAIM_POLARITY_VALUES, citesLiveFeed } from './validate-data.mjs';
 import { deriveStatus, deriveAdoption } from './derive-status-adoption.mjs';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -110,15 +112,18 @@ export function validateJudgment(j) {
     if (v.strengths != null && (!Array.isArray(v.strengths) || v.strengths.some((t) => typeof t !== 'string'))) errs.push(`${j.id}: strengths must be string[]`);
     for (const k of Object.keys(v)) if (!['best_for', 'use_well', 'strengths'].includes(k)) errs.push(`${j.id}: guidance can't set "${k}"`);
   } else if (j.kind === 'judged-fit') {
-    // value: { taskId, band, confidence, claims:[{sentence, source_url, tier, date, quote}], reconciliation? }
-    // Same shape scripts/validate-data.mjs gates once written (JUDGED_BAND_VALUES/CLAIM_TIERS/
-    // bannedPhraseIn/wordCount all imported from there) — failing here is earlier and clearer,
-    // exactly like BEST_FOR_VOCAB above mirrors validate-data.mjs's own vocab.
+    // value (v3): { taskId, claims:[{sentence, source_url, tier, date, quote, polarity?}], reconciliation? }
+    // NO band, NO confidence — v3 (2026-09) removed both from the schema (scripts/migrate-judged-v3.mjs);
+    // a v2 judgment carrying either is rejected below, naming the field, so the old AI-judged
+    // grade can't reach data/models.json again. Same shape scripts/validate-data.mjs gates once
+    // written (CLAIM_TIERS/CLAIM_POLARITY_VALUES/bannedPhraseIn/wordCount all imported from
+    // there) — failing here is earlier and clearer, exactly like BEST_FOR_VOCAB above mirrors
+    // validate-data.mjs's own vocab.
     const v = j.value;
     if (!v || typeof v !== 'object') { errs.push(`${j.id}: judged-fit value must be an object`); return errs; }
     if (!TASK_IDS.includes(v.taskId)) errs.push(`${j.id}: judged-fit taskId "${v.taskId}" must be one of ${TASK_IDS.join(', ')}`);
-    if (!JUDGED_BAND_VALUES.includes(v.band)) errs.push(`${j.id}: judged-fit band "${v.band}" must be one of ${JUDGED_BAND_VALUES.join(', ')}`);
-    if (!['high', 'medium', 'low'].includes(v.confidence)) errs.push(`${j.id}: judged-fit confidence "${v.confidence}" must be high|medium|low`);
+    if (Object.prototype.hasOwnProperty.call(v, 'band')) errs.push(`${j.id}: judged-fit value has "band" — v3 removed band from the schema; submit claims[] instead`);
+    if (Object.prototype.hasOwnProperty.call(v, 'confidence')) errs.push(`${j.id}: judged-fit value has "confidence" — v3 removed confidence from the schema; submit claims[] instead`);
     if (v.reconciliation != null) {
       if (typeof v.reconciliation !== 'string') errs.push(`${j.id}: judged-fit reconciliation must be a string or null`);
       else {
@@ -148,6 +153,7 @@ export function validateJudgment(j) {
       if (!c.date) errs.push(`${cl}.date is required`);
       if (!c.quote || typeof c.quote !== 'string') errs.push(`${cl}.quote is required (verbatim from source_url)`);
       else if (wordCount(c.quote) > 25) errs.push(`${cl}.quote is ${wordCount(c.quote)} word(s) — must be ≤25`);
+      if (c.polarity != null && !CLAIM_POLARITY_VALUES.includes(c.polarity)) errs.push(`${cl}.polarity must be one of ${CLAIM_POLARITY_VALUES.join(', ')}`);
     });
   } else if (j.kind === 'usage') {
     // value: { category, share (0-100), rank (>=1) } — usage.openrouter on the matching model.
@@ -268,13 +274,13 @@ export function applyOne(data, j, today) {
     // date, so this only ever blocks a genuinely out-of-order/backdated write, never normal use.
     const m = data.models.find((x) => x.id === modelId);
     if (!m) throw new Error(`${j.id}: no model with id "${modelId}"`);
-    const { taskId, band, confidence, claims, reconciliation } = j.value;
+    const { taskId, claims, reconciliation } = j.value;
     const existing = m.task_fit_judged && m.task_fit_judged[taskId];
     if (existing && existing.as_of && existing.as_of > today) return null; // a newer record already on file — no-op
     m.task_fit_judged = m.task_fit_judged || {};
-    m.task_fit_judged[taskId] = { band, confidence, claims, reconciliation: reconciliation ?? null, as_of: today };
+    m.task_fit_judged[taskId] = { claims, reconciliation: reconciliation ?? null, as_of: today };
     m.sources = Array.from(new Set([...(m.sources || []), ...j.sources.map((s) => s.url)]));
-    return { date: today, model: m.name, field: `task_fit_judged.${taskId}`, old: existing ? existing.band : null, new: band, sources: j.sources.map((s) => s.url), reason: j.reason };
+    return { date: today, model: m.name, field: `task_fit_judged.${taskId}`, old: existing ? `${existing.claims.length} claim(s) as of ${existing.as_of}` : null, new: `${claims.length} claim(s)`, sources: j.sources.map((s) => s.url), reason: j.reason };
   }
   if (j.kind === 'usage') {
     // growth-only, same as judged-fit above.

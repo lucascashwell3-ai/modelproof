@@ -39,7 +39,9 @@ const plans = readJson('plans.json').plans;
 const presets = readJson('usage-presets.json').presets;
 const vendors = readJson('vendors.json').vendors;
 const situations = readJson('eval/situations.json').situations;
-const mustNever = readJson('eval/must-never.json');
+const mustNeverFile = readJson('eval/must-never.json');
+// v2 (2026-09-13) wraps the rules in { _readme, _dropped, rules }; v1 was a bare array.
+const mustNever = Array.isArray(mustNeverFile) ? mustNeverFile : mustNeverFile.rules;
 const knownDisagreements = readJson('eval/known-disagreements.json');
 const knownMissIds = new Set(knownDisagreements.disagreements.map((d) => d.id));
 const reasonFor = (id) => knownDisagreements.disagreements.find((d) => d.id === id)?.reason;

@@ -63,8 +63,8 @@ page — a `null` price means the page didn't show that number in static HTML, n
 - **Ranking is never a judgment call.** A pick's grade is agreement across independent tester
   standings, real OpenRouter spend share, and arena.ai human votes — kept separate, never averaged
   (see [`scripts/derive-standings.mjs`](scripts/derive-standings.mjs) and the ranking rule at the
-  top of [`assets/decide.mjs`](assets/decide.mjs)). A model's judged record (band + confidence +
-  claims, each with a source link and a verbatim quote) carries zero ranking weight — it's the
+  top of [`assets/decide.mjs`](assets/decide.mjs)). A model's judged record (claims, each with a
+  source link and a verbatim quote — no grade, no number) carries zero ranking weight — it's the
   sourced explanation shown next to a pick, not what decided it; the site labels this text
   "reported use, not measured" so a reader never mistakes it for a benchmark. Every quote is
   checked against its live source before publish

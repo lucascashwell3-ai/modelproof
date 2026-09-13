@@ -27,7 +27,9 @@ const plans = readJson('data/plans.json').plans;
 const presets = readJson('data/usage-presets.json').presets;
 const vendors = readJson('data/vendors.json').vendors;
 const situations = readJson('data/eval/situations.json').situations;
-const mustNever = readJson('data/eval/must-never.json');
+const mustNeverFile = readJson('data/eval/must-never.json');
+// v2 (2026-09-13) wraps the rules in { _readme, _dropped, rules }; v1 was a bare array.
+const mustNever = Array.isArray(mustNeverFile) ? mustNeverFile : mustNeverFile.rules;
 const data = { models, plans, presets, vendors };
 
 const thinShareArg = process.argv.find((a) => a.startsWith('--thin-share='));
