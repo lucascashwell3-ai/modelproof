@@ -1,21 +1,6 @@
 {
-  "generated": "2026-09-12",
+  "generated": "2026-09-13",
   "items": [
-    {
-      "id": "new:deepseekv41flash",
-      "model": "DeepSeek: DeepSeek V4.1 Flash",
-      "kind": "new-model",
-      "current": null,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.15,
-          "date": "2026-09-12"
-        }
-      ],
-      "ask": "\"DeepSeek: DeepSeek V4.1 Flash\" showed up on OpenRouter but single source — is this a real, released model? If so, find vendor + a second source and add it."
-    },
     {
       "id": "new:fugumax",
       "model": "Sakana: Fugu Max",
@@ -26,7 +11,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 2,
-          "date": "2026-09-12"
+          "date": "2026-09-13"
         }
       ],
       "ask": "\"Sakana: Fugu Max\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -41,7 +26,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 5,
-          "date": "2026-09-12"
+          "date": "2026-09-13"
         }
       ],
       "ask": "\"Sakana: Fugu Ultra v2\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -55,8 +40,8 @@
         {
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.15,
-          "date": "2026-09-12"
+          "value": 0.075,
+          "date": "2026-09-13"
         }
       ],
       "ask": "\"Z.ai: GLM 5.3 Flash\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -71,7 +56,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.06,
-          "date": "2026-09-12"
+          "date": "2026-09-13"
         }
       ],
       "ask": "\"inclusionAI: Ling 3.0 Flash Fin\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -86,7 +71,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.06,
-          "date": "2026-09-12"
+          "date": "2026-09-13"
         }
       ],
       "ask": "\"inclusionAI: Ling 3.0 Flash VL\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -101,7 +86,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.04,
-          "date": "2026-09-12"
+          "date": "2026-09-13"
         }
       ],
       "ask": "\"Inception: Mercury 2.5\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -116,7 +101,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.049999999999999996,
-          "date": "2026-09-12"
+          "date": "2026-09-13"
         }
       ],
       "ask": "\"Inference.net: Schematron V2 Small\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -131,7 +116,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.03,
-          "date": "2026-09-12"
+          "date": "2026-09-13"
         }
       ],
       "ask": "\"Inference.net: Schematron V2 Turbo\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -147,108 +132,112 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.04,
-          "date": "2026-09-12"
+          "date": "2026-09-13"
         },
         {
           "source": "litellm",
           "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
           "value": 0.44,
-          "date": "2026-09-12"
+          "date": "2026-09-13"
         }
       ],
       "ask": "DeepSeek V4 Flash 0731 price input is currently 0.05; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
     },
     {
-      "id": "deepseek-v4-flash-0731:price_output",
+      "id": "gemini-3-8-flash:guidance",
+      "model": "Gemini 3.8 Flash",
+      "kind": "guidance",
+      "field": "use_well",
+      "current": null,
+      "observations": [
+        {
+          "source": "auto-refresh",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": null,
+          "date": "2026-09-13"
+        }
+      ],
+      "ask": "Gemini 3.8 Flash has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+    },
+    {
+      "id": "gpt-6-astra-pro:guidance",
+      "model": "GPT-6 Astra Pro",
+      "kind": "guidance",
+      "field": "use_well",
+      "current": null,
+      "observations": [
+        {
+          "source": "auto-refresh",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": null,
+          "date": "2026-09-13"
+        }
+      ],
+      "ask": "GPT-6 Astra Pro has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+    },
+    {
+      "id": "gpt-6-astra:guidance",
+      "model": "GPT-6 Astra",
+      "kind": "guidance",
+      "field": "use_well",
+      "current": null,
+      "observations": [
+        {
+          "source": "auto-refresh",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": null,
+          "date": "2026-09-13"
+        }
+      ],
+      "ask": "GPT-6 Astra has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+    },
+    {
+      "id": "deepseek-v4-flash-0731:coding:re-judge",
       "model": "DeepSeek V4 Flash 0731",
-      "kind": "conflict",
-      "field": "price_output",
-      "current": 0.1,
+      "kind": "judged-fit",
+      "field": "task_fit_judged",
+      "current": "strong",
       "observations": [
         {
-          "source": "openrouter",
+          "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.08,
-          "date": "2026-09-12"
-        },
-        {
-          "source": "litellm",
-          "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-          "value": 1.32,
-          "date": "2026-09-12"
+          "value": null,
+          "date": "2026-09-13"
         }
       ],
-      "ask": "DeepSeek V4 Flash 0731 price output is currently 0.1; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
+      "ask": "DeepSeek V4.1 Flash just shipped from the same vendor as DeepSeek V4 Flash 0731, whose \"coding\" judged fit (strong, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"coding\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
     },
     {
-      "id": "deepseek-v4-flash-vision-exp:price_input",
+      "id": "deepseek-v4-flash-vision-exp:coding:re-judge",
       "model": "DeepSeek V4 Flash Vision Exp",
-      "kind": "conflict",
-      "field": "price_input",
-      "current": 0.44,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.22,
-          "date": "2026-09-12"
-        },
-        {
-          "source": "litellm",
-          "url": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
-          "value": 0.44,
-          "date": "2026-09-12"
-        }
-      ],
-      "ask": "DeepSeek V4 Flash Vision Exp price input is currently 0.44; sources disagree (source-conflict) — what's the correct current value, with a source URL and date?"
-    },
-    {
-      "id": "deepseek-v4-flash-0731:guidance",
-      "model": "DeepSeek V4 Flash 0731",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
+      "kind": "judged-fit",
+      "field": "task_fit_judged",
+      "current": "capable",
       "observations": [
         {
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-09-12"
+          "date": "2026-09-13"
         }
       ],
-      "ask": "DeepSeek V4 Flash 0731 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "DeepSeek V4.1 Flash just shipped from the same vendor as DeepSeek V4 Flash Vision Exp, whose \"coding\" judged fit (capable, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"coding\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
     },
     {
-      "id": "deepseek-v4-flash-vision-exp:guidance",
-      "model": "DeepSeek V4 Flash Vision Exp",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
+      "id": "deepseek-v4-flash:agents:re-judge",
+      "model": "DeepSeek V4-Flash",
+      "kind": "judged-fit",
+      "field": "task_fit_judged",
+      "current": "capable",
       "observations": [
         {
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-09-12"
+          "date": "2026-09-13"
         }
       ],
-      "ask": "DeepSeek V4 Flash Vision Exp has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
-    },
-    {
-      "id": "deepseek-v4-pro-0813:guidance",
-      "model": "DeepSeek V4 Pro 0813",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
-      "observations": [
-        {
-          "source": "auto-refresh",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": null,
-          "date": "2026-09-12"
-        }
-      ],
-      "ask": "DeepSeek V4 Pro 0813 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "DeepSeek V4.1 Flash just shipped from the same vendor as DeepSeek V4-Flash, whose \"agents\" judged fit (capable, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"agents\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
     }
   ]
 }

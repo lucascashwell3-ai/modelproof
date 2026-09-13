@@ -5,7 +5,7 @@ live tester feed and could not be matched to a catalog model id — never guesse
 appears in any model's `standings`. A future run re-checks all of these; add an alias to
 `scripts/model-aliases.json` only after confirming the feed name really is that model.
 
-## epoch-ai / gpqa_diamond.csv (262)
+## epoch-ai / gpqa_diamond.csv (251)
 
 - `DeepSeek-R1`
 - `DeepSeek-R1-0528`
@@ -55,7 +55,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `claude-3-haiku-20240307`
 - `claude-3-opus-20240229`
 - `claude-3-sonnet-20240229`
-- `claude-haiku-4-5-20251001_32K`
 - `claude-opus-4-1-20250805`
 - `claude-opus-4-1-20250805_16K`
 - `claude-opus-4-1-20250805_27K`
@@ -69,7 +68,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `claude-opus-4-6_max`
 - `claude-opus-4-7_max`
 - `claude-opus-4-7_xhigh`
-- `claude-opus-4-8_none`
 - `claude-sonnet-4-20250514`
 - `claude-sonnet-4-20250514_16K`
 - `claude-sonnet-4-20250514_32K`
@@ -87,7 +85,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `deepseek-llm-67b-chat`
 - `deepseek-r1-0528-qwen3-8b`
 - `deepseek-reasoner`
-- `deepseek-v4-pro_none`
 - `fireworks/kimi-k2p5`
 - `gemini-1.0-pro-001`
 - `gemini-1.5-flash-001`
@@ -111,8 +108,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gemini-3.5-flash-lite_high`
 - `gemini-3.5-flash-lite_low`
 - `gemini-3.5-flash-lite_minimal`
-- `gemini-3.5-flash_minimal`
-- `gemini-3.6-flash_minimal`
 - `gemma-2-27b-it`
 - `gemma-2-9b-it`
 - `gemma-3-12b-it`
@@ -126,7 +121,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `glm-4.7-flash_none`
 - `glm-5`
 - `glm-5.1`
-- `glm-5.2_none`
 - `glm-5.3-flash_max`
 - `gpt-3.5-turbo-0125`
 - `gpt-3.5-turbo-1106`
@@ -175,10 +169,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gpt-5.4-pro-2026-03-05_xhigh`
 - `gpt-5.5-pre-release_xhigh`
 - `gpt-5.5-pro-pre-release_xhigh`
-- `gpt-5.5_none`
-- `gpt-5.6-luna_none`
-- `gpt-5.6-sol_none`
-- `gpt-5.6-terra_none`
 - `gpt-oss-20b_high`
 - `gpt-oss-20b_low`
 - `gpt-oss-20b_medium`
@@ -262,7 +252,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.6-flash`
 - `qwen3.6-max-preview`
 - `qwen3.6-plus`
-- `qwen3.7-flash_none`
 - `qwen3.7-max`
 - `qwen3.7-plus`
 - `qwen3.7-plus_none`
@@ -270,11 +259,10 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwq-plus`
 - `seed-oss-36b-instruct`
 
-## epoch-ai / simpleqa_verified.csv (45)
+## epoch-ai / simpleqa_verified.csv (44)
 
 - `Qwen3-235B-A22B-Thinking-2507`
 - `claude-3-opus-20240229`
-- `claude-haiku-4-5-20251001_32K`
 - `claude-opus-4-5-20251101_32K`
 - `claude-opus-4-6_max`
 - `claude-opus-4-7_xhigh`
@@ -318,10 +306,9 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.7-max`
 - `qwen3.8-max-0902_xhigh`
 
-## epoch-ai / hle_external.csv (42)
+## epoch-ai / hle_external.csv (41)
 
 - `GLM-4.5-Air`
-- `Llama-4-Maverick-17B-128E-Instruct`
 - `amazon.nova-lite-v1:0`
 - `amazon.nova-pro-v1:0`
 - `claude-3-5-sonnet-20241022`
@@ -398,7 +385,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `grok-4-0709`
 - `o3-2025-04-16_medium`
 
-## epoch-ai / webdev_arena_external.csv (88)
+## epoch-ai / webdev_arena_external.csv (77)
 
 - `DeepSeek-V3.2-Exp`
 - `DeepSeek-V3.2-Exp_thinking`
@@ -408,8 +395,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `MiniMax-M2.7`
 - `MiniMax-M3`
 - `Qwen3-Coder-480B-A35B-Instruct`
-- `claude-fable-5_unknown`
-- `claude-haiku-4-5-20251001_unknown`
 - `claude-opus-4-1-20250805`
 - `claude-opus-4-1-20250805_unknown`
 - `claude-opus-4-5-20251101`
@@ -420,21 +405,15 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `claude-opus-4-7`
 - `claude-opus-4-7_high`
 - `claude-opus-4-7_unknown`
-- `claude-opus-4-8_none`
-- `claude-opus-4-8_unknown`
 - `claude-sonnet-4-5-20250929`
 - `claude-sonnet-4-5-20250929_32K`
 - `claude-sonnet-4-6`
-- `deepseek-v4-pro_none`
-- `deepseek-v4-pro_unknown`
 - `deepseek/deepseek-v3.2`
 - `gemini-2.5-pro`
 - `gemini-3-flash-preview`
 - `gemini-3-pro-preview`
 - `gemini-3.1-flash-lite`
 - `gemini-3.5-flash-lite`
-- `gemini-3.5-flash_unknown`
-- `gemini-3.6-flash_unknown`
 - `gemma-4-26b-a4b`
 - `gemma-4-31b-it`
 - `glm-4.6`
@@ -457,13 +436,11 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gpt-5.4-2026-03-05_medium`
 - `gpt-5.4-2026-03-05_unknown`
 - `gpt-5.4-mini-2026-03-17_high`
-- `gpt-5.5_unknown`
 - `grok-4-1`
 - `grok-4-1-fast-reasoning`
 - `grok-4-20`
 - `grok-4-fast`
 - `grok-4.3_unknown`
-- `grok-4.5_unknown`
 - `grok-code-fast-1`
 - `kimi-k2-thinking-turbo`
 - `kimi-k2.5`
@@ -486,10 +463,9 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.6-max-preview`
 - `qwen3.6-plus`
 - `qwen3.7-max`
-- `qwen3.8-max_unknown`
 - `trinity-large-thinking`
 
-## epoch-ai / cursorbench_external.csv (12)
+## epoch-ai / cursorbench_external.csv (11)
 
 - `Composer 2.5`
 - `claude-opus-4-7_high`
@@ -500,7 +476,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `claude-sonnet-4-6_high`
 - `claude-sonnet-4-6_max`
 - `claude-sonnet-4-6_medium`
-- `gemini-3.5-flash_unknown`
 - `kimi-k2.5`
 - `kimi-k2.7-code`
 
@@ -536,7 +511,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.6-plus`
 - `qwen3.7-max`
 
-## epoch-ai / scicode_external.csv (94)
+## epoch-ai / scicode_external.csv (83)
 
 - `DeepSeek-R1`
 - `DeepSeek-V3`
@@ -545,7 +520,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `DeepSeek-V3.2-Exp_thinking`
 - `Llama-3.1-8B-Instruct`
 - `Llama-3.3-70B-Instruct`
-- `Llama-4-Maverick-17B-128E-Instruct`
 - `Llama-4-Scout-17B-16E-Instruct`
 - `MiniMax-M2.7`
 - `MiniMax-M3`
@@ -553,7 +527,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `Qwen3-32B`
 - `Ring-2.6-1T`
 - `claude-3-5-haiku-20241022`
-- `claude-haiku-4-5-20251001_unknown`
 - `claude-opus-4-7_max`
 - `claude-sonnet-4-20250514_unknown`
 - `claude-sonnet-4-5-20250929_unknown`
@@ -571,7 +544,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `glm-4.6`
 - `glm-4.7`
 - `glm-5.1`
-- `glm-5.2_none`
 - `glm-5.3-flash_unknown`
 - `gpt-4.1-mini-2025-04-14`
 - `gpt-4.1-nano-2025-04-14`
@@ -581,18 +553,12 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gpt-5.4-2026-03-05_xhigh`
 - `gpt-5.4-mini-2026-03-17_xhigh`
 - `gpt-5.4-nano-2026-03-17_xhigh`
-- `gpt-5.5_none`
-- `gpt-5.6-luna_none`
-- `gpt-5.6-sol_none`
-- `gpt-5.6-terra_none`
-- `gpt-6-astra_none`
 - `gpt-oss-20b_high`
 - `granite-4.1-30b`
 - `grok-4.3_high`
 - `grok-build-0.1`
 - `kimi-k2.5`
 - `kimi-k2.7-code`
-- `kimi-k3_unknown`
 - `magistral-medium-2509`
 - `magistral-small-2509`
 - `mercury-2`
@@ -627,13 +593,11 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.6-plus`
 - `qwen3.7-max`
 - `qwen3.7-plus`
-- `qwen3.8-27b_none`
-- `qwen3.8-max_unknown`
 - `solar-pro-3`
 - `step-3.7-flash`
 - `trinity-large-thinking`
 
-## epoch-ai / ale_bench_external.csv (83)
+## epoch-ai / ale_bench_external.csv (78)
 
 - `DeepSeek-R1-0528`
 - `DeepSeek-V3.1-Terminus`
@@ -645,18 +609,14 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `Qwen3-Coder-480B-A35B-Instruct`
 - `Ring-2.6-1T`
 - `amazon.nova-lite-v1:0`
-- `claude-haiku-4-5-20251001_32K`
 - `claude-opus-4-1-20250805_16K`
 - `claude-opus-4-5-20251101_16K`
 - `claude-opus-4-6`
 - `claude-opus-4-7`
-- `claude-opus-4-8_none`
 - `claude-sonnet-4-20250514_32K`
 - `claude-sonnet-4-5-20250929_32K`
 - `claude-sonnet-4-6_medium`
 - `codestral-2508`
-- `deepseek-v4-flash_none`
-- `deepseek-v4-pro_none`
 - `gemini-2.5-flash`
 - `gemini-2.5-flash-lite-preview-06-17-thinking`
 - `gemini-2.5-pro_32K`
@@ -689,7 +649,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gpt-5.4-2026-03-05_none`
 - `gpt-5.4-mini-2026-03-17_high`
 - `gpt-5.4-nano-2026-03-17_high`
-- `gpt-5.5_none`
 - `gpt-oss-120b`
 - `gpt-oss-20b`
 - `grok-4-1-fast-reasoning`
@@ -719,7 +678,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.7-max`
 - `step-3.7-flash`
 
-## epoch-ai / weirdml_external.csv (132)
+## epoch-ai / weirdml_external.csv (126)
 
 - `DeepSeek-R1`
 - `DeepSeek-R1-0528`
@@ -734,7 +693,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `Llama-3.1-70B-Instruct`
 - `Llama-3.1-8B-Instruct`
 - `Llama-3.3-70B-Instruct`
-- `Llama-4-Maverick-17B-128E-Instruct`
 - `MiniMax-M2.7`
 - `Mixtral-8x22B-Instruct-v0.1`
 - `Qwen3-235B-A22B`
@@ -749,7 +707,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `claude-3-haiku-20240307`
 - `claude-3-opus-20240229`
 - `claude-3-sonnet-20240229`
-- `claude-haiku-4-5-20251001_16K`
 - `claude-opus-4-1-20250805_16K`
 - `claude-opus-4-20250514_16K`
 - `claude-opus-4-5-20251101_16K`
@@ -760,7 +717,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `claude-opus-4-7_high`
 - `claude-opus-4-7_max`
 - `claude-opus-4-7_unknown`
-- `claude-opus-4-8_none`
 - `claude-sonnet-4-20250514`
 - `claude-sonnet-4-20250514_16K`
 - `claude-sonnet-4-5-20250929`
@@ -815,8 +771,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gpt-5.4-nano-2026-03-17_high`
 - `gpt-5.4-nano-2026-03-17_none`
 - `gpt-5.4-pro-2026-03-05_none`
-- `gpt-5.5_none`
-- `gpt-5.6-sol_promax`
 - `gpt-oss-120b_high`
 - `gpt-oss-120b_medium`
 - `gpt-oss-20b_high`
@@ -829,7 +783,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `grok-4-20`
 - `grok-4-fast`
 - `grok-4.3_unknown`
-- `grok-4.5_unknown`
 - `grok-code-fast-1`
 - `kimi-k2-0711-preview`
 - `kimi-k2-thinking`
@@ -861,7 +814,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gpt-5.4-2026-03-05_xhigh`
 - `kimi-k2.7-code`
 
-## epoch-ai / terminalbench_external.csv (57)
+## epoch-ai / terminalbench_external.csv (55)
 
 - `Kimi-K2-Instruct`
 - `MiniMax-M2`
@@ -869,7 +822,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `MiniMax-M2.5`
 - `MiniMax-M2.7`
 - `Qwen3-Coder-480B-A35B-Instruct`
-- `claude-haiku-4-5-20251001_unknown`
 - `claude-opus-4-1-20250805`
 - `claude-opus-4-1-20250805_unknown`
 - `claude-opus-4-5-20251101`
@@ -908,7 +860,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gpt-5.2-codex`
 - `gpt-5.3-codex`
 - `gpt-5.4-2026-03-05_unknown`
-- `gpt-5.5_unknown`
 - `gpt-oss-120b`
 - `gpt-oss-120b_unknown`
 - `gpt-oss-20b`
@@ -921,53 +872,37 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.5-9B`
 - `qwen3.6-35b-a3b`
 
-## epoch-ai / vending_bench_2_external.csv (50)
+## epoch-ai / vending_bench_2_external.csv (34)
 
 - `DeepSeek-V3.2-Exp_unknown`
 - `MiniMax-M2`
 - `MiniMax-M2.5`
 - `MiniMax-M3`
 - `Qwen3-235B-A22B-Thinking-2507`
-- `claude-fable-5-1_unknown`
-- `claude-haiku-4-5-20251001_unknown`
 - `claude-opus-4-5-20251101_unknown`
 - `claude-opus-4-6_unknown`
 - `claude-opus-4-7_unknown`
-- `claude-opus-4-8_unknown`
-- `claude-opus-5_unknown`
 - `claude-sonnet-4-5-20250929_unknown`
 - `claude-sonnet-4-6_unknown`
-- `claude-sonnet-5_unknown`
-- `deepseek-v4-pro_unknown`
 - `gemini-2.5-flash`
 - `gemini-2.5-pro`
 - `gemini-3-flash-preview`
 - `gemini-3-pro-preview`
 - `gemini-3.1-pro-preview-customtools`
-- `gemini-3.5-flash_unknown`
 - `glm-4.7`
 - `glm-5`
 - `glm-5.1`
-- `glm-5.2_unknown`
-- `glm-5.3_unknown`
 - `gpt-5-mini-2025-08-07_unknown`
 - `gpt-5.1-2025-11-13_unknown`
 - `gpt-5.2-2025-12-11_unknown`
 - `gpt-5.3-codex`
 - `gpt-5.4-2026-03-05_unknown`
-- `gpt-5.5_unknown`
-- `gpt-5.6-luna_unknown`
-- `gpt-5.6-sol_unknown`
-- `gpt-5.6-terra_unknown`
 - `gpt-oss-120b`
 - `grok-4-1-fast-reasoning`
 - `grok-4-20`
 - `grok-4.3_unknown`
-- `grok-4.5_unknown`
-- `grok-4.6_unknown`
 - `kimi-k2.5`
 - `kimi-k2.7-code`
-- `kimi-k3_unknown`
 - `qwen3.5-27B`
 - `qwen3.5-flash`
 - `qwen3.5-plus`
@@ -1025,18 +960,15 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen2-72b-instruct`
 - `qwen2.5-72b-instruct`
 
-## epoch-ai / apex_agents_external.csv (55)
+## epoch-ai / apex_agents_external.csv (44)
 
 - `MiniMax-M2.5`
-- `claude-fable-5-1_unknown`
-- `claude-haiku-4-5-20251001_unknown`
 - `claude-opus-4-5-20251101_unknown`
 - `claude-opus-4-6_max`
 - `claude-opus-4-6_unknown`
 - `claude-opus-4-7_max`
 - `claude-sonnet-4-20250514_unknown`
 - `claude-sonnet-4-6_high`
-- `claude-sonnet-5_unknown`
 - `deepseek/deepseek-v3.2`
 - `gemini-2.5-flash`
 - `gemini-2.5-pro`
@@ -1046,7 +978,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `glm-4.6`
 - `glm-4.7`
 - `glm-5`
-- `glm-5.2_unknown`
 - `gpt-4o-2024-11-20`
 - `gpt-5-2025-08-07_high`
 - `gpt-5-2025-08-07_unknown`
@@ -1063,20 +994,13 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gpt-5.4-2026-03-05_xhigh`
 - `gpt-5.4-mini-2026-03-17_unknown`
 - `gpt-5.4-nano-2026-03-17_unknown`
-- `gpt-5.5_unknown`
-- `gpt-5.6-sol_promax`
-- `gpt-5.6-sol_unknown`
-- `gpt-6-astra_unknown`
 - `gpt-oss-120b`
 - `grok-3`
 - `grok-4-0709`
 - `grok-4-1`
-- `grok-4.5_unknown`
-- `grok-4.6_unknown`
 - `kimi-k2-thinking`
 - `kimi-k2.5`
 - `kimi-k2.7-code`
-- `kimi-k3_unknown`
 - `nemotron-3-ultra`
 - `o1-2024-12-17_high`
 - `o3-2025-04-16_high`
@@ -1091,13 +1015,12 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `claude-sonnet-4-6_medium`
 - `qwen3.7-plus`
 
-## epoch-ai / lech_mazur_writing_external.csv (48)
+## epoch-ai / lech_mazur_writing_external.csv (47)
 
 - `DeepSeek-R1`
 - `DeepSeek-R1-0528`
 - `DeepSeek-V3-0324`
 - `Kimi-K2-Instruct`
-- `Llama-4-Maverick-17B-128E-Instruct`
 - `QwQ-32B (16K thinking)`
 - `Qwen3-235B-A22B-Thinking-2507`
 - `Qwen3-30B-A3B`
@@ -1142,7 +1065,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen2.5-max`
 - `qwen3-235b-a22b`
 
-## epoch-ai / frontiermath_tiers_1_3_v2.csv (71)
+## epoch-ai / frontiermath_tiers_1_3_v2.csv (68)
 
 - `claude-opus-4-1-20250805_32K`
 - `claude-opus-4-5-20251101_32K`
@@ -1157,7 +1080,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gemini-3.5-flash-lite_high`
 - `glm-5.1`
 - `glm-5.1_none`
-- `glm-5.2_none`
 - `glm-5.3-flash_max`
 - `gpt-3.5-turbo-0125`
 - `gpt-4-turbo-2024-04-09`
@@ -1186,7 +1108,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gpt-5.4-nano-2026-03-17_none`
 - `gpt-5.4-pro-2026-03-05_xhigh`
 - `gpt-5.5-pro_xhigh`
-- `gpt-5.6-luna_none`
 - `grok-4.20-0309-reasoning`
 - `grok-4.3_high`
 - `kimi-k2.7-code`
@@ -1211,12 +1132,11 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.6-flash_none`
 - `qwen3.6-plus`
 - `qwen3.6-plus_none`
-- `qwen3.7-flash_none`
 - `qwen3.7-max`
 - `qwen3.7-plus_none`
 - `qwen3.8-max-0902_xhigh`
 
-## epoch-ai / frontiermath_tier_4_v2.csv (29)
+## epoch-ai / frontiermath_tier_4_v2.csv (27)
 
 - `claude-opus-4-1-20250805_32K`
 - `claude-opus-4-5-20251101_32K`
@@ -1239,8 +1159,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gpt-5.4-nano-2026-03-17_high`
 - `gpt-5.4-pro-2026-03-05_xhigh`
 - `gpt-5.5-pro_xhigh`
-- `gpt-5.6-sol_promax`
-- `gpt-6-astra_none`
 - `grok-4.20-0309-reasoning`
 - `grok-4.3_high`
 - `kimi-k2.7-code`
@@ -1248,7 +1166,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.7-max`
 - `qwen3.8-max-0902_xhigh`
 
-## epoch-ai / proofbench_external.csv (43)
+## epoch-ai / proofbench_external.csv (34)
 
 - `MiniMax-M2.5`
 - `MiniMax-M2.7`
@@ -1258,15 +1176,10 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `claude-opus-4-7_max`
 - `claude-sonnet-4-5-20250929_unknown`
 - `claude-sonnet-4-6_max`
-- `deepseek-v4-flash-0731_unknown`
-- `deepseek-v4-pro-0813_unknown`
 - `fireworks/deepseek-v3p2`
 - `gemini-3-flash-preview`
 - `gemini-3-pro-preview`
 - `gemini-3.5-flash-lite`
-- `gemini-3.6-flash_unknown`
-- `gemini-3.7-flash_unknown`
-- `gemini-3.8-flash_unknown`
 - `glm-4.7`
 - `glm-5.1`
 - `glm-5.3-flash_max`
@@ -1278,12 +1191,9 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gpt-5.4-2026-03-05_xhigh`
 - `gpt-5.4-mini-2026-03-17_xhigh`
 - `gpt-5.4-nano-2026-03-17_high`
-- `gpt-6-astra_unknown`
 - `grok-4-1-fast-reasoning`
 - `grok-4.20-0309-reasoning`
 - `grok-4.3_high`
-- `grok-4.6_unknown`
-- `kimi-k3_unknown`
 - `laguna-m.1`
 - `laguna-xs.2`
 - `mimo-v2.5`
@@ -1292,9 +1202,8 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `muse-spark`
 - `nemotron-3-ultra`
 - `qwen3.7-max`
-- `qwen3.8-max_unknown`
 
-## epoch-ai / otis_mock_aime_2024_2025.csv (238)
+## epoch-ai / otis_mock_aime_2024_2025.csv (227)
 
 - `DeepSeek-R1`
 - `DeepSeek-R1-0528`
@@ -1338,7 +1247,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `claude-3-haiku-20240307`
 - `claude-3-opus-20240229`
 - `claude-3-sonnet-20240229`
-- `claude-haiku-4-5-20251001_32K`
 - `claude-opus-4-1-20250805`
 - `claude-opus-4-1-20250805_16K`
 - `claude-opus-4-1-20250805_27K`
@@ -1353,7 +1261,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `claude-opus-4-6_max`
 - `claude-opus-4-7_max`
 - `claude-opus-4-7_xhigh`
-- `claude-opus-4-8_none`
 - `claude-sonnet-4-20250514`
 - `claude-sonnet-4-20250514_16K`
 - `claude-sonnet-4-20250514_32K`
@@ -1370,7 +1277,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `deepseek-llm-67b-chat`
 - `deepseek-r1-0528-qwen3-8b`
 - `deepseek-reasoner`
-- `deepseek-v4-pro_none`
 - `fireworks/kimi-k2p5`
 - `gemini-1.0-pro-001`
 - `gemini-1.5-flash-001`
@@ -1392,8 +1298,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gemini-3.5-flash-lite_high`
 - `gemini-3.5-flash-lite_low`
 - `gemini-3.5-flash-lite_minimal`
-- `gemini-3.5-flash_minimal`
-- `gemini-3.6-flash_minimal`
 - `gemma-2-27b-it`
 - `gemma-2-9b-it`
 - `gemma-3-12b-it`
@@ -1407,7 +1311,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `glm-4.7-flash_none`
 - `glm-5`
 - `glm-5.1`
-- `glm-5.2_none`
 - `glm-5.3-flash_max`
 - `gpt-3.5-turbo-0125`
 - `gpt-4-0314`
@@ -1453,10 +1356,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gpt-5.4-nano-2026-03-17_none`
 - `gpt-5.5-pre-release_xhigh`
 - `gpt-5.5-pro-pre-release_xhigh`
-- `gpt-5.5_none`
-- `gpt-5.6-luna_none`
-- `gpt-5.6-sol_none`
-- `gpt-5.6-terra_none`
 - `gpt-oss-20b_high`
 - `gpt-oss-20b_low`
 - `gpt-oss-20b_medium`
@@ -1528,14 +1427,13 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.6-flash`
 - `qwen3.6-max-preview`
 - `qwen3.6-plus`
-- `qwen3.7-flash_none`
 - `qwen3.7-max`
 - `qwen3.7-plus`
 - `qwen3.7-plus_none`
 - `qwen3.8-max-0902_xhigh`
 - `seed-oss-36b-instruct`
 
-## epoch-ai / critpt_external.csv (105)
+## epoch-ai / critpt_external.csv (94)
 
 - `DeepSeek-R1`
 - `DeepSeek-V3`
@@ -1544,16 +1442,13 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `DeepSeek-V3.2-Exp_thinking`
 - `Llama-3.1-8B-Instruct`
 - `Llama-3.3-70B-Instruct`
-- `Llama-4-Maverick-17B-128E-Instruct`
 - `Llama-4-Scout-17B-16E-Instruct`
 - `MiniMax-M2.7`
 - `MiniMax-M3`
 - `Phi-4-mini-instruct`
 - `Qwen3-32B`
 - `Ring-2.6-1T`
-- `chutes/Llama-4-Maverick-17B-128E-Instruct`
 - `claude-3-5-haiku-20241022`
-- `claude-haiku-4-5-20251001_unknown`
 - `claude-opus-4-20250514_unknown`
 - `claude-opus-4-7_max`
 - `claude-sonnet-4-20250514_unknown`
@@ -1575,7 +1470,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `glm-4.6`
 - `glm-4.7`
 - `glm-5.1`
-- `glm-5.2_none`
 - `glm-5.3-flash_unknown`
 - `gpt-4.1-mini-2025-04-14`
 - `gpt-4.1-nano-2025-04-14`
@@ -1589,11 +1483,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gpt-5.4-nano-2026-03-17_xhigh`
 - `gpt-5.4-pro-2026-03-05_xhigh`
 - `gpt-5.5-pro_xhigh`
-- `gpt-5.5_none`
-- `gpt-5.6-luna_none`
-- `gpt-5.6-sol_none`
-- `gpt-5.6-terra_none`
-- `gpt-6-astra_none`
 - `gpt-oss-20b_high`
 - `granite-4.1-30b`
 - `grok-4.3_high`
@@ -1637,26 +1526,18 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.6-plus`
 - `qwen3.7-max`
 - `qwen3.7-plus`
-- `qwen3.8-27b_none`
-- `qwen3.8-max_unknown`
 - `solar-pro-3`
 - `step-3.7-flash`
 - `trinity-large-thinking`
 
-## epoch-ai / gdp_pdf_external.csv (16)
+## epoch-ai / gdp_pdf_external.csv (10)
 
-- `claude-fable-5_unknown`
 - `claude-opus-4-7_max`
 - `claude-sonnet-4-6_max`
 - `gemini-3-flash-preview`
 - `gemini-3-flash-preview_high`
 - `gemini-3.5-flash-lite_high`
-- `gemini-3.5-flash_unknown`
-- `gemini-3.6-flash_unknown`
 - `glm-5.3-flash_max`
-- `gpt-5.6-luna_unknown`
-- `gpt-5.6-sol_unknown`
-- `gpt-5.6-terra_unknown`
 - `grok-4.3_high`
 - `grok-4.3_unknown`
 - `nova-2.0-pro-preview_none`
@@ -1675,7 +1556,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `grok-4-0709_high`
 - `o3-2025-04-16_medium`
 
-## arc-prize (v2_Semi_Private) (161)
+## arc-prize (v2_Semi_Private) (144)
 
 - `2025_human_panel`
 - `ARChitects`
@@ -1697,10 +1578,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `claude-4-7-low`
 - `claude-4-7-max`
 - `claude-4-7-medium`
-- `claude-haiku-4-5-20251001-thinking-16k`
-- `claude-haiku-4-5-20251001-thinking-1k`
-- `claude-haiku-4-5-20251001-thinking-32k`
-- `claude-haiku-4-5-20251001-thinking-8k`
 - `claude-opus-4-20250514`
 - `claude-opus-4-20250514-thinking-16k`
 - `claude-opus-4-20250514-thinking-1k`
@@ -1728,8 +1605,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `claude_sonnet_4_6_max`
 - `codex-mini-latest`
 - `deepseek-v3.2`
-- `deepseek-v4-flash-0731-none`
-- `deepseek-v4-pro-0813-none`
 - `deepseek_r1_0528-openrouter`
 - `eric_pang_sept_2025`
 - `gemini-2-5-flash-preview-05-20`
@@ -1747,8 +1622,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gemini-3-5-flash-lite-low`
 - `gemini-3-5-flash-lite-medium`
 - `gemini-3-5-flash-lite-minimal`
-- `gemini-3-5-flash-minimal`
-- `gemini-3-6-flash-minimal`
 - `gemini-3-deep-think-preview`
 - `gemini-3-flash-preview-thinking-high`
 - `gemini-3-flash-preview-thinking-low`
@@ -1826,26 +1699,16 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `o3-pro-2025-06-10-high`
 - `o3-pro-2025-06-10-low`
 - `o3-pro-2025-06-10-medium`
-- `openai-gpt-5-6-luna-none-2026-07-30`
-- `openai-gpt-6-astra-none`
 - `poetiq-arc-agi-gemini-3-d_v1`
 - `qwen3-235b-a22b-instruct-2507`
-- `thinky-inkling`
-- `thinky-inkling-small-high`
-- `thinky-inkling-small-low`
-- `thinky-inkling-small-medium`
-- `thinky-inkling-small-minimal`
-- `thinky-inkling-small-none`
-- `thinky-inkling-small-xhigh`
 - `trm-2025-10-07`
 
-## livebench (25)
+## livebench (24)
 
 - `claude-opus-4-5-20251101-thinking-64k-high-effort`
 - `claude-opus-4-6-thinking-auto-high-effort`
 - `claude-opus-4-7-xhigh-effort`
 - `claude-sonnet-4-6-thinking-auto-medium-effort`
-- `deepseek-v4.1-flash-max`
 - `gemini-3.5-flash-lite-high`
 - `glm-5.3-flash`
 - `gpt-5.2-2025-12-11-high`
