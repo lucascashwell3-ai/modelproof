@@ -250,14 +250,17 @@ with a price and no source, or a non-URL `source_url`.
 
 Two more fields, same rule: sourced or blank.
 
-**`task_fit_judged{}`** on every model — a per-task, sourced qualitative fit (band + confidence +
-`claims[]`) that fills the gap when `task_fit`'s quantitative score is null (`scripts/refresh-judge.md`
+**`task_fit_judged{}`** on every model — a per-task, sourced qualitative record (band + confidence
++ `claims[]`) written when `task_fit`'s quantitative score is null (`scripts/refresh-judge.md`
 carries the full writing rules; `scripts/validate-data.mjs` gates the shape and bans relative
 phrasing in the Judge's own prose; `scripts/check-sources.mjs` is the separate live-fetch gate that
 confirms every `quote` is actually on its cited page — the one no wording rule alone can enforce,
-since a well-formed claim can still misquote or fabricate a source). `assets/decide.mjs`'s rule 3
-uses this only when the quantitative score is missing; see that file for the exact precedence and
-scoring.
+since a well-formed claim can still misquote or fabricate a source). Its `band`/`confidence` carry
+**zero ranking weight** in `assets/decide.mjs` (brain v2 step 3) — ranking is agreement across
+independent tester standings, real OpenRouter spend share, and arena.ai human votes, kept separate
+and never averaged (`scripts/derive-standings.mjs`; see `assets/decide.mjs`'s own file header for
+the exact rule). This record's `claims[]` still show up next to a pick as the sourced explanation
+of why it fits the task — just never as what decided the ranking.
 
 **`usage.openrouter`** — per-model token-volume share + rank, the machine-readable usage source
 this schema asked for. What was tried, in order:

@@ -94,8 +94,10 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
        matches recognized peers on something real — a named comparator, a real number, ideally
        corroborated. `capable` is the default for "genuinely evidenced, not exceptional." `weak` or
        `unknown` are real answers — use them (or hold) rather than stretching thin evidence into
-       `capable`. `weak`/`unknown` never clear the site's capability floor (same as no evidence at
-       all), so there's no pressure to inflate a band just to make a model "count."
+       `capable`. Band/confidence carry no ranking weight in `assets/decide.mjs` any more (a
+       model's candidacy and ranking come entirely from `standings` — measured/chosen/preferred —
+       never this record), so there's no pressure to inflate a band to make a model "count"; write
+       what the evidence actually supports.
      - **A same-vendor successor queues its predecessor for re-judge**, not a rewrite. When a
        `new-model` item you're admitting is from a vendor that already has a judged-fit record on
        file for another of its models, Collect will queue that OTHER model's record for re-judge
