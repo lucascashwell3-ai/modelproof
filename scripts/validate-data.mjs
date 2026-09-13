@@ -56,6 +56,24 @@ export function bannedPhraseIn(text) {
   return hit ? hit.source : null;
 }
 export const wordCount = (s) => String(s || '').trim().split(/\s+/).filter(Boolean).length;
+
+// A claim citing one of these hosts can never stay verified: the page is a live feed this
+// codebase now re-derives every day into model.standings (scripts/derive-standings.mjs) — its
+// quoted numbers change daily, and arena.ai no longer even server-renders its table for
+// scripts/check-sources.mjs to read. 2026-09 migration (scripts/migrate-claims-2026-09.mjs)
+// removed every existing claim citing one of these; this is the permanent gate that stops a new
+// one from being added back in (by apply-judgment.mjs's pre-flight validator, and here, so any
+// other path that writes data/models.json is caught too). The SAME evidence is already the dated,
+// linked standings.chosen/standings.preferred record — a claim citing these hosts was only ever
+// restating that, never independent evidence worth a claim's own citation.
+export const LIVE_FEED_URL_PATTERNS = [
+  /^https:\/\/openrouter\.ai\/api\/frontend\//,
+  /^https:\/\/openrouter\.ai\/rankings/,
+  /^https:\/\/arena\.ai\//,
+];
+export function citesLiveFeed(url) {
+  return LIVE_FEED_URL_PATTERNS.some((re) => re.test(String(url || '')));
+}
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export function validate(data, registry) {
@@ -255,6 +273,7 @@ export function validate(data, registry) {
           if (hit) E(`${cl}.sentence uses a banned relative phrase (/${hit}/) — write an absolute, dated fact instead`);
         }
         if (!c.source_url || !/^https?:\/\//i.test(c.source_url)) E(`${cl}.source_url "${c.source_url}" must be http(s)`);
+        else if (citesLiveFeed(c.source_url)) E(`${cl}.source_url "${c.source_url}" cites a live feed this codebase already re-derives daily into standings (OpenRouter rankings/arena.ai) — its numbers change every day and can never stay verified by scripts/check-sources.mjs; cite the standings record instead (model.standings[taskId]), or a stable page`);
         if (!CLAIM_TIERS.includes(c.tier)) E(`${cl}.tier "${c.tier}" must be one of ${CLAIM_TIERS.join(', ')}`);
         if (!c.date || !DATE_RE.test(c.date)) E(`${cl}.date "${c.date}" must be a YYYY-MM-DD date`);
         if (!c.quote || typeof c.quote !== 'string') E(`${cl}.quote is required (verbatim text copied from source_url)`);

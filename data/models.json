@@ -157,184 +157,7 @@
           ]
         }
       },
-      "task_fit_judged": {
-        "coding": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Claude Opus 5 #1 of the top 10 models by \"code:general_impl\" spend share (37.04% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"anthropic/claude-opus-5-20260723\",\"share\":0.1367888496145506,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Opus 5 at a score of 1493, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-opus-5-high Anthropic · Proprietary 1493 ±5 35,174 $5 / $25 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "agents": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Claude Opus 5 #1 of the top 10 models by \"agent:workflow_execution\" spend share (13.68% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"anthropic/claude-opus-5-20260723\",\"share\":0.1367888496145506,"
-            },
-            {
-              "sentence": "Arena's Agent leaderboard (human-voted model leaderboard) lists Claude Opus 5 among its ranked models, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/agent",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "Claude Opus 5 (High) Anthropic · Proprietary 12.68 % ±1.73% 13.30 % ±3.69% 18.27 % ±6.49% 16.09 % ±3.24% 15.03 % ±0.84% 0.73 %"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "writing": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Claude Opus 5 #1 of the top 10 models by \"content_writing\" spend share (9.02% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"anthropic/claude-opus-5-20260723\",\"share\":0.1367888496145506,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Opus 5 at a score of 1493, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-opus-5-high Anthropic · Proprietary 1493 ±5 35,174 $5 / $25 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "extraction": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Claude Opus 5 #1 of the top 10 models by \"data:extraction\" spend share (6.79% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"anthropic/claude-opus-5-20260723\",\"share\":0.1367888496145506,"
-            },
-            {
-              "sentence": "Arena's Document leaderboard (human-voted model leaderboard) lists Claude Opus 5 at a score of 1520, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/document",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-opus-5-high Anthropic · Proprietary 1520 ±15 1,663 $5 / $25 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "chat": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Claude Opus 5 #1 of the top 10 models by \"conversational_reply\" spend share (10.81% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"anthropic/claude-opus-5-20260723\",\"share\":0.1367888496145506,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Opus 5 at a score of 1493, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-opus-5-high Anthropic · Proprietary 1493 ±5 35,174 $5 / $25 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "vision": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Claude Opus 5 on 2026-09-06, ranking it #15 by token volume across its entire tracked catalog (1.54% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"anthropic/claude-opus-5-20260723\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Vision leaderboard (human-voted model leaderboard) lists Claude Opus 5 at a score of 1290, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/vision",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-opus-5-high Anthropic · Proprietary 1290 ±8 8,271 $5 / $25 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "frontend": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Claude Opus 5 #1 of the top 10 models by \"code:frontend_ui\" spend share (39.36% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"anthropic/claude-opus-5-20260723\",\"share\":0.1367888496145506,"
-            },
-            {
-              "sentence": "Arena's WebDev leaderboard (human-voted model leaderboard) lists Claude Opus 5 at a score of 1688, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/code/webdev",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-opus-5-max Anthropic · Proprietary 1688 +8/-8 10,904 $5 / $25 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "exec-summaries": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Claude Opus 5 #3 of the top 10 models by \"summarization\" spend share (8.18% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"anthropic/claude-opus-5-20260723\",\"share\":0.1367888496145506,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Opus 5 at a score of 1493, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-opus-5-high Anthropic · Proprietary 1493 ±5 35,174 $5 / $25 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -984,140 +807,7 @@
           ]
         }
       },
-      "task_fit_judged": {
-        "coding": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Kimi K3 #2 of the top 10 models by \"code:general_impl\" spend share (7.25% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"moonshotai/kimi-k3-20260715\",\"share\":0.08689800628907576,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Kimi K3 at a score of 1489, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "kimi-k3-max Moonshot · Kimi K3 license 1489 ±5 18,090 N/A N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "agents": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Kimi K3 #2 of the top 10 models by \"agent:workflow_execution\" spend share (8.69% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"moonshotai/kimi-k3-20260715\",\"share\":0.08689800628907576,"
-            },
-            {
-              "sentence": "Arena's Agent leaderboard (human-voted model leaderboard) lists Kimi K3 among its ranked models, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/agent",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "Kimi K3 (Max) Moonshot · Kimi K3 license 7.96 % ±0.68% 16.58 % ±1.40% 14.03 % ±2.36% 1.24 % ±1.35% 7.16 % ±0.58% 0.78"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "writing": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Kimi K3 #6 of the top 10 models by \"content_writing\" spend share (4.14% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"moonshotai/kimi-k3-20260715\",\"share\":0.08689800628907576,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Kimi K3 at a score of 1489, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "kimi-k3-max Moonshot · Kimi K3 license 1489 ±5 18,090 N/A N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "chat": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Kimi K3 #6 of the top 10 models by \"conversational_reply\" spend share (5.28% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"moonshotai/kimi-k3-20260715\",\"share\":0.08689800628907576,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Kimi K3 at a score of 1489, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "kimi-k3-max Moonshot · Kimi K3 license 1489 ±5 18,090 N/A N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "frontend": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Kimi K3 #2 of the top 10 models by \"code:frontend_ui\" spend share (8.61% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"moonshotai/kimi-k3-20260715\",\"share\":0.08689800628907576,"
-            },
-            {
-              "sentence": "Arena's WebDev leaderboard (human-voted model leaderboard) lists Kimi K3 at a score of 1674, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/code/webdev",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "kimi-k3-max Moonshot · Kimi K3 license 1674 +11/-11 4,546 $3 / $15 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "exec-summaries": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Kimi K3 #5 of the top 10 models by \"summarization\" spend share (4.65% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"moonshotai/kimi-k3-20260715\",\"share\":0.08689800628907576,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Kimi K3 at a score of 1489, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "kimi-k3-max Moonshot · Kimi K3 license 1489 ±5 18,090 N/A N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -1750,13 +1440,6 @@
           "confidence": "medium",
           "claims": [
             {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Fable 5 at a score of 1507, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-fable-5 Anthropic · Proprietary 1507 ±5 27,189 $10 / $50 1M"
-            },
-            {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
               "source_url": "https://www.anthropic.com/news/claude-opus-5",
               "tier": "lab",
@@ -1771,13 +1454,6 @@
           "band": "capable",
           "confidence": "medium",
           "claims": [
-            {
-              "sentence": "Arena's Agent leaderboard (human-voted model leaderboard) lists Claude Fable 5 among its ranked models, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/agent",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "Claude Fable 5 (High) Anthropic · Proprietary 10.23 % ±1.46% 7.37 % ±3.17% 19.36 % ±5.29% 11.89 % ±2.68% 11.73 % ±1.72% 0.78 %"
-            },
             {
               "sentence": "Anthropic's own Claude Code model-config docs name Claude Fable 5 (with Fable 5.1) for tasks larger than a single sitting, describing both as sustaining long autonomous sessions, checked 2026-09-06.",
               "source_url": "https://docs.claude.com/en/docs/claude-code/model-config",
@@ -1794,13 +1470,6 @@
           "confidence": "medium",
           "claims": [
             {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Fable 5 at a score of 1507, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-fable-5 Anthropic · Proprietary 1507 ±5 27,189 $10 / $50 1M"
-            },
-            {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
               "source_url": "https://www.anthropic.com/news/claude-opus-5",
               "tier": "lab",
@@ -1815,13 +1484,6 @@
           "band": "capable",
           "confidence": "medium",
           "claims": [
-            {
-              "sentence": "Arena's Search leaderboard (human-voted model leaderboard) lists Claude Fable 5 at a score of 1230, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/search",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-fable-5 Anthropic · Proprietary 1230 ±8 41,795 $10 / $50 1M"
-            },
             {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
               "source_url": "https://www.anthropic.com/news/claude-opus-5",
@@ -1838,13 +1500,6 @@
           "confidence": "medium",
           "claims": [
             {
-              "sentence": "Arena's Document leaderboard (human-voted model leaderboard) lists Claude Fable 5 at a score of 1504, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/document",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-fable-5 Anthropic · Proprietary 1504 ±9 5,792 $10 / $50 1M"
-            },
-            {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
               "source_url": "https://www.anthropic.com/news/claude-opus-5",
               "tier": "lab",
@@ -1859,13 +1514,6 @@
           "band": "capable",
           "confidence": "medium",
           "claims": [
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Fable 5 at a score of 1507, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-fable-5 Anthropic · Proprietary 1507 ±5 27,189 $10 / $50 1M"
-            },
             {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
               "source_url": "https://www.anthropic.com/news/claude-opus-5",
@@ -1882,13 +1530,6 @@
           "confidence": "medium",
           "claims": [
             {
-              "sentence": "Arena's Vision leaderboard (human-voted model leaderboard) lists Claude Fable 5 at a score of 1313, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/vision",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-fable-5 Anthropic · Proprietary 1313 ±8 10,002 $10 / $50 1M"
-            },
-            {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
               "source_url": "https://www.anthropic.com/news/claude-opus-5",
               "tier": "lab",
@@ -1904,13 +1545,6 @@
           "confidence": "medium",
           "claims": [
             {
-              "sentence": "Arena's WebDev leaderboard (human-voted model leaderboard) lists Claude Fable 5 at a score of 1762, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/code/webdev",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-fable-5.1-max Anthropic · Proprietary 1762 +16/-16 2,275 $10 / $50 1M"
-            },
-            {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
               "source_url": "https://www.anthropic.com/news/claude-opus-5",
               "tier": "lab",
@@ -1925,13 +1559,6 @@
           "band": "capable",
           "confidence": "medium",
           "claims": [
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Fable 5 at a score of 1507, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-fable-5 Anthropic · Proprietary 1507 ±5 27,189 $10 / $50 1M"
-            },
             {
               "sentence": "Anthropic's own Claude Opus 5 launch post (Jul 24, 2026) describes Claude Fable 5 as its frontier-intelligence model, with Opus 5 pitched as approaching it at half the price, checked 2026-09-06.",
               "source_url": "https://www.anthropic.com/news/claude-opus-5",
@@ -2604,13 +2231,6 @@
           "confidence": "medium",
           "claims": [
             {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Opus 4.8 at a score of 1482, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-opus-4-8-high Anthropic · Proprietary 1482 ±4 48,727 $5 / $25 1M"
-            },
-            {
               "sentence": "Anthropic's own Claude Sonnet 5 launch post recommends Claude Opus 4.8 specifically for cybersecurity work needing reduced guardrails, checked 2026-09-06.",
               "source_url": "https://www.anthropic.com/news/claude-sonnet-5",
               "tier": "lab",
@@ -2626,13 +2246,6 @@
           "confidence": "medium",
           "claims": [
             {
-              "sentence": "Arena's Agent leaderboard (human-voted model leaderboard) lists Claude Opus 4.8 among its ranked models, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/agent",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "Claude Opus 4.8 (High) Anthropic · Proprietary 9.17 % ±1.48% 5.27 % ±3.07% 18.04 % ±5.19% 12.59 % ±2.73% 10.17 % ±1.68% 0.24 %"
-            },
-            {
               "sentence": "Anthropic's own Claude Sonnet 5 launch post recommends Claude Opus 4.8 specifically for cybersecurity work needing reduced guardrails, checked 2026-09-06 -- general corroborating evidence of a recognized strength, not task-specific.",
               "source_url": "https://www.anthropic.com/news/claude-sonnet-5",
               "tier": "lab",
@@ -2647,13 +2260,6 @@
           "band": "capable",
           "confidence": "medium",
           "claims": [
-            {
-              "sentence": "Arena's Document leaderboard (human-voted model leaderboard) lists Claude Opus 4.8 at a score of 1475, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/document",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-opus-4-8-high Anthropic · Proprietary 1475 ±8 8,388 $5 / $25 1M"
-            },
             {
               "sentence": "Anthropic's own Claude Sonnet 5 launch post recommends Claude Opus 4.8 specifically for cybersecurity work needing reduced guardrails, checked 2026-09-06 -- general corroborating evidence of a recognized strength, not task-specific.",
               "source_url": "https://www.anthropic.com/news/claude-sonnet-5",
@@ -3295,184 +2901,7 @@
           ]
         }
       },
-      "task_fit_judged": {
-        "coding": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Claude Sonnet 5 on 2026-09-06, ranking it #17 by token volume across its entire tracked catalog (1.15% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"anthropic/claude-sonnet-5-20260630\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Sonnet 5 at a score of 1462, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-sonnet-5-high Anthropic · Proprietary 1462 ±5 31,387 $2 / $10 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "agents": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Claude Sonnet 5 #8 of the top 10 models by \"agent:workflow_execution\" spend share (4.01% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"anthropic/claude-sonnet-5-20260630\",\"share\":0.040139443058124794,"
-            },
-            {
-              "sentence": "Arena's Agent leaderboard (human-voted model leaderboard) lists Claude Sonnet 5 among its ranked models, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/agent",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "Claude Sonnet 5 (High) Anthropic · Proprietary 7.41 % ±1.95% 2.80 % ±4.13% 11.19 % ±6.78% 11.52 % ±4.13% 10.91 % ±1.35% 0.63 %"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "writing": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Claude Sonnet 5 #5 of the top 10 models by \"content_writing\" spend share (5.07% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"anthropic/claude-sonnet-5-20260630\",\"share\":0.040139443058124794,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Sonnet 5 at a score of 1462, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-sonnet-5-high Anthropic · Proprietary 1462 ±5 31,387 $2 / $10 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "extraction": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Claude Sonnet 5 #5 of the top 10 models by \"data:extraction\" spend share (3.88% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"anthropic/claude-sonnet-5-20260630\",\"share\":0.040139443058124794,"
-            },
-            {
-              "sentence": "Arena's Document leaderboard (human-voted model leaderboard) lists Claude Sonnet 5 at a score of 1470, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/document",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-sonnet-5-high Anthropic · Proprietary 1470 ±10 3,601 $2 / $10 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "chat": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Claude Sonnet 5 #3 of the top 10 models by \"conversational_reply\" spend share (5.64% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"anthropic/claude-sonnet-5-20260630\",\"share\":0.040139443058124794,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Sonnet 5 at a score of 1462, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-sonnet-5-high Anthropic · Proprietary 1462 ±5 31,387 $2 / $10 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "vision": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Claude Sonnet 5 on 2026-09-06, ranking it #17 by token volume across its entire tracked catalog (1.15% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"anthropic/claude-sonnet-5-20260630\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Vision leaderboard (human-voted model leaderboard) lists Claude Sonnet 5 at a score of 1267, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/vision",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-sonnet-5-high Anthropic · Proprietary 1267 ±8 8,522 $2 / $10 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "frontend": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Claude Sonnet 5 #4 of the top 10 models by \"code:frontend_ui\" spend share (3.44% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"anthropic/claude-sonnet-5-20260630\",\"share\":0.040139443058124794,"
-            },
-            {
-              "sentence": "Arena's WebDev leaderboard (human-voted model leaderboard) lists Claude Sonnet 5 at a score of 1537, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/code/webdev",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-sonnet-5-high Anthropic · Proprietary 1537 +8/-8 8,401 $2 / $10 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "exec-summaries": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Claude Sonnet 5 #6 of the top 10 models by \"summarization\" spend share (4.41% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"anthropic/claude-sonnet-5-20260630\",\"share\":0.040139443058124794,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Sonnet 5 at a score of 1462, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-sonnet-5-high Anthropic · Proprietary 1462 ±5 31,387 $2 / $10 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -4082,52 +3511,7 @@
           ]
         }
       },
-      "task_fit_judged": {
-        "research": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for GPT-5.5 on 2026-08-31, ranking it #77 by token volume across its entire tracked catalog (0.08% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-08-31",
-              "quote": "\"model_permaslug\":\"openai/gpt-5.5-20260423\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Search leaderboard (human-voted model leaderboard) lists GPT-5.5 at a score of 1242, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/search",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gpt-5.5-search OpenAI · Proprietary 1242 ±5 89,873 $5 / $30 1.1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "extraction": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for GPT-5.5 on 2026-08-31, ranking it #77 by token volume across its entire tracked catalog (0.08% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-08-31",
-              "quote": "\"model_permaslug\":\"openai/gpt-5.5-20260423\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Document leaderboard (human-voted model leaderboard) lists GPT-5.5 at a score of 1485, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/document",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gpt-5.5-high OpenAI · Proprietary 1485 ±7 16,816 $5 / $30 1.1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -4726,184 +4110,7 @@
           ]
         }
       },
-      "task_fit_judged": {
-        "coding": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Gemini 3.1 Pro (Preview) on 2026-09-06, ranking it #53 by token volume across its entire tracked catalog (0.16% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"google/gemini-3.1-pro-preview-20260219\",\"variant\":\"batch\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Gemini 3.1 Pro (Preview) at a score of 1487, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gemini-3.1-pro-preview Google · Proprietary 1487 ±3 102,999 $1 / $6 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "agents": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Gemini 3.1 Pro (Preview) on 2026-09-06, ranking it #53 by token volume across its entire tracked catalog (0.16% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"google/gemini-3.1-pro-preview-20260219\",\"variant\":\"batch\""
-            },
-            {
-              "sentence": "Arena's Agent leaderboard (human-voted model leaderboard) lists Gemini 3.1 Pro (Preview) among its ranked models, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/agent",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "Gemini 3.1 Pro Preview Google · Proprietary 3.73 % ±0.94% 2.55 % ±2.21% 1.11 % ±2.79% 2.05 % ±1.61% 15.70 % ±1.80% 0.53 %"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "writing": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Gemini 3.1 Pro (Preview) #8 of the top 10 models by \"content_writing\" spend share (2.96% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"google/gemini-3.1-pro-preview-20260219\",\"share\":0.06399097547042978,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Gemini 3.1 Pro (Preview) at a score of 1487, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gemini-3.1-pro-preview Google · Proprietary 1487 ±3 102,999 $1 / $6 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "research": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Gemini 3.1 Pro (Preview) on 2026-09-06, ranking it #53 by token volume across its entire tracked catalog (0.16% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"google/gemini-3.1-pro-preview-20260219\",\"variant\":\"batch\""
-            },
-            {
-              "sentence": "Arena's Search leaderboard (human-voted model leaderboard) lists Gemini 3.1 Pro (Preview) at a score of 1210, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/search",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gemini-3.1-pro-grounding Google · Proprietary 1210 ±5 113,282 N/A N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "extraction": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks Gemini 3.1 Pro (Preview) #8 of the top 10 models by \"data:extraction\" spend share (3.3% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"google/gemini-3.1-pro-preview-20260219\",\"share\":0.06399097547042978,"
-            },
-            {
-              "sentence": "Arena's Document leaderboard (human-voted model leaderboard) lists Gemini 3.1 Pro (Preview) at a score of 1445, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/document",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gemini-3.1-pro-preview Google · Proprietary 1445 ±6 45,162 $1 / $6 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "chat": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Gemini 3.1 Pro (Preview) on 2026-09-06, ranking it #53 by token volume across its entire tracked catalog (0.16% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"google/gemini-3.1-pro-preview-20260219\",\"variant\":\"batch\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Gemini 3.1 Pro (Preview) at a score of 1487, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gemini-3.1-pro-preview Google · Proprietary 1487 ±3 102,999 $1 / $6 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "vision": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Gemini 3.1 Pro (Preview) on 2026-09-06, ranking it #53 by token volume across its entire tracked catalog (0.16% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"google/gemini-3.1-pro-preview-20260219\",\"variant\":\"batch\""
-            },
-            {
-              "sentence": "Arena's Vision leaderboard (human-voted model leaderboard) lists Gemini 3.1 Pro (Preview) at a score of 1278, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/vision",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gemini-3.1-pro-preview Google · Proprietary 1278 ±6 39,412 $1 / $6 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "exec-summaries": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Gemini 3.1 Pro (Preview) on 2026-09-06, ranking it #53 by token volume across its entire tracked catalog (0.16% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"google/gemini-3.1-pro-preview-20260219\",\"variant\":\"batch\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Gemini 3.1 Pro (Preview) at a score of 1487, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gemini-3.1-pro-preview Google · Proprietary 1487 ±3 102,999 $1 / $6 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -5553,13 +4760,6 @@
               "tier": "measured",
               "date": "2026-09-07",
               "quote": "DeepSeek V4 Pro 0813 (Reasoning, Max Effort) achieves a score of 36 on the Artificial Analysis Intelligence Index."
-            },
-            {
-              "sentence": "OpenRouter's live model-usage feed (checked 2026-09-07) recorded 33,027,586 standard-variant requests for DeepSeek's deepseek-v4-pro-20260813 build in its 2026-09-06 snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"deepseek/deepseek-v4-pro-20260813\",\"variant\":\"standard\",\"total_completion_tokens\":28206432997,\"total_prompt_tokens\":1006481321942,\"total_native_tokens_reasoning\":0,\"count\":33027586"
             }
           ],
           "reconciliation": null,
@@ -5575,13 +4775,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Terminal-Bench 2.0 at 67.9% beats Claude Opus 4.6 (65.4%) by 2.5 points — this benchmark involves real autonomous terminal execution with a 3-hour timeout."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) shows deepseek-v4-pro-20260813 handling over 1 trillion prompt tokens across 33 million requests in its most recent standard-variant snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"deepseek/deepseek-v4-pro-20260813\",\"variant\":\"standard\",\"total_completion_tokens\":28206432997,\"total_prompt_tokens\":1006481321942,\"total_native_tokens_reasoning\":0,\"count\":33027586"
             }
           ],
           "reconciliation": null,
@@ -5604,13 +4797,6 @@
               "tier": "measured",
               "date": "2026-09-07",
               "quote": "DeepSeek V4 Pro 0813 (Reasoning, Max Effort) has a context window of 1.0M tokens."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) shows real production volume for deepseek-v4-pro-20260813 at over 1 trillion prompt tokens processed.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"deepseek/deepseek-v4-pro-20260813\",\"variant\":\"standard\",\"total_completion_tokens\":28206432997,\"total_prompt_tokens\":1006481321942,\"total_native_tokens_reasoning\":0,\"count\":33027586"
             }
           ],
           "reconciliation": null,
@@ -5626,13 +4812,6 @@
               "tier": "measured",
               "date": "2026-09-07",
               "quote": "DeepSeek V4 Pro 0813 (Reasoning, Max Effort) scores 36 on the Artificial Analysis Intelligence Index, placing it well above average among comparable models (median: 17)."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) confirms production-scale adoption of deepseek-v4-pro-20260813 at over 33 million requests in its latest snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"deepseek/deepseek-v4-pro-20260813\",\"variant\":\"standard\",\"total_completion_tokens\":28206432997,\"total_prompt_tokens\":1006481321942,\"total_native_tokens_reasoning\":0,\"count\":33027586"
             }
           ],
           "reconciliation": null,
@@ -6186,13 +5365,6 @@
               "tier": "lab",
               "date": "2026-09-07",
               "quote": "Kimi K2.6 shows strong improvements in long-horizon coding tasks, with reliable generalization across programming languages (e.g., Rust, Go, and Python)"
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) recorded 9,368,694 standard-variant requests for moonshotai/kimi-k2.6-20260420 in its 2026-09-06 snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"moonshotai/kimi-k2.6-20260420\",\"variant\":\"standard\",\"total_completion_tokens\":11882530302,\"total_prompt_tokens\":174787772698,\"total_native_tokens_reasoning\":0,\"count\":9368694"
             }
           ],
           "reconciliation": null,
@@ -6208,13 +5380,6 @@
               "tier": "lab",
               "date": "2026-09-07",
               "quote": "Kimi K2.6 delivers measurable improvements in real-world reliability: more precise API interpretation, stabler long-running performance, and enhanced safety awareness during extended research tasks."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) shows moonshotai/kimi-k2.6-20260420 processing over 174 billion prompt tokens in its most recent standard-variant snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"moonshotai/kimi-k2.6-20260420\",\"variant\":\"standard\",\"total_completion_tokens\":11882530302,\"total_prompt_tokens\":174787772698,\"total_native_tokens_reasoning\":0,\"count\":9368694"
             }
           ],
           "reconciliation": null,
@@ -6230,13 +5395,6 @@
               "tier": "lab",
               "date": "2026-09-07",
               "quote": "Unless otherwise specified, all Kimi K2.6 experiments were conducted with temperature = 1.0, top-p = 1.0, and a context length of 262,144 tokens."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) confirms production-scale adoption of moonshotai/kimi-k2.6-20260420 at over 9.3 million requests.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"moonshotai/kimi-k2.6-20260420\",\"variant\":\"standard\",\"total_completion_tokens\":11882530302,\"total_prompt_tokens\":174787772698,\"total_native_tokens_reasoning\":0,\"count\":9368694"
             }
           ],
           "reconciliation": null,
@@ -6781,13 +5939,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Yes. Maverick scores 91.5% on HumanEval (near GPT-5.4's 92.0%) and 89.5% on MBPP."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) recorded 8,966,301 standard-variant requests for meta-llama/llama-4-maverick-17b-128e-instruct in its 2026-09-06 snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta-llama/llama-4-maverick-17b-128e-instruct\",\"variant\":\"standard\",\"total_completion_tokens\":946010360,\"total_prompt_tokens\":17543628849,\"total_native_tokens_reasoning\":0,\"count\":8966301"
             }
           ],
           "reconciliation": null,
@@ -6803,13 +5954,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Document analysis 10K docs/day: Maverick (Groq) $390 vs GPT-5.4 $5,250"
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) shows meta-llama/llama-4-maverick-17b-128e-instruct processing over 17.5 billion prompt tokens in its most recent snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta-llama/llama-4-maverick-17b-128e-instruct\",\"variant\":\"standard\",\"total_completion_tokens\":946010360,\"total_prompt_tokens\":17543628849,\"total_native_tokens_reasoning\":0,\"count\":8966301"
             }
           ],
           "reconciliation": null,
@@ -7156,13 +6300,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "It supports tool use and demonstrates competitive reasoning and coding performance across benchmarks like AIME (99.5% with Python) and SWE-bench"
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) recorded 465,560 standard-variant requests for openai/o4-mini-2025-04-16 in its 2026-09-06 snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"openai/o4-mini-2025-04-16\",\"variant\":\"standard\",\"total_completion_tokens\":387048519,\"total_prompt_tokens\":2446711172,\"total_native_tokens_reasoning\":0,\"count\":465560"
             }
           ],
           "reconciliation": null,
@@ -7178,13 +6315,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Despite its smaller size, o4-mini exhibits high accuracy in STEM tasks, visual problem solving (e.g., MathVista, MMMU), and code editing."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) confirms real-world adoption of openai/o4-mini-2025-04-16 at over 465,000 requests in its latest snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"openai/o4-mini-2025-04-16\",\"variant\":\"standard\",\"total_completion_tokens\":387048519,\"total_prompt_tokens\":2446711172,\"total_native_tokens_reasoning\":0,\"count\":465560"
             }
           ],
           "reconciliation": null,
@@ -7200,13 +6330,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "It is especially well-suited for high-throughput scenarios where latency or cost is critical."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) confirms real-world adoption of openai/o4-mini-2025-04-16 at over 465,000 requests in its latest snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"openai/o4-mini-2025-04-16\",\"variant\":\"standard\",\"total_completion_tokens\":387048519,\"total_prompt_tokens\":2446711172,\"total_native_tokens_reasoning\":0,\"count\":465560"
             }
           ],
           "reconciliation": null,
@@ -7641,13 +6764,6 @@
           "confidence": "medium",
           "claims": [
             {
-              "sentence": "Arena's Document leaderboard (human-voted model leaderboard) lists Claude Haiku 4.5 at a score of 1423, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/document",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-haiku-4-5-20251001 Anthropic · Proprietary 1423 ±6 30,937 $1 / $5 200K"
-            },
-            {
               "sentence": "Anthropic's own model-selection guide names Claude Haiku 4.5 for real-time, high-volume intelligent processing and cost-sensitive deployments, checked 2026-09-06.",
               "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
               "tier": "lab",
@@ -7662,13 +6778,6 @@
           "band": "capable",
           "confidence": "medium",
           "claims": [
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Haiku 4.5 at a score of 1413, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-haiku-4-5-20251001 Anthropic · Proprietary 1413 ±3 125,243 $1 / $5 200K"
-            },
             {
               "sentence": "Anthropic's own model-selection guide names Claude Haiku 4.5 for real-time, high-volume intelligent processing and cost-sensitive deployments, checked 2026-09-06.",
               "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
@@ -7690,13 +6799,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "similar levels of coding performance but at one-third the cost and more than twice the speed"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall leaderboard (human-voted) lists Claude Haiku 4.5 at a score of 1413, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-haiku-4-5-20251001 Anthropic · Proprietary 1413 ±3 125,243 $1 / $5 200K"
             }
           ],
           "reconciliation": null,
@@ -8150,162 +7252,7 @@
           ]
         }
       },
-      "task_fit_judged": {
-        "coding": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks GPT-5.6 Sol #3 of the top 10 models by \"code:general_impl\" spend share (6.03% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"openai/gpt-5.6-sol-20260709\",\"share\":0.08121340244442894,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists GPT-5.6 Sol at a score of 1483, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gpt-5.6-sol-xhigh OpenAI · Proprietary 1483 ±5 23,413 $4 / $20 N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "agents": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks GPT-5.6 Sol #3 of the top 10 models by \"agent:workflow_execution\" spend share (8.12% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"openai/gpt-5.6-sol-20260709\",\"share\":0.08121340244442894,"
-            },
-            {
-              "sentence": "Arena's Agent leaderboard (human-voted model leaderboard) lists GPT-5.6 Sol among its ranked models, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/agent",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "GPT 5.6 Sol (xHigh) OpenAI · Proprietary 9.31 % ±1.49% 6.68 % ±3.13% 22.07 % ±5.50% 8.88 % ±2.84% 8.14 % ±0.96% 0.78 %"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "writing": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks GPT-5.6 Sol #2 of the top 10 models by \"content_writing\" spend share (6.4% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"openai/gpt-5.6-sol-20260709\",\"share\":0.08121340244442894,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists GPT-5.6 Sol at a score of 1483, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gpt-5.6-sol-xhigh OpenAI · Proprietary 1483 ±5 23,413 $4 / $20 N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "research": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks GPT-5.6 Sol #3 of the top 10 models by \"research_report\" spend share (9.55% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"openai/gpt-5.6-sol-20260709\",\"share\":0.08121340244442894,"
-            },
-            {
-              "sentence": "Arena's Search leaderboard (human-voted model leaderboard) lists GPT-5.6 Sol at a score of 1257, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/search",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gpt-5.6-sol-xhigh OpenAI · Proprietary 1257 ±7 29,663 $4 / $20 1.1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "extraction": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks GPT-5.6 Sol #2 of the top 10 models by \"data:extraction\" spend share (6.05% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"openai/gpt-5.6-sol-20260709\",\"share\":0.08121340244442894,"
-            },
-            {
-              "sentence": "Arena's Document leaderboard (human-voted model leaderboard) lists GPT-5.6 Sol at a score of 1479, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/document",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gpt-5.6-sol-xhigh OpenAI · Proprietary 1479 ±17 1,152 $4 / $20 N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "chat": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks GPT-5.6 Sol #5 of the top 10 models by \"conversational_reply\" spend share (5.28% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"openai/gpt-5.6-sol-20260709\",\"share\":0.08121340244442894,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists GPT-5.6 Sol at a score of 1483, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gpt-5.6-sol-xhigh OpenAI · Proprietary 1483 ±5 23,413 $4 / $20 N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "exec-summaries": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks GPT-5.6 Sol #2 of the top 10 models by \"summarization\" spend share (8.53% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"openai/gpt-5.6-sol-20260709\",\"share\":0.08121340244442894,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists GPT-5.6 Sol at a score of 1483, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gpt-5.6-sol-xhigh OpenAI · Proprietary 1483 ±5 23,413 $4 / $20 N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -8960,52 +7907,7 @@
           ]
         }
       },
-      "task_fit_judged": {
-        "coding": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for GPT-5.6 Terra on 2026-09-06, ranking it #29 by token volume across its entire tracked catalog (0.49% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"openai/gpt-5.6-terra-20260709\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists GPT-5.6 Terra at a score of 1466, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gpt-5.6-terra-xhigh OpenAI · Proprietary 1466 ±5 24,200 $2 / $12 N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "extraction": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for GPT-5.6 Terra on 2026-09-06, ranking it #29 by token volume across its entire tracked catalog (0.49% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"openai/gpt-5.6-terra-20260709\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Document leaderboard (human-voted model leaderboard) lists GPT-5.6 Terra at a score of 1479, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/document",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gpt-5.6-terra-xhigh OpenAI · Proprietary 1479 ±13 1,969 $2 / $12 N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -9591,74 +8493,7 @@
           ]
         }
       },
-      "task_fit_judged": {
-        "coding": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks GPT-5.6 Luna #10 of the top 10 models by \"code:general_impl\" spend share (2.54% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"openai/gpt-5.6-luna-20260709\",\"share\":0.025387508910605736,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists GPT-5.6 Luna at a score of 1453, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gpt-5.6-luna-xhigh OpenAI · Proprietary 1453 ±5 24,740 $0.20 / $1.20 N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "exec-summaries": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks GPT-5.6 Luna #4 of the top 10 models by \"summarization\" spend share (5.51% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"openai/gpt-5.6-luna-20260709\",\"share\":0.025387508910605736,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists GPT-5.6 Luna at a score of 1453, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gpt-5.6-luna-xhigh OpenAI · Proprietary 1453 ±5 24,740 $0.20 / $1.20 N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "bulk": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for GPT-5.6 Luna on 2026-09-06, ranking it #2 by token volume across its entire tracked catalog (11.21% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"openai/gpt-5.6-luna-20260709\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall leaderboard (human-voted) lists GPT-5.6 Luna at a score of 1453, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gpt-5.6-luna-xhigh OpenAI · Proprietary 1453 ±5 24,740 $0.20 / $1.20 N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -10259,13 +9094,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Gemini 3.5 Flash surpasses Gemini 3.1 Pro on Terminal-Bench 2.1 (coding), GDPval-AA (real-world agentic evaluation), MCP Atlas (scaled tool use), and Finance Agent v2."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) recorded 11,681,470 standard-variant requests for google/gemini-3.5-flash-20260519 in its 2026-09-06 snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"google/gemini-3.5-flash-20260519\",\"variant\":\"standard\",\"total_completion_tokens\":12521230301,\"total_prompt_tokens\":88179842818,\"total_native_tokens_reasoning\":0,\"count\":11681470"
             }
           ],
           "reconciliation": null,
@@ -10281,13 +9109,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "It leads the entire field (including Claude Opus 4.7 and GPT-5.5) on MCP Atlas, Toolathlon, Finance Agent v2, CharXiv Reasoning, and MMMU-Pro."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) shows google/gemini-3.5-flash-20260519 processing over 88 billion prompt tokens in its most recent standard-variant snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"google/gemini-3.5-flash-20260519\",\"variant\":\"standard\",\"total_completion_tokens\":12521230301,\"total_prompt_tokens\":88179842818,\"total_native_tokens_reasoning\":0,\"count\":11681470"
             }
           ],
           "reconciliation": null,
@@ -10303,13 +9124,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "It leads the entire field (including Claude Opus 4.7 and GPT-5.5) on MCP Atlas, Toolathlon, Finance Agent v2, CharXiv Reasoning, and MMMU-Pro."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) confirms real-world adoption of google/gemini-3.5-flash-20260519 at over 11.6 million requests in its latest snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"google/gemini-3.5-flash-20260519\",\"variant\":\"standard\",\"total_completion_tokens\":12521230301,\"total_prompt_tokens\":88179842818,\"total_native_tokens_reasoning\":0,\"count\":11681470"
             }
           ],
           "reconciliation": null,
@@ -10325,13 +9139,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "The 1M token context window is the same as the previous Flash generation but half the size of Gemini 3.1 Pro's 2M window."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) shows google/gemini-3.5-flash-20260519 processing over 88 billion prompt tokens in its most recent standard-variant snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"google/gemini-3.5-flash-20260519\",\"variant\":\"standard\",\"total_completion_tokens\":12521230301,\"total_prompt_tokens\":88179842818,\"total_native_tokens_reasoning\":0,\"count\":11681470"
             }
           ],
           "reconciliation": null,
@@ -10886,13 +9693,6 @@
               "tier": "measured",
               "date": "2026-09-07",
               "quote": "Gemini 2.5 Flash-Lite (Non-reasoning) generates output at 321.2 tokens per second (based on Google's API), which is well above average"
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) recorded 246,268,225 standard-variant requests for google/gemini-2.5-flash-lite in its 2026-09-06 snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"google/gemini-2.5-flash-lite\",\"variant\":\"standard\",\"total_completion_tokens\":60446867445,\"total_prompt_tokens\":644937158389,\"total_native_tokens_reasoning\":0,\"count\":246268225"
             }
           ],
           "reconciliation": null,
@@ -11174,74 +9974,7 @@
           ]
         }
       },
-      "task_fit_judged": {
-        "coding": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Grok 4.5 on 2026-09-06, ranking it #71 by token volume across its entire tracked catalog (0.09% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"x-ai/grok-4.5-20260708\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Grok 4.5 at a score of 1471, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "grok-4.5 SpaceXAI · Proprietary 1471 ±5 26,158 $2 / $6 500K"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "research": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Grok 4.5 on 2026-09-06, ranking it #71 by token volume across its entire tracked catalog (0.09% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"x-ai/grok-4.5-20260708\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Search leaderboard (human-voted model leaderboard) lists Grok 4.5 at a score of 1213, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/search",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "grok-4.5 SpaceXAI · Proprietary 1213 ±7 31,505 $2 / $6 500K"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "frontend": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Grok 4.5 on 2026-09-06, ranking it #71 by token volume across its entire tracked catalog (0.09% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"x-ai/grok-4.5-20260708\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's WebDev leaderboard (human-voted, front-end code generation) lists Grok 4.5 at a score of 1556, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/code/webdev",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "grok-4.5 SpaceXAI · Proprietary 1556 +8/-8 7,361 $2 / $6 500K"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -11764,13 +10497,6 @@
           "confidence": "medium",
           "claims": [
             {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks DeepSeek V4-Flash #9 of the top 10 models by \"agent:workflow_execution\" spend share (2.74% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"deepseek/deepseek-v4-flash-20260731\",\"share\":0.0274394535565345,"
-            },
-            {
               "sentence": "Lindy's own migration write-up describes moving its managed-agent traffic (previously Claude/Sonnet- and Gemini-backed) to DeepSeek V4-Flash, checked 2026-09-06.",
               "source_url": "https://www.lindy.ai/blog/migrating-from-claude-to-deepseek",
               "tier": "reported",
@@ -11785,13 +10511,6 @@
           "band": "capable",
           "confidence": "low",
           "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for DeepSeek V4-Flash on 2026-09-06, ranking it #4 by token volume across its entire tracked catalog (10.71% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"deepseek/deepseek-v4-flash-20260731\",\"variant\":\"batch\""
-            },
             {
               "sentence": "Lindy reports that on the agent traffic it migrated to DeepSeek V4-Flash, inference costs fell by about 90%, checked 2026-09-06.",
               "source_url": "https://www.lindy.ai/blog/migrating-from-claude-to-deepseek",
@@ -12296,13 +11015,6 @@
               "tier": "measured",
               "date": "2026-09-07",
               "quote": "Qwen3-Max-Thinking scores 40 on the Artificial Analysis Intelligence Index, an 8-point jump from the Preview version (32)."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) recorded 515,729 standard-variant requests for qwen/qwen3-max in its 2026-09-06 snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"qwen/qwen3-max\",\"variant\":\"standard\",\"total_completion_tokens\":104656356,\"total_prompt_tokens\":2866199521,\"total_native_tokens_reasoning\":0,\"count\":515729"
             }
           ],
           "reconciliation": null,
@@ -12325,13 +11037,6 @@
               "tier": "measured",
               "date": "2026-09-07",
               "quote": "This places it ahead of MiniMax-M2.1 (1074) but behind GLM-4.7 (1192), DeepSeek V3.2 (1186), and Kimi K2.5 (1316)."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) confirms real-world adoption of qwen/qwen3-max at over 515,000 requests in its latest snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"qwen/qwen3-max\",\"variant\":\"standard\",\"total_completion_tokens\":104656356,\"total_prompt_tokens\":2866199521,\"total_native_tokens_reasoning\":0,\"count\":515729"
             }
           ],
           "reconciliation": null,
@@ -12702,13 +11407,6 @@
               "tier": "lab",
               "date": "2026-09-07",
               "quote": "Currently equivalent to qwen3-coder-plus-2025-09-23"
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) recorded 140,117 standard-variant requests for qwen/qwen3-coder-plus in its 2026-09-06 snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"qwen/qwen3-coder-plus\",\"variant\":\"standard\",\"total_completion_tokens\":32919945,\"total_prompt_tokens\":1647879832,\"total_native_tokens_reasoning\":0,\"count\":140117"
             }
           ],
           "reconciliation": null,
@@ -12724,13 +11422,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Qwen3-Coder-Plus ships optimized for function calling and tool use."
-            },
-            {
-              "sentence": "OpenRouter's live usage feed (checked 2026-09-07) confirms real-world adoption of qwen/qwen3-coder-plus at over 140,000 requests in its latest snapshot.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"qwen/qwen3-coder-plus\",\"variant\":\"standard\",\"total_completion_tokens\":32919945,\"total_prompt_tokens\":1647879832,\"total_native_tokens_reasoning\":0,\"count\":140117"
             }
           ],
           "reconciliation": null,
@@ -13318,13 +12009,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "offers competitive accuracy relative to larger models like Claude Sonnet 3.5/3.7, Llama 4 Maverick, and Command R+"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 617,508 standard-variant requests and about 2.2 billion prompt tokens for Mistral Medium 3.1 on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"total_prompt_tokens\":2199757883,\"total_native_tokens_reasoning\":0,\"count\":617508"
             }
           ],
           "reconciliation": null,
@@ -13340,13 +12024,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Mistral Medium 3.1 costs $0.40/M input tokens and $2.00/M output tokens, with separate rates for Cache Read at $0.04/M tokens."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 617,508 standard-variant requests and about 2.2 billion prompt tokens for Mistral Medium 3.1 on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"total_prompt_tokens\":2199757883,\"total_native_tokens_reasoning\":0,\"count\":617508"
             }
           ],
           "reconciliation": null,
@@ -14120,74 +12797,7 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": {
-        "coding": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks GLM-5.2 #4 of the top 10 models by \"code:general_impl\" spend share (5.01% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"z-ai/glm-5.2-20260616\",\"share\":0.0558768021768372,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists GLM-5.2 at a score of 1472, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "glm-5.2-max Z.ai · MIT 1472 ±5 33,966 $1.40 / $4.40 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "agents": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks GLM-5.2 #5 of the top 10 models by \"agent:workflow_execution\" spend share (5.59% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"z-ai/glm-5.2-20260616\",\"share\":0.0558768021768372,"
-            },
-            {
-              "sentence": "Arena's Agent leaderboard (human-voted model leaderboard) lists GLM-5.2 among its ranked models, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/agent",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "GLM 5.2 (Max) Z.ai · MIT · SiliconFlow 6.03 % ±0.76% 8.63 % ±1.64% 11.73 % ±2.67% 4.48 % ±1.38% 4.51 % ±0.77% 0.78"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "frontend": {
-          "band": "strong",
-          "confidence": "high",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks GLM-5.2 #3 of the top 10 models by \"code:frontend_ui\" spend share (7.76% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"z-ai/glm-5.2-20260616\",\"share\":0.0558768021768372,"
-            },
-            {
-              "sentence": "Arena's WebDev leaderboard (human-voted model leaderboard) lists GLM-5.2 at a score of 1587, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/code/webdev",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "glm-5.2-max Z.ai · MIT 1587 +7/-7 9,836 $1.40 / $4.40 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -14760,30 +13370,7 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": {
-        "writing": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Gemini 3.7 Flash on 2026-09-06, ranking it #12 by token volume across its entire tracked catalog (1.83% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"google/gemini-3.7-flash-20260813\",\"variant\":\"batch\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Gemini 3.7 Flash at a score of 1491, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gemini-3.7-flash-high Google · Proprietary 1491 ±8 Preliminary 5,682 $0.75 / $3.75 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -15270,28 +13857,6 @@
               "tier": "lab",
               "date": "2026-08-12",
               "quote": "It matches GPT-5.6 Sol on the Artificial Analysis Intelligence Index, which is a composite score of nine benchmarks."
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "coding": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Grok 4.6 on 2026-09-06, ranking it #38 by token volume across its entire tracked catalog (0.31% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"x-ai/grok-4.6-20260810\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Grok 4.6 at a score of 1461, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "grok-4.6-high SpaceXAI · Proprietary 1461 ±10 Preliminary 3,453 $2 / $6 500K"
             }
           ],
           "reconciliation": null,
@@ -15826,74 +14391,7 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": {
-        "coding": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Muse Spark 1.2 on 2026-09-06, ranking it #95 by token volume across its entire tracked catalog (0.05% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"meta/muse-spark-1.2-20260805\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Muse Spark 1.2 at a score of 1499, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "muse-spark-1.2 (xHigh) Meta · Proprietary 1499 ±10 3,240 $1.25 / $4.25 N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "chat": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Muse Spark 1.2 on 2026-09-06, ranking it #95 by token volume across its entire tracked catalog (0.05% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"meta/muse-spark-1.2-20260805\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Muse Spark 1.2 at a score of 1499, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "muse-spark-1.2 (xHigh) Meta · Proprietary 1499 ±10 3,240 $1.25 / $4.25 N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "vision": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Muse Spark 1.2 on 2026-09-06, ranking it #95 by token volume across its entire tracked catalog (0.05% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"meta/muse-spark-1.2-20260805\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Vision leaderboard (human-voted model leaderboard) lists Muse Spark 1.2 at a score of 1292, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/vision",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "muse-spark-1.2 (xHigh) Meta · Proprietary 1292 ±15 1,844 $1.25 / $4.25 N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -16321,13 +14819,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Meta reports strong performance on real-world coding across large codebases, computer-use workflows, and visual-to-code generation."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 788,719 standard-variant requests and about 15.4 billion prompt tokens for Muse Spark 1.1 on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta/muse-spark-1.1-20260709\",\"variant\":\"standard\",\"total_completion_tokens\":467443045,\"total_prompt_tokens\":15357667618,\"total_native_tokens_reasoning\":0,\"count\":788719"
             }
           ],
           "reconciliation": null,
@@ -16343,13 +14834,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "The model is designed to orchestrate multi-agent workflows, acting as either a main agent that plans and delegates or as a subagent"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 788,719 standard-variant requests and about 15.4 billion prompt tokens for Muse Spark 1.1 on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta/muse-spark-1.1-20260709\",\"variant\":\"standard\",\"total_completion_tokens\":467443045,\"total_prompt_tokens\":15357667618,\"total_native_tokens_reasoning\":0,\"count\":788719"
             }
           ],
           "reconciliation": null,
@@ -16365,13 +14849,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "It accepts text, images, video, audio, and PDF documents and returns text, with a 1M-token context window."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 788,719 standard-variant requests and about 15.4 billion prompt tokens for Muse Spark 1.1 on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta/muse-spark-1.1-20260709\",\"variant\":\"standard\",\"total_completion_tokens\":467443045,\"total_prompt_tokens\":15357667618,\"total_native_tokens_reasoning\":0,\"count\":788719"
             }
           ],
           "reconciliation": null,
@@ -16387,13 +14864,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "It supports structured output, parallel function calling, built-in search with citations, and configurable reasoning effort."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 788,719 standard-variant requests and about 15.4 billion prompt tokens for Muse Spark 1.1 on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta/muse-spark-1.1-20260709\",\"variant\":\"standard\",\"total_completion_tokens\":467443045,\"total_prompt_tokens\":15357667618,\"total_native_tokens_reasoning\":0,\"count\":788719"
             }
           ],
           "reconciliation": null,
@@ -16848,13 +15318,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Whether you are running multi-turn coding agents or building daily agentic workflows on tight token budgets, Ling 3.0 Flash brings high capabilities at lightning speed."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 16,526,258 standard-variant requests and about 76.8 billion prompt tokens for Ling-3.0-flash on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"inclusionai/ling-3.0-flash-20260723\",\"variant\":\"standard\",\"total_completion_tokens\":9983539016,\"total_prompt_tokens\":76781664960,\"total_native_tokens_reasoning\":0,\"count\":16526258"
             }
           ],
           "reconciliation": null,
@@ -16877,13 +15340,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Whether you are running multi-turn coding agents or building daily agentic workflows on tight token budgets, Ling 3.0 Flash brings high capabilities at lightning speed."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 16,526,258 standard-variant requests and about 76.8 billion prompt tokens for Ling-3.0-flash on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"inclusionai/ling-3.0-flash-20260723\",\"variant\":\"standard\",\"total_completion_tokens\":9983539016,\"total_prompt_tokens\":76781664960,\"total_native_tokens_reasoning\":0,\"count\":16526258"
             }
           ],
           "reconciliation": null,
@@ -16899,13 +15355,6 @@
               "tier": "lab",
               "date": "2026-09-07",
               "quote": "Engineered for speed, compute efficiency, and production deployment, Ling-3.0-flash delivers class-defying performance against both larger SOTA competitors and previous-generation flagships."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 16,526,258 standard-variant requests and about 76.8 billion prompt tokens for Ling-3.0-flash on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"inclusionai/ling-3.0-flash-20260723\",\"variant\":\"standard\",\"total_completion_tokens\":9983539016,\"total_prompt_tokens\":76781664960,\"total_native_tokens_reasoning\":0,\"count\":16526258"
             }
           ],
           "reconciliation": "InclusionAI's own claim of beating larger competitors is self-reported; the third-party Kilo blog places Ling 3.0 Flash alongside Gemini 3.6 Flash contextually but does not report a direct head-to-head benchmark between the two as of 2026-09-07.",
@@ -16928,13 +15377,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Features a native 256K context window (extendable up to 1M), perfect for long-horizon task stability and deep repository reasoning."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 16,526,258 standard-variant requests and about 76.8 billion prompt tokens for Ling-3.0-flash on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"inclusionai/ling-3.0-flash-20260723\",\"variant\":\"standard\",\"total_completion_tokens\":9983539016,\"total_prompt_tokens\":76781664960,\"total_native_tokens_reasoning\":0,\"count\":16526258"
             }
           ],
           "reconciliation": null,
@@ -17194,13 +15636,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "It scores 65.2 on SWE-Bench Pro and 94.9 on PinchBench, with a context window of 256K tokens and output up to 80K tokens."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 6,367 standard-variant requests and about 73.2 million prompt tokens for KAT-Coder-Pro V2.5 on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"kwaipilot/kat-coder-pro-v2.5-20260710\",\"variant\":\"standard\",\"total_completion_tokens\":2535844,\"total_prompt_tokens\":73207890,\"total_native_tokens_reasoning\":0,\"count\":6367"
             }
           ],
           "reconciliation": null,
@@ -17223,13 +15658,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "It scores 65.2 on SWE-Bench Pro and 94.9 on PinchBench, with a context window of 256K tokens and output up to 80K tokens."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 6,367 standard-variant requests and about 73.2 million prompt tokens for KAT-Coder-Pro V2.5 on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"kwaipilot/kat-coder-pro-v2.5-20260710\",\"variant\":\"standard\",\"total_completion_tokens\":2535844,\"total_prompt_tokens\":73207890,\"total_native_tokens_reasoning\":0,\"count\":6367"
             }
           ],
           "reconciliation": null,
@@ -17469,13 +15897,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "KAT-Coder-Air V2.5 is a flagship-level Agentic Coding model that can directly hand over an entire issue or an entire business workflow to it"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 964 standard-variant requests and about 13.8 million prompt tokens for KAT-Coder-Air V2.5 on 2026-08-31, the most recent day it appears in the feed.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"kwaipilot/kat-coder-air-v2.5-20260710\",\"variant\":\"standard\",\"total_completion_tokens\":644747,\"total_prompt_tokens\":13818334,\"total_native_tokens_reasoning\":0,\"count\":964"
             }
           ],
           "reconciliation": null,
@@ -17491,13 +15912,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "allowing it to autonomously locate and make modifications, and complete the entire process in the actual repository"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 964 standard-variant requests and about 13.8 million prompt tokens for KAT-Coder-Air V2.5 on 2026-08-31, the most recent day it appears in the feed.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"kwaipilot/kat-coder-air-v2.5-20260710\",\"variant\":\"standard\",\"total_completion_tokens\":644747,\"total_prompt_tokens\":13818334,\"total_native_tokens_reasoning\":0,\"count\":964"
             }
           ],
           "reconciliation": null,
@@ -17513,13 +15927,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "it seamlessly integrates multiple experts to fully retain the front-end aesthetic generation capability of V2"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 964 standard-variant requests and about 13.8 million prompt tokens for KAT-Coder-Air V2.5 on 2026-08-31, the most recent day it appears in the feed.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"kwaipilot/kat-coder-air-v2.5-20260710\",\"variant\":\"standard\",\"total_completion_tokens\":644747,\"total_prompt_tokens\":13818334,\"total_native_tokens_reasoning\":0,\"count\":964"
             }
           ],
           "reconciliation": null,
@@ -17535,13 +15942,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "KAT-Coder-Air V2.5 costs $0.15 per 1M input tokens and $0.6 per 1M output tokens."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 964 standard-variant requests and about 13.8 million prompt tokens for KAT-Coder-Air V2.5 on 2026-08-31, the most recent day it appears in the feed.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"kwaipilot/kat-coder-air-v2.5-20260710\",\"variant\":\"standard\",\"total_completion_tokens\":644747,\"total_prompt_tokens\":13818334,\"total_native_tokens_reasoning\":0,\"count\":964"
             }
           ],
           "reconciliation": null,
@@ -17790,13 +16190,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Meituan says LongCat-2.0 scores 59.5 on SWE-bench Pro versus GPT-5.5"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 320,246 standard-variant requests and about 5.7 billion prompt tokens for LongCat-2.0 on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meituan/longcat-2.0-20260720\",\"variant\":\"standard\",\"total_completion_tokens\":237634215,\"total_prompt_tokens\":5666313930,\"total_native_tokens_reasoning\":0,\"count\":320246"
             }
           ],
           "reconciliation": "Meituan's own benchmark places LongCat-2.0 slightly ahead of GPT-5.5 on SWE-bench Pro (59.5 vs 58.6) as of its 2026-06-30 release, but felloai.com's review (checked 2026-09-07) notes the score is self-reported and not independently verified.",
@@ -17819,13 +16212,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "handling roughly 10.1 trillion tokens a month before Meituan revealed it as LongCat-2.0."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 320,246 standard-variant requests and about 5.7 billion prompt tokens for LongCat-2.0 on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meituan/longcat-2.0-20260720\",\"variant\":\"standard\",\"total_completion_tokens\":237634215,\"total_prompt_tokens\":5666313930,\"total_native_tokens_reasoning\":0,\"count\":320246"
             }
           ],
           "reconciliation": null,
@@ -18086,13 +16472,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "it is not a benchmark sweep, a zero-cost service or a fully reproducible open-source release"
-            },
-            {
-              "sentence": "OpenRouter's public model-usage rankings feed (checked 2026-09-07) recorded 1,488,126 requests against Meta's muse-glimmer-30b-20260810 permaslug (standard variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta/muse-glimmer-30b-20260810\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": "Meta's own SWE-Bench Verified score of 76.0 for Muse Glimmer 30B is close to but below the 77.2 Meta recorded for Qwen3.6-27B in the same table, and Kingy.ai's 2026-09-07-checked review flagged that table as Meta-sourced rather than independently reproduced.",
@@ -18108,13 +16487,6 @@
               "tier": "lab",
               "date": "2026-09-07",
               "quote": "Multimodal reasoning: Interpreting screenshots, charts, documents, and images"
-            },
-            {
-              "sentence": "OpenRouter's public model-usage rankings feed (checked 2026-09-07) recorded 1,488,126 requests against Meta's muse-glimmer-30b-20260810 permaslug (standard variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta/muse-glimmer-30b-20260810\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -18628,13 +17000,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "laguna s 2.1 actually wins outright on swe-bench multilingual (78.5%) and swe atlas (46.2%)"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 16,284,148 requests against Poolside's poolside/laguna-s-2.1-20260720 permaslug (free variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"poolside/laguna-s-2.1-20260720\",\"variant\":\"free\""
             }
           ],
           "reconciliation": "Poolside's own July 21, 2026 blog post describes Laguna S 2.1 as the leading agentic coding model within its own weight class, while AIToolsReview's 2026-09-07-checked review found it trailing the much larger Kimi K3 on Terminal-Bench 2.1 and Claude Fable 5 on SWE-Bench Pro.",
@@ -18650,13 +17015,6 @@
               "tier": "lab",
               "date": "2026-09-07",
               "quote": "a significant step forward in our development of models that pursue longer horizon work and make effective use of reasoning"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 16,284,148 requests against Poolside's poolside/laguna-s-2.1-20260720 permaslug (free variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"poolside/laguna-s-2.1-20260720\",\"variant\":\"free\""
             }
           ],
           "reconciliation": null,
@@ -18921,13 +17279,6 @@
               "tier": "lab",
               "date": "2026-09-07",
               "quote": "delivers a comprehensive upgrade over 3.6-Flash in multimodal understanding and agent execution"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 47,864,615 requests against Alibaba's qwen/qwen3.7-flash-20260727 permaslug (standard variant) on 2026-09-06, among the highest volumes of the models checked in this batch.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"qwen/qwen3.7-flash-20260727\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": "Alibaba's own changelog markets Qwen3.7 Flash's multimodal and agent upgrades in prose without a benchmark table, while eesel.ai's 2026-09-07-checked review independently ran Roboflow Vision Evals and placed it 22nd of 23 models overall, recommending it only for cheap, error-tolerant, high-volume classification work.",
@@ -19211,13 +17562,6 @@
               "tier": "lab",
               "date": "2026-09-07",
               "quote": "in code engineering, it strengthens end-to-end delivery, enabling more reliable requirement understanding, coding, debugging, and validation"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 98,118 requests against ByteDance's bytedance-seed/seed-2-1-turbo-20260810 permaslug (standard variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"bytedance-seed/seed-2-1-turbo-20260810\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": "ByteDance's own Seed 2.1 page describes the Turbo variant's coding capabilities in prose, but per DataNorth's 2026-09-07-checked report ByteDance has not published parameter counts or independent benchmark scores specifically for the Seed 2.1 family.",
@@ -19233,13 +17577,6 @@
               "tier": "lab",
               "date": "2026-09-07",
               "quote": "from project planning and file processing to tool use"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 98,118 requests against ByteDance's bytedance-seed/seed-2-1-turbo-20260810 permaslug (standard variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"bytedance-seed/seed-2-1-turbo-20260810\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -19262,13 +17599,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "a faster, lower cost variant built for high frequency enterprise workloads"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 98,118 requests against ByteDance's bytedance-seed/seed-2-1-turbo-20260810 permaslug (standard variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"bytedance-seed/seed-2-1-turbo-20260810\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -19536,13 +17866,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Aion-3.0 is a multi-model roleplaying and storytelling system from AionLabs, built on the GLM family of models."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 478,141 requests against AionLabs' aion-labs/aion-3.0-20260707 permaslug (standard variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"aion-labs/aion-3.0-20260707\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -19558,13 +17881,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Janitor AI is a chatbot platform where users create and chat with custom AI characters for interactive roleplay, storytelling, and immersive fiction."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 478,141 requests against AionLabs' aion-labs/aion-3.0-20260707 permaslug (standard variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"aion-labs/aion-3.0-20260707\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -19831,13 +18147,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Aion-3.0 Mini is a multi-model roleplaying and storytelling system from AionLabs, built on the DeepSeek family of models."
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 178,162 requests against AionLabs' aion-labs/aion-3.0-mini-20260707 permaslug (standard variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"aion-labs/aion-3.0-mini-20260707\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -19853,13 +18162,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Chat with AI characters for free"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 178,162 requests against AionLabs' aion-labs/aion-3.0-mini-20260707 permaslug (standard variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"aion-labs/aion-3.0-mini-20260707\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -20122,13 +18424,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Stronger programming and reasoning abilities than the preceding Seed coding models"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 33,416 requests against ByteDance's bytedance-seed/seed-2.0-code-20260730 permaslug (standard variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"bytedance-seed/seed-2.0-code-20260730\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -20144,13 +18439,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "multi-step work where the model must plan, execute, observe results, and revise the plan"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 33,416 requests against ByteDance's bytedance-seed/seed-2.0-code-20260730 permaslug (standard variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"bytedance-seed/seed-2.0-code-20260730\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -20424,13 +18712,6 @@
               "tier": "measured",
               "date": "2026-09-07",
               "quote": "achieving a 100% success rate across all 7 benchmarks"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 1,930,672 requests against Poolside's poolside/laguna-xs-2.1-20260625 permaslug (free variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"poolside/laguna-xs-2.1-20260625\",\"variant\":\"free\""
             }
           ],
           "reconciliation": null,
@@ -20453,13 +18734,6 @@
               "tier": "lab",
               "date": "2026-09-07",
               "quote": "a lightweight terminal-based coding agent"
-            },
-            {
-              "sentence": "OpenRouter's rankings feed (checked 2026-09-07) recorded 1,930,672 requests against Poolside's poolside/laguna-xs-2.1-20260625 permaslug (free variant) on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"poolside/laguna-xs-2.1-20260625\",\"variant\":\"free\""
             }
           ],
           "reconciliation": null,
@@ -20979,13 +19253,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "Qwen3.8-27B delivers excellent capabilities in handling coding, professional work, research, and long-horizon agentic tasks, matching the performance of Qwen3.7-plus"
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 10,828,061 API requests for the qwen/qwen3.8-27b-20260814 standard variant on 2026-09-06, showing real third-party adoption of the local model.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"qwen/qwen3.8-27b-20260814\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": "VentureBeat's coverage of Alibaba's own comparison table shows Qwen3.8-27B ahead of Claude Opus 4.6 Max on SWE-bench Pro and LiveCodeBench specifically, but the same table has Opus ahead on Terminal-Bench, GPQA Diamond, and Humanity's Last Exam, so the win is benchmark-specific rather than across the board.",
@@ -21001,13 +19268,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "the model is designed to execute complex, multi-step tasks to completion with high reliability."
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 10,828,061 API requests for the qwen/qwen3.8-27b-20260814 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"qwen/qwen3.8-27b-20260814\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -21023,13 +19283,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "Qwen3.8-27B delivers excellent capabilities in handling coding, professional work, research, and long-horizon agentic tasks, matching the performance of Qwen3.7-plus"
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 10,828,061 API requests for the qwen/qwen3.8-27b-20260814 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"qwen/qwen3.8-27b-20260814\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -21422,13 +19675,6 @@
               "tier": "reported",
               "date": "2026-09-06",
               "quote": "the sharpest number here is a sakana-run comparison against its own base model, and the landing page does not show head-to-head benchmarks against gpt, gemini,"
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 3,837 API requests for the sakana/namazu-20260811 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"sakana/namazu-20260811\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": "Sakana's reported benchmark gains (e.g. FairPoliticsQA) are measured against Namazu's own Kimi K2.6 base model, and AI Weekly's 2026-09-06 review confirms no independent head-to-head comparison against GPT, Gemini, or Claude has been published, so the improvement is real but unverified against closed-model peers.",
@@ -21444,13 +19690,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "what supports this long, multi-stage workflow is the strong agentic ability inherited from the base model, together with the web search tool that comes"
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 3,837 API requests for the sakana/namazu-20260811 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"sakana/namazu-20260811\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -21466,13 +19705,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "from drawing up the research plan through repeated web searches, cross-checking what it finds, and writing the report itself."
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 3,837 API requests for the sakana/namazu-20260811 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"sakana/namazu-20260811\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -21488,13 +19720,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "a model specialized for japanese can handle everything end to end, from answering inquiries to aggregating and analyzing order data."
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 3,837 API requests for the sakana/namazu-20260811 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"sakana/namazu-20260811\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -21750,13 +19975,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "hy3 has made particularly notable progress in productivity tasks such as software development, office productivity, financial modeling, front-end design and game production"
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 56,418,720 API requests for the tencent/hy3-20260706 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"tencent/hy3-20260706\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -21779,13 +19997,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "hy3 is a hybrid fast-and-slow-thinking model built on a mixture-of-experts (moe) architecture, with 295 billion total parameters and 21 billion active parameters,"
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 56,418,720 API requests for the tencent/hy3-20260706 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"tencent/hy3-20260706\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -21801,13 +20012,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "hy3 has made particularly notable progress in productivity tasks such as software development, office productivity, financial modeling, front-end design and game production"
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 56,418,720 API requests for the tencent/hy3-20260706 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"tencent/hy3-20260706\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -21823,13 +20027,6 @@
               "tier": "reported",
               "date": "2026-09-06",
               "quote": "tencent has priced hy3 at rmb 1 ($0.15) per million input tokens and rmb 4 ($0.59) per million output tokens."
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 56,418,720 API requests for the tencent/hy3-20260706 standard variant on 2026-09-06, one of the largest usage volumes in the feed.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"tencent/hy3-20260706\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -21845,13 +20042,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "hy3 has also strengthened ima’s knowledge-base q&a to deliver more structured reasoning, broader information coverage, and more complete, structured and usable outputs for long-form writing."
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 56,418,720 API requests for the tencent/hy3-20260706 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"tencent/hy3-20260706\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -22131,13 +20321,6 @@
               "tier": "reported",
               "date": "2026-09-06",
               "quote": "inkling uses a third as many tokens as nvidia’s nemotron 3 ultra — its latest generation open-weight model — to hit the same coding performance."
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 999,090 API requests for the thinkingmachines/inkling-20260715 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"thinkingmachines/inkling-20260715\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -22608,13 +20791,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "with these improvements, inkling-small surpassed inkling on reasoning and agentic coding benchmarks."
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 451,641 API requests for the thinkingmachines/inkling-small-20260730 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"thinkingmachines/inkling-small-20260730\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -22637,13 +20813,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "today, we are releasing inkling-small, an efficient open-weights model that achieves comparable performance to inkling at a quarter of its size."
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 451,641 API requests for the thinkingmachines/inkling-small-20260730 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"thinkingmachines/inkling-small-20260730\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -22666,13 +20835,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "it retains strong performance on visual reasoning, chart and diagram understanding, mathematical visual question answering, speech understanding, and longer-form audio reasoning."
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 451,641 API requests for the thinkingmachines/inkling-small-20260730 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"thinkingmachines/inkling-small-20260730\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -23065,13 +21227,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "terminal tasks (terminal-bench v2.1): 57"
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 70,663,518 API requests for the upstage/solar-pro4-20260810 standard variant on 2026-09-06, one of the highest volumes in the feed.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"upstage/solar-pro4-20260810\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -23094,13 +21249,6 @@
               "tier": "reported",
               "date": "2026-09-06",
               "quote": "it scored 71, more than 2.3 times better than the previous model."
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 70,663,518 API requests for the upstage/solar-pro4-20260810 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"upstage/solar-pro4-20260810\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -23123,13 +21271,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "long-document reasoning (aa-lcr): 71"
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 70,663,518 API requests for the upstage/solar-pro4-20260810 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"upstage/solar-pro4-20260810\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -23145,13 +21286,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "three prompts turned market data into an excel workbook, a review report, and a slide deck."
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 70,663,518 API requests for the upstage/solar-pro4-20260810 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"upstage/solar-pro4-20260810\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -23439,13 +21573,6 @@
               "tier": "usage",
               "date": "2026-09-06",
               "quote": "\"downloads\":22753,\"downloadsalltime\":237642,\"id\":\"tencent/hy-mt2-1.8b\""
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 4,400,994 API requests for the tencent/hy-mt2-1.8b-20260521 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"tencent/hy-mt2-1.8b-20260521\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -23708,13 +21835,6 @@
               "tier": "reported",
               "date": "2026-09-06",
               "quote": "hy-mt2-30b-a3b is tencent's flagship translation model in the hy-mt2 family."
-            },
-            {
-              "sentence": "OpenRouter's public model-usage feed (checked 2026-09-06) recorded 1,705,061 API requests for the tencent/hy-mt2-30b-a3b-20260521 standard variant on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"tencent/hy-mt2-30b-a3b-20260521\",\"variant\":\"standard\""
             }
           ],
           "reconciliation": null,
@@ -23974,30 +22094,7 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": {
-        "coding": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own per-task spend-share feed ranks GLM-5.3 #6 of the top 10 models by \"code:general_impl\" spend share (4.59% of that tagged spend) over its trailing 30-day window, checked 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model\":\"z-ai/glm-5.3-20260816\",\"share\":0.026950324819853905,"
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists GLM-5.3 at a score of 1482, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "glm-5.3-max Z.ai · MIT 1482 ±7 7,668 $1.40 / $4.40 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -24485,52 +22582,7 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": {
-        "vision": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Qwen3.8 Max on 2026-09-06, ranking it #85 by token volume across its entire tracked catalog (0.06% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"qwen/qwen3.8-max-20260902\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Vision leaderboard (human-voted model leaderboard) lists Qwen3.8 Max at a score of 1300, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/vision",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "qwen3.8-max Alibaba · Proprietary 1300 ±8 7,244 $2 / $6 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "frontend": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Qwen3.8 Max on 2026-09-06, ranking it #85 by token volume across its entire tracked catalog (0.06% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"qwen/qwen3.8-max-20260902\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's WebDev leaderboard (human-voted model leaderboard) lists Qwen3.8 Max at a score of 1686, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/code/webdev",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "qwen3.8-max-0902 Alibaba · Proprietary 1686 +16/-16 Preliminary 1,868 $2 / $6 N/A"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -25764,13 +23816,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Qwen 3.8 27B, especially, beats the Granite models across the board, especially when it comes to coding, where the IBM models deliver inconsistent results overall."
-            },
-            {
-              "sentence": "OpenRouter's public rankings feed recorded 300,868 requests for ibm-granite/granite-4.2-8b in the period reported on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"ibm-granite/granite-4.2-8b-20260831\""
             }
           ],
           "reconciliation": "IBM's own SWE-Bench Verified score and agentic-RL training claim real coding ability, but The New Stack's independent review found Qwen 3.8 27B beating Granite 4.2 on coding with inconsistent results, so third-party coding performance is contested rather than clearly strong.",
@@ -25800,13 +23845,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "IBM argues that the main argument for Granite is its performance in high-throughput agentic tasks, for example."
-            },
-            {
-              "sentence": "OpenRouter's public rankings feed recorded 300,868 requests for ibm-granite/granite-4.2-8b in the period reported on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"ibm-granite/granite-4.2-8b-20260831\""
             }
           ],
           "reconciliation": null,
@@ -25829,13 +23867,6 @@
               "tier": "lab",
               "date": "2026-09-07",
               "quote": "86.67"
-            },
-            {
-              "sentence": "OpenRouter's public rankings feed recorded 300,868 requests for ibm-granite/granite-4.2-8b in the period reported on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"ibm-granite/granite-4.2-8b-20260831\""
             }
           ],
           "reconciliation": null,
@@ -26117,13 +24148,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "It is designed to track information across extended tasks, work through conflicting inputs, and request clarification or confirmation when needed."
-            },
-            {
-              "sentence": "OpenRouter's public rankings feed recorded 9,811,226 requests for meta/muse-spark-1.3-contributor in the period reported on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta/muse-spark-1.3-contributor-20260902\""
             }
           ],
           "reconciliation": null,
@@ -26146,13 +24170,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "It is designed to track information across extended tasks, work through conflicting inputs, and request clarification or confirmation when needed."
-            },
-            {
-              "sentence": "OpenRouter's public rankings feed recorded 9,811,226 requests for meta/muse-spark-1.3-contributor in the period reported on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta/muse-spark-1.3-contributor-20260902\""
             }
           ],
           "reconciliation": null,
@@ -26417,13 +24434,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Muse Spark 1.3 is a multimodal reasoning model from Meta for long-running agentic, multi-agent, and coding workflows."
-            },
-            {
-              "sentence": "OpenRouter's public rankings feed recorded 1,942,994 requests for meta/muse-spark-1.3 in the period reported on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta/muse-spark-1.3-20260902\""
             }
           ],
           "reconciliation": null,
@@ -26446,13 +24456,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Meta engineers measured ~20% fewer tool calls and ~25% fewer tokens versus Muse Spark 1.2"
-            },
-            {
-              "sentence": "OpenRouter's public rankings feed recorded 1,942,994 requests for meta/muse-spark-1.3 in the period reported on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta/muse-spark-1.3-20260902\""
             }
           ],
           "reconciliation": null,
@@ -26475,13 +24478,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "a 1M-token context window"
-            },
-            {
-              "sentence": "OpenRouter's public rankings feed recorded 1,942,994 requests for meta/muse-spark-1.3 in the period reported on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta/muse-spark-1.3-20260902\""
             }
           ],
           "reconciliation": null,
@@ -26796,116 +24792,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "Versatility across agentic tasks Optimized for high performance across software engineering, long horizon and knowledge work tasks."
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "coding": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Gemini 3.8 Flash on 2026-09-06, ranking it #22 by token volume across its entire tracked catalog (0.93% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"google/gemini-3.8-flash-20260902\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Gemini 3.8 Flash at a score of 1494, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gemini-3.8-flash-high Google · Proprietary 1494 ±9 Preliminary 5,125 $0.75 / $3.75 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "writing": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Gemini 3.8 Flash on 2026-09-06, ranking it #22 by token volume across its entire tracked catalog (0.93% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"google/gemini-3.8-flash-20260902\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Gemini 3.8 Flash at a score of 1494, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gemini-3.8-flash-high Google · Proprietary 1494 ±9 Preliminary 5,125 $0.75 / $3.75 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "chat": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Gemini 3.8 Flash on 2026-09-06, ranking it #22 by token volume across its entire tracked catalog (0.93% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"google/gemini-3.8-flash-20260902\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Gemini 3.8 Flash at a score of 1494, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gemini-3.8-flash-high Google · Proprietary 1494 ±9 Preliminary 5,125 $0.75 / $3.75 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "exec-summaries": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Gemini 3.8 Flash on 2026-09-06, ranking it #22 by token volume across its entire tracked catalog (0.93% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"google/gemini-3.8-flash-20260902\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Gemini 3.8 Flash at a score of 1494, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gemini-3.8-flash-high Google · Proprietary 1494 ±9 Preliminary 5,125 $0.75 / $3.75 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "research": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Gemini 3.8 Flash on 2026-09-06, ranking it #22 by token volume across its entire tracked catalog (0.93% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"google/gemini-3.8-flash-20260902\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall leaderboard (human-voted) lists Gemini 3.8 Flash (High) at a score of 1494, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gemini-3.8-flash-high Google · Proprietary 1494 ±9 Preliminary 5,125 $0.75 / $3.75 1M"
             }
           ],
           "reconciliation": null,
@@ -27358,28 +25244,6 @@
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "GPT-6 Astra is our most capable model, built for the hardest end-to-end work."
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "frontend": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for GPT-6 Astra on 2026-09-06, ranking it #64 by token volume across its entire tracked catalog (0.12% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"openai/gpt-6-astra-20260903\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's WebDev leaderboard (human-voted model leaderboard) lists GPT-6 Astra at a score of 1797, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/code/webdev",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "gpt-6-astra-max OpenAI · Proprietary 1797 +24/-24 1,199 $10 / $50 1.1M"
             }
           ],
           "reconciliation": null,
@@ -27877,13 +25741,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "GPT-6 Astra Pro is the same underlying model as GPT-6 Astra, served with reasoning.mode set to pro for higher-quality responses on complex tasks."
-            },
-            {
-              "sentence": "OpenRouter's public rankings feed recorded 213,819 requests for openai/gpt-6-astra-pro in the period reported on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"openai/gpt-6-astra-pro-20260903\""
             }
           ],
           "reconciliation": null,
@@ -27906,13 +25763,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "GPT-6 Astra Pro is the same underlying model as GPT-6 Astra, served with reasoning.mode set to pro for higher-quality responses on complex tasks."
-            },
-            {
-              "sentence": "OpenRouter's public rankings feed recorded 213,819 requests for openai/gpt-6-astra-pro in the period reported on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"openai/gpt-6-astra-pro-20260903\""
             }
           ],
           "reconciliation": null,
@@ -27942,13 +25792,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Anthropic has reported a higher result of 77.9% for Fable 5.1, but"
-            },
-            {
-              "sentence": "OpenRouter's public rankings feed recorded 213,819 requests for openai/gpt-6-astra-pro in the period reported on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"openai/gpt-6-astra-pro-20260903\""
             }
           ],
           "reconciliation": "OpenAI reports GPT-6 Astra improved its own OSWorld V2-Offline computer-use score to 72.6% over its prior model, but Anthropic separately reported a higher 77.9% for Claude Fable 5.1 on what The New Stack says was a different, non-comparable OSWorld release.",
@@ -28221,140 +26064,7 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": {
-        "coding": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Claude Fable 5.1 on 2026-09-06, ranking it #43 by token volume across its entire tracked catalog (0.26% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"anthropic/claude-fable-5.1-20260831\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Fable 5.1 at a score of 1504, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-fable-5.1-max Anthropic · Proprietary 1504 ±11 2,906 $10 / $50 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "agents": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Claude Fable 5.1 on 2026-09-06, ranking it #43 by token volume across its entire tracked catalog (0.26% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"anthropic/claude-fable-5.1-20260831\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Agent leaderboard (human-voted model leaderboard) lists Claude Fable 5.1 among its ranked models, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/agent",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "Claude Fable 5.1 (Max) Anthropic · Proprietary 15.87 % ±2.84% 22.45 % ±3.71% 42.45 % ±10.94% 0.58 % ±6.77% 13.11 % ±1.33% 0.78 %"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "writing": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Claude Fable 5.1 on 2026-09-06, ranking it #43 by token volume across its entire tracked catalog (0.26% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"anthropic/claude-fable-5.1-20260831\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Fable 5.1 at a score of 1504, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-fable-5.1-max Anthropic · Proprietary 1504 ±11 2,906 $10 / $50 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "chat": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Claude Fable 5.1 on 2026-09-06, ranking it #43 by token volume across its entire tracked catalog (0.26% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"anthropic/claude-fable-5.1-20260831\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Fable 5.1 at a score of 1504, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-fable-5.1-max Anthropic · Proprietary 1504 ±11 2,906 $10 / $50 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "frontend": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Claude Fable 5.1 on 2026-09-06, ranking it #43 by token volume across its entire tracked catalog (0.26% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"anthropic/claude-fable-5.1-20260831\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's WebDev leaderboard (human-voted model leaderboard) lists Claude Fable 5.1 at a score of 1762, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/code/webdev",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-fable-5.1-max Anthropic · Proprietary 1762 +16/-16 2,275 $10 / $50 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
-        "exec-summaries": {
-          "band": "capable",
-          "confidence": "medium",
-          "claims": [
-            {
-              "sentence": "OpenRouter's own rankings feed recorded real API traffic for Claude Fable 5.1 on 2026-09-06, ranking it #43 by token volume across its entire tracked catalog (0.26% of that day's total tokens).",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-06",
-              "quote": "\"model_permaslug\":\"anthropic/claude-fable-5.1-20260831\",\"variant\":\"standard\""
-            },
-            {
-              "sentence": "Arena's Text Arena Overall (human-voted model leaderboard) lists Claude Fable 5.1 at a score of 1504, checked 2026-09-06.",
-              "source_url": "https://arena.ai/leaderboard/text",
-              "tier": "reported",
-              "date": "2026-09-06",
-              "quote": "claude-fable-5.1-max Anthropic · Proprietary 1504 ±11 2,906 $10 / $50 1M"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        }
-      },
+      "task_fit_judged": null,
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -28846,13 +26556,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "it performs well on multi-file refactors, extended debugging sessions, whole-repository generation, and tasks that stretch well past a single prompt."
-            },
-            {
-              "sentence": "OpenRouter's public rankings feed recorded 4,597,595 requests for meta/muse-spark-1.2-contributor in the period reported on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta/muse-spark-1.2-contributor-20260805\""
             }
           ],
           "reconciliation": null,
@@ -28875,13 +26578,6 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "supports structured output, parallel function calling, and configurable reasoning effort"
-            },
-            {
-              "sentence": "OpenRouter's public rankings feed recorded 4,597,595 requests for meta/muse-spark-1.2-contributor in the period reported on 2026-09-06.",
-              "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "\"model_permaslug\":\"meta/muse-spark-1.2-contributor-20260805\""
             }
           ],
           "reconciliation": null,

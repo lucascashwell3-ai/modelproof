@@ -33,7 +33,7 @@
 import { isNotablePriceChange, priceEntry, retiredEntry, addEntry } from './timeline.mjs';
 import { canonicalVendor, bareModelName, modelId as idFromName } from './naming.mjs';
 import { TASK_IDS } from './derive-task-fit.mjs';
-import { bannedPhraseIn, wordCount, JUDGED_BAND_VALUES, CLAIM_TIERS } from './validate-data.mjs';
+import { bannedPhraseIn, wordCount, JUDGED_BAND_VALUES, CLAIM_TIERS, citesLiveFeed } from './validate-data.mjs';
 import { deriveStatus, deriveAdoption } from './derive-status-adoption.mjs';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -136,6 +136,12 @@ export function validateJudgment(j) {
         if (hit) errs.push(`${cl}.sentence uses a banned relative phrase (/${hit}/) — write an absolute, dated fact instead`);
       }
       if (!c.source_url || !/^https?:\/\//i.test(c.source_url)) errs.push(`${cl}.source_url must be http(s)`);
+      // 2026-09 migration (scripts/migrate-claims-2026-09.mjs) removed every claim citing
+      // OpenRouter's rankings API or arena.ai — both are live feeds this codebase already
+      // re-derives daily into model.standings, so their numbers change every day and a claim
+      // quoting them can never stay verified by scripts/check-sources.mjs. Reject a new one here,
+      // at submission time, so the Judge routine can't reintroduce what that migration removed.
+      else if (citesLiveFeed(c.source_url)) errs.push(`${cl}.source_url cites a live feed (OpenRouter rankings/arena.ai) that changes daily and can never stay verified — cite the standings record instead (model.standings[taskId] already carries this exact evidence, dated and linked), or a stable page`);
       if (!CLAIM_TIERS.includes(c.tier)) errs.push(`${cl}.tier must be one of ${CLAIM_TIERS.join(', ')}`);
       if (!c.date) errs.push(`${cl}.date is required`);
       if (!c.quote || typeof c.quote !== 'string') errs.push(`${cl}.quote is required (verbatim from source_url)`);
