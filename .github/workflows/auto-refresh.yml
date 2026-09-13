@@ -80,6 +80,26 @@ jobs:
         # run here blocks publish, not just notifies after the fact.
         run: node scripts/validate-data.mjs && node scripts/check-live-data.mjs
 
+      - name: Anti-fabrication gate (claims freshness)
+        id: claim_gate
+        # scripts/check-sources.mjs confirms every task_fit_judged claim's quote still appears on
+        # its cited page. Fabrication itself is blocked at WRITE time — scripts/apply-judgment.mjs
+        # runs this same script synchronously right after any judged-fit write, unchanged and
+        # still a hard, blocking gate there. Here, running against the whole catalog on every
+        # refresh, a failure means an already-published claim's page changed wording since it was
+        # written (link rot), not a new fabrication — this repo's live-data rule is gates are
+        # invariants only (see scripts/check-live-data.mjs's own header), so rot discovered after
+        # the fact is flagged, never a publish blocker. continue-on-error keeps this step's own
+        # failure from blocking "Commit and push" below; the next step still reports it loudly.
+        continue-on-error: true
+        run: node scripts/check-sources.mjs
+
+      - name: Report claim rot (writes summary + opens/updates an issue on live runs)
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.MODELPROOF_AUTOREFRESH_TOKEN || github.token }}
+        run: node scripts/report-claim-rot.mjs >> "$GITHUB_STEP_SUMMARY"
+
       - name: Eval report (informational — never a gate)
         # scripts/eval-report.mjs runs the 40-situation cold answer key + 15 must-never rules
         # against the just-refreshed live data and prints a pass rate, every disagreement with
