@@ -196,10 +196,12 @@
       empties a task's whole candidate pool.
    Only the top 3 survivors (after tiering + the chosen stance's order) are returned; item 0 is
    always start_here: true, UNLESS the top-ranked item is disqualified (see
-   isDisqualifiedFromStartHere): except under stance 'cheapest' (cost-primary, full stop — see
-   rule 4 above), an "early" or (non-thin only) "tests-only" item never starts while a T1 item is
-   also a candidate, and a preview item never starts while a same-tier GA/deprecated item is also
-   a candidate. Disqualification only ever changes which item gets start_here — it never drops a
+   isDisqualifiedFromStartHere): a (non-thin) "tests-only" item never starts while a T1 item is
+   also a candidate, under any stance; an "early" item never starts while a T1 item is also a
+   candidate except under 'cheapest' on a non-enterprise input (cost-primary — see rule 4 above;
+   an enterprise-style input keeps the block, as it keeps preview SKUs out); and, except
+   under 'cheapest', a preview item never starts while a same-tier GA/deprecated item is also a
+   candidate. Disqualification only ever changes which item gets start_here — it never drops a
    model from the returned shortlist.
 
    Kept unchanged from v1 (still exactly what the file header used to say): reachability rule 1's
@@ -252,7 +254,7 @@ export const WHY_FIELDS = {
 
 export function buildWhy(model, basis) {
   const parts = (basis || []).map((f) => WHY_FIELDS[f]?.say(model)).filter(Boolean);
-  if (!parts.length) return 'No sourced basis for this task.';
+  if (!parts.length) return 'No written explanation on file for this task yet.';
   const s = parts.join(', ');
   return s.charAt(0).toUpperCase() + s.slice(1) + '.';
 }
@@ -752,11 +754,15 @@ export function filterCandidates(taskId, input, data) {
  * ($1.23/mo, T2 "early") must win over Gemini 3.8 Flash ($7.13/mo, T4) once a T1 candidate no
  * longer disqualifies it. The label itself is untouched either way — only start_here eligibility
  * changes. */
-export function isDisqualifiedFromStartHere(item, allCandidates, stance) {
-  if (stance !== 'cheapest') {
-    const anyT1 = (allCandidates || []).some((c) => c !== item && c.tier === 1);
-    if (anyT1 && (item.tier_name === 'early' || (!item.thin_task && item.tier_name === 'tests-only'))) return true;
-  }
+export function isDisqualifiedFromStartHere(item, allCandidates, stance, input) {
+  const anyT1 = (allCandidates || []).some((c) => c !== item && c.tier === 1);
+  // "tests-only" is capped below an agreed pick under EVERY stance (a benchmark-only standing
+  // never buys the top slot). "early" is exempt under 'cheapest' only, which stays cost-primary
+  // exactly like the preview exemption below — but not on an enterprise-style input: the same
+  // reasoning that keeps a preview SKU out of an enterprise shortlist keeps a weeks-old model
+  // with no usage record from being the enterprise starting point on cost alone.
+  if (anyT1 && !item.thin_task && item.tier_name === 'tests-only') return true;
+  if (anyT1 && item.tier_name === 'early' && (stance !== 'cheapest' || isEnterpriseInput(input))) return true;
   if (item.model.status === 'preview' && stance !== 'cheapest') {
     const gaSameTier = (allCandidates || []).some((c) => c !== item && c.tier === item.tier && c.model.status !== 'preview');
     if (gaSameTier) return true;
@@ -882,7 +888,7 @@ export function decide(input, data) {
     // a disqualified model still shows up in the top 3 if it ranks there, it just doesn't get the
     // start_here flag. If every candidate is disqualified there's no alternative to prefer, so
     // the normal #1 keeps start_here.
-    let startIdx = ranked.findIndex((item) => !isDisqualifiedFromStartHere(item, candidates, stance));
+    let startIdx = ranked.findIndex((item) => !isDisqualifiedFromStartHere(item, candidates, stance, input));
     if (startIdx === -1) startIdx = 0;
     const reordered = startIdx === 0 ? ranked : [ranked[startIdx], ...ranked.slice(0, startIdx), ...ranked.slice(startIdx + 1)];
     const top = reordered.slice(0, 3);

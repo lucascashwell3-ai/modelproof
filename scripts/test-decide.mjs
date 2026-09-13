@@ -110,12 +110,12 @@ test(`full grid: ${TASK_IDS.length} tasks x ${HAVE_OPTIONS.length} have x ${STAN
               }
             }
 
-            // (f) invariant (d) — "early" or (non-thin only) "tests-only" is never start_here
-            //     while a T1 candidate exists for this (task, access) combination — EXCEPT under
-            //     stance 'cheapest', which stays cost-primary, full stop (round 4 fix, same
-            //     exemption the preview check already had).
+            // (f) invariant (d) — (non-thin) "tests-only" is never start_here while a T1
+            //     candidate exists for this (task, access) combination, under any stance; "early"
+            //     is never start_here while a T1 exists EXCEPT under 'cheapest' on a
+            //     non-enterprise input (cost-primary, same exemption the preview check has).
             const startHere = shortlist.find((x) => x.start_here);
-            if (stance !== 'cheapest' && startHere && (startHere.tier_name === 'early' || (!startHere.thin_task && startHere.tier_name === 'tests-only'))) {
+            if (startHere && ((!startHere.thin_task && startHere.tier_name === 'tests-only') || ((stance !== 'cheapest' || isEnterpriseInput(input)) && startHere.tier_name === 'early'))) {
               const { candidates } = filterCandidates(taskId, input, data);
               if (candidates.some((c) => c.tier === 1)) {
                 failures.push(`${label}: start_here "${startHere.id}" is tier_name "${startHere.tier_name}" but a tier-1 candidate also exists`);
@@ -655,12 +655,15 @@ test("stance 'balanced': no priced non-\"early\" candidate falls back to plain '
 // ---------------------------------------------------------------------------------------------
 // start_here disqualifiers.
 // ---------------------------------------------------------------------------------------------
-test('isDisqualifiedFromStartHere: a non-thin "tests-only" item is disqualified while a T1 item is also a candidate, except under "cheapest"', () => {
+test('isDisqualifiedFromStartHere: a non-thin "tests-only" item is disqualified while a T1 item is also a candidate, under EVERY stance', () => {
   const t3 = { tier: 3, tier_name: 'tests-only', thin_task: false, model: { status: 'ga' } };
   const t1 = { tier: 1, tier_name: 'agreed', thin_task: false, model: { status: 'ga' } };
   assert.equal(isDisqualifiedFromStartHere(t3, [t3, t1], 'best'), true);
   assert.equal(isDisqualifiedFromStartHere(t3, [t3], 'best'), false, 'no T1 rival -> not disqualified');
-  assert.equal(isDisqualifiedFromStartHere(t3, [t3, t1], 'cheapest'), false, 'round 4: "cheapest" stays cost-primary, exactly like the preview exemption');
+  // A benchmark-only standing never buys the top slot, not even on a cost-first ask: the cap on
+  // "strong on tests, low real-world use" is stance-independent (only "early" gets the cheapest
+  // exemption).
+  assert.equal(isDisqualifiedFromStartHere(t3, [t3, t1], 'cheapest'), true, '"tests-only" stays capped under "cheapest" too');
 });
 
 test('isDisqualifiedFromStartHere: "tests-only"-vs-T1 rule never applies on a thin task', () => {
@@ -679,6 +682,7 @@ test('isDisqualifiedFromStartHere: "early" is disqualified while a T1 item exist
   // ($7.13/mo, T4) while DeepSeek V4.1 Flash ($1.23/mo, T2 "early") sat second, purely because a
   // T1 candidate existed elsewhere in the pool.
   assert.equal(isDisqualifiedFromStartHere(early, [early, t1], 'cheapest'), false, "round 4: 'cheapest' stays cost-primary — an early item must not be blocked from start_here here");
+  assert.equal(isDisqualifiedFromStartHere(early, [early, t1], 'cheapest', { enterprise: true }), true, 'an enterprise-style input keeps the early block even under "cheapest" (same reasoning as the preview exclusion)');
 
   const earlyThin = { tier: 2, tier_name: 'early', thin_task: true, model: { status: 'ga' } };
   const t1Thin = { tier: 1, tier_name: 'human-agreed', thin_task: true, model: { status: 'ga' } };
