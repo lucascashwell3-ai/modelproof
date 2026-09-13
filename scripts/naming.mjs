@@ -115,6 +115,61 @@ export function bareModelName(name, vendor) {
 /** Lowercase slug: runs of non-alphanumerics -> "-", trimmed. */
 export const slug = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
+/** Known trailing tokens an independent TESTER hangs off a bare model name — reasoning effort,
+ * thinking-mode flags, run/snapshot dates ("-max-effort", "-thinking-auto-high-effort",
+ * "-20251101", "_high"). Stripped one at a time, longest-acting pattern first, so
+ * "claude-opus-4-5-20251101-thinking-64k-high-effort" peels down to "claude-opus-4-5". Promoted
+ * out of scripts/_audit/map-names.mjs (a throwaway tester-registry audit helper) into shared code
+ * here so derive-standings.mjs's benchmark-row matching doesn't reimplement the same list a third
+ * time; naming.mjs already owns "what does a bare model name look like", so this rule about a
+ * tester's own suffix noise belongs next to it, not duplicated per collector. */
+const EFFORT_DATE_SUFFIX_RE = [
+  /-\d{8}$/, // trailing run/snapshot date: -20251101
+  /-\d{4}-\d{2}-\d{2}$/, // -2025-12-11
+  /-thinking-auto-(low|medium|high)-effort$/,
+  /-thinking-\d+k-(low|medium|high|xhigh|max)-effort$/,
+  /-(low|medium|high|xhigh|extra-high)-effort$/,
+  /-max-effort$/,
+  /-(low|medium|high|xhigh|extra-high|max|auto|instant)$/,
+  /-thinking$/,
+  /-preview$/,
+  /_(low|medium|high|xhigh|extra high|max)$/,
+  // 2026-09 fix round: a tester's row can also carry "no reasoning-effort setting reported" or a
+  // vendor-tier noise word, or a context-window suffix — all trailing, all noise, none of them
+  // part of a real catalog id. Every one of these is checked against a real, already-slugged
+  // example row before being added (see the fix-round PR notes); this is candidate GENERATION
+  // only — matchAlias() still requires an EXACT key match against a real catalog id/name/alias,
+  // so a peeled string that happens not to be a real id just never matches anything (no risk of
+  // silently mapping a different version — see the "never map a different version" rule in the
+  // fix-round notes: "-20251101"-style date peeling already existed and is unaffected by this).
+  /-(none|unknown|minimal|promax)$/,
+  /-\d+k$/, // trailing context-window noise a tester sometimes appends: -16k, -32k, -59k, -128k
+];
+
+/** Every stage of peeling a slugged string down through EFFORT_DATE_SUFFIX_RE, starting with the
+ * input itself unstripped — a name matcher tries these in order so a partial strip can match
+ * where a full strip would over-strip (and vice versa). Pure, no I/O. */
+export function effortDateSuffixCandidates(s) {
+  const s0 = String(s || '');
+  const out = new Set([s0]);
+  let cur = s0;
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const re of EFFORT_DATE_SUFFIX_RE) {
+      const next = cur.replace(re, '');
+      if (next !== cur && next.length > 1) { cur = next; out.add(cur); changed = true; break; }
+    }
+  }
+  return [...out];
+}
+
+/** The fully-peeled form only (the last candidate effortDateSuffixCandidates produces). */
+export function stripEffortDateSuffix(s) {
+  const all = effortDateSuffixCandidates(s);
+  return all[all.length - 1];
+}
+
 /** The id a model with this display name must carry. Any leading label and any "(…)" are dropped. */
 export function modelId(name) {
   const bare = String(name || '').replace(LEADING_LABEL, '').replace(/\s*\([^)]*\)/g, ' ');

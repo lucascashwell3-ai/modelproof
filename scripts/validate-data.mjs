@@ -9,11 +9,79 @@ import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { namingProblems, canonicalVendor, VENDORS } from './naming.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
+import { STATUS_VALUES, ADOPTION_VALUES, deriveStatus, deriveAdoption } from './derive-status-adoption.mjs';
+
+// data/testers.json's own tester ids — every standings.measured[].tester must name one of these
+// (scripts/derive-standings.mjs). Read once at module load, same as every other
+// static registry this gate cross-checks against (BENCHES, VENDOR, etc.).
+const TESTERS_FILE = JSON.parse(readFileSync(new URL('../data/testers.json', import.meta.url)));
+const TESTER_IDS = new Set(TESTERS_FILE.testers.map((t) => t.id));
+export const STANDINGS_LICENCE_VALUES = ['display-ok', 'signal-only'];
+// scripts/derive-standings.mjs's EPOCH_FILE_CONFIG entries route by this field on their own
+// data/testers.json per_benchmark entry — "measured" (default, absent counts as this) or
+// "preferred" (a mirrored blind-vote board like webdev_arena_external, brain v2 step 2). Any other
+// value is a typo, not a third kind — this file has never defined one.
+export const EPOCH_PER_BENCHMARK_KIND_VALUES = ['measured', 'preferred'];
 
 const CONF = ['low', 'medium', 'high'];
 const VOCAB = ['reasoning', 'agentic', 'coding', 'research', 'long-context', 'writing', 'cheap-bulk', 'speed', 'vision'];
 const BENCHES = ['swe_bench', 'gpqa', 'aime', 'mmlu_pro'];   // lmarena_elo dropped 2026-08-22
 const num = (v) => v === null || v === undefined || Number.isNaN(v);
+
+// --- judged task fit (task_fit_judged) — the qualitative-evidence gate ------------------------
+// A judged record is a fit band + confidence backed by claims a human (the Judge) actually read.
+// This block checks SHAPE ONLY: every claim carries the required fields, dates are real dates,
+// enums are in-vocab, and no claim/reconciliation sentence uses relative/superlative language a
+// newer model would immediately falsify ("best available", "the top model" — see BANNED_RELATIVE
+// below). It does NOT confirm a quote is actually on the page; that live check is
+// scripts/check-sources.mjs, which fetches every claim's source_url and can't run inside this
+// synchronous, offline gate. The two are complementary, not redundant: this catches a malformed
+// or dishonestly-worded claim before it's even written; check-sources.mjs catches a well-formed
+// claim that quotes something the page doesn't actually say.
+export const JUDGED_BAND_VALUES = ['strong', 'capable', 'weak', 'unknown'];
+export const CLAIM_TIERS = ['lab', 'reported', 'measured', 'usage'];
+// Absolute, dated facts only — a record must stay true after a newer model supersedes this one.
+// Applied to OUR OWN prose (claim.sentence, reconciliation) — never to `quote`, which is verbatim
+// text copied from the source and reproduced as a quotation, not asserted as our own claim.
+export const BANNED_RELATIVE_PATTERNS = [
+  /\bbest available\b/i, /\bthe top model\b/i, /\btop model\b/i, /\bbest[- ]in[- ]class\b/i,
+  /\bstate[- ]of[- ]the[- ]art\b/i, /\bmost capable\b/i, /\bmost advanced\b/i,
+  /\bindustry[- ]leading\b/i, /\bworld'?s best\b/i, /\bunmatched\b/i, /\bunrivale?d\b/i,
+  /\bsuperior to\b/i, /\bbetter than (any|all|every)\b/i, /\bleading model\b/i,
+  /\bcutting[- ]edge\b/i, /\bnumber one\b/i, /\b#1\b/, /\btop[- ]tier\b/i, /\bpremier\b/i,
+  /\bbest model\b/i, /\bthe best\b/i,
+];
+export function bannedPhraseIn(text) {
+  const hit = BANNED_RELATIVE_PATTERNS.find((re) => re.test(String(text || '')));
+  return hit ? hit.source : null;
+}
+export const wordCount = (s) => String(s || '').trim().split(/\s+/).filter(Boolean).length;
+
+// A claim citing one of these hosts can never stay verified, for one of two reasons:
+//   - live feed: the page is one this codebase now re-derives every day into model.standings
+//     (scripts/derive-standings.mjs) — its quoted numbers change daily, and arena.ai no longer
+//     even server-renders its table for scripts/check-sources.mjs to read. The SAME evidence is
+//     already the dated, linked standings.chosen/standings.preferred record — a claim citing
+//     these hosts was only ever restating that, never independent evidence worth its own citation.
+//   - display-banned: artificialanalysis.ai's own terms ban DISPLAYING its content outside a paid
+//     tier (data/testers.json's "artificial-analysis" entry: verdict "signal-only", notes
+//     "Display-BANNED stands" — a claim's `sentence`/`quote` displaying its numbers is exactly
+//     the redistribution its terms reserve; added 2026-09, round 3, after check-sources.mjs also
+//     kept failing 4 of its claims for content drift, on top of the licence problem).
+// 2026-09 migration (scripts/migrate-claims-2026-09.mjs) removed every existing claim citing one
+// of these; this is the permanent gate that stops a new one from being added back in (by
+// apply-judgment.mjs's pre-flight validator, and here, so any other path that writes
+// data/models.json is caught too).
+export const LIVE_FEED_URL_PATTERNS = [
+  /^https:\/\/openrouter\.ai\/api\/frontend\//,
+  /^https:\/\/openrouter\.ai\/rankings/,
+  /^https:\/\/arena\.ai\//,
+  /^https:\/\/(?:www\.)?artificialanalysis\.ai\//,
+];
+export function citesLiveFeed(url) {
+  return LIVE_FEED_URL_PATTERNS.some((re) => re.test(String(url || '')));
+}
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export function validate(data, registry) {
   const errors = [], warnings = [];
@@ -173,10 +241,203 @@ export function validate(data, registry) {
         E(`${id}: task_fit.${t} has a score but an empty basis[] — every score must trace to at least one field`);
       }
     }
-    // task_fit_judged is reserved for a future Judge override (scripts/derive-task-fit.mjs's
-    // header) that doesn't exist yet — v1 must keep it null, or a stray value would silently
-    // start overriding rule-based fit with nothing behind it.
-    if (m.task_fit_judged !== null) E(`${id}: task_fit_judged must be null in v1 (no Judge pass exists yet) — got ${JSON.stringify(m.task_fit_judged)}`);
+  }
+
+  // 10b. task_fit_judged (sourced qualitative fit, scripts/refresh-judge.md): null (no judged
+  // records yet) or an object keyed by a SUBSET of TASK_IDS — unlike task_fit, judged fit is
+  // sparse by design; most models will only ever have a judged record for the handful of tasks
+  // someone actually researched. Every record needs band + confidence (both enumerated) and a
+  // non-empty claims[], each claim carrying source_url + tier + date + a verbatim quote of at
+  // most 25 words. See the BANNED_RELATIVE comment above for why sentence/reconciliation get a
+  // phrase gate here — the "is this quote real" gate is scripts/check-sources.mjs's job.
+  for (const m of data.models) {
+    const id = m.name || m.id || '(unnamed)';
+    const tfj = m.task_fit_judged;
+    if (tfj == null) continue; // valid: no judged records for this model yet
+    if (typeof tfj !== 'object' || Array.isArray(tfj)) { E(`${id}: task_fit_judged must be null or an object keyed by task id`); continue; }
+    for (const taskId of Object.keys(tfj)) {
+      const rec = tfj[taskId];
+      const label = `${id}: task_fit_judged.${taskId}`;
+      if (!TASK_IDS.includes(taskId)) { E(`${label} — "${taskId}" is not one of ${TASK_IDS.join(', ')}`); continue; }
+      if (!rec || typeof rec !== 'object') { E(`${label} must be an object`); continue; }
+      if (!JUDGED_BAND_VALUES.includes(rec.band)) E(`${label}.band "${rec.band}" must be one of ${JUDGED_BAND_VALUES.join(', ')}`);
+      if (!CONF.includes(rec.confidence)) E(`${label}.confidence "${rec.confidence}" must be one of ${CONF.join(', ')}`);
+      if (!rec.as_of || !DATE_RE.test(rec.as_of)) E(`${label}.as_of "${rec.as_of}" must be a YYYY-MM-DD date`);
+      if (rec.reconciliation != null) {
+        if (typeof rec.reconciliation !== 'string') E(`${label}.reconciliation must be a string or null`);
+        else {
+          const hit = bannedPhraseIn(rec.reconciliation);
+          if (hit) E(`${label}.reconciliation uses a banned relative phrase (/${hit}/) — statements must be absolute and dated, never relative`);
+        }
+      }
+      if (!Array.isArray(rec.claims) || !rec.claims.length) { E(`${label}.claims must be a non-empty array`); continue; }
+      rec.claims.forEach((c, i) => {
+        const cl = `${label}.claims[${i}]`;
+        if (!c || typeof c !== 'object') { E(`${cl} must be an object`); return; }
+        if (!c.sentence || typeof c.sentence !== 'string') E(`${cl}.sentence is required`);
+        else {
+          const hit = bannedPhraseIn(c.sentence);
+          if (hit) E(`${cl}.sentence uses a banned relative phrase (/${hit}/) — write an absolute, dated fact instead`);
+        }
+        if (!c.source_url || !/^https?:\/\//i.test(c.source_url)) E(`${cl}.source_url "${c.source_url}" must be http(s)`);
+        else if (citesLiveFeed(c.source_url)) E(`${cl}.source_url "${c.source_url}" cites a live feed this codebase already re-derives daily into standings (OpenRouter rankings/arena.ai) — its numbers change every day and can never stay verified by scripts/check-sources.mjs; cite the standings record instead (model.standings[taskId]), or a stable page`);
+        if (!CLAIM_TIERS.includes(c.tier)) E(`${cl}.tier "${c.tier}" must be one of ${CLAIM_TIERS.join(', ')}`);
+        if (!c.date || !DATE_RE.test(c.date)) E(`${cl}.date "${c.date}" must be a YYYY-MM-DD date`);
+        if (!c.quote || typeof c.quote !== 'string') E(`${cl}.quote is required (verbatim text copied from source_url)`);
+        else if (wordCount(c.quote) > 25) E(`${cl}.quote is ${wordCount(c.quote)} word(s) — must be ≤25 words, copied verbatim from the source`);
+      });
+    }
+  }
+
+  // 10c. usage.openrouter (added with judged task fit, 2026-09-06) — same honesty rule as
+  // everything else: sourced or null, never guessed. Every model needs the field (even
+  // all-null), mirroring availability{}'s always-present-but-sourced-or-null shape. "category"
+  // is free text in v1 (e.g. "overall") rather than a fixed vocab, because the only feed found
+  // so far (scripts/data-sources.md, added 2026-09-06) reports total token volume, not a
+  // per-task breakdown — never invent a task split the source doesn't give.
+  for (const m of data.models) {
+    const id = m.name || m.id || '(unnamed)';
+    const u = m.usage;
+    if (u == null || typeof u !== 'object' || Array.isArray(u)) { E(`${id}: usage{} is required (openrouter: null | {...}) — every model needs the field, even all-null`); continue; }
+    if (!('openrouter' in u)) { E(`${id}: usage.openrouter is required (null when not sourced)`); continue; }
+    const or = u.openrouter;
+    if (or == null) continue;
+    if (typeof or !== 'object' || Array.isArray(or)) { E(`${id}: usage.openrouter must be null or an object`); continue; }
+    if (!or.category || typeof or.category !== 'string') E(`${id}: usage.openrouter.category is required`);
+    if (typeof or.share !== 'number' || Number.isNaN(or.share) || or.share < 0 || or.share > 100) E(`${id}: usage.openrouter.share "${or.share}" must be 0-100`);
+    if (!Number.isInteger(or.rank) || or.rank < 1) E(`${id}: usage.openrouter.rank "${or.rank}" must be a positive integer`);
+    if (!or.as_of || !DATE_RE.test(or.as_of)) E(`${id}: usage.openrouter.as_of "${or.as_of}" must be a YYYY-MM-DD date`);
+    if (!or.source_url || !/^https?:\/\//i.test(or.source_url)) E(`${id}: usage.openrouter.source_url must be http(s)`);
+  }
+
+  // 10d. status / adoption (scripts/derive-status-adoption.mjs, added with the judged-ranking
+  // rewrite, 2026-09-07) — model-level, not per-task, because assets/decide.mjs's "a preview SKU
+  // or a low-adoption model can never be start_here" gate has to fire even on a task with no
+  // judged record at all (the exact gap a 0.16%-share preview model exploited to top "research"
+  // on a benchmark number alone). Both are pure derivations of fields the catalog already
+  // sources — model.deprecated / model.name for status, usage.openrouter.share for adoption — so
+  // this gate re-derives them and requires an exact match, the same cross-check pattern rule 6
+  // above uses for SWE-bench: a hand-edited or stale value drifting from its own source is a bug,
+  // not a matter of opinion.
+  for (const m of data.models) {
+    const id = m.name || m.id || '(unnamed)';
+    if (!STATUS_VALUES.includes(m.status)) { E(`${id}: status "${m.status}" must be one of ${STATUS_VALUES.join(', ')}`); continue; }
+    if (!ADOPTION_VALUES.includes(m.adoption)) { E(`${id}: adoption "${m.adoption}" must be one of ${ADOPTION_VALUES.join(', ')}`); continue; }
+    const wantStatus = deriveStatus(m).status;
+    if (m.status !== wantStatus) E(`${id}: status "${m.status}" doesn't match what deriveStatus() computes from this model's own name/deprecated flag ("${wantStatus}") — re-run scripts/derive-status-adoption.mjs`);
+    const wantAdoption = deriveAdoption(m, data.as_of).adoption;
+    if (m.adoption !== wantAdoption) E(`${id}: adoption "${m.adoption}" doesn't match what deriveAdoption() computes from usage.openrouter.share ("${wantAdoption}") — re-run scripts/derive-status-adoption.mjs`);
+  }
+
+  // 10e. signals (scripts/derive-signals.mjs, added with the calibration fix, 2026-09-07) —
+  // per-task real-world-signal counts assets/decide.mjs's rule 3b reads to downgrade a
+  // thinly-evidenced judged "strong" to "capable". Same honesty rule as everywhere else:
+  // usage_rank/arena_rank are a positive integer or null (never 0 or negative — "rank 0" isn't a
+  // real rank), usage_share is 0-100 or null, expert_default is `true` or null (never `false` —
+  // the same "not confirmed, never confirmed absent" convention availability{}'s
+  // AVAIL_BOOL_OR_NULL_ONLY_TRUE uses, since a model absent from Cursor/Claude Code/Anthropic's
+  // published shortlists was simply never on any of them, not affirmatively rejected), and
+  // `families` must be an exact cross-check of the other three fields (same pattern rule 10d uses
+  // for status/adoption) — never a hand-typed number that could drift from what the three actual
+  // fields say.
+  for (const m of data.models) {
+    const id = m.name || m.id || '(unnamed)';
+    const sig = m.signals;
+    if (sig == null || typeof sig !== 'object' || Array.isArray(sig)) { E(`${id}: missing signals{} (scripts/derive-signals.mjs) — every model needs one, keyed by every task id`); continue; }
+    const keys = Object.keys(sig);
+    for (const t of TASK_IDS) if (!keys.includes(t)) E(`${id}: signals missing "${t}"`);
+    for (const t of keys) if (!TASK_IDS.includes(t)) E(`${id}: signals has unknown task "${t}" — not one of ${TASK_IDS.join(', ')}`);
+    for (const t of TASK_IDS) {
+      const rec = sig[t];
+      const label = `${id}: signals.${t}`;
+      if (rec == null || typeof rec !== 'object') { E(`${label} must be an object`); continue; }
+      if (rec.usage_rank !== null && (!Number.isInteger(rec.usage_rank) || rec.usage_rank < 1)) E(`${label}.usage_rank "${rec.usage_rank}" must be null or a positive integer`);
+      if (rec.usage_share !== null && (typeof rec.usage_share !== 'number' || Number.isNaN(rec.usage_share) || rec.usage_share < 0 || rec.usage_share > 100)) E(`${label}.usage_share "${rec.usage_share}" must be null or 0-100`);
+      if (rec.arena_rank !== null && (!Number.isInteger(rec.arena_rank) || rec.arena_rank < 1)) E(`${label}.arena_rank "${rec.arena_rank}" must be null or a positive integer`);
+      if (rec.expert_default !== null && rec.expert_default !== true) E(`${label}.expert_default is "${rec.expert_default}" — must be true or null (never false — absence isn't confirmed rejection)`);
+      const wantFamilies = (rec.usage_rank !== null ? 1 : 0) + (rec.arena_rank !== null ? 1 : 0) + (rec.expert_default === true ? 1 : 0);
+      if (rec.families !== wantFamilies) E(`${label}.families "${rec.families}" doesn't match the count of its own usage_rank/arena_rank/expert_default fields (${wantFamilies}) — re-run scripts/derive-signals.mjs`);
+    }
+  }
+
+  // 10f. standings (scripts/derive-standings.mjs, 2026-09-07) — the three kinds
+  // of evidence (measured / chosen / preferred), kept separate, that later feed a ranking this
+  // gate does not itself compute. Same honesty rule as everywhere else: a task with no evidence
+  // gets measured: [] (never a missing key) and chosen/preferred: null (never a guessed object);
+  // every measured row must name a real tester (data/testers.json), a real rank inside its own
+  // n_models, a real date, a real URL, and a licence class that is display-ok or signal-only —
+  // "banned" must never appear here (a banned tester is excluded from standings entirely, not
+  // downgraded); a signal-only row may never carry a score (that's the whole point of
+  // signal-only — cite the tester, never republish its number).
+  for (const m of data.models) {
+    const id = m.name || m.id || '(unnamed)';
+    const st = m.standings;
+    if (st == null || typeof st !== 'object' || Array.isArray(st)) { E(`${id}: missing standings{} (scripts/derive-standings.mjs) — every model needs one, keyed by every task id`); continue; }
+    if (!st.as_of || !DATE_RE.test(st.as_of)) E(`${id}: standings.as_of "${st.as_of}" must be a YYYY-MM-DD date`);
+    for (const t of TASK_IDS) if (!(t in st)) E(`${id}: standings missing "${t}"`);
+    for (const t of Object.keys(st)) if (t !== 'as_of' && !TASK_IDS.includes(t)) E(`${id}: standings has unknown task "${t}" — not one of ${TASK_IDS.join(', ')}`);
+    for (const taskId of TASK_IDS) {
+      const rec = st[taskId];
+      const label = `${id}: standings.${taskId}`;
+      if (rec == null || typeof rec !== 'object') { E(`${label} must be an object`); continue; }
+      if (!Array.isArray(rec.measured)) { E(`${label}.measured must be an array (empty when nothing was found — never a missing key)`); }
+      else rec.measured.forEach((row, i) => {
+        const rl = `${label}.measured[${i}]`;
+        if (!row || typeof row !== 'object') { E(`${rl} must be an object`); return; }
+        if (!TESTER_IDS.has(row.tester)) E(`${rl}.tester "${row.tester}" does not name a tester id in data/testers.json`);
+        if (!row.benchmark || typeof row.benchmark !== 'string') E(`${rl}.benchmark is required`);
+        if (!Number.isInteger(row.n_models) || row.n_models < 1) E(`${rl}.n_models "${row.n_models}" must be a positive integer`);
+        else if (!Number.isInteger(row.rank) || row.rank < 1 || row.rank > row.n_models) E(`${rl}.rank "${row.rank}" must be an integer between 1 and n_models (${row.n_models})`);
+        if (!row.as_of || !DATE_RE.test(row.as_of)) E(`${rl}.as_of "${row.as_of}" must be a YYYY-MM-DD date`);
+        if (!row.url || !/^https?:\/\//i.test(row.url)) E(`${rl}.url "${row.url}" must be http(s)`);
+        if (!STANDINGS_LICENCE_VALUES.includes(row.licence)) E(`${rl}.licence "${row.licence}" must be one of ${STANDINGS_LICENCE_VALUES.join(', ')} — a banned tester must never appear in standings at all`);
+        if (row.licence === 'signal-only' && row.score !== null) E(`${rl}.score must be null for a signal-only tester — cite it, never republish its number`);
+        if (row.score !== null && typeof row.score !== 'number') E(`${rl}.score "${row.score}" must be a number or null`);
+      });
+      if (rec.chosen != null) {
+        const c = rec.chosen;
+        const cl = `${label}.chosen`;
+        if (typeof c !== 'object') E(`${cl} must be null or an object`);
+        else {
+          if (!Number.isInteger(c.n_models) || c.n_models < 1) E(`${cl}.n_models "${c.n_models}" must be a positive integer`);
+          else if (!Number.isInteger(c.rank) || c.rank < 1 || c.rank > c.n_models) E(`${cl}.rank "${c.rank}" must be an integer between 1 and n_models (${c.n_models})`);
+          if (typeof c.share !== 'number' || Number.isNaN(c.share) || c.share < 0 || c.share > 100) E(`${cl}.share "${c.share}" must be 0-100`);
+          if (!Array.isArray(c.tags)) E(`${cl}.tags must be an array (may be empty for bulk's token-volume rule)`);
+          if (!c.as_of || !DATE_RE.test(c.as_of)) E(`${cl}.as_of "${c.as_of}" must be a YYYY-MM-DD date`);
+          if (!c.url || !/^https?:\/\//i.test(c.url)) E(`${cl}.url "${c.url}" must be http(s)`);
+        }
+      }
+      if (rec.preferred != null) {
+        const p = rec.preferred;
+        const pl = `${label}.preferred`;
+        if (typeof p !== 'object') E(`${pl} must be null or an object`);
+        else {
+          if (!p.board || typeof p.board !== 'string') E(`${pl}.board is required`);
+          if (!Number.isInteger(p.n_models) || p.n_models < 1) E(`${pl}.n_models "${p.n_models}" must be a positive integer`);
+          else if (!Number.isInteger(p.rank) || p.rank < 1 || p.rank > p.n_models) E(`${pl}.rank "${p.rank}" must be an integer between 1 and n_models (${p.n_models})`);
+          if (!p.as_of || !DATE_RE.test(p.as_of)) E(`${pl}.as_of "${p.as_of}" must be a YYYY-MM-DD date`);
+          if (!p.url || !/^https?:\/\//i.test(p.url)) E(`${pl}.url "${p.url}" must be http(s)`);
+          // licence/score are OPTIONAL on preferred (a plain arena.ai capture carries neither) —
+          // only present when the evidence actually came from a licensed/scored feed reused as
+          // preferred (e.g. an Epoch mirror, brain v2 step 2). Same honesty rule as measured's
+          // signal-only row above: a signal-only preferred entry may never carry a real score.
+          if (p.licence !== undefined && !STANDINGS_LICENCE_VALUES.includes(p.licence)) E(`${pl}.licence "${p.licence}" must be one of ${STANDINGS_LICENCE_VALUES.join(', ')}`);
+          if (p.score !== undefined && p.score !== null && typeof p.score !== 'number') E(`${pl}.score "${p.score}" must be null or a number`);
+          if (p.licence === 'signal-only' && p.score !== null && p.score !== undefined) E(`${pl}.score must be null for a signal-only preferred entry — cite it, never republish its number`);
+        }
+      }
+    }
+  }
+
+  // 10g. data/testers.json's own per_benchmark `kind` field (scripts/derive-standings.mjs's
+  // EPOCH_FILE_CONFIG reads this to route a set into measured vs. preferred — see 10f above).
+  // Absent means "measured"; anything present that isn't one of the two known values is a typo.
+  for (const tester of TESTERS_FILE.testers) {
+    for (const [file, meta] of Object.entries(tester.mapping?.per_benchmark || {})) {
+      if (meta.kind !== undefined && !EPOCH_PER_BENCHMARK_KIND_VALUES.includes(meta.kind)) {
+        E(`data/testers.json: ${tester.id}.mapping.per_benchmark["${file}"].kind "${meta.kind}" must be one of ${EPOCH_PER_BENCHMARK_KIND_VALUES.join(', ')} (or absent, meaning "measured")`);
+      }
+    }
   }
 
   return { errors, warnings };

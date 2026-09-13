@@ -7,8 +7,9 @@ import {
   buildWorklist, bestForLine, needsGuidance, pickGuidance, guidanceItem, parseCsv, refreshCursorBench,
   releaseTitle, isKnownCandidate, findKnownModel, admissionFailReasons, formatDropLine,
   normalizeDisplayName, findNewCandidateIds, decideRefreshRun, DAILY_FULL_RUN_HOUR_UTC,
+  needsJudgedFit, pickJudgedFit, judgedFitItem, reJudgeWorklistItems, stripProviderPrefix,
 } from './auto-refresh.mjs';
-import { modelId, canonicalVendor, bareModelName, isCommunityListing, namingProblems, VENDORS, isCanonicalVendor } from './naming.mjs';
+import { modelId, canonicalVendor, bareModelName, isCommunityListing, namingProblems, VENDORS, isCanonicalVendor, effortDateSuffixCandidates, stripEffortDateSuffix } from './naming.mjs';
 import { validate } from './validate-data.mjs';
 import { TASK_IDS } from './derive-task-fit.mjs';
 
@@ -282,6 +283,15 @@ test('canonicalKey strips provider prefixes, date suffixes, and separators', () 
   assert.equal(canonicalKey('deepseek/deepseek-v4-pro'), canonicalKey('deepseek-v4-pro'));
 });
 
+// 2026-09 fix round: OpenRouter's rankings/models feed dates some permaslugs with a full ISO
+// calendar date ("openai/o4-mini-2025-04-16") instead of the contiguous 8-digit form
+// ("anthropic/claude-opus-5-20260723") — both must strip down to the same bare id, or a model's
+// real usage silently reads as null forever (o4-mini's exact bug).
+test('canonicalKey also strips the ISO-hyphenated date form some feeds use ("-2025-04-16")', () => {
+  assert.equal(canonicalKey('openai/o4-mini-2025-04-16'), canonicalKey('o4-mini'));
+  assert.equal(canonicalKey('openai/o4-mini-high-2025-04-16'), canonicalKey('o4-mini-high'));
+});
+
 // --- isKnownCandidate: point releases are NEW models, real aliases still dedupe ----------------
 // Bug (2026-09-06, verified live): isKnownCandidate compared fully-stripped canonicalKey values
 // with substring containment. canonicalKey deletes every separator, so "claude-fable-5" ->
@@ -427,6 +437,14 @@ test('buildWorklist orders new-model > conflict > deprecation > benchmark > ladd
   assert.deepEqual(out.map((i) => i.kind), ['new-model', 'conflict', 'deprecation', 'benchmark', 'ladder', 'release']);
 });
 
+test('buildWorklist places judged-fit after guidance, both below every other kind', () => {
+  const items = [
+    { id: 'j1', kind: 'judged-fit' }, { id: 'g1', kind: 'guidance' }, { id: 'r1', kind: 'release' },
+  ];
+  const out = buildWorklist(items);
+  assert.deepEqual(out.map((i) => i.kind), ['release', 'guidance', 'judged-fit']);
+});
+
 test('buildWorklist caps at 15 items, keeping highest priority', () => {
   const items = [];
   for (let i = 0; i < 20; i++) items.push({ id: `release-${i}`, kind: 'release' });
@@ -521,6 +539,73 @@ test('guidance items sort last, keep their reserved slots when conflicts overflo
   assert.equal(out.filter((i) => i.kind === 'conflict').length, 12);
   // with no guidance candidates the full 15 go to the rest
   assert.equal(buildWorklist(many).length, 15);
+});
+
+// --- judged task fit rotation (2026-09-06) --------------------------------------------------
+const TF_NULL = (reason) => ({ score: null, basis: [], reason });
+const J = (id, extra = {}) => ({
+  id, name: id, price_input: 1, price_output: 2,
+  task_fit: Object.fromEntries(TASK_IDS.map((t) => [t, TF_NULL('fixture')])),
+  task_fit_judged: null,
+  ...extra,
+});
+test('needsJudgedFit: a model with any null task and no judged record needs one; fully covered or deprecated models don\'t', () => {
+  assert.equal(needsJudgedFit(J('a')), true);
+  assert.equal(needsJudgedFit(J('b', { deprecated: true })), false);
+  const fullyJudged = J('c', { task_fit_judged: Object.fromEntries(TASK_IDS.map((t) => [t, { band: 'capable', confidence: 'low', claims: [], reconciliation: null, as_of: '2026-09-01' }])) });
+  assert.equal(needsJudgedFit(fullyJudged), false);
+  const oneTaskLeft = J('d', { task_fit: { ...J('d').task_fit, coding: { score: 80, basis: ['coding_score'] } } });
+  assert.equal(needsJudgedFit(oneTaskLeft), true); // still 9 other null tasks
+});
+test('pickJudgedFit takes at most perRun, newest-released first when usage is unsourced, then rotates by id', () => {
+  const models = [J('m1', { released: '2026-01-01' }), J('m2', { released: '2026-06-01' }), J('m3', { released: '2026-03-01' })];
+  const { picked, cursor } = pickJudgedFit(models, {}, 2);
+  assert.deepEqual(picked, ['m2', 'm3']); // newest two by released date
+  assert.equal(cursor, 'm3');
+});
+test('pickJudgedFit prefers a sourced usage share over release date', () => {
+  const models = [
+    J('old-but-popular', { released: '2026-01-01', usage: { openrouter: { share: 40 } } }),
+    J('new-but-obscure', { released: '2026-08-01' }),
+  ];
+  const { picked } = pickJudgedFit(models, {}, 1);
+  assert.deepEqual(picked, ['old-but-popular']);
+});
+test('pickJudgedFit rotates: the next run resumes after the cursor and wraps around', () => {
+  const models = ['m1', 'm2', 'm3'].map((id) => J(id));
+  const r1 = pickJudgedFit(models, {}, 2);
+  assert.deepEqual(r1.picked, ['m1', 'm2']);
+  const r2 = pickJudgedFit(models, { judgedFitCursor: r1.cursor }, 2);
+  assert.deepEqual(r2.picked, ['m3', 'm1']);
+});
+test('pickJudgedFit: models with every task judged drop out; empty catalog returns nothing', () => {
+  const fullyJudged = J('done', { task_fit_judged: Object.fromEntries(TASK_IDS.map((t) => [t, { band: 'weak', confidence: 'low', claims: [], reconciliation: null, as_of: '2026-09-01' }])) });
+  assert.deepEqual(pickJudgedFit([fullyJudged, J('open')], {}, 5).picked, ['open']);
+  assert.deepEqual(pickJudgedFit([], {}, 5).picked, []);
+});
+test('judgedFitItem names exactly the tasks still missing a basis, and is a judged-fit worklist item', () => {
+  const m = J('m1', { name: 'M One', task_fit: { ...J('m1').task_fit, coding: { score: 80, basis: ['coding_score'] } } });
+  const item = judgedFitItem(m, '2026-09-06');
+  assert.equal(item.kind, 'judged-fit');
+  assert.equal(item.id, 'm1:judged-fit');
+  assert.doesNotMatch(item.ask, /\bcoding\b,/); // coding already has a quantitative score — not asked about
+  assert.match(item.ask, /agents/);
+});
+test('reJudgeWorklistItems: a same-vendor successor queues every judged task the OTHER model already carries, and only that vendor', () => {
+  const predecessor = J('old-1', { name: 'Old One', vendor: 'Acme', task_fit_judged: { coding: { band: 'capable', confidence: 'medium', claims: [], reconciliation: null, as_of: '2026-08-01' } } });
+  const otherVendor = J('other-1', { name: 'Other One', vendor: 'OtherCo', task_fit_judged: { coding: { band: 'strong', confidence: 'high', claims: [], reconciliation: null, as_of: '2026-08-01' } } });
+  const noJudgedYet = J('old-2', { name: 'Old Two', vendor: 'Acme', task_fit_judged: null });
+  const newModel = J('new-1', { name: 'New One', vendor: 'Acme' });
+  const items = reJudgeWorklistItems(newModel, [predecessor, otherVendor, noJudgedYet, newModel], '2026-09-06');
+  assert.equal(items.length, 1);
+  assert.equal(items[0].model, 'Old One');
+  assert.equal(items[0].kind, 'judged-fit');
+  assert.match(items[0].ask, /New One/);
+  assert.match(items[0].ask, /coding/);
+});
+test('reJudgeWorklistItems: no items when nothing from that vendor has a judged record yet', () => {
+  const newModel = J('new-1', { name: 'New One', vendor: 'Acme' });
+  assert.deepEqual(reJudgeWorklistItems(newModel, [J('sibling', { vendor: 'Acme' }), newModel], '2026-09-06'), []);
 });
 
 // --- CursorBench ladder refresh from Epoch's CSV (2026-08-22) ----------------------------------
@@ -666,6 +751,81 @@ test('canonicalKey strips ANY routing segment, so a clean id still meets its Ope
   assert.equal(matchAlias('tencent/hy4-preview', models, {}), 'hy4-preview');
 });
 
+// --- stripProviderPrefix: hyphen-joined vendor prefixes (2026-09-07) ---------------------------
+// ARC Prize's own modelId strings ("anthropic-claude-fable-5-1-high") join the vendor with a
+// hyphen instead of a "/" or a ".", which the pre-fix PROVIDER_PREFIX regex never matched
+// (data/testers.json's arc-prize entry flagged this live, 2026-09-07).
+test('stripProviderPrefix strips a hyphen-joined vendor prefix ARC Prize actually publishes', () => {
+  assert.equal(stripProviderPrefix('anthropic-claude-fable-5-1-high'), 'claude-fable-5-1-high');
+  assert.equal(stripProviderPrefix('google-gemini-3-7-flash-high'), 'gemini-3-7-flash-high');
+  assert.equal(stripProviderPrefix('x-ai-grok-4-6'), 'grok-4-6');
+  assert.equal(stripProviderPrefix('meta-muse-spark-1-2'), 'muse-spark-1-2');
+  // 2026-09 fix round: Epoch's own shorthand for Thinking Machines Lab — no catalog id starts
+  // with "thinky", checked against the whole catalog before adding this.
+  assert.equal(stripProviderPrefix('thinky-inkling'), 'inkling');
+});
+test('stripProviderPrefix never strips a vendor word that is also a real catalog id\'s own first word', () => {
+  // "gemini"/"deepseek"/"qwen" are both vendor aliases AND the literal first word of a real
+  // catalog id — stripping them here would corrupt canonicalKey for our own models.
+  assert.equal(stripProviderPrefix('gemini-3-1-pro'), 'gemini-3-1-pro');
+  assert.equal(stripProviderPrefix('deepseek-v4-pro'), 'deepseek-v4-pro');
+  assert.equal(stripProviderPrefix('qwen-turbo'), 'qwen-turbo');
+  assert.equal(canonicalKey('gemini-3-1-pro'), canonicalKey('Gemini 3.1 Pro'));
+  assert.equal(canonicalKey('deepseek-v4-pro'), canonicalKey('DeepSeek V4 Pro'));
+});
+test('stripProviderPrefix still strips the existing slash/dot forms unchanged', () => {
+  assert.equal(stripProviderPrefix('anthropic/claude-opus-5'), 'claude-opus-5');
+  assert.equal(stripProviderPrefix('vertex_ai.gemini-3.5-flash'), 'gemini-3.5-flash');
+});
+
+// --- effortDateSuffixCandidates / stripEffortDateSuffix (promoted from scripts/_audit/map-names.mjs) ---
+test('stripEffortDateSuffix peels reasoning-effort, thinking-mode and date suffixes down to a bare slug', () => {
+  assert.equal(stripEffortDateSuffix('claude-opus-4-5-20251101-thinking-64k-high-effort'), 'claude-opus-4-5');
+  assert.equal(stripEffortDateSuffix('claude-fable-5-1_high'), 'claude-fable-5-1');
+  assert.equal(stripEffortDateSuffix('gemini-3-7-flash-high'), 'gemini-3-7-flash');
+  assert.equal(stripEffortDateSuffix('gpt-5-6-sol'), 'gpt-5-6-sol'); // no known suffix — unchanged
+});
+test('effortDateSuffixCandidates includes every intermediate peel, starting with the input itself', () => {
+  const cands = effortDateSuffixCandidates('claude-fable-5-1-max-effort');
+  assert.ok(cands.includes('claude-fable-5-1-max-effort'));
+  assert.ok(cands.includes('claude-fable-5-1'));
+});
+
+// 2026-09 fix round: a tester row can carry "no reasoning-effort setting reported" (none/unknown),
+// a vendor-tier noise word (minimal/promax), or a context-window suffix (16k/32k/59k/128k) — all
+// of these were previously left unstripped, silently dropping real coverage (see the PR notes for
+// the exact standings-unmapped.md names this fixes: claude-opus-5_unknown, gpt-5.6-sol_none,
+// claude-haiku-4-5-20251001_32K, etc. — every example below is one of those real names, slugged).
+test('stripEffortDateSuffix: none/unknown/minimal/promax and context-window (…k) suffixes are noise, not part of the id', () => {
+  assert.equal(stripEffortDateSuffix('claude-opus-5-unknown'), 'claude-opus-5');
+  assert.equal(stripEffortDateSuffix('gpt-5-6-sol-none'), 'gpt-5-6-sol');
+  assert.equal(stripEffortDateSuffix('deepseek-v4-flash-none'), 'deepseek-v4-flash');
+  assert.equal(stripEffortDateSuffix('grok-4-5-unknown'), 'grok-4-5');
+  assert.equal(stripEffortDateSuffix('some-model-minimal'), 'some-model');
+  assert.equal(stripEffortDateSuffix('some-model-promax'), 'some-model');
+  assert.equal(stripEffortDateSuffix('claude-haiku-4-5-20251001-32k'), 'claude-haiku-4-5', 'both the date suffix and the context-size suffix peel off, in either order');
+  assert.equal(stripEffortDateSuffix('some-model-16k'), 'some-model');
+  assert.equal(stripEffortDateSuffix('some-model-128k'), 'some-model');
+});
+
+// This is candidate GENERATION only (effortDateSuffixCandidates never asserts a real id exists) —
+// the actual safety comes from matchAlias() requiring an EXACT key match, tested here end to end
+// against real fixture models so a peeled candidate that happens not to be a real catalog id
+// simply matches nothing, and a genuinely different version is never silently conflated with one
+// that merely shares a prefix.
+test('matchAlias safety: a fully-peeled candidate that names a DIFFERENT real version never matches the wrong one', () => {
+  const models = JSON.parse(readFileSync(new URL('./fixtures/models.json', import.meta.url))).models;
+  const aliases = JSON.parse(readFileSync(new URL('./model-aliases.json', import.meta.url)));
+  const peeledButUnreal = [
+    stripEffortDateSuffix('claude-opus-4-5-20251101'), // NOT claude-opus-5
+    stripEffortDateSuffix('gpt-5-2025-08-07'), // NOT gpt-5-5
+  ];
+  for (const cand of peeledButUnreal) assert.equal(matchAlias(cand, models, aliases), null, `"${cand}" must not match any catalog model`);
+  // deepseek-v4-flash-0731 is its OWN catalog id (a 4-digit date, not an 8-digit run/snapshot
+  // date) — the date-suffix regex only strips 8-digit dates, so this must survive unstripped.
+  assert.equal(stripEffortDateSuffix('deepseek-v4-flash-0731'), 'deepseek-v4-flash-0731');
+});
+
 test('namingProblems: a clean record has none', () => {
   assert.deepEqual(namingProblems({ id: 'gemini-3-8-flash', name: 'Gemini 3.8 Flash', vendor: 'Google' }), []);
   assert.deepEqual(namingProblems({ id: 'gemini-3-1-pro', name: 'Gemini 3.1 Pro (Preview)', vendor: 'Google' }), []);
@@ -677,8 +837,10 @@ const REGISTRY = { sources: [] };
 // task_fit{} + task_fit_judged so the (separate) task_fit gate never fires here and each test
 // stays about the one naming rule it names.
 const BLANK_TASK_FIT = Object.fromEntries(TASK_IDS.map((t) => [t, { score: null, basis: [], reason: 'naming-rule test fixture — task fit not exercised here' }]));
+const BLANK_SIGNALS = Object.fromEntries(TASK_IDS.map((t) => [t, { usage_rank: null, usage_share: null, arena_rank: null, expert_default: null, families: 0 }]));
+const BLANK_STANDINGS = { as_of: '2026-09-07', ...Object.fromEntries(TASK_IDS.map((t) => [t, { measured: [], chosen: null, preferred: null }])) };
 const cleanData = (models) => ({
-  models: models.map((m) => ({ task_fit: BLANK_TASK_FIT, task_fit_judged: null, ...m })),
+  models: models.map((m) => ({ task_fit: BLANK_TASK_FIT, task_fit_judged: null, usage: { openrouter: null }, status: 'ga', adoption: 'unknown', signals: BLANK_SIGNALS, standings: BLANK_STANDINGS, ...m })),
   releases: [],
   effort_ladders: [],
 });

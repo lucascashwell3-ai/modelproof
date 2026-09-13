@@ -1,0 +1,50 @@
+{
+  "_readme": "The exact set of scripts/fixtures/eval/situations.json situation ids the engine (assets/decide.mjs) misses against THIS frozen fixture snapshot, each with a one-line reason: the engine's own pick + the evidence it actually graded it on, versus the key's expected pick + what the key's own rationale leaned on. scripts/test-eval-situations.mjs asserts the LIVE miss set equals this list EXACTLY (a new miss or a newly-passing situation both fail that test) so a real behavior change is always reviewed and this file updated deliberately, never silently absorbed. Root cause common to most of these: the cold key's own rationale field cites 'families' (a: revealed_choice_openrouter, b: human_votes_arena, c: expert_defaults, d: enterprise_evidence) drafted from vendor expert-default rosters and cited enterprise case studies that this engine deliberately does not rank on (only standings.measured/chosen/preferred count) — see assets/decide.mjs's file header. Updated 2026-09-13, round 4: 'cheapest' no longer lets a same-task T1 candidate block an 'early' item from start_here (cost-primary, exactly like the existing preview exemption); the 'tests-only' cap stays stance-independent. This added S02 to the miss set (a genuinely evidenced cheapest pick the key, drafted before that model existed, could not have known) and removed none. must-never 15/15.",
+  "as_of": "2026-09-13",
+  "disagreements": [
+    {
+      "id": "S02",
+      "reason": "round 4: engine now correctly starts with deepseek-v4-1-flash (tier 2 'early', $0.60/mo, measured #1/39 on LiveBench Coding) once 'cheapest' stopped letting a same-task T1 candidate block an 'early' item from start_here; key expects gpt-5-6-luna — the key predates this model's admission to the catalog (added by this same PR's own Collect refresh), so it had no way to know about it."
+    },
+    {
+      "id": "S10",
+      "reason": "engine picks gemini-3-5-flash (tier 5 'tested' — measured 16/23, nothing near top on any kind, a weak field per decide()'s own honesty line); key expects gemini-3-7-flash/gemini-3-8-flash from vendor-guidance/enterprise signals outside standings."
+    },
+    {
+      "id": "S11",
+      "reason": "engine picks gemini-2-5-flash-lite (tier 1 'single-signal' — chosen position 5/63, genuinely top of real bulk token-share data); key expects deepseek-v4-flash-0731 from its own 'families' scoring, not standings.chosen."
+    },
+    {
+      "id": "S12",
+      "reason": "same as S11 under noChinaHosted — engine still picks gemini-2-5-flash-lite (chosen 5/63); key expects gpt-5-6-luna."
+    },
+    {
+      "id": "S14",
+      "reason": "same as S11 under 'balanced' — engine still picks gemini-2-5-flash-lite; key expects deepseek-v4-flash or gpt-5-6-luna from its own family count, not real chosen-share position."
+    },
+    {
+      "id": "S23",
+      "reason": "engine picks gpt-5-6-luna (tier 4 'tested, people-backed' — measured 14/33, chosen 3/10, preferred 10/14, all real); key expects claude-haiku-4-5, which carries no measured/chosen/preferred evidence for extraction at all in this catalog."
+    },
+    {
+      "id": "S26",
+      "reason": "same as S23 under noChinaHosted — engine picks gpt-5-6-luna on real standings; key expects claude-haiku-4-5."
+    },
+    {
+      "id": "S27",
+      "reason": "engine picks deepseek-v4-flash (tier 3 'one-signal' — chosen position 1/11, the actual #1 real chat spend-share model); key expects gemini-3-8-flash and explicitly bans deepseek-v4-flash, likely on a blanket vendor-origin concern this situation's own dataRule doesn't set."
+    },
+    {
+      "id": "S29",
+      "reason": "engine picks gpt-5-6-luna (tier 4 'evidenced' — preferred 25/34, OpenAI-only); key expects gpt-5-6-sol and explicitly bans gpt-5-6-luna from its own family scoring."
+    },
+    {
+      "id": "S33",
+      "reason": "engine picks gemini-3-6-flash (tier 2 'evidenced' — preferred 7/19 on the real Vision Arena board, not near top at this catalog's threshold); key expects gemini-3-1-pro (preview), which sits at Vision Arena position 12/19 — worse on the real board than the engine's pick."
+    },
+    {
+      "id": "S37",
+      "reason": "engine picks gpt-6-astra (tier 3 'tests-only' — measured 8/34, genuinely near top on LiveBench summarize, no human backing); key expects gpt-5-6-luna and explicitly bans gpt-6-astra from its own family scoring."
+    }
+  ]
+}

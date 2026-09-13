@@ -1,205 +1,2710 @@
 {
-  "_readme": "Twenty realistic decide() calls used as an eval set by scripts/test-decide.mjs, alongside the full-grid property test. Every `expected` was drafted by RUNNING decide() against the live catalog and reading real fields off the winning models (see each rationale) — never from opinion about which model 'should' win. That also means this file is a trip-wire on purpose: if a future data refresh changes prices, scores, or availability enough to flip one of these, the eval fails loud (see the 'Derive task fit' + test step in .github/workflows/auto-refresh.yml) rather than silently drifting. start_here_any_of: [] means the situation is expected to return an EMPTY shortlist (nothing clears every filter) — test-decide.mjs treats that as its own assertion, not 'any model is fine'. Where the underlying data is thin enough that a refresh could plausibly reorder close scores, start_here_any_of lists more than one acceptable id and the rationale says so.",
+  "_readme": "Forty realistic decide() calls used as the eval set by scripts/test-eval-situations.mjs. Unlike the 20 situations this file replaced (2026-09-06 and earlier), this `expected` was NOT drafted by running decide() against the catalog and reading off the winner -- it's a cold answer key, built independently by a separate pass with real, cited, per-task usage/vote/vendor-guidance/enterprise-case-study signals (see each situation's `signals[]`) and no visibility into this engine's internals, specifically so this eval can't grade its own homework. `start_here_any_of` and `acceptable` are both 'any of these would be a fine top pick' -- acceptable is the broader set; a real engine only needs to land in start_here_any_of to pass. `must_not_start` bars a model from the #1 spot only (it may still appear lower in the shortlist); `must_not_include` bars it from the shortlist entirely -- reserved for a hard, structural exclusion (a China-hosted vendor under noChinaHosted, or a preview/beta SKU under an enterprise-style input), never just 'this one is not the best fit'. `input.have` and `input.dataRule` are stored in decide()'s own array/object shape (openrouter-anything -> ['any'], claude-only -> ['anthropic'], etc. -- see convert_situations.py in the PR that added this file for the exact mapping and how it was checked against the key's own reachable-count derivation text). `input.enterprise` is passed straight into decide() as an explicit override of its own have/volume/dataRule heuristic (assets/decide.mjs's isEnterpriseInput) -- the key's authors already know the situation's own context, so there's no reason to re-derive it. See data/eval/must-never.json for the companion set of absolute per-(task,stance) and per-context rules this same key ships.",
   "situations": [
     {
-      "id": "solo-dev-openrouter-bulk-cheapest",
-      "description": "Solo developer, OpenRouter only, cheap high-volume batch job.",
-      "input": { "tasks": ["bulk"], "have": ["openrouter"], "stance": "cheapest", "volume": "heavy", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": ["llama-4-maverick"],
-        "must_not_include": ["qwen3-max"]
+      "id": "S01",
+      "description": "Startup CTO, any vendor allowed, wants the single best coding model regardless of price.",
+      "input": {
+        "tasks": [
+          "coding"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": false
       },
-      "rationale": "Llama 4 Maverick is the cheapest OpenRouter-reachable model with a general score (GPQA) to weight against price ($0.22/$0.88). Qwen3 Max has no sourced GPQA or MMLU-Pro, so bulk's floor (a general-capability basis) excludes it even though it's reachable and cheap."
+      "expected": {
+        "start_here_any_of": [
+          "claude-opus-5"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-4-8",
+          "claude-sonnet-5",
+          "gemini-3-1-pro",
+          "gemini-3-8-flash",
+          "glm-5-2",
+          "glm-5-3",
+          "gpt-5-6-luna",
+          "gpt-5-6-sol",
+          "gpt-5-6-terra",
+          "grok-4-5",
+          "grok-4-6",
+          "kimi-k3",
+          "muse-spark-1-2"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "gemini-3-7-flash",
+          "gpt-5-5",
+          "gpt-6-astra",
+          "hy3",
+          "hy4-preview",
+          "qwen3-8-max"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. claude-opus-5: agreement=3 families (a,c,d).",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag code:general_impl, top mapped 30d. Includes: claude-opus-5, glm-5-2, glm-5-3, gpt-5-6-sol, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena human-vote Text-Arena 'Coding' category, 395 models, 1.68M votes, top mapped. Includes: claude-fable-5, claude-opus-4-8, gemini-3-8-flash, kimi-k3, muse-spark-1-2."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://cursor.com/docs/models-and-pricing ; https://docs.claude.com/en/docs/claude-code/model-config ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Cursor featured model roster + Claude Code 'sonnet'/'opus'/'fable' aliases + Anthropic selection matrix (coding rows). Includes: claude-fable-5-1, claude-opus-5, claude-sonnet-5, gemini-3-1-pro, gemini-3-8-flash, gpt-5-6-luna, gpt-5-6-sol, gpt-5-6-terra, grok-4-5, grok-4-6."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://www.anthropic.com/news/claude-opus-5 ; https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Trading-firm engineer used Opus 5 for market-data-feed build + OSS bugfix; Geotab used Gemini 3 for agentic code-gen. Includes: claude-opus-5, gemini-3-1-pro."
+        }
+      ]
     },
     {
-      "id": "enterprise-claude-only-coding-balanced",
-      "description": "Enterprise team paying for Anthropic only, balanced coding pick.",
-      "input": { "tasks": ["coding"], "have": ["anthropic"], "stance": "balanced", "volume": "typical", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": ["claude-sonnet-5"],
-        "must_not_include": ["gpt-5-6-sol", "gemini-3-1-pro"]
+      "id": "S02",
+      "description": "Solo developer on a tight budget, any vendor, wants the cheapest usable coding model.",
+      "input": {
+        "tasks": [
+          "coding"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "cheapest",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": false
       },
-      "rationale": "Balanced blends normalized coding_score with normalized price; Claude Sonnet 5 (coding_score 85, $19/mo at typical volume) sits between Haiku's cheap-but-weaker and Opus's strongest-but-priciest. OpenAI and Google models are unreachable — 'have' names Anthropic only."
+      "expected": {
+        "start_here_any_of": [
+          "gpt-5-6-luna"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-4-8",
+          "claude-opus-5",
+          "claude-sonnet-5",
+          "gemini-3-1-pro",
+          "gemini-3-8-flash",
+          "glm-5-2",
+          "glm-5-3",
+          "gpt-5-6-sol",
+          "gpt-5-6-terra",
+          "grok-4-5",
+          "grok-4-6",
+          "kimi-k3",
+          "muse-spark-1-2"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "gemini-3-7-flash",
+          "gpt-5-5",
+          "gpt-6-astra",
+          "hy3",
+          "hy4-preview",
+          "qwen3-8-max"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. gpt-5-6-luna: agreement=1 families (c). gpt-5-6-luna list price at this volume ~= $1.00/mo ($0.2/$1.2 per Mtok) -- cheapest among strong-or-acceptable candidates.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag code:general_impl, top mapped 30d. Includes: claude-opus-5, glm-5-2, glm-5-3, gpt-5-6-sol, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena human-vote Text-Arena 'Coding' category, 395 models, 1.68M votes, top mapped. Includes: claude-fable-5, claude-opus-4-8, gemini-3-8-flash, kimi-k3, muse-spark-1-2."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://cursor.com/docs/models-and-pricing ; https://docs.claude.com/en/docs/claude-code/model-config ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Cursor featured model roster + Claude Code 'sonnet'/'opus'/'fable' aliases + Anthropic selection matrix (coding rows). Includes: claude-fable-5-1, claude-opus-5, claude-sonnet-5, gemini-3-1-pro, gemini-3-8-flash, gpt-5-6-luna, gpt-5-6-sol, gpt-5-6-terra, grok-4-5, grok-4-6."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://www.anthropic.com/news/claude-opus-5 ; https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Trading-firm engineer used Opus 5 for market-data-feed build + OSS bugfix; Geotab used Gemini 3 for agentic code-gen. Includes: claude-opus-5, gemini-3-1-pro."
+        }
+      ]
     },
     {
-      "id": "cto-no-china-research-best",
-      "description": "CTO wants the strongest researcher, any vendor, no China-hosted models.",
-      "input": { "tasks": ["research"], "have": ["any"], "stance": "best", "volume": "typical", "dataRule": { "noChinaHosted": true } },
-      "expected": {
-        "start_here_any_of": ["gemini-3-1-pro"],
-        "must_not_include": ["deepseek-v4-pro", "kimi-k3"]
+      "id": "S03",
+      "description": "Team standardized on Anthropic only, wants a balanced coding default.",
+      "input": {
+        "tasks": [
+          "coding"
+        ],
+        "have": [
+          "anthropic"
+        ],
+        "stance": "balanced",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": false
       },
-      "rationale": "Gemini 3.1 Pro has the highest research fit (GPQA 94.3 + 1M context) among non-China-hosted models. DeepSeek (China) and Moonshot AI / Kimi (China) both carry strong GPQA scores that would otherwise be competitive — data/vendors.json marks both China-headquartered, so noChinaHosted must drop them regardless of score."
+      "expected": {
+        "start_here_any_of": [
+          "claude-opus-5"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-4-8",
+          "claude-sonnet-5"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=Claude only (Anthropic API/subscription) -> 6 catalog models reachable. claude-opus-5: agreement=3 families (a,c,d). claude-opus-5 list price at this volume ~= $22.50/mo -- best agreement within 2x the cheapest strong candidate's price.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag code:general_impl, top mapped 30d. Includes: claude-opus-5."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena human-vote Text-Arena 'Coding' category, 395 models, 1.68M votes, top mapped. Includes: claude-fable-5, claude-opus-4-8."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://cursor.com/docs/models-and-pricing ; https://docs.claude.com/en/docs/claude-code/model-config ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Cursor featured model roster + Claude Code 'sonnet'/'opus'/'fable' aliases + Anthropic selection matrix (coding rows). Includes: claude-fable-5-1, claude-opus-5, claude-sonnet-5."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://www.anthropic.com/news/claude-opus-5 ; https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Trading-firm engineer used Opus 5 for market-data-feed build + OSS bugfix; Geotab used Gemini 3 for agentic code-gen. Includes: claude-opus-5."
+        }
+      ]
     },
     {
-      "id": "marketing-openai-writing-balanced",
-      "description": "Marketing team on an OpenAI plan, balanced pick for long-form copy.",
-      "input": { "tasks": ["writing"], "have": ["openai"], "stance": "balanced", "volume": "typical", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": ["gpt-5-6-luna"],
-        "must_not_include": ["claude-opus-5"]
+      "id": "S04",
+      "description": "Regulated enterprise on Anthropic only, needs the best coding model but preview/beta SKUs are unacceptable.",
+      "input": {
+        "tasks": [
+          "coding"
+        ],
+        "have": [
+          "anthropic"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": true
       },
-      "rationale": "Writing fit is GPQA-or-MMLU-Pro as-is; among reachable OpenAI models GPT-5.6 Luna's balance of a high GPQA (91.6) at $1.2/$2.16-per-1M-tokens pricing wins the blended rank. Claude Opus 5 is unreachable — 'have' names OpenAI only."
+      "expected": {
+        "start_here_any_of": [
+          "claude-opus-5"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-4-8",
+          "claude-sonnet-5"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=Claude only (Anthropic API/subscription) -> 6 catalog models reachable. enterprise=True: preview/beta SKUs (gemini-3-1-pro, hy4-preview, deepseek-v4-flash-vision-exp) excluded from candidates if present. claude-opus-5: agreement=3 families (a,c,d).",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag code:general_impl, top mapped 30d. Includes: claude-opus-5."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena human-vote Text-Arena 'Coding' category, 395 models, 1.68M votes, top mapped. Includes: claude-fable-5, claude-opus-4-8."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://cursor.com/docs/models-and-pricing ; https://docs.claude.com/en/docs/claude-code/model-config ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Cursor featured model roster + Claude Code 'sonnet'/'opus'/'fable' aliases + Anthropic selection matrix (coding rows). Includes: claude-fable-5-1, claude-opus-5, claude-sonnet-5."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://www.anthropic.com/news/claude-opus-5 ; https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Trading-firm engineer used Opus 5 for market-data-feed build + OSS bugfix; Geotab used Gemini 3 for agentic code-gen. Includes: claude-opus-5."
+        }
+      ]
     },
     {
-      "id": "startup-any-extraction-cheapest-light",
-      "description": "Small startup, any vendor, cheapest extraction pipeline at light volume.",
-      "input": { "tasks": ["extraction"], "have": ["any"], "stance": "cheapest", "volume": "light", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": ["llama-4-maverick"],
-        "must_not_include": ["qwen3-max"]
+      "id": "S05",
+      "description": "High-volume coding-assistant vendor, any provider, must avoid China-hosted models, cheapest at 50M/10M monthly tokens.",
+      "input": {
+        "tasks": [
+          "coding"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "cheapest",
+        "volume": {
+          "tokens_in_month": 50000000,
+          "tokens_out_month": 10000000
+        },
+        "dataRule": {
+          "noChinaHosted": true
+        },
+        "enterprise": false
       },
-      "rationale": "Same floor gap as the bulk case: extraction needs a general score AND a price. Llama 4 Maverick has both and is the cheapest to clear; Qwen3 Max has no sourced GPQA/MMLU-Pro so it never clears the floor no matter how cheap it is."
+      "expected": {
+        "start_here_any_of": [
+          "gpt-5-6-luna"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-4-8",
+          "claude-opus-5",
+          "claude-sonnet-5",
+          "gemini-3-1-pro",
+          "gemini-3-8-flash",
+          "gpt-5-6-sol",
+          "gpt-5-6-terra",
+          "grok-4-5",
+          "grok-4-6",
+          "muse-spark-1-2"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "gemini-3-7-flash",
+          "gpt-5-5",
+          "gpt-6-astra"
+        ],
+        "must_not_include": [
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "deepseek-v4-flash-vision-exp",
+          "deepseek-v4-pro",
+          "deepseek-v4-pro-0813",
+          "glm-5-2",
+          "glm-5-3",
+          "hy-mt2-1-8b",
+          "hy-mt2-30b-a3b",
+          "hy-mt2-7b",
+          "hy3",
+          "hy4-preview",
+          "kat-coder-air-v2-5",
+          "kat-coder-pro-v2-5",
+          "kimi-k2-6",
+          "kimi-k3",
+          "ling-3-0-flash",
+          "longcat-2-0",
+          "qwen-turbo",
+          "qwen3-7-flash",
+          "qwen3-8-2-4t-a95b",
+          "qwen3-8-27b",
+          "qwen3-8-flash",
+          "qwen3-8-max",
+          "qwen3-coder-plus",
+          "qwen3-max",
+          "seed-2-0-code",
+          "seed-2-1-turbo"
+        ]
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. dataRule=noChinaHosted applied: China-HQ vendors (Alibaba (Qwen), ByteDance, DeepSeek, InclusionAI (Ant Group), Kwaipilot, Meituan, Moonshot AI, Tencent, Z.ai (Zhipu)) excluded from candidates. gpt-5-6-luna: agreement=1 families (c). gpt-5-6-luna list price at this volume ~= $22.00/mo ($0.2/$1.2 per Mtok) -- cheapest among strong-or-acceptable candidates.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag code:general_impl, top mapped 30d. Includes: claude-opus-5, gpt-5-6-sol."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena human-vote Text-Arena 'Coding' category, 395 models, 1.68M votes, top mapped. Includes: claude-fable-5, claude-opus-4-8, gemini-3-8-flash, muse-spark-1-2."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://cursor.com/docs/models-and-pricing ; https://docs.claude.com/en/docs/claude-code/model-config ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Cursor featured model roster + Claude Code 'sonnet'/'opus'/'fable' aliases + Anthropic selection matrix (coding rows). Includes: claude-fable-5-1, claude-opus-5, claude-sonnet-5, gemini-3-1-pro, gemini-3-8-flash, gpt-5-6-luna, gpt-5-6-sol, gpt-5-6-terra, grok-4-5, grok-4-6."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://www.anthropic.com/news/claude-opus-5 ; https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Trading-firm engineer used Opus 5 for market-data-feed build + OSS bugfix; Geotab used Gemini 3 for agentic code-gen. Includes: claude-opus-5, gemini-3-1-pro."
+        }
+      ]
     },
     {
-      "id": "support-bot-google-chat-cheapest",
-      "description": "Customer-support bot builder with a Google-only budget, cheapest chat model.",
-      "input": { "tasks": ["chat"], "have": ["google"], "stance": "cheapest", "volume": "typical", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": ["gemini-3-5-flash"],
-        "must_not_include": ["gpt-5-6-luna"]
+      "id": "S06",
+      "description": "Product team building a long-horizon autonomous agent, any vendor, wants the best agentic model.",
+      "input": {
+        "tasks": [
+          "agents"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 5000000,
+          "tokens_out_month": 1000000
+        },
+        "dataRule": {},
+        "enterprise": false
       },
-      "rationale": "Gemini 3.5 Flash is the only reachable Google model that clears chat's floor (a sourced general score) once dominated candidates are dropped. GPT-5.6 Luna is unreachable — 'have' names Google only."
+      "expected": {
+        "start_here_any_of": [
+          "claude-opus-5"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-4-8",
+          "claude-sonnet-5",
+          "deepseek-v4-flash",
+          "gemini-3-1-pro",
+          "glm-5-2",
+          "gpt-5-6-sol",
+          "kimi-k3"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "deepseek-v4-flash-0731",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "glm-5-3",
+          "gpt-5-5",
+          "gpt-5-6-luna",
+          "gpt-5-6-terra",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "hy3",
+          "hy4-preview",
+          "muse-spark-1-2",
+          "qwen3-8-max"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. claude-opus-5: agreement=3 families (a,b,c).",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag agent:workflow_execution, top mapped. Includes: claude-opus-4-8, claude-opus-5, glm-5-2, gpt-5-6-sol, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Agent' leaderboard overview top10 (share of votes), dedup by base model. Includes: claude-fable-5, claude-fable-5-1, claude-opus-4-8, claude-opus-5, gpt-5-6-sol."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/claude-code/model-config ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Claude Code 'fable' alias = hardest/longest-running (agentic) tasks; Anthropic matrix Opus5=complex agentic, Sonnet5=agentic tool use. Includes: claude-fable-5-1, claude-opus-5, claude-sonnet-5."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://www.lindy.ai/blog/migrating-from-claude-to-deepseek ; https://www.anthropic.com/news/claude-sonnet-5 ; https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Lindy moved 100% of agent traffic to DeepSeek V4 Flash (cost); ClickHouse/Pace run agents on Sonnet 5; Geotab/Shopify run agents on Gemini 3. Includes: claude-sonnet-5, deepseek-v4-flash, gemini-3-1-pro."
+        }
+      ]
     },
     {
-      "id": "xai-only-frontend-best",
-      "description": "Frontend developer with xAI access only, wants the strongest option.",
-      "input": { "tasks": ["frontend"], "have": ["xai"], "stance": "best", "volume": "typical", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": ["grok-4-5"],
-        "must_not_include": ["grok-4-6"]
+      "id": "S07",
+      "description": "Same agent workload, but wants a balanced cost/capability pick.",
+      "input": {
+        "tasks": [
+          "agents"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "balanced",
+        "volume": {
+          "tokens_in_month": 5000000,
+          "tokens_out_month": 1000000
+        },
+        "dataRule": {},
+        "enterprise": false
       },
-      "rationale": "Grok 4.5 has a sourced coding_score (86); frontend fit is coding_score plus a small best_for:speed bonus. Grok 4.6 has neither a sourced coding_score nor a sourced direct_api flag yet, so it fails both the floor and (separately) reachability."
+      "expected": {
+        "start_here_any_of": [
+          "claude-sonnet-5",
+          "gpt-5-6-sol"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-4-8",
+          "claude-opus-5",
+          "deepseek-v4-flash",
+          "gemini-3-1-pro",
+          "glm-5-2",
+          "kimi-k3"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "deepseek-v4-flash-0731",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "glm-5-3",
+          "gpt-5-5",
+          "gpt-5-6-luna",
+          "gpt-5-6-terra",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "hy3",
+          "hy4-preview",
+          "muse-spark-1-2",
+          "qwen3-8-max"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. claude-sonnet-5: agreement=2 families (c,d). gpt-5-6-sol: agreement=2 families (a,b). claude-sonnet-5 list price at this volume ~= $20.00/mo -- best agreement within 2x the cheapest strong candidate's price. gpt-5-6-sol list price at this volume ~= $40.00/mo -- best agreement within 2x the cheapest strong candidate's price.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag agent:workflow_execution, top mapped. Includes: claude-opus-4-8, claude-opus-5, glm-5-2, gpt-5-6-sol, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Agent' leaderboard overview top10 (share of votes), dedup by base model. Includes: claude-fable-5, claude-fable-5-1, claude-opus-4-8, claude-opus-5, gpt-5-6-sol."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/claude-code/model-config ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Claude Code 'fable' alias = hardest/longest-running (agentic) tasks; Anthropic matrix Opus5=complex agentic, Sonnet5=agentic tool use. Includes: claude-fable-5-1, claude-opus-5, claude-sonnet-5."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://www.lindy.ai/blog/migrating-from-claude-to-deepseek ; https://www.anthropic.com/news/claude-sonnet-5 ; https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Lindy moved 100% of agent traffic to DeepSeek V4 Flash (cost); ClickHouse/Pace run agents on Sonnet 5; Geotab/Shopify run agents on Gemini 3. Includes: claude-sonnet-5, deepseek-v4-flash, gemini-3-1-pro."
+        }
+      ]
     },
     {
-      "id": "analyst-anthropic-exec-summaries-heavy-balanced",
-      "description": "Analyst on Anthropic, heavy volume, balanced pick for executive summaries.",
-      "input": { "tasks": ["exec-summaries"], "have": ["anthropic"], "stance": "balanced", "volume": "heavy", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": ["claude-sonnet-5"],
-        "must_not_include": ["claude-haiku-4-5"]
+      "id": "S08",
+      "description": "Team locked into OpenAI only, wants the cheapest usable agent model.",
+      "input": {
+        "tasks": [
+          "agents"
+        ],
+        "have": [
+          "openai"
+        ],
+        "stance": "cheapest",
+        "volume": {
+          "tokens_in_month": 5000000,
+          "tokens_out_month": 1000000
+        },
+        "dataRule": {},
+        "enterprise": false
       },
-      "rationale": "exec-summaries fit is the general score as-is; Claude Sonnet 5 has a sourced GPQA where Claude Haiku 4.5 does not, so Haiku fails the floor entirely despite being the cheapest Anthropic model — a same-vendor case showing the floor is about sourced capability, not just reachability."
+      "expected": {
+        "start_here_any_of": [
+          "gpt-5-6-sol"
+        ],
+        "acceptable": [],
+        "must_not_start": [
+          "gpt-5-5",
+          "gpt-5-6-luna",
+          "gpt-5-6-terra",
+          "gpt-6-astra"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenAI only -> 7 catalog models reachable. gpt-5-6-sol: agreement=2 families (a,b). gpt-5-6-sol list price at this volume ~= $40.00/mo ($4/$20 per Mtok) -- cheapest among strong-or-acceptable candidates.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag agent:workflow_execution, top mapped. Includes: gpt-5-6-sol."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Agent' leaderboard overview top10 (share of votes), dedup by base model. Includes: gpt-5-6-sol."
+        }
+      ]
     },
     {
-      "id": "screenshot-qa-any-vision-cheapest",
-      "description": "Screenshot/QA tool, any vendor, cheapest model that actually handles images.",
-      "input": { "tasks": ["vision"], "have": ["any"], "stance": "cheapest", "volume": "typical", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": ["inkling-small"],
-        "must_not_include": ["claude-opus-5"]
+      "id": "S09",
+      "description": "Enterprise running agents at Lindy-like scale (100M/20M tokens/month), cost-driven, preview/beta unacceptable.",
+      "input": {
+        "tasks": [
+          "agents"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "cheapest",
+        "volume": {
+          "tokens_in_month": 100000000,
+          "tokens_out_month": 20000000
+        },
+        "dataRule": {},
+        "enterprise": true
       },
-      "rationale": "Vision fit is a plain yes/no on the best_for:vision tag; every tagged model ties at 100, so the cheapest one (Inkling Small) dominates the rest of the tie and is the only survivor. Claude Opus 5 carries no vision tag in this data, so it's excluded regardless of how capable it may actually be — an unsourced fact stays null, never a guessed yes."
+      "expected": {
+        "start_here_any_of": [
+          "deepseek-v4-flash"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-4-8",
+          "claude-opus-5",
+          "claude-sonnet-5",
+          "glm-5-2",
+          "gpt-5-6-sol",
+          "kimi-k3"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "deepseek-v4-flash-0731",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "glm-5-3",
+          "gpt-5-5",
+          "gpt-5-6-luna",
+          "gpt-5-6-terra",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "hy3",
+          "muse-spark-1-2",
+          "qwen3-8-max"
+        ],
+        "must_not_include": [
+          "deepseek-v4-flash-vision-exp",
+          "gemini-3-1-pro",
+          "hy4-preview"
+        ]
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. enterprise=True: preview/beta SKUs (gemini-3-1-pro, hy4-preview, deepseek-v4-flash-vision-exp) excluded from candidates if present. deepseek-v4-flash: agreement=1 families (d). deepseek-v4-flash list price at this volume ~= $70.40/mo ($0.44/$1.32 per Mtok) -- cheapest among strong-or-acceptable candidates.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag agent:workflow_execution, top mapped. Includes: claude-opus-4-8, claude-opus-5, glm-5-2, gpt-5-6-sol, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Agent' leaderboard overview top10 (share of votes), dedup by base model. Includes: claude-fable-5, claude-fable-5-1, claude-opus-4-8, claude-opus-5, gpt-5-6-sol."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/claude-code/model-config ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Claude Code 'fable' alias = hardest/longest-running (agentic) tasks; Anthropic matrix Opus5=complex agentic, Sonnet5=agentic tool use. Includes: claude-fable-5-1, claude-opus-5, claude-sonnet-5."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://www.lindy.ai/blog/migrating-from-claude-to-deepseek ; https://www.anthropic.com/news/claude-sonnet-5 ; https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Lindy moved 100% of agent traffic to DeepSeek V4 Flash (cost); ClickHouse/Pace run agents on Sonnet 5; Geotab/Shopify run agents on Gemini 3. Includes: claude-sonnet-5, deepseek-v4-flash."
+        }
+      ]
     },
     {
-      "id": "openrouter-no-china-coding-balanced",
-      "description": "OpenRouter-only builder, balanced coding pick, no China-hosted models.",
-      "input": { "tasks": ["coding"], "have": ["openrouter"], "stance": "balanced", "volume": "typical", "dataRule": { "noChinaHosted": true } },
-      "expected": {
-        "start_here_any_of": ["gpt-5-6-luna"],
-        "must_not_include": ["kimi-k3", "deepseek-v4-pro"]
+      "id": "S10",
+      "description": "Enterprise standardized on Google only, wants the best agent model, preview/beta unacceptable.",
+      "input": {
+        "tasks": [
+          "agents"
+        ],
+        "have": [
+          "google"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 5000000,
+          "tokens_out_month": 1000000
+        },
+        "dataRule": {},
+        "enterprise": true
       },
-      "rationale": "The single strongest coding_score reachable via OpenRouter is actually Kimi K3 (96, Moonshot AI) — which is exactly why this case matters: data/vendors.json marks Moonshot AI and DeepSeek China-headquartered, so noChinaHosted must drop both regardless of how high they score, leaving GPT-5.6 Luna's balanced price/capability trade-off on top."
+      "expected": {
+        "start_here_any_of": [
+          "gemini-3-7-flash",
+          "gemini-3-8-flash"
+        ],
+        "acceptable": [],
+        "must_not_start": [],
+        "must_not_include": [
+          "gemini-3-1-pro"
+        ]
+      },
+      "rationale": "have=Google (Gemini) only -> 6 catalog models reachable. enterprise=True: preview/beta SKUs (gemini-3-1-pro, hy4-preview, deepseek-v4-flash-vision-exp) excluded from candidates if present. WEAK SIGNAL COVERAGE: no reachable candidate had top-5 support from >=1 signal family for this task under this access; start_here_any_of was widened per the methodology's weak-coverage rule.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag agent:workflow_execution, top mapped. Includes: claude-opus-4-8, claude-opus-5, glm-5-2, gpt-5-6-sol, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Agent' leaderboard overview top10 (share of votes), dedup by base model. Includes: claude-fable-5, claude-fable-5-1, claude-opus-4-8, claude-opus-5, gpt-5-6-sol."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/claude-code/model-config ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Claude Code 'fable' alias = hardest/longest-running (agentic) tasks; Anthropic matrix Opus5=complex agentic, Sonnet5=agentic tool use. Includes: claude-fable-5-1, claude-opus-5, claude-sonnet-5."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://www.lindy.ai/blog/migrating-from-claude-to-deepseek ; https://www.anthropic.com/news/claude-sonnet-5 ; https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Lindy moved 100% of agent traffic to DeepSeek V4 Flash (cost); ClickHouse/Pace run agents on Sonnet 5; Geotab/Shopify run agents on Gemini 3. Includes: claude-sonnet-5, deepseek-v4-flash, gemini-3-1-pro."
+        }
+      ]
     },
     {
-      "id": "xai-only-agents-best",
-      "description": "Automation builder with xAI access only, strongest agentic pick.",
-      "input": { "tasks": ["agents"], "have": ["xai"], "stance": "best", "volume": "typical", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": ["grok-4-5"],
-        "must_not_include": ["grok-4-6"]
+      "id": "S11",
+      "description": "Bulk classification/tagging pipeline at massive scale, any vendor, pure cost minimization.",
+      "input": {
+        "tasks": [
+          "bulk"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "cheapest",
+        "volume": {
+          "tokens_in_month": 200000000,
+          "tokens_out_month": 50000000
+        },
+        "dataRule": {},
+        "enterprise": false
       },
-      "rationale": "Agents fit needs a coding_score baseline; Grok 4.5 has one, Grok 4.6 doesn't (and also isn't confirmed reachable yet — its direct_api flag is unsourced), so it fails on two independent rules at once."
+      "expected": {
+        "start_here_any_of": [
+          "deepseek-v4-flash-0731"
+        ],
+        "acceptable": [
+          "claude-haiku-4-5",
+          "deepseek-v4-flash",
+          "gpt-5-6-luna",
+          "hy3",
+          "hy4-preview"
+        ],
+        "must_not_start": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-4-8",
+          "claude-opus-5",
+          "claude-sonnet-5",
+          "gemini-3-1-pro",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "glm-5-2",
+          "glm-5-3",
+          "gpt-5-5",
+          "gpt-5-6-sol",
+          "gpt-5-6-terra",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "kimi-k3",
+          "muse-spark-1-2",
+          "qwen3-8-max"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. deepseek-v4-flash-0731: agreement=1 families (a). deepseek-v4-flash-0731 list price at this volume ~= $15.00/mo ($0.05/$0.1 per Mtok) -- cheapest among strong-or-acceptable candidates.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+          "what_it_says": "OpenRouter raw completion-token volume leaderboard, latest day, top mapped. Includes: deepseek-v4-flash, deepseek-v4-flash-0731, gpt-5-6-luna, hy3, hy4-preview."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/claude-code/model-config ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Claude Code 'haiku' alias = fast/cheap/simple tasks; Anthropic matrix Haiku4.5 = lowest latency/price, high-volume processing. Includes: claude-haiku-4-5, gpt-5-6-luna."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://www.lindy.ai/blog/migrating-from-claude-to-deepseek",
+          "what_it_says": "Lindy: 100% of managed-agent traffic moved to DeepSeek V4 Flash, ~90% inference-cost cut. Includes: deepseek-v4-flash."
+        }
+      ]
     },
     {
-      "id": "compliance-google-no-china-extraction-balanced",
-      "description": "Compliance-sensitive team, Google only, no-China rule (belt-and-suspenders), extraction.",
-      "input": { "tasks": ["extraction"], "have": ["google"], "stance": "balanced", "volume": "typical", "dataRule": { "noChinaHosted": true } },
-      "expected": {
-        "start_here_any_of": ["gemini-3-5-flash"],
-        "must_not_include": ["gemini-3-1-pro"]
+      "id": "S12",
+      "description": "Same bulk pipeline, but must avoid China-hosted models.",
+      "input": {
+        "tasks": [
+          "bulk"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "cheapest",
+        "volume": {
+          "tokens_in_month": 200000000,
+          "tokens_out_month": 50000000
+        },
+        "dataRule": {
+          "noChinaHosted": true
+        },
+        "enterprise": false
       },
-      "rationale": "Google's own HQ is the United States, so noChinaHosted doesn't change this set — the interesting part is that Gemini 3.1 Pro, despite a strong GPQA, is dropped as dominated (Gemini 3.5 Flash is both cheaper and has an equal-or-better blended extraction fit), leaving one survivor."
+      "expected": {
+        "start_here_any_of": [
+          "gpt-5-6-luna"
+        ],
+        "acceptable": [
+          "claude-haiku-4-5"
+        ],
+        "must_not_start": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-4-8",
+          "claude-opus-5",
+          "claude-sonnet-5",
+          "gemini-3-1-pro",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "gpt-5-5",
+          "gpt-5-6-sol",
+          "gpt-5-6-terra",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "muse-spark-1-2"
+        ],
+        "must_not_include": [
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "deepseek-v4-flash-vision-exp",
+          "deepseek-v4-pro",
+          "deepseek-v4-pro-0813",
+          "glm-5-2",
+          "glm-5-3",
+          "hy-mt2-1-8b",
+          "hy-mt2-30b-a3b",
+          "hy-mt2-7b",
+          "hy3",
+          "hy4-preview",
+          "kat-coder-air-v2-5",
+          "kat-coder-pro-v2-5",
+          "kimi-k2-6",
+          "kimi-k3",
+          "ling-3-0-flash",
+          "longcat-2-0",
+          "qwen-turbo",
+          "qwen3-7-flash",
+          "qwen3-8-2-4t-a95b",
+          "qwen3-8-27b",
+          "qwen3-8-flash",
+          "qwen3-8-max",
+          "qwen3-coder-plus",
+          "qwen3-max",
+          "seed-2-0-code",
+          "seed-2-1-turbo"
+        ]
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. dataRule=noChinaHosted applied: China-HQ vendors (Alibaba (Qwen), ByteDance, DeepSeek, InclusionAI (Ant Group), Kwaipilot, Meituan, Moonshot AI, Tencent, Z.ai (Zhipu)) excluded from candidates. gpt-5-6-luna: agreement=2 families (a,c). gpt-5-6-luna list price at this volume ~= $100.00/mo ($0.2/$1.2 per Mtok) -- cheapest among strong-or-acceptable candidates.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+          "what_it_says": "OpenRouter raw completion-token volume leaderboard, latest day, top mapped. Includes: gpt-5-6-luna."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/claude-code/model-config ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Claude Code 'haiku' alias = fast/cheap/simple tasks; Anthropic matrix Haiku4.5 = lowest latency/price, high-volume processing. Includes: claude-haiku-4-5, gpt-5-6-luna."
+        }
+      ]
     },
     {
-      "id": "openrouter-chat-cheapest",
-      "description": "Budget chat app, OpenRouter only, cheapest that clears the floor.",
-      "input": { "tasks": ["chat"], "have": ["openrouter"], "stance": "cheapest", "volume": "typical", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": ["llama-4-maverick"],
-        "must_not_include": ["qwen3-max"]
+      "id": "S13",
+      "description": "Same bulk pipeline, but locked into Anthropic only.",
+      "input": {
+        "tasks": [
+          "bulk"
+        ],
+        "have": [
+          "anthropic"
+        ],
+        "stance": "cheapest",
+        "volume": {
+          "tokens_in_month": 200000000,
+          "tokens_out_month": 50000000
+        },
+        "dataRule": {},
+        "enterprise": false
       },
-      "rationale": "Same general-score gap again: Llama 4 Maverick is the cheapest OpenRouter model with a sourced general score; Qwen3 Max has none, so it never clears chat's floor."
+      "expected": {
+        "start_here_any_of": [
+          "claude-haiku-4-5"
+        ],
+        "acceptable": [],
+        "must_not_start": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-4-8",
+          "claude-opus-5",
+          "claude-sonnet-5"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=Claude only (Anthropic API/subscription) -> 6 catalog models reachable. claude-haiku-4-5: agreement=1 families (c). claude-haiku-4-5 list price at this volume ~= $450.00/mo ($1/$5 per Mtok) -- cheapest among strong-or-acceptable candidates.",
+      "signals": [
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/claude-code/model-config ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Claude Code 'haiku' alias = fast/cheap/simple tasks; Anthropic matrix Haiku4.5 = lowest latency/price, high-volume processing. Includes: claude-haiku-4-5."
+        }
+      ]
     },
     {
-      "id": "research-lab-any-no-china-best-heavy",
-      "description": "Research lab, any vendor, no-China rule, strongest researcher at heavy volume.",
-      "input": { "tasks": ["research"], "have": ["any"], "stance": "best", "volume": "heavy", "dataRule": { "noChinaHosted": true } },
-      "expected": {
-        "start_here_any_of": ["gemini-3-1-pro"],
-        "must_not_include": ["deepseek-v4-pro"]
+      "id": "S14",
+      "description": "Bulk pipeline where some quality still matters, balanced pick.",
+      "input": {
+        "tasks": [
+          "bulk"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "balanced",
+        "volume": {
+          "tokens_in_month": 200000000,
+          "tokens_out_month": 50000000
+        },
+        "dataRule": {},
+        "enterprise": false
       },
-      "rationale": "Fit ranking (rule 4) doesn't depend on volume — only the displayed monthly_cost_usd does — so this repeats the CTO case's winner at a different cost figure. DeepSeek's GPQA (90.1) would otherwise be in range, but it's China-headquartered."
+      "expected": {
+        "start_here_any_of": [
+          "deepseek-v4-flash",
+          "gpt-5-6-luna"
+        ],
+        "acceptable": [
+          "claude-haiku-4-5",
+          "deepseek-v4-flash-0731",
+          "hy3",
+          "hy4-preview"
+        ],
+        "must_not_start": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-4-8",
+          "claude-opus-5",
+          "claude-sonnet-5",
+          "gemini-3-1-pro",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "glm-5-2",
+          "glm-5-3",
+          "gpt-5-5",
+          "gpt-5-6-sol",
+          "gpt-5-6-terra",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "kimi-k3",
+          "muse-spark-1-2",
+          "qwen3-8-max"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. deepseek-v4-flash: agreement=2 families (a,d). gpt-5-6-luna: agreement=2 families (a,c). deepseek-v4-flash list price at this volume ~= $154.00/mo -- best agreement within 2x the cheapest strong candidate's price. gpt-5-6-luna list price at this volume ~= $100.00/mo -- best agreement within 2x the cheapest strong candidate's price.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models",
+          "what_it_says": "OpenRouter raw completion-token volume leaderboard, latest day, top mapped. Includes: deepseek-v4-flash, deepseek-v4-flash-0731, gpt-5-6-luna, hy3, hy4-preview."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/claude-code/model-config ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Claude Code 'haiku' alias = fast/cheap/simple tasks; Anthropic matrix Haiku4.5 = lowest latency/price, high-volume processing. Includes: claude-haiku-4-5, gpt-5-6-luna."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://www.lindy.ai/blog/migrating-from-claude-to-deepseek",
+          "what_it_says": "Lindy: 100% of managed-agent traffic moved to DeepSeek V4 Flash, ~90% inference-cost cut. Includes: deepseek-v4-flash."
+        }
+      ]
     },
     {
-      "id": "enterprise-anthropic-openai-coding-balanced-heavy",
-      "description": "Enterprise paying for both Anthropic and OpenAI, balanced coding at heavy volume.",
-      "input": { "tasks": ["coding"], "have": ["anthropic", "openai"], "stance": "balanced", "volume": "heavy", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": ["gpt-5-6-luna"],
-        "must_not_include": ["gemini-3-1-pro"]
+      "id": "S15",
+      "description": "Content team, any vendor, wants the best model for long-form writing quality.",
+      "input": {
+        "tasks": [
+          "writing"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 1000000,
+          "tokens_out_month": 300000
+        },
+        "dataRule": {},
+        "enterprise": false
       },
-      "rationale": "With two vendors reachable, GPT-5.6 Luna's cheap-but-decent coding_score wins the balanced blend over Anthropic's pricier options at heavy volume. Google is unreachable — 'have' names Anthropic and OpenAI only, not Google."
+      "expected": {
+        "start_here_any_of": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-sonnet-5",
+          "gemini-3-1-pro"
+        ],
+        "acceptable": [
+          "claude-opus-5",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "gpt-5-6-sol",
+          "kimi-k3"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "claude-opus-4-8",
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "glm-5-2",
+          "glm-5-3",
+          "gpt-5-5",
+          "gpt-5-6-luna",
+          "gpt-5-6-terra",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "hy3",
+          "hy4-preview",
+          "muse-spark-1-2",
+          "qwen3-8-max"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. claude-fable-5: agreement=2 families (a,b). claude-fable-5-1: agreement=2 families (b,c). claude-sonnet-5: agreement=2 families (a,c). gemini-3-1-pro: agreement=2 families (b,d).",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag content_writing, top mapped. Includes: claude-fable-5, claude-opus-5, claude-sonnet-5, gpt-5-6-sol, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena Text-Arena 'Creative Writing' category, top mapped. Includes: claude-fable-5, claude-fable-5-1, gemini-3-1-pro, gemini-3-7-flash, gemini-3-8-flash."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Sonnet5='content creation'; Fable5.1='analysis carried through to a finished document'. Includes: claude-fable-5-1, claude-sonnet-5."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "WRTN Technologies: story generation on Gemini 3. Includes: gemini-3-1-pro."
+        }
+      ]
     },
     {
-      "id": "freelancer-openrouter-vision-balanced",
-      "description": "Freelancer on OpenRouter, balanced pick for a vision task.",
-      "input": { "tasks": ["vision"], "have": ["openrouter"], "stance": "balanced", "volume": "typical", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": ["inkling-small"],
-        "must_not_include": ["claude-opus-5"]
+      "id": "S16",
+      "description": "Same content team, balanced cost/quality.",
+      "input": {
+        "tasks": [
+          "writing"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "balanced",
+        "volume": {
+          "tokens_in_month": 1000000,
+          "tokens_out_month": 300000
+        },
+        "dataRule": {},
+        "enterprise": false
       },
-      "rationale": "Same tie-and-price-dominate pattern as the vision-cheapest case: every vision-tagged, OpenRouter-reachable model ties at fit 100, and Inkling Small is the cheapest of them, so it's the sole survivor under any price-sensitive stance. Claude Opus 5 has no vision tag in this data."
+      "expected": {
+        "start_here_any_of": [
+          "claude-sonnet-5",
+          "gemini-3-1-pro"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-5",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "gpt-5-6-sol",
+          "kimi-k3"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "claude-opus-4-8",
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "glm-5-2",
+          "glm-5-3",
+          "gpt-5-5",
+          "gpt-5-6-luna",
+          "gpt-5-6-terra",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "hy3",
+          "hy4-preview",
+          "muse-spark-1-2",
+          "qwen3-8-max"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. claude-sonnet-5: agreement=2 families (a,c). gemini-3-1-pro: agreement=2 families (b,d). claude-sonnet-5 list price at this volume ~= $5.00/mo -- best agreement within 2x the cheapest strong candidate's price. gemini-3-1-pro list price at this volume ~= $5.60/mo -- best agreement within 2x the cheapest strong candidate's price.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag content_writing, top mapped. Includes: claude-fable-5, claude-opus-5, claude-sonnet-5, gpt-5-6-sol, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena Text-Arena 'Creative Writing' category, top mapped. Includes: claude-fable-5, claude-fable-5-1, gemini-3-1-pro, gemini-3-7-flash, gemini-3-8-flash."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Sonnet5='content creation'; Fable5.1='analysis carried through to a finished document'. Includes: claude-fable-5-1, claude-sonnet-5."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "WRTN Technologies: story generation on Gemini 3. Includes: gemini-3-1-pro."
+        }
+      ]
     },
     {
-      "id": "freelancer-openrouter-extraction-light-cheapest",
-      "description": "Freelancer on OpenRouter, cheapest extraction pick at light volume.",
-      "input": { "tasks": ["extraction"], "have": ["openrouter"], "stance": "cheapest", "volume": "light", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": ["llama-4-maverick"],
-        "must_not_include": ["qwen3-max"]
+      "id": "S17",
+      "description": "Team on Google only, cheapest usable writing model.",
+      "input": {
+        "tasks": [
+          "writing"
+        ],
+        "have": [
+          "google"
+        ],
+        "stance": "cheapest",
+        "volume": {
+          "tokens_in_month": 1000000,
+          "tokens_out_month": 300000
+        },
+        "dataRule": {},
+        "enterprise": false
       },
-      "rationale": "Identical floor logic to the other extraction/bulk/chat cases at a different volume — volume changes monthly_cost_usd, not which models clear the general-score floor or which is cheapest per token."
+      "expected": {
+        "start_here_any_of": [
+          "gemini-3-7-flash",
+          "gemini-3-8-flash"
+        ],
+        "acceptable": [
+          "gemini-3-1-pro"
+        ],
+        "must_not_start": [],
+        "must_not_include": []
+      },
+      "rationale": "have=Google (Gemini) only -> 6 catalog models reachable. gemini-3-7-flash: agreement=1 families (b). gemini-3-8-flash: agreement=1 families (b). gemini-3-7-flash list price at this volume ~= $1.88/mo ($0.75/$3.75 per Mtok) -- cheapest among strong-or-acceptable candidates. gemini-3-8-flash list price at this volume ~= $1.88/mo ($0.75/$3.75 per Mtok) -- cheapest among strong-or-acceptable candidates.",
+      "signals": [
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena Text-Arena 'Creative Writing' category, top mapped. Includes: gemini-3-1-pro, gemini-3-7-flash, gemini-3-8-flash."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "WRTN Technologies: story generation on Gemini 3. Includes: gemini-3-1-pro."
+        }
+      ]
     },
     {
-      "id": "solo-builder-anthropic-frontend-cheapest",
-      "description": "Solo builder on Anthropic only, cheapest frontend-capable model.",
-      "input": { "tasks": ["frontend"], "have": ["anthropic"], "stance": "cheapest", "volume": "typical", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": ["claude-haiku-4-5"],
-        "must_not_include": ["gpt-5-6-luna"]
+      "id": "S18",
+      "description": "Best writing model, any vendor except China-hosted.",
+      "input": {
+        "tasks": [
+          "writing"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 1000000,
+          "tokens_out_month": 300000
+        },
+        "dataRule": {
+          "noChinaHosted": true
+        },
+        "enterprise": false
       },
-      "rationale": "Claude Haiku 4.5 has a sourced coding_score (66) and is the cheapest Anthropic model that clears frontend's floor. GPT-5.6 Luna is unreachable — 'have' names Anthropic only."
+      "expected": {
+        "start_here_any_of": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-sonnet-5",
+          "gemini-3-1-pro"
+        ],
+        "acceptable": [
+          "claude-opus-5",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "gpt-5-6-sol"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "claude-opus-4-8",
+          "gpt-5-5",
+          "gpt-5-6-luna",
+          "gpt-5-6-terra",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "muse-spark-1-2"
+        ],
+        "must_not_include": [
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "deepseek-v4-flash-vision-exp",
+          "deepseek-v4-pro",
+          "deepseek-v4-pro-0813",
+          "glm-5-2",
+          "glm-5-3",
+          "hy-mt2-1-8b",
+          "hy-mt2-30b-a3b",
+          "hy-mt2-7b",
+          "hy3",
+          "hy4-preview",
+          "kat-coder-air-v2-5",
+          "kat-coder-pro-v2-5",
+          "kimi-k2-6",
+          "kimi-k3",
+          "ling-3-0-flash",
+          "longcat-2-0",
+          "qwen-turbo",
+          "qwen3-7-flash",
+          "qwen3-8-2-4t-a95b",
+          "qwen3-8-27b",
+          "qwen3-8-flash",
+          "qwen3-8-max",
+          "qwen3-coder-plus",
+          "qwen3-max",
+          "seed-2-0-code",
+          "seed-2-1-turbo"
+        ]
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. dataRule=noChinaHosted applied: China-HQ vendors (Alibaba (Qwen), ByteDance, DeepSeek, InclusionAI (Ant Group), Kwaipilot, Meituan, Moonshot AI, Tencent, Z.ai (Zhipu)) excluded from candidates. claude-fable-5: agreement=2 families (a,b). claude-fable-5-1: agreement=2 families (b,c). claude-sonnet-5: agreement=2 families (a,c). gemini-3-1-pro: agreement=2 families (b,d).",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag content_writing, top mapped. Includes: claude-fable-5, claude-opus-5, claude-sonnet-5, gpt-5-6-sol."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena Text-Arena 'Creative Writing' category, top mapped. Includes: claude-fable-5, claude-fable-5-1, gemini-3-1-pro, gemini-3-7-flash, gemini-3-8-flash."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Sonnet5='content creation'; Fable5.1='analysis carried through to a finished document'. Includes: claude-fable-5-1, claude-sonnet-5."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "WRTN Technologies: story generation on Gemini 3. Includes: gemini-3-1-pro."
+        }
+      ]
     },
     {
-      "id": "no-access-coding-balanced",
-      "description": "Edge case: caller has no vendor access at all.",
-      "input": { "tasks": ["coding"], "have": [], "stance": "balanced", "volume": "typical", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": [],
-        "must_not_include": ["claude-opus-5", "gpt-5-6-luna", "gemini-3-1-pro"]
+      "id": "S19",
+      "description": "Analyst team, any vendor, wants the best deep-research model.",
+      "input": {
+        "tasks": [
+          "research"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": false
       },
-      "rationale": "An empty `have` matches nothing under rule 1 (it isn't 'any') — every model is unreachable, so the shortlist must be empty. This is the edge case for 'have provided but grants nothing', distinct from 'any' meaning no filter."
+      "expected": {
+        "start_here_any_of": [
+          "claude-fable-5",
+          "gemini-3-1-pro",
+          "gpt-5-6-sol"
+        ],
+        "acceptable": [
+          "claude-fable-5-1",
+          "claude-opus-5",
+          "gpt-5-5",
+          "gpt-5-6-terra",
+          "grok-4-5",
+          "kimi-k3"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "claude-opus-4-8",
+          "claude-sonnet-5",
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "glm-5-2",
+          "glm-5-3",
+          "gpt-5-6-luna",
+          "gpt-6-astra",
+          "grok-4-6",
+          "hy3",
+          "hy4-preview",
+          "muse-spark-1-2",
+          "qwen3-8-max"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. claude-fable-5: agreement=2 families (a,b). gemini-3-1-pro: agreement=2 families (b,d). gpt-5-6-sol: agreement=2 families (a,b).",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag research_report, top mapped. Includes: claude-fable-5, claude-opus-5, gpt-5-6-sol, gpt-5-6-terra, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Search' leaderboard top10 (grounded/web-search arena, closest proxy to research), dedup. Includes: claude-fable-5, gemini-3-1-pro, gpt-5-5, gpt-5-6-sol, grok-4-5."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Fable5.1='multistep deep research'. Includes: claude-fable-5-1."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Thomson Reuters: legal reasoning / contract understanding on Gemini 3. Includes: gemini-3-1-pro."
+        }
+      ]
     },
     {
-      "id": "anthropic-only-vision-best",
-      "description": "Edge case: the only vendor the caller has doesn't publish a vision-capable model in this data.",
-      "input": { "tasks": ["vision"], "have": ["anthropic"], "stance": "best", "volume": "typical", "dataRule": {} },
-      "expected": {
-        "start_here_any_of": [],
-        "must_not_include": ["claude-opus-5", "claude-sonnet-5"]
+      "id": "S20",
+      "description": "Same research workload, balanced pick.",
+      "input": {
+        "tasks": [
+          "research"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "balanced",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": false
       },
-      "rationale": "No Anthropic model carries a 'vision' best_for tag in this snapshot, so every Anthropic model fails vision's floor and the shortlist is empty — this is a floor failure, not a reachability failure (Anthropic models ARE reachable here for other tasks)."
+      "expected": {
+        "start_here_any_of": [
+          "gemini-3-1-pro",
+          "gpt-5-6-sol"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-5",
+          "gpt-5-5",
+          "gpt-5-6-terra",
+          "grok-4-5",
+          "kimi-k3"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "claude-opus-4-8",
+          "claude-sonnet-5",
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "glm-5-2",
+          "glm-5-3",
+          "gpt-5-6-luna",
+          "gpt-6-astra",
+          "grok-4-6",
+          "hy3",
+          "hy4-preview",
+          "muse-spark-1-2",
+          "qwen3-8-max"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. gemini-3-1-pro: agreement=2 families (b,d). gpt-5-6-sol: agreement=2 families (a,b). gemini-3-1-pro list price at this volume ~= $10.00/mo -- best agreement within 2x the cheapest strong candidate's price. gpt-5-6-sol list price at this volume ~= $18.00/mo -- best agreement within 2x the cheapest strong candidate's price.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag research_report, top mapped. Includes: claude-fable-5, claude-opus-5, gpt-5-6-sol, gpt-5-6-terra, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Search' leaderboard top10 (grounded/web-search arena, closest proxy to research), dedup. Includes: claude-fable-5, gemini-3-1-pro, gpt-5-5, gpt-5-6-sol, grok-4-5."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Fable5.1='multistep deep research'. Includes: claude-fable-5-1."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Thomson Reuters: legal reasoning / contract understanding on Gemini 3. Includes: gemini-3-1-pro."
+        }
+      ]
+    },
+    {
+      "id": "S21",
+      "description": "Enterprise on Google only wants the best research model; preview/beta unacceptable.",
+      "input": {
+        "tasks": [
+          "research"
+        ],
+        "have": [
+          "google"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": true
+      },
+      "expected": {
+        "start_here_any_of": [
+          "gemini-3-7-flash",
+          "gemini-3-8-flash"
+        ],
+        "acceptable": [],
+        "must_not_start": [],
+        "must_not_include": [
+          "gemini-3-1-pro"
+        ]
+      },
+      "rationale": "have=Google (Gemini) only -> 6 catalog models reachable. enterprise=True: preview/beta SKUs (gemini-3-1-pro, hy4-preview, deepseek-v4-flash-vision-exp) excluded from candidates if present. WEAK SIGNAL COVERAGE: no reachable candidate had top-5 support from >=1 signal family for this task under this access; start_here_any_of was widened per the methodology's weak-coverage rule.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag research_report, top mapped. Includes: claude-fable-5, claude-opus-5, gpt-5-6-sol, gpt-5-6-terra, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Search' leaderboard top10 (grounded/web-search arena, closest proxy to research), dedup. Includes: claude-fable-5, gemini-3-1-pro, gpt-5-5, gpt-5-6-sol, grok-4-5."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Fable5.1='multistep deep research'. Includes: claude-fable-5-1."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Thomson Reuters: legal reasoning / contract understanding on Gemini 3. Includes: gemini-3-1-pro."
+        }
+      ]
+    },
+    {
+      "id": "S22",
+      "description": "Team on xAI only, cheapest usable research model.",
+      "input": {
+        "tasks": [
+          "research"
+        ],
+        "have": [
+          "xai"
+        ],
+        "stance": "cheapest",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "grok-4-5"
+        ],
+        "acceptable": [],
+        "must_not_start": [
+          "grok-4-6"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=xAI (Grok) only -> 2 catalog models reachable. grok-4-5: agreement=1 families (b). grok-4-5 list price at this volume ~= $7.00/mo ($2/$6 per Mtok) -- cheapest among strong-or-acceptable candidates.",
+      "signals": [
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Search' leaderboard top10 (grounded/web-search arena, closest proxy to research), dedup. Includes: grok-4-5."
+        }
+      ]
+    },
+    {
+      "id": "S23",
+      "description": "Document-extraction pipeline at scale, any vendor, cost minimization.",
+      "input": {
+        "tasks": [
+          "extraction"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "cheapest",
+        "volume": {
+          "tokens_in_month": 100000000,
+          "tokens_out_month": 10000000
+        },
+        "dataRule": {},
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "claude-haiku-4-5"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-opus-4-8",
+          "claude-opus-5",
+          "claude-sonnet-5",
+          "gemini-3-1-pro",
+          "gpt-5-5",
+          "gpt-5-6-sol",
+          "gpt-5-6-terra",
+          "kimi-k3"
+        ],
+        "must_not_start": [
+          "claude-fable-5-1",
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "glm-5-2",
+          "glm-5-3",
+          "gpt-5-6-luna",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "hy3",
+          "hy4-preview",
+          "muse-spark-1-2",
+          "qwen3-8-max"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. claude-haiku-4-5: agreement=1 families (c). claude-haiku-4-5 list price at this volume ~= $150.00/mo ($1/$5 per Mtok) -- cheapest among strong-or-acceptable candidates.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag data:extraction, top mapped. Includes: claude-opus-4-8, claude-opus-5, claude-sonnet-5, gpt-5-6-sol, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Document' leaderboard top10, dedup. Includes: claude-fable-5, claude-opus-5, gpt-5-5, gpt-5-6-terra."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Sonnet5='data analysis'; Haiku4.5='high-volume intelligent processing'. Includes: claude-haiku-4-5, claude-sonnet-5."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Box (content analysis), Wayfair (SOP->structured infographic), Rakuten (structured doc-photo extraction, +50%) all on Gemini 3. Includes: gemini-3-1-pro."
+        }
+      ]
+    },
+    {
+      "id": "S24",
+      "description": "Enterprise extraction pipeline, best accuracy, preview/beta unacceptable.",
+      "input": {
+        "tasks": [
+          "extraction"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 100000000,
+          "tokens_out_month": 10000000
+        },
+        "dataRule": {},
+        "enterprise": true
+      },
+      "expected": {
+        "start_here_any_of": [
+          "claude-opus-5",
+          "claude-sonnet-5"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-haiku-4-5",
+          "claude-opus-4-8",
+          "gpt-5-5",
+          "gpt-5-6-sol",
+          "gpt-5-6-terra",
+          "kimi-k3"
+        ],
+        "must_not_start": [
+          "claude-fable-5-1",
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "glm-5-2",
+          "glm-5-3",
+          "gpt-5-6-luna",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "hy3",
+          "muse-spark-1-2",
+          "qwen3-8-max"
+        ],
+        "must_not_include": [
+          "deepseek-v4-flash-vision-exp",
+          "gemini-3-1-pro",
+          "hy4-preview"
+        ]
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. enterprise=True: preview/beta SKUs (gemini-3-1-pro, hy4-preview, deepseek-v4-flash-vision-exp) excluded from candidates if present. claude-opus-5: agreement=2 families (a,b). claude-sonnet-5: agreement=2 families (a,c).",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag data:extraction, top mapped. Includes: claude-opus-4-8, claude-opus-5, claude-sonnet-5, gpt-5-6-sol, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Document' leaderboard top10, dedup. Includes: claude-fable-5, claude-opus-5, gpt-5-5, gpt-5-6-terra."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Sonnet5='data analysis'; Haiku4.5='high-volume intelligent processing'. Includes: claude-haiku-4-5, claude-sonnet-5."
+        }
+      ]
+    },
+    {
+      "id": "S25",
+      "description": "Extraction pipeline locked to Anthropic only, balanced pick.",
+      "input": {
+        "tasks": [
+          "extraction"
+        ],
+        "have": [
+          "anthropic"
+        ],
+        "stance": "balanced",
+        "volume": {
+          "tokens_in_month": 100000000,
+          "tokens_out_month": 10000000
+        },
+        "dataRule": {},
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "claude-sonnet-5"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-haiku-4-5",
+          "claude-opus-4-8",
+          "claude-opus-5"
+        ],
+        "must_not_start": [
+          "claude-fable-5-1"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=Claude only (Anthropic API/subscription) -> 6 catalog models reachable. claude-sonnet-5: agreement=2 families (a,c). claude-sonnet-5 list price at this volume ~= $300.00/mo -- best agreement within 2x the cheapest strong candidate's price.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag data:extraction, top mapped. Includes: claude-opus-4-8, claude-opus-5, claude-sonnet-5."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Document' leaderboard top10, dedup. Includes: claude-fable-5, claude-opus-5."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Sonnet5='data analysis'; Haiku4.5='high-volume intelligent processing'. Includes: claude-haiku-4-5, claude-sonnet-5."
+        }
+      ]
+    },
+    {
+      "id": "S26",
+      "description": "Extraction pipeline, cheapest, must avoid China-hosted models.",
+      "input": {
+        "tasks": [
+          "extraction"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "cheapest",
+        "volume": {
+          "tokens_in_month": 100000000,
+          "tokens_out_month": 10000000
+        },
+        "dataRule": {
+          "noChinaHosted": true
+        },
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "claude-haiku-4-5"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-opus-4-8",
+          "claude-opus-5",
+          "claude-sonnet-5",
+          "gemini-3-1-pro",
+          "gpt-5-5",
+          "gpt-5-6-sol",
+          "gpt-5-6-terra"
+        ],
+        "must_not_start": [
+          "claude-fable-5-1",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "gpt-5-6-luna",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "muse-spark-1-2"
+        ],
+        "must_not_include": [
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "deepseek-v4-flash-vision-exp",
+          "deepseek-v4-pro",
+          "deepseek-v4-pro-0813",
+          "glm-5-2",
+          "glm-5-3",
+          "hy-mt2-1-8b",
+          "hy-mt2-30b-a3b",
+          "hy-mt2-7b",
+          "hy3",
+          "hy4-preview",
+          "kat-coder-air-v2-5",
+          "kat-coder-pro-v2-5",
+          "kimi-k2-6",
+          "kimi-k3",
+          "ling-3-0-flash",
+          "longcat-2-0",
+          "qwen-turbo",
+          "qwen3-7-flash",
+          "qwen3-8-2-4t-a95b",
+          "qwen3-8-27b",
+          "qwen3-8-flash",
+          "qwen3-8-max",
+          "qwen3-coder-plus",
+          "qwen3-max",
+          "seed-2-0-code",
+          "seed-2-1-turbo"
+        ]
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. dataRule=noChinaHosted applied: China-HQ vendors (Alibaba (Qwen), ByteDance, DeepSeek, InclusionAI (Ant Group), Kwaipilot, Meituan, Moonshot AI, Tencent, Z.ai (Zhipu)) excluded from candidates. claude-haiku-4-5: agreement=1 families (c). claude-haiku-4-5 list price at this volume ~= $150.00/mo ($1/$5 per Mtok) -- cheapest among strong-or-acceptable candidates.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag data:extraction, top mapped. Includes: claude-opus-4-8, claude-opus-5, claude-sonnet-5, gpt-5-6-sol."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Document' leaderboard top10, dedup. Includes: claude-fable-5, claude-opus-5, gpt-5-5, gpt-5-6-terra."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Sonnet5='data analysis'; Haiku4.5='high-volume intelligent processing'. Includes: claude-haiku-4-5, claude-sonnet-5."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Box (content analysis), Wayfair (SOP->structured infographic), Rakuten (structured doc-photo extraction, +50%) all on Gemini 3. Includes: gemini-3-1-pro."
+        }
+      ]
+    },
+    {
+      "id": "S27",
+      "description": "Consumer chat app, any vendor, cheapest usable model at 20M/5M tokens/month.",
+      "input": {
+        "tasks": [
+          "chat"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "cheapest",
+        "volume": {
+          "tokens_in_month": 20000000,
+          "tokens_out_month": 5000000
+        },
+        "dataRule": {},
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "gemini-3-8-flash"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-haiku-4-5",
+          "claude-opus-5",
+          "claude-sonnet-5",
+          "gemini-3-1-pro",
+          "gpt-5-6-sol",
+          "kimi-k3",
+          "muse-spark-1-2"
+        ],
+        "must_not_start": [
+          "claude-opus-4-8",
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "gemini-3-7-flash",
+          "glm-5-2",
+          "glm-5-3",
+          "gpt-5-5",
+          "gpt-5-6-luna",
+          "gpt-5-6-terra",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "hy3",
+          "hy4-preview",
+          "qwen3-8-max"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. gemini-3-8-flash: agreement=1 families (b). gemini-3-8-flash list price at this volume ~= $33.75/mo ($0.75/$3.75 per Mtok) -- cheapest among strong-or-acceptable candidates.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag conversational_reply, top mapped. Includes: claude-fable-5, claude-opus-5, claude-sonnet-5, gpt-5-6-sol, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena Text-Arena 'Overall' (general chat quality), top mapped. Includes: claude-fable-5, claude-fable-5-1, claude-opus-5, gemini-3-8-flash, muse-spark-1-2."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Sonnet5 general use; Haiku4.5='real-time applications'. Includes: claude-haiku-4-5, claude-sonnet-5."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "WRTN Technologies: contextual companion chat on Gemini 3. Includes: gemini-3-1-pro."
+        }
+      ]
+    },
+    {
+      "id": "S28",
+      "description": "Chat app locked to Anthropic only, best quality.",
+      "input": {
+        "tasks": [
+          "chat"
+        ],
+        "have": [
+          "anthropic"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 20000000,
+          "tokens_out_month": 5000000
+        },
+        "dataRule": {},
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "claude-fable-5",
+          "claude-opus-5",
+          "claude-sonnet-5"
+        ],
+        "acceptable": [
+          "claude-fable-5-1",
+          "claude-haiku-4-5"
+        ],
+        "must_not_start": [
+          "claude-opus-4-8"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=Claude only (Anthropic API/subscription) -> 6 catalog models reachable. claude-fable-5: agreement=2 families (a,b). claude-opus-5: agreement=2 families (a,b). claude-sonnet-5: agreement=2 families (a,c).",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag conversational_reply, top mapped. Includes: claude-fable-5, claude-opus-5, claude-sonnet-5."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena Text-Arena 'Overall' (general chat quality), top mapped. Includes: claude-fable-5, claude-fable-5-1, claude-opus-5."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Sonnet5 general use; Haiku4.5='real-time applications'. Includes: claude-haiku-4-5, claude-sonnet-5."
+        }
+      ]
+    },
+    {
+      "id": "S29",
+      "description": "Chat app locked to OpenAI only, balanced pick.",
+      "input": {
+        "tasks": [
+          "chat"
+        ],
+        "have": [
+          "openai"
+        ],
+        "stance": "balanced",
+        "volume": {
+          "tokens_in_month": 20000000,
+          "tokens_out_month": 5000000
+        },
+        "dataRule": {},
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "gpt-5-6-sol"
+        ],
+        "acceptable": [],
+        "must_not_start": [
+          "gpt-5-5",
+          "gpt-5-6-luna",
+          "gpt-5-6-terra",
+          "gpt-6-astra"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenAI only -> 7 catalog models reachable. gpt-5-6-sol: agreement=1 families (a). gpt-5-6-sol list price at this volume ~= $180.00/mo -- best agreement within 2x the cheapest strong candidate's price.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag conversational_reply, top mapped. Includes: gpt-5-6-sol."
+        }
+      ]
+    },
+    {
+      "id": "S30",
+      "description": "Chat app, best quality, any vendor except China-hosted.",
+      "input": {
+        "tasks": [
+          "chat"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 20000000,
+          "tokens_out_month": 5000000
+        },
+        "dataRule": {
+          "noChinaHosted": true
+        },
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "claude-fable-5",
+          "claude-opus-5",
+          "claude-sonnet-5"
+        ],
+        "acceptable": [
+          "claude-fable-5-1",
+          "claude-haiku-4-5",
+          "gemini-3-1-pro",
+          "gemini-3-8-flash",
+          "gpt-5-6-sol",
+          "muse-spark-1-2"
+        ],
+        "must_not_start": [
+          "claude-opus-4-8",
+          "gemini-3-7-flash",
+          "gpt-5-5",
+          "gpt-5-6-luna",
+          "gpt-5-6-terra",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6"
+        ],
+        "must_not_include": [
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "deepseek-v4-flash-vision-exp",
+          "deepseek-v4-pro",
+          "deepseek-v4-pro-0813",
+          "glm-5-2",
+          "glm-5-3",
+          "hy-mt2-1-8b",
+          "hy-mt2-30b-a3b",
+          "hy-mt2-7b",
+          "hy3",
+          "hy4-preview",
+          "kat-coder-air-v2-5",
+          "kat-coder-pro-v2-5",
+          "kimi-k2-6",
+          "kimi-k3",
+          "ling-3-0-flash",
+          "longcat-2-0",
+          "qwen-turbo",
+          "qwen3-7-flash",
+          "qwen3-8-2-4t-a95b",
+          "qwen3-8-27b",
+          "qwen3-8-flash",
+          "qwen3-8-max",
+          "qwen3-coder-plus",
+          "qwen3-max",
+          "seed-2-0-code",
+          "seed-2-1-turbo"
+        ]
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. dataRule=noChinaHosted applied: China-HQ vendors (Alibaba (Qwen), ByteDance, DeepSeek, InclusionAI (Ant Group), Kwaipilot, Meituan, Moonshot AI, Tencent, Z.ai (Zhipu)) excluded from candidates. claude-fable-5: agreement=2 families (a,b). claude-opus-5: agreement=2 families (a,b). claude-sonnet-5: agreement=2 families (a,c).",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag conversational_reply, top mapped. Includes: claude-fable-5, claude-opus-5, claude-sonnet-5, gpt-5-6-sol."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena Text-Arena 'Overall' (general chat quality), top mapped. Includes: claude-fable-5, claude-fable-5-1, claude-opus-5, gemini-3-8-flash, muse-spark-1-2."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Sonnet5 general use; Haiku4.5='real-time applications'. Includes: claude-haiku-4-5, claude-sonnet-5."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "WRTN Technologies: contextual companion chat on Gemini 3. Includes: gemini-3-1-pro."
+        }
+      ]
+    },
+    {
+      "id": "S31",
+      "description": "Enterprise document/image-understanding workload, best accuracy, preview/beta unacceptable.",
+      "input": {
+        "tasks": [
+          "vision"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 3000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": true
+      },
+      "expected": {
+        "start_here_any_of": [
+          "claude-opus-5"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-sonnet-5",
+          "muse-spark-1-2",
+          "qwen3-8-max"
+        ],
+        "must_not_start": [
+          "claude-fable-5-1",
+          "claude-haiku-4-5",
+          "claude-opus-4-8",
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "glm-5-2",
+          "glm-5-3",
+          "gpt-5-5",
+          "gpt-5-6-luna",
+          "gpt-5-6-sol",
+          "gpt-5-6-terra",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "hy3",
+          "kimi-k3"
+        ],
+        "must_not_include": [
+          "deepseek-v4-flash-vision-exp",
+          "gemini-3-1-pro",
+          "hy4-preview"
+        ]
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. enterprise=True: preview/beta SKUs (gemini-3-1-pro, hy4-preview, deepseek-v4-flash-vision-exp) excluded from candidates if present. claude-opus-5: agreement=2 families (b,c).",
+      "signals": [
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Vision' leaderboard top10, dedup. Includes: claude-fable-5, claude-opus-5, muse-spark-1-2, qwen3-8-max."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Opus5='vision-heavy workflows'; Sonnet5='visual understanding'. Includes: claude-opus-5, claude-sonnet-5."
+        }
+      ]
+    },
+    {
+      "id": "S32",
+      "description": "Vision workload locked to Anthropic only, balanced pick.",
+      "input": {
+        "tasks": [
+          "vision"
+        ],
+        "have": [
+          "anthropic"
+        ],
+        "stance": "balanced",
+        "volume": {
+          "tokens_in_month": 3000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "claude-opus-5"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-sonnet-5"
+        ],
+        "must_not_start": [
+          "claude-fable-5-1",
+          "claude-haiku-4-5",
+          "claude-opus-4-8"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=Claude only (Anthropic API/subscription) -> 6 catalog models reachable. claude-opus-5: agreement=2 families (b,c). claude-opus-5 list price at this volume ~= $27.50/mo -- best agreement within 2x the cheapest strong candidate's price.",
+      "signals": [
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Vision' leaderboard top10, dedup. Includes: claude-fable-5, claude-opus-5."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Opus5='vision-heavy workflows'; Sonnet5='visual understanding'. Includes: claude-opus-5, claude-sonnet-5."
+        }
+      ]
+    },
+    {
+      "id": "S33",
+      "description": "Vision workload on Google only, best accuracy.",
+      "input": {
+        "tasks": [
+          "vision"
+        ],
+        "have": [
+          "google"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 3000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "gemini-3-1-pro"
+        ],
+        "acceptable": [],
+        "must_not_start": [
+          "gemini-3-7-flash",
+          "gemini-3-8-flash"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=Google (Gemini) only -> 6 catalog models reachable. gemini-3-1-pro: agreement=2 families (b,d).",
+      "signals": [
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'Vision' leaderboard top10, dedup. Includes: gemini-3-1-pro."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Rakuten: vision/document-photo extraction on Gemini 3, +50% vs baseline. Includes: gemini-3-1-pro."
+        }
+      ]
+    },
+    {
+      "id": "S34",
+      "description": "Team building UI/web-app code with an agent, any vendor, best quality.",
+      "input": {
+        "tasks": [
+          "frontend"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "claude-opus-5"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-sonnet-5",
+          "glm-5-2",
+          "gpt-6-astra",
+          "kimi-k3",
+          "qwen3-8-max"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "claude-opus-4-8",
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "gemini-3-1-pro",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "glm-5-3",
+          "gpt-5-5",
+          "gpt-5-6-luna",
+          "gpt-5-6-sol",
+          "gpt-5-6-terra",
+          "grok-4-5",
+          "grok-4-6",
+          "hy3",
+          "hy4-preview",
+          "muse-spark-1-2"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. claude-opus-5: agreement=3 families (a,b,c).",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag code:frontend_ui, top mapped. Includes: claude-fable-5, claude-opus-5, claude-sonnet-5, glm-5-2, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'WebDev' leaderboard top10, dedup. Includes: claude-fable-5-1, claude-opus-5, gpt-6-astra, kimi-k3, qwen3-8-max."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://cursor.com/docs/models-and-pricing",
+          "what_it_says": "Cursor's featured coding roster (used for 'Build Apps & Websites'). Includes: claude-fable-5-1, claude-opus-5, claude-sonnet-5."
+        }
+      ]
+    },
+    {
+      "id": "S35",
+      "description": "Frontend/web-app coding locked to xAI only, best available.",
+      "input": {
+        "tasks": [
+          "frontend"
+        ],
+        "have": [
+          "xai"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "grok-4-5",
+          "grok-4-6"
+        ],
+        "acceptable": [],
+        "must_not_start": [],
+        "must_not_include": []
+      },
+      "rationale": "have=xAI (Grok) only -> 2 catalog models reachable. WEAK SIGNAL COVERAGE: no reachable candidate had top-5 support from >=1 signal family for this task under this access; start_here_any_of was widened per the methodology's weak-coverage rule.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag code:frontend_ui, top mapped. Includes: claude-fable-5, claude-opus-5, claude-sonnet-5, glm-5-2, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'WebDev' leaderboard top10, dedup. Includes: claude-fable-5-1, claude-opus-5, gpt-6-astra, kimi-k3, qwen3-8-max."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://cursor.com/docs/models-and-pricing",
+          "what_it_says": "Cursor's featured coding roster (used for 'Build Apps & Websites'). Includes: claude-fable-5-1, claude-opus-5, claude-sonnet-5."
+        }
+      ]
+    },
+    {
+      "id": "S36",
+      "description": "Frontend/web-app coding, any vendor, cheapest usable.",
+      "input": {
+        "tasks": [
+          "frontend"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "cheapest",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "glm-5-2"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-5",
+          "claude-sonnet-5",
+          "gpt-6-astra",
+          "kimi-k3",
+          "qwen3-8-max"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "claude-opus-4-8",
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "gemini-3-1-pro",
+          "gemini-3-7-flash",
+          "gemini-3-8-flash",
+          "glm-5-3",
+          "gpt-5-5",
+          "gpt-5-6-luna",
+          "gpt-5-6-sol",
+          "gpt-5-6-terra",
+          "grok-4-5",
+          "grok-4-6",
+          "hy3",
+          "hy4-preview",
+          "muse-spark-1-2"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. glm-5-2: agreement=1 families (a). glm-5-2 list price at this volume ~= $5.00/mo ($1.4/$4.4 per Mtok) -- cheapest among strong-or-acceptable candidates.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag code:frontend_ui, top mapped. Includes: claude-fable-5, claude-opus-5, claude-sonnet-5, glm-5-2, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard",
+          "what_it_says": "Arena 'WebDev' leaderboard top10, dedup. Includes: claude-fable-5-1, claude-opus-5, gpt-6-astra, kimi-k3, qwen3-8-max."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://cursor.com/docs/models-and-pricing",
+          "what_it_says": "Cursor's featured coding roster (used for 'Build Apps & Websites'). Includes: claude-fable-5-1, claude-opus-5, claude-sonnet-5."
+        }
+      ]
+    },
+    {
+      "id": "S37",
+      "description": "Exec-summary generation for leadership decks, locked to OpenAI only, balanced pick.",
+      "input": {
+        "tasks": [
+          "exec-summaries"
+        ],
+        "have": [
+          "openai"
+        ],
+        "stance": "balanced",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "gpt-5-6-luna"
+        ],
+        "acceptable": [
+          "gpt-5-6-sol"
+        ],
+        "must_not_start": [
+          "gpt-5-5",
+          "gpt-5-6-terra",
+          "gpt-6-astra"
+        ],
+        "must_not_include": []
+      },
+      "rationale": "have=OpenAI only -> 7 catalog models reachable. gpt-5-6-luna: agreement=1 families (a). gpt-5-6-luna list price at this volume ~= $1.00/mo -- best agreement within 2x the cheapest strong candidate's price.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag summarization, top mapped. Includes: gpt-5-6-luna, gpt-5-6-sol."
+        }
+      ]
+    },
+    {
+      "id": "S38",
+      "description": "Enterprise exec-summary workflow, best quality, preview/beta unacceptable.",
+      "input": {
+        "tasks": [
+          "exec-summaries"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "best",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": true
+      },
+      "expected": {
+        "start_here_any_of": [
+          "claude-fable-5-1",
+          "claude-opus-5",
+          "claude-sonnet-5",
+          "kimi-k3"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "gemini-3-8-flash",
+          "gpt-5-6-luna",
+          "gpt-5-6-sol"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "claude-opus-4-8",
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "gemini-3-7-flash",
+          "glm-5-2",
+          "glm-5-3",
+          "gpt-5-5",
+          "gpt-5-6-terra",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "hy3",
+          "muse-spark-1-2",
+          "qwen3-8-max"
+        ],
+        "must_not_include": [
+          "deepseek-v4-flash-vision-exp",
+          "gemini-3-1-pro",
+          "hy4-preview"
+        ]
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. enterprise=True: preview/beta SKUs (gemini-3-1-pro, hy4-preview, deepseek-v4-flash-vision-exp) excluded from candidates if present. claude-fable-5-1: agreement=2 families (b,c). claude-opus-5: agreement=2 families (a,b). claude-sonnet-5: agreement=2 families (a,c). kimi-k3: agreement=2 families (a,b).",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag summarization, top mapped. Includes: claude-opus-5, claude-sonnet-5, gpt-5-6-luna, gpt-5-6-sol, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena Text-Arena big matrix 'Longer Query' column (proxy: long-doc handling), top mapped. Includes: claude-fable-5, claude-fable-5-1, claude-opus-5, gemini-3-8-flash, kimi-k3."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Sonnet5='content creation'; Fable5.1='finished document/deck'. Includes: claude-fable-5-1, claude-sonnet-5."
+        }
+      ]
+    },
+    {
+      "id": "S39",
+      "description": "Exec-summary generation, cheapest, must avoid China-hosted models.",
+      "input": {
+        "tasks": [
+          "exec-summaries"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "cheapest",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {
+          "noChinaHosted": true
+        },
+        "enterprise": false
+      },
+      "expected": {
+        "start_here_any_of": [
+          "gpt-5-6-luna"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-5",
+          "claude-sonnet-5",
+          "gemini-3-1-pro",
+          "gemini-3-8-flash",
+          "gpt-5-6-sol"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "claude-opus-4-8",
+          "gemini-3-7-flash",
+          "gpt-5-5",
+          "gpt-5-6-terra",
+          "gpt-6-astra",
+          "grok-4-5",
+          "grok-4-6",
+          "muse-spark-1-2"
+        ],
+        "must_not_include": [
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "deepseek-v4-flash-vision-exp",
+          "deepseek-v4-pro",
+          "deepseek-v4-pro-0813",
+          "glm-5-2",
+          "glm-5-3",
+          "hy-mt2-1-8b",
+          "hy-mt2-30b-a3b",
+          "hy-mt2-7b",
+          "hy3",
+          "hy4-preview",
+          "kat-coder-air-v2-5",
+          "kat-coder-pro-v2-5",
+          "kimi-k2-6",
+          "kimi-k3",
+          "ling-3-0-flash",
+          "longcat-2-0",
+          "qwen-turbo",
+          "qwen3-7-flash",
+          "qwen3-8-2-4t-a95b",
+          "qwen3-8-27b",
+          "qwen3-8-flash",
+          "qwen3-8-max",
+          "qwen3-coder-plus",
+          "qwen3-max",
+          "seed-2-0-code",
+          "seed-2-1-turbo"
+        ]
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. dataRule=noChinaHosted applied: China-HQ vendors (Alibaba (Qwen), ByteDance, DeepSeek, InclusionAI (Ant Group), Kwaipilot, Meituan, Moonshot AI, Tencent, Z.ai (Zhipu)) excluded from candidates. gpt-5-6-luna: agreement=1 families (a). gpt-5-6-luna list price at this volume ~= $1.00/mo ($0.2/$1.2 per Mtok) -- cheapest among strong-or-acceptable candidates.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag summarization, top mapped. Includes: claude-opus-5, claude-sonnet-5, gpt-5-6-luna, gpt-5-6-sol."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena Text-Arena big matrix 'Longer Query' column (proxy: long-doc handling), top mapped. Includes: claude-fable-5, claude-fable-5-1, claude-opus-5, gemini-3-8-flash."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Anthropic matrix: Sonnet5='content creation'; Fable5.1='finished document/deck'. Includes: claude-fable-5-1, claude-sonnet-5."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Presentations.AI: strategic sales content generated in 90s vs 6h analyst time, on Gemini 3. Includes: gemini-3-1-pro."
+        }
+      ]
+    },
+    {
+      "id": "S40",
+      "description": "Enterprise coding-agent rollout, balanced pick, preview/beta unacceptable.",
+      "input": {
+        "tasks": [
+          "coding"
+        ],
+        "have": [
+          "any"
+        ],
+        "stance": "balanced",
+        "volume": {
+          "tokens_in_month": 2000000,
+          "tokens_out_month": 500000
+        },
+        "dataRule": {},
+        "enterprise": true
+      },
+      "expected": {
+        "start_here_any_of": [
+          "gemini-3-8-flash"
+        ],
+        "acceptable": [
+          "claude-fable-5",
+          "claude-fable-5-1",
+          "claude-opus-4-8",
+          "claude-opus-5",
+          "claude-sonnet-5",
+          "glm-5-2",
+          "glm-5-3",
+          "gpt-5-6-luna",
+          "gpt-5-6-sol",
+          "gpt-5-6-terra",
+          "grok-4-5",
+          "grok-4-6",
+          "kimi-k3",
+          "muse-spark-1-2"
+        ],
+        "must_not_start": [
+          "claude-haiku-4-5",
+          "deepseek-v4-flash",
+          "deepseek-v4-flash-0731",
+          "gemini-3-7-flash",
+          "gpt-5-5",
+          "gpt-6-astra",
+          "hy3",
+          "qwen3-8-max"
+        ],
+        "must_not_include": [
+          "deepseek-v4-flash-vision-exp",
+          "gemini-3-1-pro",
+          "hy4-preview"
+        ]
+      },
+      "rationale": "have=OpenRouter / any vendor -> 67 catalog models reachable. enterprise=True: preview/beta SKUs (gemini-3-1-pro, hy4-preview, deepseek-v4-flash-vision-exp) excluded from candidates if present. gemini-3-8-flash: agreement=2 families (b,c). gemini-3-8-flash list price at this volume ~= $3.38/mo -- best agreement within 2x the cheapest strong candidate's price.",
+      "signals": [
+        {
+          "family": "revealed_choice_openrouter",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+          "what_it_says": "OpenRouter spend-share tag code:general_impl, top mapped 30d. Includes: claude-opus-5, glm-5-2, glm-5-3, gpt-5-6-sol, kimi-k3."
+        },
+        {
+          "family": "human_votes_arena",
+          "source_url": "https://arena.ai/leaderboard/text",
+          "what_it_says": "Arena human-vote Text-Arena 'Coding' category, 395 models, 1.68M votes, top mapped. Includes: claude-fable-5, claude-opus-4-8, gemini-3-8-flash, kimi-k3, muse-spark-1-2."
+        },
+        {
+          "family": "expert_defaults",
+          "source_url": "https://cursor.com/docs/models-and-pricing ; https://docs.claude.com/en/docs/claude-code/model-config ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+          "what_it_says": "Cursor featured model roster + Claude Code 'sonnet'/'opus'/'fable' aliases + Anthropic selection matrix (coding rows). Includes: claude-fable-5-1, claude-opus-5, claude-sonnet-5, gemini-3-8-flash, gpt-5-6-luna, gpt-5-6-sol, gpt-5-6-terra, grok-4-5, grok-4-6."
+        },
+        {
+          "family": "enterprise_evidence",
+          "source_url": "https://www.anthropic.com/news/claude-opus-5 ; https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise",
+          "what_it_says": "Trading-firm engineer used Opus 5 for market-data-feed build + OSS bugfix; Geotab used Gemini 3 for agentic code-gen. Includes: claude-opus-5."
+        }
+      ]
     }
   ]
 }

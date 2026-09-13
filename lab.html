@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Modelproof — Decision lab</title>
-  <meta name="description" content="The shared rule engine behind Modelproof's model advisor, run in the open — 20 realistic situations plus a form to run your own. Every pick traces to a named field; a missing fact stays null." />
+  <meta name="description" content="The shared rule engine behind Modelproof's model advisor, run in the open — 40 realistic situations plus a form to run your own. The AI never ranks: a model's grade is agreement across independent tester standings, real usage share, and human votes." />
   <meta name="theme-color" content="#0a0b0f" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%230a0b0f'/%3E%3Ccircle cx='12' cy='12' r='9.2' fill='none' stroke='%23f2c14e' stroke-opacity='0.5' stroke-width='1.4'/%3E%3Cpath d='M7.6 12.4l3 3 5.8-6.6' fill='none' stroke='%23f2c14e' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
@@ -50,10 +50,66 @@
       color: var(--gold); border: 1px solid var(--gold-line); background: var(--gold-soft);
       border-radius: 999px; padding: 2px 8px; margin-bottom: 2px; }
 
+    /* Judged (qualitative) task fit: a "reported"/"lab-stated" badge plus the claims that
+       actually back the pick's `why` — sentence + source link — never asserted with no way to
+       check it. Only present when the model has a task_fit_judged record for this task; band/
+       confidence carry zero ranking weight any more (brain v2 step 3) — see .pick__tier below for
+       what actually grades a pick now. */
+    .pick__basis { display: inline-block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.03em;
+      color: var(--ink-3); border: 1px solid var(--line-soft); border-radius: 999px; padding: 1px 7px;
+      margin-top: 6px; }
+
+    /* Status/adoption badges: the facts that can keep a pick from being start_here even when its
+       tier and cost look great — a preview SKU, or a model almost nobody has actually adopted.
+       --warn/--low are the site's existing status colors. */
+    .pick__badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+    .pick__badge { display: inline-block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.03em;
+      border-radius: 999px; padding: 1px 7px; border: 1px solid currentColor; }
+    .pick__badge--preview { color: var(--warn); }
+    .pick__badge--deprecated { color: var(--warn); }
+    .pick__badge--adoption-low { color: var(--low); }
+    .pick__badge--adoption-new { color: var(--low); }
+    .pick__claims { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+    .pick__claims li { color: var(--ink-3); font-size: 11.5px; line-height: 1.4; padding-left: 12px; position: relative; }
+    .pick__claims li::before { content: "\2013"; position: absolute; left: 0; color: var(--ink-4); }
+    .pick__claims a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 2px; }
+    .pick__reconciliation { color: var(--ink-3); font-size: 11.5px; margin-top: 4px; font-style: italic; }
+
+    /* Tier + evidence (brain v2 step 3) — the AI never ranks; a pick's grade is agreement across
+       measured (independent tester standings), chosen (real OpenRouter spend share) and preferred
+       (arena.ai human votes), kept separate and never averaged (assets/decide.mjs). `tier`/
+       `tier_name` say which of the named tiers a pick landed in; `label` is the reader-facing
+       caveat that goes with some tiers (e.g. "strong on tests, low real-world use", "not
+       independently tested") and is null on every tier that carries none. `evidence` carries the
+       actual position/of per kind so a reader can check the claim, not just trust the label. */
+    .pick__tier { color: var(--ink-3); font-size: 11.5px; margin-top: 6px; }
+    .pick__label { color: var(--warn); font-size: 11.5px; margin-top: 2px; font-style: italic; }
+    .pick__evidence { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+    .pick__evidence li { color: var(--ink-3); font-size: 11.5px; line-height: 1.4; }
+    .pick__evidence .dim { color: var(--ink-4); }
+    .pick__evidence a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 2px; }
+    .pick__evidence .near-top { color: var(--ink); font-weight: 500; }
+
     .assumptions { list-style: none; margin-top: 12px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
     .assumptions li { color: var(--ink-3); font-size: 12px; padding-left: 14px; position: relative; line-height: 1.5; }
     .assumptions li::before { content: "—"; position: absolute; left: 0; color: var(--ink-4); }
     .empty-note { color: var(--ink-3); font-size: 13px; font-style: italic; }
+
+    /* Standings (2026-09-07): three kinds of evidence per model x task, kept
+       separate and never averaged — measured (independent tests), chosen (real OpenRouter
+       spend), preferred (arena.ai blind human votes). Reuses the site's existing .table-wrap/.tbl
+       table look; the only new rules are the left-aligned multi-line evidence cells. */
+    .standings-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .standings-head label { font-size: 11.5px; font-weight: 500; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
+    .standings-head select { font-family: var(--font); font-size: 13.5px; color: var(--ink);
+      background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 9px 10px; }
+    .tbl.tbl-standings td, .tbl.tbl-standings th { text-align: left; }
+    .tbl.tbl-standings td { vertical-align: top; }
+    .std-cell { display: flex; flex-direction: column; gap: 4px; }
+    .std-row { font-size: 12.5px; line-height: 1.4; }
+    .std-row a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 2px; }
+    .std-row .dim { color: var(--ink-4); }
+    .std-none { color: var(--ink-4); font-size: 12.5px; }
   </style>
 </head>
 <body data-page="lab">
@@ -75,7 +131,7 @@
       <div class="hero__scrim" aria-hidden="true"></div>
       <span class="hero__eyebrow">Decision lab</span>
       <h1 class="pagehead__title" id="phTitle">The rules, run in the open</h1>
-      <p class="pagehead__sub">The same shared engine behind the model advisor — reachability, a no-China-hosted option, a capability floor, then ranked by cheapest / balanced / best. Every pick names the exact fields it's based on; a missing fact stays blank, never guessed.</p>
+      <p class="pagehead__sub">The same shared engine behind the model advisor — reachability, a no-China-hosted option, then real evidence, never a judgment call. Every pick's grade is agreement across three kinds of evidence kept separate, never averaged: <strong>measured</strong> (independent tester standings), <strong>chosen</strong> (real OpenRouter spend share), <strong>preferred</strong> (arena.ai human votes). A pick that's near the top on more of these outranks one that's near the top on fewer, then cheapest / balanced / best breaks the rest of the tie. A model with no evidence of any kind isn't a candidate — a benchmark score alone is never enough.</p>
     </section>
 
     <section class="panel" id="try">
@@ -132,11 +188,38 @@
     <section class="panel" id="situations">
       <div class="panel__head">
         <div>
-          <h2 class="panel__title">20 realistic situations</h2>
-          <p class="panel__desc">Drafted by running the engine against the live catalog, not from opinion — see each rationale. <span class="dim">A future data refresh that changes these enough to flip an expectation fails the automated test suite (scripts/test-decide.mjs), on purpose.</span></p>
+          <h2 class="panel__title">40 realistic situations</h2>
+          <p class="panel__desc">A cold answer key, not graded by this engine — a separate pass with its own cited usage/vote/vendor-guidance evidence, no visibility into these rules. <span class="dim">Run against the live data by scripts/eval-report.mjs (a report, never a gate) and pinned on the frozen test fixture by scripts/test-eval-situations.mjs, alongside a companion set of "must never" rules (data/eval/must-never.json).</span></p>
         </div>
       </div>
       <div id="situationsList"></div>
+    </section>
+
+    <section class="panel" id="standings">
+      <div class="panel__head">
+        <div>
+          <h2 class="panel__title">Standings</h2>
+          <p class="panel__desc">The AI never ranks. For every model x task this site publishes three kinds of evidence, kept separate, never averaged: <strong>measured</strong> — rank out of n on a named, independent benchmark; <strong>chosen</strong> — real spend share on OpenRouter for that task; <strong>preferred</strong> — blind human-vote rank on arena.ai. <span class="dim">"—" means nobody has published that kind of evidence for this model on this task yet — never a guess. See scripts/derive-standings.mjs for exactly how each column is sourced.</span></p>
+        </div>
+      </div>
+      <div class="standings-head">
+        <label for="stTask">Task</label>
+        <select id="stTask"></select>
+        <span class="dim" id="stAsOf"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="tbl tbl-standings" id="stTable">
+          <thead>
+            <tr>
+              <th class="col-model">Model</th>
+              <th>Measured</th>
+              <th>Chosen</th>
+              <th>Preferred</th>
+            </tr>
+          </thead>
+          <tbody id="stBody"></tbody>
+        </table>
+      </div>
     </section>
   </main>
 
@@ -154,7 +237,7 @@
       </div>
       <div class="foot__col">
         <h3>Rule order</h3>
-        <p>Reachable with what you have → clears the data rule → clears the task's capability floor → ranked by stance, ties broken by price. See <code>assets/decide.mjs</code> for the exact order.</p>
+        <p>Reachable with what you have → clears the data rule → has to have SOME independent evidence (a benchmark score with nobody backing it is never enough) → tiered by how much of that evidence is near the top of the catalog (measured tester rank, real OpenRouter spend, arena.ai votes — agreement across more of these beats agreement across fewer) → stance (cheapest / balanced / best) breaks the rest of the tie, GA before preview, ties broken by price. See <code>assets/decide.mjs</code> for the exact order.</p>
       </div>
       <div class="foot__col">
         <h3>Freshness</h3>
@@ -177,6 +260,82 @@
     const fmtUSD = (n) => (typeof n === 'number' ? `$${n.toFixed(2)}/mo` : 'cost unknown');
     const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+    // A shortlist item's `basis` ('reported' | 'lab-stated') says what kind of judged evidence
+    // backs its `why` text (scripts/refresh-judge.md) — 'reported' when at least one claim names
+    // an independent third party, 'lab-stated' when every claim is the vendor's own. Only present
+    // when the model has a task_fit_judged record for this task — the tier itself (see
+    // renderTier/renderEvidence) never depends on this any more (brain v2 step 3): a pick with no
+    // judged record at all can still be a candidate purely on standings evidence, and simply has
+    // no claims to show here.
+    function renderBasis(item) {
+      if (!item.claims || !item.claims.length) return '';
+      const claims = item.claims.map((c) => `<li>${esc(c.sentence)} <a href="${esc(c.source_url)}" target="_blank" rel="noopener noreferrer">source</a></li>`).join('');
+      return `
+        <span class="pick__basis">${esc(item.basis)}</span>
+        <ul class="pick__claims">${claims}</ul>
+        ${item.reconciliation ? `<div class="pick__reconciliation">${esc(item.reconciliation)}</div>` : ''}`;
+    }
+
+    // status ('ga'|'preview'|'deprecated') and adoption ('broad'|'moderate'|'low'|'unknown'|'new')
+    // are the two facts that can keep a top-fit pick from being start_here (assets/decide.mjs's
+    // isDisqualifiedFromStartHere) — only the noteworthy values get a badge; a plain 'ga' /
+    // 'broad'/'moderate'/'unknown' model shows nothing extra, so a badge always means "read this
+    // before you commit to it." 'new' (scripts/derive-status-adoption.mjs's 60-day recency rule,
+    // added 2026-09-07) gets its own badge, not the 'low adoption' one — the whole point of that
+    // bucket is "too recent to say" is a different claim from "measured and it's genuinely low",
+    // and decide.mjs never demotes a 'new' model the way it demotes a 'low' one.
+    function renderBadges(item) {
+      const badges = [];
+      if (item.status === 'preview') badges.push('<span class="pick__badge pick__badge--preview">preview — pin the version</span>');
+      if (item.status === 'deprecated') badges.push('<span class="pick__badge pick__badge--deprecated">deprecated</span>');
+      if (item.adoption === 'low') badges.push('<span class="pick__badge pick__badge--adoption-low">low adoption</span>');
+      if (item.adoption === 'new') badges.push('<span class="pick__badge pick__badge--adoption-new">new — adoption not yet measurable</span>');
+      return badges.length ? `<div class="pick__badges">${badges.join('')}</div>` : '';
+    }
+
+    // tier/tier_name/label (brain v2 step 3, assets/decide.mjs) — the AI never ranks; a pick's
+    // grade is agreement across real evidence, never a judged band. `label` is the reader-facing
+    // caveat some tiers carry (e.g. "strong on tests, low real-world use", "not independently
+    // tested", "early: too new for usage data") — most tiers carry none, so this stays blank on
+    // most picks. thin_task flags a task where fewer than 8 catalog models have any tester
+    // standing at all, so the tier scheme itself is narrower (see assets/decide.mjs's header).
+    function renderTier(item) {
+      const thinNote = item.thin_task ? ' <span class="dim">(thin task — under 8 catalog models have tester standings for it)</span>' : '';
+      const label = item.label ? `<div class="pick__label">${esc(item.label)}</div>` : '';
+      return `<div class="pick__tier">Tier ${item.tier} · ${esc(item.tier_name)}${thinNote}</div>${label}`;
+    }
+
+    // The three evidence kinds a pick was actually graded on (assets/decide.mjs), kept separate
+    // and never averaged: measured (independent tester standings), chosen (real OpenRouter spend
+    // share), preferred (arena.ai human votes). Each shows this model's position among the
+    // catalog models that carry that kind of evidence for this task — bold when it's near the
+    // top, plain when it isn't — plus the underlying fact so a reader can check the claim rather
+    // than just trust the tier. "—" means nobody has published that kind of evidence for this
+    // model on this task, never a guess.
+    function renderEvidence(item) {
+      const ev = item.evidence || {};
+      const rows = [];
+      const m = ev.measured;
+      if (m && m.present) {
+        const best = m.best;
+        const detail = best
+          ? ` — <a href="${esc(best.url)}" target="_blank" rel="noopener noreferrer">${esc(best.tester)}</a>, rank ${esc(best.rank)}/${esc(best.n_models)} (${esc(best.benchmark)})`
+          : '';
+        rows.push(`<li><span class="${m.near_top ? 'near-top' : ''}">measured</span>: #${m.position} of ${m.of}${detail}${m.rows > 1 ? ` <span class="dim">(${m.rows} rows)</span>` : ''}</li>`);
+      } else {
+        rows.push('<li><span class="dim">measured: —</span></li>');
+      }
+      const c = ev.chosen;
+      rows.push(c
+        ? `<li><span class="${c.near_top ? 'near-top' : ''}">chosen</span>: #${c.position} of ${c.of} — <a href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">${c.share != null ? `${esc(c.share)}% spend` : `rank ${esc(c.rank)}`}</a></li>`
+        : '<li><span class="dim">chosen: —</span></li>');
+      const p = ev.preferred;
+      rows.push(p
+        ? `<li><span class="${p.near_top ? 'near-top' : ''}">preferred</span>: #${p.position} of ${p.of} — <a href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${esc(p.board)}</a></li>`
+        : '<li><span class="dim">preferred: —</span></li>');
+      return `<ul class="pick__evidence">${rows.join('')}</ul>`;
+    }
+
     function renderShortlist(shortlist) {
       if (!shortlist.length) return '<p class="empty-note">No model clears every filter for this task with these inputs.</p>';
       return `<div class="shortlist">${shortlist.map((item) => `
@@ -186,7 +345,11 @@
             <span class="pick__name">${esc(item.name)}</span>
             <span class="pick__cost">${esc(fmtUSD(item.monthly_cost_usd))}</span>
           </div>
-          <div class="pick__why">${esc(item.why)} <span class="dim">(fit ${item.fit}/100)</span></div>
+          <div class="pick__why">${esc(item.why)}${typeof item.fit === 'number' ? ` <span class="dim">(fit ${item.fit}/100)</span>` : ''}</div>
+          ${renderTier(item)}
+          ${renderEvidence(item)}
+          ${renderBadges(item)}
+          ${renderBasis(item)}
           ${item.seat_plan_alternative
             ? `<div class="pick__seat">Seat plan alternative: ${esc(item.seat_plan_alternative.plan)} — $${item.seat_plan_alternative.price_usd_month}/mo</div>`
             : ''}
@@ -196,6 +359,49 @@
     function renderAssumptions(assumptions) {
       if (!assumptions || !assumptions.length) return '';
       return `<ul class="assumptions">${assumptions.map((a) => `<li>${esc(a)}</li>`).join('')}</ul>`;
+    }
+
+    // -------- standings (measured / chosen / preferred) --------
+    // Three kinds of evidence, kept separate, never averaged — see data/models.json's own
+    // `standings` field (written by scripts/derive-standings.mjs) for exactly what backs each one.
+    function renderMeasured(rows) {
+      if (!rows || !rows.length) return '<span class="std-none">—</span>';
+      return `<div class="std-cell">${rows.map((r) => `
+        <div class="std-row"><a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.rank)}/${esc(r.n_models)}</a> · ${esc(r.benchmark)}${r.score != null ? ` <span class="dim">(${esc(r.score)})</span>` : ''}</div>
+      `).join('')}</div>`;
+    }
+    function renderChosen(c) {
+      if (!c) return '<span class="std-none">—</span>';
+      return `<div class="std-cell"><div class="std-row"><a href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">${esc(c.rank)}/${esc(c.n_models)}</a> · ${esc(c.share)}% spend <span class="dim">(${c.tags.map(esc).join(', ')})</span></div></div>`;
+    }
+    function renderPreferred(p) {
+      if (!p) return '<span class="std-none">—</span>';
+      return `<div class="std-cell"><div class="std-row"><a href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${esc(p.rank)}/${esc(p.n_models)}</a> · ${esc(p.board)}</div></div>`;
+    }
+    function renderStandingsTable(models, taskId) {
+      const body = document.getElementById('stBody');
+      // Models with evidence first: best measured rank, then chosen rank, then preferred rank, then name.
+      const keyOf = (m) => {
+        const s = m.standings?.[taskId] || { measured: [], chosen: null, preferred: null };
+        const best = s.measured.length ? Math.min(...s.measured.map((r) => r.rank / r.n_models)) : Infinity;
+        const chosen = s.chosen?.rank ?? Infinity;
+        const preferred = s.preferred?.n_models ? s.preferred.rank / s.preferred.n_models : Infinity;
+        return [best, chosen, preferred];
+      };
+      const rows = [...models].sort((a, b) => {
+        const ka = keyOf(a), kb = keyOf(b);
+        for (let i = 0; i < 3; i++) if (ka[i] !== kb[i]) return ka[i] - kb[i];
+        return a.name.localeCompare(b.name);
+      });
+      body.innerHTML = rows.map((m) => {
+        const s = m.standings?.[taskId] || { measured: [], chosen: null, preferred: null };
+        return `<tr>
+          <td class="cell-model">${esc(m.name)}</td>
+          <td>${renderMeasured(s.measured)}</td>
+          <td>${renderChosen(s.chosen)}</td>
+          <td>${renderPreferred(s.preferred)}</td>
+        </tr>`;
+      }).join('');
     }
 
     function inputSummary(input) {
@@ -226,7 +432,14 @@
       const taskSelect = document.getElementById('fTask');
       taskSelect.innerHTML = tasksFile.tasks.map((t) => `<option value="${esc(t.id)}">${esc(t.label)}</option>`).join('');
 
-      // -------- 20 situations --------
+      // -------- standings --------
+      const stTaskSelect = document.getElementById('stTask');
+      stTaskSelect.innerHTML = tasksFile.tasks.map((t) => `<option value="${esc(t.id)}">${esc(t.label)}</option>`).join('');
+      document.getElementById('stAsOf').textContent = `standings as of ${models.models[0]?.standings?.as_of || models.as_of}`;
+      stTaskSelect.addEventListener('change', () => renderStandingsTable(data.models, stTaskSelect.value));
+      renderStandingsTable(data.models, stTaskSelect.value);
+
+      // -------- 40 situations --------
       const list = document.getElementById('situationsList');
       list.innerHTML = situationsFile.situations.map((s) => {
         const taskId = s.input.tasks[0];

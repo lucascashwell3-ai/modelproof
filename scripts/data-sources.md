@@ -245,3 +245,141 @@ Premium tiers share a JS-toggled price display with their base tier). Google, An
 GitHub Copilot's own pages, by contrast, render every number server-side. Every entry carries the
 `source_url` it was read from and an `as_of` date; `scripts/validate-data.mjs` rejects any entry
 with a price and no source, or a non-URL `source_url`.
+
+## Judged task fit + usage (added 2026-09-06/07, engine round 3)
+
+Two more fields, same rule: sourced or blank.
+
+**`task_fit_judged{}`** on every model — a per-task, sourced qualitative record (band + confidence
++ `claims[]`) written when `task_fit`'s quantitative score is null (`scripts/refresh-judge.md`
+carries the full writing rules; `scripts/validate-data.mjs` gates the shape and bans relative
+phrasing in the Judge's own prose; `scripts/check-sources.mjs` is the separate live-fetch gate that
+confirms every `quote` is actually on its cited page — the one no wording rule alone can enforce,
+since a well-formed claim can still misquote or fabricate a source). Its `band`/`confidence` carry
+**zero ranking weight** in `assets/decide.mjs` (brain v2 step 3) — ranking is agreement across
+independent tester standings, real OpenRouter spend share, and arena.ai human votes, kept separate
+and never averaged (`scripts/derive-standings.mjs`; see `assets/decide.mjs`'s own file header for
+the exact rule). This record's `claims[]` still show up next to a pick as the sourced explanation
+of why it fits the task — just never as what decided the ranking.
+
+**`usage.openrouter`** — per-model token-volume share + rank, the machine-readable usage source
+this schema asked for. What was tried, in order:
+
+1. **`openrouter.ai/api/v1/models`** (the existing Tier-A price/model-id feed, `scripts/sources.json`) —
+   confirmed to carry pricing and model metadata only, no usage/volume field. Ruled out immediately.
+2. **`openrouter.ai/rankings`** (the public rankings page) — HTML only in its initial response, no
+   embedded JSON blob (`__NEXT_DATA__` or similar) to read instead of scraping the rendered page.
+   Scraping brittle HTML is explicitly against this file's own rule — ruled out.
+3. **`openrouter.ai/api/frontend/v1/rankings/models`** — found by reading the network requests the
+   rankings page itself makes (the same JSON the page renders from). Confirmed live 2026-09-06:
+   unauthenticated `GET`, returns `{"data": [{"date", "model_permaslug", "variant",
+   "total_prompt_tokens", "total_completion_tokens", "count", ...}]}` — one row per
+   (model, variant) for the day, across OpenRouter's **entire** tracked catalog. **Used.** It is
+   the JSON the task explicitly named as a candidate ("a JSON behind openrouter.ai/rankings"), and
+   every field it returns is copied, not scraped from rendered markup.
+
+   **Caveat, stated plainly:** unlike `/api/v1/models`, this endpoint is not documented at
+   `openrouter.ai/docs` — it's the frontend's own internal API, discovered rather than published,
+   so it carries no stability guarantee and could change shape or disappear without notice.
+   `scripts/derive-usage.mjs` treats a failed/reshaped fetch as "nothing to report this run," never
+   as "usage dropped to zero" (same fill-vs-change spirit as availability above). If this endpoint
+   ever breaks for good, the fallback is back to option 2 (a real HTML scrape) or watching for
+   OpenRouter to document a real usage API — worth a note in the PR that finds it broken.
+
+   **The arithmetic** (why this is collection, not judgment, under this file's "provenance, not
+   field type" rule): `share` is one model's `(total_prompt_tokens + total_completion_tokens)` as a
+   percentage of that same sum across every row the endpoint returns that day — one division of
+   two directly-fetched numbers, not an average, interpolation, or reconciliation across sources.
+   `rank` is that model's position sorted by the same total among the **whole** feed, including
+   rows that never match our catalog — a more honest "where does this model sit" than ranking only
+   among the ~65 models we happen to track. `category` is always `"overall"`: the endpoint reports
+   total volume, not a task-specific breakdown (a `?category=` query param was tried and returned
+   identical data regardless of value — not a real filter, so never assume one), and inventing a
+   per-task split the source doesn't give would be exactly the kind of guess this file exists to
+   forbid.
+
+   Collected every full Collect run (`scripts/auto-refresh.mjs`, right after availability); the
+   first live pass (2026-09-06) matched 58 of the catalog's 67 models.
+
+## How to run these two
+
+```
+node scripts/derive-usage.mjs          # usage.openrouter only, standalone (also runs inside auto-refresh.mjs)
+node scripts/check-sources.mjs         # the anti-fabrication gate — fetches every judged-fit claim's source_url
+```
+
+## Tester registry (added 2026-09-07, brain v2 step 1)
+
+**The rule this section exists to serve: the AI never ranks a model.** Everything above this
+section is about sourcing individual facts (price, a benchmark score, availability). Ranking is a
+different problem — and the plan is that ranking never comes from this codebase's own judgment.
+Instead, a future ranking is meant to come from **agreement across the named, independent testers
+below, plus human votes, plus real usage** — three things that already exist in the world, none of
+them invented here. `data/testers.json` is the machine-readable registry backing that plan: every
+entry was actually fetched (curl, or a headless browser where a site is JS-rendered) and dated, the
+same discipline the rest of this file already holds sources to.
+
+| Tester | Tasks covered | Licence class | Mapped / feed models | Verdict |
+|---|---|---|---|---|
+| Epoch AI Benchmarking Hub | research, frontend (preferred only — see note), coding, agents, writing, vision, extraction, exec-summaries | display-ok (CC-BY-4.0 for Epoch's own runs; external mirrors keep upstream terms — see `data/testers.json`) | 37 / 902 | use |
+| Aider Polyglot Leaderboard | coding | display-ok (Apache-2.0) | 2 / 68 | exclude — frozen since 2025-10-04 |
+| LiveBench | coding, research, extraction, writing, exec-summaries | unknown | 32 / 56 | use |
+| Terminal-Bench 2.0 | agents | display-ok (Apache-2.0, via Epoch's mirror) | 3 / 48 | use |
+| SWE-bench Verified leaderboard | coding | unknown | 1 / 83 | signal-only |
+| Scale AI SEAL Leaderboards | agents, research, vision, chat | banned (all rights reserved) | 13 / 44 | signal-only |
+| Vals AI | coding, research, extraction (descriptive only) | banned (proprietary) | — (no feed found) | exclude |
+| LMArena / Arena.ai | coding, agents, writing, research, extraction, chat, vision, frontend, exec-summaries | signal-only (live site unlicensed; legacy Apache-2.0 mirror dead since 2025-08-04) | 15 / — | signal-only |
+| OpenRouter task/category spend & usage | coding, agents, bulk, writing, research, extraction, chat, frontend, exec-summaries | signal-only (undocumented internal API) | 58 / 554 | use |
+| Artificial Analysis | coding, research, agents (descriptive only) | signal-only (redistribution gated, internal use not) | — (API paid-gated) | signal-only |
+| ARC Prize Foundation — ARC-AGI-2 Evaluations | research | display-ok (terms restrict commercial republishing only; this site is non-commercial; courtesy request sent 2026-08-22) | 12 / 247 | use |
+
+Notes on how to read this table:
+
+- **"Mapped / feed models"** is how many of this catalog's models (`data/models.json`) a tester's
+  own feed names contain, out of that feed's total distinct model names — computed by a throwaway
+  matcher (`scripts/_audit/map-names.mjs`) that strips only *known* reasoning-effort/date suffixes
+  before comparing. It never guesses a fuzzy match; a real alias goes into `model-aliases.json`
+  only after a human confirms it. A low ratio here usually means the tester tracks a long history
+  of superseded models this catalog no longer lists, not that the tester is thin.
+- **Licence class** follows the same display-ok / signal-only / banned / unknown scale as the rest
+  of this file (`unknown` is a real, allowed answer — never a guessed licence).
+- **OpenRouter's usage row is not a "tester" in the same sense as the other ten** — it is the
+  **real-usage** leg of the three-legged plan (agreement + votes + usage), included because the
+  brief that built this registry named it as a candidate to check.
+- Full detail — feed URLs, exact licence quotes, independence citations, refresh cadence, and the
+  unmapped-name samples behind each ratio — lives in `data/testers.json`. Nothing in that file was
+  invented: a number not fetched is recorded as `null` with a note, per this file's own rule above.
+- **Epoch's 37 / 902 is a feed-wide total across ~80 benchmark CSVs**, not one number for one
+  table — `data/testers.json`'s `epoch-ai.mapping.per_benchmark` breaks it down file by file
+  (catalog models matched, feed models, which of this catalog's 10 tasks it maps to, and its own
+  licence: Epoch's own runs are CC-BY, Aider Polyglot and Terminal-Bench are Apache-2.0, everything
+  else Epoch mirrors carries unstated upstream terms). Two mirrored sets — Video-MME and Epoch's
+  own LiveBench mirror (`live_bench_external.csv`, separate from the standalone LiveBench row
+  above) — matched zero catalog models each because both are frozen at snapshots older than this
+  catalog, not because the matcher failed.
+- **Widened 2026-09-07 (brain v2 step 2 fix round): 14 → 25 wired `per_benchmark` entries.** Added
+  SciCode, ALE-Bench, WeirdML, and DeepSWE to `coding`; APEX-Agents and OSWorld 2.0 to `agents`;
+  Epoch's own versioned FrontierMath (Tiers 1-3 v2, Tier 4 v2), ProofBench, OTIS Mock AIME
+  2024-2025, and CritPt to `research`; GDP.pdf as this catalog's first Epoch `extraction` set —
+  each one's fit against its own listed task was confirmed against the benchmark's own page (or
+  its CSV's `Source` column) before wiring it in, never assumed from the filename alone; the one
+  line each got is in `data/testers.json`'s `epoch-ai.notes`. Dropped `aider_polyglot_external.csv`
+  from `coding` (1 matched model, frozen since 2025-10-04) to match the standalone Aider Polyglot
+  row's own `exclude` verdict above — the same stale leaderboard reached two ways now gets one
+  answer.
+- **WebDev Arena reclassified `measured` → `preferred` (2026-09-07).** WebDev Arena is a blind
+  human-vote leaderboard, not an independent test — it never belonged in `measured` at all,
+  Epoch's own mirror of it notwithstanding. `webdev_arena_external.csv`'s `per_benchmark` entry now
+  carries `kind: "preferred"`; `scripts/derive-standings.mjs` reads that field (default
+  `"measured"` when absent) to route a set's ranked rows into `standings.<task>.preferred` instead
+  of `.measured`, with `licence: "signal-only"` and `score: null` always — the rank is cited, the
+  vote-derived number itself is not republished. `frontend.measured` is honestly `[]` for every
+  model now; `frontend.preferred` prefers the mirror's own rank (out of the whole mirrored board)
+  and falls back to the arena.ai top-10 card snapshot only for a model the mirror itself lacks.
+- **ARC Prize's 12 / 247 undercounts the real match rate.** Its feed names use a hyphen-joined
+  vendor prefix (`anthropic-claude-fable-5-1-high`) that the shared matcher's provider-prefix
+  stripper doesn't recognize (it only strips a prefix followed by `/` or `.`) — a naming-convention
+  gap in `scripts/auto-refresh.mjs`, not fixed here since this pass is research-only. Epoch's own
+  mirror of the same ARC-AGI-2 data matches 22 / 203 with the same unmodified matcher, which is a
+  partial cross-check that ARC Prize's true rate is well above 12 / 247.
+

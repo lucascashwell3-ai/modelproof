@@ -1,0 +1,107 @@
+[
+  {
+    "task": "bulk",
+    "stance": "best",
+    "model_id": "claude-opus-5",
+    "why": "Zero presence in the OpenRouter raw-token-volume leaderboard (the closest real signal to 'bulk' cheap high-volume usage) and Anthropic's own model-selection guide reserves Opus 5 for 'complex agentic coding and enterprise work', not high-volume/cost-sensitive processing (that role is explicitly given to Haiku 4.5). A recommender must not open a bulk/cost-defined task with the catalog's most expensive-per-token model.",
+    "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model"
+  },
+  {
+    "task": "agents",
+    "stance": "best",
+    "model_id": "gpt-5-6-luna",
+    "why": "Not in the top-10 of OpenRouter's agent:workflow_execution or agent:multi_step_planning spend-share, and not in Arena's Agent leaderboard top-10. Luna is OpenAI's lightest/cheapest GPT-5.6 tier; nothing in the collected signals supports it for long-horizon agent work.",
+    "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend ; https://arena.ai/leaderboard"
+  },
+  {
+    "task": "vision",
+    "stance": "best",
+    "model_id": "kimi-k3",
+    "why": "Absent from Arena's Vision leaderboard top-10 despite being a top-5 revealed-choice/vote-getter for coding, agents, frontend and research. No vendor guide or enterprise case study in the collected evidence names it for vision/image workloads either.",
+    "source_url": "https://arena.ai/leaderboard"
+  },
+  {
+    "task": "research",
+    "stance": "best",
+    "model_id": "claude-sonnet-5",
+    "why": "Not in the top-5 of OpenRouter's research_report spend-share nor Arena's Search-leaderboard top-5. Anthropic's own selection matrix assigns 'multistep deep research' specifically to Fable 5.1, describing Sonnet 5 as the everyday/agentic-tool-use model instead.",
+    "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model"
+  },
+  {
+    "task": "extraction",
+    "stance": "best",
+    "model_id": "qwen3-8-max",
+    "why": "No presence in OpenRouter's data:extraction spend-share top-10 or Arena's Document leaderboard top-10. The only enterprise/vendor evidence collected for extraction (Box, Wayfair, Rakuten via Google Cloud; Anthropic's Sonnet-5/Haiku-4.5 picks) names Gemini 3 or Claude models, never this one.",
+    "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend ; https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise"
+  },
+  {
+    "task": "chat",
+    "stance": "best",
+    "model_id": "deepseek-v4-flash",
+    "why": "Not in the top-5 of OpenRouter's conversational_reply spend-share or Arena's Text-Arena Overall top-5. The one real-world case study naming this model (Lindy) is for automated agent/workflow traffic (email, calendar), not consumer chat quality -- that evidence does not transfer to a 'best chat' recommendation.",
+    "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend ; https://www.lindy.ai/blog/migrating-from-claude-to-deepseek"
+  },
+  {
+    "task": "writing",
+    "stance": "best",
+    "model_id": "grok-4-5",
+    "why": "Zero presence in OpenRouter's content_writing spend-share top-10 or Arena's Creative Writing leaderboard top-10. Cursor lists it in its coding-agent model pool; nothing in the collected signals positions it for writing quality.",
+    "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend ; https://arena.ai/leaderboard/text"
+  },
+  {
+    "task": "frontend",
+    "stance": "best",
+    "model_id": "claude-haiku-4-5",
+    "why": "No presence in OpenRouter's code:frontend_ui spend-share top-10 or Arena's WebDev leaderboard top-10. Anthropic's own guide positions Haiku 4.5 for 'real-time applications' and 'high-volume processing', explicitly not the vision-heavy/UI-generation workflows it assigns to Opus 5.",
+    "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend ; https://docs.claude.com/en/docs/about-claude/models/choosing-a-model"
+  },
+  {
+    "task": "coding",
+    "stance": "best",
+    "model_id": "gpt-6-astra",
+    "why": "Released 2026-09-04, two days before this catalog snapshot; has zero OpenRouter code:general_impl spend-share and does not appear in Arena's dedicated Coding category top-20. Its one piece of real evidence is a #1 finish on the separate WebDev/frontend leaderboard (as 'gpt-6-astra-max'), which is a different, narrower workload and does not establish general coding strength.",
+    "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend ; https://arena.ai/leaderboard/text"
+  },
+  {
+    "task": "any",
+    "context": "enterprise",
+    "model_id": "gemini-3-1-pro",
+    "why": "The catalog itself names this SKU 'Gemini 3.1 Pro (Preview)'. It has real, independently-sourced signal for writing/research/extraction/vision/frontend (Arena top-5s, and named Google Cloud enterprise customers Box/Rakuten/Geotab/Wayfair/Thomson Reuters/WRTN/Presentations.AI), which is exactly why it is tempting to start with -- but a preview-labeled SKU must never be the enterprise starting recommendation regardless of how strong its other-task evidence is.",
+    "source_url": "https://cloud.google.com/blog/products/ai-machine-learning/gemini-3-is-available-for-enterprise"
+  },
+  {
+    "task": "any",
+    "context": "enterprise",
+    "model_id": "hy4-preview",
+    "why": "'preview' is literally part of the model's own catalog id/name. It ranks in OpenRouter's top-5 by raw completion-token volume (a real bulk/cost signal), but a named preview SKU is unacceptable to enterprise buyers regardless of its usage volume.",
+    "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+  },
+  {
+    "task": "any",
+    "context": "enterprise",
+    "model_id": "deepseek-v4-flash-vision-exp",
+    "why": "'Exp' (experimental) is literally part of the model's own catalog name (DeepSeek V4 Flash Vision Exp). Must never be an enterprise starting recommendation for any task regardless of any other evidence.",
+    "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+  },
+  {
+    "task": "any",
+    "context": "noChinaHosted",
+    "model_id": "deepseek-v4-flash",
+    "why": "DeepSeek is headquartered in China. This is the single most enterprise-validated cost-driven pick collected for bulk/agent workloads (Lindy's documented ~90% inference-cost cut moving 100% of agent traffic to it), which is exactly why the noChinaHosted exclusion has to be applied as a hard filter rather than left to a quality/price ranking that would otherwise surface it first.",
+    "source_url": "https://www.lindy.ai/blog/migrating-from-claude-to-deepseek"
+  },
+  {
+    "task": "any",
+    "context": "noChinaHosted",
+    "model_id": "kimi-k3",
+    "why": "Moonshot AI is headquartered in China. It is OpenRouter's #2 model by code:general_impl spend-share and a top-5 vote-getter in Arena's Coding category, both real signals of quality -- neither exempts it from a noChinaHosted exclusion.",
+    "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend ; https://arena.ai/leaderboard/text"
+  },
+  {
+    "task": "any",
+    "context": "noChinaHosted",
+    "model_id": "glm-5-2",
+    "why": "Z.ai (Zhipu) is headquartered in China. It is a top-5 OpenRouter model by code:frontend_ui spend-share, but that revealed-usage strength does not override a noChinaHosted hosting constraint.",
+    "source_url": "https://openrouter.ai/api/frontend/v1/rankings/task-spend"
+  }
+]

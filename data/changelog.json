@@ -1192,6 +1192,2128 @@
   },
   {
     "date": "2026-09-07",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.anthropic.com/claude/fable"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-6 Astra",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://platform.openai.com/docs/models/gpt-6-astra.md"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.8 Flash",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://deepmind.google/models/gemini/flash/"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Grok 4.6",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://x.ai/news/grok-4-6"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GLM-5.3",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://docs.z.ai/guides/llm/glm-5.3"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4 Pro 0813",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813/raw/main/README.md"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4 Flash 0731",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731/raw/main/README.md"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4 Flash Vision Exp",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp/raw/main/README.md"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 Flash",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/Qwen/Qwen3.8-Flash-Next/raw/main/README.md"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 2.4T A95B",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.marktechpost.com/2026/07/19/alibaba-previews-qwen3-8-max-a-2-4-trillion-parameter-multimodal-model-days-after-moonshots-kimi-k3-open-weight-launch/",
+      "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy4 preview",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.tencent.com/tencent-releases-and-open-sources-tencent-hy4-preview/",
+      "https://technode.com/2026/08/28/tencent-open-sources-hy4-preview-with-770b-parameters-and-a-1m-token-context/"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Nemotron 3.5 Lightning",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.cnbc.com/2026/08/11/nvidia-releases-nemotron-3point5-lightning-open-source-ai-model-.html"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://arena.ai/leaderboard/text",
+      "https://www.anthropic.com/news/claude-opus-5"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://arena.ai/leaderboard/agent",
+      "https://docs.claude.com/en/docs/claude-code/model-config"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://arena.ai/leaderboard/text",
+      "https://www.anthropic.com/news/claude-opus-5"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://arena.ai/leaderboard/search",
+      "https://www.anthropic.com/news/claude-opus-5"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5",
+    "field": "task_fit_judged.extraction",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://arena.ai/leaderboard/document",
+      "https://www.anthropic.com/news/claude-opus-5"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://arena.ai/leaderboard/text",
+      "https://www.anthropic.com/news/claude-opus-5"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://arena.ai/leaderboard/vision",
+      "https://www.anthropic.com/news/claude-opus-5"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5",
+    "field": "task_fit_judged.frontend",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://arena.ai/leaderboard/code/webdev",
+      "https://www.anthropic.com/news/claude-opus-5"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5",
+    "field": "task_fit_judged.exec-summaries",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://arena.ai/leaderboard/text",
+      "https://www.anthropic.com/news/claude-opus-5"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.coding",
+    "old": "capable",
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/agent"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.frontend",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/code/webdev"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.exec-summaries",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Opus 4.8",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://arena.ai/leaderboard/text",
+      "https://www.anthropic.com/news/claude-sonnet-5"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Opus 4.8",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://arena.ai/leaderboard/agent",
+      "https://www.anthropic.com/news/claude-sonnet-5"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Opus 4.8",
+    "field": "task_fit_judged.extraction",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://arena.ai/leaderboard/document",
+      "https://www.anthropic.com/news/claude-sonnet-5"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Opus 5",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Opus 5",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/agent"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Opus 5",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Opus 5",
+    "field": "task_fit_judged.extraction",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/document"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Opus 5",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Opus 5",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/vision"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Opus 5",
+    "field": "task_fit_judged.frontend",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/code/webdev"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Opus 5",
+    "field": "task_fit_judged.exec-summaries",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Sonnet 5",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Sonnet 5",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/agent"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Sonnet 5",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Sonnet 5",
+    "field": "task_fit_judged.extraction",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/document"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Sonnet 5",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Sonnet 5",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/vision"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Sonnet 5",
+    "field": "task_fit_judged.frontend",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/code/webdev"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Sonnet 5",
+    "field": "task_fit_judged.exec-summaries",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.1 Pro (Preview)",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.1 Pro (Preview)",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/agent"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.1 Pro (Preview)",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.1 Pro (Preview)",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/search"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.1 Pro (Preview)",
+    "field": "task_fit_judged.extraction",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/document"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.1 Pro (Preview)",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.1 Pro (Preview)",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/vision"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.1 Pro (Preview)",
+    "field": "task_fit_judged.exec-summaries",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.8 Flash",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.8 Flash",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.8 Flash",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.8 Flash",
+    "field": "task_fit_judged.exec-summaries",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GLM-5.2",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GLM-5.2",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/agent"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GLM-5.2",
+    "field": "task_fit_judged.frontend",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/code/webdev"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GLM-5.3",
+    "field": "task_fit_judged.coding",
+    "old": "capable",
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.6 Luna",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.6 Luna",
+    "field": "task_fit_judged.exec-summaries",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.6 Sol",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.6 Sol",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/agent"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.6 Sol",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.6 Sol",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/search"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.6 Sol",
+    "field": "task_fit_judged.extraction",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/document"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.6 Sol",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.6 Sol",
+    "field": "task_fit_judged.exec-summaries",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.6 Terra",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.6 Terra",
+    "field": "task_fit_judged.extraction",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/document"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Grok 4.5",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Grok 4.5",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/search"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Grok 4.6",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Kimi K3",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Kimi K3",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/agent"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Kimi K3",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Kimi K3",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Kimi K3",
+    "field": "task_fit_judged.frontend",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/code/webdev"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Kimi K3",
+    "field": "task_fit_judged.exec-summaries",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.2",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.2",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.2",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/vision"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4-Flash",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/task-spend",
+      "https://www.lindy.ai/blog/migrating-from-claude-to-deepseek"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4-Flash",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://www.lindy.ai/blog/migrating-from-claude-to-deepseek"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.7 Flash",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.5",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/search"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.5",
+    "field": "task_fit_judged.extraction",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/document"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Haiku 4.5",
+    "field": "task_fit_judged.extraction",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://arena.ai/leaderboard/document",
+      "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Haiku 4.5",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://arena.ai/leaderboard/text",
+      "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 Max",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/vision"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 Max",
+    "field": "task_fit_judged.frontend",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/code/webdev"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-6 Astra",
+    "field": "task_fit_judged.frontend",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/code/webdev"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Claude Haiku 4.5",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.anthropic.com/news/claude-haiku-4-5",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-5.6 Luna",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.8 Flash",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/text"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Grok 4.5",
+    "field": "task_fit_judged.frontend",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/api/frontend/v1/rankings/models",
+      "https://arena.ai/leaderboard/code/webdev"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Glimmer 30B",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/meta-models/Muse-Glimmer-30B",
+      "https://kingy.ai/blog/muse-glimmer-30b-benchmarks-hardware-run/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Glimmer 30B",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/meta-models/Muse-Glimmer-30B",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Laguna S 2.1",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://poolside.ai/blog/introducing-laguna-s-2-1",
+      "https://aitoolsreview.co.uk/insights/poolside-laguna-s-2-1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Laguna S 2.1",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://poolside.ai/blog/introducing-laguna-s-2-1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.7 Flash",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.eesel.ai/blog/qwen-3-7-flash",
+      "https://docs.qwencloud.com/changelog/models",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Seed 2.1 Turbo",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://seed.bytedance.com/en/seed2_1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Seed 2.1 Turbo",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://seed.bytedance.com/en/seed2_1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Seed 2.1 Turbo",
+    "field": "task_fit_judged.exec-summaries",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://seed.bytedance.com/en/seed2_1",
+      "https://datanorth.ai/news/bytedance-releases-seed-2-1-pro-and-seed-2-1-turbo",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Aion-3.0",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/aion-labs/aion-3.0",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Aion-3.0",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/aion-labs/aion-3.0",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Aion-3.0-Mini",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/aion-labs/aion-3.0-mini",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Aion-3.0-Mini",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/aion-labs/aion-3.0-mini",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Seed-2.0-Code",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://seed.bytedance.com/en/blog/seed-2-0-official-launch",
+      "https://howaiworks.ai/models/doubao-seed-code",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Seed-2.0-Code",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://howaiworks.ai/models/doubao-seed-code",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Laguna XS 2.1",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://poolside.ai/blog/introducing-laguna-xs-2-1",
+      "https://benchable.ai/models/poolside/laguna-xs-2.1-20260625",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Laguna XS 2.1",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://poolside.ai/blog/introducing-laguna-xs-2-1",
+      "https://huggingface.co/poolside/Laguna-XS-2.1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen-Turbo",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "https://openrouter.ai/qwen/qwen-turbo",
+      "https://electroiq.com/stats/qwen-ai-statistics/"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Mistral Medium 3.1",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://openrouter.ai/mistralai/mistral-medium-3.1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Mistral Medium 3.1",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/mistralai/mistral-medium-3.1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Mistral Medium 3.1",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/mistralai/mistral-medium-3.1"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.1",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.1",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.1",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.1",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.1",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Ling-3.0-flash",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/inclusionAI/Ling-3.0-flash",
+      "https://blog.kilo.ai/p/announcing-ling-30-flash-free-on",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Ling-3.0-flash",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/inclusionAI/Ling-3.0-flash",
+      "https://blog.kilo.ai/p/announcing-ling-30-flash-free-on",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Ling-3.0-flash",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://huggingface.co/inclusionAI/Ling-3.0-flash",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Ling-3.0-flash",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/inclusionAI/Ling-3.0-flash",
+      "https://blog.kilo.ai/p/announcing-ling-30-flash-free-on",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "KAT-Coder-Pro V2.5",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://arxiv.org/abs/2607.05471",
+      "https://vercel.com/ai-gateway/models/kat-coder-pro-v2.5",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "KAT-Coder-Pro V2.5",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://arxiv.org/abs/2607.05471",
+      "https://vercel.com/ai-gateway/models/kat-coder-pro-v2.5",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "KAT-Coder-Air V2.5",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/kwaipilot/kat-coder-air-v2.5",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "KAT-Coder-Air V2.5",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/kwaipilot/kat-coder-air-v2.5",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "KAT-Coder-Air V2.5",
+    "field": "task_fit_judged.frontend",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/kwaipilot/kat-coder-air-v2.5",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "KAT-Coder-Air V2.5",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://developer.puter.com/ai/kwaipilot/kat-coder-air-v2.5/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "LongCat 2.0",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://github.com/meituan-longcat/LongCat-2.0",
+      "https://felloai.com/longcat-2-0/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "LongCat 2.0",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://github.com/meituan-longcat/LongCat-2.0",
+      "https://felloai.com/longcat-2-0/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 27B",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 27B",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3.8 27B",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.alibabacloud.com/blog/alibaba-unveils-qwen3-8-27b-and-releases-weights-of-qwen3-8-flagship-model_603463",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Sakana Namazu",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://sakana.ai/namazu-api/",
+      "https://aiweekly.co/alerts/sakana-ai-ships-namazu-a-japanese-tuned-kimi-k26-llm",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Sakana Namazu",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://sakana.ai/namazu-api/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Sakana Namazu",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://sakana.ai/namazu-api/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Sakana Namazu",
+    "field": "task_fit_judged.chat",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://sakana.ai/namazu-api/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy3",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.tencent.com/en-us/articles/2202386.html",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy3",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.tencent.com/en-us/articles/2202386.html",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy3",
+    "field": "task_fit_judged.frontend",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.tencent.com/en-us/articles/2202386.html",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy3",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://technode.com/2026/07/07/tencent-launches-hunyuan-hy3-integrates-model-across-multiple-products/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy3",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.tencent.com/en-us/articles/2202386.html",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Inkling",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://techcrunch.com/2026/07/15/thinking-machines-amps-up-its-bet-against-one-size-fits-all-ai-with-its-first-open-model-inkling/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Inkling Small",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://thinkingmachines.ai/news/inkling-small/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Inkling Small",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://thinkingmachines.ai/news/inkling-small/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Inkling Small",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://thinkingmachines.ai/news/inkling-small/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Solar Pro 4",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4",
+      "https://www.upstage.ai/blog/en/solar-pro-4",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Solar Pro 4",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.upstage.ai/blog/en/solar-pro-4",
+      "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Solar Pro 4",
+    "field": "task_fit_judged.extraction",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://en.sedaily.com/technology/2026/08/14/upstage-unveils-new-ai-model-solar-pro-4",
+      "https://www.upstage.ai/blog/en/solar-pro-4",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Solar Pro 4",
+    "field": "task_fit_judged.exec-summaries",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.upstage.ai/blog/en/solar-pro-4",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy-MT2-1.8B",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://github.com/Tencent-Hunyuan/Hy-MT2",
+      "https://huggingface.co/tencent/Hy-MT2-1.8B",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Hy-MT2-30B-A3B",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://github.com/Tencent-Hunyuan/Hy-MT2",
+      "https://openrouter.ai/tencent/hy-mt2-30b-a3b",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Granite 4.2 8B",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://research.ibm.com/blog/introducing-granite-4-2",
+      "https://huggingface.co/ibm-granite/granite-4.2-8b",
+      "https://thenewstack.io/ibm-granite-reasoning-models/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Granite 4.2 8B",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://huggingface.co/ibm-granite/granite-4.2-8b",
+      "https://thenewstack.io/ibm-granite-reasoning-models/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Granite 4.2 8B",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://research.ibm.com/blog/introducing-granite-4-2",
+      "https://huggingface.co/ibm-granite/granite-4.2-8b",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.3",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
+      "https://openrouter.ai/meta/muse-spark-1.3",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.3",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.3",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.3 Contributor",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.3-contributor",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.3 Contributor",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.3-contributor",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.2 Contributor",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.2-contributor",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Muse Spark 1.2 Contributor",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.2-contributor",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-6 Astra Pro",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://artificialanalysis.ai/articles/benchmarking-gpt-6-astra",
+      "https://openrouter.ai/openai/gpt-6-astra-pro",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-6 Astra Pro",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://artificialanalysis.ai/articles/benchmarking-gpt-6-astra",
+      "https://openrouter.ai/openai/gpt-6-astra-pro",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "GPT-6 Astra Pro",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://thenewstack.io/openai-gpt6-astra-benchmarks/",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4-Pro",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.buildfastwithai.com/blogs/deepseek-v4-pro-review-2026",
+      "https://llm-stats.com/benchmarks/swe-bench-verified",
+      "https://artificialanalysis.ai/models/deepseek-v4-pro",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4-Pro",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.buildfastwithai.com/blogs/deepseek-v4-pro-review-2026",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4-Pro",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.buildfastwithai.com/blogs/deepseek-v4-pro-review-2026",
+      "https://artificialanalysis.ai/models/deepseek-v4-pro",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "DeepSeek V4-Pro",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://artificialanalysis.ai/models/deepseek-v4-pro",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Kimi K2.6",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.kimi.ai/blog/kimi-k2-6",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Kimi K2.6",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://www.kimi.ai/blog/kimi-k2-6",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Kimi K2.6",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://www.kimi.ai/blog/kimi-k2-6",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Llama 4 Maverick",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://tokenmix.ai/blog/llama-4-maverick-review",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Llama 4 Maverick",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://tokenmix.ai/blog/llama-4-maverick-review",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "o4-mini",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/openai/o4-mini",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "o4-mini",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/openai/o4-mini",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "o4-mini",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://openrouter.ai/openai/o4-mini",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.5 Flash",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://o-mega.ai/articles/gemini-3-5-flash-benchmarks-cost-and-guide",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.5 Flash",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "strong",
+    "sources": [
+      "https://o-mega.ai/articles/gemini-3-5-flash-benchmarks-cost-and-guide",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.5 Flash",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://o-mega.ai/articles/gemini-3-5-flash-benchmarks-cost-and-guide",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 3.5 Flash",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://o-mega.ai/articles/gemini-3-5-flash-benchmarks-cost-and-guide",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Gemini 2.5 Flash-Lite",
+    "field": "task_fit_judged.bulk",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://artificialanalysis.ai/models/gemini-2-5-flash-lite",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3-Max",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://artificialanalysis.ai/articles/qwen3-max-thinking-everything-you-need-to-know",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3-Max",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://artificialanalysis.ai/articles/qwen3-max-thinking-everything-you-need-to-know",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3-Coder-Plus",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://tokenmix.ai/blog/qwen3-coder-plus-review-benchmark-2026",
+      "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "model": "Qwen3-Coder-Plus",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "capable",
+    "sources": [
+      "https://tokenmix.ai/blog/qwen3-coder-plus-review-benchmark-2026",
+      "https://openrouter.ai/api/frontend/v1/rankings/models"
+    ]
+  },
+  {
+    "date": "2026-09-07",
     "model": "Laguna S 2.1",
     "field": "price_input",
     "new": 0.09,
@@ -1410,6 +3532,36 @@
     "new": "usage guidance",
     "sources": [
       "https://www.aionlabs.ai/docs/models"
+    ]
+  },
+  {
+    "date": "2026-09-13",
+    "model": "Muse Glimmer 30B",
+    "field": "price_input",
+    "new": 0.35,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-13",
+    "model": "Muse Glimmer 30B",
+    "field": "price_output",
+    "new": 1.5,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-13",
+    "model": "DeepSeek V4.1 Flash",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/deepseek/deepseek-v4.1-flash"
     ]
   }
 ]
