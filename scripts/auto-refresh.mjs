@@ -698,7 +698,10 @@ async function main() {
   const aliases = JSON.parse(readFileSync(aliasUrl));
   const state = existsSync(stateUrl) ? JSON.parse(readFileSync(stateUrl)) : {};
   const changelog = existsSync(changelogUrl) ? JSON.parse(readFileSync(changelogUrl)) : [];
-  const today = new Date().toISOString().slice(0, 10);
+  // MODELPROOF_TODAY: test-only override so a date-boundary case (e.g. a model aging out of the
+  // 60-day "new" adoption window) can be pinned instead of depending on the real clock. Unset in
+  // every real run — falls straight through to the real date.
+  const today = process.env.MODELPROOF_TODAY || new Date().toISOString().slice(0, 10);
 
   console.log('feed: fetching OpenRouter + LiteLLM...');
   const [orList, llmList] = await Promise.all([feedOpenRouter(), feedLiteLLM()]);
@@ -1040,12 +1043,20 @@ async function main() {
     // status / adoption (scripts/derive-status-adoption.mjs): model-level facts the decision
     // layer's judged-ranking gate reads directly, so they're kept fresh every run, not just when
     // `changed` — a model's usage.openrouter.share can cross an adoption bucket boundary on a run
-    // that touched nothing else about that model.
+    // that touched nothing else about that model. Derived against `today`, not the stale
+    // `data.as_of` still on file — a few lines below, `if (changed) data.as_of = today`, so the
+    // gate (which reads the just-written as_of) will judge these fields against `today` too.
+    // Deriving here against the old as_of let a model's recency window (60 days,
+    // scripts/derive-status-adoption.mjs) expire on the calendar day the run happens without this
+    // step ever noticing — the exact gate failure this comment is fixing (2026-09-14).
     {
-      const statusAdoption = deriveStatusAdoptionForCatalog(data.models, data.as_of);
+      const statusAdoption = deriveStatusAdoptionForCatalog(data.models, today);
       for (const m of data.models) {
         const next = statusAdoption.get(m.id);
-        if (m.status !== next.status || m.adoption !== next.adoption) changed = true;
+        if (m.status !== next.status || m.adoption !== next.adoption) {
+          console.log(`adoption/status re-derived: ${m.id} ${m.status}/${m.adoption} -> ${next.status}/${next.adoption}`);
+          changed = true;
+        }
         m.status = next.status;
         m.adoption = next.adoption;
       }

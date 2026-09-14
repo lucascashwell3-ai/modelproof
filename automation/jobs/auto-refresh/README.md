@@ -94,6 +94,13 @@ Judge, on any error. Verify reverts the data commit(s) since Collect on a live-m
 gate failure and fails loud. Held items collect into one GitHub issue ("Held for review — modelproof
 data refresh", via `scripts/held-review-issue.mjs`), closed automatically when empty.
 
+Date-dependent fields (`status`/`adoption`, `scripts/derive-status-adoption.mjs`) are recomputed
+for the whole catalog on every write, right before the gate runs — both in Collect
+(`scripts/auto-refresh.mjs`) and in Judge's writer (`scripts/apply-judgment.mjs`) — so a model
+aging out of the 60-day "new" adoption window on the same calendar day as an unrelated write can
+never fail the gate for a value nobody re-derived. The gate check itself stays in place as the
+safety net if that ever drifts.
+
 Both Collect's post-push check and the standalone Verify piece use `scripts/verify-live.mjs`,
 which polls the live site for up to 30 minutes instead of checking once: matched → publish
 confirmed; Pages build failed, or built but content still wrong after a short grace period →
