@@ -4,6 +4,13 @@ import { validateJudgment, applyOne } from './apply-judgment.mjs';
 
 const SOURCES = [{ url: 'https://vendor.example.com/pricing', date: '2026-08-16' }];
 const REASON = 'confirmed on vendor pricing page';
+// scripts/fixtures/models.json's own as_of — pinning the CLI tests' clock to this date (via
+// MODELPROOF_TODAY, read by apply-judgment.mjs) keeps them deterministic regardless of the real
+// calendar: without it, `data.as_of` bumps to whatever day the test happens to run, and a fixture
+// model can age out of derive-status-adoption.mjs's 60-day "new" window mid-test, failing the
+// honesty gate for a reason that has nothing to do with what the test is checking (the actual
+// 2026-09-14 production failure this pins against — see the dedicated re-derive test below).
+const FIXTURE_AS_OF = '2026-09-13';
 
 test('validateJudgment rejects an unknown field', () => {
   const errs = validateJudgment({ id: 'm:foo', kind: 'conflict', field: 'made_up_field', value: 5, sources: SOURCES, reason: REASON });
@@ -137,7 +144,7 @@ test('CLI: a bad value that breaks the gate is restored, exit code 1', () => {
     writeFileSync(jFile, JSON.stringify(judgments));
     let failed = false;
     try {
-      execFileSync('node', [join(dir, 'scripts', 'apply-judgment.mjs'), jFile], { cwd: dir, stdio: 'pipe' });
+      execFileSync('node', [join(dir, 'scripts', 'apply-judgment.mjs'), jFile], { cwd: dir, stdio: 'pipe', env: { ...process.env, MODELPROOF_TODAY: FIXTURE_AS_OF } });
     } catch (e) {
       failed = true;
       assert.equal(e.status, 1);
@@ -164,7 +171,7 @@ test('CLI: a valid judgment applies, passes the gate, and removes the item from 
     const jFile = join(dir, 'judgments.json');
     writeFileSync(jFile, JSON.stringify(judgments));
     writeFileSync(join(dir, 'data', 'refresh', 'worklist.json'), JSON.stringify({ generated: '2026-08-16', items: [{ id: `${target.id}:gpqa`, kind: 'benchmark' }, { id: 'keep:this', kind: 'conflict' }] }));
-    execFileSync('node', [join(dir, 'scripts', 'apply-judgment.mjs'), jFile], { cwd: dir, stdio: 'pipe' });
+    execFileSync('node', [join(dir, 'scripts', 'apply-judgment.mjs'), jFile], { cwd: dir, stdio: 'pipe', env: { ...process.env, MODELPROOF_TODAY: FIXTURE_AS_OF } });
     const after = JSON.parse(readFileSync(join(dir, 'data', 'models.json'), 'utf8'));
     assert.equal(after.models.find((m) => m.id === target.id).benchmarks.gpqa, 77.7);
     const worklist = JSON.parse(readFileSync(join(dir, 'data', 'refresh', 'worklist.json'), 'utf8'));
@@ -172,6 +179,35 @@ test('CLI: a valid judgment applies, passes the gate, and removes the item from 
     const receipt = JSON.parse(readFileSync(join(dir, 'data', 'refresh', 'receipt-judge.json'), 'utf8'));
     assert.equal(receipt.job, 'judge');
     assert.equal(receipt.ok, true);
+  });
+});
+
+// --- date-boundary regression (2026-09-14): a judgment that touches ONE model still bumps the
+// catalog-wide as_of, and any OTHER model that ages out of the 60-day "new" adoption window on
+// that exact date must have its stored adoption re-derived before the gate runs, or every
+// judgment fails on the day a model happens to cross that boundary — the real failure behind
+// run 34839112338 (both scheduled Modelproof collect runs on 2026-09-14). ---------------------
+test('CLI: applying an unrelated judgment re-derives a 61-day-old model from "new" to "low" and passes the gate', () => {
+  withSandbox((dir) => {
+    const models = JSON.parse(readFileSync(join(dir, 'data', 'models.json')));
+    // scripts/fixtures/models.json: inkling, released 2026-07-15, stored adoption "new" — exactly
+    // 60 days old (the edge of the window) as of the fixture's own as_of, 2026-09-13.
+    const boundary = models.models.find((m) => m.id === 'inkling');
+    assert.ok(boundary, 'fixture must carry the inkling model this regression is about');
+    assert.equal(boundary.adoption, 'new');
+    const other = models.models.find((m) => m.benchmarks && 'gpqa' in m.benchmarks && m.id !== boundary.id);
+    // A judgment about a completely different model still bumps data.as_of for the whole catalog.
+    const judgments = [{ id: `${other.id}:gpqa`, kind: 'benchmark', field: 'gpqa', value: 81.4, sources: SOURCES, reason: REASON }];
+    const jFile = join(dir, 'judgments.json');
+    writeFileSync(jFile, JSON.stringify(judgments));
+    // One day past FIXTURE_AS_OF — inkling is now 61 days old, past RECENCY_WINDOW_DAYS (60).
+    const out = execFileSync('node', [join(dir, 'scripts', 'apply-judgment.mjs'), jFile], { cwd: dir, stdio: 'pipe', env: { ...process.env, MODELPROOF_TODAY: '2026-09-14' } }).toString();
+    assert.match(out, /adoption re-derived: inkling new -> low/);
+    const after = JSON.parse(readFileSync(join(dir, 'data', 'models.json'), 'utf8'));
+    assert.equal(after.as_of, '2026-09-14');
+    assert.equal(after.models.find((m) => m.id === 'inkling').adoption, 'low');
+    const receipt = JSON.parse(readFileSync(join(dir, 'data', 'refresh', 'receipt-judge.json'), 'utf8'));
+    assert.equal(receipt.ok, true, 'the gate must pass — adoption was re-derived to match the new as_of before validate-data.mjs ran');
   });
 });
 

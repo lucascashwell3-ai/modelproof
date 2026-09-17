@@ -36,7 +36,7 @@ import { isNotablePriceChange, priceEntry, retiredEntry, addEntry } from './time
 import { canonicalVendor, bareModelName, modelId as idFromName } from './naming.mjs';
 import { TASK_IDS } from './derive-task-fit.mjs';
 import { bannedPhraseIn, wordCount, CLAIM_TIERS, CLAIM_POLARITY_VALUES, citesLiveFeed } from './validate-data.mjs';
-import { deriveStatus, deriveAdoption } from './derive-status-adoption.mjs';
+import { deriveStatus, deriveAdoption, deriveStatusAdoptionForCatalog } from './derive-status-adoption.mjs';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -332,7 +332,10 @@ async function main() {
   const originalText = readFileSync(dataUrl, 'utf8');
   const data = JSON.parse(originalText);
   const changelog = existsSync(changelogUrl) ? JSON.parse(readFileSync(changelogUrl)) : [];
-  const today = new Date().toISOString().slice(0, 10);
+  // MODELPROOF_TODAY: test-only override so a date-boundary case (e.g. a model aging out of the
+  // 60-day "new" adoption window) can be pinned instead of depending on the real clock. Unset in
+  // every real run — falls straight through to the real date.
+  const today = process.env.MODELPROOF_TODAY || new Date().toISOString().slice(0, 10);
 
   const applied = [];
   const held = judgments.filter((j) => j.hold);
@@ -342,6 +345,25 @@ async function main() {
     if (entry) applied.push(entry);
   }
   if (applied.length) data.as_of = today;
+
+  // Date-dependent fields (status/adoption, scripts/derive-status-adoption.mjs) must match what
+  // the honesty gate below recomputes for the NEW as_of — a judgment that touches one model (say,
+  // a price conflict) still bumps the catalog-wide as_of, and any OTHER model that happens to age
+  // out of the 60-day "new" adoption window on that exact date would otherwise fail the gate for
+  // a value this script never re-derived. Re-run over the whole catalog before the gate, same as
+  // scripts/auto-refresh.mjs already does on every full pass.
+  if (applied.length) {
+    const statusAdoption = deriveStatusAdoptionForCatalog(data.models, data.as_of);
+    for (const m of data.models) {
+      const next = statusAdoption.get(m.id);
+      if (!next) continue;
+      if (m.status !== next.status) console.log(`status re-derived: ${m.id} ${m.status} -> ${next.status}`);
+      if (m.adoption !== next.adoption) console.log(`adoption re-derived: ${m.id} ${m.adoption} -> ${next.adoption}`);
+      m.status = next.status;
+      m.adoption = next.adoption;
+    }
+  }
+
   changelog.push(...applied.map(({ reason, ...c }) => c));
 
   console.log(`\n=== apply-judgment report (${dryRun ? 'DRY RUN' : 'LIVE'}) ===`);
