@@ -26780,8 +26780,8 @@
       "vendor": "DeepSeek",
       "released": "2026-08-12",
       "context_window": 1048576,
-      "price_input": 0.66,
-      "price_output": 1.98,
+      "price_input": 0.58,
+      "price_output": 1.73,
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": null,
