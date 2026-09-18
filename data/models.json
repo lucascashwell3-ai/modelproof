@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-09-17",
+  "as_of": "2026-09-18",
   "models": [
     {
       "id": "claude-opus-5",
@@ -13516,7 +13516,13 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "reasoning",
+        "agentic",
+        "coding",
+        "vision",
+        "long-context"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -13525,12 +13531,18 @@
         "https://openrouter.ai/x-ai/grok-4.6",
         "https://x.ai/news/grok-4-6",
         "https://openrouter.ai/api/frontend/v1/rankings/models",
-        "https://arena.ai/leaderboard/text"
+        "https://arena.ai/leaderboard/text",
+        "https://docs.x.ai/developers/models/grok-4.6"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Grok 4.6 supports four reasoning efforts (low, medium, high, xhigh); reserve high or xhigh for genuinely hard multi-step problems since deeper thinking costs more tokens and latency.",
+        "Cache repeated context: xAI prices cached input at $0.50 per million tokens versus $2 standard for prompts under 200K tokens, so reusing a long system prompt or codebase is much cheaper.",
+        "Its 500K context window and image input make it well suited to long-document or codebase review that includes visual inputs, not just short chat turns.",
+        "At $2/$6 per million input/output tokens, use a cheaper tier for simple lookups and save Grok 4.6 for long-running agentic or coding work it's built for."
+      ],
       "task_copy": {},
       "auto_added": "2026-08-16",
       "best_for_line": "Priciest xAI model · 500K ctx · $2/$6",
@@ -21111,7 +21123,10 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "cheap-bulk",
+        "speed"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -21119,7 +21134,11 @@
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Hy-MT2-1.8B is a fast-thinking translation model across 33 languages; use it for high-volume translation jobs rather than general reasoning or coding.",
+        "The 1.25-bit AngelSlim quantization shrinks the model to about 440MB and speeds inference roughly 1.5x, making it a good fit for on-device or edge deployment.",
+        "It follows terminology, style, and delimiter-preservation instructions given directly in the prompt, so state explicit formatting constraints rather than relying on defaults."
+      ],
       "task_copy": {},
       "id": "hy-mt2-1-8b",
       "name": "Hy-MT2-1.8B",
@@ -21365,7 +21384,10 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "cheap-bulk",
+        "long-context"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -21373,7 +21395,11 @@
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Hy-MT2-30B-A3B is a 30B mixture-of-experts model with only 3B active parameters, so it stays cheap to run despite outperforming open-source translation models per Tencent's own comparison.",
+        "It supports a 256K context window, so use it to translate long documents or multi-turn dialogues in one pass instead of chunking them.",
+        "Prefer this 30B-A3B variant over the 1.8B model for the highest translation quality on complex, domain-specific instructions; use the 1.8B for lightweight or on-device jobs instead."
+      ],
       "task_copy": {},
       "id": "hy-mt2-30b-a3b",
       "name": "Hy-MT2-30B-A3B",

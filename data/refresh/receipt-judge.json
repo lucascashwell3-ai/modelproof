@@ -1,8 +1,7 @@
 {
   "job": "judge",
-  "ran_at": "2026-09-15T06:39:51.000Z",
-  "applied": 0,
-  "held": 15,
-  "ok": true,
-  "note": "All 15 worklist items held this pass. 8 were held on evidence grounds (thin/conflicting sources, missing vendor in naming.mjs VENDORS). The other 7 (5 new-model, 2 guidance, 3 judged-fit) were drafted, sourced, and passed schema validation, but every attempted apply tripped a pre-existing, unrelated honesty-gate failure: bumping data.as_of to today exposes stale stored adoption (\"new\") on Muse Spark 1.1 and Inkling that no longer matches deriveAdoption() at the later as_of. Confirmed via `node scripts/validate-data.mjs` on unmodified data/models.json (0 errors) vs. after any apply (2 errors, same two models). Fix needs scripts/derive-status-adoption.mjs (Collect's writer) re-run before the next Judge pass — outside what apply-judgment.mjs / this routine may write. See judgments.json in this commit for full per-item reasons."
+  "ran_at": "2026-09-18T06:38:11.628Z",
+  "applied": 3,
+  "held": 12,
+  "ok": true
 }

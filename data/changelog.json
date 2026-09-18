@@ -3563,5 +3563,35 @@
     "sources": [
       "https://openrouter.ai/deepseek/deepseek-v4.1-flash"
     ]
+  },
+  {
+    "date": "2026-09-18",
+    "model": "Grok 4.6",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://docs.x.ai/developers/models/grok-4.6"
+    ]
+  },
+  {
+    "date": "2026-09-18",
+    "model": "Hy-MT2-1.8B",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://github.com/Tencent-Hunyuan/Hy-MT2"
+    ]
+  },
+  {
+    "date": "2026-09-18",
+    "model": "Hy-MT2-30B-A3B",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://github.com/Tencent-Hunyuan/Hy-MT2"
+    ]
   }
 ]
