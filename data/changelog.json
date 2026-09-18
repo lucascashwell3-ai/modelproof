@@ -3593,5 +3593,109 @@
     "sources": [
       "https://github.com/Tencent-Hunyuan/Hy-MT2"
     ]
+  },
+  {
+    "date": "2026-09-18",
+    "model": "KAT-Coder-Pro V2.5",
+    "field": "price_input",
+    "new": 0.74,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-18",
+    "model": "KAT-Coder-Pro V2.5",
+    "field": "price_output",
+    "new": 2.96,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-18",
+    "model": "Seed 2.1 Turbo",
+    "field": "price_input",
+    "new": 0.5,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-18",
+    "model": "Seed 2.1 Turbo",
+    "field": "price_output",
+    "new": 2.5,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-18",
+    "model": "Seed-2.0-Code",
+    "field": "price_input",
+    "new": 0.5,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-18",
+    "model": "Seed-2.0-Code",
+    "field": "price_output",
+    "new": 3,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-18",
+    "model": "Solar Pro 4",
+    "field": "price_input",
+    "old": 0.3,
+    "new": 0.09,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-18",
+    "model": "Solar Pro 4",
+    "field": "price_output",
+    "old": 1.2,
+    "new": 0.36,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-18",
+    "model": "DeepSeek V4 Pro 0813",
+    "field": "price_input",
+    "old": 0.58,
+    "new": 0.66,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-18",
+    "model": "DeepSeek V4 Pro 0813",
+    "field": "price_output",
+    "old": 1.74,
+    "new": 1.98,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
   }
 ]
