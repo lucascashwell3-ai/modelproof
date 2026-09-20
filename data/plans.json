@@ -329,10 +329,10 @@
     {
       "vendor": "xAI",
       "plan": "SuperGrok Lite",
-      "price_usd_month": null,
-      "billing": "no vendor-published price. The pricing page lists SuperGrok Lite in its comparison table with a \"Get Lite\" button but prints no number; that button goes to grok.com/supergrok, which requires a login before showing prices. Third-party pricing guides say $10/month, which this file does not accept as a source. Changed from 10 to null on 2026-09-20 because the cited page never printed the number.",
+      "price_usd_month": 10,
+      "billing": "monthly. Source tier 2 (vendor announcement on the official Grok account, 2026-03-25): \"SuperGrok Lite is xAI's new $10/month entry tier for basic AI image/video creation (a few per day at 480p, 6-sec clips), plus 2x longer Grok chats and 1x AI agent.\" x.ai/pricing lists the tier but prints no number; checkout needs a login.",
       "includes": null,
-      "source_url": "https://x.ai/pricing",
+      "source_url": "https://x.com/grok/status/2036955441565979113",
       "as_of": "2026-09-20"
     },
     {
@@ -653,10 +653,10 @@
     {
       "vendor": "Perplexity",
       "plan": "Enterprise Max",
-      "price_usd_month": null,
-      "billing": "no price I could read from a vendor page. The Perplexity help-centre article \"What is Enterprise Max?\" returns HTTP 403 to automated fetches and an \"Error 500\" page in a real browser, and no vendor blog or pricing page prints the figure. Search results summarising that help-centre article give $325/seat/month or $3,250/seat/year, which is not admissible here without the page itself. Recorded as null on 2026-09-20 rather than carrying an unverified number.",
+      "price_usd_month": 325,
+      "billing": "per user/month ($3,250 per year). Source tier 2 (vendor blog, read 2026-09-20): \"Enterprise Pro remains $40 per user per month ($400 per year), while Enterprise Max is $325 per user per month ($3,250 per year).\" The help-centre article on Enterprise Max blocks automated reads.",
       "includes": "Highest Perplexity enterprise tier, above Enterprise Pro",
-      "source_url": "https://www.perplexity.ai/help-center/en/articles/12310544-what-is-enterprise-max",
+      "source_url": "https://www.perplexity.ai/hub/blog/power-your-organization-s-full-potential",
       "as_of": "2026-09-20"
     },
     {
