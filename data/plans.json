@@ -1,6 +1,6 @@
 {
-  "_readme": "Seat/subscription pricing for the vendors and coding tools in data/models.json. Refreshed manually — see scripts/refresh-plans.md. Every price is read verbatim from the vendor's own pricing page HTML fetched with curl; a null price means the page didn't render that number in static HTML (often a JS-driven toggle) or the plan is contact-sales-only — never a guess. Validated by scripts/validate-data.mjs.",
-  "as_of": "2026-09-06",
+  "_readme": "Seat/subscription pricing for the vendors and coding tools in data/models.json. Refreshed manually — see scripts/refresh-plans.md. Every price is read verbatim from the vendor's own pricing page HTML fetched with curl, or rendered in a real browser where the page is JS-only (marked in `billing`); a null price means the page didn't render that number in static HTML (often a JS-driven toggle) or the plan is contact-sales-only — never a guess. Validated by scripts/validate-data.mjs.",
+  "as_of": "2026-09-20",
   "plans": [
     {
       "vendor": "Anthropic",
@@ -33,10 +33,10 @@
       "vendor": "Anthropic",
       "plan": "Max 20x",
       "price_usd_month": null,
-      "billing": "monthly only (per FAQ) — exact price not in fetched static HTML: the page shows a single \"From $100\" card for Max and splits into 5x/20x behind a client-side toggle",
+      "billing": "monthly only — page shows \"From $100\" for Max; the 20x price is not printed on the page",
       "includes": "Everything in Max 5x plus 20x usage vs Pro (multiplier stated on page; price not)",
       "source_url": "https://www.anthropic.com/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Anthropic",
@@ -77,38 +77,47 @@
     {
       "vendor": "OpenAI",
       "plan": "Go",
-      "price_usd_month": null,
-      "billing": "monthly — price is client-side rendered (JS), not present in the fetched static HTML",
+      "price_usd_month": 8,
+      "billing": "monthly",
       "includes": "Everything in Free plus more messages/tools, more uploads, more image creation, more voice, longer memory; plan may include ads",
       "source_url": "https://openai.com/chatgpt/pricing/",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "OpenAI",
       "plan": "Plus",
-      "price_usd_month": null,
-      "billing": "monthly — price is client-side rendered (JS), not present in the fetched static HTML",
+      "price_usd_month": 20,
+      "billing": "monthly",
       "includes": "Advanced reasoning with GPT-6 Astra and GPT-5.6; expanded messages/uploads/deep research/memory; projects, scheduled tasks, custom GPTs",
       "source_url": "https://openai.com/chatgpt/pricing/",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "OpenAI",
       "plan": "Pro",
-      "price_usd_month": null,
-      "billing": "monthly — price is client-side rendered (JS), not present in the fetched static HTML",
+      "price_usd_month": 100,
+      "billing": "monthly — \"From $100\"",
       "includes": "5x or 20x more usage than Plus; Pro reasoning powered by GPT-6 Astra; maximum Codex, deep research, and memory",
       "source_url": "https://openai.com/chatgpt/pricing/",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "OpenAI",
       "plan": "Business",
-      "price_usd_month": null,
-      "billing": "per seat/month, starts at 2 users — exact price is client-side rendered (JS), not present in the fetched static HTML",
+      "price_usd_month": 20,
+      "billing": "per seat/month, billed annually ($25 if billed monthly); Standard seat",
       "includes": null,
       "source_url": "https://openai.com/chatgpt/pricing/",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "OpenAI",
+      "plan": "Business (Premium seat)",
+      "price_usd_month": 100,
+      "billing": "per seat/month, billed annually ($125 if billed monthly); 5x more usage than standard, no 5-hour limit",
+      "includes": null,
+      "source_url": "https://openai.com/chatgpt/pricing/",
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "OpenAI",
@@ -248,20 +257,20 @@
     {
       "vendor": "Cursor",
       "plan": "Pro+",
-      "price_usd_month": null,
-      "billing": "price not present in the fetched static HTML (Pro/Pro+/Ultra share a tab-toggled price display)",
+      "price_usd_month": 60,
+      "billing": "per month",
       "includes": "Everything in Pro plus 3x Pro limits on Agent, higher Grok Bot usage",
       "source_url": "https://cursor.com/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Cursor",
       "plan": "Ultra",
-      "price_usd_month": null,
-      "billing": "price not present in the fetched static HTML (Pro/Pro+/Ultra share a tab-toggled price display)",
+      "price_usd_month": 200,
+      "billing": "per month",
       "includes": "Everything in Pro plus 20x Pro limits on Agent, highest Grok Bot usage, priority access to new features",
       "source_url": "https://cursor.com/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Cursor",
