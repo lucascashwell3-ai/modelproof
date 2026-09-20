@@ -1,40 +1,40 @@
 {
-  "_readme": "Seat/subscription pricing for the vendors and coding tools in data/models.json. Refreshed manually — see scripts/refresh-plans.md. Every price is read from the vendor's own pricing page (rendered in a real browser where the page is JS-only), or, when that page lists a tier without printing its number, from the vendor's help center / docs, or from the vendor's launch announcement as reported by the press — `billing` says which. A null price means the plan has no public list price (contact sales) — never a guess. Validated by scripts/validate-data.mjs.",
+  "_readme": "Seat/subscription pricing for the vendors and coding tools in data/models.json, plus the cloud marketplaces enterprises actually buy through. Refreshed manually — see scripts/refresh-plans.md. Every price is read from the vendor's own pricing page (rendered in a real browser where the page is JS-only), or, when that page lists a tier without printing its number, from the vendor's help center / docs, or from the vendor's launch announcement as reported by the press — `billing` says which source tier (1 = vendor pricing page, 2 = vendor help center/docs/blog, 3 = launch announcement as reported by a major outlet). Where a page shows both terms, `price_usd_month` is the annual-billing monthly equivalent and `billing` states the monthly-billing figure. A null price means the plan has no public list price (contact sales) — never a guess; `billing` then says exactly what the vendor says and what a reputable report adds. Per-token API prices live in data/models.json, not here. Validated by scripts/validate-data.mjs.",
   "as_of": "2026-09-20",
   "plans": [
     {
       "vendor": "Anthropic",
       "plan": "Free",
       "price_usd_month": 0,
-      "billing": "no billing — free",
+      "billing": "no billing — free. Source tier 1 (vendor pricing page): \"Free — $0 — Free for everyone\".",
       "includes": "Chat on web/iOS/Android/desktop, code generation, web search, memory across conversations",
       "source_url": "https://www.anthropic.com/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Anthropic",
       "plan": "Pro",
-      "price_usd_month": 20,
-      "billing": "monthly; $17/mo ($200 billed up front) if paid annually",
-      "includes": "Everything in Free plus more usage, Claude Code, Claude Cowork, Claude Design, Claude Science, unlimited projects",
+      "price_usd_month": 17,
+      "billing": "per month on the annual plan ($200 billed up front); $20/mo if billed monthly. Source tier 1: \"$17 Per month with annual subscription discount ($200 billed up front). $20 if billed monthly.\" Number changed from 20 to 17 on 2026-09-20 to follow the file rule of recording the annual-billing monthly equivalent.",
+      "includes": "Everything in Free plus more usage, Claude Code, Claude Design/Slides/Docs, Claude Science, projects, Claude in Chrome and Microsoft 365",
       "source_url": "https://www.anthropic.com/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Anthropic",
       "plan": "Max 5x",
       "price_usd_month": 100,
-      "billing": "monthly only",
+      "billing": "monthly only — the pricing page prints \"Max — From $100 Per month\" and the comparison table splits Max 5x / Max 20x; the FAQ says \"choose from 5x or 20x the usage of Pro per 5-hour session. Both options are billed monthly.\" Source tier 1.",
       "includes": "Everything in Pro plus 5x more usage, higher output limits, priority access at high-traffic times",
       "source_url": "https://www.anthropic.com/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Anthropic",
       "plan": "Max 20x",
       "price_usd_month": 200,
-      "billing": "monthly only — \"Max 20x: $200 per month\" (vendor help center; the pricing page prints only \"From $100\" for Max)",
-      "includes": "Everything in Max 5x plus 20x usage vs Pro (multiplier stated on page; price not)",
+      "billing": "monthly only — \"Max 20x: $200 per month\" (source tier 2, vendor help center; the pricing page prints only \"From $100\" for Max).",
+      "includes": "Everything in Max 5x plus 20x usage vs Pro (multiplier stated on the pricing page; price not)",
       "source_url": "https://support.claude.com/en/articles/11049741-what-is-the-max-plan",
       "as_of": "2026-09-20"
     },
@@ -42,43 +42,61 @@
       "vendor": "Anthropic",
       "plan": "Team (Standard seat)",
       "price_usd_month": 20,
-      "billing": "per seat/month billed annually; $25/mo per seat if billed monthly",
-      "includes": "All Claude features plus more usage than Pro, Claude Code and Claude Cowork included",
+      "billing": "per seat/month billed annually; $25/mo per seat if billed monthly. Source tier 1: \"Standard seat — $20 — Per seat / month if billed annually. $25 if billed monthly.\" Team is \"For teams of 2 to 150\".",
+      "includes": "All Claude features plus more usage than Pro, Claude Code and Claude Cowork, central billing, SSO, no model training on your content by default",
       "source_url": "https://www.anthropic.com/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Anthropic",
       "plan": "Team (Premium seat)",
       "price_usd_month": 100,
-      "billing": "per seat/month billed annually; $125/mo per seat if billed monthly",
-      "includes": "5x more usage than Standard seats, plus Claude Design and Claude Science",
+      "billing": "per seat/month billed annually; $125/mo per seat if billed monthly. Source tier 1: \"Premium seat — 5x more usage than standard seats — $100 — Per seat / month if billed annually. $125 if billed monthly.\" Seat types can be mixed.",
+      "includes": "Everything in Team Standard plus 5x more usage, Claude Design, Slides and Docs, Claude Science",
       "source_url": "https://www.anthropic.com/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Anthropic",
       "plan": "Enterprise",
       "price_usd_month": 20,
-      "billing": "per seat/month plus usage billed at API rates; annual billing only",
-      "includes": "All Team features plus SSO, domain capture, SCIM, audit logs, compliance API, custom data retention",
+      "billing": "per seat/month billed annually PLUS usage billed at API rates — the seat fee alone is the $20. Source tier 1, Team & Enterprise tab: \"Seat price + usage at API rates — US$20/seat/month, billed annually. Usage cost scales with model and task.\" The same page's FAQ repeats it: \"Pricing is $20 per seat per month plus usage billed at API rates... You can get started self-serve or contact sales for a tailored quote.\" Anthropic is the only major vendor publishing a real enterprise seat number.",
+      "includes": "All Team features plus SSO, SCIM, role-based access, audit logs, compliance API, custom data retention, network access control, IP allowlisting, HIPAA-ready offering",
       "source_url": "https://www.anthropic.com/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Anthropic",
+      "plan": "Claude for Education",
+      "price_usd_month": null,
+      "billing": "contact sales — the vendor education page publishes no seat price and offers only a \"Contact sales\" action. Source tier 1 (vendor solution page), read 2026-09-20.",
+      "includes": "Campus deployment of Claude for students, faculty and staff",
+      "source_url": "https://www.anthropic.com/education",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Anthropic",
+      "plan": "Claude for Government",
+      "price_usd_month": null,
+      "billing": "contact sales — the vendor government page publishes no seat price and offers only a \"Contact sales\" action, with flexible deployment (API, cloud partners). Source tier 1 (vendor solution page), read 2026-09-20.",
+      "includes": "Government deployment of Claude with flexible deployment options",
+      "source_url": "https://www.anthropic.com/solutions/government",
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "OpenAI",
       "plan": "Free",
       "price_usd_month": 0,
-      "billing": "no billing — free",
+      "billing": "no billing — free. Source tier 1: pricing page prints \"$0 / month\" on the Individual tab.",
       "includes": "Unlimited text chats with GPT-5.6 Luna (abuse guardrails apply); limited uploads, image generation, voice, deep research, memory, Codex",
       "source_url": "https://openai.com/chatgpt/pricing/",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "OpenAI",
       "plan": "Go",
       "price_usd_month": 8,
-      "billing": "monthly",
+      "billing": "monthly — source tier 1: pricing page prints \"$8 / month\". \"This plan may include ads.\"",
       "includes": "Everything in Free plus more messages/tools, more uploads, more image creation, more voice, longer memory; plan may include ads",
       "source_url": "https://openai.com/chatgpt/pricing/",
       "as_of": "2026-09-20"
@@ -87,7 +105,7 @@
       "vendor": "OpenAI",
       "plan": "Plus",
       "price_usd_month": 20,
-      "billing": "monthly",
+      "billing": "monthly — source tier 1: pricing page prints \"$20 / month\".",
       "includes": "Advanced reasoning with GPT-6 Astra and GPT-5.6; expanded messages/uploads/deep research/memory; projects, scheduled tasks, custom GPTs",
       "source_url": "https://openai.com/chatgpt/pricing/",
       "as_of": "2026-09-20"
@@ -96,8 +114,8 @@
       "vendor": "OpenAI",
       "plan": "Pro",
       "price_usd_month": 100,
-      "billing": "monthly — the Pro $100 tier; the pricing page reads \"Pro — From $100\"; see the Pro 20x row for the $200 tier",
-      "includes": "5x or 20x more usage than Plus; Pro reasoning powered by GPT-6 Astra; maximum Codex, deep research, and memory",
+      "billing": "monthly — the Pro $100 tier. Source tier 1: the pricing page prints \"Pro — From $100 / month\"; the vendor Codex pricing page names the tiers directly (\"the $100 and $200 Pro plans\") and its usage table has separate \"Pro 5x\" and \"Pro 20x\" columns. See the Pro 20x row for the $200 tier.",
+      "includes": "5x more usage than Plus; Pro reasoning powered by GPT-6 Astra; maximum Codex tasks, deep research and memory",
       "source_url": "https://openai.com/chatgpt/pricing/",
       "as_of": "2026-09-20"
     },
@@ -105,17 +123,17 @@
       "vendor": "OpenAI",
       "plan": "Pro 20x",
       "price_usd_month": 200,
-      "billing": "monthly — \"Pro $200 (Pro 20x)\"; new sign-ups and upgrades paused by OpenAI since 2026-09-10, existing subscriptions renew (vendor help center)",
-      "includes": "5x or 20x more usage than Plus; Pro reasoning powered by GPT-6 Astra; maximum Codex, deep research, and memory",
-      "source_url": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers",
+      "billing": "monthly — the Pro $200 tier. Source tier 2 (vendor help center banner, read 2026-09-20): \"New sign-ups and upgrades to the ChatGPT Pro $200 plan are temporarily paused. Existing Pro $200 subscriptions will continue to renew as usual.\" CAVEAT: not purchasable new today.",
+      "includes": "20x more usage than Plus; Pro reasoning powered by GPT-6 Astra; maximum Codex, deep research and memory",
+      "source_url": "https://help.openai.com/articles/11481834-chatgpt-rate-card-business-enterpriseedu",
       "as_of": "2026-09-20"
     },
     {
       "vendor": "OpenAI",
       "plan": "Business",
       "price_usd_month": 20,
-      "billing": "per seat/month, billed annually ($25 if billed monthly); Standard seat",
-      "includes": null,
+      "billing": "per seat/month billed annually; $25/mo per seat if billed monthly. Source tier 1, Business & Enterprise tab: \"Standard seat — Best for everyday work — $20/month if billed annually. $25/month if billed monthly.\" CAVEAT: \"For teams of 2–200 employees.\" Seat types can be mixed. Nonprofits get up to a 75% discount on Business or Enterprise (same page FAQ).",
+      "includes": "All ChatGPT, ChatGPT Work and Codex features; SAML/SSO/MFA; central billing; usage analytics and spend controls; no training on business data by default; workspace agents",
       "source_url": "https://openai.com/chatgpt/pricing/",
       "as_of": "2026-09-20"
     },
@@ -123,8 +141,8 @@
       "vendor": "OpenAI",
       "plan": "Business (Premium seat)",
       "price_usd_month": 100,
-      "billing": "per seat/month, billed annually ($125 if billed monthly); 5x more usage than standard, no 5-hour limit",
-      "includes": null,
+      "billing": "per seat/month billed annually; $125/mo per seat if billed monthly. Source tier 1: \"Premium seat — 5x more usage than standard, with no 5-hour limit — $100/month if billed annually. $125/month if billed monthly.\"",
+      "includes": "Everything in the Standard seat plus 5x more usage and no 5-hour limit",
       "source_url": "https://openai.com/chatgpt/pricing/",
       "as_of": "2026-09-20"
     },
@@ -132,89 +150,206 @@
       "vendor": "OpenAI",
       "plan": "Enterprise",
       "price_usd_month": null,
-      "billing": "contact sales — no list price published",
-      "includes": null,
+      "billing": "custom — no list seat price. What OpenAI actually charges (read 2026-09-20): a CONTRACTED seat fee plus metered usage, under one of two published rate cards. Source tier 2, \"Token-based billing for ChatGPT Enterprise\": \"Usage charges apply alongside any contracted seat fees... the number of assigned seats at the start of each billing month sets your baseline seat charge, even if assigned users haven't sent a message\"; usage is metered in tokens and invoiced monthly in arrears. Token rate card (USD per 1M tokens): GPT-6 Astra $10.00 in / $1.00 cached / $50.00 out; GPT-5.6 Sol $4.00 / $0.40 / $20.00; GPT-5.6 Terra $2.00 / $0.20 / $12.00; GPT-5.6 Luna $0.20 / $0.02 / $1.20 (https://help.openai.com/articles/20001415). Older/other agreements use a CREDIT rate card instead: 10 credits per GPT-5.6 Sol chat message, 50 per Sol Pro or GPT-6 Pro message, 30 per agent-mode message, 50 per deep-research task, 5 per image, 1.25 per voice minute, and credits per 1M tokens for Work/Codex (https://help.openai.com/articles/11481834). OpenAI does not publish a dollar value per credit. The credit card also states: \"On average, Codex costs approximately $100–$200 per developer per month.\" Contracts can carry a spend commitment across ChatGPT and the API. Nonprofits: up to 75% off Business or Enterprise.",
+      "includes": "Expanded context window, SCIM, EKM, role-based access, domain verification, custom data retention, data residency in ten regions, 24/7 priority support and SLAs, invoicing and volume discounts",
       "source_url": "https://openai.com/chatgpt/pricing/",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "OpenAI",
+      "plan": "Edu",
+      "price_usd_month": null,
+      "billing": "contact sales — no list price. Source tier 1: the ChatGPT Edu page offers only \"Contact sales\"; the pricing-page FAQ calls it \"an affordable plan that lets universities deploy AI across their campus communities\". Edu workspaces bill on the same credit rate card as Enterprise, and get 3 image generations and 5 deep-research queries per rolling 24 hours at no credit cost (source tier 2: help.openai.com/articles/11481834). Token-based billing is NOT offered for Edu.",
+      "includes": "Campus-wide deployment with SSO, domain verification, custom data retention, admin console, SCIM, consolidated invoicing",
+      "source_url": "https://chatgpt.com/business/education/",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "OpenAI",
+      "plan": "ChatGPT for Teachers",
+      "price_usd_month": 0,
+      "billing": "free — source tier 1 (pricing-page FAQ): \"We offer ChatGPT for Teachers, a free plan for verified U.S. K–12 educators through June 2027\". CAVEAT: verified U.S. K–12 educators only, and free only through June 2027.",
+      "includes": "Free K-12 educator plan with enhanced security and privacy controls",
+      "source_url": "https://chatgpt.com/plans/k12-teachers/",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "OpenAI",
+      "plan": "Codex (no separate subscription)",
+      "price_usd_month": 0,
+      "billing": "no separate seat price — Codex is included in the ChatGPT plan you already pay for. Source tier 1 (vendor Codex pricing page): \"Codex is included in your ChatGPT Free, Go, Plus, Pro, Business, or Enterprise plan.\" Its published per-plan task allowances run from 5–45 GPT-6 Astra tasks on Plus and Standard Business up to 100–900 on Pro 20x. Beyond the allowance you buy credits, and Enterprise/Edu workspaces on flexible pricing have no fixed rate limit at all.",
+      "includes": "Cloud and local coding agent included with every ChatGPT plan; extra usage bought as credits or billed at API rates with your own key",
+      "source_url": "https://chatgpt.com/codex/pricing/",
       "as_of": "2026-09-20"
     },
     {
       "vendor": "Google",
       "plan": "Google AI (Free)",
       "price_usd_month": 0,
-      "billing": "no billing — free with a Google Account",
-      "includes": "Gemini app access, base Gemini model",
+      "billing": "no billing — free with a Google Account. Source tier 1: \"$0 / month with a Google Account\".",
+      "includes": "Gemini app access, base Gemini model, 15 GB storage",
       "source_url": "https://gemini.google/subscriptions/",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Google",
       "plan": "Google AI Plus",
       "price_usd_month": 4.99,
-      "billing": "monthly",
-      "includes": "2x higher usage limits than Free, access to more features including video generation and Daily Brief",
+      "billing": "monthly — source tier 1: \"$4.99 / month\". Available in 160+ countries.",
+      "includes": "2x higher usage limits than Free, video generation and Daily Brief, 200 Google Flow credits, 400 GB storage",
       "source_url": "https://gemini.google/subscriptions/",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Google",
       "plan": "Google AI Pro",
       "price_usd_month": 19.99,
-      "billing": "monthly",
-      "includes": "4x higher usage limits than Free; access to Gemini 3.1 Pro and more",
+      "billing": "monthly — source tier 1: \"$19.99 / month\". College students get a free Pro plan for one year (banner on the same page).",
+      "includes": "4x higher usage limits than Free; access to Gemini 3.1 Pro; 1,000 Google Flow credits",
       "source_url": "https://gemini.google/subscriptions/",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Google",
       "plan": "Google AI Ultra (5x)",
       "price_usd_month": 99.99,
-      "billing": "monthly — Ultra's lower usage tier",
-      "includes": "5x higher usage limits vs AI Pro; Veo 3.1 video generation, Deep Research, audio overviews",
+      "billing": "monthly — source tier 1: \"$99.99 / month: 5x higher usage limits vs. AI Pro\".",
+      "includes": "5x higher usage limits vs AI Pro; Veo video generation, Deep Research, higher Antigravity agent rate limits",
       "source_url": "https://gemini.google/subscriptions/",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Google",
       "plan": "Google AI Ultra (20x)",
       "price_usd_month": 199.99,
-      "billing": "monthly — Ultra's higher usage tier",
-      "includes": "20x higher usage limits vs AI Pro; same feature set as Ultra 5x",
+      "billing": "monthly — source tier 1: \"$199.99 / month: 20x higher usage limits vs. AI Pro\".",
+      "includes": "20x higher usage limits vs AI Pro; highest Antigravity agent rate limits; Project Genie",
       "source_url": "https://gemini.google/subscriptions/",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Workspace Business Starter",
+      "price_usd_month": 7,
+      "billing": "per user/month, billed monthly — source tier 1: \"$7 / user per month\". CAVEAT: promo \"$4.90 (30% off for 3 months)\" shown for new customers; max 300 users; Gemini is included in the Workspace apps at every tier.",
+      "includes": "Custom business email, Gemini in Gmail and the Gemini app, 30 GB pooled storage per user",
+      "source_url": "https://workspace.google.com/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Workspace Business Standard",
+      "price_usd_month": 14,
+      "billing": "per user/month, billed monthly — source tier 1: \"$14 / user per month\". CAVEAT: promo \"$11.20 (20% off for 3 months)\"; max 300 users.",
+      "includes": "Gemini in Gmail, Docs, Meet and more; Gemini Notebook with expanded access; 2 TB pooled storage per user",
+      "source_url": "https://workspace.google.com/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Workspace Business Plus",
+      "price_usd_month": 22,
+      "billing": "per user/month, billed monthly — source tier 1: \"$22 / user per month\". CAVEAT: promo \"$11.00 (50% off for 3 months)\"; max 300 users.",
+      "includes": "Everything in Standard plus enhanced security and compliance; 5 TB pooled storage per user",
+      "source_url": "https://workspace.google.com/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Workspace Enterprise",
+      "price_usd_month": null,
+      "billing": "contact sales — the pricing page prints no number for the Enterprise column, only a contact action. Source tier 1. \"There is no minimum or maximum user limit for Enterprise plans.\"",
+      "includes": "Enterprise data regions, enterprise endpoint management, 5 TB per user with the ability to request more",
+      "source_url": "https://workspace.google.com/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Gemini Enterprise (Business edition)",
+      "price_usd_month": 21,
+      "billing": "per seat/month, \"Starting at: $21 USD per seat per month\" — source tier 1 (cloud.google.com product page; the same figure appears on gemini.google/subscriptions Business tab). CAVEAT: 1–500 seats, 25 GiB pooled storage and data indexing per seat, self-serve with no IT setup.",
+      "includes": "Gemini Enterprise app, Gemini Notebook for enterprise, connectors to Microsoft 365/Workspace/HubSpot/Jira, no-code Workflow Builder, prebuilt Google agents",
+      "source_url": "https://cloud.google.com/gemini-enterprise",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Gemini Enterprise (Standard / Plus editions)",
+      "price_usd_month": 30,
+      "billing": "per seat/month, \"Starting at: $30 USD per seat per month\" — source tier 1. CAVEAT: Google prints ONE starting figure covering both Standard and Plus; Plus has no separately published price (\"Contact sales\"). Unlimited seats; Standard gets 30 GiB and Plus up to 75 GiB pooled storage/indexing per seat (source tier 2: cloud docs edition comparison).",
+      "includes": "Everything in Business edition plus higher usage limits, bring-your-own ADK or third-party agents, VPC-SC and CMEK, sovereign data boundaries",
+      "source_url": "https://cloud.google.com/gemini-enterprise",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Gemini Enterprise (Pay-as-you-go edition)",
+      "price_usd_month": 0,
+      "billing": "no seat fee — source tier 1: \"Deploy and scale instantly with a $0 seat fee. Pay only for what you use, billed at standard [rates].\" CAVEAT: requires a project linked to an invoiced Cloud Billing account (source tier 2, cloud docs); 1 minimum seat to get started.",
+      "includes": "Everything in Standard / Plus editions with usage-based billing instead of seats",
+      "source_url": "https://cloud.google.com/gemini-enterprise",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Gemini Enterprise (Frontline edition)",
+      "price_usd_month": null,
+      "billing": "no published price — sold only as an add-on to Standard or Plus. Source tier 2 (cloud docs edition comparison): Frontline requires \"150 or more users of Standard or Plus editions\" and gives 2 GiB pooled storage and indexing per user.",
+      "includes": "Frontline-worker edition of Gemini Enterprise, purchased as an add-on",
+      "source_url": "https://docs.cloud.google.com/gemini/enterprise/docs/editions",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Gemini Code Assist Standard",
+      "price_usd_month": 19,
+      "billing": "per user/month on a 12-month commitment; $22.80/user/month on a monthly commitment. Source tier 1 prints the rate by the hour, not the month: \"Gemini Code Assist Standard — $0.026027397 / 1 hour\" (12-month commitment) and \"$0.031232877 / 1 hour\" (monthly commitment); at 730 hours per month those are $19.00 and $22.80. All subscriptions are billed monthly.",
+      "includes": "IDE code assistant with enterprise-grade security, agent mode, Colab Enterprise, Gen AI indemnification",
+      "source_url": "https://cloud.google.com/products/gemini/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Google",
+      "plan": "Gemini Code Assist Enterprise",
+      "price_usd_month": 45,
+      "billing": "per user/month on a 12-month commitment; $54.00/user/month on a monthly commitment. Source tier 1 prints the rate by the hour: \"Gemini Code Assist Enterprise — $0.061643836 / 1 hour\" (12-month) and \"$0.073972603 / 1 hour\" (monthly); at 730 hours per month those are $45.00 and $54.00. All subscriptions are billed monthly.",
+      "includes": "Everything in Standard plus code assistance across Google Cloud services, enterprise knowledge-base integration, increased agent and Gemini CLI usage",
+      "source_url": "https://cloud.google.com/products/gemini/pricing",
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "xAI",
       "plan": "Free",
       "price_usd_month": 0,
-      "billing": "no billing — free",
-      "includes": "Real-time web and X search, voice mode, connectors",
+      "billing": "no billing — free. Source tier 1: \"Free — $0 /month\".",
+      "includes": "Real-time web and X search, voice mode, connectors, SOC 2 compliance",
       "source_url": "https://x.ai/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "xAI",
+      "plan": "SuperGrok Lite",
+      "price_usd_month": null,
+      "billing": "no vendor-published price. The pricing page lists SuperGrok Lite in its comparison table with a \"Get Lite\" button but prints no number; that button goes to grok.com/supergrok, which requires a login before showing prices. Third-party pricing guides say $10/month, which this file does not accept as a source. Changed from 10 to null on 2026-09-20 because the cited page never printed the number.",
+      "includes": null,
+      "source_url": "https://x.ai/pricing",
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "xAI",
       "plan": "SuperGrok",
       "price_usd_month": 30,
-      "billing": "monthly",
-      "includes": "Grok 4.6 model, Grok Bot access, higher rate limits across all features, image and video generation",
+      "billing": "monthly — source tier 1: \"SuperGrok — $30 /month\".",
+      "includes": "Grok 4.6 model, Grok Bot access, connectors, higher rate limits across all features, image and video generation",
       "source_url": "https://x.ai/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "xAI",
       "plan": "SuperGrok Plus",
       "price_usd_month": 100,
-      "billing": "monthly",
+      "billing": "monthly — source tier 1: \"SuperGrok Plus — $100 /month\".",
       "includes": "Everything in SuperGrok plus 1080p video creation, significantly higher usage, priority access at peak times",
-      "source_url": "https://x.ai/pricing",
-      "as_of": "2026-09-06"
-    },
-    {
-      "vendor": "xAI",
-      "plan": "SuperGrok Lite",
-      "price_usd_month": 10,
-      "billing": "monthly — press-reported at launch (2026-03-25); x.ai/pricing lists the tier without printing a number",
-      "includes": null,
       "source_url": "https://x.ai/pricing",
       "as_of": "2026-09-20"
     },
@@ -222,53 +357,89 @@
       "vendor": "xAI",
       "plan": "SuperGrok Heavy",
       "price_usd_month": 300,
-      "billing": "monthly — press-reported at launch (TechCrunch 2025-07-09, xAI announcement); x.ai/pricing lists the tier without printing a number",
+      "billing": "monthly — source tier 3 (launch announcement as reported by TechCrunch, 2025-07-09): \"xAI launches Grok 4 alongside a $300 monthly subscription\", the SuperGrok Heavy plan. x.ai/pricing lists the tier in its comparison table without printing a number, and the vendor FAQ only refers to \"a SuperGrok Heavy yearly subscription\" without a figure.",
       "includes": null,
-      "source_url": "https://x.ai/pricing",
+      "source_url": "https://techcrunch.com/2025/07/09/elon-musks-xai-launches-grok-4-alongside-a-300-monthly-subscription/",
       "as_of": "2026-09-20"
     },
     {
       "vendor": "xAI",
       "plan": "Business",
       "price_usd_month": 30,
-      "billing": "per user/month — \"$30 / month per user\" on the vendor business page",
-      "includes": null,
-      "source_url": "https://x.ai/grok/business",
+      "billing": "per user/month — source tier 1: the Team tab prints \"Business — $30 /month\" and the business page prints \"$30 / month per user\".",
+      "includes": "All Grok models including Grok 4.6, Grok Build access, team seat management, consolidated billing, RBAC, domain verification, user analytics, custom data retention",
+      "source_url": "https://x.ai/pricing",
       "as_of": "2026-09-20"
     },
     {
       "vendor": "xAI",
       "plan": "Enterprise",
       "price_usd_month": null,
-      "billing": "contact sales — no list price published",
-      "includes": null,
+      "billing": "contact sales — the pricing page's Enterprise card carries only a \"Contact Sales\" action and no number, and xAI publishes no enterprise rate card. What the docs do say (source tier 2, docs.x.ai Business & Enterprise guide): an organization license grants \"Full benefits of SuperGrok (or SuperGrok Heavy for upgraded licenses)\", so the enterprise seat is a SuperGrok or SuperGrok Heavy entitlement priced by contract. Separate enterprise terms and an enterprise FAQ are published at x.ai/legal.",
+      "includes": "Everything in Business plus custom SSO, SCIM directory sync, custom RBAC, dedicated onboarding and support, customer-managed encryption keys, dedicated data plane",
       "source_url": "https://x.ai/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Mistral AI",
+      "plan": "Le Chat Free",
+      "price_usd_month": 0,
+      "billing": "no billing — free. Source tier 1: the Free card carries no price and the FAQ says \"Mistral's Free plan provides limited access\". Includes $10/mo in API credits for Studio.",
+      "includes": "Web and mobile access, limited messages and web searches, limited coding sessions, image generation, $10/mo in API credits, 100+ connectors",
+      "source_url": "https://mistral.ai/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Mistral AI",
+      "plan": "Le Chat Pro",
+      "price_usd_month": 14.99,
+      "billing": "per month, excluding taxes — source tier 1: \"Pro — $14.99 /mo — Excluding taxes\". CAVEAT: the FAQ adds \"Verified students can get Mistral Pro for $5.99 / month (normally $14.99)\". Includes $30/mo in API credits.",
+      "includes": "More messages and web searches, all-day coding in CLI/IDE/web with Mistral Vibe, more image generations, $30/mo in API credits, chat and email support",
+      "source_url": "https://mistral.ai/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Mistral AI",
+      "plan": "Le Chat Team",
+      "price_usd_month": 24.99,
+      "billing": "per user/month, excluding taxes — source tier 1: \"Team — $24.99 /user/mo — Excluding taxes\".",
+      "includes": "Secure collaborative workspace, up to 30 GB storage per user, domain name verification, data export",
+      "source_url": "https://mistral.ai/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Mistral AI",
+      "plan": "Le Chat Enterprise",
+      "price_usd_month": null,
+      "billing": "contact sales — the Enterprise card carries only a \"Contact us\" action and no number. Source tier 1; the same page's FAQ says \"the Mistral Enterprise plan includes custom SLAs, dedicated support, and private deployments\", which is why there is no list price.",
+      "includes": "Private deployments with custom models, custom agents and workflows, audit logs, SAML SSO, white label",
+      "source_url": "https://mistral.ai/pricing",
       "as_of": "2026-09-20"
     },
     {
       "vendor": "Cursor",
       "plan": "Hobby",
       "price_usd_month": 0,
-      "billing": "no billing — free",
-      "includes": "Limited Agent requests, access to Composer",
+      "billing": "no billing — free. Source tier 1: \"Hobby — For the tinkerer — Free\".",
+      "includes": "Limited Agent requests, access to Composer, no credit card required",
       "source_url": "https://cursor.com/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Cursor",
       "plan": "Pro",
       "price_usd_month": 20,
-      "billing": "per month",
-      "includes": "Extended Agent limits, access to frontier models, MCPs/skills/hooks, cloud agents",
+      "billing": "per month — source tier 1: the Individual card prints \"$20 / mo.\" under the Pro toggle.",
+      "includes": "Extended Agent limits, access to frontier models, MCPs/skills/hooks, cloud agents, Bugbot on usage-based billing",
       "source_url": "https://cursor.com/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Cursor",
       "plan": "Pro+",
       "price_usd_month": 60,
-      "billing": "per month",
-      "includes": "Everything in Pro plus 3x Pro limits on Agent, higher Grok Bot usage",
+      "billing": "per month — source tier 1: selecting the Pro+ toggle on the Individual card shows $60.",
+      "includes": "Everything in Pro plus 3x Pro limits on Agent",
       "source_url": "https://cursor.com/pricing",
       "as_of": "2026-09-20"
     },
@@ -276,8 +447,8 @@
       "vendor": "Cursor",
       "plan": "Ultra",
       "price_usd_month": 200,
-      "billing": "per month",
-      "includes": "Everything in Pro plus 20x Pro limits on Agent, highest Grok Bot usage, priority access to new features",
+      "billing": "per month — source tier 1: selecting the Ultra toggle on the Individual card shows $200.",
+      "includes": "Everything in Pro plus 20x Pro limits on Agent, priority access to new features",
       "source_url": "https://cursor.com/pricing",
       "as_of": "2026-09-20"
     },
@@ -285,26 +456,26 @@
       "vendor": "Cursor",
       "plan": "Teams (Standard)",
       "price_usd_month": 40,
-      "billing": "per user/month",
-      "includes": "Centralized team billing and administration, team marketplace, cloud agents with shared team context, SAML/OIDC SSO",
+      "billing": "per user/month — source tier 1: \"Teams — $40 / user / mo.\"; vendor docs agree: \"Teams offers two seat types: Standard ($40/user/mo) and Premium ($120/user/mo)\".",
+      "includes": "Centralized team billing and administration, team marketplace, cloud agents with shared team context, Bugbot code reviews, usage analytics, SAML/OIDC SSO",
       "source_url": "https://cursor.com/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Cursor",
       "plan": "Teams (Premium)",
       "price_usd_month": 120,
-      "billing": "per user/month — \"$120 / user / mo.\" (pricing page Premium seat toggle; docs agree)",
+      "billing": "per user/month — source tier 2 (vendor docs, since the pricing page needs the Premium toggle): \"Standard ($40/user/mo) and Premium ($120/user/mo), where Premium adds 5x the Standard limits on Agent.\"",
       "includes": "Everything in Teams Standard plus 5x Standard limits on Agent",
-      "source_url": "https://cursor.com/pricing",
+      "source_url": "https://cursor.com/docs/account/pricing",
       "as_of": "2026-09-20"
     },
     {
       "vendor": "Cursor",
       "plan": "Enterprise",
       "price_usd_month": null,
-      "billing": "custom — contact sales, no list price published",
-      "includes": null,
+      "billing": "custom — the pricing page prints \"Enterprise — For scaled organizations — Custom\" with a contact-sales action, and the vendor docs confirm \"two business plans: Teams and Enterprise (Custom)\". No published seat minimum. Real cost fact from the same docs (source tier 2): \"On Teams and Enterprise plans, third-party model requests include a Cursor Token Rate of $0.25 per million tokens. This rate applies on top of model API pricing for included usage, on-demand usage, and BYOK usage.\" Docs guidance: \"We recommend Enterprise for customers that need priority support, pooled usage, invoicing, SCIM, or advanced security controls.\"",
+      "includes": "Everything on Teams plus pooled usage, invoice/PO billing, SCIM seat management, repository/model/MCP access controls, audit logs and service accounts, AI code tracking API, priority support",
       "source_url": "https://cursor.com/pricing",
       "as_of": "2026-09-20"
     },
@@ -312,54 +483,216 @@
       "vendor": "GitHub Copilot",
       "plan": "Free",
       "price_usd_month": 0,
-      "billing": "no billing — free",
-      "includes": "Limited chat and agent usage, code completions and next-edit suggestions",
+      "billing": "no billing — free. Source tier 1: \"Free — $0 USD\". No credit card required; verified students get the Student plan.",
+      "includes": "2,000 completions per month, access to Haiku 4.5 and GPT-5 mini, Copilot CLI, community support",
       "source_url": "https://github.com/features/copilot/plans",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "GitHub Copilot",
       "plan": "Pro",
       "price_usd_month": 10,
-      "billing": "per user/month",
-      "includes": "$15/month in included GitHub AI Credits, model selection",
+      "billing": "per user/month — source tier 1: \"$10 USD per user / month\".",
+      "includes": "Cloud agent and code review, unlimited completions and next-edit suggestions, third-party agents (Claude Code and Codex), model selection, $15/month in included GitHub AI Credits",
       "source_url": "https://github.com/features/copilot/plans",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "GitHub Copilot",
       "plan": "Pro+",
       "price_usd_month": 39,
-      "billing": "per user/month",
-      "includes": "$70/month in included GitHub AI Credits, access to more models including Opus, audit logs, 4x+ included usage vs Pro",
+      "billing": "per user/month — source tier 1: \"$39 USD per user / month\".",
+      "includes": "Everything in Pro plus premium models including Opus, audit logs, 4x+ included usage vs Pro, $70/month in included GitHub AI Credits",
       "source_url": "https://github.com/features/copilot/plans",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "GitHub Copilot",
       "plan": "Max",
       "price_usd_month": 100,
-      "billing": "per user/month",
-      "includes": "$200/month in included GitHub AI Credits, for sustained high-volume agent workflows, 2.9x+ included usage vs Pro+",
+      "billing": "per user/month — source tier 1: \"$100 USD per user / month\".",
+      "includes": "Everything in Pro+ plus priority access to new models and features, 2.9x+ included usage vs Pro+, $200/month in included GitHub AI Credits",
       "source_url": "https://github.com/features/copilot/plans",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "GitHub Copilot",
       "plan": "Business",
       "price_usd_month": 19,
-      "billing": "per granted seat/month — \"$19 USD per granted seat per month\" (vendor docs)",
-      "includes": "Organization plan: centralized seat management and policy controls",
-      "source_url": "https://docs.github.com/en/copilot/get-started/plans",
+      "billing": "per user/month — source tier 1, \"For businesses\" tab: \"$19 USD per user / month\" (vendor docs say the same as \"$19 USD per granted seat per month\"). CAVEAT printed on the card: \"We're gradually enabling new sign-ups. If you're unable to sign up right now, please check back soon.\"",
+      "includes": "Pooled credits, unlimited completions, cloud agent and code review, broad model catalog, third-party agents, access/budget/governance controls, IP indemnity",
+      "source_url": "https://github.com/features/copilot/plans",
       "as_of": "2026-09-20"
     },
     {
       "vendor": "GitHub Copilot",
       "plan": "Enterprise",
       "price_usd_month": 39,
-      "billing": "per granted seat/month — \"$39 USD per granted seat per month\" (vendor docs)",
-      "includes": "Organization plan: centralized seat management and policy controls plus enterprise features",
-      "source_url": "https://docs.github.com/en/copilot/get-started/plans",
+      "billing": "per user/month — source tier 1, \"For businesses\" tab: \"Enterprise — For org-wide rollout and larger pooled credits — $39 USD per user / month\" (vendor docs: \"$39 USD per granted seat per month\"). Same gradual-sign-up caveat as Business. This is one of the few genuinely published enterprise seat prices.",
+      "includes": "Everything in Business plus priority access to new models and features and 2x the included usage of Business",
+      "source_url": "https://github.com/features/copilot/plans",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Microsoft 365 Copilot",
+      "plan": "Microsoft 365 Copilot (enterprise add-on)",
+      "price_usd_month": 30,
+      "billing": "per user/month paid yearly, annual commitment; $31.50/user/month if paid monthly. Source tier 1 (vendor enterprise page price card): \"Microsoft 365 Copilot — $30.00 user/month, paid yearly — Or $31.50 paid monthly (Annual commitment)\". CAVEAT: it is an ADD-ON — \"To purchase, customers must have a qualifying plan for enterprise or business\" — so the $30 sits on top of the underlying Microsoft 365 licence.",
+      "includes": "Copilot across Word, Excel, PowerPoint, Outlook and Teams, Copilot Chat with work data, agents and Copilot Studio, for existing enterprise Microsoft 365 licences",
+      "source_url": "https://www.microsoft.com/en-us/microsoft-365-copilot/enterprise",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Microsoft 365 Copilot",
+      "plan": "Microsoft 365 Copilot Business",
+      "price_usd_month": 18,
+      "billing": "per user/month paid yearly (annual subscription, auto-renews); $25.20/user/month billed monthly. Source tier 1 price card: \"Originally starting from $21.00 now starting from $18.00 — user/month, paid yearly\". CAVEAT: $18.00 is a promotional price against a $21.00 list price, and the card says \"starting from\"; also an add-on requiring a qualifying business or enterprise plan.",
+      "includes": "Copilot Chat with work data, Copilot Pages, agents including Researcher and Analyst, Copilot Studio, 100+ connectors, usage and ROI reporting",
+      "source_url": "https://www.microsoft.com/en-us/microsoft-365-copilot/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Microsoft 365 Copilot",
+      "plan": "Microsoft 365 Business Standard with Copilot",
+      "price_usd_month": 23.5,
+      "billing": "per user/month paid yearly (annual subscription, auto-renews); $28.20/user/month billed monthly. Source tier 1 price card: \"Microsoft 365 Business Standard with Copilot — $23.50 — user/month, paid yearly\". This is the bundled SKU: the Microsoft 365 licence and Copilot in one price.",
+      "includes": "Microsoft 365 Business Standard apps and services with Copilot included, 1 TB cloud storage per user",
+      "source_url": "https://www.microsoft.com/en-us/microsoft-365-copilot/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Microsoft 365 Copilot",
+      "plan": "Microsoft 365 Business Premium with Copilot",
+      "price_usd_month": 32,
+      "billing": "per user/month paid yearly (annual subscription, auto-renews); $38.40/user/month billed monthly. Source tier 1 price card: \"Microsoft 365 Business Premium with Copilot — $32.00 — user/month, paid yearly\". Bundled SKU.",
+      "includes": "Microsoft 365 Business Premium apps, security and device management with Copilot included, 1 TB cloud storage per user",
+      "source_url": "https://www.microsoft.com/en-us/microsoft-365-copilot/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Windsurf",
+      "plan": "Free",
+      "price_usd_month": 0,
+      "billing": "no billing — free. Source tier 1: \"Free — $0\".",
+      "includes": "Light agent quota, limited model availability, unlimited inline edits, unlimited Tab completions",
+      "source_url": "https://windsurf.com/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Windsurf",
+      "plan": "Pro",
+      "price_usd_month": 20,
+      "billing": "per month — source tier 1: \"Pro — $20 PER MONTH\".",
+      "includes": "Increased quotas including frontier models from OpenAI, Claude, Gemini and SpaceXAI, full model availability, free SWE-2, cloud agents (Devin Cloud), extra usage purchasable at API pricing",
+      "source_url": "https://windsurf.com/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Windsurf",
+      "plan": "Max",
+      "price_usd_month": 200,
+      "billing": "per month — source tier 1: \"Max — NEW — $200 PER MONTH\".",
+      "includes": "Everything in Pro plus significantly higher quotas",
+      "source_url": "https://windsurf.com/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Windsurf",
+      "plan": "Teams",
+      "price_usd_month": 40,
+      "billing": "per full dev seat/month, PLUS an $80/month team platform fee — the $40 is the per-seat number. Source tier 1: \"Teams — $80 /MONTH FOR TEAM PLAN + $40/MO PER FULL DEV SEAT\"; the comparison table repeats \"Unlimited flex seats +$40/month per full user\". Unlimited team members; each full user gets their own quota and Devin Desktop.",
+      "includes": "Everything in Pro plus unlimited team members, sharing and collaboration, centralized billing, admin dashboard with analytics, priority support",
+      "source_url": "https://windsurf.com/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Windsurf",
+      "plan": "Enterprise",
+      "price_usd_month": null,
+      "billing": "no list price — the pricing page prints \"Enterprise — Let's talk\" with a \"Get a Demo\" action and repeats \"Let's talk\" in the comparison table. Source tier 1, read 2026-09-20. Windsurf publishes no enterprise seat minimum or rate card.",
+      "includes": "Highest priority support, dedicated account management, SAML/OIDC SSO, centralized enterprise admin controls, dedicated deployment option",
+      "source_url": "https://windsurf.com/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Perplexity",
+      "plan": "Free",
+      "price_usd_month": 0,
+      "billing": "no billing — free. Source tier 1: \"Free — $0 /month\".",
+      "includes": "Search with accurate answers and citations, limited daily usage, access to basic AI models",
+      "source_url": "https://www.perplexity.ai/hub/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Perplexity",
+      "plan": "Pro",
+      "price_usd_month": 20,
+      "billing": "per month — source tier 1: \"$20 /month\".",
+      "includes": "Expanded Computer access, 4,000 bonus credits, deep research, access to and selection between top AI models, more usage limits and memory",
+      "source_url": "https://www.perplexity.ai/hub/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Perplexity",
+      "plan": "Max",
+      "price_usd_month": 200,
+      "billing": "per month — source tier 1: \"$200 /month\".",
+      "includes": "Maximum Computer usage, 35,000 bonus credits, 10,000 monthly credits, expert-level research, frontier models, highest usage limits and memory",
+      "source_url": "https://www.perplexity.ai/hub/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Perplexity",
+      "plan": "Enterprise Pro",
+      "price_usd_month": 33.33,
+      "billing": "per seat/month when billed annually ($400/seat/year); $40/seat/month if billed monthly. Source tier 2 (vendor blog, Perplexity's own launch post): \"Prices start at $40/month or $400/year per seat.\" The $33.33 is $400 divided by 12, following this file's rule of recording the annual-billing monthly equivalent. CAVEAT: \"start at\" — Perplexity's help centre (which blocks automated reads) is reported to list discounts for 250+ seats and a $30/seat/month rate for schools, nonprofits and government.",
+      "includes": "Enterprise search over internal files and applications, 400+ connectors, SOC 2 Type II, no training on customer data, configurable file retention, SSO and SCIM, user management",
+      "source_url": "https://www.perplexity.ai/hub/blog/perplexity-launches-enterprise-pro",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Perplexity",
+      "plan": "Enterprise Max",
+      "price_usd_month": null,
+      "billing": "no price I could read from a vendor page. The Perplexity help-centre article \"What is Enterprise Max?\" returns HTTP 403 to automated fetches and an \"Error 500\" page in a real browser, and no vendor blog or pricing page prints the figure. Search results summarising that help-centre article give $325/seat/month or $3,250/seat/year, which is not admissible here without the page itself. Recorded as null on 2026-09-20 rather than carrying an unverified number.",
+      "includes": "Highest Perplexity enterprise tier, above Enterprise Pro",
+      "source_url": "https://www.perplexity.ai/help-center/en/articles/12310544-what-is-enterprise-max",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "OpenRouter",
+      "plan": "Pay as you go",
+      "price_usd_month": 0,
+      "billing": "no seat plan and no subscription — you pay each model's own per-token list price plus OpenRouter's platform fee. Source tier 1 (vendor pricing page, read 2026-09-20): the platform fee is 5.5% on Standard (pay-as-you-go), 8% on Business (pay-as-you-go), N/A on Free, and \"Fee discounts available\" on Enterprise. Source tier 2 (vendor docs FAQ): \"We pass through the pricing of the underlying model providers without any markup, so you pay the same rate as you would directly with the provider\", with the fee charged when you purchase credits; crypto purchases carry their own fee. Bring-your-own-key: Standard and Business include $25,000/month of list-price inference with no BYOK fee and Enterprise includes $200,000/month, with a 5% fee on usage above the allowance. Free tier gives 25+ free models across 4 providers.",
+      "includes": "Unified API across 500+ models and 80+ providers; per-token billing at each model's listed price",
+      "source_url": "https://openrouter.ai/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Amazon Bedrock",
+      "plan": "Pay as you go",
+      "price_usd_month": 0,
+      "billing": "per token at the model's list price; enterprise commitments negotiated. No seat or subscription fee. Source tier 1 (vendor pricing page, read 2026-09-20): On-Demand pricing is quoted per 1M input and output tokens per model and region, batch inference runs \"at a 50% lower price compared to on-demand inference pricing\", and Provisioned Throughput is sold by model unit per hour with 1-month and 6-month commitment terms. Matters here because many enterprises buy Anthropic, Meta, Mistral and Amazon models through Bedrock rather than direct.",
+      "includes": "Managed access to foundation models from Anthropic, Meta, Mistral AI, AI21, Amazon and others, billed per token",
+      "source_url": "https://aws.amazon.com/bedrock/pricing/",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Google Vertex AI",
+      "plan": "Pay as you go",
+      "price_usd_month": 0,
+      "billing": "per token at the model's list price; enterprise commitments negotiated. No seat or subscription fee. Source tier 1 (vendor pricing page, read 2026-09-20): Vertex AI charges per 1M input and output tokens per model, with separate rates for batch, context caching, grounding and provisioned throughput. Matters here because enterprises buy Gemini and partner models through Vertex rather than the consumer plans.",
+      "includes": "Managed access to Gemini and partner models on Google Cloud, billed per token",
+      "source_url": "https://cloud.google.com/vertex-ai/pricing",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "Microsoft Azure AI Foundry",
+      "plan": "Pay as you go",
+      "price_usd_month": 0,
+      "billing": "per token at the model's list price; enterprise commitments negotiated. No seat or subscription fee. Source tier 1 (vendor pricing page, read 2026-09-20): Foundry Models are \"available through both pay-as-you-go and provisioned throughput options\", with per-1M-token input, cached-input and output tables per model and a Provisioned Throughput table quoting minimum PTUs, hourly PTU pricing and monthly PTU reservation pricing. Catalogue includes OpenAI, DeepSeek, xAI Grok, Meta Llama and Mistral models. Matters here because Azure is how many regulated enterprises buy OpenAI.",
+      "includes": "Managed access to 11,000+ models including OpenAI, DeepSeek, Grok, Llama and Mistral, billed per token or by provisioned throughput",
+      "source_url": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/microsoft/",
       "as_of": "2026-09-20"
     }
   ]
