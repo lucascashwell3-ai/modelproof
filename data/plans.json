@@ -1,5 +1,5 @@
 {
-  "_readme": "Seat/subscription pricing for the vendors and coding tools in data/models.json. Refreshed manually — see scripts/refresh-plans.md. Every price is read verbatim from the vendor's own pricing page HTML fetched with curl, or rendered in a real browser where the page is JS-only (marked in `billing`); a null price means the page didn't render that number in static HTML (often a JS-driven toggle) or the plan is contact-sales-only — never a guess. Validated by scripts/validate-data.mjs.",
+  "_readme": "Seat/subscription pricing for the vendors and coding tools in data/models.json. Refreshed manually — see scripts/refresh-plans.md. Every price is read from the vendor's own pricing page (rendered in a real browser where the page is JS-only), or, when that page lists a tier without printing its number, from the vendor's help center / docs, or from the vendor's launch announcement as reported by the press — `billing` says which. A null price means the plan has no public list price (contact sales) — never a guess. Validated by scripts/validate-data.mjs.",
   "as_of": "2026-09-20",
   "plans": [
     {
@@ -32,10 +32,10 @@
     {
       "vendor": "Anthropic",
       "plan": "Max 20x",
-      "price_usd_month": null,
-      "billing": "monthly only — page shows \"From $100\" for Max; the 20x price is not printed on the page",
+      "price_usd_month": 200,
+      "billing": "monthly only — \"Max 20x: $200 per month\" (vendor help center; the pricing page prints only \"From $100\" for Max)",
       "includes": "Everything in Max 5x plus 20x usage vs Pro (multiplier stated on page; price not)",
-      "source_url": "https://www.anthropic.com/pricing",
+      "source_url": "https://support.claude.com/en/articles/11049741-what-is-the-max-plan",
       "as_of": "2026-09-20"
     },
     {
@@ -96,9 +96,18 @@
       "vendor": "OpenAI",
       "plan": "Pro",
       "price_usd_month": 100,
-      "billing": "monthly — \"From $100\"",
+      "billing": "monthly — the Pro $100 tier; the pricing page reads \"Pro — From $100\"; see the Pro 20x row for the $200 tier",
       "includes": "5x or 20x more usage than Plus; Pro reasoning powered by GPT-6 Astra; maximum Codex, deep research, and memory",
       "source_url": "https://openai.com/chatgpt/pricing/",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "OpenAI",
+      "plan": "Pro 20x",
+      "price_usd_month": 200,
+      "billing": "monthly — \"Pro $200 (Pro 20x)\"; new sign-ups and upgrades paused by OpenAI since 2026-09-10, existing subscriptions renew (vendor help center)",
+      "includes": "5x or 20x more usage than Plus; Pro reasoning powered by GPT-6 Astra; maximum Codex, deep research, and memory",
+      "source_url": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers",
       "as_of": "2026-09-20"
     },
     {
@@ -123,10 +132,10 @@
       "vendor": "OpenAI",
       "plan": "Enterprise",
       "price_usd_month": null,
-      "billing": "contact sales",
+      "billing": "contact sales — no list price published",
       "includes": null,
       "source_url": "https://openai.com/chatgpt/pricing/",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Google",
@@ -203,38 +212,38 @@
     {
       "vendor": "xAI",
       "plan": "SuperGrok Lite",
-      "price_usd_month": null,
-      "billing": "price not present in the fetched static HTML (comparison table lists the tier name only)",
+      "price_usd_month": 10,
+      "billing": "monthly — press-reported at launch (2026-03-25); x.ai/pricing lists the tier without printing a number",
       "includes": null,
       "source_url": "https://x.ai/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "xAI",
       "plan": "SuperGrok Heavy",
-      "price_usd_month": null,
-      "billing": "price not present in the fetched static HTML (comparison table lists the tier name only)",
+      "price_usd_month": 300,
+      "billing": "monthly — press-reported at launch (TechCrunch 2025-07-09, xAI announcement); x.ai/pricing lists the tier without printing a number",
       "includes": null,
       "source_url": "https://x.ai/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "xAI",
       "plan": "Business",
-      "price_usd_month": null,
-      "billing": "price not present in the fetched static HTML",
+      "price_usd_month": 30,
+      "billing": "per user/month — \"$30 / month per user\" on the vendor business page",
       "includes": null,
-      "source_url": "https://x.ai/pricing",
-      "as_of": "2026-09-06"
+      "source_url": "https://x.ai/grok/business",
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "xAI",
       "plan": "Enterprise",
       "price_usd_month": null,
-      "billing": "contact sales",
+      "billing": "contact sales — no list price published",
       "includes": null,
       "source_url": "https://x.ai/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Cursor",
@@ -284,20 +293,20 @@
     {
       "vendor": "Cursor",
       "plan": "Teams (Premium)",
-      "price_usd_month": null,
-      "billing": "price not present in the fetched static HTML (Standard/Premium share a tab-toggled price display)",
+      "price_usd_month": 120,
+      "billing": "per user/month — \"$120 / user / mo.\" (pricing page Premium seat toggle; docs agree)",
       "includes": "Everything in Teams Standard plus 5x Standard limits on Agent",
       "source_url": "https://cursor.com/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "Cursor",
       "plan": "Enterprise",
       "price_usd_month": null,
-      "billing": "custom — contact sales",
+      "billing": "custom — contact sales, no list price published",
       "includes": null,
       "source_url": "https://cursor.com/pricing",
-      "as_of": "2026-09-06"
+      "as_of": "2026-09-20"
     },
     {
       "vendor": "GitHub Copilot",
@@ -334,6 +343,24 @@
       "includes": "$200/month in included GitHub AI Credits, for sustained high-volume agent workflows, 2.9x+ included usage vs Pro+",
       "source_url": "https://github.com/features/copilot/plans",
       "as_of": "2026-09-06"
+    },
+    {
+      "vendor": "GitHub Copilot",
+      "plan": "Business",
+      "price_usd_month": 19,
+      "billing": "per granted seat/month — \"$19 USD per granted seat per month\" (vendor docs)",
+      "includes": "Organization plan: centralized seat management and policy controls",
+      "source_url": "https://docs.github.com/en/copilot/get-started/plans",
+      "as_of": "2026-09-20"
+    },
+    {
+      "vendor": "GitHub Copilot",
+      "plan": "Enterprise",
+      "price_usd_month": 39,
+      "billing": "per granted seat/month — \"$39 USD per granted seat per month\" (vendor docs)",
+      "includes": "Organization plan: centralized seat management and policy controls plus enterprise features",
+      "source_url": "https://docs.github.com/en/copilot/get-started/plans",
+      "as_of": "2026-09-20"
     }
   ]
 }
