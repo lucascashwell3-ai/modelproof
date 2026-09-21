@@ -3719,5 +3719,15 @@
       "openrouter",
       "litellm"
     ]
+  },
+  {
+    "date": "2026-09-21",
+    "model": "Grok 4.7",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/x-ai/grok-4.7"
+    ]
   }
 ]
