@@ -3762,5 +3762,15 @@
       "https://help.aliyun.com/en/model-studio/qwen3-7-flash",
       "https://www.alibabacloud.com/help/en/model-studio/qwen3-7-flash"
     ]
+  },
+  {
+    "date": "2026-09-22",
+    "model": "CursorBench ladder",
+    "field": "effort_ladders",
+    "old": null,
+    "new": "Opus 5: 5 rungs refreshed; Sonnet 5: 5 rungs refreshed; GPT-5.6 Sol: 5 rungs refreshed; Grok 4.6: 4 rungs refreshed; Gemini 3.7 Flash: 0 usable rung(s) in the file — kept previous 3",
+    "sources": [
+      "https://epoch.ai/data/benchmark_data.zip"
+    ]
   }
 ]
