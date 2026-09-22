@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-09-21",
+  "as_of": "2026-09-22",
   "models": [
     {
       "id": "claude-opus-5",
@@ -16861,7 +16861,11 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "vision",
+        "agentic",
+        "coding"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -16869,7 +16873,11 @@
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "It's a vision-language model built for multimodal agent work like Search Agent and CI Agent — reach for it when the task involves images or video, not pure text.",
+        "Function calling, structured outputs, and context caching work in most regions, but fine-tuning and batch inference availability varies — check your region before relying on those.",
+        "Alibaba's own docs say it gives \"a smoother vibe coding experience\" — a good fit for coding-adjacent agent loops, not just chat."
+      ],
       "task_copy": {},
       "id": "qwen3-7-flash",
       "name": "Qwen3.7 Flash",
@@ -16880,7 +16888,9 @@
       "sources": [
         "https://docs.qwencloud.com/changelog/models",
         "https://www.eesel.ai/blog/qwen-3-7-flash",
-        "https://openrouter.ai/api/frontend/v1/rankings/models"
+        "https://openrouter.ai/api/frontend/v1/rankings/models",
+        "https://help.aliyun.com/en/model-studio/qwen3-7-flash",
+        "https://www.alibabacloud.com/help/en/model-studio/qwen3-7-flash"
       ],
       "best_for_line": "Cheapest Alibaba (Qwen) model · 991K ctx · $0.03/$0.13",
       "availability": {
@@ -23688,19 +23698,28 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "cheap-bulk",
+        "agentic",
+        "coding"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
         "https://openrouter.ai/meta/muse-spark-1.3-contributor",
-        "https://openrouter.ai/api/frontend/v1/rankings/models"
+        "https://openrouter.ai/api/frontend/v1/rankings/models",
+        "https://dev.meta.ai/docs/pricing-rate-limits"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Contributor pricing runs about 90% below Standard ($0.10/$0.20 vs $1.25/$4.25 per M tokens) in exchange for letting Meta train future models on your prompts and completions — keep sensitive data on Standard instead.",
+        "Cached input is $0.002/M tokens, far below the $0.10 fresh-input rate — repeat the same long system prompt or context across calls to capture that discount.",
+        "Meta positions this tier for prototyping, testing integrations, and scaling experiments where training on your data is acceptable — not for production traffic with sensitive content."
+      ],
       "task_copy": {},
       "auto_added": "2026-09-04",
       "best_for_line": "Cheapest Meta model · 1M ctx · $0.1/$0.2",
@@ -23969,7 +23988,11 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "agentic",
+        "coding",
+        "long-context"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -23977,12 +24000,18 @@
       "sources": [
         "https://openrouter.ai/meta/muse-spark-1.3",
         "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
-        "https://openrouter.ai/api/frontend/v1/rankings/models"
+        "https://openrouter.ai/api/frontend/v1/rankings/models",
+        "https://cursor.com/docs/models/muse-spark-1-3",
+        "https://dev.meta.ai/docs/pricing-rate-limits"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Built for long-running agentic coding — hand it the whole task in one message for long tool-use chains, multi-step debugging, and large-repo work rather than splitting it across turns.",
+        "Standard pricing is $1.25/$4.25 per M tokens with a 1,048,576-token context window and $0.15/M cached input — put your stable context first in the prompt to hit the cache rate.",
+        "This checkpoint dropped the audio input that 1.1 and 1.2 supported — stay on an older Muse Spark checkpoint if your pipeline still needs audio."
+      ],
       "task_copy": {},
       "auto_added": "2026-09-04",
       "best_for_line": "Priciest Meta model · 1M ctx · $1.25/$4.25",

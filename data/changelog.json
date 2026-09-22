@@ -3729,5 +3729,38 @@
     "sources": [
       "https://openrouter.ai/x-ai/grok-4.7"
     ]
+  },
+  {
+    "date": "2026-09-22",
+    "model": "Muse Spark 1.3",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://cursor.com/docs/models/muse-spark-1-3",
+      "https://dev.meta.ai/docs/pricing-rate-limits"
+    ]
+  },
+  {
+    "date": "2026-09-22",
+    "model": "Muse Spark 1.3 Contributor",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://dev.meta.ai/docs/pricing-rate-limits",
+      "https://openrouter.ai/meta/muse-spark-1.3-contributor"
+    ]
+  },
+  {
+    "date": "2026-09-22",
+    "model": "Qwen3.7 Flash",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://help.aliyun.com/en/model-studio/qwen3-7-flash",
+      "https://www.alibabacloud.com/help/en/model-studio/qwen3-7-flash"
+    ]
   }
 ]
