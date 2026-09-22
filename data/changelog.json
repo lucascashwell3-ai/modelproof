@@ -3772,5 +3772,65 @@
     "sources": [
       "https://epoch.ai/data/benchmark_data.zip"
     ]
+  },
+  {
+    "date": "2026-09-22",
+    "model": "GPT-6 Luna Pro",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/openai/gpt-6-luna-pro"
+    ]
+  },
+  {
+    "date": "2026-09-22",
+    "model": "GPT-6 Luna",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/openai/gpt-6-luna"
+    ]
+  },
+  {
+    "date": "2026-09-22",
+    "model": "GPT-6 Sol Pro",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/openai/gpt-6-sol-pro"
+    ]
+  },
+  {
+    "date": "2026-09-22",
+    "model": "GPT-6 Sol",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/openai/gpt-6-sol"
+    ]
+  },
+  {
+    "date": "2026-09-22",
+    "model": "Claude Opus 5.5",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/anthropic/claude-opus-5.5"
+    ]
+  },
+  {
+    "date": "2026-09-22",
+    "model": "Qwen3.8 Omni Flash",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/qwen/qwen3.8-omni-flash"
+    ]
   }
 ]

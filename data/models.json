@@ -298,8 +298,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 5,
-              "n_models": 59,
+              "rank": 6,
+              "n_models": 61,
               "score": 71.6994,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -402,8 +402,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 18,
-              "n_models": 59,
+              "rank": 19,
+              "n_models": 61,
               "score": 73.4453,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -505,7 +505,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 4,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.9042,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -514,8 +514,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 4,
-              "n_models": 59,
+              "rank": 5,
+              "n_models": 61,
               "score": 94.1226,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -551,8 +551,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 31,
-              "n_models": 59,
+              "rank": 33,
+              "n_models": 61,
               "score": 74.5503,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -639,8 +639,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
-              "rank": 42,
-              "n_models": 59,
+              "rank": 44,
+              "n_models": 61,
               "score": 66.433,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -939,8 +939,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 7,
-              "n_models": 59,
+              "rank": 8,
+              "n_models": 61,
               "score": 69.8812,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -1034,7 +1034,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
               "rank": 10,
-              "n_models": 59,
+              "n_models": 61,
               "score": 76.5795,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -1136,7 +1136,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 36,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.6042,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -1145,8 +1145,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 26,
-              "n_models": 59,
+              "rank": 28,
+              "n_models": 61,
               "score": 88.9377,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -1182,8 +1182,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 16,
-              "n_models": 59,
+              "rank": 18,
+              "n_models": 61,
               "score": 78.7337,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -1259,7 +1259,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 34,
-              "n_models": 59,
+              "n_models": 61,
               "score": 69.35,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -1674,8 +1674,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 4,
-              "n_models": 59,
+              "rank": 5,
+              "n_models": 61,
               "score": 71.6998,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -1769,7 +1769,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
               "rank": 2,
-              "n_models": 59,
+              "n_models": 61,
               "score": 80.5173,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -1861,7 +1861,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 6,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.8917,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -1870,8 +1870,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 6,
-              "n_models": 59,
+              "rank": 7,
+              "n_models": 61,
               "score": 93.5434,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -1902,8 +1902,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 3,
-              "n_models": 59,
+              "rank": 4,
+              "n_models": 61,
               "score": 80.5377,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -1971,7 +1971,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 7,
-              "n_models": 59,
+              "n_models": 61,
               "score": 81.7,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -2309,8 +2309,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 31,
-              "n_models": 59,
+              "rank": 33,
+              "n_models": 61,
               "score": 63.0342,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -2413,8 +2413,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 25,
-              "n_models": 59,
+              "rank": 27,
+              "n_models": 61,
               "score": 72.028,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -2525,8 +2525,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 9,
-              "n_models": 59,
+              "rank": 11,
+              "n_models": 61,
               "score": 92.5964,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -2568,8 +2568,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 51,
-              "n_models": 59,
+              "rank": 53,
+              "n_models": 61,
               "score": 66.0333,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -2648,7 +2648,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 13,
-              "n_models": 59,
+              "n_models": 61,
               "score": 77.667,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -2939,8 +2939,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 10,
-              "n_models": 59,
+              "rank": 11,
+              "n_models": 61,
               "score": 67.9084,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -3033,8 +3033,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 51,
-              "n_models": 59,
+              "rank": 53,
+              "n_models": 61,
               "score": 63.2445,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -3135,8 +3135,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 16,
-              "n_models": 59,
+              "rank": 18,
+              "n_models": 61,
               "score": 91.3376,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -3162,8 +3162,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 41,
-              "n_models": 59,
+              "rank": 43,
+              "n_models": 61,
               "score": 71.7407,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -3251,7 +3251,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 30,
-              "n_models": 59,
+              "n_models": 61,
               "score": 71.217,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -3539,8 +3539,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 23,
-              "n_models": 59,
+              "rank": 24,
+              "n_models": 61,
               "score": 65.2536,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -3626,7 +3626,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
               "rank": 9,
-              "n_models": 59,
+              "n_models": 61,
               "score": 76.593,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -3728,7 +3728,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 7,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.85,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -3737,8 +3737,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 5,
-              "n_models": 59,
+              "rank": 6,
+              "n_models": 61,
               "score": 93.5604,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -3764,7 +3764,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
               "rank": 2,
-              "n_models": 59,
+              "n_models": 61,
               "score": 81.5757,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -3821,7 +3821,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 24,
-              "n_models": 59,
+              "n_models": 61,
               "score": 72.317,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -4100,8 +4100,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 46,
-              "n_models": 59,
+              "rank": 48,
+              "n_models": 61,
               "score": 57.0666,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -4187,7 +4187,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
               "rank": 6,
-              "n_models": 59,
+              "n_models": 61,
               "score": 78.3113,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -4309,7 +4309,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 14,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.7708,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -4318,8 +4318,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 27,
-              "n_models": 59,
+              "rank": 29,
+              "n_models": 61,
               "score": 88.911,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -4355,8 +4355,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 17,
-              "n_models": 59,
+              "rank": 19,
+              "n_models": 61,
               "score": 78.5413,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -4435,7 +4435,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 1,
-              "n_models": 59,
+              "n_models": 61,
               "score": 88.233,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -4732,8 +4732,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 54,
-              "n_models": 59,
+              "rank": 56,
+              "n_models": 61,
               "score": 53.5732,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -4816,8 +4816,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 45,
-              "n_models": 59,
+              "rank": 47,
+              "n_models": 61,
               "score": 65.0895,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -4908,8 +4908,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 31,
-              "n_models": 59,
+              "rank": 33,
+              "n_models": 61,
               "score": 87.9412,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -4935,8 +4935,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 32,
-              "n_models": 59,
+              "rank": 34,
+              "n_models": 61,
               "score": 74.5377,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -4992,7 +4992,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 32,
-              "n_models": 59,
+              "n_models": 61,
               "score": 69.5,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -5309,8 +5309,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 40,
-              "n_models": 59,
+              "rank": 42,
+              "n_models": 61,
               "score": 59.5784,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -5375,8 +5375,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 41,
-              "n_models": 59,
+              "rank": 43,
+              "n_models": 61,
               "score": 66.1518,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -5467,8 +5467,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 48,
-              "n_models": 59,
+              "rank": 50,
+              "n_models": 61,
               "score": 82.6598,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -5493,8 +5493,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 52,
-              "n_models": 59,
+              "rank": 54,
+              "n_models": 61,
               "score": 65.1343,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -5550,8 +5550,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
-              "rank": 40,
-              "n_models": 59,
+              "rank": 42,
+              "n_models": 61,
               "score": 67.5,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -6326,8 +6326,8 @@
             {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
-              "rank": 82,
-              "n_models": 167,
+              "rank": 83,
+              "n_models": 168,
               "score": 0.0611,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -6778,8 +6778,8 @@
             {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
-              "rank": 97,
-              "n_models": 167,
+              "rank": 98,
+              "n_models": 168,
               "score": 0.0403,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -7125,8 +7125,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 12,
-              "n_models": 59,
+              "rank": 13,
+              "n_models": 61,
               "score": 67.3036,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -7230,7 +7230,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
               "rank": 7,
-              "n_models": 59,
+              "n_models": 61,
               "score": 77.6213,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -7332,7 +7332,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 3,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.925,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -7341,8 +7341,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 3,
-              "n_models": 59,
+              "rank": 4,
+              "n_models": 61,
               "score": 94.6007,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -7384,8 +7384,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 6,
-              "n_models": 59,
+              "rank": 8,
+              "n_models": 61,
               "score": 79.8407,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -7473,7 +7473,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 33,
-              "n_models": 59,
+              "n_models": 61,
               "score": 69.433,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -7780,8 +7780,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 25,
-              "n_models": 59,
+              "rank": 27,
+              "n_models": 61,
               "score": 64.268,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -7859,8 +7859,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 30,
-              "n_models": 59,
+              "rank": 32,
+              "n_models": 61,
               "score": 69.886,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -7962,7 +7962,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 12,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.839,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -7971,8 +7971,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 8,
-              "n_models": 59,
+              "rank": 10,
+              "n_models": 61,
               "score": 92.7968,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -8008,8 +8008,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 11,
-              "n_models": 59,
+              "rank": 13,
+              "n_models": 61,
               "score": 79.3067,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -8086,7 +8086,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 22,
-              "n_models": 59,
+              "n_models": 61,
               "score": 73.167,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -8376,8 +8376,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 33,
-              "n_models": 59,
+              "rank": 35,
+              "n_models": 61,
               "score": 62.2266,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -8460,8 +8460,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 57,
-              "n_models": 59,
+              "rank": 59,
+              "n_models": 61,
               "score": 59.5213,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -8563,7 +8563,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 38,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.5958,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -8572,8 +8572,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 34,
-              "n_models": 59,
+              "rank": 36,
+              "n_models": 61,
               "score": 87.5422,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -8598,8 +8598,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 22,
-              "n_models": 59,
+              "rank": 24,
+              "n_models": 61,
               "score": 78.0333,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -8666,8 +8666,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
-              "rank": 46,
-              "n_models": 59,
+              "rank": 48,
+              "n_models": 61,
               "score": 64.933,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -8993,8 +8993,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 38,
-              "n_models": 59,
+              "rank": 40,
+              "n_models": 61,
               "score": 60.6676,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -9060,7 +9060,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
               "rank": 11,
-              "n_models": 59,
+              "n_models": 61,
               "score": 76.1175,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -9152,7 +9152,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 20,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.7208,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -9161,8 +9161,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 41,
-              "n_models": 59,
+              "rank": 43,
+              "n_models": 61,
               "score": 86.7771,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -9187,8 +9187,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 53,
-              "n_models": 59,
+              "rank": 55,
+              "n_models": 61,
               "score": 64.8573,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -9245,7 +9245,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 6,
-              "n_models": 59,
+              "n_models": 61,
               "score": 82.583,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -9787,8 +9787,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 36,
-              "n_models": 59,
+              "rank": 38,
+              "n_models": 61,
               "score": 61.313,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -9853,8 +9853,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 20,
-              "n_models": 59,
+              "rank": 21,
+              "n_models": 61,
               "score": 73.2965,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -9945,8 +9945,8 @@
             {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
-              "rank": 44,
-              "n_models": 167,
+              "rank": 45,
+              "n_models": 168,
               "score": 0.5264,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -9955,8 +9955,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 22,
-              "n_models": 59,
+              "rank": 24,
+              "n_models": 61,
               "score": 89.9989,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -9987,8 +9987,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 37,
-              "n_models": 59,
+              "rank": 39,
+              "n_models": 61,
               "score": 73.0377,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -10045,7 +10045,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 23,
-              "n_models": 59,
+              "n_models": 61,
               "score": 73.15,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -10321,8 +10321,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 58,
-              "n_models": 59,
+              "rank": 60,
+              "n_models": 61,
               "score": 50.2668,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -10379,8 +10379,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 54,
-              "n_models": 59,
+              "rank": 56,
+              "n_models": 61,
               "score": 62.6305,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -10421,8 +10421,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 56,
-              "n_models": 59,
+              "rank": 58,
+              "n_models": 61,
               "score": 76.713,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -10448,8 +10448,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 48,
-              "n_models": 59,
+              "rank": 50,
+              "n_models": 61,
               "score": 68.023,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -10515,8 +10515,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
-              "rank": 35,
-              "n_models": 59,
+              "rank": 36,
+              "n_models": 61,
               "score": 68.85,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -12040,8 +12040,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 45,
-              "n_models": 59,
+              "rank": 47,
+              "n_models": 61,
               "score": 57.2058,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -12097,7 +12097,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
               "rank": 12,
-              "n_models": 59,
+              "n_models": 61,
               "score": 75.4025,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -12189,7 +12189,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 37,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.6042,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -12198,8 +12198,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 36,
-              "n_models": 59,
+              "rank": 38,
+              "n_models": 61,
               "score": 87.3562,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -12224,8 +12224,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 54,
-              "n_models": 59,
+              "rank": 56,
+              "n_models": 61,
               "score": 62.9993,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -12276,7 +12276,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 17,
-              "n_models": 59,
+              "n_models": 61,
               "score": 75.85,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -12543,8 +12543,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 32,
-              "n_models": 59,
+              "rank": 34,
+              "n_models": 61,
               "score": 62.9222,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -12627,8 +12627,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 46,
-              "n_models": 59,
+              "rank": 48,
+              "n_models": 61,
               "score": 64.9645,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -12719,8 +12719,8 @@
             {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
-              "rank": 60,
-              "n_models": 167,
+              "rank": 61,
+              "n_models": 168,
               "score": 0.2278,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -12729,8 +12729,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 43,
-              "n_models": 59,
+              "rank": 45,
+              "n_models": 61,
               "score": 85.2917,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -12745,8 +12745,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 36,
-              "n_models": 59,
+              "rank": 38,
+              "n_models": 61,
               "score": 73.7397,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -12821,8 +12821,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
-              "rank": 38,
-              "n_models": 59,
+              "rank": 39,
+              "n_models": 61,
               "score": 68.367,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -13066,8 +13066,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 16,
-              "n_models": 59,
+              "rank": 17,
+              "n_models": 61,
               "score": 66.5252,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -13123,7 +13123,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
               "rank": 5,
-              "n_models": 59,
+              "n_models": 61,
               "score": 79.1705,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -13225,7 +13225,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 8,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.8458,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -13234,8 +13234,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 12,
-              "n_models": 59,
+              "rank": 14,
+              "n_models": 61,
               "score": 91.6738,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -13260,8 +13260,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 49,
-              "n_models": 59,
+              "rank": 51,
+              "n_models": 61,
               "score": 67.9643,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -13317,7 +13317,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 3,
-              "n_models": 59,
+              "n_models": 61,
               "score": 84.767,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -13596,8 +13596,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 24,
-              "n_models": 59,
+              "rank": 25,
+              "n_models": 61,
               "score": 64.9224,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -13691,7 +13691,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
               "rank": 13,
-              "n_models": 59,
+              "n_models": 61,
               "score": 75.2853,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -13783,7 +13783,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 27,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.6708,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -13792,8 +13792,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 10,
-              "n_models": 59,
+              "rank": 12,
+              "n_models": 61,
               "score": 92.4789,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -13829,8 +13829,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 35,
-              "n_models": 59,
+              "rank": 37,
+              "n_models": 61,
               "score": 73.857,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -13874,8 +13874,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
-              "rank": 39,
-              "n_models": 59,
+              "rank": 40,
+              "n_models": 61,
               "score": 68.083,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -14105,8 +14105,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 22,
-              "n_models": 59,
+              "rank": 23,
+              "n_models": 61,
               "score": 65.562,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -14161,8 +14161,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 27,
-              "n_models": 59,
+              "rank": 29,
+              "n_models": 61,
               "score": 70.9185,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -14213,8 +14213,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 13,
-              "n_models": 59,
+              "rank": 15,
+              "n_models": 61,
               "score": 91.6481,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -14239,8 +14239,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 26,
-              "n_models": 59,
+              "rank": 28,
+              "n_models": 61,
               "score": 76.4583,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -14291,7 +14291,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 8,
-              "n_models": 59,
+              "n_models": 61,
               "score": 80.617,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -14576,8 +14576,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 19,
-              "n_models": 59,
+              "rank": 20,
+              "n_models": 61,
               "score": 65.9846,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -14632,8 +14632,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 43,
-              "n_models": 59,
+              "rank": 45,
+              "n_models": 61,
               "score": 65.894,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -14684,8 +14684,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 28,
-              "n_models": 59,
+              "rank": 30,
+              "n_models": 61,
               "score": 88.6113,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -14710,8 +14710,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 39,
-              "n_models": 59,
+              "rank": 41,
+              "n_models": 61,
               "score": 72.548,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -14768,7 +14768,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 21,
-              "n_models": 59,
+              "n_models": 61,
               "score": 74.3,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -18926,8 +18926,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 13,
-              "n_models": 59,
+              "rank": 14,
+              "n_models": 61,
               "score": 67.0938,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -18971,8 +18971,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 29,
-              "n_models": 59,
+              "rank": 31,
+              "n_models": 61,
               "score": 70.1343,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -19013,8 +19013,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 46,
-              "n_models": 59,
+              "rank": 48,
+              "n_models": 61,
               "score": 83.9407,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -19029,8 +19029,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 25,
-              "n_models": 59,
+              "rank": 27,
+              "n_models": 61,
               "score": 76.5857,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -19081,7 +19081,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 16,
-              "n_models": 59,
+              "n_models": 61,
               "score": 75.933,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -19964,8 +19964,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 42,
-              "n_models": 59,
+              "rank": 44,
+              "n_models": 61,
               "score": 58.0442,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -20020,8 +20020,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 35,
-              "n_models": 59,
+              "rank": 37,
+              "n_models": 61,
               "score": 68.5605,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -20112,8 +20112,8 @@
             {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
-              "rank": 50,
-              "n_models": 167,
+              "rank": 51,
+              "n_models": 168,
               "score": 0.3653,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -20122,8 +20122,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 45,
-              "n_models": 59,
+              "rank": 47,
+              "n_models": 61,
               "score": 84.2234,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -20138,8 +20138,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 38,
-              "n_models": 59,
+              "rank": 40,
+              "n_models": 61,
               "score": 72.778,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -20184,7 +20184,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 19,
-              "n_models": 59,
+              "n_models": 61,
               "score": 74.85,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -20579,8 +20579,8 @@
             {
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
-              "rank": 47,
-              "n_models": 167,
+              "rank": 48,
+              "n_models": 168,
               "score": 0.4014,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -21742,8 +21742,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 8,
-              "n_models": 59,
+              "rank": 9,
+              "n_models": 61,
               "score": 68.1254,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -21836,8 +21836,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 28,
-              "n_models": 59,
+              "rank": 30,
+              "n_models": 61,
               "score": 70.263,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -21938,8 +21938,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 33,
-              "n_models": 59,
+              "rank": 35,
+              "n_models": 61,
               "score": 87.793,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -21965,8 +21965,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 45,
-              "n_models": 59,
+              "rank": 47,
+              "n_models": 61,
               "score": 70.2443,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -22020,7 +22020,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 20,
-              "n_models": 59,
+              "n_models": 61,
               "score": 74.55,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -22240,8 +22240,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 9,
-              "n_models": 59,
+              "rank": 10,
+              "n_models": 61,
               "score": 67.9368,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -22285,8 +22285,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 17,
-              "n_models": 59,
+              "rank": 18,
+              "n_models": 61,
               "score": 73.599,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -22377,8 +22377,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 18,
-              "n_models": 59,
+              "rank": 20,
+              "n_models": 61,
               "score": 90.2883,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -22414,8 +22414,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 18,
-              "n_models": 59,
+              "rank": 20,
+              "n_models": 61,
               "score": 78.413,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -22466,7 +22466,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 10,
-              "n_models": 59,
+              "n_models": 61,
               "score": 79.15,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -24162,8 +24162,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 6,
-              "n_models": 59,
+              "rank": 7,
+              "n_models": 61,
               "score": 70.8796,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -24207,7 +24207,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
               "rank": 8,
-              "n_models": 59,
+              "n_models": 61,
               "score": 77.6203,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -24262,8 +24262,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 7,
-              "n_models": 59,
+              "rank": 9,
+              "n_models": 61,
               "score": 92.935,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -24288,8 +24288,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 7,
-              "n_models": 59,
+              "rank": 9,
+              "n_models": 61,
               "score": 79.5653,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -24328,7 +24328,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 5,
-              "n_models": 59,
+              "n_models": 61,
               "score": 83.4,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -24583,8 +24583,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 35,
-              "n_models": 59,
+              "rank": 37,
+              "n_models": 61,
               "score": 61.541,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -24650,7 +24650,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
               "rank": 1,
-              "n_models": 59,
+              "n_models": 61,
               "score": 81.532,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -24751,8 +24751,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 15,
-              "n_models": 59,
+              "rank": 17,
+              "n_models": 61,
               "score": 91.4922,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -24777,8 +24777,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 58,
-              "n_models": 59,
+              "rank": 60,
+              "n_models": 61,
               "score": 54.0057,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -24823,7 +24823,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 2,
-              "n_models": 59,
+              "n_models": 61,
               "score": 87.5,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -25084,8 +25084,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 15,
-              "n_models": 59,
+              "rank": 16,
+              "n_models": 61,
               "score": 66.5372,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -25167,7 +25167,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
               "rank": 3,
-              "n_models": 59,
+              "n_models": 61,
               "score": 80.1313,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -25273,7 +25273,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 2,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.95,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -25283,7 +25283,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
               "rank": 1,
-              "n_models": 59,
+              "n_models": 61,
               "score": 95.3156,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -25310,7 +25310,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
               "rank": 1,
-              "n_models": 59,
+              "n_models": 61,
               "score": 82.9733,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -25380,7 +25380,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 9,
-              "n_models": 59,
+              "n_models": 61,
               "score": 79.55,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -25961,8 +25961,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 2,
-              "n_models": 59,
+              "rank": 3,
+              "n_models": 61,
               "score": 74.1864,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -26056,7 +26056,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
               "rank": 4,
-              "n_models": 59,
+              "n_models": 61,
               "score": 79.6968,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -26158,7 +26158,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 5,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.9,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -26167,8 +26167,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 2,
-              "n_models": 59,
+              "rank": 3,
+              "n_models": 61,
               "score": 94.9032,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -26204,8 +26204,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 4,
-              "n_models": 59,
+              "rank": 6,
+              "n_models": 61,
               "score": 80.2757,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -26261,7 +26261,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 25,
-              "n_models": 59,
+              "n_models": 61,
               "score": 72.167,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -26760,8 +26760,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 17,
-              "n_models": 59,
+              "rank": 18,
+              "n_models": 61,
               "score": 66.3416,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -26793,8 +26793,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 24,
-              "n_models": 59,
+              "rank": 26,
+              "n_models": 61,
               "score": 72.103,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -26809,8 +26809,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 30,
-              "n_models": 59,
+              "rank": 32,
+              "n_models": 61,
               "score": 88.0173,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -26825,8 +26825,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 8,
-              "n_models": 59,
+              "rank": 10,
+              "n_models": 61,
               "score": 79.4767,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -26857,7 +26857,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 26,
-              "n_models": 59,
+              "n_models": 61,
               "score": 72.1,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27093,8 +27093,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 26,
-              "n_models": 59,
+              "rank": 28,
+              "n_models": 61,
               "score": 63.8332,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27130,8 +27130,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 23,
-              "n_models": 59,
+              "rank": 25,
+              "n_models": 61,
               "score": 72.447,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27217,7 +27217,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 34,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.6125,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -27226,8 +27226,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 14,
-              "n_models": 59,
+              "rank": 16,
+              "n_models": 61,
               "score": 91.5233,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27242,8 +27242,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 13,
-              "n_models": 59,
+              "rank": 15,
+              "n_models": 61,
               "score": 79.2433,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27281,8 +27281,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
-              "rank": 44,
-              "n_models": 59,
+              "rank": 46,
+              "n_models": 61,
               "score": 65.667,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27518,8 +27518,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 41,
-              "n_models": 59,
+              "rank": 43,
+              "n_models": 61,
               "score": 58.0544,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27544,8 +27544,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 37,
-              "n_models": 59,
+              "rank": 39,
+              "n_models": 61,
               "score": 68.098,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27631,7 +27631,7 @@
               "tester": "arc-prize",
               "benchmark": "ARC-AGI-2 (semi-private evaluation)",
               "rank": 33,
-              "n_models": 167,
+              "n_models": 168,
               "score": 0.6139,
               "as_of": "2026-09-22",
               "url": "https://arcprize.org/leaderboard",
@@ -27640,8 +27640,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 32,
-              "n_models": 59,
+              "rank": 34,
+              "n_models": 61,
               "score": 87.8922,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27656,8 +27656,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 9,
-              "n_models": 59,
+              "rank": 11,
+              "n_models": 61,
               "score": 79.3273,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27696,7 +27696,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 29,
-              "n_models": 59,
+              "n_models": 61,
               "score": 71.5,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27858,8 +27858,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 1,
-              "n_models": 59,
+              "rank": 2,
+              "n_models": 61,
               "score": 78.3784,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27891,8 +27891,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
-              "rank": 26,
-              "n_models": 59,
+              "rank": 28,
+              "n_models": 61,
               "score": 71.7463,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27927,8 +27927,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 17,
-              "n_models": 59,
+              "rank": 19,
+              "n_models": 61,
               "score": 91.1031,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27943,8 +27943,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 12,
-              "n_models": 59,
+              "rank": 14,
+              "n_models": 61,
               "score": 79.2533,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -27983,7 +27983,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 31,
-              "n_models": 59,
+              "n_models": 61,
               "score": 69.65,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -28200,8 +28200,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Coding category",
-              "rank": 28,
-              "n_models": 59,
+              "rank": 30,
+              "n_models": 61,
               "score": 63.2572,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -28234,7 +28234,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench Language category (creative-writing columns)",
               "rank": 15,
-              "n_models": 59,
+              "n_models": 61,
               "score": 73.8458,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -28269,8 +28269,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Reasoning + Math categories",
-              "rank": 20,
-              "n_models": 59,
+              "rank": 22,
+              "n_models": 61,
               "score": 90.1474,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -28285,8 +28285,8 @@
             {
               "tester": "livebench",
               "benchmark": "LiveBench Data Analysis category",
-              "rank": 24,
-              "n_models": 59,
+              "rank": 26,
+              "n_models": 61,
               "score": 76.8833,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -28317,7 +28317,7 @@
               "tester": "livebench",
               "benchmark": "LiveBench summarize (Language category)",
               "rank": 12,
-              "n_models": 59,
+              "n_models": 61,
               "score": 78.167,
               "as_of": "2026-09-22",
               "url": "https://livebench.ai/",
@@ -28383,6 +28383,1483 @@
       "status": "ga",
       "adoption": "new",
       "best_for_line": "Cheapest xAI model · 500K ctx · $1.6/$4.8"
+    },
+    {
+      "id": "gpt-6-luna-pro",
+      "name": "GPT-6 Luna Pro",
+      "vendor": "OpenAI",
+      "released": "2026-09-22",
+      "context_window": 1050000,
+      "price_input": 0.1,
+      "price_output": 0.5,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/openai/gpt-6-luna-pro"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "task_fit_judged": null,
+      "usage": {
+        "openrouter": null
+      },
+      "auto_added": "2026-09-22",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      },
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      },
+      "standings": {
+        "as_of": "2026-09-22",
+        "coding": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "agents": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "bulk": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "writing": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "research": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "extraction": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "chat": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "vision": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "frontend": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "exec-summaries": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "status": "ga",
+      "adoption": "new",
+      "best_for_line": "Cheapest OpenAI model · 1M ctx · $0.1/$0.5"
+    },
+    {
+      "id": "gpt-6-luna",
+      "name": "GPT-6 Luna",
+      "vendor": "OpenAI",
+      "released": "2026-09-22",
+      "context_window": 1050000,
+      "price_input": 0.1,
+      "price_output": 0.5,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/openai/gpt-6-luna"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "task_fit_judged": null,
+      "usage": {
+        "openrouter": null
+      },
+      "auto_added": "2026-09-22",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      },
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      },
+      "standings": {
+        "as_of": "2026-09-22",
+        "coding": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "agents": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "bulk": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "writing": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "research": {
+          "measured": [
+            {
+              "tester": "arc-prize",
+              "benchmark": "ARC-AGI-2 (semi-private evaluation)",
+              "rank": 39,
+              "n_models": 168,
+              "score": 0.5931,
+              "as_of": "2026-09-22",
+              "url": "https://arcprize.org/leaderboard",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        },
+        "extraction": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "chat": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "vision": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "frontend": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "exec-summaries": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "status": "ga",
+      "adoption": "new",
+      "best_for_line": "OpenAI model · 1M ctx · $0.1/$0.5"
+    },
+    {
+      "id": "gpt-6-sol-pro",
+      "name": "GPT-6 Sol Pro",
+      "vendor": "OpenAI",
+      "released": "2026-09-22",
+      "context_window": 1050000,
+      "price_input": 2,
+      "price_output": 10,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/openai/gpt-6-sol-pro"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "task_fit_judged": null,
+      "usage": {
+        "openrouter": null
+      },
+      "auto_added": "2026-09-22",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      },
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      },
+      "standings": {
+        "as_of": "2026-09-22",
+        "coding": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "agents": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "bulk": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "writing": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "research": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "extraction": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "chat": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "vision": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "frontend": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "exec-summaries": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "status": "ga",
+      "adoption": "new",
+      "best_for_line": "OpenAI model · 1M ctx · $2/$10"
+    },
+    {
+      "id": "gpt-6-sol",
+      "name": "GPT-6 Sol",
+      "vendor": "OpenAI",
+      "released": "2026-09-22",
+      "context_window": 1050000,
+      "price_input": 2,
+      "price_output": 10,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/openai/gpt-6-sol"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "task_fit_judged": null,
+      "usage": {
+        "openrouter": null
+      },
+      "auto_added": "2026-09-22",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      },
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      },
+      "standings": {
+        "as_of": "2026-09-22",
+        "coding": {
+          "measured": [
+            {
+              "tester": "livebench",
+              "benchmark": "LiveBench Coding category",
+              "rank": 26,
+              "n_models": 61,
+              "score": 64.434,
+              "as_of": "2026-09-22",
+              "url": "https://livebench.ai/",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        },
+        "agents": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "bulk": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "writing": {
+          "measured": [
+            {
+              "tester": "livebench",
+              "benchmark": "LiveBench Language category (creative-writing columns)",
+              "rank": 22,
+              "n_models": 61,
+              "score": 73.228,
+              "as_of": "2026-09-22",
+              "url": "https://livebench.ai/",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        },
+        "research": {
+          "measured": [
+            {
+              "tester": "livebench",
+              "benchmark": "LiveBench Reasoning + Math categories",
+              "rank": 8,
+              "n_models": 61,
+              "score": 93.3377,
+              "as_of": "2026-09-22",
+              "url": "https://livebench.ai/",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        },
+        "extraction": {
+          "measured": [
+            {
+              "tester": "livebench",
+              "benchmark": "LiveBench Data Analysis category",
+              "rank": 3,
+              "n_models": 61,
+              "score": 81.1893,
+              "as_of": "2026-09-22",
+              "url": "https://livebench.ai/",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        },
+        "chat": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "vision": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "frontend": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "exec-summaries": {
+          "measured": [
+            {
+              "tester": "livebench",
+              "benchmark": "LiveBench summarize (Language category)",
+              "rank": 41,
+              "n_models": 61,
+              "score": 68,
+              "as_of": "2026-09-22",
+              "url": "https://livebench.ai/",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "status": "ga",
+      "adoption": "new",
+      "best_for_line": "OpenAI model · 1M ctx · $2/$10"
+    },
+    {
+      "id": "claude-opus-5-5",
+      "name": "Claude Opus 5.5",
+      "vendor": "Anthropic",
+      "released": "2026-09-22",
+      "context_window": 1000000,
+      "price_input": 4,
+      "price_output": 20,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/anthropic/claude-opus-5.5"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "task_fit_judged": null,
+      "usage": {
+        "openrouter": null
+      },
+      "auto_added": "2026-09-22",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      },
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      },
+      "standings": {
+        "as_of": "2026-09-22",
+        "coding": {
+          "measured": [
+            {
+              "tester": "livebench",
+              "benchmark": "LiveBench Coding category",
+              "rank": 1,
+              "n_models": 61,
+              "score": 78.7314,
+              "as_of": "2026-09-22",
+              "url": "https://livebench.ai/",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        },
+        "agents": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "bulk": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "writing": {
+          "measured": [
+            {
+              "tester": "livebench",
+              "benchmark": "LiveBench Language category (creative-writing columns)",
+              "rank": 16,
+              "n_models": 61,
+              "score": 73.6653,
+              "as_of": "2026-09-22",
+              "url": "https://livebench.ai/",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        },
+        "research": {
+          "measured": [
+            {
+              "tester": "livebench",
+              "benchmark": "LiveBench Reasoning + Math categories",
+              "rank": 2,
+              "n_models": 61,
+              "score": 95.1398,
+              "as_of": "2026-09-22",
+              "url": "https://livebench.ai/",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        },
+        "extraction": {
+          "measured": [
+            {
+              "tester": "livebench",
+              "benchmark": "LiveBench Data Analysis category",
+              "rank": 5,
+              "n_models": 61,
+              "score": 80.307,
+              "as_of": "2026-09-22",
+              "url": "https://livebench.ai/",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        },
+        "chat": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "vision": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "frontend": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "exec-summaries": {
+          "measured": [
+            {
+              "tester": "livebench",
+              "benchmark": "LiveBench summarize (Language category)",
+              "rank": 35,
+              "n_models": 61,
+              "score": 69.333,
+              "as_of": "2026-09-22",
+              "url": "https://livebench.ai/",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "status": "ga",
+      "adoption": "new",
+      "best_for_line": "Anthropic model · 1M ctx · $4/$20"
+    },
+    {
+      "id": "qwen3-8-omni-flash",
+      "name": "Qwen3.8 Omni Flash",
+      "vendor": "Alibaba (Qwen)",
+      "released": "2026-09-21",
+      "context_window": 1000000,
+      "price_input": 0.15,
+      "price_output": 0.47,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/qwen/qwen3.8-omni-flash"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "task_fit_judged": null,
+      "usage": {
+        "openrouter": null
+      },
+      "auto_added": "2026-09-22",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      },
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      },
+      "standings": {
+        "as_of": "2026-09-22",
+        "coding": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "agents": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "bulk": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "writing": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "research": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "extraction": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "chat": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "vision": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "frontend": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "exec-summaries": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "status": "ga",
+      "adoption": "new",
+      "best_for_line": "Alibaba (Qwen) model · 1M ctx · $0.15/$0.47"
     }
   ],
   "releases": [
@@ -28861,6 +30338,60 @@
       "title": "xAI releases Grok 4.7",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/x-ai/grok-4.7",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-09-22",
+      "vendor": "OpenAI",
+      "title": "OpenAI releases GPT-6 Luna Pro",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/openai/gpt-6-luna-pro",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-09-22",
+      "vendor": "OpenAI",
+      "title": "OpenAI releases GPT-6 Luna",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/openai/gpt-6-luna",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-09-22",
+      "vendor": "OpenAI",
+      "title": "OpenAI releases GPT-6 Sol Pro",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/openai/gpt-6-sol-pro",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-09-22",
+      "vendor": "OpenAI",
+      "title": "OpenAI releases GPT-6 Sol",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/openai/gpt-6-sol",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-09-22",
+      "vendor": "Anthropic",
+      "title": "Anthropic releases Claude Opus 5.5",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/anthropic/claude-opus-5.5",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-09-21",
+      "vendor": "Alibaba (Qwen)",
+      "title": "Alibaba (Qwen) releases Qwen3.8 Omni Flash",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/qwen/qwen3.8-omni-flash",
       "why": "Priced and available now; treat capability as unproven until scores land."
     }
   ],
