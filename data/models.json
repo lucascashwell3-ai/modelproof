@@ -30215,6 +30215,232 @@
       "status": "ga",
       "adoption": "new",
       "best_for_line": "Cohere model · 192K ctx · $0.3/$1.5"
+    },
+    {
+      "id": "qwen3-8-max-prime",
+      "name": "Qwen3.8 Max Prime",
+      "vendor": "Alibaba (Qwen)",
+      "released": "2026-09-23",
+      "context_window": 1000000,
+      "price_input": 4,
+      "price_output": 12,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/qwen/qwen3.8-max-prime"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "task_fit_judged": null,
+      "usage": {
+        "openrouter": null
+      },
+      "auto_added": "2026-09-23",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      },
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      },
+      "standings": {
+        "as_of": "2026-09-23",
+        "coding": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "agents": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "bulk": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "writing": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "research": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "extraction": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "chat": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "vision": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "frontend": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "exec-summaries": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "status": "ga",
+      "adoption": "new",
+      "best_for_line": "Priciest Alibaba (Qwen) model · 1M ctx · $4/$12"
     }
   ],
   "releases": [
@@ -30756,6 +30982,15 @@
       "title": "Cohere releases Command A+",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/cohere/command-a-plus",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-09-23",
+      "vendor": "Alibaba (Qwen)",
+      "title": "Alibaba (Qwen) releases Qwen3.8 Max Prime",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/qwen/qwen3.8-max-prime",
       "why": "Priced and available now; treat capability as unproven until scores land."
     }
   ],

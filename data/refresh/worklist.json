@@ -2,6 +2,36 @@
   "generated": "2026-09-23",
   "items": [
     {
+      "id": "new:aion35",
+      "model": "AionLabs: Aion 3.5",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 3,
+          "date": "2026-09-23"
+        }
+      ],
+      "ask": "\"AionLabs: Aion 3.5\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:aion35mini",
+      "model": "AionLabs: Aion 3.5 Mini",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.7,
+          "date": "2026-09-23"
+        }
+      ],
+      "ask": "\"AionLabs: Aion 3.5 Mini\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
       "id": "new:fugumax",
       "model": "Sakana: Fugu Max",
       "kind": "new-model",
@@ -107,38 +137,8 @@
       "ask": "\"Inception: Mercury 2.5\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
-      "id": "new:mimov26flash",
-      "model": "Xiaomi: MiMo-V2.6-Flash",
-      "kind": "new-model",
-      "current": null,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.14,
-          "date": "2026-09-23"
-        }
-      ],
-      "ask": "\"Xiaomi: MiMo-V2.6-Flash\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
-    },
-    {
-      "id": "new:mimov26pro",
-      "model": "Xiaomi: MiMo-V2.6-Pro",
-      "kind": "new-model",
-      "current": null,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.435,
-          "date": "2026-09-23"
-        }
-      ],
-      "ask": "\"Xiaomi: MiMo-V2.6-Pro\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
-    },
-    {
-      "id": "claude-opus-5-5:guidance",
-      "model": "Claude Opus 5.5",
+      "id": "command-a:guidance",
+      "model": "Command A+",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -150,11 +150,11 @@
           "date": "2026-09-23"
         }
       ],
-      "ask": "Claude Opus 5.5 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "Command A+ has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "seed-2-1-turbo:guidance",
-      "model": "Seed 2.1 Turbo",
+      "id": "deepseek-v4-1-flash:guidance",
+      "model": "DeepSeek V4.1 Flash",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -166,11 +166,11 @@
           "date": "2026-09-23"
         }
       ],
-      "ask": "Seed 2.1 Turbo has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "DeepSeek V4.1 Flash has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "solar-pro-4:guidance",
-      "model": "Solar Pro 4",
+      "id": "deepseek-v4-flash-0731:guidance",
+      "model": "DeepSeek V4 Flash 0731",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -182,11 +182,11 @@
           "date": "2026-09-23"
         }
       ],
-      "ask": "Solar Pro 4 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "DeepSeek V4 Flash 0731 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "claude-haiku-4-5:judged-fit",
-      "model": "Claude Haiku 4.5",
+      "id": "deepseek-v4-flash-vision-exp:judged-fit",
+      "model": "DeepSeek V4 Flash Vision Exp",
       "kind": "judged-fit",
       "field": "task_fit_judged",
       "current": null,
@@ -198,11 +198,11 @@
           "date": "2026-09-23"
         }
       ],
-      "ask": "Claude Haiku 4.5 has no quantitative task fit for: writing, research, vision, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
+      "ask": "DeepSeek V4 Flash Vision Exp has no quantitative task fit for: agents, bulk, writing, research, extraction, chat, vision, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
     },
     {
-      "id": "grok-4-6:judged-fit",
-      "model": "Grok 4.6",
+      "id": "gemini-3-6-flash:judged-fit",
+      "model": "Gemini 3.6 Flash",
       "kind": "judged-fit",
       "field": "task_fit_judged",
       "current": null,
@@ -214,11 +214,11 @@
           "date": "2026-09-23"
         }
       ],
-      "ask": "Grok 4.6 has no quantitative task fit for: coding, bulk, writing, research, extraction, chat, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
+      "ask": "Gemini 3.6 Flash has no quantitative task fit for: coding, agents, bulk, writing, research, extraction, chat, vision, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
     },
     {
-      "id": "qwen3-8-27b:judged-fit",
-      "model": "Qwen3.8 27B",
+      "id": "kimi-k2-6:judged-fit",
+      "model": "Kimi K2.6",
       "kind": "judged-fit",
       "field": "task_fit_judged",
       "current": null,
@@ -230,7 +230,7 @@
           "date": "2026-09-23"
         }
       ],
-      "ask": "Qwen3.8 27B has no quantitative task fit for: bulk, writing, extraction, chat, vision, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
+      "ask": "Kimi K2.6 has no quantitative task fit for: vision. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
     }
   ]
 }
