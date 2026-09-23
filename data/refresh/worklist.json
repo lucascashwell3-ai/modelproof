@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-22",
+  "generated": "2026-09-23",
   "items": [
     {
       "id": "new:fugumax",
@@ -11,7 +11,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 2,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
       "ask": "\"Sakana: Fugu Max\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -26,7 +26,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 5,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
       "ask": "\"Sakana: Fugu Ultra v2\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -41,7 +41,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.15,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
       "ask": "\"Z.ai: GLM 5.3 Flash\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -56,7 +56,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.37,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
       "ask": "\"Z.ai: GLM 5.3 FlashX\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -71,7 +71,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.06,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
       "ask": "\"inclusionAI: Ling 3.0 Flash Fin\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -86,7 +86,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.06,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
       "ask": "\"inclusionAI: Ling 3.0 Flash VL\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -101,7 +101,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.04,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
       "ask": "\"Inception: Mercury 2.5\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -116,7 +116,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.14,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
       "ask": "\"Xiaomi: MiMo-V2.6-Flash\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -131,14 +131,14 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.435,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
       "ask": "\"Xiaomi: MiMo-V2.6-Pro\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
-      "id": "qwen3-8-max:guidance",
-      "model": "Qwen3.8 Max",
+      "id": "claude-opus-5-5:guidance",
+      "model": "Claude Opus 5.5",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -147,14 +147,14 @@
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
-      "ask": "Qwen3.8 Max has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "Claude Opus 5.5 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "sakana-namazu:guidance",
-      "model": "Sakana Namazu",
+      "id": "seed-2-1-turbo:guidance",
+      "model": "Seed 2.1 Turbo",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -163,14 +163,14 @@
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
-      "ask": "Sakana Namazu has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "Seed 2.1 Turbo has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "seed-2-0-code:guidance",
-      "model": "Seed-2.0-Code",
+      "id": "solar-pro-4:guidance",
+      "model": "Solar Pro 4",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -179,58 +179,58 @@
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
-      "ask": "Seed-2.0-Code has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "Solar Pro 4 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "claude-fable-5:agents:re-judge",
-      "model": "Claude Fable 5",
+      "id": "claude-haiku-4-5:judged-fit",
+      "model": "Claude Haiku 4.5",
       "kind": "judged-fit",
       "field": "task_fit_judged",
-      "current": "1 claim(s) on file, as_of 2026-09-07",
+      "current": null,
       "observations": [
         {
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
-      "ask": "Claude Opus 5.5 just shipped from the same vendor as Claude Fable 5, whose \"agents\" judged fit (1 claim(s) on file, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"agents\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
+      "ask": "Claude Haiku 4.5 has no quantitative task fit for: writing, research, vision, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
     },
     {
-      "id": "claude-fable-5:chat:re-judge",
-      "model": "Claude Fable 5",
+      "id": "grok-4-6:judged-fit",
+      "model": "Grok 4.6",
       "kind": "judged-fit",
       "field": "task_fit_judged",
-      "current": "1 claim(s) on file, as_of 2026-09-07",
+      "current": null,
       "observations": [
         {
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
-      "ask": "Claude Opus 5.5 just shipped from the same vendor as Claude Fable 5, whose \"chat\" judged fit (1 claim(s) on file, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"chat\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
+      "ask": "Grok 4.6 has no quantitative task fit for: coding, bulk, writing, research, extraction, chat, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
     },
     {
-      "id": "claude-fable-5:coding:re-judge",
-      "model": "Claude Fable 5",
+      "id": "qwen3-8-27b:judged-fit",
+      "model": "Qwen3.8 27B",
       "kind": "judged-fit",
       "field": "task_fit_judged",
-      "current": "1 claim(s) on file, as_of 2026-09-07",
+      "current": null,
       "observations": [
         {
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-09-22"
+          "date": "2026-09-23"
         }
       ],
-      "ask": "Claude Opus 5.5 just shipped from the same vendor as Claude Fable 5, whose \"coding\" judged fit (1 claim(s) on file, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"coding\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
+      "ask": "Qwen3.8 27B has no quantitative task fit for: bulk, writing, extraction, chat, vision, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
     }
   ]
 }

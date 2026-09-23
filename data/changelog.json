@@ -3832,5 +3832,15 @@
     "sources": [
       "https://openrouter.ai/qwen/qwen3.8-omni-flash"
     ]
+  },
+  {
+    "date": "2026-09-23",
+    "model": "Command A+",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/cohere/command-a-plus"
+    ]
   }
 ]
