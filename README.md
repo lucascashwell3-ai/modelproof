@@ -38,6 +38,9 @@ Three ways in, all on the site's installer:
 - **Timeline** — dated releases, price changes, and retirements, each with a one-line "should
   you care?"
 - **Full table** — every tracked model with per-model verdicts, sources, and a confidence flag.
+- **Board** ([`board.html`](board.html)) — drag out the teams and routines in a company, or your
+  own set of models, and see the monthly bill, the cost per person and per year, and what the
+  engine would pick instead. Exports a PNG and an `AGENTS.md`.
 
 ## The data
 

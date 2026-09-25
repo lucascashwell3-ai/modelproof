@@ -1,0 +1,116 @@
+{
+  "_readme": "Two fictional example boards the Board page offers as a starting point: `org` (a made-up company with four divisions) and `modelMode` (a made-up personal setup). Team and division names are generic on purpose — no real company, team or person appears here. Every model id must exist in data/models.json and every plan name must exist in data/plans.json; scripts/test-board.mjs checks both.",
+  "org": {
+    "name": "Northwind Labs",
+    "divisions": [
+      {
+        "name": "Engineering",
+        "people": [
+          {
+            "who": "Backend team (6)",
+            "task": "coding",
+            "model": "claude-sonnet-5",
+            "plan": "Cursor Pro",
+            "seats": 6
+          },
+          {
+            "who": "Platform lead",
+            "task": "agents",
+            "model": "claude-opus-5",
+            "plan": "Anthropic Max 5x",
+            "seats": 1
+          },
+          {
+            "who": "Frontend team (4)",
+            "task": "frontend",
+            "model": "gpt-5-6-sol",
+            "plan": "Cursor Pro",
+            "seats": 4
+          }
+        ]
+      },
+      {
+        "name": "Data",
+        "people": [
+          {
+            "who": "Analysts (3)",
+            "task": "research",
+            "model": "gemini-3-1-pro",
+            "plan": "Google AI Pro",
+            "seats": 3
+          },
+          {
+            "who": "ETL pipeline",
+            "task": "extraction",
+            "model": "deepseek-v4-flash",
+            "plan": null,
+            "seats": 0,
+            "calls_per_day": 4000
+          }
+        ]
+      },
+      {
+        "name": "Marketing",
+        "people": [
+          {
+            "who": "Content (2)",
+            "task": "writing",
+            "model": "claude-sonnet-5",
+            "plan": "Anthropic Pro",
+            "seats": 2
+          },
+          {
+            "who": "Support bot",
+            "task": "chat",
+            "model": "gemini-3-6-flash",
+            "plan": null,
+            "seats": 0,
+            "calls_per_day": 2000
+          }
+        ]
+      },
+      {
+        "name": "Leadership",
+        "people": [
+          {
+            "who": "Exec team (4)",
+            "task": "exec-summaries",
+            "model": "claude-opus-5",
+            "plan": "Anthropic Team (Premium seat)",
+            "seats": 4
+          }
+        ]
+      }
+    ]
+  },
+  "modelMode": {
+    "have": [
+      "claude-opus-5",
+      "claude-sonnet-5",
+      "gemini-3-6-flash",
+      "deepseek-v4-flash"
+    ],
+    "roles": [
+      {
+        "role": "Coordinator / planner",
+        "model": "claude-opus-5"
+      },
+      {
+        "role": "Long-haul code",
+        "model": "claude-sonnet-5"
+      },
+      {
+        "role": "Bulk extraction",
+        "model": "deepseek-v4-flash"
+      },
+      {
+        "role": "Chat / triage",
+        "model": "gemini-3-6-flash"
+      },
+      {
+        "role": "Research",
+        "model": "claude-opus-5"
+      }
+    ]
+  }
+}

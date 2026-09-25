@@ -1,0 +1,152 @@
+<!doctype html>
+<!--
+  The one page every verdict in the board links to. Same visual system as board.html:
+  one ink colour at a few opacities, hairline rules, one rust accent kept for links, big air,
+  small type. No confidence words anywhere — this page is what replaced them.
+  Round 3, item 12: cut to plain, short sentences and Step 1–5 in place of 01/02 numbering.
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modelproof — how we pick</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f7f7f4;
+    --ink: 20, 18, 11;
+    --accent: #b5502e;
+    --ease: cubic-bezier(.4,0,.2,1);
+    --dur-fast: 140ms;
+  }
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; background: var(--bg); }
+  body{
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: rgba(var(--ink), 0.92);
+    font-size: 13px; -webkit-font-smoothing: antialiased;
+  }
+  a{ color: var(--accent); text-decoration:none; }
+  a:hover{ text-decoration: underline; }
+  :focus{ outline:none; }
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
+  }
+
+  header{
+    height:56px; display:flex; align-items:center; gap:14px; padding: 0 20px;
+    border-bottom: 1px solid rgba(var(--ink), .08);
+  }
+  .brand{ font-weight:700; font-size:14px; letter-spacing:-0.01em; }
+  .back{ font-size:12px; color: rgba(var(--ink),.55); }
+  .back:hover{ color: rgba(var(--ink),.9); text-decoration:none; }
+  @media (prefers-reduced-motion: no-preference){ .back{ transition: color var(--dur-fast) var(--ease); } }
+
+  main{ max-width: 640px; margin: 0 auto; padding: 72px 24px 96px; }
+  h1{ font-size:32px; font-weight:600; letter-spacing:-0.02em; line-height:1.15; margin: 0 0 10px; }
+  .lede{ font-size:13.5px; color: rgba(var(--ink),.55); line-height:1.65; margin: 0; max-width: 54ch; }
+
+  section{ padding-top: 40px; margin-top: 40px; border-top: 1px solid rgba(var(--ink),.08); }
+  .step{ font-size:12px; font-weight:600; color: rgba(var(--ink),.4); margin-bottom: 12px; }
+  h2{ font-size:15px; font-weight:600; letter-spacing:-0.005em; margin: 0 0 10px; }
+  p{ font-size:13.5px; line-height:1.7; color: rgba(var(--ink),.72); margin: 0 0 12px; max-width: 58ch; }
+  p:last-child{ margin-bottom:0; }
+  p b{ font-weight:600; color: rgba(var(--ink),.9); }
+  .muted{ color: rgba(var(--ink),.45); }
+
+  .srcList{ display:flex; flex-direction:column; margin-top:16px; }
+  .srcRow{
+    display:flex; align-items:baseline; gap:12px; padding: 9px 0;
+    border-bottom: 1px solid rgba(var(--ink),.06); font-size:12.5px;
+  }
+  .srcRow:last-child{ border-bottom:none; }
+  .srcName{ flex:1; min-width:0; color: rgba(var(--ink),.8); }
+  .srcWhere{ flex:0 0 auto; color: rgba(var(--ink),.45); font-size:11.5px; }
+  /* one accent, rationed: a column of 24 rust links would out-shout the page */
+  .srcWhere a{ color: rgba(var(--ink),.5); border-bottom:1px solid rgba(var(--ink),.16); }
+  .srcWhere a:hover{ color: var(--accent); border-bottom-color: currentColor; text-decoration:none; }
+  .srcNote{ font-size:12px; color: rgba(var(--ink),.45); line-height:1.6; margin-top:12px; }
+
+  footer{ margin-top: 56px; padding-top: 20px; border-top: 1px solid rgba(var(--ink),.08); font-size:12.5px; }
+
+  @media (max-width: 600px){
+    main{ padding: 44px 18px 64px; }
+    h1{ font-size:26px; }
+    section{ padding-top:32px; margin-top:32px; }
+  }
+</style>
+
+<header>
+  <span class="brand">Modelproof</span>
+  <a class="back" href="./board.html">&larr; Back to the board</a>
+</header>
+
+<main>
+  <h1>How we pick</h1>
+  <p class="lede">Every pick comes from rows you can open. Here is the order.</p>
+
+  <section>
+    <div class="step">Step 1</div>
+    <h2>The shortlist</h2>
+    <p>A model joins a task&rsquo;s shortlist only if somebody independent has said something about it on that task: a tester&rsquo;s published rank, real spend on OpenRouter, or blind human votes. A benchmark score nobody backs is not enough, and nothing joins for being new or popular. Where no model clears that bar, the row reads <span class="muted">no shortlist for this task yet</span> rather than a guess.</p>
+  </section>
+
+  <section>
+    <div class="step">Step 2</div>
+    <h2>Your filters cut it</h2>
+    <p>Your plans decide which labs you reach. Your <b>data rule</b> drops a whole vendor; a country we could not confirm is never a match. <b>Never-suggest</b> models never enter an automatic pick.</p>
+  </section>
+
+  <section>
+    <div class="step">Step 3</div>
+    <h2>Your stance orders it</h2>
+    <p>Models are grouped by how much of that evidence puts them near the top of the field, best group first. <b>Best</b> takes that order as it stands. <b>Cheapest</b> takes the lowest price inside the best group that still clears the evidence bar &mdash; never a cheaper model from a weaker group. <b>Balanced</b> keeps everything priced at or under twice the cheapest qualifying model, and ranks the rest after. The stance also sets the effort we write into AGENTS.md. It reorders the shortlist; it never cuts it.</p>
+  </section>
+
+  <section>
+    <div class="step">Step 4</div>
+    <h2>The evidence</h2>
+    <p>Three kinds, kept apart and never averaged: independent testers&rsquo; ranks, spend share on OpenRouter, and blind human votes. Agreement across more of them beats agreement across fewer. Alongside them: list price per million tokens, and one headquarters country per vendor with a source. Nothing else counts, and no model is ranked by us.</p>
+  </section>
+
+  <section>
+    <div class="step">Step 5</div>
+    <h2>What we never do</h2>
+    <p>Never invent a number. Never favour a lab. Never propose what your rule or your list rules out, even when it is cheaper. Never hide a cost&rsquo;s assumption.</p>
+  </section>
+
+  <section>
+    <div class="step">Sources</div>
+    <h2>The site’s own files</h2>
+    <p>Prices, tags and scores come from <a href="./data/models.json">data/models.json</a> and <a href="./data/plans.json">data/plans.json</a> — the same files every other page on this site reads. Vendor countries sit in <a href="./data/vendors.json">data/vendors.json</a>, one source each.</p>
+    <div class="srcList" id="srcList"><div class="srcNote">Loading the vendor list&hellip;</div></div>
+    <div class="srcNote" id="srcAsOf"></div>
+  </section>
+
+  <footer><a href="./board.html">&larr; Back to the board</a></footer>
+</main>
+
+<script>
+(function(){
+  var list = document.getElementById("srcList");
+  fetch("./data/vendors.json").then(function(r){ return r.json(); }).then(function(d){
+    var rows = (d && d.vendors) || [];
+    if (!rows.length){ list.innerHTML = '<div class="srcNote">No vendor list in the data file.</div>'; return; }
+    rows = rows.slice().sort(function(a,b){ return String(a.vendor).localeCompare(String(b.vendor)); });
+    var html = "";
+    rows.forEach(function(row){
+      var country = row.country || "not confirmed";
+      var where = row.source
+        ? '<a href="' + row.source + '" target="_blank" rel="noopener">' + country + '</a>'
+        : '<span class="muted">' + country + '</span>';
+      html += '<div class="srcRow"><span class="srcName">' + row.vendor + '</span><span class="srcWhere">' + where + '</span></div>';
+    });
+    list.innerHTML = html;
+    if (d.as_of) document.getElementById("srcAsOf").textContent =
+      "Vendor countries as of " + d.as_of + ". An editorial pass, not a feed \u2014 spot-check one before leaning on it.";
+  }).catch(function(){
+    list.innerHTML = '<div class="srcNote">Couldn\u2019t load data/vendors.json from here, so the per-vendor citations aren\u2019t listed. Open the file directly: <a href="./data/vendors.json">data/vendors.json</a>.</div>';
+  });
+})();
+</script>
