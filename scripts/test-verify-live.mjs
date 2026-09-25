@@ -148,6 +148,73 @@ test('grace period is measured from when success was first observed, not from st
   assert.equal(code, EXIT.DEPLOY_WRONG);
 });
 
+test('--at-least: live already newer than want -> 0 verified, no Pages lookup needed', async () => {
+  // Reproduces run 36136725571: Collect published 2026-09-24 (want), but the Judge published
+  // later and the live site already shows 2026-09-25 by the time Verify runs.
+  const clock = fakeClock();
+  let pagesCalls = 0;
+  const code = await verifyLive({
+    ...BASE_OPTS,
+    ...clock,
+    want: '2026-09-24',
+    atLeast: true,
+    fetchLive: async () => ({ as_of: '2026-09-25' }),
+    fetchPagesRun: async () => { pagesCalls += 1; return null; },
+  });
+  assert.equal(code, EXIT.VERIFIED);
+  assert.equal(pagesCalls, 0);
+});
+
+test('--at-least: live older than want, then catches up to exactly want -> 0', async () => {
+  const clock = fakeClock();
+  let poll = 0;
+  const code = await verifyLive({
+    ...BASE_OPTS,
+    ...clock,
+    want: '2026-09-24',
+    atLeast: true,
+    timeoutSec: 1800,
+    pollSec: 10,
+    fetchLive: async () => {
+      poll += 1;
+      return { as_of: poll < 3 ? '2026-09-23' : '2026-09-24' };
+    },
+    fetchPagesRun: async () => ({ status: 'completed', conclusion: 'cancelled' }),
+  });
+  assert.equal(code, EXIT.VERIFIED);
+  assert.ok(poll >= 3);
+});
+
+test('--at-least: live stays older than want until timeout -> 4', async () => {
+  const clock = fakeClock();
+  const code = await verifyLive({
+    ...BASE_OPTS,
+    ...clock,
+    want: '2026-09-24',
+    atLeast: true,
+    timeoutSec: 100,
+    pollSec: 10,
+    fetchLive: async () => ({ as_of: '2026-09-23' }),
+    fetchPagesRun: async () => null,
+  });
+  assert.equal(code, EXIT.TIMED_OUT);
+});
+
+test('exact mode (no --at-least): a newer live value still does not pass', async () => {
+  const clock = fakeClock();
+  const code = await verifyLive({
+    ...BASE_OPTS,
+    ...clock,
+    want: '2026-09-24',
+    atLeast: false,
+    timeoutSec: 100,
+    pollSec: 10,
+    fetchLive: async () => ({ as_of: '2026-09-25' }), // newer, but exact mode wants ==
+    fetchPagesRun: async () => null,
+  });
+  assert.equal(code, EXIT.TIMED_OUT);
+});
+
 test('log receives one plain line per poll with the expected fields', async () => {
   const clock = fakeClock();
   const lines = [];

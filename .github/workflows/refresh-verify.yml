@@ -1,11 +1,14 @@
 name: Modelproof verify
 # v1.1 "Verify" piece (automation/PIPELINE_V1.md "Modelproof refresh — v1.1"). Confirms the
-# Collect + Judge pieces actually published: live data/models.json on Pages must show the
-# collect receipt's date, and the gate must pass on the live file. Uses scripts/verify-live.mjs
-# (shared with auto-refresh.yml) so a Pages deploy that's merely slow — not broken — is never
-# treated as a failed publish: it polls up to 30 min and only reverts on an actual failed or
-# wrong deploy, never on a still-pending one. On a real failure it reverts the data commit(s)
-# made since Collect ran and pushes, then fails loud.
+# Collect + Judge pieces actually published: live data/models.json on Pages must show at least
+# the collect receipt's date, and the gate must pass on the live file. "At least" (not exact —
+# see scripts/verify-live.mjs's --at-least) because the Judge can publish after Collect did,
+# which makes the live site newer than the collect receipt; that used to look identical to "not
+# deployed yet" and time out (run 36136725571). Uses scripts/verify-live.mjs (shared with
+# auto-refresh.yml, which keeps exact-match since it just published that exact date) so a Pages
+# deploy that's merely slow — not broken — is never treated as a failed publish: it polls up to
+# 30 min and only reverts on an actual failed or wrong deploy, never on a still-pending one. On a
+# real failure it reverts the data commit(s) made since Collect ran and pushes, then fails loud.
 on:
   schedule:
     - cron: "15 7 * * 2,5"   # Tue/Fri 07:15 UTC — 75 min after Collect, well past the Judge window
@@ -35,7 +38,11 @@ jobs:
         # scripts/verify-live.mjs polls (up to 30 min) rather than checking once, and tells a
         # merely-slow Pages deploy apart from an actually broken one. want = the collect
         # receipt's date (falls back to today if the receipt is missing, as before); sha = HEAD,
-        # i.e. whatever Collect (+ Judge) last pushed to main. Four outcomes -> three results:
+        # i.e. whatever Collect (+ Judge) last pushed to main — so the Pages lookup, if it's ever
+        # needed, is for the build that actually carries the receipt. --at-least means live only
+        # has to be >= want, not ==; when the Judge already published something newer than
+        # collect_date, that's a pass on the very first poll and the Pages lookup never runs.
+        # Four outcomes -> three results:
         #   exit 0                -> RESULT=ok (still runs the schema/gate check below)
         #   exit 2 or 3           -> RESULT=revert (deploy failed, or deployed but wrong)
         #   exit 4 (still pending)-> RESULT=timeout (fail loud, but main is left alone)
@@ -49,6 +56,7 @@ jobs:
 
           GH_TOKEN="${{ github.token }}" node scripts/verify-live.mjs \
             --want "$collect_date" \
+            --at-least \
             --sha "$(git rev-parse HEAD)" \
             --repo "$GITHUB_REPOSITORY" \
             --url "$url"
