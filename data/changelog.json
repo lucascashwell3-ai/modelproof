@@ -3852,5 +3852,38 @@
     "sources": [
       "https://openrouter.ai/qwen/qwen3.8-max-prime"
     ]
+  },
+  {
+    "date": "2026-09-25",
+    "model": "DeepSeek V4 Flash Vision Exp",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://api-docs.deepseek.com/news/news260821/",
+      "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp"
+    ]
+  },
+  {
+    "date": "2026-09-25",
+    "model": "DeepSeek V4 Pro 0813",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://docs.nvidia.com/nim/large-language-models/2.0.12/get-started/advanced/get-started-deepseek-v4-pro-0813.html",
+      "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813"
+    ]
+  },
+  {
+    "date": "2026-09-25",
+    "model": "Gemini 3.8 Flash",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://ai.google.dev/gemini-api/docs/latest-model",
+      "https://deepmind.google/models/model-cards/gemini-3-8-flash/"
+    ]
   }
 ]

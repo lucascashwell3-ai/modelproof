@@ -137,54 +137,6 @@
       "ask": "\"inclusionAI: Ling 3.0 Flash Fin\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
-      "id": "deepseek-v4-flash-vision-exp:guidance",
-      "model": "DeepSeek V4 Flash Vision Exp",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
-      "observations": [
-        {
-          "source": "auto-refresh",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": null,
-          "date": "2026-09-24"
-        }
-      ],
-      "ask": "DeepSeek V4 Flash Vision Exp has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
-    },
-    {
-      "id": "deepseek-v4-pro-0813:guidance",
-      "model": "DeepSeek V4 Pro 0813",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
-      "observations": [
-        {
-          "source": "auto-refresh",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": null,
-          "date": "2026-09-24"
-        }
-      ],
-      "ask": "DeepSeek V4 Pro 0813 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
-    },
-    {
-      "id": "gemini-3-8-flash:guidance",
-      "model": "Gemini 3.8 Flash",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
-      "observations": [
-        {
-          "source": "auto-refresh",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": null,
-          "date": "2026-09-24"
-        }
-      ],
-      "ask": "Gemini 3.8 Flash has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
-    },
-    {
       "id": "inkling-small:judged-fit",
       "model": "Inkling Small",
       "kind": "judged-fit",

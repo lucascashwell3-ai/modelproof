@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-09-24",
+  "as_of": "2026-09-25",
   "models": [
     {
       "id": "claude-opus-5",
@@ -24316,7 +24316,12 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "agentic",
+        "coding",
+        "reasoning",
+        "speed"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -24325,12 +24330,19 @@
         "https://openrouter.ai/google/gemini-3.8-flash",
         "https://deepmind.google/models/gemini/flash/",
         "https://openrouter.ai/api/frontend/v1/rankings/models",
-        "https://arena.ai/leaderboard/text"
+        "https://arena.ai/leaderboard/text",
+        "https://ai.google.dev/gemini-api/docs/latest-model",
+        "https://deepmind.google/models/model-cards/gemini-3-8-flash/"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Stick with the default medium thinking level for most coding and agentic tasks -- Google says it gives the best first-pass accuracy for that class of work.",
+        "Drop to low thinking effort for latency-critical jobs like real-time chat, incident response, or fast data analysis, where turnaround matters more than depth.",
+        "Save high thinking effort for genuinely hard multi-step reasoning or math -- minimal thinking isn't supported on this model and returns an error if requested.",
+        "If token overhead is the binding constraint, use a lower effort level or fall back to 3.7 Flash instead of forcing 3.8 Flash higher."
+      ],
       "task_copy": {},
       "auto_added": "2026-09-04",
       "best_for_line": "Google model · 1M ctx · $0.75/$3.75",
@@ -26551,19 +26563,28 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "vision",
+        "agentic"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
         "https://openrouter.ai/deepseek/deepseek-v4-flash-vision-exp",
-        "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp/raw/main/README.md"
+        "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp/raw/main/README.md",
+        "https://api-docs.deepseek.com/news/news260821/",
+        "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Reach for this over plain V4-Flash whenever a task involves images, charts, tables, or documents -- DeepSeek's own release notes say it brings multimodal agent performance close to Opus-4.8 while matching V4-Flash on text.",
+        "Images are billed at up to 384 tokens each, so batch or downscale screenshots/documents before sending them to keep costs down.",
+        "For pure text-only workloads it matches V4-Flash's pricing exactly, so there's no cost penalty to standardizing on the vision-capable variant."
+      ],
       "task_copy": {},
       "auto_added": "2026-09-06",
       "best_for_line": "DeepSeek model · 1M ctx · $0.22/$0.66",
@@ -26860,19 +26881,29 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "coding",
+        "agentic",
+        "reasoning"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
         "https://openrouter.ai/deepseek/deepseek-v4-pro-0813",
-        "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813/raw/main/README.md"
+        "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813/raw/main/README.md",
+        "https://docs.nvidia.com/nim/large-language-models/2.0.12/get-started/advanced/get-started-deepseek-v4-pro-0813.html",
+        "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Set reasoning_effort to max for long-horizon agentic runs and complex coding tasks where deliberation quality matters most; drop to low when latency matters more than depth.",
+        "For agentic tool-calling, DeepSeek's documented sampling recommendation is top_p=0.95; use top_p=1.0 for non-agentic generation.",
+        "It's a 1.6T MoE model with only 49B active params built for sustained multi-step reasoning -- reach for a smaller DeepSeek tier for simple, low-effort requests."
+      ],
       "task_copy": {},
       "auto_added": "2026-09-06",
       "best_for_line": "DeepSeek model · 1M ctx · $0.58/$1.74",
