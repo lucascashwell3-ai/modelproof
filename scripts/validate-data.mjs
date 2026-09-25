@@ -496,7 +496,14 @@ function main() {
   // 10. data/plans.json (scripts/refresh-plans.md): seat pricing, refreshed manually. Same honesty
   // rule as everything else — a price with no source_url can't ship, and "contact sales" is null,
   // never a guess at what a sales call would quote.
-  const PLAN_VENDORS = ['Anthropic', 'OpenAI', 'Google', 'xAI', 'Cursor', 'GitHub Copilot'];
+  // The seller's name as a buyer sees it on the invoice, which is not always a model vendor from
+  // naming.mjs: "Microsoft 365 Copilot" and the three marketplaces (Bedrock, Vertex AI, Azure AI
+  // Foundry) sell other people's models, and they are here because that is how enterprises buy.
+  const PLAN_VENDORS = [
+    'Anthropic', 'OpenAI', 'Google', 'xAI', 'Cursor', 'GitHub Copilot', 'Mistral AI',
+    'Microsoft 365 Copilot', 'Windsurf', 'Perplexity', 'OpenRouter',
+    'Amazon Bedrock', 'Google Vertex AI', 'Microsoft Azure AI Foundry',
+  ];
   let plans = null;
   try {
     plans = JSON.parse(readFileSync(new URL('../data/plans.json', import.meta.url)));
