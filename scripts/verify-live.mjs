@@ -5,6 +5,15 @@
    module tells the difference between "still deploying" and "actually broken" by checking the
    `pages-build-deployment` Actions run for the commit, not just a clock.
 
+   Also fixes run 36136725571: the standalone Verify piece (refresh-verify.yml) wants the live
+   site to show at least the last Collect's date, not exactly that date - if the Judge publishes
+   later the same week and Verify's `want` is still Collect's older date, the live site is newer
+   than `want`, which used to look identical to "not deployed yet" and timed out after 30 min. The
+   `--at-least` flag switches the match from "equals" to "greater than or equal to" (plain ISO
+   date string compare); auto-refresh.yml's own post-push check keeps exact match, since it just
+   published that exact date and a newer live value there would mean someone else published
+   first.
+
    Four outcomes (see automation/jobs/auto-refresh/README.md "Failure behavior"):
      0 verified          - live as_of now matches `want`.
      2 DEPLOY_FAILED      - the Pages build for `sha` completed with conclusion "failure".
@@ -60,6 +69,7 @@ export async function defaultFetchPagesRun({ repo, sha, token }) {
 export async function verifyLive(opts) {
   const {
     want, sha, repo, url,
+    atLeast = false,
     timeoutSec = 1800, pollSec = 15, graceSec = 180,
     token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN,
     fetchLive = defaultFetchLive,
@@ -84,7 +94,8 @@ export async function verifyLive(opts) {
       liveAsOf = undefined; // network error: unknown, never crash, never treat as a match
     }
 
-    const matched = liveAsOf !== undefined && liveAsOf === want;
+    const matched = liveAsOf !== undefined
+      && (atLeast ? liveAsOf >= want : liveAsOf === want);
 
     let pagesRun = null;
     let pagesLabel = 'matched';
@@ -125,6 +136,7 @@ function parseCliArgs(argv) {
       sha: { type: 'string' },
       repo: { type: 'string' },
       url: { type: 'string' },
+      'at-least': { type: 'boolean' },
       'timeout-sec': { type: 'string' },
       'poll-sec': { type: 'string' },
       'grace-sec': { type: 'string' },
@@ -135,6 +147,7 @@ function parseCliArgs(argv) {
     sha: values.sha ?? process.env.VERIFY_LIVE_SHA ?? process.env.GITHUB_SHA,
     repo: values.repo ?? process.env.VERIFY_LIVE_REPO ?? process.env.GITHUB_REPOSITORY,
     url: values.url ?? process.env.VERIFY_LIVE_URL,
+    atLeast: values['at-least'] ?? (process.env.VERIFY_LIVE_AT_LEAST === '1'),
     timeoutSec: values['timeout-sec'] ? Number(values['timeout-sec']) : undefined,
     pollSec: values['poll-sec'] ? Number(values['poll-sec']) : undefined,
     graceSec: values['grace-sec'] ? Number(values['grace-sec']) : undefined,
@@ -154,6 +167,7 @@ async function main() {
     sha: args.sha,
     repo: args.repo,
     url: args.url,
+    atLeast: args.atLeast,
     ...(args.timeoutSec !== undefined ? { timeoutSec: args.timeoutSec } : {}),
     ...(args.pollSec !== undefined ? { pollSec: args.pollSec } : {}),
     ...(args.graceSec !== undefined ? { graceSec: args.graceSec } : {}),

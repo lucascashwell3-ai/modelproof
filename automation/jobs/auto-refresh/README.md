@@ -105,7 +105,11 @@ Both Collect's post-push check and the standalone Verify piece use `scripts/veri
 which polls the live site for up to 30 minutes instead of checking once: matched → publish
 confirmed; Pages build failed, or built but content still wrong after a short grace period →
 revert; still pending at 30 min → fail loud with main untouched (the next run re-verifies).
-**Only a failed or wrong deploy ever reverts — a deploy that's merely slow never does.**
+**Only a failed or wrong deploy ever reverts — a deploy that's merely slow never does.** Verify
+accepts a live site that is newer than the date it's checking for (`--at-least`), not only an
+exact match — the Judge can publish after Collect did, so by the time Verify runs the live site
+may already show a later date than Collect's receipt, and that's a pass, not a stall. Collect's
+own post-push check keeps exact match, since it just published that exact date itself.
 
 **Receipts:** each piece writes `data/refresh/receipt-<piece>.json (collect / judge / verify)` (`{job, ran_at, ..., ok}`) — the
 reporter reads these for the board and missed-tick detection.
