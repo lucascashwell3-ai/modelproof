@@ -1,0 +1,278 @@
+{
+  "version": "modelproof.package/1",
+  "generator_version": "1.0.0",
+  "as_of": "2026-09-27",
+  "profile": {
+    "schema": "modelproof.profile/1",
+    "who": "person",
+    "tools": [
+      "claude-code"
+    ],
+    "scope": "user",
+    "plans": [
+      {
+        "vendor": "Anthropic",
+        "plan": "Max 5x"
+      }
+    ],
+    "api": false,
+    "limits": "often",
+    "work": [
+      "coding",
+      "agents"
+    ],
+    "like": [
+      "claude-opus-5-5",
+      "claude-sonnet-5"
+    ],
+    "never": [],
+    "roles": {
+      "builder": "claude-opus-5-5"
+    },
+    "effort_cap": null,
+    "set_default_model": false,
+    "org": null
+  },
+  "parts": [
+    {
+      "id": "claude-code:agent:scout",
+      "tool": "claude-code",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.claude/agents/modelproof-scout.md"
+      },
+      "content": "---\nname: modelproof-scout\ndescription: Reads, searches and sums up code or docs for the lead. Use it for long reading and lookups. It does not edit files.\nmodel: haiku\neffort: low\n---\n<!-- modelproof:owned v1 -->\nYou are the scout. You find and read; you do not edit files.\n- Search first (grep or glob), then open only the line ranges you need.\n- Never read a large file whole.\n- Answer in a few lines: what you found, with file:line for each fact.\n- Say what you could not find.\n- Put long findings in a file on disk and return its path.\n",
+      "why": "Claude Code runs this helper on haiku, the model named in the file.",
+      "lines": 13
+    },
+    {
+      "id": "claude-code:agent:builder",
+      "tool": "claude-code",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.claude/agents/modelproof-builder.md"
+      },
+      "content": "---\nname: modelproof-builder\ndescription: Makes one planned change from a brief (exact files, goal, done check) and reports the check result.\nmodel: opus\neffort: medium\n---\n<!-- modelproof:owned v1 -->\nYou are the builder. You make the change the lead planned.\n- Touch only the files the brief names; ask before touching others.\n- Run the done check from the brief and report its exact result.\n- Return in a few lines: files changed, the last lines of the check, anything left undone.\n- Put long logs in a file on disk and return its path.\n",
+      "why": "Claude Code runs this helper on opus, the model named in the file.",
+      "lines": 12
+    },
+    {
+      "id": "claude-code:agent:reviewer",
+      "tool": "claude-code",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.claude/agents/modelproof-reviewer.md"
+      },
+      "content": "---\nname: modelproof-reviewer\ndescription: Reviews a change cold from the diff, runs the checks itself, and reports problems with file:line.\nmodel: inherit\n---\n<!-- modelproof:owned v1 -->\nYou are the reviewer. You review cold: the diff, not the author's summary.\n- Read the diff (git diff) and the files it touches.\n- Run the project's checks yourself; scripts decide pass or fail.\n- Report problems worst first, each with file:line and a one-line fix.\n- Say plainly when you found nothing wrong. Do not edit files.\n",
+      "why": "Claude Code runs this helper on the lead's model (model: inherit).",
+      "lines": 11
+    },
+    {
+      "id": "claude-code:agent:explore",
+      "tool": "claude-code",
+      "kind": "owned-file",
+      "enforced": true,
+      "optional": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.claude/agents/modelproof-explore.md"
+      },
+      "content": "---\nname: Explore\ndescription: Fast read-only search of the codebase for files, symbols and answers.\nmodel: haiku\ndisallowedTools: Write, Edit, NotebookEdit\n---\n<!-- modelproof:owned v1 -->\nYou explore the codebase and report back; you do not edit files.\n- Search first, then read only the line ranges you need.\n- Answer briefly, with file:line for each fact.\n",
+      "why": "Optional: replaces the built-in Explore helper's model with haiku (since v2.1.198 the built-in follows the lead).",
+      "basis": [
+        {
+          "id": "cc-explore-override-haiku",
+          "sentence": "A user or project subagent named Explore with model: haiku keeps exploration on Haiku.",
+          "quote": "define one with model: haiku to keep exploration on a lower-cost model",
+          "source_url": "https://code.claude.com/docs/en/sub-agents",
+          "date": "2026-09-27"
+        }
+      ],
+      "lines": 10
+    },
+    {
+      "id": "claude-code:rules",
+      "tool": "claude-code",
+      "readers": [
+        "claude-code"
+      ],
+      "kind": "owned-file",
+      "enforced": false,
+      "target": {
+        "scope": "user",
+        "path": "~/.claude/rules/modelproof.md"
+      },
+      "content": "<!-- modelproof:owned v1 -->\n# Modelproof helpers and hand-off (facts as of 2026-09-27)\nLead: the model you choose in the tool. Helpers marked inherit run on it.\n\n## Helpers\n- Call these helpers by name and pass no model: a model given per call overrides the file. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- modelproof-scout (reads and searches) → haiku (Claude Haiku 4.5)\n  Source: Claude Code docs, https://code.claude.com/docs/en/costs (2026-09-27)\n- modelproof-builder (makes the planned change) → opus (Claude Opus 5.5)\n  Source: your choice (list price $4 in / $20 out per 1M tokens, as of 2026-09-26)\n- modelproof-reviewer (reviews the diff cold) → inherit: runs on the lead's model\n  Source: Claude Code docs, https://code.claude.com/docs/en/model-config (2026-09-27)\n\n## How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n- Send verbose work (test runs, logs) to a helper so only a summary comes back. Source: Claude Code docs, https://code.claude.com/docs/en/costs (2026-09-27)\n\n## Context\n- Search before reading; read line ranges, not whole big files.\n- Hand long reading to modelproof-scout and take back a short summary.\n- Each Claude Code subagent runs in its own context window with its own system prompt, tools and permissions. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n\n## Usage\n- Subagent requests count toward the same usage limits as the main Claude Code conversation. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- Anthropic reports that in its data agents used about 4 times the tokens of chat, and multi-agent systems about 15 times. Source: Anthropic docs, https://www.anthropic.com/engineering/multi-agent-research-system (2026-09-27)\n- Anthropic's cost guide reports that, on work one model could handle alone, the same model at lower effort cost less than an orchestrator setup in every measured case. Source: Anthropic docs, https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence.md (2026-09-27)\n\n## Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- An effort field in a subagent file overrides the session effort level while that subagent runs. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-09-27)\n- Effort levels per model: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "why": "Claude Code loads every file in rules/ each session; your CLAUDE.md is not touched.",
+      "lines": 35
+    }
+  ],
+  "roles": {
+    "claude-code": {
+      "lead": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [],
+        "price": null,
+        "usage": null
+      },
+      "scout": {
+        "model_ref": "haiku",
+        "model_id": "claude-haiku-4-5",
+        "model_name": "Claude Haiku 4.5",
+        "from": "tool",
+        "basis": [
+          {
+            "id": "cc-costs-haiku-subagent",
+            "sentence": "Claude Code cost docs suggest model: haiku in the subagent file for simple subagent tasks.",
+            "quote": "For simple subagent tasks, specify model: haiku in your subagent configuration",
+            "source_url": "https://code.claude.com/docs/en/costs",
+            "date": "2026-09-27"
+          },
+          {
+            "id": "cc-alias-haiku",
+            "sentence": "Claude Code describes its haiku alias as the Haiku model for simple tasks.",
+            "quote": "Uses the fast and efficient Haiku model for simple tasks",
+            "source_url": "https://code.claude.com/docs/en/model-config",
+            "date": "2026-09-27"
+          }
+        ],
+        "price": {
+          "input": 1,
+          "output": 5
+        },
+        "usage": {
+          "openrouter_share": 0.17,
+          "as_of": "2026-09-25",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      },
+      "builder": {
+        "model_ref": "opus",
+        "model_id": "claude-opus-5-5",
+        "model_name": "Claude Opus 5.5",
+        "from": "you",
+        "basis": [],
+        "price": {
+          "input": 4,
+          "output": 20
+        },
+        "usage": {
+          "openrouter_share": 0.49,
+          "as_of": "2026-09-25",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      },
+      "reviewer": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "cc-inherit-follows-switch",
+            "sentence": "A subagent that inherits the session model follows a /model switch; a model field in its file keeps it fixed.",
+            "quote": "To keep a custom subagent on a smaller model, set model in its definition.",
+            "source_url": "https://code.claude.com/docs/en/model-config",
+            "date": "2026-09-27"
+          }
+        ],
+        "price": null,
+        "usage": null
+      }
+    }
+  },
+  "preview_facts": {
+    "models_you_use": [
+      {
+        "id": "claude-opus-5-5",
+        "name": "Claude Opus 5.5",
+        "price": {
+          "input": 4,
+          "output": 20
+        },
+        "usage": {
+          "openrouter_share": 0.49,
+          "as_of": "2026-09-25",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        },
+        "claim": null
+      },
+      {
+        "id": "claude-sonnet-5",
+        "name": "Claude Sonnet 5",
+        "price": {
+          "input": 2,
+          "output": 10
+        },
+        "usage": {
+          "openrouter_share": 1.02,
+          "as_of": "2026-09-25",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        },
+        "claim": null
+      }
+    ],
+    "tools_and_labs_say": [
+      {
+        "subject": "Claude Code",
+        "claims": [
+          {
+            "id": "cc-sonnet-vs-opus-costs",
+            "sentence": "Claude Code cost docs say Sonnet handles most coding tasks and costs less than Opus, with Opus kept for complex architecture or multi-step reasoning.",
+            "quote": "Sonnet handles most coding tasks well and costs less than Opus. Reserve Opus for complex architectural decisions or multi-step reasoning.",
+            "source_url": "https://code.claude.com/docs/en/costs",
+            "date": "2026-09-27"
+          },
+          {
+            "id": "cc-alias-sonnet",
+            "sentence": "Claude Code describes its sonnet alias as the latest Sonnet model for daily coding tasks.",
+            "quote": "Uses the latest Sonnet model for daily coding tasks",
+            "source_url": "https://code.claude.com/docs/en/model-config",
+            "date": "2026-09-27"
+          },
+          {
+            "id": "cc-alias-opus",
+            "sentence": "Claude Code describes its opus alias as the latest Opus model for complex reasoning tasks.",
+            "quote": "Uses the latest Opus model for complex reasoning tasks",
+            "source_url": "https://code.claude.com/docs/en/model-config",
+            "date": "2026-09-27"
+          }
+        ]
+      }
+    ]
+  },
+  "facts_used": [
+    "anthropic-effort-defaults",
+    "anthropic-multi-agent-token-use",
+    "anthropic-orchestrator-vs-lower-effort",
+    "cc-alias-haiku",
+    "cc-alias-opus",
+    "cc-alias-sonnet",
+    "cc-costs-haiku-subagent",
+    "cc-delegate-verbose",
+    "cc-explore-override-haiku",
+    "cc-inherit-follows-switch",
+    "cc-sonnet-vs-opus-costs",
+    "cc-subagent-effort",
+    "cc-subagent-model-order",
+    "cc-subagent-own-context",
+    "cc-subagent-usage-limits"
+  ],
+  "notes": [
+    "Start a new session so each tool loads the new helper and rule files.",
+    "Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history."
+  ],
+  "model_names": {
+    "claude-opus-5-5": "Claude Opus 5.5",
+    "claude-sonnet-5": "Claude Sonnet 5"
+  }
+}

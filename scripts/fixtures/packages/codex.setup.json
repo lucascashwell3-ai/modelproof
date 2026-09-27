@@ -1,0 +1,32 @@
+{
+  "home": "/home/alex",
+  "project": null,
+  "tools": {
+    "claude-code": false,
+    "codex": true,
+    "cursor": false
+  },
+  "dirs": {
+    "claude": "~/.claude",
+    "codex": "~/.codex"
+  },
+  "files": [
+    {
+      "scope": "user",
+      "path": "~/.codex/AGENTS.md",
+      "lines": 24,
+      "readers": [
+        "codex"
+      ]
+    }
+  ],
+  "agents": [],
+  "settings": [],
+  "agents_override": {
+    "user": false,
+    "project": false
+  },
+  "env": {
+    "subagent_model_force": false
+  }
+}

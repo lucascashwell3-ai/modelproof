@@ -1,0 +1,34 @@
+Modelproof package · facts as of 2026-09-27 · generator 1.0.0
+Your answers: person · project scope · tools: Cursor · plans: Cursor Pro · limits: rarely · work: coding, frontend
+  you use: Claude Sonnet 5, GPT-6 Sol
+
+Which model each helper runs
+  Cursor
+    lead     the model you choose in Cursor
+    scout    inherit (runs on the lead's model)
+    builder  inherit (runs on the lead's model)
+    reviewer inherit (runs on the lead's model)
+
+Models you use
+  Claude Sonnet 5: list price $2 in / $10 out per 1M tokens · 1.02% of OpenRouter tokens (2026-09-25)
+  GPT-6 Sol: list price $2 in / $10 out per 1M tokens · 0.37% of OpenRouter tokens (2026-09-25)
+    "use gpt-6-astra for our highest level of capability, gpt-6-sol for strong reasoning on demanding tasks, or gpt-6-luna for efficient, repeatable work at scale." https://developers.openai.com/api/docs/guides/latest-model (2026-09-27)
+
+What the tools and labs say (their own words)
+  OpenAI: "use gpt-6-astra for our highest level of capability, gpt-6-sol for strong reasoning on demanding tasks, or gpt-6-luna for efficient, repeatable work at scale."
+    https://developers.openai.com/api/docs/guides/latest-model (2026-09-27)
+
+Files (numbered; answer "no to 3" to leave one out)
+   1. file   .cursor/agents/modelproof-scout.md · 12 lines · the tool obeys it
+      Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
+   2. file   .cursor/agents/modelproof-builder.md · 11 lines · the tool obeys it
+      Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
+   3. file   .cursor/agents/modelproof-reviewer.md · 11 lines · the tool obeys it
+      Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
+   4. file   .cursor/rules/modelproof.mdc · 27 lines · text
+      Cursor applies a rule with alwaysApply: true in every chat.
+
+Notes
+  - You use models from 2 labs (Anthropic, OpenAI), so helpers run on the lead's model unless you choose one; each lab's own descriptions are listed as facts.
+  - Start a new session so each tool loads the new helper and rule files.
+  - Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history.
