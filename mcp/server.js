@@ -37,7 +37,7 @@ function sourcedClaims(m) {
     for (const c of entry?.claims || []) {
       if (!c?.quote || !c?.source_url) continue;
       const key = c.quote + '\u0000' + c.source_url;
-      if (!byQuote.has(key)) byQuote.set(key, { quote: c.quote, source_url: c.source_url, date: c.date || null, kinds_of_work: [] });
+      if (!byQuote.has(key)) byQuote.set(key, { quote: c.quote, source_url: c.source_url, date: c.date || null, from: c.tier === 'lab' ? 'the lab' : 'a reporter or tester', kinds_of_work: [] });
       byQuote.get(key).kinds_of_work.push(task);
     }
   }
