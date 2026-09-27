@@ -1,0 +1,1841 @@
+{
+  "_readme": "What AI coding tools and model labs publish about instruction files, which model runs each job, effort settings and context. Every claim is one plain sentence plus a quote of at most 25 words copied verbatim from source_url, with the date it was checked. tier \"tool\" = the coding tool's own docs; tier \"lab\" = the model maker's own docs about its own models. scripts/check-sources.mjs re-fetches every source_url and fails if a quote is no longer on the page; scripts/validate-data.mjs checks the shape. role_defaults names a model for a helper job only where the tool's own docs name that job; every other job runs on the same model as the lead (inherit). model_refs maps the strings a tool's config accepts (for example \"sonnet\") to catalog ids in data/models.json. effort_pages links each lab's own page on effort or reasoning settings. Nothing in this file ranks models against each other.",
+  "as_of": "2026-09-27",
+  "claims": [
+    {
+      "id": "cc-user-claude-md",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "Claude Code loads ~/.claude/CLAUDE.md as user instructions that apply to every project on that machine.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Personal preferences for all projects"
+    },
+    {
+      "id": "cc-project-claude-md",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "Claude Code reads project instructions from ./CLAUDE.md or ./.claude/CLAUDE.md, shared with a team through source control.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Team-shared instructions for the project"
+    },
+    {
+      "id": "cc-local-claude-md",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "Claude Code reads a CLAUDE.local.md at the project root for private per-project instructions that stay out of version control.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "For private per-project preferences that shouldn't be checked into version control"
+    },
+    {
+      "id": "cc-claude-md-concatenated",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "Claude Code joins every CLAUDE.md file it finds into one context instead of letting one file replace another.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "All discovered files are concatenated into context rather than overriding each other."
+    },
+    {
+      "id": "cc-imports-syntax",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "A CLAUDE.md file can pull in another file with an @path import line.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "CLAUDE.md files can import additional files using @path/to/import syntax."
+    },
+    {
+      "id": "cc-imports-relative",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "A relative @path import in CLAUDE.md resolves from the folder of the file that contains it.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Relative paths resolve relative to the file containing the import, not the working directory."
+    },
+    {
+      "id": "cc-imports-depth",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "CLAUDE.md imports can nest, up to four levels deep.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Imported files can recursively import other files, with a maximum depth of four hops."
+    },
+    {
+      "id": "cc-agents-md-default",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "By default, Claude Code reads AGENTS.md only when there is no CLAUDE.md in the working directory or any folder above it.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "By default, Claude reads AGENTS.md only when you have no CLAUDE.md in your working directory or above it."
+    },
+    {
+      "id": "cc-agents-md-version",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "Claude Code reads AGENTS.md on its own starting with version 2.1.277.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Reading AGENTS.md directly requires Claude Code v2.1.277 or later."
+    },
+    {
+      "id": "cc-agents-md-user-files-alongside",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "~/.claude/CLAUDE.md, a managed CLAUDE.md and .claude/rules/ files do not stop Claude Code from reading AGENTS.md; they load alongside it.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Don't count, and keep loading alongside AGENTS.md"
+    },
+    {
+      "id": "cc-agents-md-local-blocks",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "Adding a CLAUDE.local.md to a project that relies on AGENTS.md stops Claude Code from reading that AGENTS.md under the default setting.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "adding one to keep your own uncommitted instructions in a project that relies on AGENTS.md stops Claude from reading AGENTS.md for you."
+    },
+    {
+      "id": "cc-agents-md-bridge",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "An @AGENTS.md import line in a CLAUDE.md next to AGENTS.md lets Claude Code and other coding tools share one instruction file.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "you can still keep it as the one file every tool shares by putting an @AGENTS.md import in a CLAUDE.md next to it."
+    },
+    {
+      "id": "cc-agents-md-no-double-read",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "Keeping an @AGENTS.md import in CLAUDE.md does not make Claude Code read AGENTS.md twice.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Keeping the import never makes Claude read AGENTS.md twice, whichever Project instructions value you use."
+    },
+    {
+      "id": "cc-rules-dir",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "Claude Code loads every .md file under a project .claude/rules/ folder, including subfolders.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "All .md files are discovered recursively"
+    },
+    {
+      "id": "cc-rules-paths",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "A rule file can limit itself to matching files with a paths field in its YAML frontmatter.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Rules can be scoped to specific files using YAML frontmatter with the paths field."
+    },
+    {
+      "id": "cc-rules-unconditional",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "A rule file with no paths field loads every session and applies to all files.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Rules without a paths field are loaded unconditionally and apply to all files."
+    },
+    {
+      "id": "cc-user-rules",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "instruction-files",
+      "sentence": "Rule files in ~/.claude/rules/ apply to every project on the machine.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Personal rules in ~/.claude/rules/ apply to every project on your machine."
+    },
+    {
+      "id": "cc-claude-md-size",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "context",
+      "sentence": "Claude Code docs set a target of under 200 lines per CLAUDE.md file, saying longer files use more context and reduce adherence.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "target under 200 lines per CLAUDE.md file. Longer files consume more context and reduce adherence."
+    },
+    {
+      "id": "cc-imports-still-load",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "context",
+      "sentence": "Files pulled in through CLAUDE.md imports still load into the context window at launch.",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "imported files still load and enter the context window at launch"
+    },
+    {
+      "id": "cc-claude-md-bloat",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "context",
+      "sentence": "Claude Code docs say an overlong CLAUDE.md can cause Claude to ignore the instructions in it.",
+      "source_url": "https://code.claude.com/docs/en/best-practices",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Bloated CLAUDE.md files cause Claude to ignore your actual instructions!"
+    },
+    {
+      "id": "cc-costs-claude-md-200",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "context",
+      "sentence": "Claude Code cost docs advise keeping CLAUDE.md under 200 lines of essentials.",
+      "source_url": "https://code.claude.com/docs/en/costs",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Aim to keep CLAUDE.md under 200 lines by including only essentials."
+    },
+    {
+      "id": "cc-skills-on-demand",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "context",
+      "sentence": "Claude Code loads skills only when they are invoked, so instructions moved from CLAUDE.md into skills stay out of the base context.",
+      "source_url": "https://code.claude.com/docs/en/costs",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Skills load on-demand only when invoked, so moving specialized instructions into skills keeps your base context smaller."
+    },
+    {
+      "id": "cc-context-degrades",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "context",
+      "sentence": "Claude Code docs state that model performance degrades as the context window fills.",
+      "source_url": "https://code.claude.com/docs/en/best-practices",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Claude's context window fills up fast, and performance degrades as it fills."
+    },
+    {
+      "id": "cc-subagent-own-context",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "context",
+      "sentence": "Each Claude Code subagent runs in its own context window with its own system prompt, tools and permissions.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Each subagent runs in its own context window with a custom system prompt, specific tool access, and independent permissions."
+    },
+    {
+      "id": "cc-subagent-usage-limits",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "context",
+      "sentence": "Subagent requests count toward the same usage limits as the main Claude Code conversation.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "It also sends its own requests, which count toward the same usage limits as your main conversation."
+    },
+    {
+      "id": "cc-delegate-verbose",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "context",
+      "sentence": "Claude Code cost docs say to hand verbose work such as test runs to subagents so only a summary returns to the main conversation.",
+      "source_url": "https://code.claude.com/docs/en/costs",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Delegate these to subagents so the verbose output stays in the subagent's context while only a summary returns to your main conversation."
+    },
+    {
+      "id": "cc-agent-teams-tokens",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "context",
+      "sentence": "Claude Code docs state agent teams use about 7x the tokens of a standard session when teammates run in plan mode.",
+      "source_url": "https://code.claude.com/docs/en/costs",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Agent teams use approximately 7x more tokens than standard sessions when teammates run in plan mode"
+    },
+    {
+      "id": "cc-subagent-locations",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "Claude Code reads subagent definition files from .claude/agents/ (project) and ~/.claude/agents/ (user), including subfolders.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Claude Code scans .claude/agents/ and ~/.claude/agents/ recursively"
+    },
+    {
+      "id": "cc-subagent-same-name",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "When two subagent files share a name, Claude Code uses the higher-priority location, and project .claude/agents/ ranks above user ~/.claude/agents/ in its table.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "When multiple subagents share the same name, Claude Code uses the one from the higher-priority location."
+    },
+    {
+      "id": "cc-subagent-required-fields",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "A Claude Code subagent file needs only name and description in its frontmatter; tools and model are optional.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Only name and description are required."
+    },
+    {
+      "id": "cc-subagent-model-values",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "The model field in a subagent file accepts sonnet, opus, haiku, fable, a full model ID, or inherit.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents.md",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "`sonnet`, `opus`, `haiku`, `fable`, a full model ID such as `claude-opus-5-5`, or `inherit`"
+    },
+    {
+      "id": "cc-subagent-model-order",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "Claude Code resolves a subagent's model from the per-call model parameter, then the file model field, then CLAUDE_CODE_SUBAGENT_MODEL, then the main conversation model.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Claude Code resolves the subagent's model in this order:"
+    },
+    {
+      "id": "cc-subagent-model-force",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "Setting both CLAUDE_CODE_SUBAGENT_MODEL and CLAUDE_CODE_SUBAGENT_MODEL_FORCE puts every subagent on the model named in the first.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents.md",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "If you set both variables, subagents run on the model in `CLAUDE_CODE_SUBAGENT_MODEL`."
+    },
+    {
+      "id": "cc-settings-model-key",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "The model key in a Claude Code settings file sets the model each new session starts on.",
+      "source_url": "https://code.claude.com/docs/en/settings-reference",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Set the model every new session uses, so you don't have to pick one with /model each time."
+    },
+    {
+      "id": "cc-model-priority",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "Claude Code takes the model from /model, then --model, then ANTHROPIC_MODEL, then the settings model field, in that priority order.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "configure permanently in your settings file using the model field"
+    },
+    {
+      "id": "cc-settings-local-over-project",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "Claude Code applies .claude/settings.local.json over the committed .claude/settings.json for the same key.",
+      "source_url": "https://code.claude.com/docs/en/settings",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Claude Code applies that file over the committed .claude/settings.json"
+    },
+    {
+      "id": "cc-settings-user-scope",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "~/.claude/settings.json holds user settings for every project and sits last in Claude Code settings precedence.",
+      "source_url": "https://code.claude.com/docs/en/settings",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "your personal settings for every project."
+    },
+    {
+      "id": "cc-settings-lists-merge",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "When several settings files set the same list key, Claude Code merges the lists rather than keeping only one.",
+      "source_url": "https://code.claude.com/docs/en/settings",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Claude Code combines the lists instead of picking one, so each file can add entries without removing another file's."
+    },
+    {
+      "id": "cc-opusplan",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "The opusplan model setting uses opus in plan mode and switches to sonnet for execution.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Special mode that uses opus during plan mode, then switches to sonnet for execution"
+    },
+    {
+      "id": "cc-skill-model",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "A model field in a skill file switches the model for the rest of that turn without saving it to settings.",
+      "source_url": "https://code.claude.com/docs/en/skills",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Model to use when this skill is active. The override applies for the rest of the current turn and isn't saved to settings."
+    },
+    {
+      "id": "cc-effort-setting",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "effort",
+      "sentence": "The effortLevel settings key sets a default effort level for models with no saved level.",
+      "source_url": "https://code.claude.com/docs/en/settings-reference",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Set a default effort level for models you haven't saved a level for."
+    },
+    {
+      "id": "cc-effort-order",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "effort",
+      "sentence": "Claude Code resolves session effort from an explicit choice first, then saved settings, then the model default.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Claude Code resolves the session's effort level in this order, taking the first that applies:"
+    },
+    {
+      "id": "cc-effort-opus-5-5-default",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "effort",
+      "sentence": "In Claude Code, Opus 5.5 starts at medium effort unless a setting or explicit choice sets another level.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Opus 5.5 starts at medium unless one of the sources above sets a level for it"
+    },
+    {
+      "id": "cc-effort-by-model",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "effort",
+      "sentence": "The effort levels Claude Code offers depend on the model in use.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "The available effort levels depend on the model."
+    },
+    {
+      "id": "cc-effort-fallback",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "effort",
+      "sentence": "If a chosen effort level is not supported by the model, Claude Code uses the highest supported level at or below it.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Claude Code falls back to the highest supported level at or below the one you set."
+    },
+    {
+      "id": "cc-max-effort",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "effort",
+      "sentence": "The maxEffortLevel settings key caps the effort level a session can use.",
+      "source_url": "https://code.claude.com/docs/en/settings-reference",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Cap the effort level a session can use, leaving lower levels available."
+    },
+    {
+      "id": "cc-subagent-effort",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "effort",
+      "sentence": "An effort field in a subagent file overrides the session effort level while that subagent runs.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Effort level when this subagent is active. Overrides the session effort level."
+    },
+    {
+      "id": "cc-skill-effort",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "effort",
+      "sentence": "An effort field in a skill file overrides the session effort level while that skill runs.",
+      "source_url": "https://code.claude.com/docs/en/skills",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Effort level when this skill is active. Overrides the session effort level."
+    },
+    {
+      "id": "cc-explore-model",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "lead-helper",
+      "sentence": "Since v2.1.198 the built-in Explore subagent inherits the main conversation model instead of always running on Haiku.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "As of v2.1.198, Explore inherits the main conversation's model instead of always running on Haiku."
+    },
+    {
+      "id": "cc-explore-cap",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "lead-helper",
+      "sentence": "On the Claude API, the Explore subagent model is capped at Opus.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "inherits from the main conversation, capped at Opus on the Claude API"
+    },
+    {
+      "id": "cc-explore-override-haiku",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "lead-helper",
+      "sentence": "A user or project subagent named Explore with model: haiku keeps exploration on Haiku.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "define one with model: haiku to keep exploration on a lower-cost model"
+    },
+    {
+      "id": "cc-explore-skips-claude-md",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "lead-helper",
+      "sentence": "The built-in Explore and Plan subagents do not load CLAUDE.md files.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Explore and Plan skip your CLAUDE.md files and the git status snapshot to keep research fast and inexpensive."
+    },
+    {
+      "id": "cc-subagent-costs-haiku",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "lead-helper",
+      "sentence": "Claude Code subagent docs list routing tasks to Haiku as one way to control costs.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Control costs by routing tasks to faster, cheaper models like Haiku"
+    },
+    {
+      "id": "cc-costs-haiku-subagent",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "lead-helper",
+      "sentence": "Claude Code cost docs say to set model: haiku in the subagent file for simple subagent tasks.",
+      "source_url": "https://code.claude.com/docs/en/costs",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "For simple subagent tasks, specify model: haiku in your subagent configuration"
+    },
+    {
+      "id": "cc-inherit-follows-switch",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "lead-helper",
+      "sentence": "A subagent that inherits the session model follows a /model switch; a model field in its file keeps it fixed.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "To keep a custom subagent on a smaller model, set model in its definition."
+    },
+    {
+      "id": "cc-teams-sonnet",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "lead-helper",
+      "sentence": "Claude Code cost docs say to use Sonnet for agent-team teammates.",
+      "source_url": "https://code.claude.com/docs/en/costs",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Use Sonnet for teammates. It balances capability and cost for coordination tasks."
+    },
+    {
+      "id": "cc-sonnet-vs-opus-costs",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "model-per-job",
+      "sentence": "Claude Code cost docs say Sonnet handles most coding tasks and costs less than Opus, with Opus kept for complex architecture or multi-step reasoning.",
+      "source_url": "https://code.claude.com/docs/en/costs",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Sonnet handles most coding tasks well and costs less than Opus. Reserve Opus for complex architectural decisions or multi-step reasoning."
+    },
+    {
+      "id": "cc-alias-sonnet",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "model-per-job",
+      "sentence": "Claude Code describes its sonnet alias as the latest Sonnet model for daily coding tasks.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Uses the latest Sonnet model for daily coding tasks"
+    },
+    {
+      "id": "cc-alias-opus",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "model-per-job",
+      "sentence": "Claude Code describes its opus alias as the latest Opus model for complex reasoning tasks.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Uses the latest Opus model for complex reasoning tasks"
+    },
+    {
+      "id": "cc-alias-haiku",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "model-per-job",
+      "sentence": "Claude Code describes its haiku alias as the Haiku model for simple tasks.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Uses the fast and efficient Haiku model for simple tasks"
+    },
+    {
+      "id": "cc-alias-fable-resolves",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "Unless ANTHROPIC_DEFAULT_FABLE_MODEL is set, Claude Code's fable alias resolves to Fable 5.1 (Fable 5 in Claude apps gateway sessions).",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "the fable alias resolves to Fable 5.1, except in Claude apps gateway sessions"
+    },
+    {
+      "id": "cc-alias-provider-versions",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "Claude Code's model-config table shows the opus alias resolving to Opus 5.5 and the sonnet alias to Sonnet 5 on the Anthropic API; other providers resolve to other versions.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Anthropic API Opus 5.5 Sonnet 5"
+    },
+    {
+      "id": "codex-reads-agents-md",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "instruction-files",
+      "sentence": "Codex reads AGENTS.md files before it starts any task.",
+      "source_url": "https://developers.openai.com/codex/guides/agents-md",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Codex reads AGENTS.md files before doing any work."
+    },
+    {
+      "id": "codex-global-agents-md",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "instruction-files",
+      "sentence": "At global scope Codex reads AGENTS.override.md from its home directory (~/.codex unless CODEX_HOME is set) if it exists, and AGENTS.md otherwise.",
+      "source_url": "https://developers.openai.com/codex/guides/agents-md.md",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "In your Codex home directory (defaults to `~/.codex`, unless you set `CODEX_HOME`), Codex reads `AGENTS.override.md` if it exists."
+    },
+    {
+      "id": "codex-project-agents-md-walk",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "instruction-files",
+      "sentence": "From the project root down to the working directory, Codex checks each directory for AGENTS.override.md, then AGENTS.md, then any names listed in project_doc_fallback_filenames, and includes at most one file per directory.",
+      "source_url": "https://developers.openai.com/codex/guides/agents-md.md",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "In each directory along the path, it checks for `AGENTS.override.md`, then `AGENTS.md`, then any fallback names in `project_doc_fallback_filenames`."
+    },
+    {
+      "id": "codex-agents-md-merge-order",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "instruction-files",
+      "sentence": "Codex joins the instruction files it finds from the root down, so files nearer the working directory appear later in the combined prompt.",
+      "source_url": "https://developers.openai.com/codex/guides/agents-md",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Codex concatenates files from the root down, joining them with blank lines."
+    },
+    {
+      "id": "codex-agents-md-size-cap",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "context",
+      "sentence": "Codex stops adding instruction files once their combined size reaches project_doc_max_bytes, which is 32 KiB by default.",
+      "source_url": "https://developers.openai.com/codex/guides/agents-md",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "stops adding files once the combined size reaches the limit defined by project_doc_max_bytes (32 KiB by default)"
+    },
+    {
+      "id": "codex-default-model-key",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "enforced-model",
+      "sentence": "Codex sets its default model for the CLI and IDE with the model key in config.toml.",
+      "source_url": "https://developers.openai.com/codex/config-basic",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Choose the model Codex uses by default in the CLI and IDE. model = \"gpt-6-sol\""
+    },
+    {
+      "id": "codex-reasoning-effort-key",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "effort",
+      "sentence": "Codex sets reasoning effort with the model_reasoning_effort key in config.toml, applied when the model supports it.",
+      "source_url": "https://developers.openai.com/codex/config-basic",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Tune how much reasoning effort the model applies when supported. model_reasoning_effort = \"medium\""
+    },
+    {
+      "id": "codex-project-config-precedence",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "enforced-model",
+      "sentence": "A project's .codex/config.toml outranks the user's ~/.codex/config.toml, is read from the project root down with the closest file winning, and loads only for trusted projects.",
+      "source_url": "https://developers.openai.com/codex/config-basic.md",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Project config files: `.codex/config.toml`, ordered from the project root down to your current working directory (closest wins; trusted projects only)"
+    },
+    {
+      "id": "codex-profiles",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "model-per-job",
+      "sentence": "A Codex profile is a separate file, ~/.codex/<name>.config.toml, layered over config.toml when Codex runs with --profile <name>.",
+      "source_url": "https://developers.openai.com/codex/config-advanced.md",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "When you pass `--profile profile-name`, Codex loads `~/.codex/config.toml`, then overlays `~/.codex/profile-name.config.toml`."
+    },
+    {
+      "id": "codex-profiles-no-table",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "model-per-job",
+      "sentence": "From Codex 0.134.0, --profile no longer reads [profiles.<name>] tables inside config.toml.",
+      "source_url": "https://developers.openai.com/codex/config-advanced",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "In Codex 0.134.0 and later, --profile no longer reads [profiles.profile-name] from config.toml"
+    },
+    {
+      "id": "codex-subagent-inherits",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "lead-helper",
+      "sentence": "A Codex subagent with no model or reasoning effort configured uses the parent agent's model and effort.",
+      "source_url": "https://developers.openai.com/codex/subagents.md",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "If you don't configure a subagent model or `model_reasoning_effort`, the subagent inherits the parent agent's model and reasoning effort."
+    },
+    {
+      "id": "codex-subagent-default-model",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "lead-helper",
+      "sentence": "The agents.default_subagent_model key in config.toml sets the default model for agents that Codex spawns.",
+      "source_url": "https://developers.openai.com/codex/subagents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "agents.default_subagent_model string No Set the default model for spawned agents."
+    },
+    {
+      "id": "codex-custom-agent-files",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "model-per-job",
+      "sentence": "Codex custom agents are standalone TOML files in ~/.codex/agents/ (personal) or .codex/agents/ (project).",
+      "source_url": "https://developers.openai.com/codex/subagents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "add standalone TOML files under ~/.codex/agents/ for personal agents or .codex/agents/ for project-scoped agents."
+    },
+    {
+      "id": "codex-custom-agent-model-wins",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "model-per-job",
+      "sentence": "A model or model_reasoning_effort set inside a Codex custom agent file takes precedence for that agent.",
+      "source_url": "https://developers.openai.com/codex/subagents.md",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "If a custom agent file sets `model` or `model_reasoning_effort`, the value in the file takes precedence."
+    },
+    {
+      "id": "cursor-project-rules-location",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "instruction-files",
+      "sentence": "Cursor project rules are .mdc files stored in .cursor/rules.",
+      "source_url": "https://cursor.com/docs/context/rules",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Project rules live in .cursor/rules as .mdc files and are version-controlled."
+    },
+    {
+      "id": "cursor-rules-need-mdc",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "instruction-files",
+      "sentence": "Cursor ignores plain .md files in .cursor/rules; project rules need the .mdc extension.",
+      "source_url": "https://cursor.com/docs/context/rules",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Project rules must use the .mdc extension."
+    },
+    {
+      "id": "cursor-rule-frontmatter",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "instruction-files",
+      "sentence": "Cursor decides when to include a rule from three frontmatter fields: description, globs and alwaysApply.",
+      "source_url": "https://cursor.com/docs/context/rules",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Under the hood, the three frontmatter fields interact to determine when a rule is included"
+    },
+    {
+      "id": "cursor-reads-agents-md",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "instruction-files",
+      "sentence": "Cursor reads AGENTS.md in the project root and in subdirectories.",
+      "source_url": "https://cursor.com/docs/context/rules",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Cursor supports AGENTS.md in the project root and subdirectories."
+    },
+    {
+      "id": "cursor-user-rules",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "instruction-files",
+      "sentence": "Cursor User Rules are set in the app's Customize > Rules screen and apply across all projects.",
+      "source_url": "https://cursor.com/docs/context/rules",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "User Rules are global preferences defined in Customize → Rules that apply across all projects."
+    },
+    {
+      "id": "cursor-rule-precedence",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "instruction-files",
+      "sentence": "Cursor merges Team, Project and User Rules in that order, with earlier sources taking precedence on conflict.",
+      "source_url": "https://cursor.com/docs/context/rules",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Rules are applied in this order: Team Rules → Project Rules → User Rules"
+    },
+    {
+      "id": "cursor-rule-length",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "context",
+      "sentence": "Cursor's rules guide says to keep each rule under 500 lines.",
+      "source_url": "https://cursor.com/docs/context/rules",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Keep rules under 500 lines"
+    },
+    {
+      "id": "cursor-subagent-model-field",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "model-per-job",
+      "sentence": "A Cursor subagent file's model field sets which model that subagent uses.",
+      "source_url": "https://cursor.com/docs/context/subagents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "The model field controls which model a subagent uses."
+    },
+    {
+      "id": "cursor-subagent-inherit-default",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "lead-helper",
+      "sentence": "A Cursor subagent uses the parent agent's model by default (model: inherit).",
+      "source_url": "https://cursor.com/docs/context/subagents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Uses the same model as the parent agent. This is the default."
+    },
+    {
+      "id": "cursor-subagent-effort",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "effort",
+      "sentence": "In a Cursor subagent's model field, options in square brackets after the model ID set reasoning effort, speed and context window.",
+      "source_url": "https://cursor.com/docs/context/subagents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Append square brackets to a model ID to set per-model options like speed, reasoning effort, and context window."
+    },
+    {
+      "id": "cursor-subagent-paths",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "model-per-job",
+      "sentence": "Cursor subagents are markdown files in .cursor/agents/ (project) or ~/.cursor/agents/ (user).",
+      "source_url": "https://cursor.com/docs/context/subagents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "You can also create subagents manually by adding markdown files to .cursor/agents/ (project) or ~/.cursor/agents/ (user)."
+    },
+    {
+      "id": "cursor-subagent-compat-folders",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "model-per-job",
+      "sentence": "Cursor also loads subagents from .claude/agents/ and .codex/agents/, and a same-named file in .cursor/ wins.",
+      "source_url": "https://cursor.com/docs/context/subagents",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": ".cursor/ takes precedence over .claude/ or .codex/"
+    },
+    {
+      "id": "agentsmd-tool-list",
+      "subject": {
+        "kind": "tool",
+        "name": "AGENTS.md"
+      },
+      "topic": "instruction-files",
+      "sentence": "The AGENTS.md site lists tools that work with the format, including Codex, Cursor, Gemini CLI, GitHub Copilot's coding agent, Jules, Aider, Zed, Warp, VS Code, Devin, Junie and Windsurf.",
+      "source_url": "https://agents.md/",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Your agent definitions are compatible with a growing ecosystem of AI coding agents and tools"
+    },
+    {
+      "id": "agentsmd-nearest-wins",
+      "subject": {
+        "kind": "tool",
+        "name": "AGENTS.md"
+      },
+      "topic": "instruction-files",
+      "sentence": "Under the AGENTS.md format, the file nearest the edited file wins and the user's chat prompt overrides all files.",
+      "source_url": "https://agents.md/",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "The closest AGENTS.md to the edited file wins; explicit user chat prompts override everything."
+    },
+    {
+      "id": "copilot-reads-agents-md",
+      "subject": {
+        "kind": "tool",
+        "name": "GitHub Copilot"
+      },
+      "topic": "instruction-files",
+      "sentence": "GitHub Copilot reads AGENTS.md files anywhere in a repository and uses the nearest one.",
+      "source_url": "https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "When Copilot is working, the nearest AGENTS.md file in the directory tree will take precedence."
+    },
+    {
+      "id": "copilot-instructions-file",
+      "subject": {
+        "kind": "tool",
+        "name": "GitHub Copilot"
+      },
+      "topic": "instruction-files",
+      "sentence": "GitHub Copilot's repository-wide instructions live in .github/copilot-instructions.md.",
+      "source_url": "https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "These are specified in a copilot-instructions.md file in the .github directory of the repository."
+    },
+    {
+      "id": "copilot-model-picker",
+      "subject": {
+        "kind": "tool",
+        "name": "GitHub Copilot"
+      },
+      "topic": "enforced-model",
+      "sentence": "In VS Code, the Copilot Chat model is chosen from a dropdown at the bottom of the chat view.",
+      "source_url": "https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "At the bottom of the chat view, select the CURRENT-MODEL dropdown menu, then click the AI model of your choice."
+    },
+    {
+      "id": "gemini-cli-context-file",
+      "subject": {
+        "kind": "tool",
+        "name": "Gemini CLI"
+      },
+      "topic": "instruction-files",
+      "sentence": "Gemini CLI reads context files named GEMINI.md by default.",
+      "source_url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/cli/gemini-md.md",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "Context files, which use the default name `GEMINI.md`"
+    },
+    {
+      "id": "gemini-cli-context-filename-setting",
+      "subject": {
+        "kind": "tool",
+        "name": "Gemini CLI"
+      },
+      "topic": "instruction-files",
+      "sentence": "Gemini CLI's context file name can be changed in settings.json, for example to include AGENTS.md.",
+      "source_url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/cli/gemini-md.md",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "While `GEMINI.md` is the default filename, you can configure this in your `settings.json` file."
+    },
+    {
+      "id": "gemini-cli-model-setting",
+      "subject": {
+        "kind": "tool",
+        "name": "Gemini CLI"
+      },
+      "topic": "enforced-model",
+      "sentence": "Gemini CLI's model.name setting in settings.json sets the model used for conversations.",
+      "source_url": "https://raw.githubusercontent.com/google-gemini/gemini-cli/main/docs/reference/configuration.md",
+      "tier": "tool",
+      "date": "2026-09-27",
+      "quote": "The Gemini model to use for conversations."
+    },
+    {
+      "id": "anthropic-research-lead-opus-subagents-sonnet",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "lead-helper",
+      "sentence": "Anthropic's engineering post on its research system reports that Claude Opus 4 as lead agent with Claude Sonnet 4 subagents scored 90.2% higher than single-agent Claude Opus 4 on Anthropic's internal research eval.",
+      "source_url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "Claude Opus 4 as the lead agent and Claude Sonnet 4 subagents outperformed single-agent Claude Opus 4 by 90.2%"
+    },
+    {
+      "id": "anthropic-multi-agent-token-use",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "lead-helper",
+      "sentence": "Anthropic reports that in its data agents used about 4 times the tokens of chat, and multi-agent systems about 15 times.",
+      "source_url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats"
+    },
+    {
+      "id": "anthropic-two-multi-model-patterns",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "lead-helper",
+      "sentence": "Anthropic's model-choice guide names two multi-model patterns: an executor that escalates hard decisions to an advisor, and an orchestrator that delegates bulk work to lower-cost workers.",
+      "source_url": "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model.md",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "the two common patterns are an executor that escalates hard decisions to an advisor, and an orchestrator that delegates bulk work to lower-cost workers."
+    },
+    {
+      "id": "anthropic-orchestrator-vs-lower-effort",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "lead-helper",
+      "sentence": "Anthropic's cost guide reports that, on work one model could handle alone, the same model at lower effort cost less than an orchestrator setup in every measured case.",
+      "source_url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence.md",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "on work a single model could handle alone, the same model at lower effort was cheaper every time."
+    },
+    {
+      "id": "anthropic-workloads-start-opus-5-5",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "model-per-job",
+      "sentence": "Anthropic's model-choice guide states that most workloads start with Claude Opus 5.5.",
+      "source_url": "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model.md",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "Most workloads start with Claude Opus 5.5."
+    },
+    {
+      "id": "anthropic-effort-defaults",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "effort",
+      "sentence": "Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium.",
+      "source_url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "the default on every model that supports effort except Claude Opus 5.5."
+    },
+    {
+      "id": "openai-gpt-6-family-roles",
+      "subject": {
+        "kind": "lab",
+        "name": "OpenAI"
+      },
+      "topic": "model-per-job",
+      "sentence": "OpenAI's GPT-6 guide assigns gpt-6-astra to its highest capability, gpt-6-sol to strong reasoning on demanding tasks, and gpt-6-luna to efficient, repeatable work at scale.",
+      "source_url": "https://developers.openai.com/api/docs/guides/latest-model",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "use gpt-6-astra for our highest level of capability, gpt-6-sol for strong reasoning on demanding tasks, or gpt-6-luna for efficient, repeatable work at scale."
+    },
+    {
+      "id": "openai-planner-and-workhorse",
+      "subject": {
+        "kind": "lab",
+        "name": "OpenAI"
+      },
+      "topic": "lead-helper",
+      "sentence": "OpenAI's reasoning guide describes using reasoning (o-series) models to plan a strategy and GPT models to execute specific tasks.",
+      "source_url": "https://developers.openai.com/api/docs/guides/reasoning-best-practices",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "an application might use o-series models to plan out the strategy to solve a problem, and use gpt models to execute specific tasks"
+    },
+    {
+      "id": "openai-effort-speed-vs-depth",
+      "subject": {
+        "kind": "lab",
+        "name": "OpenAI"
+      },
+      "topic": "effort",
+      "sentence": "OpenAI's reasoning guide says lower reasoning effort favors speed and lower token use, and higher effort makes the model think more completely.",
+      "source_url": "https://developers.openai.com/api/docs/guides/reasoning",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "lower effort favors speed and lower token usage, while at higher effort the model thinks more completely to provide higher quality responses."
+    },
+    {
+      "id": "openai-xhigh-only-with-eval-evidence",
+      "subject": {
+        "kind": "lab",
+        "name": "OpenAI"
+      },
+      "topic": "effort",
+      "sentence": "OpenAI's reasoning guide says to use xhigh effort only when evals show a clear benefit that justifies the extra latency and cost.",
+      "source_url": "https://developers.openai.com/api/docs/guides/reasoning",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "only use when your evals show a clear benefit that justifies the extra latency and cost."
+    },
+    {
+      "id": "openai-sol-luna-default-medium",
+      "subject": {
+        "kind": "lab",
+        "name": "OpenAI"
+      },
+      "topic": "effort",
+      "sentence": "OpenAI's reasoning guide states gpt-6-sol and gpt-6-luna default to medium reasoning effort.",
+      "source_url": "https://developers.openai.com/api/docs/guides/reasoning",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "gpt-6 sol and luna also default to medium reasoning effort."
+    },
+    {
+      "id": "openai-change-effort-mid-conversation",
+      "subject": {
+        "kind": "lab",
+        "name": "OpenAI"
+      },
+      "topic": "effort",
+      "sentence": "OpenAI documents a configuration_update input item that raises reasoning effort for difficult work or lowers it for routine follow-ups while keeping the prompt prefix.",
+      "source_url": "https://developers.openai.com/api/docs/guides/latest-model",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "increase reasoning effort for difficult work or reduce it for routine follow-ups without rewriting the original prompt prefix."
+    },
+    {
+      "id": "google-gemini-3-thinking-level",
+      "subject": {
+        "kind": "lab",
+        "name": "Google"
+      },
+      "topic": "effort",
+      "sentence": "Google's Gemini docs state that Gemini 3 models replace token thinking budgets with discrete thinking_level settings.",
+      "source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/thinking",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "gemini 3 models introduce the thinking_level parameter, which simplifies thinking budget configuration into discrete levels."
+    },
+    {
+      "id": "google-thinking-level-high-use",
+      "subject": {
+        "kind": "lab",
+        "name": "Google"
+      },
+      "topic": "effort",
+      "sentence": "Google's Gemini docs describe the high thinking level as suited to complex prompts such as multi-step planning, verified code generation, or advanced function calling.",
+      "source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/thinking",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "suitable for complex prompts requiring deep reasoning, such as multi-step planning, verified code generation, or advanced function calling scenarios."
+    },
+    {
+      "id": "google-gemini-2-5-thinking-budget",
+      "subject": {
+        "kind": "lab",
+        "name": "Google"
+      },
+      "topic": "effort",
+      "sentence": "Google's Gemini docs state that models earlier than Gemini 3 use a thinking_budget parameter that caps the tokens spent on thinking.",
+      "source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/thinking",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "the thinking_budget parameter, which sets an upper limit on the number of tokens the model can use for its thought process."
+    },
+    {
+      "id": "google-gemini-3-8-flash-role",
+      "subject": {
+        "kind": "lab",
+        "name": "Google"
+      },
+      "topic": "model-per-job",
+      "sentence": "Google's model list describes Gemini 3.8 Flash as built for long-horizon coding and autonomous agents.",
+      "source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/models",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "gemini 3.8 flash our most intelligent workhorse model yet, built for long-horizon coding and autonomous agents."
+    },
+    {
+      "id": "google-gemini-3-5-flash-lite-role",
+      "subject": {
+        "kind": "lab",
+        "name": "Google"
+      },
+      "topic": "model-per-job",
+      "sentence": "Google's model list describes Gemini 3.5 Flash-Lite as a model for lightweight agentic workflows at low cost.",
+      "source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/models",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "gemini 3.5 flash-lite create lightweight agentic workflows at top speeds and minimal cost."
+    },
+    {
+      "id": "google-flash-master-agent-flash-lite-helper",
+      "subject": {
+        "kind": "lab",
+        "name": "Google"
+      },
+      "topic": "lead-helper",
+      "sentence": "Google DeepMind's Gemini page shows Gemini 3.6 Flash acting as the master agent while Gemini 3.5 Flash-Lite generates 25 web design concepts.",
+      "source_url": "https://deepmind.google/models/gemini/",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "working alongside 3.6 flash as the master agent, 3.5 flash-lite instantly generates 25 unique, ready-to-explore web design concepts."
+    },
+    {
+      "id": "xai-grok-effort-default-high",
+      "subject": {
+        "kind": "lab",
+        "name": "xAI"
+      },
+      "topic": "effort",
+      "sentence": "xAI's reasoning docs state that reasoning_effort on Grok reasoning models defaults to high when not set.",
+      "source_url": "https://docs.x.ai/docs/guides/reasoning",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "reasoning_effort defaults to \"high\""
+    },
+    {
+      "id": "xai-grok-low-effort-use",
+      "subject": {
+        "kind": "lab",
+        "name": "xAI"
+      },
+      "topic": "effort",
+      "sentence": "xAI's reasoning docs list low effort for latency-sensitive agentic use and simple tool calling.",
+      "source_url": "https://docs.x.ai/docs/guides/reasoning",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "latency-sensitive agentic use and simple tool calling."
+    },
+    {
+      "id": "xai-grok-xhigh-effort-use",
+      "subject": {
+        "kind": "lab",
+        "name": "xAI"
+      },
+      "topic": "effort",
+      "sentence": "xAI's reasoning docs list xhigh effort for the hardest problems, where answer quality matters more than response time.",
+      "source_url": "https://docs.x.ai/docs/guides/reasoning",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "the hardest problems, where answer quality matters more than response time"
+    },
+    {
+      "id": "xai-multi-agent-leader",
+      "subject": {
+        "kind": "lab",
+        "name": "xAI"
+      },
+      "topic": "lead-helper",
+      "sentence": "xAI's multi-agent docs state that in grok-4.20-multi-agent a leader agent synthesizes the sub-agents' discussion and returns the final answer.",
+      "source_url": "https://docs.x.ai/developers/model-capabilities/text/multi-agent.md",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "is responsible for synthesizing the discussion and presenting the final answer back to you."
+    },
+    {
+      "id": "xai-multi-agent-count",
+      "subject": {
+        "kind": "lab",
+        "name": "xAI"
+      },
+      "topic": "lead-helper",
+      "sentence": "xAI's multi-agent docs say to use 4 agents for focused queries and 16 agents for comprehensive, multi-perspective analysis.",
+      "source_url": "https://docs.x.ai/developers/model-capabilities/text/multi-agent.md",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "use 4 agents for focused queries and 16 agents when you need comprehensive, multi-perspective analysis."
+    },
+    {
+      "id": "xai-grok-4-7-general-use",
+      "subject": {
+        "kind": "lab",
+        "name": "xAI"
+      },
+      "topic": "model-per-job",
+      "sentence": "xAI's models page says to use Grok 4.7 for everything other than its dedicated audio, image and video models, including code.",
+      "source_url": "https://docs.x.ai/docs/models",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "for everything else, including code, use grok 4.7."
+    },
+    {
+      "id": "mistral-high-effort-agentic-code",
+      "subject": {
+        "kind": "lab",
+        "name": "Mistral AI"
+      },
+      "topic": "effort",
+      "sentence": "Mistral's reasoning docs name reasoning_effort high for agentic and code use cases on mistral-medium-3-5.",
+      "source_url": "https://docs.mistral.ai/capabilities/reasoning/",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "for agentic and code use cases, reasoning_effort=\"high\" is recommended."
+    },
+    {
+      "id": "mistral-none-effort-behavior",
+      "subject": {
+        "kind": "lab",
+        "name": "Mistral AI"
+      },
+      "topic": "effort",
+      "sentence": "Mistral's reasoning docs state that with reasoning_effort none the model thinks minimally and no thinking chunk is returned.",
+      "source_url": "https://docs.mistral.ai/capabilities/reasoning/",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "the model thinks minimally and the thinking chunk is omitted from the response"
+    },
+    {
+      "id": "mistral-medium-3-5-role",
+      "subject": {
+        "kind": "lab",
+        "name": "Mistral AI"
+      },
+      "topic": "model-per-job",
+      "sentence": "Mistral's models page describes Mistral Medium 3.5 as a multimodal model optimized for agentic and coding use cases.",
+      "source_url": "https://docs.mistral.ai/getting-started/models/models_overview/",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "mistral medium 3.5 our frontier-class multimodal model optimized for agentic and coding use cases."
+    },
+    {
+      "id": "mistral-small-4-role",
+      "subject": {
+        "kind": "lab",
+        "name": "Mistral AI"
+      },
+      "topic": "model-per-job",
+      "sentence": "Mistral's models page describes Mistral Small 4 as one model combining instruct, reasoning and coding.",
+      "source_url": "https://docs.mistral.ai/getting-started/models/models_overview/",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "mistral small 4 hybrid model unifying instruct, reasoning, and coding in a single efficient model."
+    },
+    {
+      "id": "deepseek-thinking-default-high",
+      "subject": {
+        "kind": "lab",
+        "name": "DeepSeek"
+      },
+      "topic": "effort",
+      "sentence": "DeepSeek's thinking-mode docs state thinking is on by default with high effort.",
+      "source_url": "https://api-docs.deepseek.com/guides/thinking_mode",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "thinking mode is enabled by default, with the default effort being high"
+    },
+    {
+      "id": "deepseek-effort-mapping",
+      "subject": {
+        "kind": "lab",
+        "name": "DeepSeek"
+      },
+      "topic": "effort",
+      "sentence": "DeepSeek's thinking-mode docs publish a table mapping each requested effort value to the effort the model actually applies.",
+      "source_url": "https://api-docs.deepseek.com/guides/thinking_mode",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "the mapping between the effort set by the user and the model's actual reasoning effort is as follows"
+    },
+    {
+      "id": "deepseek-models-thinking-modes",
+      "subject": {
+        "kind": "lab",
+        "name": "DeepSeek"
+      },
+      "topic": "model-per-job",
+      "sentence": "DeepSeek's models and pricing page states its API models support non-thinking and thinking modes, with thinking as the default.",
+      "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "thinking mode supports both non-thinking and thinking (default) modes"
+    },
+    {
+      "id": "meta-muse-spark-role",
+      "subject": {
+        "kind": "lab",
+        "name": "Meta"
+      },
+      "topic": "model-per-job",
+      "sentence": "Meta's model docs describe Muse Spark as its model for agentic and coding work.",
+      "source_url": "https://dev.meta.ai/docs/models.md",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "muse spark is meta's model for agentic and coding work - multi-step tool loops, software engineering assistants, and long-context reasoning."
+    },
+    {
+      "id": "meta-muse-glimmer-role",
+      "subject": {
+        "kind": "lab",
+        "name": "Meta"
+      },
+      "topic": "model-per-job",
+      "sentence": "Meta's model docs describe Muse Glimmer as an open-weight multimodal model distilled from Muse Spark to run on your own hardware.",
+      "source_url": "https://dev.meta.ai/docs/models.md",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "muse glimmer is meta's open-weight multimodal model, distilled from muse spark and built to run on your own hardware."
+    },
+    {
+      "id": "meta-effort-cost",
+      "subject": {
+        "kind": "lab",
+        "name": "Meta"
+      },
+      "topic": "effort",
+      "sentence": "Meta's reasoning docs state that higher reasoning_effort means more reasoning tokens, latency and cost.",
+      "source_url": "https://dev.meta.ai/docs/reasoning.md",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "higher effort means more reasoning - and more reasoning tokens, latency, and cost."
+    },
+    {
+      "id": "meta-effort-omitted",
+      "subject": {
+        "kind": "lab",
+        "name": "Meta"
+      },
+      "topic": "effort",
+      "sentence": "Meta's reasoning docs state that when reasoning_effort is omitted, Muse Spark still reasons at a model-determined level.",
+      "source_url": "https://dev.meta.ai/docs/reasoning.md",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "when you omit the parameter, the model still reasons at a model-determined level."
+    },
+    {
+      "id": "anthropic-model-ids",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "enforced-model",
+      "sentence": "Anthropic's models overview lists claude-fable-5-1, claude-opus-5-5, claude-sonnet-5 and claude-haiku-4-5 as its current Claude API aliases.",
+      "source_url": "https://platform.claude.com/docs/en/about-claude/models/overview",
+      "tier": "lab",
+      "date": "2026-09-27",
+      "quote": "Claude API alias claude-fable-5-1 claude-opus-5-5 claude-sonnet-5 claude-haiku-4-5"
+    }
+  ],
+  "role_defaults": [
+    {
+      "tool": "claude-code",
+      "role": "scout",
+      "lab": "Anthropic",
+      "model_ref": "haiku",
+      "model_id": "claude-haiku-4-5",
+      "basis": [
+        "cc-costs-haiku-subagent",
+        "cc-explore-override-haiku",
+        "cc-alias-haiku"
+      ]
+    },
+    {
+      "tool": "claude-code",
+      "role": "builder",
+      "lab": "Anthropic",
+      "model_ref": "sonnet",
+      "model_id": "claude-sonnet-5",
+      "basis": [
+        "cc-sonnet-vs-opus-costs",
+        "cc-teams-sonnet",
+        "cc-alias-sonnet"
+      ]
+    }
+  ],
+  "model_refs": [
+    {
+      "tool": "claude-code",
+      "ref": "haiku",
+      "model_id": "claude-haiku-4-5",
+      "basis": [
+        "cc-alias-haiku",
+        "anthropic-model-ids"
+      ]
+    },
+    {
+      "tool": "claude-code",
+      "ref": "sonnet",
+      "model_id": "claude-sonnet-5",
+      "basis": [
+        "cc-alias-sonnet",
+        "cc-alias-provider-versions"
+      ]
+    },
+    {
+      "tool": "claude-code",
+      "ref": "opus",
+      "model_id": "claude-opus-5-5",
+      "basis": [
+        "cc-alias-opus",
+        "cc-alias-provider-versions"
+      ]
+    },
+    {
+      "tool": "claude-code",
+      "ref": "fable",
+      "model_id": "claude-fable-5-1",
+      "basis": [
+        "cc-alias-fable-resolves"
+      ]
+    }
+  ],
+  "effort_pages": [
+    {
+      "lab": "Anthropic",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
+      "basis": [
+        "anthropic-effort-defaults"
+      ]
+    },
+    {
+      "lab": "OpenAI",
+      "url": "https://developers.openai.com/api/docs/models",
+      "basis": [
+        "openai-effort-speed-vs-depth",
+        "openai-sol-luna-default-medium"
+      ]
+    },
+    {
+      "lab": "Google",
+      "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/thinking",
+      "basis": [
+        "google-gemini-3-thinking-level",
+        "google-gemini-2-5-thinking-budget"
+      ]
+    },
+    {
+      "lab": "xAI",
+      "url": "https://docs.x.ai/docs/guides/reasoning",
+      "basis": [
+        "xai-grok-effort-default-high"
+      ]
+    },
+    {
+      "lab": "DeepSeek",
+      "url": "https://api-docs.deepseek.com/guides/thinking_mode",
+      "basis": [
+        "deepseek-thinking-default-high",
+        "deepseek-effort-mapping"
+      ]
+    },
+    {
+      "lab": "Meta",
+      "url": "https://dev.meta.ai/docs/reasoning.md",
+      "basis": [
+        "meta-effort-cost",
+        "meta-effort-omitted"
+      ]
+    },
+    {
+      "lab": "Mistral AI",
+      "url": "https://docs.mistral.ai/capabilities/reasoning/",
+      "basis": [
+        "mistral-high-effort-agentic-code",
+        "mistral-none-effort-behavior"
+      ]
+    }
+  ]
+}
