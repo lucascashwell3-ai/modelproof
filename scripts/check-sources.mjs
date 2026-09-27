@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-/* Anti-fabrication gate for judged task-fit claims (data/models.json's task_fit_judged[*].claims).
+/* Anti-fabrication gate for judged task-fit claims (data/models.json's task_fit_judged[*].claims)
+   and the instruction package's sourced facts (data/guidance.json's claims[], when the file exists).
    scripts/validate-data.mjs checks SHAPE — every claim has a url, tier, date, and a quote under
    25 words, and no relative phrasing. This script checks the one thing that gate can't: whether
    the quote is actually on the page it cites. It fetches every claim's source_url (read-only,
@@ -13,7 +14,7 @@
 
    Usage:
      node scripts/check-sources.mjs
-   As a module: collectClaims(data), checkClaims(claims, {fetchImpl}) — unit-tested with a fake
+   As a module: collectClaims(data), collectGuidanceClaims(guidance), checkClaims(claims, {fetchImpl}) — unit-tested with a fake
    fetchImpl in scripts/test-check-sources.mjs (no real network calls in the unit tests). */
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -25,6 +26,7 @@ import { resolve } from 'node:path';
 
 const ROOT = new URL('../', import.meta.url);
 const dataUrl = new URL('data/models.json', ROOT);
+const guidanceUrl = new URL('data/guidance.json', ROOT);
 const CACHE_DIR = join(tmpdir(), 'modelproof-check-sources-cache');
 const FETCH_TIMEOUT_MS = 20000;
 
@@ -82,6 +84,23 @@ export function collectClaims(data) {
       });
     }
   }
+  return out;
+}
+
+/** Every claim in data/guidance.json, in the same record shape as collectClaims (so checkClaims
+ * and the report treat both files alike). modelId is null — a guidance claim is about a tool or a
+ * lab, not one model; modelName carries the subject name, taskId the topic, claimId the claim's
+ * own id. Pure — no I/O. */
+export function collectGuidanceClaims(g) {
+  const out = [];
+  if (!g || !Array.isArray(g.claims)) return out;
+  g.claims.forEach((c, index) => {
+    if (!c) return;
+    out.push({
+      modelId: null, modelName: c.subject && c.subject.name, taskId: c.topic, index,
+      source_url: c.source_url, quote: c.quote, tier: c.tier, claimId: c.id, file: 'guidance',
+    });
+  });
   return out;
 }
 
@@ -151,15 +170,21 @@ export async function checkClaims(claims, { fetchImpl = fetchNormalizedPage } = 
 
 async function main() {
   const data = JSON.parse(readFileSync(dataUrl, 'utf8'));
-  const claims = collectClaims(data);
+  // data/guidance.json is optional (a throwaway copy of scripts+data may not carry it); when it
+  // exists, every one of its claims is checked exactly like a judged task-fit claim.
+  const guidance = existsSync(guidanceUrl) ? JSON.parse(readFileSync(guidanceUrl, 'utf8')) : null;
+  const modelClaims = collectClaims(data);
+  const guidanceClaims = collectGuidanceClaims(guidance);
+  const claims = [...modelClaims, ...guidanceClaims];
   if (!claims.length) {
-    console.log('check-sources: no task_fit_judged claims in data/models.json to verify.');
+    console.log('check-sources: no claims in data/models.json or data/guidance.json to verify.');
     return;
   }
-  console.log(`check-sources: verifying ${claims.length} claim(s) against their cited source_url...`);
+  console.log(`check-sources: verifying ${claims.length} claim(s) (${modelClaims.length} in models.json, ${guidanceClaims.length} in guidance.json) against their cited source_url...`);
   const results = await checkClaims(claims);
   for (const r of results) {
-    console.log(`  ${r.ok ? '✓' : '✗'} ${r.modelName} / ${r.taskId} [${r.tier}] ${r.source_url}${r.ok ? '' : ` — ${r.reason}`}`);
+    const what = r.claimId ? `${r.modelName} / ${r.taskId} (${r.claimId})` : `${r.modelName} / ${r.taskId}`;
+    console.log(`  ${r.ok ? '✓' : '✗'} ${what} [${r.tier}] ${r.source_url}${r.ok ? '' : ` — ${r.reason}`}`);
   }
   const failed = results.filter((r) => !r.ok);
   console.log(`\ncheck-sources: ${results.length - failed.length}/${results.length} claim(s) verified.`);
