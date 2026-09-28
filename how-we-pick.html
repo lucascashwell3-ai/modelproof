@@ -1,13 +1,13 @@
 <!doctype html>
 <!--
-  The one page every verdict in the board links to. Same visual system as board.html:
-  one ink colour at a few opacities, hairline rules, one rust accent kept for links, big air,
-  small type. No confidence words anywhere — this page is what replaced them.
-  Round 3, item 12: cut to plain, short sentences and Step 1–5 in place of 01/02 numbering.
+  How we source facts (the filename is kept so old links still work). Same visual system as
+  board.html: one ink colour at a few opacities, hairline rules, one rust accent kept for links,
+  big air, small type. Plain, short sentences; one section per kind of fact.
 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Modelproof — how we pick</title>
+<title>Modelproof — how we source facts</title>
+<meta name="description" content="Where every Modelproof fact comes from: vendor pricing pages, OpenRouter usage, and the labs' and tools' own words — each with its link and the date it was checked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -48,7 +48,6 @@
   .lede{ font-size:13.5px; color: rgba(var(--ink),.55); line-height:1.65; margin: 0; max-width: 54ch; }
 
   section{ padding-top: 40px; margin-top: 40px; border-top: 1px solid rgba(var(--ink),.08); }
-  .step{ font-size:12px; font-weight:600; color: rgba(var(--ink),.4); margin-bottom: 12px; }
   h2{ font-size:15px; font-weight:600; letter-spacing:-0.005em; margin: 0 0 10px; }
   p{ font-size:13.5px; line-height:1.7; color: rgba(var(--ink),.72); margin: 0 0 12px; max-width: 58ch; }
   p:last-child{ margin-bottom:0; }
@@ -83,43 +82,35 @@
 </header>
 
 <main>
-  <h1>How we pick</h1>
-  <p class="lede">Every pick comes from rows you can open. Here is the order.</p>
-
+  <h1>How we source facts</h1>
+  <p class="lede">Every number and quote on this site links to where it came from. Nothing is ranked, and nothing is guessed.</p>
   <section>
-    <div class="step">Step 1</div>
-    <h2>The shortlist</h2>
-    <p>A model joins a task&rsquo;s shortlist only if somebody independent has said something about it on that task: a tester&rsquo;s published rank, real spend on OpenRouter, or blind human votes. A benchmark score nobody backs is not enough, and nothing joins for being new or popular. Where no model clears that bar, the row reads <span class="muted">no shortlist for this task yet</span> rather than a guess.</p>
+    <h2>Prices</h2>
+    <p>List prices per million tokens, standard tier, from each vendor&rsquo;s own pricing page. Our daily check takes a price only when two independent feeds (OpenRouter&rsquo;s model list and the LiteLLM price table) agree within 2%. Anything else waits for a check against the vendor&rsquo;s page, and a jump of more than 5x is held until someone confirms it.</p>
   </section>
-
   <section>
-    <div class="step">Step 2</div>
-    <h2>Your filters cut it</h2>
-    <p>Your plans decide which labs you reach. Your <b>data rule</b> drops a whole vendor; a country we could not confirm is never a match. <b>Never-suggest</b> models never enter an automatic pick.</p>
+    <h2>Usage</h2>
+    <p>Each model&rsquo;s share of tokens on OpenRouter. It shows what people actually run. It says nothing about quality.</p>
   </section>
-
   <section>
-    <div class="step">Step 3</div>
-    <h2>Your stance orders it</h2>
-    <p>Models are grouped by how much of that evidence puts them near the top of the field, best group first. <b>Best</b> takes that order as it stands. <b>Cheapest</b> takes the lowest price inside the best group that still clears the evidence bar &mdash; never a cheaper model from a weaker group. <b>Balanced</b> keeps everything priced at or under twice the cheapest qualifying model, and ranks the rest after. The stance also sets the effort we write into AGENTS.md. It reorders the shortlist; it never cuts it.</p>
+    <h2>What the labs and tools say</h2>
+    <p>Quotes from each lab&rsquo;s and each tool&rsquo;s own docs: how a lab describes its own models, and which model a tool uses for which job. They live in <a href="./data/guidance.json">data/guidance.json</a> and on each model, with the link and the date we checked. A lab&rsquo;s words only ever describe that lab&rsquo;s own models.</p>
   </section>
-
   <section>
-    <div class="step">Step 4</div>
-    <h2>The evidence</h2>
-    <p>Three kinds, kept apart and never averaged: independent testers&rsquo; ranks, spend share on OpenRouter, and blind human votes. Agreement across more of them beats agreement across fewer. Alongside them: list price per million tokens, and one headquarters country per vendor with a source. Nothing else counts, and no model is ranked by us.</p>
+    <h2>The quote check</h2>
+    <p>A quote goes live only if its exact words are on the page it cites. The same check runs again across every quote after each data refresh, and a page whose wording changed gets flagged.</p>
   </section>
-
   <section>
-    <div class="step">Step 5</div>
+    <h2>Scores</h2>
+    <p>Coding score is 0&ndash;100: SWE-bench Verified where the lab or a tester published it, otherwise an estimate from other sourced results, marked <b>est</b>. Every score names its source. Treat scores as a rough guide.</p>
+  </section>
+  <section>
     <h2>What we never do</h2>
-    <p>Never invent a number. Never favour a lab. Never propose what your rule or your list rules out, even when it is cheaper. Never hide a cost&rsquo;s assumption.</p>
+    <p>Never invent a number &mdash; a blank reads &ldquo;&mdash;&rdquo;. Never rank models or name one for you. Never favour a lab.</p>
   </section>
-
   <section>
-    <div class="step">Sources</div>
-    <h2>The site’s own files</h2>
-    <p>Prices, tags and scores come from <a href="./data/models.json">data/models.json</a> and <a href="./data/plans.json">data/plans.json</a> — the same files every other page on this site reads. Vendor countries sit in <a href="./data/vendors.json">data/vendors.json</a>, one source each.</p>
+    <h2>The files</h2>
+    <p>Prices, usage and scores come from <a href="./data/models.json">data/models.json</a> and plan prices from <a href="./data/plans.json">data/plans.json</a> &mdash; the same files every page on this site reads. Vendor countries sit in <a href="./data/vendors.json">data/vendors.json</a>, one source each.</p>
     <div class="srcList" id="srcList"><div class="srcNote">Loading the vendor list&hellip;</div></div>
     <div class="srcNote" id="srcAsOf"></div>
   </section>

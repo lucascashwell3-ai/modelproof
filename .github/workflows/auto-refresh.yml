@@ -68,16 +68,15 @@ jobs:
             GH_TOKEN="${{ secrets.MODELPROOF_AUTOREFRESH_TOKEN || github.token }}" node scripts/auto-refresh.mjs
           fi
 
-      - name: Check the refreshed live data (invariants only, never expected winners)
+      - name: Check the refreshed live data (invariants only, never expected values)
         # scripts/auto-refresh.mjs's own internal honesty gate (validate-data.mjs) already blocks
         # a schema-invalid refresh from writing at all; validate-data.mjs here is a second,
         # standalone run of that same gate against what's now on disk. check-live-data.mjs adds
-        # the checks a schema gate can't make: decide() still runs clean for every task, every
-        # shortlisted id is real, situations.json's must_not_include rules still hold, the model
-        # count didn't jump or collapse, and as_of is a sane date. It never asserts which model
-        # should win — a refresh that legitimately changes prices/scores/availability is expected
-        # to change winners, and must not fail CI for it. Runs BEFORE "Commit and push" so a red
-        # run here blocks publish, not just notifies after the fact.
+        # the checks a schema gate can't make: the model count didn't jump or collapse, no key
+        # feed silently went empty, and as_of is a sane date. It never asserts expected values —
+        # a refresh that legitimately changes prices or availability must not fail CI for it.
+        # Runs BEFORE "Commit and push" so a red run here blocks publish, not just notifies after
+        # the fact.
         run: node scripts/validate-data.mjs && node scripts/check-live-data.mjs
 
       - name: Anti-fabrication gate (claims freshness)
@@ -99,14 +98,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.MODELPROOF_AUTOREFRESH_TOKEN || github.token }}
         run: node scripts/report-claim-rot.mjs >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Eval report (informational — never a gate)
-        # scripts/eval-report.mjs runs the 40-situation cold answer key + 15 must-never rules
-        # against the just-refreshed live data and prints a pass rate, every disagreement with
-        # its reason, and a top-3-per-task table for 'best'/'cheapest'. Always exits 0 — this is
-        # visibility into how the standings-based ranking is doing against an independently-
-        # drafted key, never a publish gate (that's validate-data.mjs + check-live-data.mjs above).
-        run: node scripts/eval-report.mjs >> "$GITHUB_STEP_SUMMARY"
 
       - name: Dry-run summary (no push, no live verify)
         if: env.DRY_RUN == 'true'

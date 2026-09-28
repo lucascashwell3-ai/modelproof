@@ -1,21 +1,18 @@
 /* ============================================================
-   Modelproof — client-side decision engine
-   Loads data/models.json and renders: recommender, cost/capability
-   chart, compare table, releases feed. Honest with missing data.
+   Modelproof — client-side facts renderer
+   Loads data/models.json and renders: side-by-side compare, price vs
+   score map, effort ladders, full table, releases feed. Sourced or
+   blank — it never ranks models or names one for a job.
    ============================================================ */
 
 const state = {
   data: null,
-  // faceted console: task + budget + optional labs COMPOSE (no more By-task/By-lab modes)
-  goal: 'coding',        // the task facet (single-select)
-  priority: 48,          // the budget facet: 0 = cheapest … 100 = best
-  labs: [],              // vendors the user pays for; [] = all labs. A filter layered on the task, not a mode.
-  filter: 'all',
+  filter: 'all',         // full-table lab filter: 'all', a vendor name, or 'other'
   showAll: false,        // compare table defaults to the common flagships; opt in to all 22
   sort: { key: 'coding_score', dir: 'desc' },
   expanded: new Set(),
   compare: [],           // model ids on the side-by-side board (2–5)
-  cmpCustom: false,      // true once the user hand-picks — stops auto-reseeding from the engine
+  cmpCustom: false,      // true once the user chooses models — stops the auto-seeding
   ladder: 0,             // which published effort ladder is on screen
   ladderOff: new Set(),  // model ids toggled off in the effort chart
   feedExpanded: false,   // timeline defaults to the latest FEED_CAP; "Show all" reveals the rest
@@ -35,38 +32,6 @@ const LAB_LABEL = {
 };
 // order the lab chips by how commonly people reach for them (unknown vendors fall to the end)
 const LAB_ORDER = ['Anthropic', 'OpenAI', 'Google', 'xAI', 'DeepSeek', 'Meta', 'Alibaba (Qwen)', 'Moonshot AI', 'Mistral AI'];
-// budget is a continuum (the spring slider) — words are derived, not buckets
-function prioLabel(p) { return p <= 16 ? 'cheapest' : p <= 38 ? 'value' : p <= 66 ? 'balanced' : 'best'; }
-
-// which benchmark a goal cares about
-const GOAL_METRIC = {
-  coding: 'coding_score',   // unified 0-100 coding score (blends SWE-bench + other sourced signals)
-  research: 'gpqa',
-  writing: 'gpqa',          // no clean writing benchmark — general reasoning is the fallback (LMArena dropped 2026-08-22: no-redistribution source, feed dead)
-  'cheap-bulk': 'mmlu_pro',
-};
-
-// data still carries the finer-grained best_for tags; these map goals → tags
-// that satisfy them (agentic folds into coding; reasoning/research → research).
-const GOAL_TAGS = {
-  coding: ['coding', 'agentic'],
-  research: ['reasoning', 'research'],
-  writing: ['writing'],
-  'cheap-bulk': ['cheap-bulk'],
-};
-
-const GOAL_DESC = {
-  coding: 'Writing, fixing & refactoring code — including multi-step agent tasks. Ranked on a 0–100 coding score: SWE-bench where it exists, otherwise sourced signals (agentic suites, vendor-published evals) so new models aren\'t stuck at "—".',
-  research: 'Deep thinking, analysis & planning. Ranked on graduate-level reasoning (GPQA).',
-  writing: 'Drafting prose, emails & content. No clean writing benchmark exists, so only models the data tags for prose are ranked — on general ability + price.',
-  'cheap-bulk': 'High-volume simple work — classification, tagging, extraction. Cheapest capable option first.',
-};
-
-const TAG_LABEL = {
-  coding: 'coding', agentic: 'agentic', writing: 'writing', reasoning: 'reasoning',
-  'cheap-bulk': 'cheap bulk', vision: 'vision', 'long-context': 'long context',
-  speed: 'speed', research: 'research',
-};
 
 // ---------- helpers ----------
 const $ = (s, r = document) => r.querySelector(s);
@@ -89,8 +54,8 @@ function fmtCtx(t) {
 }
 function fmtScore(v) { return num(v) ? '<span class="na">—</span>' : v + (v <= 100 ? '%' : ''); }
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-// The coding score has ONE identity everywhere it appears — pick card, runner chips, board,
-// table, advisor prompt: "N/100, SWE-bench Verified where published, otherwise a sourced
+// The coding score has ONE identity everywhere it appears — compare board, map, table,
+// and the effort chart: "N/100, SWE-bench Verified where published, otherwise a sourced
 // estimate marked est". A score with no published SWE-bench is an estimate, and the est mark
 // travels with the number instead of hiding in a hover dot.
 const CODING_DEF = 'Coding score, 0–100 — SWE-bench Verified where published, otherwise a sourced estimate (marked est)';
@@ -100,11 +65,28 @@ function fmtCoding(m, { unit = true } = {}) {
   return m.coding_score + (unit ? '<span class="unit">/100</span>' : '') +
     (isEst(m) ? `<sup class="est" title="estimate — SWE-bench Verified not published. Basis: ${esc(m.coding_basis || 'sourced signals')}">est</sup>` : '');
 }
-const CONF_TXT = { high: 'high', medium: 'med', low: 'low' };
-const confMark = (m, conf) => { const c = conf || m.confidence || 'low'; return `<i class="conf conf-${c}"></i><span class="conf-txt">${CONF_TXT[c] || c}</span>`; };
 function fmtPriceRange(m) {
   if (num(m.price_input) && num(m.price_output)) return '<span class="na">—</span>';
   return `${fmtPrice(m.price_input)}<span class="pslash">/</span>${fmtPrice(m.price_output)}`;
+}
+
+// What the labs and reporters say about a model, from its sourced claims (task_fit_judged):
+// each quote once, with its link and the date it was checked. A lab's own words come first
+// (tier "lab"); the compare board's "Lab says" row shows only those.
+// Empty when nothing is sourced — then nothing renders.
+function sourcedClaims(m) {
+  const seen = new Map();
+  for (const entry of Object.values(m.task_fit_judged || {})) {
+    for (const c of entry?.claims || []) {
+      if (!c?.quote || !c?.source_url) continue;
+      const k = c.quote + '\u0000' + c.source_url;
+      if (!seen.has(k)) seen.set(k, c);
+    }
+  }
+  return [...seen.values()].sort((a, b) => (a.tier === 'lab' ? 0 : 1) - (b.tier === 'lab' ? 0 : 1));
+}
+function claimHTML(c) {
+  return `<q class="claim__q">${esc(c.quote)}</q> <a class="claim__src" href="${esc(c.source_url)}" target="_blank" rel="noopener">${shortUrl(c.source_url)}</a>${c.date ? ` <span class="claim__date">${esc(c.date)}</span>` : ''}`;
 }
 
 // normalize an array of {v} ignoring nulls → returns fn(v)->0..1
@@ -119,167 +101,21 @@ function normalizer(values, { log = false } = {}) {
   };
 }
 
-// ---------- recommender ----------
-// Build a per-model capability estimate for a goal. A model is only "measured"
-// if it has the goal's own benchmark OR a proxy from another sourced benchmark
-// (SWE-bench / GPQA). Truly unmeasured models are excluded from quality-goal
-// recommendations — we never crown a model we have no performance data for.
-// Goals with no reliable dedicated benchmark fall back to a general-ability
-// blend. Coding/agentic/reasoning each have a direct metric and must NOT be
-// cross-proxied (a GPQA reasoning score is not evidence of coding skill).
-const PROXY_GOALS = new Set(['writing']);
-
-function scorer(models, goal) {
-  const metric = GOAL_METRIC[goal];
-  const primaryNorm = normalizer(models.map((m) => capVal(m, metric)));
-  const sweNorm = normalizer(models.map((m) => m.coding_score));
-  const gpqaNorm = normalizer(models.map((m) => m.benchmarks?.gpqa));
-  const priceNorm = normalizer(models.map((m) => m.price_output), { log: true });
-  const allowProxy = PROXY_GOALS.has(goal);
-
-  return (m) => {
-    const primary = capVal(m, metric);
-    let cap, measured, via;
-    if (!num(primary)) {
-      cap = primaryNorm(primary); measured = true; via = metric;
-    } else if (allowProxy) {
-      const parts = [];
-      if (!num(m.coding_score)) { parts.push(sweNorm(m.coding_score)); via = via || 'coding'; }
-      if (!num(m.benchmarks?.gpqa)) { parts.push(gpqaNorm(m.benchmarks.gpqa)); via = via || 'gpqa'; }
-      if (parts.length) { cap = (parts.reduce((a, b) => a + b, 0) / parts.length) * 0.9; measured = true; }
-      else { cap = 0.3; measured = false; via = null; }
-    } else {
-      cap = 0.3; measured = false; via = null;   // no direct score for a strict goal
-    }
-    const cheap = 1 - priceNorm(m.price_output);
-    return { cap, cheap, measured, via };
-  };
-}
-
-function score(models, goal, priority) {
-  const f = scorer(models, goal);
-  // capability floor: even "Cheapest" keeps ~22% weight on ability, so a weak model
-  // can't win a quality goal on price alone; "Best" tops out ~90%.
-  const w = 0.22 + 0.68 * (priority / 100);
-  const bulk = goal === 'cheap-bulk';
-  // Writing has no clean benchmark (one Elo in the whole dataset), so ranking every model on
-  // the reasoning proxy just cloned the Strategy tab. Rank only the models the data actually
-  // tags for prose — the same set the full table's writing filter shows.
-  const strictTag = goal === 'writing';
-  const tags = GOAL_TAGS[goal] || [goal];
-  return models
-    .map((m) => {
-      const hasTag = (m.best_for || []).some((t) => tags.includes(t));
-      const { cap, cheap, measured, via } = f(m);
-      let s = bulk ? 0.30 * cap + 0.70 * cheap : w * cap + (1 - w) * cheap;
-      if (hasTag) s += 0.03;               // small nudge for explicit fit
-      // cheap-bulk is price-led (include everything); quality goals require a sourced score
-      const inRec = bulk ? true : strictTag ? (hasTag && measured) : measured;
-      return { m, s, measured, via, inRec };
-    })
-    .filter((x) => x.inRec)
-    .sort((a, b) => b.s - a.s);
-}
-
-// pick the most defensible headline number for a goal: the goal's own metric,
-// else a sourced proxy, else an honest dash.
-function headlineStat(m, metric) {
-  if (metric === 'coding_score') {
-    if (!num(m.coding_score)) return { value: fmtCoding(m), label: 'coding score' };
-  } else {
-    const v = capVal(m, metric);
-    if (!num(v)) return { value: fmtScore(v), label: metricLabel(metric) };
-  }
-  if (!num(m.benchmarks?.gpqa)) return { value: fmtScore(m.benchmarks.gpqa), label: 'GPQA' };
-  if (!num(m.coding_score)) return { value: fmtCoding(m), label: 'coding score' };
-  return { value: '<span class="na">—</span>', label: metricLabel(metric) };
-}
-
-// stat-grounded fallback verdict for research/writing when no hand-written task copy exists —
-// never editorial, never borrowed from the coding pitch
-function genericTaskVerdict(m, metric) {
-  const v = capVal(m, metric);
-  const ev = !num(v)
-    ? (metric === 'gpqa' ? `GPQA ${v} (graduate-level reasoning)` : `${metricLabel(metric)} ${v}`)
-    : 'general ability — no direct benchmark is sourced for this task';
-  return `The ${(TASK_LABEL[state.goal] || state.goal).toLowerCase()} pick at this budget, ranked on ${ev} + price. Basis and sources below.`;
-}
-
-// the evidence trail ON the pick card (cold review #8): basis, confidence, sources, permalink —
-// so the one artifact people screenshot can survive a "says who?"
-function pickBasisHTML(m, metric, hvLabel) {
-  const conf = metric === 'coding_score' ? (m.coding_confidence || m.confidence) : m.confidence;
-  const basis = metric === 'coding_score'
-    ? (m.coding_basis || 'No basis recorded.')
-    : `${hvLabel || metricLabel(metric)} and pricing as sourced in the full table; every figure carries a confidence flag and unsourced cells stay blank.`;
-  const srcs = (m.sources || []).slice(0, 3).map((u) => `<a href="${u}" target="_blank" rel="noopener">${shortUrl(u)}</a>`).join(' · ');
-  return `<details class="pick__basis">
-    <summary>Basis &amp; sources — ${CONF_TXT[conf] || conf || 'low'} confidence</summary>
-    <p>${esc(basis)}</p>
-    <div class="srcs">${srcs || '<span class="na">no public source recorded</span>'}</div>
-    <button class="pick__link" type="button" data-copylink>Copy link to this pick</button>
-    <span class="pick__linkstatus" role="status" aria-live="polite"></span>
-  </details>`;
-}
-
-// ---------- shareable state: the pick lives in the URL (cold review #9) ----------
-// task/budget/labs mirror into query params so a selection can be sent to someone else;
-// replaceState is debounced — Safari rate-limits it, and the slider fires per-frame.
-let _urlT = 0;
-function syncURL() {
-  clearTimeout(_urlT);
-  _urlT = setTimeout(() => {
-    const p = new URLSearchParams();
-    if (state.goal !== 'coding') p.set('task', state.goal);
-    if (state.priority !== 48) p.set('budget', String(state.priority));
-    if (state.labs.length) p.set('labs', state.labs.map((v) => LAB_LABEL[v] || v).join(','));
-    const qs = p.toString();
-    try { history.replaceState(null, '', qs ? '?' + qs : location.pathname); } catch (e) { /* ignore */ }
-  }, 250);
-}
-function readURL() {
-  const p = new URLSearchParams(location.search);
-  const t = p.get('task');
-  if (t && GOAL_METRIC[t]) state.goal = t;
-  const b = parseInt(p.get('budget'), 10);
-  if (!Number.isNaN(b)) state.priority = Math.min(100, Math.max(0, b));
-  const byLabel = Object.fromEntries(Object.entries(LAB_LABEL).map(([v, l]) => [l.toLowerCase(), v]));
-  const vendors = new Set(state.data.models.map((m) => m.vendor));
-  state.labs = (p.get('labs') || '').split(',')
-    .map((s) => byLabel[s.trim().toLowerCase()] || s.trim())
-    .filter((v) => vendors.has(v));
-}
-
-// the field the recommender ranks: all models, or (if labs are chosen) just those vendors
-function currentModels() {
-  return state.labs.length ? state.data.models.filter((m) => state.labs.includes(m.vendor)) : state.data.models;
-}
-const TASK_LABEL = { coding: 'Coding', research: 'Strategy', writing: 'Writing', 'cheap-bulk': 'Cheap bulk' };
-// the read-only sentence the console echoes back — the tool restating your query
-function queryText() {
-  const labs = state.labs.length ? state.labs.map((v) => LAB_LABEL[v] || v).join(' + ') : 'any lab';
-  return { task: TASK_LABEL[state.goal] || state.goal, budget: prioLabel(state.priority), labs };
-}
-
-function renderResult() {
-  const echo = $('#queryEcho');
-  if (echo) { const q = queryText(); echo.innerHTML = `${q.task} · ${q.budget} cost · <b>${q.labs}</b>`; }
-  syncURL();         // the selection is shareable — it lives in the query string
-  renderVerdict();
-  seedCompare();     // the side-by-side board follows the engine until the user hand-picks
-}
-
 // ---------- side-by-side comparator ----------
-// Auto-seeded from the engine's answer (top pick + runners, or the chosen lab's best);
-// the user can hand-pick 2–5 models, which stops the auto-reseeding.
+// Seeded with the newest generally available model (with a sourced price and coding score)
+// from each of the first three labs in LAB_ORDER — a fixed, neutral starting set, never a
+// ranking. The user can choose 2–3 models from the dropdowns; that stops the auto-seeding.
 function seedCompare() {
   if (!state.cmpCustom) {
-    let ids = score(currentModels(), state.goal, state.priority).slice(0, 3).map((r) => r.m.id);
-    if (ids.length < 2) {   // a narrow lab pick — top up from the whole field so there's something to compare
-      for (const r of score(state.data.models, state.goal, state.priority)) {
-        if (!ids.includes(r.m.id)) ids.push(r.m.id);
-        if (ids.length >= 3) break;
-      }
+    const ids = [];
+    for (const lab of LAB_ORDER) {
+      // only models with a real date, a sourced price and a coding score (so the board has facts
+      // to show); same-day ties go by name
+      const newest = state.data.models
+        .filter((m) => m.vendor === lab && m.status === 'ga' && /^\d{4}/.test(String(m.released || '')) && !num(m.coding_score) && !num(m.price_output))
+        .sort((a, b) => String(b.released).localeCompare(String(a.released)) || a.name.localeCompare(b.name))[0];
+      if (newest) ids.push(newest.id);
+      if (ids.length >= 3) break;
     }
     if (ids.length >= 2) state.compare = ids;
   }
@@ -301,7 +137,7 @@ function renderCompare() {
     <label class="cmp-slot">
       <span class="cmp-slot__n">${i + 1}</span>
       <select class="cmp-select" data-slot="${i}" aria-label="Model ${i + 1}">
-        <option value="">${i < 2 ? 'Pick a model' : '— none —'}</option>
+        <option value="">${i < 2 ? 'Choose a model' : '— none —'}</option>
         ${vendors.map((v) => `<optgroup label="${v}">${byVendor[v].map((m) =>
           `<option value="${m.id}" ${m.id === sel ? 'selected' : ''} ${state.compare.includes(m.id) && m.id !== sel ? 'disabled' : ''}>${m.name}</option>`).join('')}</optgroup>`).join('')}
       </select>
@@ -319,13 +155,12 @@ function renderCompare() {
   bd.style.setProperty('--n', ms.length);
   const rows = [
     ['', (m) => `<div class="cmp-model">${m.name}</div><div class="cmp-vendor">${m.vendor}</div>`],
-    ['Best for', (m) => (m.best_for || []).slice(0, 3).map((t) => `<span class="mini-tag">${TAG_LABEL[t] || t}</span>`).join(' ') || '<span class="na">—</span>'],
-    ['Coding', (m) => `<span class="cmp-num">${fmtCoding(m)}</span>${num(m.coding_score) ? '' : confMark(m, m.coding_confidence)}`],
+    ['Coding', (m) => `<span class="cmp-num">${fmtCoding(m)}</span>`],
     ['GPQA', (m) => `<span class="cmp-num">${fmtScore(m.benchmarks?.gpqa)}</span>`],
     ['Context', (m) => `<span class="cmp-num">${fmtCtx(m.context_window)}</span>`],
     ['$ in / 1M', (m) => `<span class="cmp-num">${fmtPrice(m.price_input)}</span>`],
     ['$ out / 1M', (m) => `<span class="cmp-num">${fmtPrice(m.price_output)}</span>`],
-    ['Verdict', (m) => `<span class="cmp-verdict">${m.verdict || '<span class="na">—</span>'}</span>`],
+    ['Lab says', (m) => { const c = sourcedClaims(m).find((x) => x.tier === 'lab'); return c ? `<span class="cmp-claim">${claimHTML(c)}</span>` : '<span class="na">—</span>'; }],
   ];
   bd.innerHTML = rows.map(([label, fn], ri) =>
     `<div class="cmp-cell cmp-lbl${ri === 0 ? ' cmp-head' : ''}">${label}</div>` +
@@ -333,177 +168,14 @@ function renderCompare() {
   ).join('');
 }
 
-function renderVerdict() {
-  const box = $('#result');
-  if (!box) return;
-  const ranked = score(currentModels(), state.goal, state.priority);
-  if (!ranked.length) {
-    const who = state.labs.length ? state.labs.map((v) => LAB_LABEL[v] || v).join(' + ') : 'this goal';
-    box.innerHTML = `<div class="empty">No sourced model for <b>${who}</b> on this task yet. Add another lab, or browse the full table below.</div>`;
-    renderChart();
-    return;
-  }
-  const top = ranked[0].m;
-  const runners = ranked.slice(1, 3).map((r) => r.m);
-  state.pickId = top.id;
-
-  const metric = GOAL_METRIC[state.goal];
-  const hv = headlineStat(top, metric);
-  const caption = {
-    coding: `Ranked on the coding score + price. ${CODING_DEF}. Models with no sourced score for this task sit in the full table, not here.`,
-    research: 'Ranked on GPQA (graduate-level reasoning) + price. Models with no sourced score for this task sit in the full table, not here.',
-    writing: 'No clean writing benchmark exists — these are the models the data tags for prose, ranked on general ability + price.',
-    'cheap-bulk': 'Ranked mostly on price. Cheapest capable option first.',
-  }[state.goal] || 'Ranked on sourced benchmarks + price.';
-
-  // The verdict and tips must argue THIS task. Hand-written per-task copy wins; for
-  // research/writing without it, a stat-grounded neutral line renders and coding tips are
-  // suppressed entirely — a strategy pick may never ship a coding sales pitch (cold review #1).
-  const tc = top.task_copy?.[state.goal];
-  const baseCopy = state.goal === 'coding' || state.goal === 'cheap-bulk';
-  const verdict = tc?.verdict || (baseCopy ? (top.verdict || 'A strong all-round choice for this goal.') : genericTaskVerdict(top, metric));
-  const tips = (tc?.tips || (baseCopy ? top.use_well : []) || []).slice(0, 3);
-  box.innerHTML = `
-    <div class="pick">
-      <span class="pick__flag">Your pick</span>
-      <div class="pick__name">${top.name}</div>
-      <div class="pick__vendor">${top.vendor}</div>
-      <p class="pick__verdict">${verdict}</p>
-      <div class="pick__stats">
-        <div class="stat"><span class="stat__v">${hv.value}</span><span class="stat__l" title="${hv.label === 'GPQA' ? 'GPQA — PhD-level science questions; a proxy for reasoning' : esc(CODING_DEF)}">${hv.label}</span></div>
-        <div class="stat"><span class="stat__v">${fmtPrice(top.price_output)}</span><span class="stat__l" title="what 1M output tokens (≈ 750k words) costs">out / 1M tok</span></div>
-        <div class="stat"><span class="stat__v">${fmtPrice(top.price_input)}</span><span class="stat__l" title="what 1M input tokens (≈ 750k words read) costs">in / 1M tok</span></div>
-        <div class="stat"><span class="stat__v">${fmtCtx(top.context_window)}</span><span class="stat__l" title="how much it can hold in one conversation">context</span></div>
-      </div>
-      <p class="pick__gloss">${hv.label === 'GPQA' ? 'GPQA = PhD-level science quiz, a reasoning proxy' : 'coding score = /100, SWE-bench where published, est = sourced estimate'} · 1M tokens ≈ 750k words</p>
-      ${tips.length ? `<div class="pick__use"><h4>Use it well</h4><ul>${tips.map((t) => `<li>${t}</li>`).join('')}</ul></div>` : ''}
-      ${pickBasisHTML(top, metric, hv.label)}
-    </div>
-    <div class="runners">
-      ${runners.map((m) => { const rv = headlineStat(m, metric); return `
-        <div class="runner" data-jump="${m.id}">
-          <div class="runner__name">${m.name}</div>
-          <div class="runner__meta"><b>${rv.value}</b> ${rv.label} · <b>${fmtPrice(m.price_output)}</b>/1M out</div>
-        </div>`; }).join('')}
-    </div>
-    ${labKitHTML()}
-    ${upgradeCheck(top, metric)}
-    <p class="rec-caption">${caption}</p>`;
-
-  tickStats(box);   // odometer the numbers from the previous pick's values
-
-  // permalink for the pick — flush the debounced URL write first so the copied link is current
-  const cl = box.querySelector('[data-copylink]');
-  if (cl) cl.addEventListener('click', () => {
-    clearTimeout(_urlT); _urlT = 0;
-    const p = new URLSearchParams();
-    if (state.goal !== 'coding') p.set('task', state.goal);
-    if (state.priority !== 48) p.set('budget', String(state.priority));
-    if (state.labs.length) p.set('labs', state.labs.map((v) => LAB_LABEL[v] || v).join(','));
-    const qs = p.toString();
-    try { history.replaceState(null, '', qs ? '?' + qs : location.pathname); } catch (e) { /* ignore */ }
-    const st = box.querySelector('.pick__linkstatus');
-    const done = () => { if (st) st.textContent = 'Link copied ✓'; };
-    const fail = () => { if (st) st.textContent = location.href; };
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(location.href).then(done).catch(fail);
-    else fail();
-  });
-
-  box.querySelectorAll('[data-jump]').forEach((n) =>
-    n.addEventListener('click', () => {
-      document.getElementById('compare').scrollIntoView({ behavior: 'smooth' });
-      const id = n.getAttribute('data-jump');
-      state.expanded.add(id);
-      renderTable();
-    })
-  );
-  renderChart();
-}
-
-// ---------- "make the most of what you have": the per-task kit from the user's labs ----------
-function labKitHTML() {
-  if (!state.labs.length || !state.data) return '';
-  const mine = currentModels();
-  const rows = Object.keys(GOAL_METRIC).map((goal) => {
-    const ranked = score(mine, goal, state.priority);
-    if (!ranked.length) {
-      return `<div class="labkit__row labkit__row--none"><span class="labkit__goal">${TASK_LABEL[goal]}</span><span class="labkit__model">No sourced pick yet</span><span class="labkit__meta"></span></div>`;
-    }
-    const m = ranked[0].m;
-    return `<div class="labkit__row" data-jump="${m.id}"><span class="labkit__goal">${TASK_LABEL[goal]}</span><span class="labkit__model">${m.name}</span><span class="labkit__meta">${fmtPrice(m.price_output)}/1M out</span></div>`;
-  }).join('');
-  const who = state.labs.map((v) => LAB_LABEL[v] || v).join(' + ');
-  return `<div class="kitpanel">
-    <span class="kit__title">Make the most of ${who}</span>
-    <p class="kit__how">Your best model for each kind of work — tap a row for its full card and "use it well" notes.</p>
-    <div class="labkit">${rows}</div>
-  </div>`;
-}
-
-// number odometer: when the pick swaps, prices/scores count to their new value instead of
-// jumping. Keyed by the stat's label so values track across re-renders; skips "—" and
-// respects prefers-reduced-motion (plus renders mid-drag retarget smoothly).
-const _statPrev = {};
-function tickStats(scope) {
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  scope.querySelectorAll('.pick .stat').forEach((st) => {
-    const el = st.querySelector('.stat__v'), label = st.querySelector('.stat__l');
-    if (!el || !label) return;
-    const key = label.textContent;
-    const m = /^(\$?)(\d+(?:\.\d+)?)\s*([%MK]?)$/.exec(el.textContent.trim());
-    if (!m) { delete _statPrev[key]; return; }
-    const to = parseFloat(m[2]), from = _statPrev[key];
-    _statPrev[key] = to;
-    if (reduce || from === undefined || from === to) return;
-    const pre = m[1], suf = m[3], dec = (m[2].split('.')[1] || '').length;
-    const t0 = performance.now(), dur = 440;
-    cancelAnimationFrame(el._tick || 0);
-    const step = (now) => {
-      const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 4);   // ease-out-quart
-      el.textContent = pre + (from + (to - from) * e).toFixed(dec) + suf;
-      if (k < 1) el._tick = requestAnimationFrame(step);
-    };
-    el._tick = requestAnimationFrame(step);
-  });
-}
-
-// the upgrade check — independence made visible. When labs are constrained: either a
-// plain-spoken "you're set" (the answer most tools won't give), or a factual, COST-FIRST
-// delta for the one model outside their labs that's materially better/cheaper. Never a nudge.
-function upgradeCheck(top, metric) {
-  if (!state.labs.length) return '';
-  const set = `<div class="upcheck upcheck--set"><span class="upcheck__k">Upgrade check</span>You're set — nothing outside your labs is meaningfully better than <b>${top.name}</b> for this task at this budget.</div>`;
-  const globalTop = (score(state.data.models, state.goal, state.priority)[0] || {}).m;
-  if (!globalTop || state.labs.includes(globalTop.vendor) || globalTop.id === top.id) return set;
-  const gp = globalTop.price_output, tp = top.price_output;
-  const gCap = capVal(globalTop, metric), tCap = capVal(top, metric);
-  const cheaper = !num(gp) && !num(tp) && gp <= tp * 0.8;
-  const better = !num(gCap) && !num(tCap) && gCap > tCap;
-  if (!cheaper && !better) return set;
-  const gv = headlineStat(globalTop, metric), tv = headlineStat(top, metric);
-  return `<div class="upcheck"><span class="upcheck__k">Upgrade check</span>Outside your labs: <b>${globalTop.name}</b> at ${fmtPrice(gp)}/1M out vs your pick's ${fmtPrice(tp)} — ${gv.value} ${gv.label} vs ${tv.value}. A fact, not a pitch; your call.</div>`;
-}
-
 function metricLabel(metric) {
   return { coding_score: 'Coding', swe_bench: 'SWE-bench', gpqa: 'GPQA', aime: 'AIME', mmlu_pro: 'MMLU-Pro' }[metric] || metric;
 }
 
-// ---------- labs facet: multi-select vendor chips + an "All labs" default ----------
-const LAB_ALL = '__all__';
-function renderLabChips() {
-  if (!state.data) return;
-  const vendors = [...new Set(state.data.models.map((m) => m.vendor))]
-    .sort((a, b) => (LAB_ORDER.indexOf(a) + 1 || 99) - (LAB_ORDER.indexOf(b) + 1 || 99));
-  const allOn = state.labs.length === 0;
-  const chip = (v, label, on) => `<button class="chip labchip ${on ? 'is-active' : ''}" data-lab="${v}" role="button" aria-pressed="${on}">${label}</button>`;
-  const html = chip(LAB_ALL, 'All labs', allOn) + vendors.map((v) => chip(v, LAB_LABEL[v] || v, state.labs.includes(v))).join('');
-  document.querySelectorAll('.labctl').forEach((c) => { c.innerHTML = html; });
-  document.querySelectorAll('[data-lab]').forEach((b) =>
-    b.addEventListener('click', () => setLabs(b.getAttribute('data-lab')))
-  );
-}
+// ---------- price vs score map ----------
+// The y axis is the coding score (0–100). The map plots facts; it never names a model.
+const MAP_METRIC = 'coding_score';
 
-// ---------- cost vs capability chart ----------
 // bayer-dithered density field (bright top-left, dissolving toward bottom-right) as a
 // data-URI — the "sweet spot" shading, in the same dither language as the hero
 function ditherFieldURI(w, h) {
@@ -531,14 +203,14 @@ function ditherCluster(color, n) {
 
 function renderChart() {
   const wrap = $('#chart');
-  const metric = GOAL_METRIC[state.goal];
+  const metric = MAP_METRIC;
   const pts = state.data.models
     .map((m) => ({ m, x: m.price_output, y: capVal(m, metric) }))
     .filter((p) => !num(p.x) && !num(p.y));
 
   $('#mapLegend').innerHTML =
-    `<span><i style="background:var(--gold)"></i>Smart buy — nothing is both cheaper and better</span>
-     <span><i style="background:rgba(233,230,223,0.45)"></i>Beaten on price + quality</span>
+    `<span><i style="background:var(--gold)"></i>No model scores higher for less</span>
+     <span><i style="background:rgba(233,230,223,0.45)"></i>Another model scores higher for less</span>
      <span class="dim">↑ ${metricLabel(metric)} &nbsp;·&nbsp; → $ / 1M out (log)</span>`;
 
   if (pts.length < 2) {
@@ -565,7 +237,7 @@ function renderChart() {
   const xticks = tickCandidates.filter((t) => t >= pMin * 0.9 && t <= pMax * 1.1);
   if (xticks.length < 2) { xticks.length = 0; xticks.push(pMin, pMax); }
 
-  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Model map: cost versus capability; the value zone is top-left">`;
+  let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Model map: price versus coding score; lower price and higher score is top-left">`;
 
   // the value (Pareto) frontier: models nothing else beats on BOTH price and capability
   const frontier = pts
@@ -578,8 +250,7 @@ function renderChart() {
   // capable) fading to nothing bottom-right. A direction, not a box — no arbitrary edge.
   svg += `<defs><radialGradient id="zoneG" cx="0" cy="0" r="1" gradientUnits="objectBoundingBox"><stop offset="0" stop-color="#f2c14e" stop-opacity="0.20"/><stop offset="0.55" stop-color="#f2c14e" stop-opacity="0.05"/><stop offset="1" stop-color="#f2c14e" stop-opacity="0"/></radialGradient></defs>`;
   svg += `<rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="url(#zoneG)"/>`;
-  svg += `<text class="zone-lbl" x="${padL + 14}" y="${padT + 20}">↖ VALUE ZONE</text>`;
-  svg += `<text class="zone-sub" x="${padL + 14}" y="${padT + 36}">cheaper and more capable, this way</text>`;
+  svg += `<text class="zone-lbl" x="${padL + 14}" y="${padT + 20}">↖ LOWER PRICE, HIGHER SCORE</text>`;
 
   // axes
   svg += `<line class="axis-line" x1="${padL}" y1="${padT + plotH}" x2="${padL + plotW}" y2="${padT + plotH}"/>`;
@@ -597,14 +268,7 @@ function renderChart() {
   svg += `<text class="axis-title" x="${padL + plotW / 2}" y="${H - 10}" text-anchor="middle">PRICE — $ / 1M OUTPUT TOKENS (LOG)</text>`;
   svg += `<text class="axis-title" transform="translate(16 ${padT + plotH / 2}) rotate(-90)" text-anchor="middle">${metricLabel(metric).toUpperCase()} →</text>`;
 
-  // teaching moment: if the pick sits BELOW the frontier, connect it to the model that beats it
-  const pickPt = pts.find((p) => p.m.id === state.pickId);
-  if (drawFrontier && pickPt && !onFrontier.has(pickPt.m.id)) {
-    const dom = frontier.filter((q) => q.x <= pickPt.x && q.y >= pickPt.y).sort((a, b) => (b.y - a.y) || (a.x - b.x))[0];
-    if (dom) svg += `<line x1="${X(pickPt.x).toFixed(1)}" y1="${Y(pickPt.y).toFixed(1)}" x2="${X(dom.x).toFixed(1)}" y2="${Y(dom.y).toFixed(1)}" stroke="var(--gold)" stroke-width="1.4" stroke-dasharray="3 3" opacity="0.55"/>`;
-  }
-
-  // dots: frontier + pick burn gold and labelled; dominated models recede to pale gray
+  // dots: frontier models burn gold and are labelled; the rest recede to pale gray
   // labelled (hot) dots that sit within 14px of each other get their labels pushed apart
   const placed = [];
   const labelDy = (cx, cy) => {
@@ -615,15 +279,14 @@ function renderChart() {
   };
   pts.forEach((p) => {
     const cx = X(p.x), cy = Y(p.y);
-    const isPick = p.m.id === state.pickId;
     const fro = drawFrontier && onFrontier.has(p.m.id);
-    const hot = isPick || fro;
+    const hot = fro;
     const dy = hot ? labelDy(cx, cy) : 0;
     const nearRight = cx > padL + plotW * 0.72;
     const lx = nearRight ? -12 : 12;
-    svg += `<g class="dot ${isPick ? 'is-pick' : ''} ${fro ? 'is-frontier' : ''}" data-id="${p.m.id}" transform="translate(${cx.toFixed(1)} ${cy.toFixed(1)})">`;
+    svg += `<g class="dot ${fro ? 'is-frontier' : ''}" data-id="${p.m.id}" transform="translate(${cx.toFixed(1)} ${cy.toFixed(1)})">`;
     svg += `<circle class="d-hit" r="24" fill="transparent"/>`;
-    svg += `<circle class="d-core" r="${isPick ? 7 : hot ? 5.5 : 4}" fill="${hot ? 'var(--gold)' : 'rgba(233,230,223,0.38)'}" stroke="${hot ? '#0a0b0f' : 'none'}" stroke-width="1.5"/>`;
+    svg += `<circle class="d-core" r="${hot ? 5.5 : 4}" fill="${hot ? 'var(--gold)' : 'rgba(233,230,223,0.38)'}" stroke="${hot ? '#0a0b0f' : 'none'}" stroke-width="1.5"/>`;
     svg += `<text class="dot__label${hot ? '' : ' dot__label--quiet'}" x="${lx}" y="${4 + dy}" text-anchor="${nearRight ? 'end' : 'start'}">${p.m.name}</text>`;
     svg += `</g>`;
   });
@@ -650,7 +313,7 @@ function showTip(e, m, metric) {
   const tip = $('#tooltip');
   tip.innerHTML =
     `<b>${m.name}</b> <span style="color:var(--ink-3)">${m.vendor}</span>
-     <div class="tt-row"><span>${metricLabel(metric)}</span><span>${fmtScore(m.benchmarks?.[metric])}</span></div>
+     <div class="tt-row"><span>${metricLabel(metric)}</span><span>${metric === 'coding_score' ? fmtCoding(m) : fmtScore(capVal(m, metric))}</span></div>
      <div class="tt-row"><span>$ out / 1M</span><span>${fmtPrice(m.price_output)}</span></div>
      <div class="tt-row"><span>context</span><span>${fmtCtx(m.context_window)}</span></div>`;
   tip.classList.add('show');
@@ -725,7 +388,7 @@ function renderEffort() {
 
   const series = L.series.filter((s) => !state.ladderOff.has(s.model_id));
 
-  // suite picker only appears if there's more than one ladder to choose between
+  // suite chooser only appears if there's more than one ladder to choose between
   if (head) {
     const suites = (state.data.effort_ladders || []);
     head.innerHTML = suites.length > 1
@@ -884,12 +547,17 @@ function showLadderTip(e, s, p, prev, L) {
 }
 
 // ---------- compare table ----------
+// Filter by lab — a plain fact about each model, never a judgement about what it's for.
 function renderFilters() {
-  const goals = ['all', 'coding', 'research', 'writing', 'cheap-bulk', 'vision', 'long-context', 'speed'];
   const box = $('#filters');
-  if (!box) return;
-  box.innerHTML = goals.map((g) =>
-    `<button class="chip ${state.filter === g ? 'is-active' : ''}" data-f="${g}">${g === 'all' ? 'All' : TAG_LABEL[g] || g}</button>`
+  if (!box || !state.data) return;
+  // The main labs get a chip each; every other vendor shares one "Other labs" chip.
+  const present = new Set(state.data.models.map((m) => m.vendor));
+  const keys = ['all', ...LAB_ORDER.filter((v) => present.has(v))];
+  if ([...present].some((v) => !LAB_ORDER.includes(v))) keys.push('other');
+  const label = (k) => (k === 'all' ? 'All' : k === 'other' ? 'Other labs' : k);
+  box.innerHTML = keys.map((k) =>
+    `<button class="chip ${state.filter === k ? 'is-active' : ''}" data-f="${esc(k)}" aria-pressed="${state.filter === k}">${esc(label(k))}</button>`
   ).join('');
   box.querySelectorAll('.chip').forEach((c) =>
     c.addEventListener('click', () => { state.filter = c.getAttribute('data-f'); renderFilters(); renderTable(); })
@@ -899,15 +567,13 @@ function renderFilters() {
 function sortedModels() {
   let list = state.data.models.slice();
   if (state.filter !== 'all') {
-    const syn = GOAL_TAGS[state.filter] || [state.filter];
-    list = list.filter((m) => (m.best_for || []).some((t) => syn.includes(t)));
+    list = list.filter((m) => (state.filter === 'other' ? !LAB_ORDER.includes(m.vendor) : m.vendor === state.filter));
   } else if (!state.showAll) {
     list = list.filter((m) => COMMON_IDS.includes(m.id));   // default: the common flagships only
   }
   const { key, dir } = state.sort;
   const val = (m) => {
     if (key === 'name') return m.name.toLowerCase();
-    if (key === 'best') return (m.best_for || []).length;
     if (key === 'context') return m.context_window;
     if (key === 'price_input') return m.price_input;
     if (key === 'price_output') return m.price_output;
@@ -934,10 +600,9 @@ function renderTable() {
     const tr = el('tr');
     tr.innerHTML = `
       <td class="cell-model col-model"><b>${m.name}</b><span>${m.vendor}</span></td>
-      <td class="cell-best col-best"><div class="tags">${(m.best_for || []).slice(0, 3).map((t) => `<span class="mini-tag">${TAG_LABEL[t] || t}</span>`).join('') || '<span class="na">—</span>'}</div></td>
-      <td class="num col-code">${fmtCoding(m, { unit: false })}${num(m.coding_score) ? '' : confMark(m, m.coding_confidence)}</td>
+      <td class="num col-code">${fmtCoding(m, { unit: false })}</td>
       <td class="num col-ctx">${fmtCtx(m.context_window)}</td>
-      <td class="num col-price">${fmtPriceRange(m)}${confMark(m)}</td>
+      <td class="num col-price">${fmtPriceRange(m)}</td>
       <td class="is-right col-exp" style="text-align:right;color:var(--ink-4)">${state.expanded.has(m.id) ? '−' : '+'}</td>`;
     tr.addEventListener('click', () => {
       if (state.expanded.has(m.id)) state.expanded.delete(m.id); else state.expanded.add(m.id);
@@ -947,19 +612,20 @@ function renderTable() {
 
     if (state.expanded.has(m.id)) {
       const mr = el('tr', 'row-more');
-      const td = el('td'); td.colSpan = 6;
+      const td = el('td'); td.colSpan = 5;
+      const claims = sourcedClaims(m);
       td.innerHTML = `
         <div class="rm-grid">
           <div>
-            <h4>Verdict</h4>
-            <p>${m.verdict || '—'}</p>
-            <h4 style="margin-top:14px">Strengths</h4>
+            ${claims.length ? `<h4>Sourced quotes</h4>
+            <ul class="claims">${claims.slice(0, 3).map((c) => `<li>${claimHTML(c)}</li>`).join('')}</ul>
+            <h4 style="margin-top:14px">Strengths</h4>` : '<h4>Strengths</h4>'}
             <ul>${(m.strengths || []).map((s) => `<li>${s}</li>`).join('') || '<li class="na">—</li>'}</ul>
           </div>
           <div>
             <h4>Watch out for</h4>
             <ul>${(m.weaknesses || []).map((s) => `<li>${s}</li>`).join('') || '<li class="na">—</li>'}</ul>
-            <h4 style="margin-top:14px">Coding score: <span style="color:var(--ink)">${num(m.coding_score) ? '—' : m.coding_score}/100</span> <span style="color:var(--ink-4);font-weight:400;text-transform:none;letter-spacing:0">· ${m.coding_confidence || '—'} confidence</span></h4>
+            <h4 style="margin-top:14px">Coding score: <span style="color:var(--ink)">${num(m.coding_score) ? '—' : m.coding_score}/100</span></h4>
             <p style="font-size:12.5px;color:var(--ink-3);margin-top:-4px">Basis: ${m.coding_basis || '—'}</p>
             <h4 style="margin-top:14px">Benchmarks</h4>
             <ul>
@@ -967,7 +633,7 @@ function renderTable() {
               <li>GPQA (reasoning): ${fmtScore(m.benchmarks?.gpqa)}</li>
               <li>AIME (math): ${fmtScore(m.benchmarks?.aime)}</li>
             </ul>
-            <h4 style="margin-top:14px">Confidence: <span style="color:var(--ink)">${m.confidence}</span></h4>
+            <h4 style="margin-top:14px">Sources</h4>
             <div class="srcs">${(m.sources || []).slice(0, 3).map((u) => `<a href="${u}" target="_blank" rel="noopener">${shortUrl(u)}</a>`).join(' · ') || '<span class="na">no public source recorded</span>'}</div>
           </div>
         </div>`;
@@ -1098,86 +764,7 @@ function renderFeed() {
   }
 }
 
-// ---------- controls ----------
-// goal + priority controls appear in two places (hero picker + result panel);
-// keep every matching button in sync from one source of truth.
-function setActive(attr, val) {
-  document.querySelectorAll('[' + attr + ']').forEach((b) => {
-    const on = b.getAttribute(attr) === String(val);
-    b.classList.toggle('is-active', on);
-    b.setAttribute(b.getAttribute('role') === 'radio' ? 'aria-checked' : 'aria-selected', on ? 'true' : 'false');
-  });
-}
-function setGoal(goal) {
-  state.goal = goal;
-  setActive('data-goal', goal);
-  movePill();
-  renderResult();
-}
-// budget slider: keep the input, its gold fill (--p) and the scale words in sync
-function syncBudgetUI() {
-  const r = $('#budgetRange');
-  if (!r) return;
-  if (+r.value !== state.priority) r.value = state.priority;
-  r.style.setProperty('--p', state.priority + '%');
-  const word = prioLabel(state.priority);
-  document.querySelectorAll('.budget__word').forEach((b) =>
-    b.classList.toggle('is-on', prioLabel(+b.getAttribute('data-bp')) === word));
-}
-function setPriority(p) {
-  state.priority = +p;
-  syncBudgetUI();
-  renderResult();
-}
-// live-updating recommendation while dragging: renders are rAF-throttled so the
-// answer tracks the thumb without flooding the main thread.
-let _budgetRaf = 0;
-function onBudgetInput() {
-  const r = $('#budgetRange');
-  state.priority = +r.value;
-  syncBudgetUI();
-  if (_budgetRaf) return;
-  _budgetRaf = requestAnimationFrame(() => { _budgetRaf = 0; renderResult(); });
-}
-
-// ---------- sliding-pill indicator on the task control ----------
-// one gold pill glides behind the active segment (spring-eased); buttons stay transparent.
-function movePill() {
-  document.querySelectorAll('.segmented--goals').forEach((group) => {
-    const pill = group.querySelector('.seg-pill');
-    const act = group.querySelector('.seg.is-active');
-    if (!pill || !act) return;
-    pill.style.width = act.offsetWidth + 'px';
-    pill.style.transform = `translateX(${act.offsetLeft}px)`;
-    // first placement is instant; every one after glides (avoids an entrance animation)
-    if (!pill.classList.contains('is-ready')) requestAnimationFrame(() => pill.classList.add('is-ready'));
-  });
-}
-// labs are a multi-select filter: "All labs" clears the set; any vendor toggles in/out
-function setLabs(v) {
-  if (v === LAB_ALL) state.labs = [];
-  else { const i = state.labs.indexOf(v); if (i >= 0) state.labs.splice(i, 1); else state.labs.push(v); }
-  renderLabChips();     // refresh active states (All auto-toggles with the set)
-  renderResult();
-}
 function wire() {
-  document.querySelectorAll('[data-goal]').forEach((b) =>
-    b.addEventListener('click', () => setGoal(b.getAttribute('data-goal')))
-  );
-  // budget: spring slider + tap-to-jump scale words
-  const range = $('#budgetRange');
-  if (range) {
-    range.addEventListener('input', onBudgetInput);
-    syncBudgetUI();
-  }
-  document.querySelectorAll('.budget__word').forEach((b) =>
-    b.addEventListener('click', () => setPriority(b.getAttribute('data-bp')))
-  );
-
-  // task pill follows layout changes (font load shifts widths; resizes reflow the grid)
-  addEventListener('resize', movePill);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(movePill);
-
   document.querySelectorAll('.tbl thead th[data-sort]').forEach((th) =>
     th.addEventListener('click', () => {
       const key = th.getAttribute('data-sort');
@@ -1350,7 +937,7 @@ function setText(sel, txt) { const e = $(sel); if (e) e.textContent = txt; }
 // run a given score comes from, unverified releases, etc.) belong on the full table, not here.
 const SOURCING_FACTS = [
   'Pricing is pulled from official vendor pages — standard tier, USD per 1M tokens.',
-  'Benchmarks are cited and confidence-flagged; treat them as directional, not ground truth.',
+  'Benchmarks are cited with their source; treat them as directional, not ground truth.',
   'A blank ("—") means the figure wasn’t reliably sourced — never a guess.',
   'Independent project, not affiliated with or sponsored by any model vendor.',
 ];
@@ -1368,9 +955,7 @@ function renderLoadError() {
       <button class="tbl-toggle" id="retryLoad" type="button">Try again</button>
     </div>`;
   const tb = $('#tblBody');
-  if (tb) tb.innerHTML = `<tr><td colspan="6">${msg}</td></tr>`;
-  const r = $('#result');
-  if (r) r.innerHTML = msg;
+  if (tb) tb.innerHTML = `<tr><td colspan="5">${msg}</td></tr>`;
   const retry = $('#retryLoad');
   if (retry) retry.addEventListener('click', () => {
     retry.disabled = true; retry.textContent = 'Loading…';
@@ -1394,7 +979,6 @@ async function boot() {
     renderLoadError();
     return;
   }
-  readURL();                 // restore a shared selection before anything renders
   const asof = state.data.as_of || '—';
   const nav = $('#navAsof');
   if (nav) nav.innerHTML = '● snapshot ' + asof + '<span class="nav__asof-extra"> · pricing verified</span>';
@@ -1403,16 +987,13 @@ async function boot() {
   renderSourcingNotes();
 
   wire();
-  setActive('data-goal', state.goal);   // reflect a URL-restored task on the console
   initReveal();
   renderFilters();
-  renderLabChips();          // build the "which lab" chips from the data's vendors + wire them
-  if ($('#cmpBoard')) seedCompare();  // the side-by-side board seeds from the default task until the user hand-picks
-  if ($('#chart')) renderChart();      // the model map used to hang off the hero engine's verdict; it stands alone now
+  if ($('#cmpBoard')) seedCompare();  // newest GA model from three labs until the user chooses
+  if ($('#chart')) renderChart();
   renderEffort();            // published effort ladders; guarded no-op on table.html
   renderTable();             // full table lives on table.html; guarded no-op elsewhere
   renderFeed();
-  movePill();                // place the task pill once the layout is real
 }
 // robust boot: fire once on whichever lifecycle signal arrives first — some embedded
 // panes/bfcache restores swallow DOMContentLoaded, so belt-and-braces with load + a timer

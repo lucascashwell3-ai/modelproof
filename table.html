@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Modelproof — the full model table</title>
-  <meta name="description" content="Every AI model in Modelproof, sortable and filterable — coding score, context, and sourced pricing. Unsourced figures are left blank, never guessed." />
+  <meta name="description" content="Every AI model in Modelproof, sortable and filterable by lab — coding score, context, sourced pricing and sourced quotes about each model. Unsourced figures are left blank, never guessed." />
   <meta name="theme-color" content="#0a0b0f" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%230a0b0f'/%3E%3Ccircle cx='12' cy='12' r='9.2' fill='none' stroke='%23f2c14e' stroke-opacity='0.5' stroke-width='1.4'/%3E%3Cpath d='M7.6 12.4l3 3 5.8-6.6' fill='none' stroke='%23f2c14e' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
@@ -34,23 +34,22 @@
       <div class="hero__scrim" aria-hidden="true"></div>
       <span class="hero__eyebrow">The full table</span>
       <h1 class="pagehead__title" id="phTitle">Every model, in the open</h1>
-      <p class="pagehead__sub">Sortable by any column, filterable by use case — sourced or blank, never guessed.</p>
+      <p class="pagehead__sub">Sortable by any column, filterable by lab — sourced or blank, never guessed.</p>
     </section>
 
     <section class="panel" id="compare">
       <div class="panel__head">
         <div>
           <h2 class="panel__title">All models</h2>
-          <p class="panel__desc">Every model, sortable by any column and filterable by use case. Coding score is 0–100 — SWE-bench Verified where published, otherwise a sourced estimate (marked <em>est</em>); the dot + label show confidence. Click a row for the basis, verdict, and sources. <span class="dim">"—" means the figure wasn't publicly sourced. We don't guess.</span></p>
+          <p class="panel__desc">Coding score is 0–100 — SWE-bench Verified where published, otherwise a sourced estimate (marked <em>est</em>). Click a row for its benchmarks, sources, and sourced quotes about it. <span class="dim">"—" means the figure wasn't publicly sourced. We don't guess.</span></p>
         </div>
-        <div class="filters" id="filters" aria-label="Filter by use case"></div>
+        <div class="filters" id="filters" aria-label="Filter by lab"></div>
       </div>
       <div class="table-wrap">
         <table class="tbl" id="tbl">
           <thead>
             <tr>
               <th data-sort="name" class="is-left col-model">Model</th>
-              <th data-sort="best" class="col-best">Best for</th>
               <th data-sort="coding_score" class="num col-code">Coding<span class="th-sub">score /100</span></th>
               <th data-sort="context" class="num col-ctx">Context</th>
               <th data-sort="price_output" class="num col-price">Price<span class="th-sub">in / out · 1M</span></th>
@@ -74,7 +73,7 @@
           </svg>
           <span>Model<b>proof</b></span>
         </div>
-        <p class="foot__note">A decision tool, not a leaderboard. Built by Lucas Cashwell. Sibling project: <strong>DATproof</strong>.</p>
+        <p class="foot__note">Sourced model facts, not a leaderboard. Built by Lucas Cashwell. Sibling project: <strong>DATproof</strong>.</p>
       </div>
       <div class="foot__col">
         <h3>How it's sourced</h3>
@@ -84,8 +83,8 @@
         <h3>Freshness</h3>
         <p>
           Data snapshot: <strong id="footAsof">—</strong>.
-          Numbers are pulled from official pricing pages and public benchmarks, with a confidence
-          flag on every model. A "—" means the figure wasn't publicly sourced (we don't guess).
+          Numbers are pulled from official pricing pages and public benchmarks, each with its
+          source. A "—" means the figure wasn't publicly sourced (we don't guess).
         </p>
       </div>
     </div>
@@ -95,6 +94,6 @@
     </p>
   </footer>
 
-  <script src="assets/app.js?v=mk35"></script>
+  <script src="assets/app.js?v=mk36"></script>
 </body>
 </html>

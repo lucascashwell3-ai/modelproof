@@ -1,14 +1,10 @@
 #!/usr/bin/env node
 /* Live-data gate — run after a Collect, against the real data/ (never scripts/fixtures/).
-   Checks invariants only: it never asserts an expected winner, so a data refresh that
-   legitimately changes prices/scores/availability can't turn this red. Golden-value checks on
-   decide()'s logic live in scripts/test-decide.mjs, which runs on the frozen fixture instead.
+   Checks invariants only, never expected values, so a data refresh that legitimately changes
+   prices or availability can't turn this red.
 
-   Checks:
-     (a) decide() runs for every task id with a default input and does not throw.
-     (b) every id in every shortlist decide() returns exists in data/models.json.
-     (c) every situation's must_not_include rule in data/eval/situations.json still holds
-         (start_here winners are NOT checked here — those are the golden-fixture test's job).
+   Checks (lettering kept from earlier versions; (a)-(c) retired with the ranking engine,
+   see archive/README.md):
      (d) model count is within +/-15% of the version committed at HEAD (skipped if git
          is unavailable or HEAD has no data/models.json).
      (e) as_of is a valid YYYY-MM-DD string and not in the future.
@@ -25,48 +21,6 @@ import { readFileSync, realpathSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
-import { decide } from '../assets/decide.mjs';
-import { TASK_IDS } from './derive-task-fit.mjs';
-
-// (a) + (b): decide() must not throw for any task id, and every shortlisted id must be real.
-export function checkDecideRuns(data) {
-  let out = null;
-  try {
-    out = decide({ tasks: TASK_IDS, have: ['any'], stance: 'balanced', volume: 'typical', dataRule: {} }, data);
-  } catch (e) {
-    return { problems: [`decide() threw on the live catalog: ${e.message}`], out: null };
-  }
-  const modelIds = new Set(data.models.map((m) => m.id));
-  const problems = [];
-  for (const taskId of TASK_IDS) {
-    const shortlist = out.tasks[taskId]?.shortlist || [];
-    for (const item of shortlist) {
-      if (!modelIds.has(item.id)) problems.push(`decide() shortlist for "${taskId}" includes unknown model id "${item.id}"`);
-    }
-  }
-  return { problems, out };
-}
-
-// (c): rule-based, safe to run on live data — unlike start_here_any_of, must_not_include never
-// asserts which model should win, only that certain ids must never appear.
-export function checkMustNotInclude(situations, data) {
-  const problems = [];
-  for (const s of situations || []) {
-    const taskId = s.input.tasks[0];
-    let out;
-    try {
-      out = decide(s.input, data);
-    } catch (e) {
-      problems.push(`decide() threw on situation "${s.id}": ${e.message}`);
-      continue;
-    }
-    const shortlist = out.tasks[taskId]?.shortlist || [];
-    for (const id of s.expected?.must_not_include || []) {
-      if (shortlist.some((x) => x.id === id)) problems.push(`situation "${s.id}": "${id}" must not appear in the shortlist but does`);
-    }
-  }
-  return problems;
-}
 
 // (d)
 export function checkModelCountRatio(before, after, tolerance = 0.15) {
@@ -127,14 +81,7 @@ export function checkAsOf(asOf, today = new Date()) {
 }
 
 function readLiveData(root) {
-  const readJson = (p) => JSON.parse(readFileSync(new URL(p, root)));
-  return {
-    modelsFile: readJson('data/models.json'),
-    plansFile: readJson('data/plans.json'),
-    presetsFile: readJson('data/usage-presets.json'),
-    vendorsFile: readJson('data/vendors.json'),
-    situationsFile: readJson('data/eval/situations.json'),
-  };
+  return { modelsFile: JSON.parse(readFileSync(new URL('data/models.json', root))) };
 }
 
 function committedModelsData(root) {
@@ -155,20 +102,12 @@ function main() {
     console.error(`could not read live data/: ${e.message}`);
     process.exit(1);
   }
-  const data = {
-    models: files.modelsFile.models,
-    plans: files.plansFile.plans,
-    presets: files.presetsFile.presets,
-    vendors: files.vendorsFile.vendors,
-  };
-
+  const models = files.modelsFile.models || [];
   const problems = [];
-  problems.push(...checkDecideRuns(data).problems);
-  problems.push(...checkMustNotInclude(files.situationsFile.situations, data));
 
   const committed = committedModelsData(ROOT);
   if (committed != null) {
-    problems.push(...checkModelCountRatio(committed.models.length, data.models.length));
+    problems.push(...checkModelCountRatio(committed.models.length, models.length));
     problems.push(...checkFeedHealth(committed, files.modelsFile));
   }
 
