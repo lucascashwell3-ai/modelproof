@@ -9,8 +9,8 @@ It never ranks models or names one for a job. It hands back the facts; the choic
 ## Tools
 
 - `compare_models({ names })` — models side by side: prices, context window, scores, release status,
-  usage tips, and what the labs and reporters say about each model (the quote, its link and the date
-  it was checked).
+  and what the labs and reporters say about each model (the quote, its link and the date it was
+  checked).
 - `whats_new({ limit? })` — recent releases, newest first, each with its source.
 - `list_models()` — every model with its key facts (a count of sourced quotes per model; call
   `compare_models` for the quotes themselves).
@@ -46,7 +46,8 @@ Override the data source with `Modelproof_DATA_URL` if needed.
 
 ## Changes in 0.3.0
 
-The two ranking tools and the ranking fields on each model are retired (kept for history under
-`archive/engine/`). Model entries now carry `sourced_claims` (quote + link + date) instead.
+The two ranking tools are retired (kept for history under `archive/engine/`), and model entries no
+longer carry editorial text: no ranking fields, no strengths or weaknesses, no usage tips. Each entry
+carries `sourced_claims` (quote + link + date) instead.
 
 Independent tool · not affiliated with any model vendor.
