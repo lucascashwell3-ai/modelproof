@@ -6,13 +6,19 @@ Which model each helper runs
   Claude Code
     lead     the model you choose in Claude Code
     scout    inherit (runs on the lead's model)
+             effort max: your choice (your effort cap), written into the helper file
     builder  inherit (runs on the lead's model)
+             effort max: your choice (your effort cap), written into the helper file
     reviewer inherit (runs on the lead's model)
+             effort max: your choice (your effort cap), written into the helper file
   Codex
     lead     the model you choose in Codex
     scout    inherit (runs on the lead's model)
+             effort max: your choice (your effort cap), written into the helper file
     builder  inherit (runs on the lead's model)
+             effort max: your choice (your effort cap), written into the helper file
     reviewer inherit (runs on the lead's model)
+             effort max: your choice (your effort cap), written into the helper file
   Cursor
     lead     the model you choose in Cursor
     scout    inherit (runs on the lead's model)
@@ -45,11 +51,11 @@ Files (numbered; answer "no to 3" to leave one out)
    4. keys   .claude/settings.json: maxEffortLevel · the tool obeys it
       Adds only the keys you asked for, and only where they are absent.
    5. file   .codex/agents/modelproof-scout.toml · 12 lines · the tool obeys it
-      No model set, so Codex runs this helper on the lead's model and effort.
+      No model set, so Codex runs this helper on the lead's model.
    6. file   .codex/agents/modelproof-builder.toml · 11 lines · the tool obeys it
-      No model set, so Codex runs this helper on the lead's model and effort.
+      No model set, so Codex runs this helper on the lead's model.
    7. file   .codex/agents/modelproof-reviewer.toml · 11 lines · the tool obeys it
-      No model set, so Codex runs this helper on the lead's model and effort.
+      No model set, so Codex runs this helper on the lead's model.
    8. file   .cursor/agents/modelproof-scout.md · 12 lines · the tool obeys it
       Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
    9. file   .cursor/agents/modelproof-builder.md · 11 lines · the tool obeys it

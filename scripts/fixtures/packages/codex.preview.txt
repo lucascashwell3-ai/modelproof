@@ -6,8 +6,11 @@ Which model each helper runs
   Codex
     lead     the model you choose in Codex
     scout    inherit (runs on the lead's model)
+             effort high: your choice (your effort cap), written into the helper file
     builder  inherit (runs on the lead's model)
+             effort high: your choice (your effort cap), written into the helper file
     reviewer inherit (runs on the lead's model)
+             effort high: your choice (your effort cap), written into the helper file
 
 Models you use
   GPT-6 Sol: list price $2 in / $10 out per 1M tokens · 0.37% of OpenRouter tokens (2026-09-25)
@@ -19,11 +22,11 @@ What the tools and labs say (their own words)
 
 Files (numbered; answer "no to 3" to leave one out)
    1. file   ~/.codex/agents/modelproof-scout.toml · 12 lines · the tool obeys it
-      No model set, so Codex runs this helper on the lead's model and effort.
+      No model set, so Codex runs this helper on the lead's model.
    2. file   ~/.codex/agents/modelproof-builder.toml · 11 lines · the tool obeys it
-      No model set, so Codex runs this helper on the lead's model and effort.
+      No model set, so Codex runs this helper on the lead's model.
    3. file   ~/.codex/agents/modelproof-reviewer.toml · 11 lines · the tool obeys it
-      No model set, so Codex runs this helper on the lead's model and effort.
+      No model set, so Codex runs this helper on the lead's model.
    4. block  ~/.codex/AGENTS.md (added at the end) · 22 lines · text
       Codex reads this AGENTS.md before any task.
 

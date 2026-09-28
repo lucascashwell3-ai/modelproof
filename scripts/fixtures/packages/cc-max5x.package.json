@@ -44,9 +44,9 @@
         "scope": "user",
         "path": "~/.claude/agents/modelproof-scout.md"
       },
-      "content": "---\nname: modelproof-scout\ndescription: Reads, searches and sums up code or docs for the lead. Use it for long reading and lookups. It does not edit files.\nmodel: haiku\neffort: low\n---\n<!-- modelproof:owned v1 -->\nYou are the scout. You find and read; you do not edit files.\n- Search first (grep or glob), then open only the line ranges you need.\n- Never read a large file whole.\n- Answer in a few lines: what you found, with file:line for each fact.\n- Say what you could not find.\n- Put long findings in a file on disk and return its path.\n",
+      "content": "---\nname: modelproof-scout\ndescription: Reads, searches and sums up code or docs for the lead. Use it for long reading and lookups. It does not edit files.\nmodel: haiku\n---\n<!-- modelproof:owned v1 -->\nYou are the scout. You find and read; you do not edit files.\n- Search first (grep or glob), then open only the line ranges you need.\n- Never read a large file whole.\n- Answer in a few lines: what you found, with file:line for each fact.\n- Say what you could not find.\n- Put long findings in a file on disk and return its path.\n",
       "why": "Claude Code runs this helper on haiku, the model named in the file.",
-      "lines": 13
+      "lines": 12
     },
     {
       "id": "claude-code:agent:builder",
@@ -57,9 +57,9 @@
         "scope": "user",
         "path": "~/.claude/agents/modelproof-builder.md"
       },
-      "content": "---\nname: modelproof-builder\ndescription: Makes one planned change from a brief (exact files, goal, done check) and reports the check result.\nmodel: claude-opus-5-5\neffort: medium\n---\n<!-- modelproof:owned v1 -->\nYou are the builder. You make the change the lead planned.\n- Touch only the files the brief names; ask before touching others.\n- Run the done check from the brief and report its exact result.\n- Return in a few lines: files changed, the last lines of the check, anything left undone.\n- Put long logs in a file on disk and return its path.\n",
+      "content": "---\nname: modelproof-builder\ndescription: Makes one planned change from a brief (exact files, goal, done check) and reports the check result.\nmodel: claude-opus-5-5\n---\n<!-- modelproof:owned v1 -->\nYou are the builder. You make the change the lead planned.\n- Touch only the files the brief names; ask before touching others.\n- Run the done check from the brief and report its exact result.\n- Return in a few lines: files changed, the last lines of the check, anything left undone.\n- Put long logs in a file on disk and return its path.\n",
       "why": "Claude Code runs this helper on claude-opus-5-5, the model named in the file.",
-      "lines": 12
+      "lines": 11
     },
     {
       "id": "claude-code:agent:reviewer",

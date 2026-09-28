@@ -808,12 +808,12 @@ function planFact(F, pl) {
 
 /* ------------------------------------------------------------------ agent files */
 
-function helperEffort(p, role) {
-  const base = p.limits === 'often' ? { scout: 'low', builder: 'medium', reviewer: null }[role] : null;
-  const cap = p.effort_cap;
-  if (!cap) return base;
-  if (!base) return cap;
-  return EFFORTS.indexOf(base) <= EFFORTS.indexOf(cap) ? base : cap;
+// A helper file carries an effort only when the user chose one (their effort cap); nothing is
+// inferred from how often they hit limits. The preview shows each one as their choice.
+function helperEffort(p, x) {
+  const e = p.effort_cap || null;
+  if (e) x.effort = e;
+  return e;
 }
 function ccAgent(name, description, modelRef, effort, body, extra) {
   const fm = ['---', `name: ${name}`, `description: ${description}`, `model: ${modelRef}`];
@@ -963,7 +963,7 @@ export function buildPackage(profile, facts, setup) {
         parts.push({
           id: `claude-code:agent:${role}`, tool, kind: 'owned-file', enforced: true,
           target: { scope, path: `${dir}/agents/modelproof-${role}.md` },
-          content: ccAgent(`modelproof-${role}`, AGENT_DESCRIPTION[role], ref, helperEffort(p, role), AGENT_BODY[role]),
+          content: ccAgent(`modelproof-${role}`, AGENT_DESCRIPTION[role], ref, helperEffort(p, r[role]), AGENT_BODY[role]),
           why: ref === 'inherit' ? 'Claude Code runs this helper on the lead\'s model (model: inherit).' : `Claude Code runs this helper on ${ref}, the model named in the file.`,
         });
       }
@@ -1029,8 +1029,8 @@ export function buildPackage(profile, facts, setup) {
         parts.push({
           id: `codex:agent:${role}`, tool, kind: 'owned-file', enforced: true,
           target: { scope, path: `${dir}/agents/modelproof-${role}.toml` },
-          content: codexAgent(role, x.model_ref, helperEffort(p, role)),
-          why: x.model_ref ? `Codex runs this helper on ${x.model_ref}; a model in a custom agent file wins for that agent.` : 'No model set, so Codex runs this helper on the lead\'s model and effort.',
+          content: codexAgent(role, x.model_ref, helperEffort(p, x)),
+          why: x.model_ref ? `Codex runs this helper on ${x.model_ref}; a model in a custom agent file wins for that agent.` : `No model set, so Codex runs this helper on the lead's model${x.effort ? '' : ' and effort'}.`,
         });
       }
       if (user) {
@@ -1177,6 +1177,7 @@ export function renderPreview(pkg) {
         if (role === 'lead' && x.from === 'inherit') { out.push(`    ${'lead'.padEnd(9)}the model you choose in ${tool === 'agents-md' ? 'your tool' : TOOL_LABEL[tool]}`); continue; }
         if (tool === 'agents-md' && role !== 'lead' && x.from === 'inherit') continue;
         out.push(`    ${role.padEnd(9)}${roleSummary(x)}`);
+        if (x.effort) out.push(`             effort ${x.effort}: your choice (your effort cap), written into the helper file`);
         for (const b of arr(x.basis)) if (x.from !== 'inherit') out.push(`             "${b.quote}"`, `             ${b.source_url} (${b.date})`);
         if (x.model_id) {
           const u = usageText(x.usage);

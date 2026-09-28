@@ -463,10 +463,10 @@ test('Codex agent files: owned tag, name, description, developer_instructions; m
   assert.match(max.parts.find((p) => p.id === 'codex:agent:scout').content, /model_reasoning_effort = "xhigh"/);
 });
 
-test('Claude Code agent files: frontmatter, owned tag right after it, effort only when limits=often or a cap', () => {
+test('Claude Code agent files: frontmatter, owned tag right after it, effort only from the user\'s cap', () => {
   const pkg = build('cc-max5x');
   const scout = pkg.parts.find((p) => p.id === 'claude-code:agent:scout').content;
-  assert.match(scout, /^---\nname: modelproof-scout\ndescription: .+\nmodel: haiku\neffort: low\n---\n<!-- modelproof:owned v1 -->\n/);
+  assert.match(scout, /^---\nname: modelproof-scout\ndescription: .+\nmodel: haiku\n---\n<!-- modelproof:owned v1 -->\n/);
   const calm = build('empty').parts.find((p) => p.id === 'claude-code:agent:scout').content;
   assert.ok(!/^effort:/m.test(calm));
   const capped = buildPackage({ ...PROFILES.empty, effort_cap: 'medium' }, FACTS);
@@ -583,13 +583,13 @@ test('setup warnings: FORCE env var, tools missing on the machine', () => {
 
 /* ======================================================================== each field matters */
 
-test('changing each profile field changes the output bytes (parts, roles, facts or notes)', () => {
+test('changing each profile field changes the output bytes (parts, roles, facts, notes or what is available)', () => {
   const base = {
     who: 'person', tools: ['claude-code'], scope: 'user', plans: [{ vendor: 'Anthropic', plan: 'Max 5x' }], api: false,
     limits: 'sometimes', work: ['coding'], like: ['claude-sonnet-5', 'gpt-6-sol'], never: [],
     roles: { lead: 'claude-opus-5-5' }, effort_cap: null, set_default_model: false,
   };
-  const out = (p) => { const k = buildPackage(p, FACTS); return JSON.stringify([k.parts, k.roles, k.preview_facts, k.notes]); };
+  const out = (p) => { const k = buildPackage(p, FACTS); return JSON.stringify([k.parts, k.roles, k.preview_facts, k.notes, k.available]); };
   const ref = out(base);
   const orgBase = { ...base, who: 'org', org: { name: 'Acme', divisions: [] } };
   const cases = {
@@ -770,4 +770,25 @@ test('profileFromBoard: an org board becomes an org profile with divisions', () 
   assert.match(block.content, /Engineering \(12 people, Claude Code\): Anthropic Team \(Premium seat\) \$100\/seat\/month list/);
   assert.doesNotThrow(() => profileFromBoard(undefined, undefined));
   assert.deepEqual(profileFromBoard({}, {}).tools, ['agents-md']);
+});
+
+test('LC-04: helper effort comes only from the user\'s own choice, and the preview shows each one', () => {
+  for (const n of ['cc-max5x', 'codex']) {
+    const raw = clone(PROFILES[n]);
+    raw.limits = 'often';
+    delete raw.effort_cap;
+    const pkg = buildPackage(raw, FACTS, setupFor(n));
+    for (const part of pkg.parts.filter((x) => /:agent:/.test(x.id))) {
+      assert.ok(!/^effort:|model_reasoning_effort/m.test(part.content), `${n} ${part.id} carries an effort nobody chose`);
+    }
+    assert.ok(!/effort \w+: your choice/.test(renderPreview(pkg)), n);
+
+    raw.effort_cap = 'high';
+    const capped = buildPackage(raw, FACTS, setupFor(n));
+    const preview = renderPreview(capped);
+    const written = capped.parts.filter((x) => /:agent:/.test(x.id) && /^effort: high$|^model_reasoning_effort = "high"$/m.test(x.content));
+    assert.ok(written.length > 0, `${n}: the effort cap reaches the helper files`);
+    const shown = preview.split('\n').filter((l) => /effort high: your choice/.test(l)).length;
+    assert.equal(shown, written.length, `${n}: every effort written into a helper file shows in the preview`);
+  }
 });

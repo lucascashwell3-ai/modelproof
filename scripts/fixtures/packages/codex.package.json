@@ -41,7 +41,7 @@
         "path": "~/.codex/agents/modelproof-scout.toml"
       },
       "content": "# modelproof:owned v1\nname = \"modelproof-scout\"\ndescription = \"Reads, searches and sums up code or docs for the lead. Use it for long reading and lookups. It does not edit files.\"\nmodel_reasoning_effort = \"high\"\ndeveloper_instructions = \"\"\"\nYou are the scout. You find and read; you do not edit files.\n- Search first (grep or glob), then open only the line ranges you need.\n- Never read a large file whole.\n- Answer in a few lines: what you found, with file:line for each fact.\n- Say what you could not find.\n- Put long findings in a file on disk and return its path.\n\"\"\"\n",
-      "why": "No model set, so Codex runs this helper on the lead's model and effort.",
+      "why": "No model set, so Codex runs this helper on the lead's model.",
       "lines": 12
     },
     {
@@ -54,7 +54,7 @@
         "path": "~/.codex/agents/modelproof-builder.toml"
       },
       "content": "# modelproof:owned v1\nname = \"modelproof-builder\"\ndescription = \"Makes one planned change from a brief (exact files, goal, done check) and reports the check result.\"\nmodel_reasoning_effort = \"high\"\ndeveloper_instructions = \"\"\"\nYou are the builder. You make the change the lead planned.\n- Touch only the files the brief names; ask before touching others.\n- Run the done check from the brief and report its exact result.\n- Return in a few lines: files changed, the last lines of the check, anything left undone.\n- Put long logs in a file on disk and return its path.\n\"\"\"\n",
-      "why": "No model set, so Codex runs this helper on the lead's model and effort.",
+      "why": "No model set, so Codex runs this helper on the lead's model.",
       "lines": 11
     },
     {
@@ -67,7 +67,7 @@
         "path": "~/.codex/agents/modelproof-reviewer.toml"
       },
       "content": "# modelproof:owned v1\nname = \"modelproof-reviewer\"\ndescription = \"Reviews a change cold from the diff, runs the checks itself, and reports problems with file:line.\"\nmodel_reasoning_effort = \"high\"\ndeveloper_instructions = \"\"\"\nYou are the reviewer. You review cold: the diff, not the author's summary.\n- Read the diff (git diff) and the files it touches.\n- Run the project's checks yourself; scripts decide pass or fail.\n- Report problems worst first, each with file:line and a one-line fix.\n- Say plainly when you found nothing wrong. Do not edit files.\n\"\"\"\n",
-      "why": "No model set, so Codex runs this helper on the lead's model and effort.",
+      "why": "No model set, so Codex runs this helper on the lead's model.",
       "lines": 11
     },
     {
@@ -115,7 +115,8 @@
           }
         ],
         "price": null,
-        "usage": null
+        "usage": null,
+        "effort": "high"
       },
       "builder": {
         "model_ref": null,
@@ -132,7 +133,8 @@
           }
         ],
         "price": null,
-        "usage": null
+        "usage": null,
+        "effort": "high"
       },
       "reviewer": {
         "model_ref": null,
@@ -149,7 +151,8 @@
           }
         ],
         "price": null,
-        "usage": null
+        "usage": null,
+        "effort": "high"
       }
     }
   },
