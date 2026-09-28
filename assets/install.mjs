@@ -1062,6 +1062,29 @@ function moveFile(src, dest) {
   }
   return target;
 }
+// Replace an existing file whole, at its real path: write a temp file in the same folder, copy the
+// mode, flush it to disk, then rename it over the target. A kill or power loss mid-write leaves
+// either the old bytes or the new ones, never a cut-off file. A read-only file stays refused.
+function writeReplace(real, data) {
+  const st = fs.statSync(real);
+  fs.accessSync(real, fs.constants.W_OK);
+  const dir = path.dirname(real);
+  const tmp = path.join(dir, `.${path.basename(real)}.modelproof-${process.pid}-${crypto.randomBytes(4).toString('hex')}.tmp`);
+  const fd = fs.openSync(tmp, 'wx', st.mode & 0o7777);
+  try {
+    fs.writeFileSync(fd, data);
+    fs.fchmodSync(fd, st.mode & 0o7777);
+    try { fs.fchownSync(fd, st.uid, st.gid); } catch { /* not ours to set; keep the default owner */ }
+    fs.fsyncSync(fd);
+    fs.closeSync(fd);
+    fs.renameSync(tmp, real);
+  } catch (e) {
+    try { fs.closeSync(fd); } catch { /* already closed */ }
+    try { fs.unlinkSync(tmp); } catch { /* gone */ }
+    throw e;
+  }
+  try { const dfd = fs.openSync(dir, 'r'); try { fs.fsyncSync(dfd); } finally { fs.closeSync(dfd); } } catch { /* best effort */ }
+}
 // Runs ops in order; on any error undoes the ones done, newest first, then rethrows.
 function runOps(ops) {
   const done = [];
@@ -1072,7 +1095,8 @@ function runOps(ops) {
         const original = existed ? fs.readFileSync(op.real) : null;
         const dirs = existed ? [] : mkdirsFor(op.real);
         done.push({ op, existed, original, dirs });
-        fs.writeFileSync(op.real, op.data, existed ? undefined : { flag: 'wx' });
+        if (existed) writeReplace(op.real, op.data);
+        else fs.writeFileSync(op.real, op.data, { flag: 'wx' });
       } else if (op.type === 'move') {
         const to = moveFile(op.real, op.dest);
         done.push({ op, to });
@@ -1092,7 +1116,7 @@ function runOps(ops) {
     for (const d of done.reverse()) {
       try {
         if (d.op.type === 'write') {
-          if (d.existed) fs.writeFileSync(d.op.real, d.original);
+          if (d.existed) writeReplace(d.op.real, d.original);
           else { try { fs.unlinkSync(d.op.real); } catch { /* not written */ } for (const dir of d.dirs.slice().reverse()) { try { fs.rmdirSync(dir); } catch { /* keep */ } } }
         } else if (d.op.type === 'move') fs.renameSync(d.to, d.op.real);
         else if (d.op.type === 'copy') fs.unlinkSync(d.copied);

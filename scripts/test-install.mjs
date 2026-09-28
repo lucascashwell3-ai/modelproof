@@ -602,6 +602,28 @@ test('a read-only target mid-apply rolls back every write (tree and install reco
   fs.chmodSync(file, 0o644);
 });
 
+test('LC-07: an existing file is replaced whole (temp file + rename), keeps its mode, and leaves no temp file', () => {
+  const f = setup('codex');
+  const file = path.join(f.home, '.codex', 'AGENTS.md');
+  fs.chmodSync(file, 0o640);
+  const before = snapshot(f);
+  const ino0 = fs.statSync(file).ino;
+  const p = plan(f, path.join(PROFILES, 'codex.json'), { project: false });
+  ok(apply(f, p));
+  const st1 = fs.statSync(file);
+  assert.notEqual(st1.ino, ino0, 'apply wrote a new file and renamed it over the old one (never truncated in place)');
+  assert.equal(st1.mode & 0o777, 0o640);
+  assert.match(read(file), /modelproof:begin/);
+  const leftovers = (dir) => fs.readdirSync(dir).filter((n) => /\.tmp$|modelproof-\d/.test(n) && !/^modelproof-[a-z]+\.toml$/.test(n));
+  assert.deepEqual(leftovers(path.dirname(file)), []);
+  ok(undo(f, p.plan.id));
+  const st2 = fs.statSync(file);
+  assert.notEqual(st2.ino, st1.ino, 'undo replaces the file the same way');
+  assert.equal(st2.mode & 0o777, 0o640);
+  assert.deepEqual(leftovers(path.dirname(file)), []);
+  ok(compare(f, before));
+});
+
 test('CRLF files keep CRLF, and a file with no final newline keeps none', () => {
   for (const shape of ['crlf', 'no-final-newline']) {
     const f = setup('codex');
