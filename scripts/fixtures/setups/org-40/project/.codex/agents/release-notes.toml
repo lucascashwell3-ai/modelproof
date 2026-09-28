@@ -1,0 +1,5 @@
+name = "release-notes"
+description = "Drafts release notes from merged pull requests."
+developer_instructions = """
+List user-facing changes first. Link each pull request.
+"""

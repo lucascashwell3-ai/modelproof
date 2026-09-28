@@ -1,0 +1,24 @@
+{
+  "schema": "modelproof.profile/1",
+  "who": "person",
+  "tools": [
+    "codex"
+  ],
+  "scope": "user",
+  "plans": [
+    {
+      "vendor": "OpenAI",
+      "plan": "Plus"
+    }
+  ],
+  "limits": "sometimes",
+  "work": [
+    "coding"
+  ],
+  "like": [
+    "gpt-6-sol"
+  ],
+  "never": [],
+  "roles": {},
+  "effort_cap": "high"
+}

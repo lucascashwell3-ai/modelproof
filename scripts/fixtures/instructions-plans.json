@@ -1,0 +1,391 @@
+{
+ "_readme": "Frozen copy of the vendor, plan and list-price columns of data/plans.json (taken 2026-09-27) for scripts/test-instructions.mjs.",
+ "as_of": "2026-09-20",
+ "plans": [
+  {
+   "vendor": "Anthropic",
+   "plan": "Free",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "Anthropic",
+   "plan": "Pro",
+   "price_usd_month": 17
+  },
+  {
+   "vendor": "Anthropic",
+   "plan": "Max 5x",
+   "price_usd_month": 100
+  },
+  {
+   "vendor": "Anthropic",
+   "plan": "Max 20x",
+   "price_usd_month": 200
+  },
+  {
+   "vendor": "Anthropic",
+   "plan": "Team (Standard seat)",
+   "price_usd_month": 20
+  },
+  {
+   "vendor": "Anthropic",
+   "plan": "Team (Premium seat)",
+   "price_usd_month": 100
+  },
+  {
+   "vendor": "Anthropic",
+   "plan": "Enterprise",
+   "price_usd_month": 20
+  },
+  {
+   "vendor": "Anthropic",
+   "plan": "Claude for Education",
+   "price_usd_month": null
+  },
+  {
+   "vendor": "Anthropic",
+   "plan": "Claude for Government",
+   "price_usd_month": null
+  },
+  {
+   "vendor": "OpenAI",
+   "plan": "Free",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "OpenAI",
+   "plan": "Go",
+   "price_usd_month": 8
+  },
+  {
+   "vendor": "OpenAI",
+   "plan": "Plus",
+   "price_usd_month": 20
+  },
+  {
+   "vendor": "OpenAI",
+   "plan": "Pro",
+   "price_usd_month": 100
+  },
+  {
+   "vendor": "OpenAI",
+   "plan": "Pro 20x",
+   "price_usd_month": 200
+  },
+  {
+   "vendor": "OpenAI",
+   "plan": "Business",
+   "price_usd_month": 20
+  },
+  {
+   "vendor": "OpenAI",
+   "plan": "Business (Premium seat)",
+   "price_usd_month": 100
+  },
+  {
+   "vendor": "OpenAI",
+   "plan": "Enterprise",
+   "price_usd_month": null
+  },
+  {
+   "vendor": "OpenAI",
+   "plan": "Edu",
+   "price_usd_month": null
+  },
+  {
+   "vendor": "OpenAI",
+   "plan": "ChatGPT for Teachers",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "OpenAI",
+   "plan": "Codex (no separate subscription)",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "Google",
+   "plan": "Google AI (Free)",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "Google",
+   "plan": "Google AI Plus",
+   "price_usd_month": 4.99
+  },
+  {
+   "vendor": "Google",
+   "plan": "Google AI Pro",
+   "price_usd_month": 19.99
+  },
+  {
+   "vendor": "Google",
+   "plan": "Google AI Ultra (5x)",
+   "price_usd_month": 99.99
+  },
+  {
+   "vendor": "Google",
+   "plan": "Google AI Ultra (20x)",
+   "price_usd_month": 199.99
+  },
+  {
+   "vendor": "Google",
+   "plan": "Workspace Business Starter",
+   "price_usd_month": 7
+  },
+  {
+   "vendor": "Google",
+   "plan": "Workspace Business Standard",
+   "price_usd_month": 14
+  },
+  {
+   "vendor": "Google",
+   "plan": "Workspace Business Plus",
+   "price_usd_month": 22
+  },
+  {
+   "vendor": "Google",
+   "plan": "Workspace Enterprise",
+   "price_usd_month": null
+  },
+  {
+   "vendor": "Google",
+   "plan": "Gemini Enterprise (Business edition)",
+   "price_usd_month": 21
+  },
+  {
+   "vendor": "Google",
+   "plan": "Gemini Enterprise (Standard / Plus editions)",
+   "price_usd_month": 30
+  },
+  {
+   "vendor": "Google",
+   "plan": "Gemini Enterprise (Pay-as-you-go edition)",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "Google",
+   "plan": "Gemini Enterprise (Frontline edition)",
+   "price_usd_month": null
+  },
+  {
+   "vendor": "Google",
+   "plan": "Gemini Code Assist Standard",
+   "price_usd_month": 19
+  },
+  {
+   "vendor": "Google",
+   "plan": "Gemini Code Assist Enterprise",
+   "price_usd_month": 45
+  },
+  {
+   "vendor": "xAI",
+   "plan": "Free",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "xAI",
+   "plan": "SuperGrok Lite",
+   "price_usd_month": 10
+  },
+  {
+   "vendor": "xAI",
+   "plan": "SuperGrok",
+   "price_usd_month": 30
+  },
+  {
+   "vendor": "xAI",
+   "plan": "SuperGrok Plus",
+   "price_usd_month": 100
+  },
+  {
+   "vendor": "xAI",
+   "plan": "SuperGrok Heavy",
+   "price_usd_month": 300
+  },
+  {
+   "vendor": "xAI",
+   "plan": "Business",
+   "price_usd_month": 30
+  },
+  {
+   "vendor": "xAI",
+   "plan": "Enterprise",
+   "price_usd_month": null
+  },
+  {
+   "vendor": "Mistral AI",
+   "plan": "Le Chat Free",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "Mistral AI",
+   "plan": "Le Chat Pro",
+   "price_usd_month": 14.99
+  },
+  {
+   "vendor": "Mistral AI",
+   "plan": "Le Chat Team",
+   "price_usd_month": 24.99
+  },
+  {
+   "vendor": "Mistral AI",
+   "plan": "Le Chat Enterprise",
+   "price_usd_month": null
+  },
+  {
+   "vendor": "Cursor",
+   "plan": "Hobby",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "Cursor",
+   "plan": "Pro",
+   "price_usd_month": 20
+  },
+  {
+   "vendor": "Cursor",
+   "plan": "Pro+",
+   "price_usd_month": 60
+  },
+  {
+   "vendor": "Cursor",
+   "plan": "Ultra",
+   "price_usd_month": 200
+  },
+  {
+   "vendor": "Cursor",
+   "plan": "Teams (Standard)",
+   "price_usd_month": 40
+  },
+  {
+   "vendor": "Cursor",
+   "plan": "Teams (Premium)",
+   "price_usd_month": 120
+  },
+  {
+   "vendor": "Cursor",
+   "plan": "Enterprise",
+   "price_usd_month": null
+  },
+  {
+   "vendor": "GitHub Copilot",
+   "plan": "Free",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "GitHub Copilot",
+   "plan": "Pro",
+   "price_usd_month": 10
+  },
+  {
+   "vendor": "GitHub Copilot",
+   "plan": "Pro+",
+   "price_usd_month": 39
+  },
+  {
+   "vendor": "GitHub Copilot",
+   "plan": "Max",
+   "price_usd_month": 100
+  },
+  {
+   "vendor": "GitHub Copilot",
+   "plan": "Business",
+   "price_usd_month": 19
+  },
+  {
+   "vendor": "GitHub Copilot",
+   "plan": "Enterprise",
+   "price_usd_month": 39
+  },
+  {
+   "vendor": "Microsoft 365 Copilot",
+   "plan": "Microsoft 365 Copilot (enterprise add-on)",
+   "price_usd_month": 30
+  },
+  {
+   "vendor": "Microsoft 365 Copilot",
+   "plan": "Microsoft 365 Copilot Business",
+   "price_usd_month": 18
+  },
+  {
+   "vendor": "Microsoft 365 Copilot",
+   "plan": "Microsoft 365 Business Standard with Copilot",
+   "price_usd_month": 23.5
+  },
+  {
+   "vendor": "Microsoft 365 Copilot",
+   "plan": "Microsoft 365 Business Premium with Copilot",
+   "price_usd_month": 32
+  },
+  {
+   "vendor": "Windsurf",
+   "plan": "Free",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "Windsurf",
+   "plan": "Pro",
+   "price_usd_month": 20
+  },
+  {
+   "vendor": "Windsurf",
+   "plan": "Max",
+   "price_usd_month": 200
+  },
+  {
+   "vendor": "Windsurf",
+   "plan": "Teams",
+   "price_usd_month": 40
+  },
+  {
+   "vendor": "Windsurf",
+   "plan": "Enterprise",
+   "price_usd_month": null
+  },
+  {
+   "vendor": "Perplexity",
+   "plan": "Free",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "Perplexity",
+   "plan": "Pro",
+   "price_usd_month": 20
+  },
+  {
+   "vendor": "Perplexity",
+   "plan": "Max",
+   "price_usd_month": 200
+  },
+  {
+   "vendor": "Perplexity",
+   "plan": "Enterprise Pro",
+   "price_usd_month": 33.33
+  },
+  {
+   "vendor": "Perplexity",
+   "plan": "Enterprise Max",
+   "price_usd_month": 325
+  },
+  {
+   "vendor": "OpenRouter",
+   "plan": "Pay as you go",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "Amazon Bedrock",
+   "plan": "Pay as you go",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "Google Vertex AI",
+   "plan": "Pay as you go",
+   "price_usd_month": 0
+  },
+  {
+   "vendor": "Microsoft Azure AI Foundry",
+   "plan": "Pay as you go",
+   "price_usd_month": 0
+  }
+ ]
+}

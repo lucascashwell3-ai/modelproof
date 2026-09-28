@@ -1,0 +1,7 @@
+---
+description: Frontend style rules
+globs: src/**/*.tsx
+alwaysApply: false
+---
+- Keep components under 150 lines.
+- Prefer CSS variables from tokens.css.

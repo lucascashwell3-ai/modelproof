@@ -1,0 +1,657 @@
+// Tests for assets/install.mjs. Every run copies a fixture setup from scripts/fixtures/setups/<name>/
+// {home,project} into a fresh temp folder, keeps the install record (MODELPROOF_HOME) in a SEPARATE
+// temp folder, and checks the result with scripts/setup-hash.mjs — which shares no code with the
+// installer. Frozen inputs: scripts/fixtures/{guidance,instructions-models,instructions-plans}.json.
+import { test, after } from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { makeContext, detect, readers } from '../assets/install.mjs';
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const INSTALL = path.join(ROOT, 'assets', 'install.mjs');
+const HASH = path.join(ROOT, 'scripts', 'setup-hash.mjs');
+const FIX = path.join(ROOT, 'scripts', 'fixtures');
+const PROFILES = path.join(FIX, 'profiles');
+const temps = [];
+after(() => {
+  for (const t of temps) {
+    try { fs.chmodSync(t, 0o700); } catch { /* gone */ }
+    fs.rmSync(t, { recursive: true, force: true });
+  }
+});
+const tmp = (tag) => { const d = fs.mkdtempSync(path.join(os.tmpdir(), `mp-${tag}-`)); temps.push(d); return d; };
+
+// One frozen data folder for every run.
+const DATA = tmp('data');
+fs.copyFileSync(path.join(FIX, 'guidance.json'), path.join(DATA, 'guidance.json'));
+fs.copyFileSync(path.join(FIX, 'instructions-models.json'), path.join(DATA, 'models.json'));
+fs.copyFileSync(path.join(FIX, 'instructions-plans.json'), path.join(DATA, 'plans.json'));
+
+// Copy a tree keeping links as links and file modes.
+function copyTree(src, dest) {
+  fs.mkdirSync(dest, { recursive: true });
+  for (const name of fs.readdirSync(src)) {
+    const s = path.join(src, name); const d = path.join(dest, name);
+    const st = fs.lstatSync(s);
+    if (st.isSymbolicLink()) fs.symlinkSync(fs.readlinkSync(s), d);
+    else if (st.isDirectory()) copyTree(s, d);
+    else { fs.copyFileSync(s, d); fs.chmodSync(d, st.mode & 0o7777); }
+  }
+}
+function cleanEnv(extra = {}) {
+  const env = { ...process.env };
+  for (const k of ['CLAUDE_CONFIG_DIR', 'CODEX_HOME', 'CLAUDE_CODE_SUBAGENT_MODEL_FORCE', 'MODELPROOF_HOME']) delete env[k];
+  return { ...env, ...extra };
+}
+function setup(name) {
+  const dir = tmp('setup');
+  const src = path.join(FIX, 'setups', name);
+  for (const part of ['home', 'project']) {
+    if (fs.existsSync(path.join(src, part))) copyTree(path.join(src, part), path.join(dir, part));
+    else fs.mkdirSync(path.join(dir, part));
+  }
+  const f = { dir, home: path.join(dir, 'home'), project: path.join(dir, 'project'), state: tmp('state'), work: tmp('work') };
+  f.env = cleanEnv({ MODELPROOF_HOME: f.state });
+  return f;
+}
+function node(script, args, env) {
+  const r = spawnSync(process.execPath, [script, ...args], { encoding: 'utf8', env });
+  return { code: r.status, out: r.stdout, err: r.stderr, all: r.stdout + r.stderr };
+}
+const inst = (f, ...args) => node(INSTALL, args, f.env);
+const hash = (...args) => node(HASH, args, cleanEnv());
+let planN = 0;
+function plan(f, profile, { project = true, state } = {}) {
+  const out = path.join(f.work, `plan-${++planN}.json`);
+  const args = ['plan', '--profile', profile, '--data', DATA, '--home', f.home, ...(project ? ['--project', f.project] : []), '--out', out];
+  const r = node(INSTALL, args, state ? cleanEnv({ MODELPROOF_HOME: state }) : f.env);
+  const p = fs.existsSync(out) ? JSON.parse(fs.readFileSync(out, 'utf8')) : null;
+  return { ...r, plan: p, file: out };
+}
+function apply(f, p, { skip, expect, state } = {}) {
+  const args = ['apply', '--plan', p.file, '--expect', expect || p.plan.hash, ...(skip ? ['--skip', skip] : [])];
+  return node(INSTALL, args, state ? cleanEnv({ MODELPROOF_HOME: state }) : f.env);
+}
+const verify = (f, project = true) => inst(f, 'verify', '--home', f.home, ...(project ? ['--project', f.project] : []));
+const undo = (f, id, state) => node(INSTALL, ['undo', id], state ? cleanEnv({ MODELPROOF_HOME: state }) : f.env);
+function snapshot(f, label = 'snap') {
+  const out = path.join(f.work, `${label}-${++planN}.json`);
+  const r = hash('snapshot', f.dir, '--out', out);
+  assert.equal(r.code, 0, r.all);
+  return out;
+}
+const compare = (f, snap) => hash('compare', f.dir, snap);
+const dupes = (f) => hash('dupes', f.dir);
+const writeProfile = (f, base, over) => {
+  const p = { ...JSON.parse(fs.readFileSync(base, 'utf8')), ...over };
+  const out = path.join(f.work, `profile-${++planN}.json`);
+  fs.writeFileSync(out, JSON.stringify(p));
+  return out;
+};
+const read = (p) => fs.readFileSync(p, 'utf8');
+const ok = (r, msg) => assert.equal(r.code, 0, `${msg || 'expected exit 0'}\n${r.all}`);
+
+// The full roundtrip from spec §5: snapshot → plan → apply → verify → dupes → plan+apply again →
+// dupes + same bytes → undo → compare 0.
+function roundtrip(f, profile, { project = true } = {}) {
+  const before = snapshot(f, 'before');
+  const p1 = plan(f, profile, { project });
+  ok(p1, 'plan');
+  assert.ok(p1.plan.items.length > 0);
+  assert.ok(p1.plan.items.every((x) => x.action !== 'conflict'), p1.out);
+  ok(apply(f, p1), 'apply');
+  ok(verify(f, project), 'verify');
+  ok(dupes(f), 'dupes after first install');
+  const first = snapshot(f, 'first');
+  const p2 = plan(f, profile, { project });
+  ok(p2, 'second plan');
+  assert.deepEqual(p2.plan.items.map((x) => x.action), p2.plan.items.map(() => 'unchanged'), p2.out);
+  ok(apply(f, p2), 'second apply');
+  ok(dupes(f), 'dupes after second install');
+  ok(compare(f, first), 'second install leaves the same bytes as the first');
+  const u = undo(f, p1.plan.id);
+  ok(u, 'undo');
+  assert.match(u.out, /byte-identical/);
+  ok(compare(f, before), 'undo restores the tree');
+  return { before, p1 };
+}
+
+/* ------------------------------------------------------------------ the five setups + two more */
+
+const MAIN = [
+  ['cc-max5x', path.join(PROFILES, 'cc-max5x.json'), false],
+  ['codex', path.join(PROFILES, 'codex.json'), false],
+  ['cursor', path.join(PROFILES, 'cursor.json'), true],
+  ['org-40', path.join(PROFILES, 'org-40.json'), true],
+  ['empty', path.join(PROFILES, 'empty.json'), true],
+];
+for (const [name, profile, project] of MAIN) {
+  test(`roundtrip: ${name}`, () => roundtrip(setup(name), profile, { project }));
+}
+
+test('roundtrip: agents-md-only never gets a CLAUDE.md, and Claude Code shares the AGENTS.md block', () => {
+  const f = setup('agents-md-only');
+  const profile = path.join(FIX, 'setups', 'agents-md-only', 'profile.json');
+  const p = plan(f, profile);
+  const block = p.plan.items.find((x) => x.path === 'AGENTS.md');
+  assert.equal(block.action, 'append');
+  assert.ok(!p.plan.items.some((x) => /CLAUDE|rules\/modelproof/.test(x.path)), p.out);
+  const part = p.plan.package.parts.find((x) => x.target.path === 'AGENTS.md');
+  assert.ok(part.readers.includes('claude-code'));
+  ok(apply(f, p));
+  for (const n of ['CLAUDE.md', '.claude/CLAUDE.md', 'CLAUDE.local.md']) assert.ok(!fs.existsSync(path.join(f.project, n)), n);
+  ok(undo(f, p.plan.id));
+  const g = setup('agents-md-only');
+  roundtrip(g, profile);
+  for (const n of ['CLAUDE.md', '.claude/CLAUDE.md', 'CLAUDE.local.md']) assert.ok(!fs.existsSync(path.join(g.project, n)), n);
+});
+
+test('roundtrip: symlinked .claude folders and a symlinked AGENTS.md stay links; writes land at the real path', () => {
+  const f = setup('symlink');
+  const before = snapshot(f, 'before');
+  const proj = path.join(FIX, 'setups', 'symlink', 'profile.json');
+  const user = path.join(FIX, 'setups', 'symlink', 'profile-user.json');
+  const p = plan(f, proj);
+  ok(p);
+  const agents = p.plan.items.find((x) => x.path === 'AGENTS.md');
+  assert.equal(agents.link, true);
+  assert.equal(agents.real_path, fs.realpathSync(path.join(f.project, 'docs', 'AGENTS.md')));
+  assert.match(p.out, /real path: .*docs\/AGENTS\.md/);
+  ok(apply(f, p));
+  ok(verify(f));
+  ok(dupes(f));
+  for (const l of ['project/.claude', 'project/AGENTS.md']) assert.ok(fs.lstatSync(path.join(f.dir, l)).isSymbolicLink(), `${l} is still a link`);
+  assert.match(read(path.join(f.project, 'docs', 'AGENTS.md')), /modelproof:begin/);
+  assert.ok(fs.existsSync(path.join(f.project, 'config', 'claude', 'agents', 'modelproof-scout.md')));
+  let first = snapshot(f, 'first');
+  ok(apply(f, plan(f, proj)));
+  ok(compare(f, first));
+  ok(undo(f, p.plan.id));
+  ok(compare(f, before));
+  // The same through a linked ~/.claude (a dotfiles folder).
+  const pu = plan(f, user, { project: false });
+  ok(pu);
+  assert.match(pu.out, /real path: .*dotfiles\/claude\/rules\/modelproof\.md/);
+  ok(apply(f, pu));
+  ok(verify(f, false));
+  ok(dupes(f));
+  assert.ok(fs.lstatSync(path.join(f.home, '.claude')).isSymbolicLink());
+  assert.ok(fs.existsSync(path.join(f.home, 'dotfiles', 'claude', 'rules', 'modelproof.md')));
+  first = snapshot(f, 'first');
+  ok(apply(f, plan(f, user, { project: false })));
+  ok(compare(f, first));
+  ok(undo(f, pu.plan.id));
+  ok(compare(f, before));
+  for (const l of ['project/.claude', 'project/AGENTS.md', 'home/.claude']) assert.ok(fs.lstatSync(path.join(f.dir, l)).isSymbolicLink());
+});
+
+/* ------------------------------------------------------------------ detect */
+
+test('detect (cc-max5x): heads-up names the prose model rule by file:line; memory mentions are file:line only; no secrets', () => {
+  const f = setup('cc-max5x');
+  const r = inst(f, 'detect', '--home', f.home);
+  ok(r);
+  const s = JSON.parse(r.out);
+  const h = s.heads_up.find((x) => x.file === '~/.claude/CLAUDE.md' && x.line === 39);
+  assert.ok(h, r.out);
+  assert.match(h.text, /Use opus for builds/);
+  assert.deepEqual(s.mentions, [{ file: '~/.claude/projects/-home-alex-app/memory/prefs.md', line: 4 }]);
+  assert.deepEqual(s.agents.map((a) => [a.name, a.model, a.modelproof]), [['code-reviewer', null, false], ['test-runner', null, false]]);
+  assert.deepEqual(s.settings[0].keys, ['permissions', 'hooks', 'env', 'apiKeyHelper']);
+  const style = s.files.find((x) => x.path === '~/.claude/notes/style.md');
+  assert.deepEqual(style.readers, ['claude-code'], 'the @import is followed');
+  assert.ok(!s.files.some((x) => /not-an-import/.test(x.path)), 'an @path inside a code fence is not an import');
+  assert.doesNotMatch(r.out, /not-for-output/);
+  // The plan prints the same heads-up, and the builder follows the user's own choice.
+  const p = plan(f, path.join(PROFILES, 'cc-max5x.json'), { project: false });
+  assert.match(p.out, /~\/\.claude\/CLAUDE\.md:39 +- Use opus for builds/);
+  assert.doesNotMatch(p.out + JSON.stringify(p.plan), /not-for-output/);
+  const builder = p.plan.package.parts.find((x) => x.id === 'claude-code:agent:builder');
+  assert.match(builder.content, /^model: opus$/m);
+  assert.match(p.out, /builder +opus = Claude Opus 5\.5 · your choice/);
+});
+
+test('readers: who loads the project AGENTS.md, case by case', () => {
+  const cases = [
+    ['no CLAUDE.md', {}, true],
+    ['CLAUDE.md without an import', { 'CLAUDE.md': '# x\n' }, false],
+    ['CLAUDE.md with @AGENTS.md', { 'CLAUDE.md': '# x\n@AGENTS.md\n' }, true],
+    ['a two-hop import chain', { 'CLAUDE.md': 'see @docs/a.md\n', 'docs/a.md': '@../AGENTS.md\n' }, true],
+    ['@AGENTS.md inside a code fence', { 'CLAUDE.md': '```\n@AGENTS.md\n```\n' }, false],
+    ['@AGENTS.md inside inline code', { 'CLAUDE.md': 'write `@AGENTS.md` to import\n' }, false],
+    ['CLAUDE.local.md only', { 'CLAUDE.local.md': '# mine\n' }, false],
+    ['.claude/CLAUDE.md only', { '.claude/CLAUDE.md': '# mine\n' }, false],
+    ['mode claude-md-and-agents-md', { 'CLAUDE.md': '# x\n', '~/.claude/settings.json': JSON.stringify({ pluginConfigs: { 'agents-md@builtin': { options: { instructionFiles: 'claude-md-and-agents-md' } } } }) }, true],
+    ['mode claude-md', { '~/.claude/settings.json': JSON.stringify({ pluginConfigs: { 'agents-md@builtin': { options: { instructionFiles: 'claude-md' } } } }) }, false],
+    ['an unknown mode', { '~/.claude/settings.json': JSON.stringify({ pluginConfigs: { 'agents-md@builtin': { options: { instructionFiles: 'something-new' } } } }) }, 'unsure'],
+  ];
+  for (const [label, files, want] of cases) {
+    const f = setup('empty');
+    fs.writeFileSync(path.join(f.project, 'AGENTS.md'), '# agents\n');
+    for (const [rel, text] of Object.entries(files)) {
+      const p = rel.startsWith('~/') ? path.join(f.home, rel.slice(2)) : path.join(f.project, rel);
+      fs.mkdirSync(path.dirname(p), { recursive: true });
+      fs.writeFileSync(p, text);
+    }
+    const ctx = makeContext({ home: f.home, project: f.project, env: {} });
+    assert.equal(detect(ctx).claude_reads_project_agents_md, want, label);
+    const r = readers(path.join(f.project, 'AGENTS.md'), ctx);
+    assert.equal(r.tools.includes('claude-code'), want !== false, label);
+    assert.equal(r.unsure, want === 'unsure', label);
+  }
+});
+
+test('readers: AGENTS.md linked to CLAUDE.md is read by Claude Code', () => {
+  const f = setup('empty');
+  fs.writeFileSync(path.join(f.project, 'CLAUDE.md'), '# shared\n');
+  fs.symlinkSync('CLAUDE.md', path.join(f.project, 'AGENTS.md'));
+  const ctx = makeContext({ home: f.home, project: f.project, env: {} });
+  assert.equal(detect(ctx).claude_reads_project_agents_md, true);
+});
+
+test('readers: unsure → Claude Code keeps its own rules file and the preview says lines may load twice', () => {
+  const f = setup('empty');
+  fs.writeFileSync(path.join(f.project, 'AGENTS.md'), '# agents\n');
+  fs.mkdirSync(path.join(f.home, '.claude'));
+  fs.writeFileSync(path.join(f.home, '.claude', 'settings.json'), JSON.stringify({ pluginConfigs: { 'agents-md@builtin': { options: { instructionFiles: 'something-new' } } } }));
+  const prof = writeProfile(f, path.join(PROFILES, 'empty.json'), { tools: ['claude-code', 'codex'] });
+  const p = plan(f, prof);
+  ok(p);
+  assert.ok(p.plan.items.some((x) => x.path === '.claude/rules/modelproof.md'));
+  assert.match(p.out, /may load twice/);
+});
+
+test('readers: AGENTS.override.md → Codex reads it instead, and only the Codex text goes there', () => {
+  const f = setup('empty');
+  fs.writeFileSync(path.join(f.project, 'AGENTS.md'), '# shared\n');
+  fs.writeFileSync(path.join(f.project, 'AGENTS.override.md'), '# override\n');
+  const ctx = makeContext({ home: f.home, project: f.project, env: {} });
+  assert.ok(!readers(path.join(f.project, 'AGENTS.md'), ctx).tools.includes('codex'));
+  assert.deepEqual(readers(path.join(f.project, 'AGENTS.override.md'), ctx).tools, ['codex']);
+  assert.equal(detect(ctx).agents_override.project, true);
+  const prof = writeProfile(f, path.join(PROFILES, 'empty.json'), { tools: ['codex'] });
+  const p = plan(f, prof);
+  const text = p.plan.items.filter((x) => x.kind === 'block');
+  assert.deepEqual(text.map((x) => x.path), ['AGENTS.override.md']);
+  roundtrip(f, prof);
+});
+
+test('CODEX_HOME / CLAUDE_CONFIG_DIR: honoured inside the home folder, ignored (with a note) outside it', () => {
+  const f = setup('empty');
+  fs.mkdirSync(path.join(f.home, 'cfg', 'codex'), { recursive: true });
+  let ctx = makeContext({ home: f.home, project: f.project, env: { CODEX_HOME: path.join(f.home, 'cfg', 'codex'), CLAUDE_CONFIG_DIR: '/etc/claude-elsewhere' } });
+  const s = detect(ctx);
+  assert.equal(s.dirs.codex, '~/cfg/codex');
+  assert.equal(s.dirs.claude, '~/.claude');
+  assert.ok(s.notes.some((n) => /CLAUDE_CONFIG_DIR points outside/.test(n)));
+  ctx = makeContext({ home: f.home, env: { CLAUDE_CODE_SUBAGENT_MODEL_FORCE: '1' } });
+  assert.equal(detect(ctx).env.subagent_model_force, true);
+  // Plan through the CLI with CODEX_HOME set: the Codex files go under it.
+  const prof = path.join(PROFILES, 'codex.json');
+  const out = path.join(f.work, 'p.json');
+  const r = node(INSTALL, ['plan', '--profile', prof, '--data', DATA, '--home', f.home, '--out', out], cleanEnv({ MODELPROOF_HOME: f.state, CODEX_HOME: path.join(f.home, 'cfg', 'codex') }));
+  ok(r);
+  const p = JSON.parse(read(out));
+  assert.ok(p.items.every((x) => x.path.startsWith('~/cfg/codex/')), JSON.stringify(p.items.map((x) => x.path)));
+});
+
+/* ------------------------------------------------------------------ edge cases */
+
+test('drift: a target changed after the preview → apply exits 3 and writes nothing', () => {
+  const f = setup('codex');
+  const p = plan(f, path.join(PROFILES, 'codex.json'), { project: false });
+  fs.appendFileSync(path.join(f.home, '.codex', 'AGENTS.md'), '- one more rule\n');
+  const snap = snapshot(f);
+  const r = apply(f, p);
+  assert.equal(r.code, 3, r.all);
+  assert.match(r.all, /changed since the preview/);
+  ok(compare(f, snap));
+  assert.ok(!fs.existsSync(path.join(f.state, 'installs')), 'no install record written');
+});
+
+test('apply refuses a plan that is not the one previewed (wrong --expect, edited plan) with exit 3', () => {
+  const f = setup('empty');
+  const p = plan(f, path.join(PROFILES, 'empty.json'));
+  const snap = snapshot(f);
+  assert.equal(apply(f, p, { expect: '0000000000000000' }).code, 3);
+  const edited = { ...p.plan, items: p.plan.items.slice(1) };
+  fs.writeFileSync(p.file, JSON.stringify(edited));
+  assert.equal(apply(f, p).code, 3);
+  ok(compare(f, snap));
+  const r = node(INSTALL, ['apply', '--plan', p.file], f.env);
+  assert.equal(r.code, 1, 'apply without --expect is a usage error');
+});
+
+test('apply refuses a target outside the fixed list, even in a plan with a matching hash (exit 2)', () => {
+  const f = setup('empty');
+  const p = plan(f, path.join(PROFILES, 'empty.json'));
+  const bad = JSON.parse(JSON.stringify(p.plan));
+  bad.items[0].path = '../outside.md';
+  bad.package.parts[0].target.path = '../outside.md';
+  delete bad.hash;
+  bad.hash = crypto.createHash('sha256').update(JSON.stringify(bad)).digest('hex').slice(0, 16);
+  fs.writeFileSync(p.file, JSON.stringify(bad));
+  const snap = snapshot(f);
+  const r = apply(f, { file: p.file, plan: bad });
+  assert.equal(r.code, 2, r.all);
+  assert.match(r.all, /refused/);
+  ok(compare(f, snap));
+  assert.ok(!fs.existsSync(path.join(f.dir, 'outside.md')));
+});
+
+test('a target linked outside the home and project folders, or to nothing, is refused and never written', () => {
+  for (const kind of ['outside', 'dangling']) {
+    const f = setup('empty');
+    const outside = path.join(tmp('outside'), 'AGENTS.md');
+    fs.writeFileSync(outside, '# elsewhere\n');
+    fs.symlinkSync(kind === 'outside' ? outside : path.join(f.project, 'nowhere.md'), path.join(f.project, 'AGENTS.md'));
+    const prof = writeProfile(f, path.join(PROFILES, 'empty.json'), { tools: ['codex'] });
+    const snap = snapshot(f);
+    const p = plan(f, prof);
+    assert.equal(p.code, 2, p.all);
+    const item = p.plan.items.find((x) => x.path === 'AGENTS.md');
+    assert.equal(item.action, 'conflict');
+    assert.match(item.reason, kind === 'outside' ? /outside the home and project folders/ : /points nowhere/);
+    ok(apply(f, p, { skip: String(item.n) }));
+    assert.equal(read(outside), '# elsewhere\n');
+    ok(undo(f, p.plan.id));
+    ok(compare(f, snap));
+  }
+});
+
+test('name collision: someone else\'s file or helper name is never overwritten (exit 2, --skip continues)', () => {
+  const f = setup('empty');
+  const own = '---\nname: my-scout\ndescription: mine\n---\nmine\n';
+  fs.mkdirSync(path.join(f.project, '.claude', 'agents'), { recursive: true });
+  fs.writeFileSync(path.join(f.project, '.claude', 'agents', 'modelproof-scout.md'), own);
+  fs.writeFileSync(path.join(f.project, '.claude', 'agents', 'helper.md'), '---\nname: modelproof-builder\ndescription: mine\n---\nmine\n');
+  const snap = snapshot(f);
+  const p = plan(f, path.join(PROFILES, 'empty.json'));
+  assert.equal(p.code, 2, p.all);
+  const conflicts = p.plan.items.filter((x) => x.action === 'conflict');
+  assert.deepEqual(conflicts.map((x) => x.n), [1, 2]);
+  assert.match(conflicts[0].reason, /did not write/);
+  assert.match(conflicts[1].reason, /already used by \.claude\/agents\/helper\.md/);
+  assert.match(p.out, /--skip 1,2/);
+  const r = apply(f, p);
+  assert.equal(r.code, 2);
+  ok(compare(f, snap));
+  ok(apply(f, p, { skip: '1,2' }));
+  assert.equal(read(path.join(f.project, '.claude', 'agents', 'modelproof-scout.md')), own);
+  assert.ok(fs.existsSync(path.join(f.project, '.claude', 'agents', 'modelproof-reviewer.md')));
+  ok(undo(f, p.plan.id));
+  ok(compare(f, snap));
+});
+
+test('unparseable settings.json → the settings item needs a decision (exit 2) and is never written', () => {
+  const f = setup('empty');
+  const bad = '{\n  "permissions": {},\n}\n';
+  fs.mkdirSync(path.join(f.project, '.claude'));
+  fs.writeFileSync(path.join(f.project, '.claude', 'settings.json'), bad);
+  const prof = writeProfile(f, path.join(PROFILES, 'empty.json'), { effort_cap: 'high' });
+  const snap = snapshot(f);
+  const p = plan(f, prof);
+  assert.equal(p.code, 2, p.all);
+  const item = p.plan.items.find((x) => x.path === '.claude/settings.json');
+  assert.equal(item.action, 'conflict');
+  assert.match(item.reason, /cannot be read as JSON/);
+  assert.equal(apply(f, p).code, 2);
+  ok(compare(f, snap));
+  ok(apply(f, p, { skip: String(item.n) }));
+  assert.equal(read(path.join(f.project, '.claude', 'settings.json')), bad);
+  ok(undo(f, p.plan.id));
+  ok(compare(f, snap));
+});
+
+test('settings keys go in as text: indent kept, never copied to the state folder, user edits survive undo', () => {
+  const f = setup('org-40');
+  const settings = path.join(f.project, '.claude', 'settings.json');
+  const original = read(settings);
+  const prof = writeProfile(f, path.join(PROFILES, 'org-40.json'), { effort_cap: 'high' });
+  const before = snapshot(f);
+  const p = plan(f, prof);
+  ok(p);
+  assert.equal(p.plan.items.find((x) => x.path === '.claude/settings.json').action, 'add-keys');
+  ok(apply(f, p));
+  const after = read(settings);
+  assert.equal(after, original.replace(/\n}\n$/, ',\n    "maxEffortLevel": "high"\n}\n'));
+  assert.deepEqual(JSON.parse(after).permissions, JSON.parse(original).permissions);
+  ok(verify(f));
+  ok(dupes(f));
+  const stateFiles = [];
+  const walk = (d) => { for (const n of fs.readdirSync(d)) { const p2 = path.join(d, n); if (fs.statSync(p2).isDirectory()) walk(p2); else stateFiles.push(p2); } };
+  walk(f.state);
+  for (const s of stateFiles.filter((x) => !x.includes(`${path.sep}bin${path.sep}`))) assert.doesNotMatch(read(s), /make check/, `${s} must not hold a copy of settings.json`);
+  // Reinstall: no second key.
+  ok(apply(f, plan(f, prof)));
+  assert.equal(read(settings), after);
+  // The user adds a key of their own; undo takes out only ours.
+  fs.writeFileSync(settings, read(settings).replace('{\n', '{\n    "model": "opus",\n'));
+  const u = undo(f, p.plan.id);
+  ok(u);
+  assert.match(u.out, /except your later edits/);
+  assert.equal(read(settings), original.replace('{\n', '{\n    "model": "opus",\n'));
+  fs.writeFileSync(settings, original);
+  ok(compare(f, before));
+});
+
+test('a key modelproof added and the user later changed is kept, and needs a decision on reinstall', () => {
+  const f = setup('org-40');
+  const settings = path.join(f.project, '.claude', 'settings.json');
+  const prof = writeProfile(f, path.join(PROFILES, 'org-40.json'), { effort_cap: 'high' });
+  const p = plan(f, prof);
+  ok(apply(f, p));
+  fs.writeFileSync(settings, read(settings).replace('"maxEffortLevel": "high"', '"maxEffortLevel": "low"'));
+  const p2 = plan(f, prof);
+  assert.equal(p2.code, 2);
+  assert.match(p2.plan.items.find((x) => x.path === '.claude/settings.json').reason, /changed; your value stays/);
+  ok(undo(f, p.plan.id));
+  assert.match(read(settings), /"maxEffortLevel": "low"/);
+});
+
+test('edit outside the block → reinstall → undo leaves the original plus the edit', () => {
+  const f = setup('codex');
+  const file = path.join(f.home, '.codex', 'AGENTS.md');
+  const original = read(file);
+  const profile = path.join(PROFILES, 'codex.json');
+  const p = plan(f, profile, { project: false });
+  ok(apply(f, p));
+  fs.writeFileSync(file, '# My top line\n' + read(file) + '- a rule after the block\n');
+  const p2 = plan(f, profile, { project: false });
+  ok(p2);
+  assert.equal(p2.plan.items.find((x) => x.kind === 'block').action, 'unchanged');
+  ok(apply(f, p2));
+  ok(verify(f, false));
+  const u = undo(f, p.plan.id);
+  ok(u);
+  assert.match(u.out, /except your later edits: ~\/\.codex\/AGENTS\.md/);
+  assert.equal(read(file), '# My top line\n' + original + '- a rule after the block\n');
+});
+
+test('edit inside the block → reinstall keeps it (exit 2); undo cuts the block and keeps a copy of the edit', () => {
+  const f = setup('codex');
+  const file = path.join(f.home, '.codex', 'AGENTS.md');
+  const before = snapshot(f);
+  const profile = path.join(PROFILES, 'codex.json');
+  const p = plan(f, profile, { project: false });
+  ok(apply(f, p));
+  fs.writeFileSync(file, read(file).replace('### How to hand off', '### How to hand off (my edit)'));
+  assert.equal(verify(f, false).code, 3);
+  const p2 = plan(f, profile, { project: false });
+  assert.equal(p2.code, 2);
+  assert.match(p2.plan.items.find((x) => x.kind === 'block').reason, /edited; your edits stay/);
+  const u = undo(f, p.plan.id);
+  ok(u);
+  const kept = /kept at (\S+)/.exec(u.out);
+  assert.ok(kept, u.out);
+  assert.match(read(kept[1]), /How to hand off \(my edit\)/);
+  ok(compare(f, before));
+});
+
+test('profile A → profile B → undo: the tree is back to before A (remove items are numbered)', () => {
+  const f = setup('empty');
+  const before = snapshot(f);
+  const A = path.join(PROFILES, 'empty.json');
+  const B = writeProfile(f, A, { tools: ['claude-code', 'codex'], roles: { builder: 'claude-opus-5-5' } });
+  const pa = plan(f, A);
+  ok(apply(f, pa));
+  const pb = plan(f, B);
+  ok(pb);
+  const rm = pb.plan.items.find((x) => x.action === 'remove');
+  assert.ok(rm, pb.out);
+  assert.equal(rm.path, '.claude/rules/modelproof.md');
+  assert.equal(rm.n, pb.plan.package.parts.length + 1);
+  assert.ok(pb.plan.items.some((x) => x.path === 'AGENTS.md' && x.action === 'create'));
+  assert.ok(pb.plan.items.some((x) => x.path === '.claude/agents/modelproof-builder.md' && x.action === 'update'));
+  ok(apply(f, pb));
+  assert.ok(!fs.existsSync(path.join(f.project, '.claude', 'rules')), 'the emptied rules folder it made is gone');
+  ok(verify(f));
+  ok(dupes(f));
+  ok(undo(f, pa.plan.id));
+  ok(compare(f, before));
+});
+
+test('a read-only target mid-apply rolls back every write (tree and install record unchanged)', { skip: process.getuid && process.getuid() === 0 ? 'root ignores file modes' : false }, () => {
+  const f = setup('codex');
+  const file = path.join(f.home, '.codex', 'AGENTS.md');
+  const p = plan(f, path.join(PROFILES, 'codex.json'), { project: false });
+  fs.chmodSync(file, 0o444);
+  const snap = snapshot(f);
+  const r = apply(f, p);
+  assert.equal(r.code, 1, r.all);
+  assert.match(r.all, /rolled back/);
+  ok(compare(f, snap));
+  assert.ok(!fs.existsSync(path.join(f.state, 'installs', p.plan.id, 'manifest.json')));
+  fs.chmodSync(file, 0o644);
+});
+
+test('CRLF files keep CRLF, and a file with no final newline keeps none', () => {
+  for (const shape of ['crlf', 'no-final-newline']) {
+    const f = setup('codex');
+    const file = path.join(f.home, '.codex', 'AGENTS.md');
+    const text = read(file);
+    fs.writeFileSync(file, shape === 'crlf' ? text.replace(/\n/g, '\r\n') : text.replace(/\n$/, ''));
+    const before = snapshot(f);
+    const p = plan(f, path.join(PROFILES, 'codex.json'), { project: false });
+    ok(apply(f, p));
+    const after = read(file);
+    if (shape === 'crlf') assert.doesNotMatch(after, /[^\r]\n/, 'no bare LF');
+    else assert.ok(after.endsWith('<!-- modelproof:end -->'));
+    ok(verify(f, false));
+    ok(undo(f, p.plan.id));
+    ok(compare(f, before), shape);
+  }
+});
+
+test('adopt: marked parts with no install record are recognised; undo and undo --from-markers restore', () => {
+  for (const [name, profile, project] of [['empty', path.join(PROFILES, 'empty.json'), true], ['codex', path.join(PROFILES, 'codex.json'), false]]) {
+    const f = setup(name);
+    const before = snapshot(f);
+    ok(apply(f, plan(f, profile, { project })));
+    const mid = snapshot(f);
+    // A teammate's checkout, or a lost state folder: a fresh MODELPROOF_HOME.
+    const other = tmp('state2');
+    const p = plan(f, profile, { project, state: other });
+    ok(p);
+    assert.ok(p.plan.items.every((x) => x.action === 'adopt'), JSON.stringify(p.plan.items.map((x) => x.action)));
+    ok(apply(f, p, { state: other }));
+    ok(compare(f, mid), 'adopting writes nothing');
+    const u = undo(f, p.plan.id, other);
+    ok(u);
+    assert.match(u.out, /no earlier record/);
+    ok(compare(f, before), `${name}: undo of adopted parts`);
+    // Again, with no record at all.
+    ok(apply(f, plan(f, profile, { project })));
+    const third = tmp('state3');
+    const r = node(INSTALL, ['undo', '--from-markers', '--home', f.home, ...(project ? ['--project', f.project] : [])], cleanEnv({ MODELPROOF_HOME: third }));
+    ok(r);
+    assert.match(r.out, /Took out \d+ marked part/);
+    ok(compare(f, before), `${name}: undo --from-markers`);
+  }
+});
+
+test('a second text copy for the same tool across user and project scope is refused (exit 2)', () => {
+  const f = setup('cc-max5x');
+  ok(apply(f, plan(f, path.join(PROFILES, 'cc-max5x.json'), { project: false })));
+  const p = plan(f, path.join(PROFILES, 'empty.json'));
+  assert.equal(p.code, 2, p.all);
+  const item = p.plan.items.find((x) => x.path === '.claude/rules/modelproof.md');
+  assert.equal(item.action, 'conflict');
+  assert.match(item.reason, /already has modelproof text at user scope/);
+  assert.ok(p.plan.items.filter((x) => x.action === 'conflict').length === 1, 'the helper files are fine');
+});
+
+test('damaged markers → plan exits 4 and writes no plan', () => {
+  const f = setup('codex');
+  const file = path.join(f.home, '.codex', 'AGENTS.md');
+  fs.appendFileSync(file, '\n<!-- modelproof:begin v1 sha=0123456789abcdef -->\nx\n<!-- modelproof:begin v1 sha=0123456789abcdef -->\n');
+  const p = plan(f, path.join(PROFILES, 'codex.json'), { project: false });
+  assert.equal(p.code, 4, p.all);
+  assert.equal(p.plan, null);
+  assert.match(p.all, /second begin marker/);
+});
+
+test('verify: exit 3 when an installed file changed, exit 4 when a second block appears', () => {
+  const f = setup('org-40');
+  const p = plan(f, path.join(PROFILES, 'org-40.json'));
+  ok(apply(f, p));
+  const scout = path.join(f.project, '.claude', 'agents', 'modelproof-scout.md');
+  const keep = read(scout);
+  fs.appendFileSync(scout, 'extra\n');
+  assert.equal(verify(f).code, 3);
+  fs.writeFileSync(scout, keep);
+  ok(verify(f));
+  fs.appendFileSync(path.join(f.project, 'AGENTS.md'), '\n<!-- modelproof:begin v1 sha=0123456789abcdef -->\nx\n<!-- modelproof:end -->\n');
+  assert.equal(verify(f).code, 4);
+  assert.equal(dupes(f).code, 1, 'setup-hash sees it too');
+});
+
+test('state folder: 700 folders, 600 files; a held lock stops a second run; the printed undo line works on its own', () => {
+  const f = setup('empty');
+  const before = snapshot(f);
+  const p = plan(f, path.join(PROFILES, 'empty.json'));
+  fs.mkdirSync(f.state, { recursive: true });
+  fs.writeFileSync(path.join(f.state, 'lock'), '1');
+  const locked = apply(f, p);
+  assert.equal(locked.code, 1);
+  assert.match(locked.all, /another modelproof run/);
+  fs.unlinkSync(path.join(f.state, 'lock'));
+  const r = apply(f, p);
+  ok(r);
+  const m = path.join(f.state, 'installs', p.plan.id, 'manifest.json');
+  assert.equal(fs.statSync(m).mode & 0o777, 0o600);
+  assert.equal(fs.statSync(path.join(f.state, 'installs', p.plan.id)).mode & 0o777, 0o700);
+  assert.equal(fs.statSync(path.join(f.state, 'bin')).mode & 0o777, 0o700);
+  const line = /Undo: node (\S+) undo ([0-9a-f]{12})/.exec(r.out);
+  assert.ok(line, r.out);
+  assert.equal(line[2], p.plan.id);
+  // Run the printed command with no MODELPROOF_HOME: it finds the state folder from its own location.
+  const u = node(line[1], ['undo', line[2]], cleanEnv());
+  ok(u);
+  ok(compare(f, before));
+  const st = inst(f, 'status');
+  ok(st);
+  assert.match(st.out, new RegExp(`${p.plan.id} +project 0 part`));
+});
+
+test('ids: user scope and project scope get different install ids, stable across runs', () => {
+  const f = setup('empty');
+  const a = plan(f, path.join(PROFILES, 'empty.json'));
+  const b = plan(f, path.join(PROFILES, 'empty.json'));
+  const c = plan(f, path.join(PROFILES, 'cc-max5x.json'), { project: false });
+  assert.equal(a.plan.id, b.plan.id);
+  assert.equal(a.plan.hash, b.plan.hash, 'same inputs, same plan hash');
+  assert.notEqual(a.plan.id, c.plan.id);
+  assert.match(a.plan.id, /^[0-9a-f]{12}$/);
+});
+
+test('usage: unknown command and a project profile without --project exit 1', () => {
+  const f = setup('empty');
+  assert.equal(inst(f, 'frobnicate').code, 1);
+  assert.equal(plan(f, path.join(PROFILES, 'empty.json'), { project: false }).code, 1);
+});

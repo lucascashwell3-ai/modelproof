@@ -1,0 +1,340 @@
+{
+  "version": "modelproof.package/1",
+  "generator_version": "1.0.0",
+  "as_of": "2026-09-27",
+  "profile": {
+    "schema": "modelproof.profile/1",
+    "who": "person",
+    "tools": [
+      "claude-code",
+      "codex"
+    ],
+    "scope": "user",
+    "plans": [
+      {
+        "vendor": "Anthropic",
+        "plan": "Max 5x"
+      },
+      {
+        "vendor": "OpenAI",
+        "plan": "Plus"
+      }
+    ],
+    "api": false,
+    "limits": "sometimes",
+    "work": [
+      "coding"
+    ],
+    "like": [],
+    "never": [],
+    "roles": {},
+    "effort_cap": null,
+    "set_default_model": false,
+    "org": null
+  },
+  "parts": [
+    {
+      "id": "claude-code:agent:scout",
+      "tool": "claude-code",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.claude/agents/modelproof-scout.md"
+      },
+      "content": "---\nname: modelproof-scout\ndescription: Reads, searches and sums up code or docs for the lead. Use it for long reading and lookups. It does not edit files.\nmodel: inherit\n---\n<!-- modelproof:owned v1 -->\nYou are the scout. You find and read; you do not edit files.\n- Search first (grep or glob), then open only the line ranges you need.\n- Never read a large file whole.\n- Answer in a few lines: what you found, with file:line for each fact.\n- Say what you could not find.\n- Put long findings in a file on disk and return its path.\n",
+      "why": "Claude Code runs this helper on the lead's model (model: inherit).",
+      "lines": 12
+    },
+    {
+      "id": "claude-code:agent:builder",
+      "tool": "claude-code",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.claude/agents/modelproof-builder.md"
+      },
+      "content": "---\nname: modelproof-builder\ndescription: Makes one planned change from a brief (exact files, goal, done check) and reports the check result.\nmodel: inherit\n---\n<!-- modelproof:owned v1 -->\nYou are the builder. You make the change the lead planned.\n- Touch only the files the brief names; ask before touching others.\n- Run the done check from the brief and report its exact result.\n- Return in a few lines: files changed, the last lines of the check, anything left undone.\n- Put long logs in a file on disk and return its path.\n",
+      "why": "Claude Code runs this helper on the lead's model (model: inherit).",
+      "lines": 11
+    },
+    {
+      "id": "claude-code:agent:reviewer",
+      "tool": "claude-code",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.claude/agents/modelproof-reviewer.md"
+      },
+      "content": "---\nname: modelproof-reviewer\ndescription: Reviews a change cold from the diff, runs the checks itself, and reports problems with file:line.\nmodel: inherit\n---\n<!-- modelproof:owned v1 -->\nYou are the reviewer. You review cold: the diff, not the author's summary.\n- Read the diff (git diff) and the files it touches.\n- Run the project's checks yourself; scripts decide pass or fail.\n- Report problems worst first, each with file:line and a one-line fix.\n- Say plainly when you found nothing wrong. Do not edit files.\n",
+      "why": "Claude Code runs this helper on the lead's model (model: inherit).",
+      "lines": 11
+    },
+    {
+      "id": "codex:agent:scout",
+      "tool": "codex",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.codex/agents/modelproof-scout.toml"
+      },
+      "content": "# modelproof:owned v1\nname = \"modelproof-scout\"\ndescription = \"Reads, searches and sums up code or docs for the lead. Use it for long reading and lookups. It does not edit files.\"\ndeveloper_instructions = \"\"\"\nYou are the scout. You find and read; you do not edit files.\n- Search first (grep or glob), then open only the line ranges you need.\n- Never read a large file whole.\n- Answer in a few lines: what you found, with file:line for each fact.\n- Say what you could not find.\n- Put long findings in a file on disk and return its path.\n\"\"\"\n",
+      "why": "No model set, so Codex runs this helper on the lead's model and effort.",
+      "lines": 11
+    },
+    {
+      "id": "codex:agent:builder",
+      "tool": "codex",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.codex/agents/modelproof-builder.toml"
+      },
+      "content": "# modelproof:owned v1\nname = \"modelproof-builder\"\ndescription = \"Makes one planned change from a brief (exact files, goal, done check) and reports the check result.\"\ndeveloper_instructions = \"\"\"\nYou are the builder. You make the change the lead planned.\n- Touch only the files the brief names; ask before touching others.\n- Run the done check from the brief and report its exact result.\n- Return in a few lines: files changed, the last lines of the check, anything left undone.\n- Put long logs in a file on disk and return its path.\n\"\"\"\n",
+      "why": "No model set, so Codex runs this helper on the lead's model and effort.",
+      "lines": 10
+    },
+    {
+      "id": "codex:agent:reviewer",
+      "tool": "codex",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.codex/agents/modelproof-reviewer.toml"
+      },
+      "content": "# modelproof:owned v1\nname = \"modelproof-reviewer\"\ndescription = \"Reviews a change cold from the diff, runs the checks itself, and reports problems with file:line.\"\ndeveloper_instructions = \"\"\"\nYou are the reviewer. You review cold: the diff, not the author's summary.\n- Read the diff (git diff) and the files it touches.\n- Run the project's checks yourself; scripts decide pass or fail.\n- Report problems worst first, each with file:line and a one-line fix.\n- Say plainly when you found nothing wrong. Do not edit files.\n\"\"\"\n",
+      "why": "No model set, so Codex runs this helper on the lead's model and effort.",
+      "lines": 10
+    },
+    {
+      "id": "claude-code:rules",
+      "tool": "claude-code",
+      "readers": [
+        "claude-code"
+      ],
+      "kind": "owned-file",
+      "enforced": false,
+      "target": {
+        "scope": "user",
+        "path": "~/.claude/rules/modelproof.md"
+      },
+      "content": "<!-- modelproof:owned v1 -->\n# Modelproof helpers and hand-off (facts as of 2026-09-27)\nLead: the model you choose in the tool. Helpers marked inherit run on it.\n\n## Helpers\n- Call these helpers by name and pass no model: a model given per call overrides the file. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- modelproof-scout, modelproof-builder, modelproof-reviewer → inherit: they run on the lead's model\n  Source: Claude Code docs, https://code.claude.com/docs/en/model-config (2026-09-27)\n\n## How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n- Send verbose work (test runs, logs) to a helper so only a summary comes back. Source: Claude Code docs, https://code.claude.com/docs/en/costs (2026-09-27)\n\n## Context\n- Search before reading; read line ranges, not whole big files.\n- Each Claude Code subagent runs in its own context window with its own system prompt, tools and permissions. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n\n## Usage\n- Subagent requests count toward the same usage limits as the main Claude Code conversation. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- Anthropic reports that in its data agents used about 4 times the tokens of chat, and multi-agent systems about 15 times. Source: Anthropic docs, https://www.anthropic.com/engineering/multi-agent-research-system (2026-09-27)\n- Anthropic's cost guide reports that, on work one model could handle alone, the same model at lower effort cost less than an orchestrator setup in every measured case. Source: Anthropic docs, https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence.md (2026-09-27)\n\n## Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- An effort field in a subagent file overrides the session effort level while that subagent runs. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-09-27)\n- Effort levels per model: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "why": "Claude Code loads every file in rules/ each session; your CLAUDE.md is not touched.",
+      "lines": 30
+    },
+    {
+      "id": "codex:text",
+      "tool": "codex",
+      "readers": [
+        "codex"
+      ],
+      "kind": "block",
+      "enforced": false,
+      "target": {
+        "scope": "user",
+        "path": "~/.codex/AGENTS.md"
+      },
+      "content": "## Modelproof helpers and hand-off (facts as of 2026-09-27)\nLead: the model you choose in the tool. Helpers marked inherit run on it.\n\n### Helpers\n- modelproof-scout, modelproof-builder, modelproof-reviewer → inherit: they run on the lead's model\n  Source: Codex CLI docs, https://developers.openai.com/codex/subagents.md (2026-09-27)\n\n### How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n### Context\n- Search before reading; read line ranges, not whole big files.\n- Codex stops adding instruction files once their combined size reaches project_doc_max_bytes, which is 32 KiB by default. Source: Codex CLI docs, https://developers.openai.com/codex/guides/agents-md (2026-09-27)\n\n### Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- OpenAI's reasoning guide says lower reasoning effort favors speed and lower token use, and higher effort makes the model think more completely. Source: OpenAI docs, https://developers.openai.com/api/docs/guides/reasoning (2026-09-27)\n- Effort levels per model: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "why": "Codex reads this AGENTS.md before any task.",
+      "lines": 21
+    }
+  ],
+  "roles": {
+    "claude-code": {
+      "lead": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [],
+        "price": null,
+        "usage": null
+      },
+      "scout": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "cc-inherit-follows-switch",
+            "sentence": "A subagent that inherits the session model follows a /model switch; a model field in its file keeps it fixed.",
+            "quote": "To keep a custom subagent on a smaller model, set model in its definition.",
+            "source_url": "https://code.claude.com/docs/en/model-config",
+            "date": "2026-09-27"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "builder": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "cc-inherit-follows-switch",
+            "sentence": "A subagent that inherits the session model follows a /model switch; a model field in its file keeps it fixed.",
+            "quote": "To keep a custom subagent on a smaller model, set model in its definition.",
+            "source_url": "https://code.claude.com/docs/en/model-config",
+            "date": "2026-09-27"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "reviewer": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "cc-inherit-follows-switch",
+            "sentence": "A subagent that inherits the session model follows a /model switch; a model field in its file keeps it fixed.",
+            "quote": "To keep a custom subagent on a smaller model, set model in its definition.",
+            "source_url": "https://code.claude.com/docs/en/model-config",
+            "date": "2026-09-27"
+          }
+        ],
+        "price": null,
+        "usage": null
+      }
+    },
+    "codex": {
+      "lead": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [],
+        "price": null,
+        "usage": null
+      },
+      "scout": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "codex-subagent-inherits",
+            "sentence": "A Codex subagent with no model or reasoning effort configured uses the parent agent's model and effort.",
+            "quote": "If you don't configure a subagent model or model_reasoning_effort , the subagent inherits the parent agent's model and reasoning effort.",
+            "source_url": "https://developers.openai.com/codex/subagents.md",
+            "date": "2026-09-27"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "builder": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "codex-subagent-inherits",
+            "sentence": "A Codex subagent with no model or reasoning effort configured uses the parent agent's model and effort.",
+            "quote": "If you don't configure a subagent model or model_reasoning_effort , the subagent inherits the parent agent's model and reasoning effort.",
+            "source_url": "https://developers.openai.com/codex/subagents.md",
+            "date": "2026-09-27"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "reviewer": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "codex-subagent-inherits",
+            "sentence": "A Codex subagent with no model or reasoning effort configured uses the parent agent's model and effort.",
+            "quote": "If you don't configure a subagent model or model_reasoning_effort , the subagent inherits the parent agent's model and reasoning effort.",
+            "source_url": "https://developers.openai.com/codex/subagents.md",
+            "date": "2026-09-27"
+          }
+        ],
+        "price": null,
+        "usage": null
+      }
+    }
+  },
+  "preview_facts": {
+    "models_you_use": [],
+    "tools_and_labs_say": [
+      {
+        "subject": "Claude Code",
+        "claims": [
+          {
+            "id": "cc-sonnet-vs-opus-costs",
+            "sentence": "Claude Code cost docs say Sonnet handles most coding tasks and costs less than Opus, with Opus kept for complex architecture or multi-step reasoning.",
+            "quote": "Sonnet handles most coding tasks well and costs less than Opus. Reserve Opus for complex architectural decisions or multi-step reasoning.",
+            "source_url": "https://code.claude.com/docs/en/costs",
+            "date": "2026-09-27"
+          },
+          {
+            "id": "cc-alias-sonnet",
+            "sentence": "Claude Code describes its sonnet alias as the latest Sonnet model for daily coding tasks.",
+            "quote": "Uses the latest Sonnet model for daily coding tasks",
+            "source_url": "https://code.claude.com/docs/en/model-config",
+            "date": "2026-09-27"
+          },
+          {
+            "id": "cc-alias-opus",
+            "sentence": "Claude Code describes its opus alias as the latest Opus model for complex reasoning tasks.",
+            "quote": "Uses the latest Opus model for complex reasoning tasks",
+            "source_url": "https://code.claude.com/docs/en/model-config",
+            "date": "2026-09-27"
+          }
+        ]
+      },
+      {
+        "subject": "OpenAI",
+        "claims": [
+          {
+            "id": "openai-gpt-6-family-roles",
+            "sentence": "OpenAI's GPT-6 guide assigns gpt-6-astra to its highest capability, gpt-6-sol to strong reasoning on demanding tasks, and gpt-6-luna to efficient, repeatable work at scale.",
+            "quote": "use gpt-6-astra for our highest level of capability, gpt-6-sol for strong reasoning on demanding tasks, or gpt-6-luna for efficient, repeatable work at scale.",
+            "source_url": "https://developers.openai.com/api/docs/guides/latest-model",
+            "date": "2026-09-27"
+          }
+        ]
+      }
+    ]
+  },
+  "facts_used": [
+    "anthropic-effort-defaults",
+    "anthropic-multi-agent-token-use",
+    "anthropic-orchestrator-vs-lower-effort",
+    "cc-alias-opus",
+    "cc-alias-sonnet",
+    "cc-delegate-verbose",
+    "cc-inherit-follows-switch",
+    "cc-sonnet-vs-opus-costs",
+    "cc-subagent-effort",
+    "cc-subagent-model-order",
+    "cc-subagent-own-context",
+    "cc-subagent-usage-limits",
+    "codex-agents-md-size-cap",
+    "codex-subagent-inherits",
+    "openai-effort-speed-vs-depth",
+    "openai-gpt-6-family-roles"
+  ],
+  "notes": [
+    "You use models from 2 labs (Anthropic, OpenAI), so helpers run on the lead's model unless you choose one; each lab's own descriptions are listed as facts.",
+    "Start a new session so each tool loads the new helper and rule files.",
+    "Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history."
+  ],
+  "model_names": {}
+}
