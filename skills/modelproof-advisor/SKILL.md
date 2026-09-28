@@ -79,7 +79,8 @@ profile). A pasted profile skips the questions. Write the answers to `$MP/profil
 - Show the plan output **verbatim** in a code block. Never trim, reword or re-order it; it
   is what they are saying yes to.
 - Then, one line each: the plan hash (the 16 characters after `Plan`); each real conflict
-  from `references/conflict-patterns.md` naming file and line; each `Left out of your
+  (the plan lists its own first, under "Check these before you say Go"; add any other from
+  `references/conflict-patterns.md`) naming file and line; each `Left out of your
   answers:` note in plain words with the fix. Nothing conflicts → "Nothing in your setup
   fights this."
 - Offer once: "Say 'show 5' to see a file's full text first." (Item N's text is

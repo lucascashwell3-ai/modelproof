@@ -13,10 +13,10 @@ places, never env values, never tokens. You read no more than it points to.
 | `files[]` | every instruction file it found: `path`, `lines`, `readers` (which tools load it), `real_path` when it is a link |
 | `claude_reads_project_agents_md` | `true`, `false` or `unsure`: whether Claude Code would load the project AGENTS.md |
 | `agents_override` | an `AGENTS.override.md` exists (Codex then reads that instead) |
-| `agents[]` | helper agents already there: tool, scope, name, model, whether Modelproof made it |
+| `agents[]` | helper agents already there: tool, scope, name, model, its one-line description, whether Modelproof made it |
 | `settings[]` | settings files and their key **names**; values only for model and effort keys |
 | `env.subagent_model_force` | `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` is set (name only): Claude Code then ignores every helper file's model line |
-| `heads_up[]` | lines that already talk about models, effort or helpers: `file`, `line`, up to 80 characters; secret-looking lines say "(line not shown)" |
+| `heads_up[]` | lines that already talk about models, effort or helpers: `file`, `line`, up to 80 characters, from CLAUDE.md, AGENTS.md, rules files and imports alike; a line holding a secret-looking value says "(line not shown)" |
 | `mentions[]` | memory or output-style files that name a model: `file` and `line` only |
 | `notes[]` | anything detect skipped and why |
 

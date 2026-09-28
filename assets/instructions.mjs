@@ -534,8 +534,21 @@ function normalizeSetup(setup) {
   const agents = [];
   for (const a of arr(s && s.agents)) {
     if (!isObj(a) || typeof a.name !== 'string') continue;
-    agents.push({ tool: TOOLS.includes(a.tool) ? a.tool : null, scope: a.scope === 'project' ? 'project' : 'user', name: a.name, modelproof: a.modelproof === true });
+    agents.push({
+      tool: TOOLS.includes(a.tool) ? a.tool : null, scope: a.scope === 'project' ? 'project' : 'user', name: a.name, modelproof: a.modelproof === true,
+      path: safeLine(a.path, 200) || null, description: safeLine(a.description, 200) || null,
+    });
   }
+  // Lines of their own instructions that talk about models or helpers, and who reads each file.
+  const headsUp = [];
+  for (const h of arr(s && s.heads_up).slice(0, 30)) {
+    if (!isObj(h) || !Number.isInteger(h.line) || h.line < 1) continue;
+    const file = safeLine(h.file, 200);
+    const text = safeLine(h.text, 80);
+    if (file && text && text !== '(line not shown)') headsUp.push({ file, line: h.line, text });
+  }
+  const readersOf = new Map();
+  for (const f of arr(s && s.files)) if (isObj(f) && typeof f.path === 'string') readersOf.set(safeLine(f.path, 200), arr(f.readers).filter((t) => TOOLS.includes(t)));
   const settings = [];
   for (const x of arr(s && s.settings)) {
     if (!isObj(x)) continue;
@@ -550,7 +563,7 @@ function normalizeSetup(setup) {
     claudeReadsAgents: reads === true ? true : reads === false ? false : 'unsure',
     override: { user: ov.user === true, project: ov.project === true },
     force: !!(s && isObj(s.env) && s.env.subagent_model_force === true),
-    agents, settings, present,
+    agents, settings, present, headsUp, readersOf,
   };
 }
 
@@ -805,6 +818,61 @@ function previewFacts(F, p, ctx) {
   return { models_you_use: models, tools_and_labs_say: said };
 }
 
+/* ------------------------------------------------------------------ checks against their setup */
+
+// Which package helper a line of their instructions, or one of their own helpers, is about.
+const LINE_JOB = {
+  scout: /\b(scout\w*|search\w*|explor\w*|research\w*|look-?ups?)\b/i,
+  builder: /\b(build|builds|builder|building|implement\w*)\b/i,
+  reviewer: /\b(review\w*|verif\w*|audit\w*)\b/i,
+};
+const HELPER_JOB = {
+  scout: /\b(scout\w*|explor\w*|research\w*)\b/i,
+  reviewer: /\b(review\w*|verif\w*|test-?runner\w*|runs? (the )?tests?)\b/i,
+};
+const NEGATION = /\b(never|avoid|don'?t|do not|not)\b/i;
+const MAX_CHECKS = 12;
+
+// Real conflicts between their setup and this package, each tied to the numbered file it touches:
+// (a) a line of theirs that names a different model for a job a helper here does, and (b) a helper
+// of theirs (not Modelproof's) that already does that job. Their files always stay as they are.
+function setupChecks(F, p, S, parts, roles) {
+  const checks = [];
+  const itemOf = (id) => parts.findIndex((x) => x.id === id) + 1;
+  const helperTools = p.tools.filter((t) => HELPER_TOOLS.includes(t) && roles[t]);
+  const seen = new Set();
+  for (const h of S.headsUp) {
+    const fileReaders = S.readersOf.get(h.file);
+    const tools = helperTools.filter((t) => !fileReaders || fileReaders.includes(t));
+    const negated = NEGATION.test(h.text);
+    for (const role of ROLES) {
+      if (!LINE_JOB[role].test(h.text) || seen.has(`${h.file}:${h.line}:${role}`)) continue;
+      for (const tool of tools) {
+        const item = itemOf(`${tool}:agent:${role}`);
+        if (!item) continue;
+        const named = [...new Set([...namedModels(F, h.text), ...refsNamed(F, tool, h.text)])].filter((id) => toolRuns(tool, F.byId.get(id)));
+        if (!named.length) continue;
+        const x = roles[tool][role];
+        const own = x.from !== 'inherit' && x.model_id ? x.model_id : null;
+        if (negated ? !(own && named.includes(own)) : (own && named.includes(own))) continue;
+        seen.add(`${h.file}:${h.line}:${role}`);
+        checks.push({ kind: 'rule', file: h.file, line: h.line, text: h.text, tool, role, item, runs: own ? F.byId.get(own).name : null });
+        break;
+      }
+    }
+  }
+  for (const a of S.agents) {
+    if (a.modelproof || !a.tool || !helperTools.includes(a.tool)) continue;
+    const name = safeLine(a.name, 60);
+    for (const role of ['scout', 'reviewer']) {
+      if (!name || !(HELPER_JOB[role].test(name) || (a.description && HELPER_JOB[role].test(a.description)))) continue;
+      const item = itemOf(`${a.tool}:agent:${role}`);
+      if (item) checks.push({ kind: 'helper', name, path: a.path, tool: a.tool, role, item });
+    }
+  }
+  return checks.slice(0, MAX_CHECKS);
+}
+
 /* ------------------------------------------------------------------ package */
 
 export function buildPackage(profile, facts, setup) {
@@ -957,6 +1025,7 @@ export function buildPackage(profile, facts, setup) {
   notes.push(`Undo removes every file, block and key this adds; ${S.stateDir ? S.stateDir + '/' : 'the Modelproof state folder'} keeps the install history.`);
   const allNotes = uniq([...problems.map((x) => `Left out of your answers: ${x}`), ...ctx.notes, ...notes]);
 
+  const checks = setupChecks(F, p, S, parts, roles);
   const preview = previewFacts(F, p, ctx);
   for (const part of parts) for (const b of arr(part.basis)) ctx.used.add(b.id);
   const model_names = {};
@@ -970,6 +1039,7 @@ export function buildPackage(profile, facts, setup) {
     profile: p,
     parts,
     available,
+    checks,
     roles,
     preview_facts: preview,
     facts_used: [...ctx.used].sort(),
@@ -1027,6 +1097,17 @@ export function renderPreview(pkg) {
   if (extra.length) out.push('  ' + extra.join(' · '));
 
   const roles = isObj(P.roles) ? P.roles : {};
+  const checks = arr(P.checks).filter((c) => isObj(c) && Number.isInteger(c.item));
+  if (checks.length) {
+    const several = HELPER_TOOLS.filter((t) => roles[t]).length > 1;
+    const helper = (c) => `#${c.item} modelproof-${c.role}${several && TOOL_LABEL[c.tool] ? ` (${TOOL_LABEL[c.tool]})` : ''}`;
+    out.push('', 'Check these before you say Go');
+    for (const c of checks) {
+      if (c.kind === 'rule') out.push(`  - ${c.file}:${c.line} says "${c.text}"; ${helper(c)} runs on ${c.runs || 'the lead\'s model'}. Make them match, or skip #${c.item}.`);
+      else out.push(`  - Your helper ${c.name}${c.path ? ` (${c.path})` : ''} does the same job as ${helper(c)}. Keep both, or skip #${c.item}.`);
+    }
+  }
+
   if (Object.keys(roles).length) {
     out.push('', 'Which model each helper runs');
     for (const tool of TOOLS) {

@@ -2,6 +2,10 @@ Modelproof package · facts as of 2026-09-27 · generator 1.0.0
 Your answers: person · user scope · tools: Claude Code · plans: Anthropic Max 5x · limits: often · work: coding, agents
   you use: Claude Opus 5.5, Claude Sonnet 5 · your helper choices: builder Claude Opus 5.5
 
+Check these before you say Go
+  - Your helper code-reviewer does the same job as #3 modelproof-reviewer. Keep both, or skip #3.
+  - Your helper test-runner does the same job as #3 modelproof-reviewer. Keep both, or skip #3.
+
 Which model each helper runs
   Claude Code
     lead     the model you choose in Claude Code

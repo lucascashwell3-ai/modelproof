@@ -146,6 +146,7 @@
     }
   ],
   "available": [],
+  "checks": [],
   "roles": {
     "claude-code": {
       "lead": {

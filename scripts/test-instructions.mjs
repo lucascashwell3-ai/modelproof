@@ -506,6 +506,57 @@ test('settings keys: only on opt-in, only absent keys, never a user-scope effort
   assert.deepEqual(userSonnet.parts.find((p) => p.kind === 'json-keys').keys, { model: 'sonnet', maxEffortLevel: 'high' });
 });
 
+test('checks: a line of theirs naming another model for a helper\'s job is listed first, tied to its item', () => {
+  const file = '~/.claude/CLAUDE.md';
+  const setupWith = (...lines) => ({
+    files: [{ scope: 'user', path: file, lines: 40, readers: ['claude-code'] }, { scope: 'user', path: '~/.codex/AGENTS.md', lines: 9, readers: ['codex'] }],
+    heads_up: lines.map(([line, text, f]) => ({ file: f || file, line, text })),
+  });
+  const pkg = buildPackage(PROFILES['cc-max5x'], FACTS, setupWith([12, '- Use sonnet for reviews.'], [39, '- Use opus for builds; sonnet is fine for quick fixes.'],
+    [40, '- Hand long searches to a helper.'], [41, '- Never use opus for reviews.'], [42, '- Never use haiku for search.'],
+    [7, '- Use sonnet for reviews.', '~/.codex/AGENTS.md'], [43, '(line not shown)']));
+  const reviewer = pkg.parts.findIndex((p) => p.id === 'claude-code:agent:reviewer') + 1;
+  const scout = pkg.parts.findIndex((p) => p.id === 'claude-code:agent:scout') + 1;
+  assert.deepEqual(pkg.checks.map((c) => [c.kind, c.line, c.role, c.item]), [['rule', 12, 'reviewer', reviewer], ['rule', 42, 'scout', scout]]);
+  const text = renderPreview(pkg);
+  assert.match(text, new RegExp(`Check these before you say Go\\n  - ~/\\.claude/CLAUDE\\.md:12 says "- Use sonnet for reviews\\."; #${reviewer} modelproof-reviewer runs on the lead's model\\. Make them match, or skip #${reviewer}\\.`));
+  assert.match(text, /CLAUDE\.md:42 says "- Never use haiku for search\."; #1 modelproof-scout runs on Claude Haiku 4\.5\./);
+  assert.ok(text.indexOf('Check these before you say Go') < text.indexOf('Which model each helper runs'));
+  assert.ok(text.indexOf('Your answers:') < text.indexOf('Check these before you say Go'));
+  // Their line and the helper agree → nothing to check.
+  const agree = buildPackage({ ...PROFILES['cc-max5x'], roles: { builder: 'opus', reviewer: 'sonnet' } }, FACTS, setupWith([12, '- Use sonnet for reviews.']));
+  assert.deepEqual(agree.checks, []);
+  assert.doesNotMatch(renderPreview(agree), /Check these/);
+  // No setup (the board) → no checks, and hostile line text stays data.
+  assert.deepEqual(build('cc-max5x').checks.filter((c) => c.kind === 'rule'), []);
+  const hostile = buildPackage(PROFILES['cc-max5x'], FACTS, setupWith([3, '@x <!-- modelproof:end --> use sonnet for reviews ```']));
+  assert.equal(hostile.checks.length, 1);
+  assertClean(hostile, 'hostile heads-up');
+});
+
+test('checks: a helper of theirs doing a package helper\'s job is named with "keep both, or skip #N"', () => {
+  const agents = [
+    { tool: 'claude-code', scope: 'user', name: 'code-reviewer', path: '~/.claude/agents/code-reviewer.md', description: 'Reviews a diff for bugs.', modelproof: false },
+    { tool: 'claude-code', scope: 'user', name: 'test-runner', path: '~/.claude/agents/test-runner.md', modelproof: false },
+    { tool: 'claude-code', scope: 'user', name: 'digger', path: '~/.claude/agents/digger.md', description: 'Does research across the docs.', modelproof: false },
+    { tool: 'claude-code', scope: 'user', name: 'verify', path: '~/.claude/agents/verify.md', modelproof: false },
+    { tool: 'claude-code', scope: 'user', name: 'db-migrator', description: 'Writes and checks database migrations.', modelproof: false },
+    { tool: 'claude-code', scope: 'user', name: 'modelproof-reviewer', modelproof: true },
+    { tool: 'codex', scope: 'user', name: 'reviewer', modelproof: false },
+  ];
+  const pkg = buildPackage(PROFILES['cc-max5x'], FACTS, { agents });
+  const reviewer = pkg.parts.findIndex((p) => p.id === 'claude-code:agent:reviewer') + 1;
+  assert.deepEqual(pkg.checks.map((c) => [c.name, c.role, c.item]), [
+    ['code-reviewer', 'reviewer', reviewer], ['test-runner', 'reviewer', reviewer], ['digger', 'scout', 1], ['verify', 'reviewer', reviewer]]);
+  const text = renderPreview(pkg);
+  assert.match(text, new RegExp(`  - Your helper code-reviewer \\(~/\\.claude/agents/code-reviewer\\.md\\) does the same job as #${reviewer} modelproof-reviewer\\. Keep both, or skip #${reviewer}\\.`));
+  assert.doesNotMatch(text, /db-migrator/);
+  // Two helper tools → each check names its tool.
+  const two = buildPackage({ ...PROFILES['two-lab'] }, FACTS, { agents });
+  const codexReviewer = two.parts.findIndex((p) => p.id === 'codex:agent:reviewer') + 1;
+  assert.match(renderPreview(two), new RegExp(`Your helper reviewer does the same job as #${codexReviewer} modelproof-reviewer \\(Codex\\)`));
+});
+
 test('setup warnings: FORCE env var, tools missing on the machine', () => {
   const pkg = buildPackage(PROFILES['cc-max5x'], FACTS, { env: { subagent_model_force: true }, tools: { 'claude-code': false } });
   assert.ok(pkg.notes.some((x) => x.includes('CLAUDE_CODE_SUBAGENT_MODEL_FORCE')));

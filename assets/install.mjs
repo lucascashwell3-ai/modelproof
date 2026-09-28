@@ -443,12 +443,20 @@ function readAgents(tool, ctx) {
       text = readSetupText(f, ctx);
       if (text === null) continue;
       const meta = toml ? tomlTop(text) : frontmatter(text);
-      out.push({ tool, scope, path: f, name: meta.name || null, model: meta.model || null, modelproof: ownedState(text).tagged });
+      const d = typeof meta.description === 'string' && !/^[>|][+-]?$/.test(meta.description) ? meta.description.trim().slice(0, 120) : '';
+      out.push({ tool, scope, path: f, name: meta.name || null, model: meta.model || null, description: d && !looksSecret(d) ? d : null, modelproof: ownedState(text).tagged });
     }
   }
   return out;
 }
-const SECRETISH = /(sk-[A-Za-z0-9]|api[_-]?key|token|secret|passw|bearer|[A-Za-z0-9+/=_-]{32,})/i;
+// A line that looks like it holds a secret value. A word like "token" or "secret" on its own is
+// not enough: instruction files talk about token use all the time, and those lines are shown.
+function looksSecret(line) {
+  if (/sk-[A-Za-z0-9_-]{8,}/.test(line)) return true;
+  if (/\b(api[_-]?key|access[_-]?key|token|secret|passw(or)?d|pwd|bearer|auth)\b["']?\s*[:=]\s*["']?[^\s"']{8,}/i.test(line)) return true;
+  if (/\bbearer\s+[A-Za-z0-9._~+/-]{16,}/i.test(line)) return true;
+  return (line.match(/[A-Za-z0-9+=_-]{32,}/g) || []).some((run) => (run.match(/\d/g) || []).length >= 4);
+}
 const RULE_WORDS = /\b(opus|sonnet|haiku|fable|gpt-[\w.-]+|gemini|codex-[\w.-]+|model|models|effort|ultrathink|think hard|subagents?|delegat\w*|helpers?)\b/i;
 const MODEL_WORDS = /\b(opus|sonnet|haiku|fable|gpt-[\w.-]+|gemini|claude-[\w.-]+|model)\b/i;
 
@@ -585,7 +593,7 @@ function scanRules(abs, ctx, out, words) {
   if (owned) return;
   lines.forEach((l, i) => {
     if (inBlock(i) || !words.test(l)) return;
-    out.push({ file: display(abs, ctx), line: i + 1, text: SECRETISH.test(l) ? '(line not shown)' : l.trim().slice(0, 80) });
+    out.push({ file: display(abs, ctx), line: i + 1, text: looksSecret(l) ? '(line not shown)' : l.trim().slice(0, 80) });
   });
 }
 
@@ -637,10 +645,11 @@ export function detect(ctx) {
       for (const x of found) mentions.push({ file: x.file, line: x.line });
     }
   }
-  // Helper agents (name + model only).
+  // Helper agents: name, model and the one-line description (so a helper doing the same job as
+  // one of the package's can be named in the plan).
   const agents = [];
   for (const tool of ['claude-code', 'codex', 'cursor']) {
-    for (const a of readAgents(tool, ctx)) agents.push({ tool, scope: a.scope, path: display(a.path, ctx), name: a.name, model: a.model, modelproof: a.modelproof });
+    for (const a of readAgents(tool, ctx)) agents.push({ tool, scope: a.scope, path: display(a.path, ctx), name: a.name, model: a.model, description: a.description, modelproof: a.modelproof });
   }
   // Settings: key names, plus model/effort values. Never env values, hooks or apiKeyHelper.
   const settings = [];
@@ -1007,10 +1016,17 @@ export function renderPlan(plan, planFile) {
     if (it.reason) out.push(`      ${it.reason}`);
   }
   const conflicts = plan.items.filter((x) => x.action === 'conflict').map((x) => x.n);
-  if (plan.heads_up.length || plan.mentions.length) {
+  // Lines already listed under "Check these before you say Go" are not repeated here.
+  const checked = new Set((Array.isArray(plan.package.checks) ? plan.package.checks : []).filter((c) => c.kind === 'rule').map((c) => `${c.file}:${c.line}`));
+  const heads = plan.heads_up.filter((h) => !checked.has(`${h.file}:${h.line}`));
+  if (heads.length || plan.mentions.length) {
     out.push('', 'Heads-up: lines in your setup that already talk about models, effort or helpers (kept as they are)');
-    for (const h of plan.heads_up) out.push(`  ${h.file}:${h.line}  ${h.text}`);
-    for (const m of plan.mentions) out.push(`  ${m.file}:${m.line}  (memory or output style; mentions a model)`);
+    for (const h of heads) out.push(`  ${h.file}:${h.line}  ${h.text}`);
+    if (plan.mentions.length) {
+      const names = uniq(plan.mentions.map((m) => path.basename(m.file)));
+      const shown = names.length > 6 ? `${names.slice(0, 6).join(', ')} and ${names.length - 6} more` : names.join(', ');
+      out.push(`  Memory and output styles: ${plan.mentions.length} ${plan.mentions.length === 1 ? 'line names' : 'lines name'} a model (${shown}; lines not shown)`);
+    }
   }
   for (const n of plan.notes) out.push(`Note: ${n}`);
   out.push('', `Undo takes out everything above and leaves ${tildeOr(plan.state_dir, plan.home)} in place (install history).`);

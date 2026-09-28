@@ -99,6 +99,24 @@
       "add": "\"explore_override\": true"
     }
   ],
+  "checks": [
+    {
+      "kind": "helper",
+      "name": "code-reviewer",
+      "path": null,
+      "tool": "claude-code",
+      "role": "reviewer",
+      "item": 3
+    },
+    {
+      "kind": "helper",
+      "name": "test-runner",
+      "path": null,
+      "tool": "claude-code",
+      "role": "reviewer",
+      "item": 3
+    }
+  ],
   "roles": {
     "claude-code": {
       "lead": {

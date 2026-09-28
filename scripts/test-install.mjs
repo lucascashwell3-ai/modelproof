@@ -259,6 +259,35 @@ test('detect (cc-max5x): heads-up names the prose model rule by file:line; memor
   assert.match(p.out, /builder +Claude Opus 5\.5 · your choice/);
 });
 
+test('plan preview: real conflicts first; rules-file lines shown; memory mentions on one line', () => {
+  const f = setup('cc-max5x');
+  const rules = path.join(f.home, '.claude', 'rules');
+  fs.mkdirSync(rules, { recursive: true });
+  fs.writeFileSync(path.join(rules, 'models.md'), '# Models\n- Keep token use low: use sonnet for reviews.\n- The opus proxy key is sk-live-abcdefgh12345678.\n');
+  const s = JSON.parse(inst(f, 'detect', '--home', f.home).out);
+  const line = (n) => s.heads_up.find((x) => x.file === '~/.claude/rules/models.md' && x.line === n);
+  assert.equal(line(2).text, '- Keep token use low: use sonnet for reviews.', 'a rules-file line is shown like a CLAUDE.md line');
+  assert.equal(line(3).text, '(line not shown)', 'a line holding a secret-looking value stays hidden');
+  assert.deepEqual(s.agents.map((a) => a.description), ['Reviews a diff for bugs and unclear code. Use after a change is finished.', 'Runs the test suite and reports failures with the first useful line of each.']);
+  const p = plan(f, path.join(PROFILES, 'cc-max5x.json'), { project: false });
+  ok(p);
+  const out = p.out;
+  const reviewer = p.plan.items.find((x) => x.part_id === 'claude-code:agent:reviewer').n;
+  const check = out.indexOf('Check these before you say Go');
+  assert.ok(check > 0 && check < out.indexOf('Which model each helper runs'), out);
+  assert.ok(out.includes(`  - ~/.claude/rules/models.md:2 says "- Keep token use low: use sonnet for reviews."; #${reviewer} modelproof-reviewer runs on the lead's model. Make them match, or skip #${reviewer}.`), out);
+  assert.ok(out.includes(`  - Your helper code-reviewer (~/.claude/agents/code-reviewer.md) does the same job as #${reviewer} modelproof-reviewer. Keep both, or skip #${reviewer}.`), out);
+  assert.ok(out.includes(`  - Your helper test-runner (~/.claude/agents/test-runner.md) does the same job as #${reviewer} modelproof-reviewer. Keep both, or skip #${reviewer}.`), out);
+  // The heads-up list keeps the other lines, without repeating a checked one; memory is one line.
+  const heads = out.slice(out.indexOf('Heads-up:'));
+  assert.match(heads, /~\/\.claude\/CLAUDE\.md:39 +- Use opus for builds/);
+  assert.doesNotMatch(heads, /models\.md:2/);
+  assert.match(heads, /models\.md:3 +\(line not shown\)/);
+  assert.match(heads, /^  Memory and output styles: 1 line names a model \(prefs\.md; lines not shown\)$/m);
+  assert.doesNotMatch(out, /memory or output style; mentions a model/);
+  assert.doesNotMatch(out + JSON.stringify(p.plan), /sk-live|not-for-output/);
+});
+
 test('readers: who loads the project AGENTS.md, case by case', () => {
   const cases = [
     ['no CLAUDE.md', {}, true],

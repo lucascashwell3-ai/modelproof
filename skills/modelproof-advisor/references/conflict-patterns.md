@@ -5,8 +5,9 @@ works. These are the ways that happens, in the order worth checking. All of it i
 Finding a conflict never licenses editing their line; their line always stays. You say it,
 one line each, under the plan (beat 3).
 
-The installer already catches some of these itself (it marks the item `conflict`, or prints
-a note). The rest are yours to judge from `detect`.
+The installer already catches some of these itself (it marks the item `conflict`, prints a
+note, or lists checks 1 and 2 first in the plan under "Check these before you say Go", each
+with the item number to skip). The rest are yours to judge from `detect`.
 
 ---
 
