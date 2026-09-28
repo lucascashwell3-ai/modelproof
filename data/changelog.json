@@ -3939,5 +3939,59 @@
       "https://arxiv.org/abs/2607.05471",
       "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/"
     ]
+  },
+  {
+    "date": "2026-09-28",
+    "model": "DeepSeek V4.1 Flash",
+    "field": "price_input",
+    "old": 0.15,
+    "new": 0.3,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-28",
+    "model": "DeepSeek V4.1 Flash",
+    "field": "price_output",
+    "old": 0.6,
+    "new": 1.2,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-28",
+    "model": "Grok 4.7",
+    "field": "price_input",
+    "old": 1.6,
+    "new": 2,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-28",
+    "model": "Grok 4.7",
+    "field": "price_output",
+    "old": 4.8,
+    "new": 6,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-28",
+    "model": "Claude Sonnet 5.5",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/anthropic/claude-sonnet-5.5"
+    ]
   }
 ]
