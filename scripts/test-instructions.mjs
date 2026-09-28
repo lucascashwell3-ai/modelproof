@@ -89,8 +89,11 @@ function shownText(pkg) {
 
 /* ======================================================================== exports + shape */
 
-test('exports exactly the eight documented names', () => {
-  assert.deepEqual(Object.keys(G).sort(), ['GENERATOR_VERSION', 'ROLES', 'TOOLS', 'buildPackage', 'normalizeProfile', 'profileFromBoard', 'renderPreview', 'roleDefaults']);
+test('exports exactly the documented names (the package API plus the shared marker helpers)', () => {
+  assert.deepEqual(Object.keys(G).sort(), [
+    'BLOCK_BEGIN_RE', 'BLOCK_END_RE', 'GENERATOR_VERSION', 'ROLES', 'TOOLS', 'blockBodyHash', 'blockBodyLines', 'blockText',
+    'buildPackage', 'normalizeProfile', 'packageText', 'profileFromBoard', 'renderPreview', 'roleDefaults', 'sha256Hex', 'stampOwnedText',
+  ]);
   assert.equal(GENERATOR_VERSION, '1.0.0');
   assert.deepEqual(TOOLS, ['claude-code', 'codex', 'cursor', 'agents-md']);
   assert.deepEqual(ROLES, ['scout', 'builder', 'reviewer']);

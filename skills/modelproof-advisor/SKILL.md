@@ -120,9 +120,9 @@ No record left (a teammate's install, a lost `MP`) →
 ## No Node
 
 Say in one line that Node 18 or later isn't here, so nothing can be written safely. Point
-them to the board (`BASE` + `board.html`), Install package, Copy text: it prints each file
-with its Modelproof markers and the path it goes to, and the installer adopts those files
-later if they add Node. Write nothing yourself. Stop.
+them to the board (`BASE` + `board.html`), Install package, Copy text: it prints each file and
+text block with its Modelproof markers, any settings keys to add, and the path each goes to;
+the installer adopts what they paste if they add Node later. Write nothing yourself. Stop.
 
 ## Behind the curtain (shapes behavior, never becomes dialogue)
 

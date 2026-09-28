@@ -1112,7 +1112,7 @@
 /* The Install pane uses the site's one instruction generator — the same assets/instructions.mjs
    the installer runs — so the package shown here is the package that gets installed. The board
    ranks nothing. A module script is deferred, so the DOM below is already parsed. */
-import { buildPackage, renderPreview, profileFromBoard, roleDefaults } from "./assets/instructions.mjs";
+import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageText } from "./assets/instructions.mjs";
 
 (function(){
   "use strict";
@@ -5514,14 +5514,9 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults } from "./a
     return { profile: profile, pkg: pkg };
   }
   function profileJson(profile){ return JSON.stringify(profile, null, 2); }
-  // Every part with text, headed by where it goes: a new file, or one block at the end of a file.
-  function packageText(pkg){
-    return (pkg.parts || []).filter(function(part){ return typeof part.content === "string"; }).map(function(part){
-      var where = part.target ? part.target.path : part.id;
-      var how = part.kind === "block" ? "Add at the end of " + where : "New file " + where;
-      return "=== " + how + " ===\n" + part.content.replace(/\n+$/, "") + "\n";
-    }).join("\n");
-  }
+  // Copy text: packageText() from assets/instructions.mjs heads every part by where it goes; a
+  // block keeps the installer's own marker lines, so a later install adopts it, and settings keys
+  // are listed to add by hand.
   function copyText(text, doneMsg){
     var ta = document.getElementById("copyFallback");
     var done = function(){ showToast(doneMsg); };

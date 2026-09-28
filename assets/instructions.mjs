@@ -9,6 +9,9 @@
 // docs (data/guidance.json, quoted with url + date); otherwise `inherit` (the lead's model). Two or
 // more labs in use and no choice → every helper inherits and each lab's own descriptions are shown
 // side by side as facts. Nothing here ranks models.
+//
+// It also holds the one definition of the marker lines the installer writes around a block and
+// the owned-file stamp (end of file), so the board's Copy text prints the same bytes.
 
 export const GENERATOR_VERSION = '1.0.0';
 export const TOOLS = ['claude-code', 'codex', 'cursor', 'agents-md'];
@@ -1307,4 +1310,99 @@ export function profileFromBoard(state, data) {
   }
   if (!raw.tools.length) raw.tools = ['agents-md'];
   return normalizeProfile(raw, { models: d.models, guidance: d.guidance }).profile;
+}
+
+/* ------------------------------------------------------------------ block markers */
+
+// The one definition of the marker lines around a block in someone's file. The installer
+// (assets/install.mjs) imports these, and the board's Copy text uses them, so a block pasted by
+// hand is the same bytes the installer writes and a later install adopts it instead of adding it
+// again. The hash is SHA-256 (first 16 hex characters) of the body lines joined with "\n", in
+// plain JS so it runs in a browser too.
+export const BLOCK_BEGIN_RE = /^<!-- modelproof:begin v1(?: sha=([0-9a-f]{16}))? -->$/;
+export const BLOCK_END_RE = /^<!-- modelproof:end -->$/;
+
+const SHA_K = [
+  0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+  0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+  0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+  0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+  0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+  0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+  0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+  0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
+];
+export function sha256Hex(text) {
+  const msg = new TextEncoder().encode(String(text));
+  const bitLen = msg.length * 8;
+  const padded = new Uint8Array(((msg.length + 9 + 63) >> 6) << 6);
+  padded.set(msg);
+  padded[msg.length] = 0x80;
+  const view = new DataView(padded.buffer);
+  view.setUint32(padded.length - 8, Math.floor(bitLen / 0x100000000));
+  view.setUint32(padded.length - 4, bitLen >>> 0);
+  const h = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+  const w = new Uint32Array(64);
+  const rotr = (x, n) => (x >>> n) | (x << (32 - n));
+  for (let off = 0; off < padded.length; off += 64) {
+    for (let i = 0; i < 16; i++) w[i] = view.getUint32(off + i * 4);
+    for (let i = 16; i < 64; i++) {
+      const s0 = rotr(w[i - 15], 7) ^ rotr(w[i - 15], 18) ^ (w[i - 15] >>> 3);
+      const s1 = rotr(w[i - 2], 17) ^ rotr(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+      w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0;
+    }
+    let [a, b, c, d, e, f, g, k] = h;
+    for (let i = 0; i < 64; i++) {
+      const t1 = (k + (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) + ((e & f) ^ (~e & g)) + SHA_K[i] + w[i]) >>> 0;
+      const t2 = ((rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) >>> 0;
+      k = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+    }
+    h[0] = (h[0] + a) >>> 0; h[1] = (h[1] + b) >>> 0; h[2] = (h[2] + c) >>> 0; h[3] = (h[3] + d) >>> 0;
+    h[4] = (h[4] + e) >>> 0; h[5] = (h[5] + f) >>> 0; h[6] = (h[6] + g) >>> 0; h[7] = (h[7] + k) >>> 0;
+  }
+  return h.map((x) => x.toString(16).padStart(8, '0')).join('');
+}
+export function blockBodyHash(bodyLines) { return sha256Hex(bodyLines.join('\n')).slice(0, 16); }
+// A block part's body lines, wrapped in the begin/end marker lines, joined with `eol`.
+export function blockText(bodyLines, eol = '\n') {
+  return [`<!-- modelproof:begin v1 sha=${blockBodyHash(bodyLines)} -->`, ...bodyLines, '<!-- modelproof:end -->'].join(eol);
+}
+export function blockBodyLines(content) {
+  const s = String(content).replace(/\r\n/g, '\n');
+  return (s.endsWith('\n') ? s.slice(0, -1) : s).split('\n');
+}
+
+// An owned file's tag line, stamped with the hash of the generator's content, so a later run (or a
+// teammate with no install record) can tell an untouched copy from an edited one. null when the
+// content has no owned tag.
+export function stampOwnedText(content) {
+  const text = String(content);
+  const sha = sha256Hex(text).slice(0, 16);
+  let done = false;
+  const out = text.split('\n').map((l) => {
+    if (done) return l;
+    if (l === OWNED_TAG) { done = true; return `<!-- modelproof:owned v1 sha=${sha} -->`; }
+    if (l === OWNED_TAG_TOML) { done = true; return `# modelproof:owned v1 sha=${sha}`; }
+    return l;
+  });
+  return done ? out.join('\n') : null;
+}
+
+// The package as plain text, for a setup with no Node: each part headed by where it goes. A block
+// carries its marker lines, a file its stamped owned tag, and settings keys are listed to add by
+// hand, so a later install adopts what was pasted.
+export function packageText(pkg) {
+  const parts = isObj(pkg) ? arr(pkg.parts) : [];
+  return parts.map((part) => {
+    const where = part.target && part.target.path ? part.target.path : part.id;
+    if (part.kind === 'block' && typeof part.content === 'string') {
+      return `=== Add at the end of ${where} (keep the two modelproof marker lines) ===\n${blockText(blockBodyLines(part.content))}\n`;
+    }
+    if (part.kind === 'json-keys' && isObj(part.keys)) {
+      const keys = Object.entries(part.keys).map(([k, v]) => `  ${JSON.stringify(k)}: ${JSON.stringify(v)}`);
+      return `=== Add these keys to ${where} (a key already there stays as it is) ===\n${keys.join(',\n')}\n`;
+    }
+    if (typeof part.content === 'string') return `=== New file ${where} ===\n${(stampOwnedText(part.content) || part.content).replace(/\n+$/, '')}\n`;
+    return null;
+  }).filter(Boolean).join('\n');
 }

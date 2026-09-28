@@ -27,7 +27,10 @@ import path from 'node:path';
 import os from 'node:os';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { buildPackage, renderPreview, GENERATOR_VERSION } from './instructions.mjs';
+import {
+  buildPackage, renderPreview, GENERATOR_VERSION,
+  BLOCK_BEGIN_RE as BEGIN_RE, BLOCK_END_RE as END_RE, blockBodyHash as bodyHash, blockText, blockBodyLines as contentLines, stampOwnedText,
+} from './instructions.mjs';
 
 export const INSTALLER_VERSION = '1.0.0';
 export const EXIT = Object.freeze({ OK: 0, USAGE: 1, CONFLICT: 2, DRIFT: 3, CORRUPT: 4 });
@@ -139,14 +142,11 @@ function scanLines(text) {
 
 /* ------------------------------------------------------------------ markers */
 
-const BEGIN_RE = /^<!-- modelproof:begin v1(?: sha=([0-9a-f]{16}))? -->$/;
-const END_RE = /^<!-- modelproof:end -->$/;
+// Block marker lines and their hash come from assets/instructions.mjs (one definition).
 const OWNED_HTML_RE = /^<!-- modelproof:owned v1(?: sha=([0-9a-f]{16}))? -->$/;
 const OWNED_TOML_RE = /^# modelproof:owned v1(?: sha=([0-9a-f]{16}))?$/;
 const PLAIN_OWNED_HTML = '<!-- modelproof:owned v1 -->';
 const PLAIN_OWNED_TOML = '# modelproof:owned v1';
-
-function bodyHash(lines) { return sha16(lines.join('\n')); }
 
 // Every modelproof block in a text file. Markers count as whole lines anywhere, code fences
 // included: a marker quoted in someone's notes makes the file look damaged (exit 4) rather than
@@ -173,13 +173,6 @@ export function findBlocks(text) {
   if (open) corrupt.push(`line ${open.begin + 1}: a begin marker with no end marker`);
   if (blocks.length > 1) corrupt.push(`${blocks.length} modelproof blocks in one file (lines ${blocks.map((b) => b.begin + 1).join(', ')})`);
   return { blocks, corrupt };
-}
-function blockText(bodyLines, eol) {
-  return [`<!-- modelproof:begin v1 sha=${bodyHash(bodyLines)} -->`, ...bodyLines, '<!-- modelproof:end -->'].join(eol);
-}
-function contentLines(content) {
-  const s = String(content).replace(/\r\n/g, '\n');
-  return (s.endsWith('\n') ? s.slice(0, -1) : s).split('\n');
 }
 function blockIntact(block) { return !!block.sha && bodyHash(block.body) === block.sha; }
 function appendBlock(text, bodyLines) {
@@ -215,18 +208,11 @@ function guessSeparators(text, block) {
 
 // Owned files carry a tag line; the installer stamps it with the hash of the generator's content
 // so a later run (or a teammate with no install record) can tell an untouched copy from an edited one.
+// The stamp itself lives in assets/instructions.mjs (the board's Copy text uses it too).
 export function stampOwned(content) {
-  const lines = String(content).split('\n');
-  const sha = sha16(String(content));
-  let done = false;
-  const out = lines.map((l) => {
-    if (done) return l;
-    if (l === PLAIN_OWNED_HTML) { done = true; return `<!-- modelproof:owned v1 sha=${sha} -->`; }
-    if (l === PLAIN_OWNED_TOML) { done = true; return `# modelproof:owned v1 sha=${sha}`; }
-    return l;
-  });
-  if (!done) throw new Fail(EXIT.USAGE, 'package part has no owned tag; refusing to write it');
-  return out.join('\n');
+  const out = stampOwnedText(content);
+  if (out === null) throw new Fail(EXIT.USAGE, 'package part has no owned tag; refusing to write it');
+  return out;
 }
 export function ownedState(text) {
   const lines = text.split('\n');

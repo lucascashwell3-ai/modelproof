@@ -878,3 +878,45 @@ test('usage: unknown command and a project profile without --project exit 1', ()
   assert.equal(inst(f, 'frobnicate').code, 1);
   assert.equal(plan(f, path.join(PROFILES, 'empty.json'), { project: false }).code, 1);
 });
+
+test('LC-02: what Copy text prints, pasted by hand, is adopted by a later install, never added again', async () => {
+  const { buildPackage, packageText } = await import('../assets/instructions.mjs');
+  const FACTS = {
+    models: JSON.parse(read(path.join(FIX, 'instructions-models.json'))),
+    guidance: JSON.parse(read(path.join(FIX, 'guidance.json'))),
+    plans: JSON.parse(read(path.join(FIX, 'instructions-plans.json'))),
+  };
+  const empty = JSON.parse(read(path.join(PROFILES, 'empty.json')));
+  const cases = [
+    ['codex', JSON.parse(read(path.join(PROFILES, 'codex.json'))), false],
+    ['empty', { ...empty, set_default_model: true, roles: { lead: 'claude-sonnet-5' }, effort_cap: 'high' }, true],
+  ];
+  for (const [name, profile, project] of cases) {
+    const f = setup(name);
+    const text = packageText(buildPackage(profile, FACTS));
+    // Paste each section where its heading says, the way a person would.
+    const sections = text.split(/^=== (.+?) ===\n/m).slice(1);
+    const kinds = [];
+    for (let i = 0; i < sections.length; i += 2) {
+      const head = sections[i];
+      const body = sections[i + 1].replace(/\n+$/, '') + '\n';
+      const m = /^(New file|Add at the end of|Add these keys to) (\S+)/.exec(head);
+      assert.ok(m, head);
+      const where = m[2].startsWith('~/') ? path.join(f.home, m[2].slice(2)) : path.join(f.project, m[2]);
+      fs.mkdirSync(path.dirname(where), { recursive: true });
+      const had = fs.existsSync(where) ? read(where) : null;
+      if (m[1] === 'New file') fs.writeFileSync(where, body);
+      else if (m[1] === 'Add at the end of') fs.writeFileSync(where, had ? had.replace(/\n*$/, '\n\n') + body : body);
+      else fs.writeFileSync(where, JSON.stringify({ ...(had ? JSON.parse(had) : {}), ...JSON.parse(`{${body}}`) }, null, 2) + '\n');
+      kinds.push(m[1]);
+    }
+    assert.ok(kinds.includes(name === 'codex' ? 'Add at the end of' : 'Add these keys to'), `${name}: ${kinds}`);
+    const p = plan(f, writeProfile(f, path.join(PROFILES, 'empty.json'), profile), { project });
+    ok(p, `${name} plan`);
+    const actions = p.plan.items.map((x) => `${x.kind}:${x.action}`);
+    for (const a of actions) assert.ok(!/:(append|create|add-keys|conflict)$/.test(a), `${name}: ${actions}`);
+    if (name === 'codex') assert.ok(actions.includes('block:adopt'), `${name}: ${actions}`);
+    ok(apply(f, p), `${name} apply`);
+    ok(dupes(f), `${name}: no second copy of any helper heading or block`);
+  }
+});
