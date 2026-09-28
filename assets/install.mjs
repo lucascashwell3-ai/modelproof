@@ -1240,7 +1240,7 @@ export function applyPlan(plan, { expect, skip = [] }) {
     delete next.pending;
     writePrivate(mPath, JSON.stringify(next, null, 2) + '\n');
     const bin = copyBin(state);
-    return { id: plan.id, summary, undo: `node ${bin} undo ${plan.id}` };
+    return { id: plan.id, summary, undo: `node ${shellPath(bin)} undo ${plan.id}` };
   } finally {
     release();
   }

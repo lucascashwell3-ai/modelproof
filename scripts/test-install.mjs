@@ -747,6 +747,22 @@ test('state folder: 700 folders, 600 files; a held lock stops a second run; the 
   assert.match(st.out, new RegExp(`${p.plan.id} +project 0 part`));
 });
 
+test('LC-05: the printed undo line runs as printed when the state folder path has a space', () => {
+  const f = setup('empty');
+  const before = snapshot(f);
+  const state = path.join(tmp('state'), 'My Home', 'state dir');
+  const p = plan(f, path.join(PROFILES, 'empty.json'), { state });
+  ok(p);
+  const r = apply(f, p, { state });
+  ok(r);
+  const line = /^Undo: (node .+)$/m.exec(r.out);
+  assert.ok(line, r.out);
+  const run = spawnSync('/bin/sh', ['-c', line[1]], { encoding: 'utf8', cwd: os.tmpdir(), env: { ...cleanEnv(), PATH: `${path.dirname(process.execPath)}${path.delimiter}${process.env.PATH || ''}` } });
+  assert.equal(run.status, 0, line[1] + '\n' + run.stdout + run.stderr);
+  assert.match(run.stdout, /byte-identical/);
+  ok(compare(f, before));
+});
+
 test('preview paths: the notes name the real state folder, and the Apply line runs as printed', () => {
   const f = setup('empty');
   const before = snapshot(f);
