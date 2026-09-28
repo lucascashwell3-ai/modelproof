@@ -13,10 +13,10 @@ day (see "Release watching" below), Judge + Verify stay Tue/Fri, 45 min end to e
 (`scripts/test-*.mjs`) runs on a frozen fixture (`scripts/fixtures/`), never on live `data/`, so a
 legitimate data change can never turn CI red. After Collect writes real data, `scripts/validate-data.mjs`
 + `scripts/check-live-data.mjs` check the live file — schema/honesty rules plus a small set of
-invariants (decide() still runs, ids are real, `must_not_include` still holds, model count and
-`as_of` look sane, and no key field's non-null count dropped more than 15% since the committed
-version — catches a feed silently starting to return empty instead of erroring loud) — never an
-expected winner.
+invariants (model count within 15% of the committed version, `as_of` looks sane, and feed
+health: no key field's non-null count dropped more than 15% since the committed version —
+catches a feed silently starting to return empty instead of erroring loud). The ranking checks
+retired with the engine, which now lives in archive/engine/.
 
 **Dry run / UAT:** every change to `.github/workflows/auto-refresh.yml` is proven on a real GitHub
 Actions run before merge — `gh workflow run auto-refresh.yml --ref <branch> -f dry_run=true`. It
