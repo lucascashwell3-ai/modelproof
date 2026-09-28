@@ -33,3 +33,20 @@ they moved here.
 
 `scripts/check-live-data.mjs` kept its model-count, date and feed-health checks; the three checks
 that ran the ranking on live data went with it.
+
+### The board's ranking (2026-09)
+
+- `assets/decide.mjs` — the rule engine itself: it took a task, the labs you can reach, a stance
+  (cheapest / balanced / best) and a volume, and returned a ranked shortlist. The board was its
+  last user. `scripts/test-decide.mjs` and `scripts/eval-report.mjs` above import it by the
+  relative path `../assets/decide.mjs`, which resolves here.
+- `board-engine.js` — the board's engine layer, copied verbatim from `board.html`: the one
+  `decide()` call and its cache, the suggested swaps and their Apply buttons, the fit count, the
+  per-block pick pane, the stance and "Optimize for" wiring, the auto-picked starter roles and
+  starter board, the catalog-text model panes and the `window.__mpEngine` debug hook. The board
+  now shows each lab's own words about its model, with price, context, release date and
+  OpenRouter share, and sets no model on its own.
+- `board-agents-md.js` — the board's "Copy AGENTS.md" builders (`buildOrgPolicyMd`,
+  `buildPersonalAgentsMd`), copied verbatim. The personal file routed tasks through the engine.
+  The board now has an Install package pane built by `assets/instructions.mjs`, the same
+  generator the installer uses.

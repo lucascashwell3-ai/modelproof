@@ -1,8 +1,9 @@
 /* board.html ships as a single file that fetches the site's own data at runtime, so nothing here
    can catch a broken reference the way an import would. These checks stand in for that: the page
-   must still name the five data files and the shipped engine, and every model id and plan name in
-   the example boards must exist in the catalog — otherwise "Start from an example" quietly builds
-   a board with a blank model or a plan that prices at nothing. */
+   must still name its data files and the one instruction generator (never the retired ranking
+   engine), and every model id and plan name in the example boards must exist in the catalog —
+   otherwise "Start from an example" quietly builds a board with a blank model or a plan that
+   prices at nothing. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -23,15 +24,38 @@ test('board.html loads the site data files, not a copy of its own', () => {
     'data/tasks.json',
     'data/usage-presets.json',
     'data/board-samples.json',
+    'data/guidance.json',
   ]) {
     assert.ok(BOARD.includes(`"./${file}"`), `board.html does not reference ${file}`);
     assert.ok(fs.existsSync(path.join(ROOT, file)), `${file} is missing from the repo`);
   }
 });
 
-test('board.html imports the shipped decision engine', () => {
-  assert.match(BOARD, /import\s*\{\s*decide\s*\}\s*from\s*["']\.\/assets\/decide\.mjs["']/);
-  assert.ok(fs.existsSync(path.join(ROOT, 'assets/decide.mjs')));
+const GENERATOR_IMPORT = /import\s*\{([^}]*)\}\s*from\s*["']\.\/assets\/instructions\.mjs["']/;
+
+test('board.html imports the instruction generator, not the retired ranking engine', () => {
+  const m = BOARD.match(GENERATOR_IMPORT);
+  assert.ok(m, 'board.html does not import ./assets/instructions.mjs');
+  const names = m[1].split(',').map((x) => x.trim());
+  for (const name of ['buildPackage', 'renderPreview', 'profileFromBoard', 'roleDefaults']) {
+    assert.ok(names.includes(name), `board.html does not import ${name}`);
+  }
+  assert.ok(fs.existsSync(path.join(ROOT, 'assets/instructions.mjs')));
+  assert.doesNotMatch(BOARD, /decide\.mjs/, 'board.html still names decide.mjs');
+  assert.doesNotMatch(BOARD, /\bdecide\s*\(/, 'board.html still calls decide()');
+  assert.doesNotMatch(BOARD, /__mpEngine/, 'board.html still exposes the engine debug hook');
+  assert.ok(!fs.existsSync(path.join(ROOT, 'assets/decide.mjs')), 'assets/decide.mjs belongs in archive/engine/');
+  assert.ok(fs.existsSync(path.join(ROOT, 'archive/engine/assets/decide.mjs')), 'the archived engine is missing');
+});
+
+test('every name board.html imports is exported by assets/instructions.mjs', async () => {
+  const mod = await import('../assets/instructions.mjs');
+  const names = BOARD.match(GENERATOR_IMPORT)[1].split(',').map((x) => x.trim()).filter(Boolean);
+  for (const name of names) assert.equal(typeof mod[name], 'function', `instructions.mjs does not export ${name}`);
+});
+
+test('board.html fetches the install prompt the installer skill ships', () => {
+  assert.ok(BOARD.includes('"./assets/install-prompt.txt"'), 'the Install pane does not fetch ./assets/install-prompt.txt');
 });
 
 test('board.html carries no bundled sample data file', () => {

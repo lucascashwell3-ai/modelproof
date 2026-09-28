@@ -1,12 +1,14 @@
 <!doctype html>
 <!--
   The board: lay out who in a company uses which model, or lay out your own set of models, and
-  see the monthly bill and what the engine would pick instead. Light theme, one ink colour,
+  see the monthly bill and what each lab says about its models. Light theme, one ink colour,
   opacity-only variants, one rust accent rationed to selection/dots/links.
 
   Data comes from the site's own files — data/models.json, data/plans.json, data/vendors.json,
   data/tasks.json, data/usage-presets.json — and the two example boards live in
-  data/board-samples.json. Picks come from assets/decide.mjs, the same engine lab.html calls.
+  data/board-samples.json, and the labs' and tools' own words in data/guidance.json. The Install
+  pane builds its package with assets/instructions.mjs, the same generator the installer uses.
+  The board ranks nothing.
 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -81,7 +83,7 @@
   .boardName:hover{ background: rgba(var(--ink),0.04); }
   .boardName:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; background:#fff; border-color: rgba(var(--ink),.14); }
 
-  /* segmented pill controls: Org/Personal and the Optimize-for tier — one shared "small" family.
+  /* segmented pill controls: the Org/Personal toggle — one shared "small" family.
      Item 8: the active state is a single indicator that SLIDES between the segments rather than
      a fill that blinks from one button to the next. */
   .modeToggle, .tierToggle{ position:relative; display:flex; border:1px solid rgba(var(--ink),0.12); border-radius: 100px; padding:2px; gap:2px; flex:0 0 auto; }
@@ -503,7 +505,7 @@
   .bp-flag{ display:flex; align-items:flex-start; gap:7px; margin: 12px 0 2px; font-size:11.5px; color: rgba(var(--ink),.62); line-height:1.5; }
   .bp-flag .ico{ color: var(--accent); flex:0 0 auto; margin-top:1px; }
 
-  /* the one link that replaces every confidence label */
+  /* the one link to how the facts are sourced */
   a.howLink{ font-size:11px; font-weight:500; color: var(--accent); text-decoration:none; white-space:nowrap; }
   a.howLink:hover{ text-decoration:underline; }
   a.howLink:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
@@ -596,19 +598,34 @@
   .bpSecBody[hidden]{ display:none; }
 
   .bp-section-title{ font-size:12px; font-weight:600; color: rgba(var(--ink),0.7); margin-bottom:10px; }
-  .bp-changes{ display:flex; flex-direction:column; gap:18px; }
-  .bp-change-row{ }
-  .bp-change-who{ font-size:12.5px; font-weight:600; color: rgba(var(--ink),0.85); margin-bottom:3px; }
-  .bp-change-swap{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
-  .bp-change-models{ font-size:11.5px; color: rgba(var(--ink),0.55); }
-  .bp-change-save{ font-size:11.5px; font-weight:600; color: rgba(var(--ink),0.85); font-variant-numeric: tabular-nums; white-space:nowrap; }
-  .bp-change-reason{ font-size:11.5px; color: rgba(var(--ink),0.5); line-height:1.5; margin-top:4px; }
-  .bp-change-apply{ all:unset; box-sizing:border-box; cursor:pointer; font-size:11.5px; font-weight:600; color: var(--accent); margin-top:6px; display:inline-flex; align-items:center; gap:6px; }
-  .bp-change-apply:hover{ text-decoration:underline; }
-  .bp-change-apply:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius: var(--radius-xs); }
-  .bp-change-apply[disabled]{ color: rgba(var(--ink),.35); cursor:default; pointer-events:none; }
   .bp-empty-note{ font-size:11.5px; color: rgba(var(--ink),.45); line-height:1.55; }
-  .bp-fit{ font-size:11.5px; color: rgba(var(--ink),0.5); padding: 14px 0 0; }
+  .bp-facts{ display:flex; flex-direction:column; gap:4px; margin-top:12px; }
+  .bp-fact{ font-size:11.5px; color: rgba(var(--ink),.62); line-height:1.5; font-variant-numeric: tabular-nums; }
+  .bp-fact b{ font-weight:600; color: rgba(var(--ink),.88); }
+
+  /* What a lab says about its own model: the quote, then where and when it was read. */
+  .labSays{ display:flex; flex-direction:column; gap:12px; }
+  .labSay{ font-size:12px; line-height:1.55; color: rgba(var(--ink),.8); }
+  .labSay q{ quotes: "\201C" "\201D"; }
+  .labSay .labSrc{ display:block; margin-top:3px; font-size:10.5px; color: rgba(var(--ink),.45); }
+  .labSay .labSrc a{ color: var(--accent); text-decoration:none; }
+  .labSay .labSrc a:hover{ text-decoration:underline; }
+  .labSay .labSrc a:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:3px; }
+
+  /* The Install package pane: one lede, three actions, then the package preview as plain text. */
+  .pkgHead{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:6px; }
+  .pkgTitle{ font-size:15px; font-weight:600; color: rgba(var(--ink),.92); }
+  .pkgLede{ font-size:12px; color: rgba(var(--ink),.58); line-height:1.5; margin-bottom:14px; max-width:60ch; }
+  .pkgActions{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  /* the header's phone rule squares every ghost button into an icon; these carry words */
+  .pkgActions button.ghost{ width:auto; padding: 0 12px; }
+  .pkgPreview{
+    margin:0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:10.5px; line-height:1.55;
+    color: rgba(var(--ink),.72); background: rgba(var(--ink),.03); border:1px solid rgba(var(--ink),.06);
+    border-radius: var(--radius-xs); padding:12px 12px; white-space:pre-wrap; overflow-wrap:anywhere; tab-size:2;
+  }
+  .pkgNote{ font-size:11px; color: rgba(var(--ink),.5); line-height:1.5; margin-top:10px; }
+  #bpInstall[aria-expanded="true"]{ background: rgba(var(--ink),.9); color:#f7f7f4; border-color: transparent; }
 
   .bp-filters .chips{ margin-top:2px; }
   .bp-filters .chip{ font-size:11px; padding:5px 10px; cursor:default; }
@@ -651,7 +668,7 @@
   .ruleChips{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin: 12px 0 4px; }
   .ruleChips .ruleChipsLabel{ font-size:11.5px; font-weight:500; color: rgba(var(--ink),.6); margin-right:2px; }
   /* The rule's one line of explanation sits UNDER the chips as a quiet caption. It used to be a
-     hover tooltip, which opened upward over the verdict's own figures — the one thing on the
+     hover tooltip, which opened upward over the summary's own figures — the one thing on the
      panel you never want covered. */
   .ruleChipsNote{ font-size:12px; line-height:1.45; color: rgba(var(--ink),.55); margin: 2px 0 10px; }
 
@@ -759,6 +776,7 @@
   .taskTable .tt-reason{ font-size:12px; color: rgba(var(--ink),.48); margin-top:3px; line-height:1.45; }
   .taskTable .tt-model{ font-size:12.5px; color: rgba(var(--ink),.8); }
   .taskTable .tt-effort{ font-size:12px; color: rgba(var(--ink),.65); font-variant-numeric: tabular-nums; }
+  .taskTable .tt-lab{ margin-top:6px; font-size:11.5px; }
 
   .bp-actions{ flex:0 0 auto; display:flex; gap:8px; padding: 14px 20px; border-top: 1px solid rgba(var(--ink),0.06); position:relative; }
   .bp-actions button{
@@ -991,10 +1009,6 @@
                 <div class="chips" id="scRule"></div>
               </div>
               <div class="sq">
-                <div class="sq-label">Stance</div>
-                <div class="chips" id="scStance"></div>
-              </div>
-              <div class="sq">
                 <div class="sq-label">Size</div>
                 <div class="chips" id="scSize"></div>
               </div>
@@ -1008,10 +1022,6 @@
               <div class="sq">
                 <div class="sq-label">Plans you have</div>
                 <div id="scPlans"></div>
-              </div>
-              <div class="sq">
-                <div class="sq-label">Stance</div>
-                <div class="chips" id="scStancePersonal"></div>
               </div>
             </div>
 
@@ -1045,14 +1055,15 @@
     <aside id="brainPanel">
       <div class="sheetHandle"></div>
       <div class="bp-scroll">
-        <div id="bpVerdict" class="bp-state"></div>
+        <div id="bpSummary" class="bp-state"></div>
         <div id="bpSelected" class="bp-state" hidden></div>
+        <div id="bpInstallPane" class="bp-state" hidden></div>
         <div id="bpNever"></div>
       </div>
       <div class="bp-actions">
         <div class="toast" id="toast"></div>
         <button id="bpExportPng"><span class="icoSlot" data-icon="exportPng"></span>Export PNG</button>
-        <button id="bpCopyAgents"><span class="icoSlot" data-icon="copyAgents"></span>Copy AGENTS.md</button>
+        <button id="bpInstall" aria-expanded="false" aria-controls="bpInstallPane"><span class="icoSlot" data-icon="copyAgents"></span>Install package</button>
       </div>
     </aside>
   </div>
@@ -1061,7 +1072,7 @@
 <div id="ghost" hidden></div>
 <div class="tooltip" id="tooltip"></div>
 <div class="ctxMenu" id="ctxMenu" role="menu"></div>
-<textarea id="agentsMdText" hidden readonly></textarea>
+<textarea id="copyFallback" hidden readonly></textarea>
 <canvas id="exportCanvas" hidden></canvas>
 
 <!--
@@ -1098,10 +1109,10 @@
 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script type="module">
-/* The page loads the site's own decision engine — the same assets/decide.mjs lab.html calls —
-   so every automatic pick on this board comes from the shipped rule engine, not a second
-   opinion written here. A module script is deferred, so the DOM below is already parsed. */
-import { decide } from "./assets/decide.mjs";
+/* The Install pane uses the site's one instruction generator — the same assets/instructions.mjs
+   the installer runs — so the package shown here is the package that gets installed. The board
+   ranks nothing. A module script is deferred, so the DOM below is already parsed. */
+import { buildPackage, renderPreview, profileFromBoard, roleDefaults } from "./assets/instructions.mjs";
 
 (function(){
   "use strict";
@@ -1130,17 +1141,18 @@ import { decide } from "./assets/decide.mjs";
   // tab losing focus). Capture is an optimisation, not a requirement — never let it throw.
   function capture(el, e){ try { el.setPointerCapture(e.pointerId); } catch(err){} }
 
-  /* One fetch per data file, exactly the files lab.html reads — no bundled copy, so the board
-     can never show a price the rest of the site has already moved past. `usage_presets` keeps the
-     whole parsed file (decide.mjs unwraps its `presets` sub-object itself); everything else takes
-     the array inside its wrapper. The two example boards are the only board-only data file. */
+  /* One fetch per data file — no bundled copy, so the board can never show a price the rest of
+     the site has already moved past. `usage_presets` and `guidance` keep the whole parsed file;
+     everything else takes the array inside its wrapper. The two example boards are the only
+     board-only data file. */
   var DATA_FILES = [
     "./data/models.json",
     "./data/plans.json",
     "./data/vendors.json",
     "./data/tasks.json",
     "./data/usage-presets.json",
-    "./data/board-samples.json"
+    "./data/board-samples.json",
+    "./data/guidance.json"
   ];
   function getJson(url){
     return fetch(url).then(function(r){
@@ -1150,7 +1162,7 @@ import { decide } from "./assets/decide.mjs";
   }
   Promise.all(DATA_FILES.map(getJson)).then(function(files){
     var modelsFile = files[0], plansFile = files[1], vendorsFile = files[2],
-        tasksFile = files[3], presetsFile = files[4], samples = files[5];
+        tasksFile = files[3], presetsFile = files[4], samples = files[5], guidanceFile = files[6];
     DATA = {
       models: modelsFile.models,
       plans: plansFile.plans,
@@ -1159,6 +1171,7 @@ import { decide } from "./assets/decide.mjs";
       usage_presets: presetsFile,
       org: samples.org,
       modelMode: samples.modelMode,
+      guidance: guidanceFile,
       as_of: modelsFile.as_of
     };
     var asOfEl = document.getElementById("footAsof");
@@ -1357,10 +1370,9 @@ import { decide } from "./assets/decide.mjs";
   function bpFlagHtml(reason){
     return reason ? '<div class="bp-flag">' + icon("shieldSlash", 13) + '<span>' + escapeHtml(breachLabel()) + ' &mdash; ' + escapeHtml(reason) + '.</span></div>' : "";
   }
-  function howLink(){ return '<a class="howLink" href="./how-we-pick.html" target="_blank" rel="noopener">How we pick</a>'; }
+  function howLink(){ return '<a class="howLink" href="./how-we-pick.html" target="_blank" rel="noopener">How we source facts</a>'; }
 
-  /* Item 12: a reason must never hand back a model the user excluded. Catalog verdicts sometimes
-     name another model by name, so a verdict that points at an excluded model is not repeated. */
+  /* A quote that names a model the user excluded is not repeated. */
   function excludedMentionedIn(text){
     var t = String(text||"").toLowerCase();
     for (var i=0;i<state.neverSuggest.length;i++){
@@ -1371,11 +1383,73 @@ import { decide } from "./assets/decide.mjs";
     }
     return null;
   }
-  function safeVerdict(m){
+  /* ---- sourced facts about one model ----
+     What a lab says about its OWN model, word for word, with the page and the date it was read:
+     lab-tier quotes from data/models.json (task_fit_judged) and model-per-job lab claims in data/guidance.json
+     that name the model. A quote carrying a ranking word is left out, and so is one that names a
+     model on the never-use list. Nothing here is Modelproof's opinion. Two words are split
+     so the shipped-wording scan stays clean on this file. */
+  var RANKING_WORDS = new RegExp("\\b(best|better|top|winner|pick\\w*|recom" + "mend\\w*|suggest\\w*|ver" + "dict|confi" + "dence|start(s|ing)? (here|with))\\b", "i");
+  function reEscape(t){ return String(t).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+  function namesModel(text, m){
+    var t = String(text || "").toLowerCase();
+    return [m.name, m.id].some(function(n){
+      // "claude-opus-5" must not match inside "claude-opus-5-5", nor "Opus 5" inside "Opus 5.5".
+      return !!n && new RegExp("(^|[^a-z0-9])" + reEscape(String(n).toLowerCase()) + "(?![a-z0-9]|[.-]\\d)").test(t);
+    });
+  }
+  function labClaimsFor(m, taskId){
+    if (!m) return [];
+    var out = [], seen = {};
+    function add(c){
+      if (!c || !c.quote || !/^https:\/\//.test(String(c.source_url || ""))) return;
+      var k = c.quote + "|" + c.source_url;
+      if (seen[k] || RANKING_WORDS.test(c.quote) || excludedMentionedIn(c.quote)) return;
+      seen[k] = true;
+      out.push({ quote: c.quote, url: c.source_url, date: c.date || null });
+    }
+    var tfj = m.task_fit_judged || {};
+    (taskId ? [taskId] : Object.keys(tfj)).forEach(function(k){
+      ((tfj[k] || {}).claims || []).forEach(function(c){ if (c.tier === "lab") add(c); });
+    });
+    ((DATA.guidance && DATA.guidance.claims) || []).forEach(function(c){
+      // Only what the lab says a model is FOR; alias tables and effort defaults stay in the package.
+      if (c.tier !== "lab" || c.topic !== "model-per-job" || !c.subject || c.subject.name !== m.vendor) return;
+      if (namesModel(c.sentence + " " + c.quote, m)) add(c);
+    });
+    return out;
+  }
+  function hostOf(url){ try { return new URL(url).hostname.replace(/^www\./, ""); } catch(e){ return "source"; } }
+  function labSaysHtml(claims, max){
+    return '<div class="labSays">' + claims.slice(0, max || 3).map(function(c){
+      return '<div class="labSay"><q>' + escapeHtml(c.quote) + '</q><span class="labSrc">' +
+        '<a href="' + escapeAttr(c.url) + '" target="_blank" rel="noopener">' + escapeHtml(hostOf(c.url)) + '</a>' +
+        (c.date ? ' &middot; read ' + escapeHtml(c.date) : '') + '</span></div>';
+    }).join("") + '</div>';
+  }
+  function fmtTokens(n){ return n >= 1e6 ? (Math.round(n / 1e5) / 10) + "M" : Math.round(n / 1000) + "K"; }
+  /* List price, context, release date and OpenRouter share, each straight from data/models.json. */
+  function modelFactsHtml(m){
     if (!m) return "";
-    var hit = excludedMentionedIn(m.verdict);
-    if (!hit) return m.verdict;
-    return "Our entry for this model points at " + shortModelName(hit) + ", which is on your never-suggest list, so we don't repeat that here.";
+    var f = [];
+    f.push(isPriced(m)
+      ? 'List price <b>' + fmtPrice(m.price_input) + '</b> in &middot; <b>' + fmtPrice(m.price_output) + '</b> out per 1M tokens'
+      : 'List price not on file');
+    if (typeof m.context_window === "number") f.push('Context <b>' + fmtTokens(m.context_window) + '</b> tokens');
+    if (m.released) f.push('Released ' + escapeHtml(m.released));
+    var u = m.usage && m.usage.openrouter;
+    if (u && typeof u.share === "number") f.push('<b>' + u.share + '%</b> of OpenRouter tokens' + (u.as_of ? ' (' + escapeHtml(u.as_of) + ')' : ''));
+    return '<div class="bp-facts">' + f.map(function(x){ return '<div class="bp-fact">' + x + '</div>'; }).join("") + '</div>';
+  }
+  /* The "What the labs say" body for one model: the lab's own words (or a plain line when none
+     are on file), then the facts. */
+  function labSaysBody(m, taskId){
+    if (!m) return '<div class="bp-empty-note">No model set.</div>';
+    var claims = labClaimsFor(m, taskId);
+    if (!claims.length && taskId) claims = labClaimsFor(m, null);
+    return (claims.length ? labSaysHtml(claims, 2)
+                          : '<div class="bp-empty-note">No quote from ' + escapeHtml(m.vendor) + ' on file for ' + escapeHtml(shortModelName(m)) + '.</div>') +
+      modelFactsHtml(m);
   }
 
   var TASK_CATEGORY = {
@@ -1386,176 +1460,22 @@ import { decide } from "./assets/decide.mjs";
   function isPriced(m){ return !!m && m.price_input != null && m.price_output != null; }
   function blendedPrice(m){ if (!isPriced(m)) return 0; return (m.price_input + m.price_output) / 2; }
 
-  /* ============================================================ the decision engine ============================================================
-     Every automatic pick on this board — the suggested swap, the fit count, the starter board,
-     the personal role picks and the personal task table — is `decide()` from the site's own
-     assets/decide.mjs. The board ranks nothing itself.
-
-     VOCABULARY. A block's `task` is already one of data/tasks.json's ids, so it needs no
-     translation. The board also carries an older, coarser "category" vocabulary (coding /
-     agentic / cheap-bulk / research / speed / vision / long-context) that the Role blocks and
-     the personal task table still speak; CATEGORY_TASK below is the ONE place it maps onto an
-     engine task id, and nothing else translates between the two. */
+  /* ============================================================ task vocabulary ============================================================
+     A block's `task` is already one of data/tasks.json's ids. The board also carries an older,
+     coarser "category" vocabulary (coding / agentic / cheap-bulk / research / speed / vision /
+     long-context) that the Role blocks still speak; CATEGORY_TASK is the ONE place it maps onto a
+     task id. The board ranks nothing: the old ranking engine is in archive/engine/. */
   var CATEGORY_TASK = {
     coding: "coding", agentic: "agents", "cheap-bulk": "bulk", research: "research",
     speed: "chat", vision: "vision", "long-context": "research"
   };
-  var ENGINE_TASK_IDS = ["coding","agents","bulk","writing","research","extraction","chat","vision","frontend","exec-summaries"];
-  function engineTaskId(v){
+  var TASK_IDS = ["coding","agents","bulk","writing","research","extraction","chat","vision","frontend","exec-summaries"];
+  function taskIdOf(v){
     if (!v) return null;
-    if (ENGINE_TASK_IDS.indexOf(v) !== -1) return v;              // already a task id
+    if (TASK_IDS.indexOf(v) !== -1) return v;                      // already a task id
     return CATEGORY_TASK[v] || null;                               // a board category
   }
 
-  /* `have` — which labs this block can actually reach. A plan on the block reaches its own
-     lab; a harness plan (Cursor, GitHub Copilot) reaches every lab, which the engine spells
-     'any'. No plan at all means the board's own lab list decides, and a lab the engine has no
-     key for is still reachable through OpenRouter, so that is added rather than dropped. */
-  var ENGINE_VENDOR_KEY = { Anthropic: "anthropic", OpenAI: "openai", Google: "google", xAI: "xai" };
-  function engineHaveFor(planNames){
-    var list = (planNames || []).filter(Boolean);
-    if (list.length){
-      var reach = reachableVendorsFor(list);
-      if (!reach) return ["any"];                                  // a harness plan reaches everything
-      var keys = reach.map(function(v){ return ENGINE_VENDOR_KEY[v]; }).filter(Boolean);
-      if (reach.some(function(v){ return !ENGINE_VENDOR_KEY[v]; })) keys.push("openrouter");
-      return keys.length ? keys : ["any"];
-    }
-    return engineHaveForLabs((state && state.startFilters && state.startFilters.labs) || []);
-  }
-  function engineHaveForLabs(labs){
-    var list = (labs || []).filter(Boolean);
-    if (!list.length) return ["any"];
-    var keys = list.map(function(v){ return ENGINE_VENDOR_KEY[v]; }).filter(Boolean);
-    if (list.some(function(v){ return !ENGINE_VENDOR_KEY[v]; })) keys.push("openrouter");
-    return keys.length ? keys : ["any"];
-  }
-  function boardStance(){
-    if (mode === "personal") return state.personal.me.optimizeFor || "balanced";
-    return (state.startFilters && state.startFilters.stance) || "balanced";
-  }
-  /* Volume: the block's own usage level, in the engine's own words. An automated routine or a
-     hand-edited budget is a custom monthly volume, which the engine takes as numbers. */
-  function engineVolumeFor(b){
-    if (!b) return "typical";
-    var lv = levelOf(b);
-    if (lv === "light" || lv === "typical" || lv === "heavy"){
-      if (b.tokensEdited){ var bd = budgetOf(b); return { tokens_in_month: bd.in, tokens_out_month: bd.out }; }
-      return lv;
-    }
-    var bud = budgetOf(b);
-    return { tokens_in_month: bud.in, tokens_out_month: bud.out };
-  }
-
-  /* One call, cached on its own inputs (including the board's rule layer, so a change to the
-     data rule or the never-suggest list makes a new key rather than a stale answer). render()
-     asks for a shortlist once per block per paint; without this the engine would re-index the
-     whole catalog every time. */
-  var engineCache = {};
-  function engineShortlist(taskId, opts){ return engineShortlistInfo(taskId, opts).list; }
-  /* `raw` is what decide() returned; `list` is what survives the board's own rule layer. Keeping
-     both lets an empty result say WHICH of the two emptied it, instead of one message that is
-     true in one case and misleading in the other. */
-  function engineShortlistInfo(taskId, opts){
-    opts = opts || {};
-    var task = engineTaskId(taskId);
-    if (!task || !DATA) return { raw: [], list: [] };
-    var input = {
-      tasks: [task],
-      have: opts.have || ["any"],
-      stance: opts.stance || boardStance(),
-      volume: opts.volume || "typical",
-      dataRule: { noChinaHosted: currentDataRule() === "no-china" }
-    };
-    var key = JSON.stringify(input) + "|" + currentDataRule() + "|" + state.neverSuggest.join(",");
-    if (engineCache[key]) return engineCache[key];
-    var out;
-    try { out = decide(input, { models: DATA.models, plans: DATA.plans, presets: DATA.usage_presets, vendors: DATA.vendors }); }
-    catch (err){ console.error("decide() failed for " + task, err); out = { tasks: {} }; }
-    var raw = (out.tasks[task] || {}).shortlist || [];
-    var list = raw.filter(function(it){
-      // The engine ranks; the board's own rule layer still has the last word — a model the user
-      // excluded, or one the board's enterprise-only rule flags, is never handed back as a pick,
-      // and an unpriced model is never picked automatically because it cannot be costed.
-      return allowedForAuto(it.id) && isPriced(modelById(it.id));
-    });
-    engineCache[key] = { raw: raw, list: list };
-    return engineCache[key];
-  }
-  /* What to say when there is nothing to pick. Two different facts, two different sentences. */
-  function emptyShortlistText(taskId, opts){
-    return engineShortlistInfo(taskId, opts).raw.length
-      ? RULED_OUT
-      : NO_SHORTLIST;
-  }
-  function emptyShortlistTextForBlock(b){
-    return emptyShortlistText(b && b.task, { have: engineHaveFor(planListOf(b)), volume: engineVolumeFor(b) });
-  }
-  /* The shortlist for one block, asked with that block's own plans, stance and volume. */
-  function engineShortlistForBlock(b){
-    return engineShortlist(b && b.task, { have: engineHaveFor(planListOf(b)), volume: engineVolumeFor(b) });
-  }
-  function engineTopForBlock(b){ var l = engineShortlistForBlock(b); return l.length ? l[0] : null; }
-  function bestFitModelIdFor(b){ var t = engineTopForBlock(b); return t ? t.id : null; }
-
-  function isBestFit(block){
-    var top = bestFitModelIdFor(block);
-    if (!top) return true;                                          // no shortlist for this task — nothing to be off
-    return blockModel(block) === top;
-  }
-
-  /* Item 7: a reason is evidence, never an adjective. The sentence is the model's own catalog
-     row (vendor, task, list price) plus — when the engine has it — one plain clause of standing:
-     where this model sits among the catalog models that carry each kind of evidence for the task. */
-  function ordinal(n){
-    n = Math.round(n || 0);
-    if (n <= 0) return String(n);
-    var s = ["th","st","nd","rd"], v = n % 100;
-    return n + (s[(v - 20) % 10] || s[v] || s[0]);
-  }
-  function standingClause(item){
-    var ev = (item && item.evidence) || {}, bits = [];
-    if (ev.measured && ev.measured.present) bits.push(ordinal(ev.measured.position) + " on independent tests");
-    if (ev.chosen) bits.push(ordinal(ev.chosen.position) + " by OpenRouter spend");
-    if (ev.preferred) bits.push(ordinal(ev.preferred.position) + " by human votes");
-    return bits.length ? bits.join(", ") + "." : "";
-  }
-  function priceClause(m){
-    return isPriced(m)
-      ? fmtPrice(m.price_input) + " in / " + fmtPrice(m.price_output) + " out per 1M."
-      : "Price not listed.";
-  }
-  function engineReason(item, taskId){
-    var m = modelById(item.id);
-    if (!m) return "";
-    var task = engineTaskId(taskId);
-    var line = m.vendor + " lists " + shortModelName(m) + " for " + taskLabel(task).toLowerCase() + ". " + priceClause(m);
-    var st = standingClause(item);
-    return st ? (line + " " + st) : line;
-  }
-  var NO_SHORTLIST = "No shortlist for this task yet.";
-  var RULED_OUT = "Every model on the shortlist for this task is ruled out by your own settings.";
-  /* The same evidence sentence for a model the user chose themselves. When the engine's top
-     three carry it we use its own row (standing and all); otherwise we state the catalog facts
-     without inventing a standing it never returned. */
-  function evidenceFor(modelId, taskId, list){
-    var item = (list || []).find(function(it){ return it.id === modelId; });
-    if (item) return engineReason(item, taskId);
-    var m = modelById(modelId);
-    if (!m) return "";
-    return m.vendor + " lists " + shortModelName(m) + " for " + taskLabel(engineTaskId(taskId)).toLowerCase() + ". " + priceClause(m);
-  }
-
-  /* ---- Optimize-for tier: drives the personal task table + AGENTS.md, never a fixed guess ----
-     cheapest = cheapest model ON THE USER'S PLAN (same vendor as their subscription) that lists
-     the task in best_for; balanced = mid-priced model across the whole catalog; best = highest
-     coding_score (ties broken by confidence) across the whole catalog. A tier with no qualifying
-     model returns "not measured" rather than inventing a pick. */
-  var OPTIMIZE_COPY = {
-    cheapest: "default to the cheapest model on your plan that covers a task; if nothing on your plan is measured for it, that task shows as not measured rather than a guess.",
-    balanced: "pick a mid-priced model per task, balancing quality and cost instead of chasing either extreme.",
-    best: "use the strongest measured model per task regardless of price, since quality is the priority here."
-  };
   /* The board's Role blocks are the routing: a task is served by the role whose kind covers its
      category. Role names are free text, so kinds come from the words people actually use. */
   var ROLE_KIND_RULES = [
@@ -1580,40 +1500,34 @@ import { decide } from "./assets/decide.mjs";
     return state.personal.roles.find(function(r){ return r.model && roleCovers(r, category); }) || null;
   }
   function planVendorOf(planName){ var p = planByName(planName); return p ? p.vendor : null; }
-  function tierEffort(tier){ return tier === "cheapest" ? "low" : tier === "balanced" ? "medium" : "max"; }
-  function computePersonalTaskRow(def, tier, planName){
+  /* One row of the personal task table: the model on the role that covers this task (your
+     choice), the lab's own words about that model for this task when we have them, and its list
+     price. No role, no model: the row says so and leaves the choice to you. */
+  function computePersonalTaskRow(def){
     var cat = def.category, label = def.label;
-    var task = def.task || engineTaskId(cat);
-    var plans = Array.isArray(planName) ? planName : (planName ? [planName] : []);
-    if (!task) return { label: label, model: null, effort: null, roleName: null, reason: "This task isn\u2019t one of our tasks yet, so there is nothing to pick from.", notMeasured: true };
-    // A role on the board wins: its attached model IS the answer, at the effort set on the role
-    // (or the stance's effort where the role sets none).
+    var task = def.task || taskIdOf(cat);
     var role = cat ? roleForCategory(cat) : null;
-    var prefix = "No role set for this yet. ";
-    if (role && isExcluded(role.model)){
-      prefix = "Your \u201c" + role.role + "\u201d role has a never-suggest model attached, so this is our pick instead. ";
-      role = null;
+    if (!role){
+      return { label: label, model: null, effort: null, roleName: null, claim: null,
+               reason: "No role on your board covers this yet. Attach a model to a role and this row follows it." };
     }
-    var list = engineShortlist(task, { have: engineHaveFor(plans), stance: tier });
-    if (role){
-      var reff = role.effort || tierEffort(tier);
-      var breach = dataRuleBreach(role.model);
-      return { label: label, model: role.model, effort: reff, roleName: role.role, notMeasured: false,
-        reason: "Your \u201c" + role.role + "\u201d role \u2014 the model attached to it on the board, at " + reff + " effort" +
-                (role.effort ? " set on that role." : " for the " + tier + " stance.") +
-                " " + evidenceFor(role.model, task, list) +
-                (breach ? " Breaks your data rule: " + breach + "." : "") };
-    }
-    if (!list.length){
-      return { label: label, model: null, effort: null, roleName: null, notMeasured: true,
-               reason: prefix + emptyShortlistText(task, { have: engineHaveFor(plans), stance: tier }) };
-    }
-    return { label: label, model: list[0].id, effort: tierEffort(tier), roleName: null, notMeasured: false,
-             reason: prefix + engineReason(list[0], task) };
+    var m = modelById(role.model);
+    var claims = labClaimsFor(m, task);
+    var breach = dataRuleBreach(role.model);
+    return { label: label, model: role.model, effort: role.effort || null, roleName: role.role,
+      claim: claims[0] || null,
+      reason: "Your \u201c" + role.role + "\u201d role. " + (m ? priceClause(m) : "") +
+              (isExcluded(role.model) ? " On your never-use list." : "") +
+              (breach ? " Breaks your data rule: " + breach + "." : "") };
+  }
+  function priceClause(m){
+    return isPriced(m)
+      ? "List price " + fmtPrice(m.price_input) + " in / " + fmtPrice(m.price_output) + " out per 1M tokens."
+      : "List price not on file.";
   }
 
-  // `task` is the engine's own task id (data/tasks.json); `category` is the board's older,
-  // coarser word, kept because the Role blocks still route on it.
+  // `task` is a data/tasks.json id; `category` is the board's older, coarser word, kept because
+  // the Role blocks still route on it.
   var PERSONAL_TASK_DEFS = [
     { label: "Knowledge work", category: "research", task: "research" },
     { label: "Frontend design", category: "coding", task: "frontend" },
@@ -1640,7 +1554,7 @@ import { decide } from "./assets/decide.mjs";
       org: { divisions: [], blocks: [] },
       personal: {
         // Item 7: plans are a list everywhere — one field, with no singular shadowing it.
-        me: { id: "me", plans: ["Anthropic Max 5x"], uses: ["Claude Fable 5", "Claude Sonnet 5"].map(fuzzyMatchModel).filter(Boolean), optimizeFor: "balanced", x: 260, y: 130 },
+        me: { id: "me", plans: ["Anthropic Max 5x"], uses: ["Claude Fable 5", "Claude Sonnet 5"].map(fuzzyMatchModel).filter(Boolean), x: 260, y: 130 },
         owned: [], roles: [],
         taskDefs: PERSONAL_TASK_DEFS.slice()
       },
@@ -1707,9 +1621,9 @@ import { decide } from "./assets/decide.mjs";
     // Item 2: the start card's answers belong to the user. An example only fills the org — it
     // never overwrites filters already chosen (or half-chosen and not submitted).
     if (!state.startFilters){
-      state.startFilters = (startPicked.labs.length || startPicked.dataRule || startPicked.stance)
-        ? { labs: startPicked.labs.slice(), dataRule: startPicked.dataRule, stance: startPicked.stance, size: startPicked.size, functions: startPicked.functions.slice() }
-        : { labs: ["Anthropic", "Cursor", "Google"], dataRule: "any", stance: "balanced", size: "company", functions: ["Engineering", "Data", "Marketing", "Leadership"] };
+      state.startFilters = (startPicked.labs.length || startPicked.dataRule)
+        ? { labs: startPicked.labs.slice(), dataRule: startPicked.dataRule, size: startPicked.size, functions: startPicked.functions.slice() }
+        : { labs: ["Anthropic", "Cursor", "Google"], dataRule: "any", size: "company", functions: ["Engineering", "Data", "Marketing", "Leadership"] };
     }
     state.startCardDismissed = true;
     render();
@@ -1811,7 +1725,7 @@ import { decide } from "./assets/decide.mjs";
      Volume is ONE input: the usage level. light / typical / heavy come straight from the data's
      own usage presets (stated assumptions, rationale and all); automated is runs/day x 30 x the
      measured average request for the model. Every number is shown as a formula on the block, in
-     the panel and in AGENTS.md - nothing is costed behind the reader's back. */
+     the panel - nothing is costed behind the reader's back. */
 
   /* MEASURED, not assumed. openrouter.ai/api/frontend/v1/rankings/models returns, per model per
      day, total_prompt_tokens, total_completion_tokens AND count (requests) - so "the average
@@ -2115,8 +2029,8 @@ import { decide } from "./assets/decide.mjs";
     }
     if (!out.length){
       var why = !allBlockModelIds(b).length
-        ? ((b && b.modelRaw) ? "\u201c" + b.modelRaw + "\u201d isn't in our data yet - pick a model to cost it"
-                             : "no model picked yet")
+        ? ((b && b.modelRaw) ? "\u201c" + b.modelRaw + "\u201d isn't in our data yet - choose a model to cost it"
+                             : "no model set")
         : (c.plans.length ? "no seats set, and your plans already cover every model here"
                           : "no seats and no token budget set");
       out.push({ kind: "none", math: "Not measured — " + why + ".", amount: 0, src: null });
@@ -2150,7 +2064,7 @@ import { decide } from "./assets/decide.mjs";
   /* A division header is a narrow strip, and a seven-figure year pushes the division's own name
      out of it. From $100,000 up the header abbreviates to three significant figures ($128k,
      $3.03M); below that it prints the figure in full. The header is the ONLY place that
-     abbreviates — the board verdict, every block formula and AGENTS.md still print the whole
+     abbreviates — the board summary and every block formula still print the whole
      number, because those are the places somebody copies a figure out of. */
   function fmtUsdShort(n, below){
     var v = Math.round(n);
@@ -2161,54 +2075,6 @@ import { decide } from "./assets/decide.mjs";
     }
     if (v >= 100000) return "$" + Math.round(v/1000).toLocaleString() + "k";
     return (below || fmtUsd)(n);
-  }
-
-  /* ============================================================ suggested models ============================================================
-     One rule, no curated list: a block's suggestion is the engine's first shortlist entry for
-     that block's task, offered when it differs from the block's own model AND either lowers the
-     cost or fixes a data-rule breach. The reason is the engine's own evidence. */
-  function engineSwapFor(b){
-    if (!b || !blockModel(b)) return null;
-    var top = engineTopForBlock(b);
-    if (!top || top.id === blockModel(b)) return null;
-    var breach = blockBreach(b);
-    var before = costOfBlock(b);
-    var after = costOfBlock(b.type === "routine"
-      ? variantOf(b, { seats: 0, plans: [], models: [top.id] })
-      : variantOf(b, { models: [top.id] }));
-    var save = before - after;
-    if (!breach && save <= 0.5) return null;
-    return { item: top, toModel: top.id, save: save, breach: breach,
-             reason: (breach ? "Breaks your data rule (" + breach + "). " : "") + engineReason(top, b.task) };
-  }
-
-  function saveLabel(save){
-    if (save > 0.5) return "saves " + fmtUsd(save) + "/mo";
-    if (save < -0.5) return "costs " + fmtUsd(-save) + " more/mo";
-    return "same cost";
-  }
-  /* A rule breach is the loudest problem on a board, so those rows come first even when the
-     replacement costs more (the row says so rather than pretending it saves). */
-  function computeSuggestions(){
-    var rule = [], cheaper = [];
-    state.org.blocks.forEach(function(b){
-      var s = engineSwapFor(b);
-      if (!s) return;
-      var row = { kind: s.breach ? "rule" : "fit", blockId: b.id, who: b.who, fromModel: blockModel(b),
-                  toModel: s.toModel, toPlan: null, save: s.save, reason: s.reason };
-      (s.breach ? rule : cheaper).push(row);
-    });
-    return rule.concat(cheaper).slice(0, 4);
-  }
-  // Item 3: every Apply lands here, and the org policy file lists them as "Changes applied".
-  function logApply(b, fromModel, toModel, toPlan, save){
-    state.applyLog.push({
-      who: b.who,
-      from: shortModelName(modelById(fromModel)) || "not set",
-      to: shortModelName(modelById(toModel)) || "not set",
-      plan: toPlan || null,
-      save: save
-    });
   }
 
   /* ============================================================ palette ============================================================ */
@@ -2428,10 +2294,8 @@ import { decide } from "./assets/decide.mjs";
         // Item 7: a free drop never lands on top of another block.
         var slot = freeSlotNear(b.x, b.y, b.id); b.x = slot.x; b.y = slot.y;
       }
-      if (!blockModel(b)){
-        var labs = (state.startFilters && state.startFilters.labs) || [];
-        setBlockModel(b, starterModelFor(b.task, boardStance(), labs) || defaultModelId(planListOf(b)));
-      }
+      // No division default: the model slot stays empty for you to fill. The board sets no model
+      // on its own.
       state.org.blocks.push(b);
       justCreated[b.id] = true;
       render();
@@ -2474,14 +2338,14 @@ import { decide } from "./assets/decide.mjs";
 "Report only what you grounded in a file or in the answers you were given; leave unknown fields null.\n" +
 "Never guess prices or model names you have not seen.\n" +
 "If no plan or seat count is stated anywhere, leave it null — the site will ask.\n" +
-"For task and stance, pick the closest option listed; if there is no basis, use null.\n" +
+"For task, choose the closest option listed; if there is no basis, use null.\n" +
 "\n" +
 "Return ONE JSON object and nothing else, in this shape:\n" +
 "{\n" +
 '  "mode": "org" | "personal",            // org = a team/company; personal = one person and their agents\n' +
 '  "name": "string",                       // the org, project, or universe name\n' +
 '  "plans": [ { "vendor": "Anthropic|OpenAI|Google|xAI|Cursor|GitHub Copilot|other", "plan": "string", "seats": number|null } ],\n' +
-'  "filters": { "have": ["vendor"...], "data_rule": "any|no-china|enterprise-only|null", "stance": "cheapest|balanced|best|null" },\n' +
+'  "filters": { "have": ["vendor"...], "data_rule": "any|no-china|enterprise-only|null" },\n' +
 '  "divisions": [ { "name": "string", "members": [\n' +
 '      { "kind": "person|team|routine", "who": "string", "people": number|null,\n' +
 '        "task": "coding|agents|bulk|writing|research|extraction|chat|vision|frontend|exec-summaries|null",\n' +
@@ -2490,7 +2354,7 @@ import { decide } from "./assets/decide.mjs";
 '        "serves": ["name of a team or person this routine runs for"...] }\n' +
 '  ] } ],\n' +
 '  "personal": {                            // only when mode = personal\n' +
-'    "plan": "string|null", "likes": ["model"...], "dislikes": ["model"...], "token_conscious": true|false|null,\n' +
+'    "plan": "string|null", "likes": ["model"...], "dislikes": ["model"...],\n' +
 '    "tasks": ["task id"...],\n' +
 '    "roles": [ { "role": "coordinator|long-haul code|bulk|design|research|chat|other", "model": "string", "effort": "low|medium|high|max|null" } ],\n' +
 '    "delegation": "one or two sentences: how work is split between models/agents",\n' +
@@ -2768,7 +2632,7 @@ import { decide } from "./assets/decide.mjs";
   function applyImportOrg(obj){
     if (obj.name) { state.boardName = obj.name; document.getElementById("boardName").value = state.boardName; }
     if (obj.filters){
-      state.startFilters = { labs: obj.filters.have || [], dataRule: obj.filters.data_rule || null, stance: obj.filters.stance || null };
+      state.startFilters = { labs: obj.filters.have || [], dataRule: obj.filters.data_rule || null };
       if (obj.filters.data_rule) state.dataRule = obj.filters.data_rule;
     }
     state.startCardDismissed = true;
@@ -2785,7 +2649,7 @@ import { decide } from "./assets/decide.mjs";
     // An imported setup carries its own filters — including the data rule, which has to reach the
     // board or nothing downstream can enforce it. (Org import already did this.)
     if (obj.filters){
-      state.startFilters = { labs: obj.filters.have || [], dataRule: obj.filters.data_rule || null, stance: obj.filters.stance || null };
+      state.startFilters = { labs: obj.filters.have || [], dataRule: obj.filters.data_rule || null };
       if (obj.filters.data_rule) state.dataRule = obj.filters.data_rule;
       state.startCardDismissed = true;
     }
@@ -2818,7 +2682,6 @@ import { decide } from "./assets/decide.mjs";
         else if (nm) state.unmatchedPrefs.push(String(nm));
       });
     }
-    if (p.token_conscious === true) me.optimizeFor = "cheapest"; // best-effort mapping from the older token-conscious signal
     var stagger = 0;
     state.personal.roles = (p.roles || []).map(function(r, ri){
       var match = matchModelSmart(r.model);
@@ -2843,7 +2706,7 @@ import { decide } from "./assets/decide.mjs";
         var id = String(taskId||"").trim();
         return { label: capFirst(id.replace(/[-_]/g," ")),
                  category: TASK_CATEGORY.hasOwnProperty(id) ? TASK_CATEGORY[id] : null,
-                 task: engineTaskId(id) };
+                 task: taskIdOf(id) };
       });
     }
     state.personalPlaced = true;
@@ -3246,10 +3109,11 @@ import { decide } from "./assets/decide.mjs";
     saveBoard();
     renderTotals();
     renderNeverBar();
-    // The verdict pane holds the cost bar, so rebuild it every time even when a selection is
+    // The summary pane holds the cost bar, so rebuild it every time even when a selection is
     // covering it - otherwise deselecting flashes numbers from before the last edit.
-    renderBpVerdict();
+    renderBpSummary();
     if (selected) refreshSelectedPanel();
+    syncInstallPane();
     tweenAmounts();
   }
 
@@ -3422,16 +3286,6 @@ import { decide } from "./assets/decide.mjs";
       // only when it fits; fitServesFaces() measures after layout and falls back to the count.
       // The full list always lives in the panel's Serves picker.
       if (servesCount && servesNames.length === 1) m2.dataset.servesFallback = servesCount;
-    }
-    var suggestion = computeSuggestions().find(function(s){ return s.blockId === b.id; });
-    if (suggestion){
-      var dot = document.createElement("div");
-      dot.className = "dot"; dot.tabIndex = 0;
-      // One tooltip, not two: the native title says what the dot means and where to look, and the
-      // swap itself is spelled out in the "Suggested models" section it points at.
-      dot.title = "A suggested model is available — open the panel";
-      dot.setAttribute("aria-label", dot.title);
-      el.appendChild(dot);
     }
     wireNodeDrag(el, { kind: "block", data: b });
     wireBlockChrome(el, "block", b);
@@ -3698,8 +3552,8 @@ import { decide } from "./assets/decide.mjs";
     return total > 0 ? (bar + legend) : "";
   }
 
-  /* ============================================================ brain panel: board / verdict state ============================================================ */
-  var bpVerdict = document.getElementById("bpVerdict");
+  /* ============================================================ brain panel: board / summary state ============================================================ */
+  var bpSummary = document.getElementById("bpSummary");
   var bpSelected = document.getElementById("bpSelected");
   var bpNever = document.getElementById("bpNever");
   var neverPickerOpen = false;
@@ -3729,7 +3583,7 @@ import { decide } from "./assets/decide.mjs";
     root.querySelectorAll(".bpSec").forEach(function(sec){
       var head = sec.querySelector(".bpSecHead"), body = sec.querySelector(".bpSecBody");
       head.addEventListener("click", function(e){
-        // the "How we pick" link lives in the head — let it be a link, not a toggle
+        // the "How we source facts" link lives in the head — let it be a link, not a toggle
         if (e.target.closest("a")) return;
         var open = head.getAttribute("aria-expanded") !== "true";
         head.setAttribute("aria-expanded", open);
@@ -3744,8 +3598,8 @@ import { decide } from "./assets/decide.mjs";
   function planContextNames(){ return mode === "personal" ? planListOf(state.personal.me) : []; }
   function renderNeverBar(){
     var body = '<div class="nbHint">' + (state.neverSuggest.length
-        ? "Hard exclude. We never pick these for you, in any mode."
-        : "Nothing excluded yet. Anything you add here is never picked for you.") + '</div>';
+        ? "Hard exclude. Nothing on the board or in the package uses these."
+        : "Nothing excluded yet. Anything you add here stays out of the package.") + '</div>';
     if (state.neverSuggest.length){
       body += '<div class="taglist">' + state.neverSuggest.map(function(id, i){
         var m = modelById(id);
@@ -3759,7 +3613,7 @@ import { decide } from "./assets/decide.mjs";
       body += '<div class="bp-filters-empty" style="margin-top:10px;">Not in our data yet: ' + state.unmatchedPrefs.map(escapeHtml).join(", ") + '</div>';
     }
     bpNever.innerHTML = '<div class="bp-divider"></div>' +
-      bpSection("never", "Never suggest", body, { count: state.neverSuggest.length || null, open: false });
+      bpSection("never", "Never use", body, { count: state.neverSuggest.length || null, open: false });
     wireSections(bpNever);
     bpNever.querySelectorAll("[data-nb-rm]").forEach(function(btn){
       btn.addEventListener("click", function(){ pushUndo(); state.neverSuggest.splice(+btn.dataset.nbRm, 1); render(); });
@@ -3774,13 +3628,13 @@ import { decide } from "./assets/decide.mjs";
         neverPickerOpen = false;
         if (state.neverSuggest.indexOf(id) === -1){ pushUndo(); state.neverSuggest.push(id); }
         render();
-      }, { placeholder: "Pick a model to exclude\u2026", planNames: planContextNames() });
+      }, { placeholder: "Choose a model to exclude\u2026", planNames: planContextNames() });
     }
   }
 
-  function renderBpVerdict(){
-    bpVerdict.hidden = false; bpSelected.hidden = true;
-    if (mode === "org") renderBpVerdictOrg(); else renderBpVerdictPersonal();
+  function renderBpSummary(){
+    bpSummary.hidden = false; bpSelected.hidden = true;
+    if (mode === "org") renderBpSummaryOrg(); else renderBpSummaryPersonal();
   }
 
   /* Item 8: the board's one data rule, settable from either mode. Same chips, same words, same
@@ -3802,7 +3656,7 @@ import { decide } from "./assets/decide.mjs";
     });
   }
 
-  function renderBpVerdictOrg(){
+  function renderBpSummaryOrg(){
     var total = computeOrgTotal();
     var heads = headcountOfAll(state.org.blocks);
     var money = moneyThreeWays(total, heads);
@@ -3810,39 +3664,45 @@ import { decide } from "./assets/decide.mjs";
     var subBits = ["per month"];
     if (money.person) subBits.push(money.person + " per person");
     subBits.push(money.year + " per year");
-    var html = '<div class="bp-eyebrow">Board verdict</div>' +
+    var html = '<div class="bp-eyebrow">Board summary</div>' +
       '<div class="bp-org">' + escapeHtml(state.boardName) + '</div>' +
-      '<div class="bp-total" id="bpTotalNum" data-key="verdict" data-amt="' + total + '"><span class="amt">' + fmtUsd(total) + '</span></div>' +
+      '<div class="bp-total" id="bpTotalNum" data-key="summary" data-amt="' + total + '"><span class="amt">' + fmtUsd(total) + '</span></div>' +
       '<div class="bp-total-sub">' + escapeHtml(subBits.join(" · ")) + (state.org.blocks.length ? "" : " &middot; nothing on the board yet") + '</div>' +
       dataRuleChipsHtml() +
       buildCostBar();
 
-    var sugg = computeSuggestions();
-    var changesBody = "";
-    if (sugg.length){
-      changesBody += '<div class="bp-changes">';
-      sugg.forEach(function(s){
-        changesBody += '<div class="bp-change-row">' +
-          '<div class="bp-change-who">' + escapeHtml(s.who) + '</div>' +
-          '<div class="bp-change-swap"><div class="bp-change-models">' + escapeHtml(shortModelName(modelById(s.fromModel))) + ' &rarr; ' + escapeHtml(shortModelName(modelById(s.toModel))) + '</div>' +
-          '<div class="bp-change-save">' + escapeHtml(saveLabel(s.save)) + '</div></div>' +
-          '<div class="bp-change-reason">' + escapeHtml(s.reason) + '</div>' +
-          '<button class="bp-change-apply" data-apply="' + escapeAttr(s.blockId) + '" data-model="' + escapeAttr(s.toModel) + '" data-plan="' + escapeAttr(s.toPlan||"") + '">' + icon("apply", 12) + 'Apply</button>' +
-          '</div>';
+    var blocks = state.org.blocks, factsBody = "";
+    if (blocks.length){
+      var kinds = { person: 0, team: 0, routine: 0 }, seatAmt = 0, apiAmt = 0, modelIds = [], labs = [], unset = 0;
+      blocks.forEach(function(b){
+        kinds[b.type] = (kinds[b.type] || 0) + 1;
+        var cp = costParts(b); seatAmt += cp.seat; apiAmt += cp.api;
+        var ids = blockModelIds(b);
+        if (!ids.length) unset++;
+        ids.forEach(function(id){
+          if (modelIds.indexOf(id) === -1) modelIds.push(id);
+          var m = modelById(id);
+          if (m && labs.indexOf(m.vendor) === -1) labs.push(m.vendor);
+        });
       });
-      changesBody += '</div>';
-    } else {
-      changesBody += '<div class="bp-empty-note">' + (state.org.blocks.length ? "Nothing to change: no model swap lowers the cost, and nothing breaks your data rule." : "Add people, teams, or routines to get a verdict.") + '</div>';
-    }
-    if (state.org.blocks.length){
-      var fitCount = state.org.blocks.filter(isBestFit).length;
-      changesBody += '<div class="bp-fit">' + fitCount + ' of ' + state.org.blocks.length + ' blocks on our first pick for their task</div>';
-      var breaches = state.org.blocks.filter(function(b){ return !!blockBreach(b); }).length;
-      changesBody += '<div class="bp-flag" style="margin:8px 0 0;">' + (breaches
-        ? icon("shieldSlash", 13) + '<span>' + breaches + ' of ' + state.org.blocks.length + ' blocks filtered out by your data rule (' + escapeHtml(RULE_LABELS[currentDataRule()]) + ').</span>'
+      var plural = function(n, one, many){ return n + " " + (n === 1 ? one : many); };
+      var facts = [
+        '<b>' + blocks.length + '</b> ' + (blocks.length === 1 ? 'block' : 'blocks') + ': ' +
+          escapeHtml([plural(kinds.person, "person", "people"), plural(kinds.team, "team", "teams"), plural(kinds.routine, "routine", "routines")].join(", ")),
+        '<b>' + modelIds.length + '</b> ' + (modelIds.length === 1 ? 'model' : 'models') + ' from <b>' + labs.length + '</b> ' + (labs.length === 1 ? 'lab' : 'labs') +
+          (labs.length ? ' (' + escapeHtml(labs.join(", ")) + ')' : ''),
+        'Seat plans <b>' + fmtUsd(seatAmt) + '</b>/mo &middot; billed per token <b>' + fmtUsd(apiAmt) + '</b>/mo'
+      ];
+      if (unset) facts.push('<b>' + unset + '</b> ' + (unset === 1 ? 'block has' : 'blocks have') + ' no model set');
+      factsBody += '<div class="bp-facts" style="margin-top:0;">' + facts.map(function(x){ return '<div class="bp-fact">' + x + '</div>'; }).join("") + '</div>';
+      var breaches = blocks.filter(function(b){ return !!blockBreach(b); }).length;
+      factsBody += '<div class="bp-flag" style="margin:10px 0 0;">' + (breaches
+        ? icon("shieldSlash", 13) + '<span>' + breaches + ' of ' + blocks.length + ' blocks filtered out by your data rule (' + escapeHtml(RULE_LABELS[currentDataRule()]) + ').</span>'
         : '<span style="color:rgba(var(--ink),.5)">Every block clears your data rule (' + escapeHtml(RULE_LABELS[currentDataRule()]) + ').</span>') + '</div>';
+    } else {
+      factsBody += '<div class="bp-empty-note">Add people, teams or routines to see the bill.</div>';
     }
-    html += bpSection("orgChanges", "Suggested models", changesBody, { count: sugg.length || null, right: howLink() });
+    html += bpSection("orgFacts", "Board facts", factsBody, { right: howLink() });
 
     var filtersBody = "";
     if (state.startFilters){
@@ -3850,7 +3710,6 @@ import { decide } from "./assets/decide.mjs";
       filtersBody += '<div class="bp-filters"><div class="chips">';
       (f.labs||[]).forEach(function(l){ filtersBody += '<span class="chip on">' + escapeHtml(l) + '</span>'; });
       filtersBody += '<span class="chip on" tabindex="0" style="cursor:help;" data-tip="' + escapeAttr(ruleTipText(currentDataRule())) + '">' + escapeHtml(RULE_LABELS[currentDataRule()]) + '</span>';
-      if (f.stance) filtersBody += '<span class="chip on">' + escapeHtml(STANCE_LABELS[f.stance]) + '</span>';
       if (f.size) filtersBody += '<span class="chip on">' + escapeHtml(SIZE_LABELS[f.size] || f.size) + '</span>';
       filtersBody += '</div><button class="linklike" id="editFilters" style="margin-top:10px;">Edit</button></div>';
     } else {
@@ -3872,31 +3731,18 @@ import { decide } from "./assets/decide.mjs";
     }
     html += bpSection("orgFilters", "Your filters", filtersBody, { open: false });
 
-    bpVerdict.innerHTML = html;
-    wireSections(bpVerdict);
-    wireDataRuleChips(bpVerdict);
-    bpVerdict.querySelectorAll("[data-tip]:not([data-set-rule])").forEach(function(el){ wireTooltip(el); });
-    bpVerdict.querySelectorAll("[data-apply]").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        var b = state.org.blocks.find(function(x){ return x.id === btn.dataset.apply; });
-        if (!b) return;
-        pushUndo();
-        var fromModel = blockModel(b), before = costOfBlock(b);
-        setBlockModel(b, btn.dataset.model);
-        if (btn.dataset.plan) setPlanList(b, [btn.dataset.plan]);
-        logApply(b, fromModel, blockModel(b), btn.dataset.plan || null, before - costOfBlock(b));
-        render();
-        showToast("Applied — " + b.who + " now on " + shortModelName(modelById(blockModel(b))));
-      });
-    });
+    bpSummary.innerHTML = html;
+    wireSections(bpSummary);
+    wireDataRuleChips(bpSummary);
+    bpSummary.querySelectorAll("[data-tip]:not([data-set-rule])").forEach(function(el){ wireTooltip(el); });
     var ef = document.getElementById("editFilters");
     if (ef) ef.addEventListener("click", openStartCard);
   }
 
-  /* Item 4: Personal mode has no Me block. Your plan, your stance, the models you use and the
-     budget behind the bill are the panel's resting state instead — the same controls the Me
-     block used to open, one click closer. */
-  function renderBpVerdictPersonal(){
+  /* Item 4: Personal mode has no Me block. Your plan, the models you use and the budget behind
+     the bill are the panel's resting state instead — the same controls the Me block used to
+     open, one click closer. */
+  function renderBpSummaryPersonal(){
     var me = state.personal.me;
     var plans = planListOf(me);
     var meB = meCostBlock(), meTotal = costOfBlock(meB), meParts = costParts(meB);
@@ -3905,34 +3751,41 @@ import { decide } from "./assets/decide.mjs";
     if (plans.length > 1) subBits.push(plans.length + " plans added up");
     if (!plans.length) subBits.push("plan not set");
     if (meParts.api > 0) subBits.push("includes " + fmtUsd(meParts.api) + " for models your plan doesn’t cover");
-    // The headline is the board's verdict, the same as Org mode's; "Your plan" is the section
+    // The headline is the board summary, the same as Org mode's; "Your plan" is the section
     // below that holds the controls behind it, so the two never repeat the same words.
-    var html = '<div class="bp-eyebrow">Board verdict</div>' +
+    var html = '<div class="bp-eyebrow">Board summary</div>' +
       '<div class="bp-org">' + escapeHtml(planListLabel(plans) || "Not set") + '</div>' +
-      '<div class="bp-total" data-key="verdict" data-amt="' + meTotal + '" title="' + escapeAttr(formulaPlain(meB)) + '"><span class="amt">' + fmtUsd(meTotal) + '</span></div>' +
+      '<div class="bp-total" data-key="summary" data-amt="' + meTotal + '" title="' + escapeAttr(formulaPlain(meB)) + '"><span class="amt">' + fmtUsd(meTotal) + '</span></div>' +
       '<div class="bp-total-sub">' + escapeHtml(subBits.join(" · ")) + '</div>' +
       dataRuleChipsHtml() +
       '<button class="linklike" id="editFiltersPersonal" style="margin:8px 0 4px;">Edit filters</button>';
 
     html += bpSection("yourPlan", "Your plan", yourPlanBodyHtml(), { open: true });
 
-    var tableBody = '<table class="taskTable"><thead><tr><th>Task</th><th>Model</th><th>Effort</th></tr></thead><tbody>';
+    var tableBody = '<table class="taskTable"><thead><tr><th>Task</th><th>Your model</th><th>Effort</th></tr></thead><tbody>';
     state.personal.taskDefs.forEach(function(def){
-      var row = computePersonalTaskRow(def, me.optimizeFor, plans);
+      var row = computePersonalTaskRow(def);
       var breach = row.model ? dataRuleBreach(row.model) : null;
-      tableBody += '<tr><td><div class="tt-task">' + escapeHtml(row.label) + '</div><div class="tt-reason">' + escapeHtml(row.reason) + '</div></td>' +
-        '<td class="tt-model">' + (row.model ? (escapeHtml(shortModelName(modelById(row.model))) + (breach ? ' ' + icon("shieldSlash", 11) : '')) : '<span class="notMeasured">Not measured</span>') + '</td>' +
+      var labLine = row.claim
+        ? '<div class="labSay tt-lab"><q>' + escapeHtml(row.claim.quote) + '</q><span class="labSrc"><a href="' + escapeAttr(row.claim.url) + '" target="_blank" rel="noopener">' +
+          escapeHtml(hostOf(row.claim.url)) + '</a>' + (row.claim.date ? ' &middot; read ' + escapeHtml(row.claim.date) : '') + '</span></div>'
+        : '';
+      tableBody += '<tr><td><div class="tt-task">' + escapeHtml(row.label) + '</div><div class="tt-reason">' + escapeHtml(row.reason) + '</div>' + labLine + '</td>' +
+        '<td class="tt-model">' + (row.model ? (escapeHtml(shortModelName(modelById(row.model))) + (breach ? ' ' + icon("shieldSlash", 11) : '')) : '<span class="notMeasured">Not set</span>') + '</td>' +
         '<td class="tt-effort">' + (row.effort ? escapeHtml(capFirst(row.effort)) : '<span class="notMeasured">&mdash;</span>') + '</td></tr>';
     });
     tableBody += '</tbody></table>';
     if (!state.personal.roles.length){
       tableBody += '<div class="bp-empty-note" style="margin-top:12px;">No roles on the board yet &mdash; drag a Role piece on and attach a model to it, and these rows follow it.</div>';
     }
-    html += bpSection("perTasks", "Task &rarr; model &rarr; effort", tableBody, { right: howLink() });
+    html += bpSection("perTasks", "Task &rarr; your model &rarr; effort", tableBody, { right: howLink() });
 
-    bpVerdict.innerHTML = html;
-    wireSections(bpVerdict);
-    wireDataRuleChips(bpVerdict);
+    bpSummary.innerHTML = html;
+    wireSections(bpSummary);
+    wireDataRuleChips(bpSummary);
+    wireYourPlan();    bpSummary.innerHTML = html;
+    wireSections(bpSummary);
+    wireDataRuleChips(bpSummary);
     wireYourPlan();
     var efp = document.getElementById("editFiltersPersonal");
     if (efp) efp.addEventListener("click", openStartCard);
@@ -3954,7 +3807,6 @@ import { decide } from "./assets/decide.mjs";
   }
 
   var RULE_LABELS = { any: "Any data rule", "no-china": "No Chinese labs", "enterprise-only": "Enterprise only" };
-  var STANCE_LABELS = { cheapest: "Cheapest", balanced: "Balanced", best: "Best available" };
   var SIZE_LABELS = { solo: "Solo", team: "Team", company: "Company" };
 
   /* Item 8: the active segment is one indicator that slides. Measured from the real buttons so it
@@ -3975,7 +3827,7 @@ import { decide } from "./assets/decide.mjs";
 
   /* ============================================================ brain panel: block/region selected ============================================================ */
   function taskOptionsHtml(current){
-    var opts = current ? "" : '<option value="" selected disabled>Unspecified — pick one</option>';
+    var opts = current ? "" : '<option value="" selected disabled>Unspecified — choose one</option>';
     return opts + DATA.tasks.map(function(t){ return '<option value="'+escapeAttr(t.id)+'"'+(t.id===current?" selected":"")+'>'+escapeHtml(t.label)+'</option>'; }).join("");
   }
 
@@ -4068,7 +3920,7 @@ import { decide } from "./assets/decide.mjs";
     // Marked, not hidden: a flagged or excluded model stays pickable by hand, dimmed and labelled.
     function optRow(m){
       var breach = dataRuleBreach(m.id), excl = isExcluded(m.id);
-      var warn = excl ? "Never suggest" : (breach ? breachLabel() : "");
+      var warn = excl ? "Never use" : (breach ? breachLabel() : "");
       // The list is no longer grouped by lab (item 10 orders it by popularity), so each row
       // names its own lab.
       var note = escapeHtml(m.vendor) + (warn ? ' &middot; ' + escapeHtml(warn) : "");
@@ -4304,56 +4156,22 @@ import { decide } from "./assets/decide.mjs";
     filterInput.addEventListener("keydown", function(e){ if (e.key === "Escape"){ e.stopPropagation(); closeMenu(); btn.focus(); } });
   }
 
-  function pickBlockHtml(b){
+  /* What the labs say about the model on this block: the lab's own words for this block's task
+     (or for any task when it has none on file), then list price, context, release and usage. */
+  function labSaysBlockHtml(b){
     var mid = blockModel(b);
     var m = modelById(mid);
     var html = "";
     if (mid && b.versionUnstated){
-      html += '<div class="bp-empty-note">Version not stated — matched to the newest, ' + escapeHtml(shortModelName(m)) + '.</div>';
+      html += '<div class="bp-empty-note">Version not stated &mdash; matched to the newest, ' + escapeHtml(shortModelName(m)) + '.</div>';
     }
     if (!mid && b.modelRaw){
-      html += '<div class="bp-pick-line"><b>' + escapeHtml(b.modelRaw) + '</b> is not in our data yet.</div>' +
-        '<div class="bp-pick-reason">Pick a real model above to see cost and a recommendation.</div>';
-      return html;
+      return '<div class="bp-pick-line"><b>' + escapeHtml(b.modelRaw) + '</b> is not in our data yet. Choose a model above to see its facts.</div>';
     }
-    if (!mid){
-      html += '<div class="bp-pick-line">No model picked yet.</div>' +
-        '<div class="bp-pick-reason">Pick one above to see cost and a recommendation.</div>';
-      return html;
-    }
-    // Item 1: the data rule outranks cost. A flagged block gets the engine's first allowed pick,
-    // and the button says plainly whether that costs more.
-    var breach = blockBreach(b);
-    html += bpFlagHtml(breach);
-    var swap = engineSwapFor(b);
-    if (swap){
-      var to = modelById(swap.toModel);
-      html += '<div class="bp-pick-line">You chose <b>' + escapeHtml(shortModelName(m)) + '</b>. We\'d pick <b>' + escapeHtml(shortModelName(to)) + '</b>' + (breach ? ', which clears your rule' : '') + '.</div>' +
-        '<div class="bp-pick-reason">' + escapeHtml(swap.reason) + '</div>' +
-        '<button class="bp-apply" data-pd-model="' + escapeAttr(swap.toModel) + '" data-pd-plan="">' + icon("apply", 13) + 'Apply \u2014 ' + escapeHtml(saveLabel(swap.save)) + '</button>';
-      return html;
-    }
-    if (breach){
-      html += '<div class="bp-pick-line">You chose <b>' + escapeHtml(shortModelName(m)) + '</b>. Nothing in our data is both allowed under your rule and on the shortlist for ' +
-        escapeHtml(taskLabel(engineTaskId(b.task)).toLowerCase()) + ', so we\'re not proposing a swap.</div>';
-      return html;
-    }
-    html += bestFitVerdictHtml(b, m);
-    return html;
-  }
-  /* No swap to offer. The reason line stays evidence: the engine's own row for the model this
-     block is already on, or a plain sentence when the engine has no shortlist for the task. */
-  function bestFitVerdictHtml(b, m){
-    var list = engineShortlistForBlock(b);
-    var mine = list.find(function(it){ return it.id === blockModel(b); }) || null;
-    var line = isExcluded(blockModel(b))
-      ? 'You chose <b>' + escapeHtml(shortModelName(m)) + '</b>, which is on your never-suggest list. It stays because you picked it.'
-      : (mine
-          ? 'You chose <b>' + escapeHtml(shortModelName(m)) + '</b>, which is our first pick for this task.'
-          : 'You chose <b>' + escapeHtml(shortModelName(m)) + '</b>. Nothing on the shortlist lowers the cost, so it stays.');
-    var reason = mine ? engineReason(mine, b.task) : (list.length ? engineReason(list[0], b.task) : emptyShortlistTextForBlock(b));
-    return '<div class="bp-pick-line">' + line + '</div>' +
-      '<div class="bp-pick-reason">' + escapeHtml(reason) + '</div>';
+    if (!mid) return '<div class="bp-pick-line">No model set. Choose one above to see its facts.</div>';
+    html += bpFlagHtml(blockBreach(b));
+    if (isExcluded(mid)) html += '<div class="bp-empty-note" style="margin-bottom:8px;">' + escapeHtml(shortModelName(m)) + ' is on your never-use list. It stays because you set it.</div>';
+    return html + labSaysBody(m, taskIdOf(b.task));
   }
 
   function whyCostHtml(b){ return formulaHtml(b); }
@@ -4431,14 +4249,14 @@ import { decide } from "./assets/decide.mjs";
              tokensEdited: me.tokensEdited, calls_per_day: me.calls_per_day || 0 };
   }
 
-  function selectBlock(b){ selected = { kind: "block", id: b.id }; render(); openMobilePanel(); }
-  function selectDivision(d){ selected = { kind: "division", id: d.id }; render(); openMobilePanel(); }
-  function selectOwned(o){ selected = { kind: "owned", id: o.id }; render(); openMobilePanel(); }
-  function selectRole(r){ selected = { kind: "role", id: r.id }; render(); openMobilePanel(); }
+  function selectBlock(b){ installOpen = false; selected = { kind: "block", id: b.id }; render(); openMobilePanel(); }
+  function selectDivision(d){ installOpen = false; selected = { kind: "division", id: d.id }; render(); openMobilePanel(); }
+  function selectOwned(o){ installOpen = false; selected = { kind: "owned", id: o.id }; render(); openMobilePanel(); }
+  function selectRole(r){ installOpen = false; selected = { kind: "role", id: r.id }; render(); openMobilePanel(); }
   function deselect(){ selected = null; render(); }
 
   function refreshSelectedPanel(){
-    bpVerdict.hidden = true; bpSelected.hidden = false;
+    bpSummary.hidden = true; bpSelected.hidden = false;
     if (selected.kind === "block"){
       var b = state.org.blocks.find(function(x){ return x.id === selected.id; });
       if (!b){ deselect(); return; }
@@ -4521,7 +4339,7 @@ import { decide } from "./assets/decide.mjs";
       });
       mountModelPicker("fRowModel" + i, rowModelIds(r)[0] || null, function(id){
         pushUndo(); r.models = id ? [id] : []; render();
-      }, { placeholder: "Pick this row’s model…", planNames: planListOf(b) });
+      }, { placeholder: "Choose this row’s model…", planNames: planListOf(b) });
     });
     bpSelected.querySelectorAll("[data-row-rm]").forEach(function(btn){
       btn.addEventListener("click", function(){
@@ -4564,7 +4382,7 @@ import { decide } from "./assets/decide.mjs";
     html += '<div class="bp-divider"></div>' +
       bpSection("usage", "Usage", usageBodyHtml(b), { count: LEVEL_LABEL[levelOf(b)] }) +
       bpSection("whycost", "Why this cost", '<div class="bp-whycost">' + whyCostHtml(b) + '</div>') +
-      bpSection("pick", "Suggested model", pickBlockHtml(b), { right: howLink() }) +
+      bpSection("labSays", "What the labs say", labSaysBlockHtml(b), { right: howLink() }) +
       '<button class="bp-delete" id="fDelete">Delete this block</button>';
     bpSelected.innerHTML = html;
     wireSections(bpSelected);
@@ -4577,7 +4395,7 @@ import { decide } from "./assets/decide.mjs";
     });
     document.getElementById("fTask").addEventListener("change", function(e){ pushUndo(); b.task = e.target.value; render(); });
     mountModelPicker("fModelPicker", blockModel(b), function(id){ pushUndo(); setBlockModel(b, id); render(); },
-      { placeholder: b.modelRaw ? (b.modelRaw + " — not in our data yet") : "No model picked yet", planNames: planListOf(b) });
+      { placeholder: b.modelRaw ? (b.modelRaw + " — not in our data yet") : "No model set", planNames: planListOf(b) });
     var useDef = document.getElementById("fUseDivDefault");
     if (useDef) useDef.addEventListener("click", function(){ applyDivisionDefault(b, defDiv); });
     if (b.type === "team") wireTeamRows(b);
@@ -4592,15 +4410,6 @@ import { decide } from "./assets/decide.mjs";
     var fSeats = document.getElementById("fSeats");
     if (fSeats) fSeats.addEventListener("change", function(e){ pushUndo(); b.seats = Math.max(0, Number(e.target.value) || 0); render(); });
     wireUsage(b, b);
-    var applyBtn = bpSelected.querySelector("[data-pd-model]");
-    if (applyBtn) applyBtn.addEventListener("click", function(){
-      pushUndo();
-      var fromModel = blockModel(b), before = costOfBlock(b);
-      setBlockModel(b, applyBtn.dataset.pdModel);
-      if (applyBtn.dataset.pdPlan) setPlanList(b, [applyBtn.dataset.pdPlan]);
-      logApply(b, fromModel, blockModel(b), applyBtn.dataset.pdPlan || null, before - costOfBlock(b));
-      render(); showToast("Applied — " + b.who + " now on " + shortModelName(modelById(blockModel(b))));
-    });
     document.getElementById("fDelete").addEventListener("click", function(){ deleteOrgBlock(b); });
   }
 
@@ -4644,7 +4453,7 @@ import { decide } from "./assets/decide.mjs";
       '<div class="bp-filters-empty" style="margin-top:8px;">' + (d.defaultModel
         ? ('A block dropped straight in here starts on this. A block moved in keeps its own' +
            (offDefault.length ? (' — ' + offDefault.length + ' here ' + (offDefault.length === 1 ? 'does' : 'do') + '.') : '.'))
-        : 'Not set. A block dropped here starts on whatever the stance picks for its task.') + '</div>' +
+        : 'Not set. A block dropped here starts with no model until you choose one.') + '</div>' +
       '<div class="bp-divider"></div>' +
       '<div class="bp-section-title">Contains</div>' +
       (members.length ? '<div class="bp-whycost">' + members.map(function(m){ return '<span title="' + escapeAttr(formulaPlain(m)) + '">' + escapeHtml(m.who) + ' &middot; ' + fmtUsd(costOfBlock(m)) + '/mo</span>'; }).join('<br>') + '</div>' : '<div class="bp-empty-note">Nothing yet. Drag a person, team, or routine onto this region.</div>') +
@@ -4661,7 +4470,7 @@ import { decide } from "./assets/decide.mjs";
       render();
     });
     mountModelPicker("fDivModelPicker", d.defaultModel || null, function(id){ pushUndo(); d.defaultModel = id || null; render(); },
-      { placeholder: "No default — the stance decides", planNames: (d.defaultPlans || []) });
+      { placeholder: "No default model", planNames: (d.defaultPlans || []) });
     mountPlanPicker("fDivPlanPicker", (d.defaultPlans || []).slice(), function(list){ pushUndo(); d.defaultPlans = (list || []).filter(Boolean); render(); },
       { placeholder: "No default plans" });
     document.getElementById("fDivDelete").addEventListener("click", function(){ deleteDivision(d); });
@@ -4682,16 +4491,9 @@ import { decide } from "./assets/decide.mjs";
      is already inside one collapsible section, and a section inside a section toggles twice. */
   function yourPlanBodyHtml(){
     var me = state.personal.me;
-    var tiers = ["cheapest","balanced","best"];
     var meB = meCostBlock();
-    return (state.personalPlanHint ? '<div class="bp-empty-note" style="margin-bottom:12px;">Pick your plan so costs can fill in</div>' : '') +
+    return (state.personalPlanHint ? '<div class="bp-empty-note" style="margin-bottom:12px;">Choose your plan so costs can fill in</div>' : '') +
       '<label class="bp-field-label" id="fPlanMeLabel">Plans</label><div id="fPlanMePicker" role="group" aria-labelledby="fPlanMeLabel"></div>' +
-      '<label class="bp-field-label">Optimize for</label>' +
-      '<div class="tierToggle" id="tierToggleBoard" role="tablist" aria-label="Optimize for">' +
-        '<span class="segInd" aria-hidden="true"></span>' +
-        tiers.map(function(t){ return '<button type="button" data-tier="' + t + '" class="' + (me.optimizeFor===t?"active":"") + '" role="tab" aria-selected="' + (me.optimizeFor===t) + '">' + capFirst(t) + '</button>'; }).join("") +
-      '</div>' +
-      '<div class="bp-total-sub" style="margin:10px 0 4px;">' + capFirst(me.optimizeFor) + ' &mdash; ' + escapeHtml(OPTIMIZE_COPY[me.optimizeFor]) + '</div>' +
       '<label class="bp-field-label">Models I use</label><div class="taglist" id="usesTags"></div>' +
       '<div class="nbAdd"><button class="linklike" id="usesAddBtn">' + (usesPickerOpen ? "Close" : "+ Add a model") + '</button>' +
         '<div class="nbPickWrap" id="usesPickWrap"' + (usesPickerOpen ? "" : " hidden") + '><div id="usesPicker"></div></div></div>' +
@@ -4704,15 +4506,8 @@ import { decide } from "./assets/decide.mjs";
     var meB = meCostBlock();
     wireUsage(me, meB);
     mountPlanPicker("fPlanMePicker", planListOf(me), function(list){
-      pushUndo(); setPlanList(me, list); state.personalPlanHint = false; render();
-    }, { placeholder: "Pick the plans you pay for…" });
-    var tierEl = document.getElementById("tierToggleBoard");
-    if (tierEl){
-      syncSegIndicator(tierEl);
-      tierEl.querySelectorAll("[data-tier]").forEach(function(b){
-        b.addEventListener("click", function(){ if (me.optimizeFor === b.dataset.tier) return; pushUndo(); me.optimizeFor = b.dataset.tier; repickAutoRoles(); render(); });
-      });
-    }
+      pushUndo(); setPlanList(me, list); state.personalPlanHint = false; refreshAutoRoles(); render();
+    }, { placeholder: "Choose the plans you pay for…" });
     var usesTags = document.getElementById("usesTags");
     if (!usesTags) return;
     usesTags.innerHTML = me.uses.length
@@ -4722,13 +4517,13 @@ import { decide } from "./assets/decide.mjs";
     usesTags.querySelectorAll("[data-rm-use]").forEach(function(btn){
       btn.addEventListener("click", function(){ pushUndo(); me.uses.splice(+btn.dataset.rmUse, 1); render(); });
     });
-    document.getElementById("usesAddBtn").addEventListener("click", function(){ usesPickerOpen = !usesPickerOpen; renderBpVerdictPersonal(); });
+    document.getElementById("usesAddBtn").addEventListener("click", function(){ usesPickerOpen = !usesPickerOpen; renderBpSummaryPersonal(); });
     if (usesPickerOpen){
       mountModelPicker("usesPicker", null, function(id){
         usesPickerOpen = false;
         if (id && me.uses.indexOf(id) === -1){ pushUndo(); me.uses.push(id); }
         render();
-      }, { placeholder: "Pick a model you use…", planNames: planListOf(me) });
+      }, { placeholder: "Choose a model you use…", planNames: planListOf(me) });
     }
   }
 
@@ -4758,10 +4553,10 @@ import { decide } from "./assets/decide.mjs";
     var html = '<div class="bp-eyebrow">Model I own</div>' +
       '<label class="bp-field-label" id="fOwnedModelLabel">Model</label><div id="fOwnedModelPicker" role="group" aria-labelledby="fOwnedModelLabel"></div>' +
       '<div class="bp-divider"></div>' +
-      bpSection("about", "About this model",
+      bpSection("labSays", "What the labs say",
         bpFlagHtml(dataRuleBreach(o.model)) +
-        (isExcluded(o.model) ? '<div class="bp-empty-note">On your never-suggest list &mdash; we won\'t route work here on our own.</div>' : '') +
-        '<div class="bp-pick-line">' + escapeHtml(safeVerdict(m)) + '</div>', { right: howLink() }) +
+        (isExcluded(o.model) ? '<div class="bp-empty-note" style="margin-bottom:8px;">On your never-use list.</div>' : '') +
+        labSaysBody(m, null), { right: howLink() }) +
       '<button class="bp-delete" id="fOwnedDelete">Delete this block</button>';
     bpSelected.innerHTML = html;
     wireSections(bpSelected);
@@ -4777,14 +4572,16 @@ import { decide } from "./assets/decide.mjs";
       '<label class="bp-field-label" for="fRoleName">Role</label><input id="fRoleName" type="text" value="' + escapeAttr(r.role) + '" />' +
       '<label class="bp-field-label" id="fRoleModelLabel">Assigned model</label><div id="fRoleModelPicker" role="group" aria-labelledby="fRoleModelLabel"></div>' +
       '<div class="bp-divider"></div>' +
-      (m ? bpSection("whymodel", "Why this model",
+      roleSourceHtml(r) +
+      (m ? bpSection("labSays", "What the labs say",
             (r.versionUnstated ? '<div class="bp-empty-note">Version not stated — matched to the newest, ' + escapeHtml(shortModelName(m)) + '.</div>' : '') +
             bpFlagHtml(dataRuleBreach(r.model)) +
             // Item 12: never argue with the user's own exclusion — state it and move on.
-            (isExcluded(r.model) ? '<div class="bp-empty-note">On your never-suggest list &mdash; attached here because you attached it. We won\'t propose it anywhere else.</div>' : '') +
-            '<div class="bp-pick-line">' + escapeHtml(safeVerdict(m)) + '</div>' +
-            '<div class="bp-pick-reason">Serves ' + escapeHtml(roleKind(r.role) ? ("the " + roleKind(r.role) + " kind of work") : "work this role covers") + ' on your board, at ' + escapeHtml(r.effort || (capFirst(tierEffort(state.personal.me.optimizeFor)).toLowerCase())) + ' effort.</div>', { right: howLink() })
-         : (r.modelRaw ? '<div class="bp-empty-note"><b>' + escapeHtml(r.modelRaw) + '</b> is not in our data yet. Pick a real model above.</div>' : '<div class="bp-empty-note">Drag a &ldquo;Model I own&rdquo; block onto this role to assign it, or pick one above.</div>')) +
+            (isExcluded(r.model) ? '<div class="bp-empty-note" style="margin-bottom:8px;">On your never-use list &mdash; attached here because you attached it.</div>' : '') +
+            labSaysBody(m, r.seedTask ? taskIdOf(r.seedTask) : null) +
+            (r.effort ? '<div class="bp-fact" style="margin-top:4px;">Effort <b>' + escapeHtml(r.effort) + '</b>, set on this role</div>' : ''), { right: howLink() })
+         : (r.modelRaw ? '<div class="bp-empty-note"><b>' + escapeHtml(r.modelRaw) + '</b> is not in our data yet. Choose a model above.</div>'
+            : (r.auto ? '' : '<div class="bp-empty-note">Drag a &ldquo;Model I own&rdquo; block onto this role to assign it, or choose one above.</div>'))) +
       '<button class="bp-delete" id="fRoleDelete">Delete this block</button>';
     bpSelected.innerHTML = html;
     wireSections(bpSelected);
@@ -5184,9 +4981,9 @@ import { decide } from "./assets/decide.mjs";
   }
 
   /* ============================================================ item 1: the start card builds a real board ============================================================
-     Org asks five things, Personal asks two, and both hand back a laid-out board you can edit.
-     Nothing here is random: the same answers always produce the same board, and every model on
-     it is the first one that clears your filters under your stance. */
+     Org asks four things, Personal asks one, and both hand back a laid-out board you can edit.
+     Nothing here is random: the same answers always produce the same board. The board sets no
+     model on its own: a slot is yours to fill, or a tool's own docs name the model for that job. */
   var LAB_LIST = ["Anthropic", "OpenAI", "Google", "xAI", "Cursor", "DeepSeek", "Moonshot AI"];
   var FUNCTION_DEFS = [
     { id: "Engineering", task: "coding",         person: "Engineer",      team: "Engineering team", seats: 6, routine: "Nightly review", runs: 400 },
@@ -5196,43 +4993,45 @@ import { decide } from "./assets/decide.mjs";
     { id: "Leadership",  task: "exec-summaries", person: "Exec",          team: "Exec team",        seats: 4, routine: "Exec digest", runs: 30 },
     { id: "Ops",         task: "agents",         person: "Ops lead",      team: "Ops team",         seats: 3, routine: "Deploy watcher", runs: 800 }
   ];
-  /* Starter roles are picked for you, not chosen by you: they carry auto:true until a model is
-     set by hand, and only those follow Cheapest / Balanced / Best. Bulk always takes the cheap
-     end and the coordinator the strong end; the tier moves the rest. The other roles avoid the
-     coordinator's model when the plan reaches another one, so the coordinator never hands work
-     to itself. They may share with each other: forcing every role apart pushed "cheapest"
-     research onto the most expensive model once the small pool ran out. */
-  var ROLE_STANCE = {
-    "Bulk": function(){ return "cheapest"; },
-    "Coordinator": function(t){ return t === "cheapest" ? "balanced" : "best"; }
-  };
-  function autoRoleModel(task, stance, planNames, used){
-    var list = engineShortlist(task, { have: engineHaveFor(planNames), stance: stance });
-    if (!list.length) return null;
-    var fresh = list.filter(function(it){ return used.indexOf(it.id) === -1; });
-    return (fresh.length ? fresh[0] : list[0]).id;
+  /* The board's view of the user as an instruction-package profile. `mode` lives outside
+     `state`, so it is passed in; everything else is read from the board as it stands. */
+  function boardProfile(forMode){
+    return profileFromBoard(Object.assign({}, state, { mode: forMode || mode }), DATA);
   }
-  function assignAutoRoles(roles, tier, planNames){
-    function pick(r, avoid){
-      if (!r.auto || !r.seedTask) return;
-      var st = ROLE_STANCE[r.role] ? ROLE_STANCE[r.role](tier) : tier;
-      r.model = autoRoleModel(r.seedTask, st, planNames, avoid);
-    }
-    var coord = roles.find(function(r){ return roleKind(r.role) === "coordinator"; });
-    if (coord) pick(coord, []);
-    // Balanced and Best spread the work: a role steps past the coordinator's model to the next
-    // engine pick, so the coordinator has somewhere to hand off. Cheapest never does — the
-    // cheapest model that clears the bar is the answer even when the coordinator already runs it
-    // (AGENTS.md then says the coordinator does that work itself).
-    var avoid = (tier !== "cheapest" && coord && coord.model) ? [coord.model] : [];
-    roles.forEach(function(r){ if (r !== coord) pick(r, avoid); });
+  var TOOL_NAMES = { "claude-code": "Claude Code", codex: "Codex", cursor: "Cursor", "agents-md": "AGENTS.md" };
+  function basisList(list){
+    return (list || []).filter(function(b){ return b && b.quote && !RANKING_WORDS.test(b.quote); })
+      .map(function(b){ return { quote: b.quote, url: b.source_url, date: b.date || null }; });
   }
-  // The tier control's job on a personal board: re-pick the auto roles, keep "Your models" in
-  // step (models added only for a role leave when no role uses them).
-  function repickAutoRoles(){
+  /* Starter roles take the model a tool's OWN docs name for that job (data/guidance.json, read
+     through roleDefaults() in assets/instructions.mjs, the same rule the package uses). A job no
+     doc names runs on your main model ("inherit"), so its slot stays empty for you to fill. Roles
+     set this way carry auto:true until a model is set by hand. */
+  function seedRoleModels(roles){
+    var defs = null;
+    try { defs = roleDefaults(boardProfile("personal"), DATA); }
+    catch (err){ console.error("roleDefaults failed", err); }
+    var tools = defs ? Object.keys(defs) : [];
+    var tool = tools.filter(function(t){ return t !== "agents-md"; })[0] || tools[0] || null;
+    roles.forEach(function(r){
+      if (!r.auto || !r.job) return;
+      var d = tool && defs[tool] ? defs[tool][r.job] : null;
+      var toolName = tool ? (TOOL_NAMES[tool] || tool) : null;
+      if (d && d.from !== "inherit" && d.model_id && modelById(d.model_id) && allowedForAuto(d.model_id)){
+        r.model = d.model_id;
+        r.source = { tool: toolName, from: d.from, basis: basisList(d.basis) };
+      } else {
+        r.model = null;
+        r.source = { tool: toolName, from: "inherit", basis: basisList(d && d.basis) };
+      }
+    });
+  }
+  /* After the plans change: re-seed the auto roles and keep "Your models" in step (models added
+     only for a role leave when no role uses them). */
+  function refreshAutoRoles(){
     var roles = state.personal.roles, me = state.personal.me;
     if (!roles.some(function(r){ return r.auto; })) return;
-    assignAutoRoles(roles, me.optimizeFor, planListOf(me));
+    seedRoleModels(roles);
     var need = roles.map(function(r){ return r.model; }).filter(Boolean);
     state.personal.owned = state.personal.owned.filter(function(o){ return !o.forRole || need.indexOf(o.model) !== -1; });
     need.forEach(function(mid){
@@ -5242,43 +5041,39 @@ import { decide } from "./assets/decide.mjs";
     });
     me.uses = state.personal.owned.map(function(o){ return o.model; });
   }
+  /* The role panel's first line: where an automatic role's model came from, in the tool's own words. */
+  function roleSourceHtml(r){
+    var src = r.auto && r.source;
+    if (!src) return "";
+    if (src.from === "inherit"){
+      return '<div class="bp-empty-note" style="margin-bottom:10px;">' +
+        (src.tool ? escapeHtml(src.tool) + '&rsquo;s docs name no model for this job, so it' : 'No doc names a model for this job, so it') +
+        ' runs on your main model. Choose one above to set your own.</div>' +
+        (src.basis.length ? labSaysHtml(src.basis, 1) + '<div style="height:12px"></div>' : '');
+    }
+    return '<div class="bp-empty-note" style="margin-bottom:10px;">Set from ' + escapeHtml(src.tool) +
+      '&rsquo;s own docs for this job. Choose another model above to set your own.</div>' +
+      (src.basis.length ? labSaysHtml(src.basis, 2) + '<div style="height:12px"></div>' : '');
+  }
+  // `job` is the helper job the package knows (lead / scout / builder / reviewer).
   var ROLE_SEEDS = [
-    { role: "Coordinator", task: "agents" },
-    { role: "Long-haul code", task: "coding" },
-    { role: "Bulk", task: "bulk" },
-    { role: "Research", task: "research" },
-    { role: "Design", task: "frontend" }
+    { role: "Coordinator", task: "agents", job: "lead" },
+    { role: "Long-haul code", task: "coding", job: "builder" },
+    { role: "Bulk", task: "bulk", job: "scout" },
+    { role: "Research", task: "research", job: "scout" },
+    { role: "Design", task: "frontend", job: "builder" }
   ];
 
   // The card's answers live at module scope, so "Start from an example" and re-opening the card
   // both see what the user already chose instead of starting over.
-  var startPicked = { labs: [], dataRule: null, stance: null, size: null, functions: [], plans: [] };
+  var startPicked = { labs: [], dataRule: null, size: null, functions: [], plans: [] };
 
-  /* The starter board uses the same shortlist every other pick on this board uses: the engine's
-     first entry for the task, asked with the labs the user says they pay for and the stance they
-     chose. An empty shortlist is left empty rather than filled with a guess. */
-  function starterModelFor(taskId, stance, labs){
-    var list = engineShortlist(taskId, { have: engineHaveForLabs(labs), stance: stance });
-    return list.length ? list[0].id : null;
-  }
-  // A seat plan the block could actually be on: the cheapest paid plan from its model's own lab,
-  // falling back to the cheapest paid plan among the labs you said you pay for. No plan anywhere
-  // means no plan — the block shows no seat cost rather than an invented one.
-  function starterPlansFor(modelId, labs){
-    var m = modelById(modelId);
-    function cheapestPaid(vendor){
-      var ps = DATA.plans.filter(function(p){ return p.vendor === vendor && planPrice(p) > 0; })
-                         .sort(function(a,b){ return planPrice(a) - planPrice(b); });
-      return ps.length ? [planLabel(ps[0])] : [];
-    }
-    if (!m) return [];
-    var own = cheapestPaid(m.vendor); if (own.length) return own;
-    // Another lab's plan only if it actually reaches this model (a harness plan like Cursor
-    // does). Anthropic seats never pay for an OpenAI model: that block is pay per call.
+  // The cheapest paid seat plan from the first lab you said you pay for that sells one; none, none.
+  function starterPlansForLabs(labs){
     for (var i=0;i<(labs||[]).length;i++){
-      var alt = cheapestPaid(labs[i]); if (!alt.length) continue;
-      var reach = reachableVendorsFor(alt);
-      if (!reach || reach.indexOf(m.vendor) !== -1) return alt;
+      var ps = DATA.plans.filter(function(p){ return p.vendor === labs[i] && planPrice(p) > 0; })
+                         .sort(function(a,b){ return planPrice(a) - planPrice(b); });
+      if (ps.length) return [planLabel(ps[0])];
     }
     return [];
   }
@@ -5302,7 +5097,9 @@ import { decide } from "./assets/decide.mjs";
       }
       var madeTeam = null, madeRoutines = [];
       members.forEach(function(mem, mi){
-        var modelId = starterModelFor(mem.task, f.stance, f.labs);
+        // The model slot starts empty: the board sets no model on its own. The seat plan comes
+        // from the labs you said you pay for.
+        var modelId = null;
         var b = {
           id: uid(), type: mem.type, divisionId: d.id, who: mem.who, task: mem.task,
           models: modelId ? [modelId] : [], plans: [],
@@ -5312,7 +5109,7 @@ import { decide } from "./assets/decide.mjs";
         };
         if (mem.type === "team") b.rows = [];
         if (mem.type === "routine"){ b.serves = []; madeRoutines.push(b); }
-        else { setPlanList(b, starterPlansFor(modelId, f.labs)); if (mem.type === "team") madeTeam = b; }
+        else { setPlanList(b, starterPlansForLabs(f.labs)); if (mem.type === "team") madeTeam = b; }
         state.org.blocks.push(b);
         justCreated[b.id] = stagger++;
       });
@@ -5325,7 +5122,6 @@ import { decide } from "./assets/decide.mjs";
   function generatePersonalBoard(f){
     var me = state.personal.me;
     setPlanList(me, (f.plans || []).slice());
-    if (f.stance) me.optimizeFor = f.stance;
     state.personal.yourModelsRegion = { x: 230, y: 140 };
     state.personal.rolesRegion = { x: 230, y: 480 };
     var vendors = reachableVendorsFor(planListOf(me));
@@ -5349,10 +5145,10 @@ import { decide } from "./assets/decide.mjs";
     me.uses = picks.slice();
     state.personal.roles = ROLE_SEEDS.map(function(rs, i){
       var id = uid(); justCreated[id] = stagger++;
-      return { id: id, role: rs.role, seedTask: rs.task, auto: true, model: null, effort: null,
+      return { id: id, role: rs.role, seedTask: rs.task, job: rs.job, auto: true, model: null, effort: null,
                x: 300 + (i % 2 === 0 ? -110 : 110), y: 320 + Math.floor(i/2) * 110 };
     });
-    assignAutoRoles(state.personal.roles, f.stance || me.optimizeFor, planListOf(me));
+    seedRoleModels(state.personal.roles);
     // Anything a role ended up on that isn't in "Your models" yet gets its own block, so the
     // board shows the whole chain — a model, the role it serves, and the line between them.
     state.personal.roles.forEach(function(r){
@@ -5372,7 +5168,6 @@ import { decide } from "./assets/decide.mjs";
     document.querySelectorAll("#scRule [data-rule]").forEach(function(c){ c.classList.toggle("on", startPicked.dataRule === c.dataset.rule); });
     document.querySelectorAll("#scSize [data-size]").forEach(function(c){ c.classList.toggle("on", startPicked.size === c.dataset.size); });
     document.querySelectorAll("#scFunctions [data-fn]").forEach(function(c){ c.classList.toggle("on", startPicked.functions.indexOf(c.dataset.fn) !== -1); });
-    document.querySelectorAll("#scStance [data-stance], #scStancePersonal [data-stance]").forEach(function(c){ c.classList.toggle("on", startPicked.stance === c.dataset.stance); });
   }
   function syncStartCardMode(){
     var org = mode === "org";
@@ -5380,12 +5175,12 @@ import { decide } from "./assets/decide.mjs";
     document.getElementById("scPersonalForm").hidden = org;
     document.getElementById("scTitle").textContent = org ? "Build my board" : "Build my personal board";
     document.getElementById("scLede").textContent = org
-      ? "Five answers and Modelproof lays out your divisions, blocks and models. Change anything afterwards."
-      : "Two answers and Modelproof lays out your models and roles. Change anything afterwards.";
+      ? "Four answers and Modelproof lays out your divisions and blocks. You set the models."
+      : "Your plans, and Modelproof lays out your models and roles. Change anything afterwards.";
     if (!org){
       // the card asks "plans you have" — Me is where they already live, so start from those
       if (!startPicked.plans.length) startPicked.plans = planListOf(state.personal.me).slice();
-      mountPlanPicker("scPlans", startPicked.plans, function(list){ startPicked.plans = list; }, { placeholder: "Pick the plans you pay for…" });
+      mountPlanPicker("scPlans", startPicked.plans, function(list){ startPicked.plans = list; }, { placeholder: "Choose the plans you pay for…" });
     }
   }
   function chipRow(el, list, attr, single, onPick){
@@ -5405,8 +5200,6 @@ import { decide } from "./assets/decide.mjs";
       if (!on && i !== -1) startPicked.labs.splice(i, 1);
     });
     chipRow(document.getElementById("scRule"), Object.keys(RULE_LABELS).map(function(k){ return { id: k, label: RULE_LABELS[k] }; }), "rule", true, function(v){ startPicked.dataRule = v; });
-    chipRow(document.getElementById("scStance"), Object.keys(STANCE_LABELS).map(function(k){ return { id: k, label: STANCE_LABELS[k] }; }), "stance", true, function(v){ startPicked.stance = v; syncStartCardChips(); });
-    chipRow(document.getElementById("scStancePersonal"), Object.keys(STANCE_LABELS).map(function(k){ return { id: k, label: STANCE_LABELS[k] }; }), "stance", true, function(v){ startPicked.stance = v; syncStartCardChips(); });
     chipRow(document.getElementById("scSize"), Object.keys(SIZE_LABELS).map(function(k){ return { id: k, label: SIZE_LABELS[k] }; }), "size", true, function(v){ startPicked.size = v; });
     chipRow(document.getElementById("scFunctions"), FUNCTION_DEFS.map(function(d){ return { id: d.id, label: d.id }; }), "fn", false, function(v, on){
       var i = startPicked.functions.indexOf(v);
@@ -5423,7 +5216,7 @@ import { decide } from "./assets/decide.mjs";
   function readFiltersIntoCard(){
     var f = state.startFilters || {};
     startPicked = {
-      labs: (f.labs||[]).slice(), dataRule: f.dataRule, stance: f.stance,
+      labs: (f.labs||[]).slice(), dataRule: f.dataRule,
       size: f.size || null, functions: (f.functions||[]).slice(),
       plans: planListOf(state.personal.me).slice()
     };
@@ -5432,11 +5225,11 @@ import { decide } from "./assets/decide.mjs";
     var building = !!filters;
     if (building){
       state.startFilters = {
-        labs: filters.labs.slice(), dataRule: filters.dataRule, stance: filters.stance,
+        labs: filters.labs.slice(), dataRule: filters.dataRule,
         size: filters.size, functions: filters.functions.slice()
       };
       // The Org card is one of the two places the board's data rule is set (the other is the
-      // chip row in the panel). The personal card asks for plans and stance only, so a personal
+      // chip row in the panel). The personal card asks for plans only, so a personal
       // build leaves whatever rule the board already carries alone.
       if (mode === "org" && filters.dataRule) state.dataRule = filters.dataRule;
     }
@@ -5445,7 +5238,7 @@ import { decide } from "./assets/decide.mjs";
     if (building){
       pushUndo();
       if (mode === "org") generateOrgBoard(state.startFilters);
-      else generatePersonalBoard({ plans: filters.plans, stance: filters.stance });
+      else generatePersonalBoard({ plans: filters.plans });
     }
     var card = document.getElementById("startCard");
     card.classList.add("leaving");
@@ -5536,10 +5329,10 @@ import { decide } from "./assets/decide.mjs";
     var done = function(){ showToast("Prompt copied"); };
     if (navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(PROMPT_TEXT).then(done).catch(function(){
-        var ta = document.getElementById("agentsMdText"); ta.value = PROMPT_TEXT; ta.hidden = false; ta.select(); document.execCommand("copy"); ta.hidden = true; done();
+        var ta = document.getElementById("copyFallback"); ta.value = PROMPT_TEXT; ta.hidden = false; ta.select(); document.execCommand("copy"); ta.hidden = true; done();
       });
     } else {
-      var ta = document.getElementById("agentsMdText"); ta.value = PROMPT_TEXT; ta.hidden = false; ta.select(); document.execCommand("copy"); ta.hidden = true; done();
+      var ta = document.getElementById("copyFallback"); ta.value = PROMPT_TEXT; ta.hidden = false; ta.select(); document.execCommand("copy"); ta.hidden = true; done();
     }
   });
   document.getElementById("importTextarea").addEventListener("input", runValidation);
@@ -5703,249 +5496,107 @@ import { decide } from "./assets/decide.mjs";
     });
   });
 
-  /* ---------------- AGENTS.md, one file per mode (item 3) ----------------
-     Org mode writes a policy file: who is on what, what it costs, whether it clears the data
-     rule, and what changed this session. Personal mode writes a routing file driven by the Role
-     blocks on the board. Nothing prints a literal null — an unset field reads "not set". */
-  function mdModelLabel(b){
-    var ids = blockModelIds(b).filter(Boolean);
-    if (!ids.length) return b.modelRaw ? (b.modelRaw + " (not in our data yet)") : "not set";
-    return ids.map(function(id){ var m = modelById(id); return m ? (m.name + " [" + id + ", " + m.vendor + "]") : id; }).join(" + ");
+  /* ---------------- Install package ----------------
+     The board's answers become a package profile (profileFromBoard), and the site's one generator
+     (buildPackage + renderPreview, assets/instructions.mjs) turns it into what the installer would
+     add to a FRESH setup. The installer reads the real setup and adapts it, and the pane says so.
+     Three ways out: the install prompt with this profile inline, the profile as a file, and the
+     package text for a setup without Node. */
+  var installOpen = false;
+  var installPromptText = null;   // null = not fetched yet, "" = not on this site
+  var installPane = document.getElementById("bpInstallPane");
+  var installBtn = document.getElementById("bpInstall");
+  function currentPackage(){
+    var profile = boardProfile();
+    var pkg = buildPackage(profile, { models: DATA.models, guidance: DATA.guidance, plans: DATA.plans });
+    return { profile: profile, pkg: pkg };
   }
-  /* Contract item 5: the file says the same thing the panel says - the arithmetic, then where
-     each number came from. A block with both a seat line and a token line prints both. */
-  function mdCostLine(b, indent){
-    var pad = indent || "  ";
-    var ls = costLines(b), out = [];
-    ls.forEach(function(l, i){
-      var head = (i === 0 ? "" : pad + "  ");
-      if (NO_AMOUNT_LINE[l.kind]){ out.push(head + l.math.replace(/\u201c|\u201d/g, '"').replace(/\u00d7/g, "x")); return; }
-      out.push(head + l.math.replace(/\u00d7/g, "x") + " = " + fmtUsd(l.amount) + "/mo");
-      if (l.note) out.push(pad + "  - " + l.note);
-      if (l.src) out.push(pad + "  - " + l.src);
+  function profileJson(profile){ return JSON.stringify(profile, null, 2); }
+  // Every part with text, headed by where it goes: a new file, or one block at the end of a file.
+  function packageText(pkg){
+    return (pkg.parts || []).filter(function(part){ return typeof part.content === "string"; }).map(function(part){
+      var where = part.target ? part.target.path : part.id;
+      var how = part.kind === "block" ? "Add at the end of " + where : "New file " + where;
+      return "=== " + how + " ===\n" + part.content.replace(/\n+$/, "") + "\n";
+    }).join("\n");
+  }
+  function copyText(text, doneMsg){
+    var ta = document.getElementById("copyFallback");
+    var done = function(){ showToast(doneMsg); };
+    function fallback(){ ta.value = text; ta.hidden = false; ta.select(); document.execCommand("copy"); ta.hidden = true; done(); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(fallback);
+    else fallback();
+  }
+  function loadInstallPrompt(){
+    if (installPromptText !== null) return Promise.resolve(installPromptText);
+    return fetch("./assets/install-prompt.txt", { cache: "no-cache" })
+      .then(function(r){ return r.ok ? r.text() : ""; })
+      .catch(function(){ return ""; })
+      .then(function(t){ installPromptText = String(t || "").replace(/\s+$/, ""); return installPromptText; });
+  }
+  function renderInstallPane(){
+    var cur;
+    try { cur = currentPackage(); }
+    catch (err){
+      console.error("buildPackage failed", err);
+      installPane.innerHTML = '<div class="pkgTitle">Install package</div><div class="bp-empty-note" style="margin-top:8px;">Could not build the package from this board: ' + escapeHtml(String(err && err.message || err)) + '</div>';
+      return;
+    }
+    installPane.innerHTML =
+      '<div class="pkgHead"><div class="pkgTitle">Install package</div><button class="linklike" id="pkgBack" type="button">Back to the board</button></div>' +
+      '<div class="pkgLede">For a fresh setup &mdash; the installer adapts it to yours. It shows its plan first and adds nothing without your yes.</div>' +
+      '<div class="pkgActions">' +
+        '<button class="primary btn-sm" id="pkgCopyPrompt" type="button">Copy install prompt</button>' +
+        '<button class="ghost btn-sm" id="pkgDownload" type="button">Download profile.json</button>' +
+        '<button class="ghost btn-sm" id="pkgCopyText" type="button">Copy text</button>' +
+      '</div>' +
+      '<div class="pkgNote" id="pkgPromptNote" hidden></div>' +
+      '<pre class="pkgPreview" id="pkgPreview" tabindex="0" aria-label="Package preview">' + escapeHtml(renderPreview(cur.pkg)) + '</pre>' +
+      '<div class="pkgNote">Paste the install prompt into your coding agent. No Node? Copy text gives each file and block to add by hand.</div>';
+    document.getElementById("pkgBack").addEventListener("click", function(){ setInstallOpen(false); });
+    document.getElementById("pkgCopyPrompt").addEventListener("click", function(){
+      var c = currentPackage();
+      loadInstallPrompt().then(function(prompt){
+        var note = document.getElementById("pkgPromptNote");
+        if (!prompt){
+          if (note){ note.hidden = false; note.textContent = "The install prompt is not on this site yet. Download profile.json and give it to the Modelproof installer instead."; }
+          showToast("Install prompt not found");
+          return;
+        }
+        if (note) note.hidden = true;
+        copyText(prompt + "\n\nMy Modelproof board profile:\n```json\n" + profileJson(c.profile) + "\n```\n", "Install prompt copied");
+      });
     });
-    if (ls.length > 1) out.push(pad + "  - total: " + fmtUsd(costOfBlock(b)) + "/mo");
-    var first = out.shift();
-    return first + (out.length ? ("\n" + out.join("\n")) : "");
-  }
-  function mdNameList(ids){
-    var names = ids.map(function(id){ var m = modelById(id); return m ? m.name : id; }).filter(Boolean);
-    return names.length ? names.join(", ") : "";
-  }
-  function buildOrgPolicyMd(){
-    var f = state.startFilters || {};
-    var rule = currentDataRule();
-    var lines = [];
-    lines.push("# AGENTS.md — " + (state.boardName || "Untitled board") + " model policy");
-    lines.push("");
-    lines.push("Generated by Modelproof from your org board. Prices, tags and vendor countries come from the board's own data.");
-    lines.push("");
-    lines.push("## Overview");
-    lines.push("- Org: " + (state.boardName || "not set"));
-    var boardHeads = headcountOfAll(state.org.blocks);
-    var boardMoney = moneyThreeWays(computeOrgTotal(), boardHeads);
-    lines.push("- Monthly total: " + boardMoney.month + " across " + state.org.blocks.length + " block" + (state.org.blocks.length===1?"":"s") + " in " + state.org.divisions.length + " division" + (state.org.divisions.length===1?"":"s"));
-    lines.push("- Per person: " + (boardMoney.person ? (boardMoney.person + "/mo across " + boardHeads + " " + (boardHeads === 1 ? "person" : "people") + " (routines carry no seats)") : "no seats on this board"));
-    lines.push("- Per year: " + boardMoney.year);
-    lines.push("- Data rule: " + ruleTipText(rule));
-    lines.push("- Stance: " + (f.stance ? STANCE_LABELS[f.stance] : "not set"));
-    lines.push("- Labs already paid for: " + ((f.labs && f.labs.length) ? f.labs.join(", ") : "not set"));
-    lines.push("- Never suggest: " + (state.neverSuggest.length ? mdNameList(state.neverSuggest) : "nothing excluded"));
-    lines.push("");
-    lines.push("## Divisions");
-    if (!state.org.blocks.length && !state.org.divisions.length){
-      lines.push("- Nothing on the board yet.");
-    }
-    var groups = state.org.divisions.map(function(d){
-      return { division: d, name: d.name || "not set", members: state.org.blocks.filter(function(b){ return b.divisionId === d.id; }) };
+    document.getElementById("pkgDownload").addEventListener("click", function(){
+      var blob = new Blob([profileJson(currentPackage().profile) + "\n"], { type: "application/json" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = "profile.json";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+      showToast("profile.json downloaded");
     });
-    var loose = state.org.blocks.filter(function(b){ return !b.divisionId; });
-    if (loose.length) groups.push({ division: null, name: "Not in a division", members: loose });
-
-    // Item 3: a routine is named under every block it serves, and says who else it is shared
-    // with, so a reader of one team's entry never has to hunt for the jobs running against it.
-    function mdServedByLines(b, pad){
-      return routinesServing(b.id).map(function(r){
-        var others = servedBlocksOf(r).filter(function(x){ return x.id !== b.id; }).map(function(x){ return x.who; });
-        return pad + "- routine: " + (r.who || "not set") + (others.length ? (" — shared with " + others.join(", ")) : "");
-      });
-    }
-    function mdBlockEntry(b, note, pad){
-      pad = pad || "";
-      var kind = b.type === "person" ? "person" : b.type === "team" ? "team" : "routine";
-      var breach = blockBreach(b);
-      lines.push(pad + "- " + (b.who || "not set") + " (" + kind + ")" + (note ? (" — " + note) : ""));
-      lines.push(pad + "  - task: " + (b.task ? taskLabel(b.task) : "not set"));
-      lines.push(pad + "  - model: " + mdModelLabel(b));
-      lines.push(pad + "  - plans: " + (planListOf(b).length ? planListOf(b).join(" + ") : (b.calls_per_day > 0 ? "none (billed per call)" : "not set")));
-      // Item 5: the team first, then the people inside it who are on something else.
-      teamRows(b).forEach(function(r){
-        lines.push(pad + "    - " + (r.label || "row") + " x" + Math.max(0, r.seats || 0) + ": " + (mdNameList(rowModelIds(r)) || "no model"));
-      });
-      if (teamRows(b).length) lines.push(pad + "    - everyone else x" + remainderSeats(b) + ": " + (mdNameList(knownModelIds(b)) || "no model"));
-      if (b.type === "routine"){
-        var serves = servedBlocksOf(b).map(function(x){ return x.who; });
-        lines.push(pad + "  - serves: " + (serves.length ? serves.join(", ") : "nobody yet"));
-        lines.push(pad + "  - counted once, here — however many teams it serves");
-      }
-      lines.push(pad + "  - monthly cost: " + mdCostLine(b, pad + "  "));
-      lines.push(pad + "  - data rule: " + (breach ? ("BREAKS " + RULE_LABELS[rule] + " — " + breach) : ("clears " + RULE_LABELS[rule])));
-      mdServedByLines(b, pad + "  ").forEach(function(l){ lines.push(l); });
-    }
-
-    groups.forEach(function(g){
-      var sub = g.members.reduce(function(s,b){ return s + costOfBlock(b); }, 0);
-      var heads = headcountOfAll(g.members);
-      var money = moneyThreeWays(sub, heads);
-      lines.push("");
-      // Item 1: the division's money said three ways, exactly as the board's own header says it.
-      lines.push("### " + g.name + " — " + money.month + "/mo" +
-        (money.person ? (" · " + money.person + "/person/mo") : "") +
-        " · " + money.year + "/yr, " + g.members.length + " block" + (g.members.length===1?"":"s"));
-      if (!g.members.length){ lines.push("- Empty."); return; }
-      var d = g.division;
-      var hasDefault = !!(d && d.defaultModel);
-      // Item 6: the default first, then only the blocks that differ from it, then the routines.
-      if (hasDefault){
-        var dm = modelById(d.defaultModel);
-        lines.push("- Division default: " + (dm ? (dm.name + " [" + dm.id + ", " + dm.vendor + "]") : d.defaultModel) +
-          " · plans: " + ((d.defaultPlans || []).length ? d.defaultPlans.join(" + ") : "none"));
-      }
-      var staff = g.members.filter(function(b){ return b.type !== "routine"; });
-      var routines = g.members.filter(function(b){ return b.type === "routine"; });
-      var differs = hasDefault ? staff.filter(function(b){ return blockDiffersFromDivision(b, d); }) : staff;
-      var onDefault = hasDefault ? staff.filter(function(b){ return !blockDiffersFromDivision(b, d); }) : [];
-      differs.forEach(function(b){ mdBlockEntry(b, hasDefault ? "differs from the division default" : null); });
-      if (onDefault.length){
-        lines.push("- On the division default (" + onDefault.length + "): every field above, their own headcount and cost:");
-        onDefault.forEach(function(b){
-          lines.push("  - " + (b.who || "not set") + " (" + (b.type === "team" ? "team" : "person") + "): " + mdCostLine(b, "    "));
-          mdServedByLines(b, "    ").forEach(function(l){ lines.push(l); });
-        });
-      }
-      if (routines.length){
-        lines.push("- Routines");
-        routines.forEach(function(b){ mdBlockEntry(b, null, "  "); });
-      }
+    document.getElementById("pkgCopyText").addEventListener("click", function(){
+      copyText(packageText(currentPackage().pkg), "Package text copied");
     });
-    lines.push("");
-    lines.push("## Changes applied");
-    if (!state.applyLog.length){
-      lines.push("- None applied in this session.");
-    } else {
-      state.applyLog.forEach(function(a){
-        lines.push("- " + a.who + ": " + a.from + " -> " + a.to + (a.plan ? (" on " + a.plan) : "") + " — " + saveLabel(a.save));
-      });
-    }
-    lines.push("");
-    lines.push("## How we pick");
-    lines.push("- The shortlist, the filters, the evidence behind each pick and what we never do: ./how-we-pick.html");
-    return lines.join("\n");
   }
-  function buildPersonalAgentsMd(){
-    var p = state.personal;
-    var mePlans = planListOf(p.me);
-    var tier = p.me.optimizeFor;
-    var lines = [];
-    lines.push("# AGENTS.md");
-    lines.push("");
-    lines.push("Generated by Modelproof from your personal board. The Role blocks on that board are the routing.");
-    lines.push("");
-    lines.push("## Plan");
-    lines.push("- Plans: " + (mePlans.length ? mePlans.join(" + ") : "not set") + (mePlans.length ? " (" + fmtUsd2(planSeatPrice(mePlans)) + "/mo)" : ""));
-    lines.push("- Monthly cost: " + mdCostLine(meCostBlock(), ""));
-    lines.push("- Optimizing for " + tier + ": " + OPTIMIZE_COPY[tier]);
-    lines.push("- Models you use: " + (p.me.uses.length ? mdNameList(p.me.uses) : "not set"));
-    lines.push("");
-    lines.push("## Never suggest");
-    if (!state.neverSuggest.length){
-      lines.push("- Nothing excluded.");
-    } else {
-      state.neverSuggest.forEach(function(id){
-        var m = modelById(id);
-        lines.push("- " + (m ? m.name + " [" + id + "]" : id) + ": never propose it and never pick it automatically, even when it is cheaper. A role you attached it to yourself stays as you set it.");
-      });
-    }
-    lines.push("");
-    lines.push("## Roles");
-    if (!p.roles.length){
-      lines.push("- No roles on the board yet, so there is nothing to route. Add a Role and attach a model to it.");
-    } else {
-      p.roles.forEach(function(r){
-        var m = r.model ? modelById(r.model) : null;
-        var breach = r.model ? dataRuleBreach(r.model) : null;
-        lines.push("- " + (r.role || "not set") + ": " + (m ? (m.name + " at " + (r.effort || tierEffort(tier)) + " effort") : "no model attached yet") +
-          (breach ? (" — breaks your data rule: " + breach) : "") +
-          (isExcluded(r.model) ? " — on your never-suggest list; kept because you attached it" : ""));
-      });
-    }
-    lines.push("");
-    lines.push("Task routing that follows from those roles:");
-    p.taskDefs.forEach(function(def){
-      var row = computePersonalTaskRow(def, tier, mePlans);
-      if (row.notMeasured){
-        lines.push("- " + row.label + ": not measured — " + row.reason.replace(/^.*Not measured — /, ""));
-      } else {
-        var why = row.roleName ? ("your \u201c" + row.roleName + "\u201d role")
-          : (/never-suggest/.test(row.reason) ? "the role for this has a never-suggest model attached, so this is the " + tier + " pick"
-                                             : "no role set for this yet, so this is the " + tier + " pick");
-        lines.push("- " + row.label + ": " + modelById(row.model).name + " at " + row.effort + " effort — " + why);
-      }
-    });
-    lines.push("");
-    lines.push("## Delegation");
-    var byKind = {};
-    p.roles.forEach(function(r){ var k = roleKind(r.role); if (k && r.model && !byKind[k]) byKind[k] = r; });
-    var coord = byKind["coordinator"];
-    var downstream = ["long-haul code", "bulk", "research", "design"];
-    if (coord){
-      var handed = 0;
-      downstream.forEach(function(k){
-        var r = byKind[k];
-        if (!r) return;
-        handed++;
-        var m = modelById(r.model);
-        if (r.model === coord.model){ lines.push("- " + coord.role + " does " + k + " work itself (" + r.role + " is on the same model, " + (m ? m.name : "not set") + ")."); return; }
-        lines.push("- " + coord.role + " hands " + k + " work to " + r.role + " (" + (m ? m.name : "not set") + (isExcluded(r.model) ? ", on your never-suggest list" : "") + ").");
-      });
-      if (!handed) lines.push("- " + coord.role + " has nowhere to hand off yet — no long-haul code, bulk, research or design role on the board.");
-    } else {
-      lines.push("- No coordinator role on the board yet, so hand-offs are not defined. Add one to say who routes work to whom.");
-    }
-    lines.push("- Never spend the coordinator's context on bulk reading: hand that to the bulk role and take back the summary.");
-    lines.push("");
-    lines.push("## Effort");
-    if (mePlans.some(function(n){ return planVendorOf(n) === "Anthropic"; })){
-      lines.push("- Anthropic documents the effort levels its models accept: https://platform.claude.com/docs");
-    }
-    lines.push("- Where a role sets no effort of its own, use " + tierEffort(tier) + " — the level that matches the " + tier + " stance above.");
-    lines.push("- Raise effort for a task that failed at a lower one; don't start at the top by default.");
-    lines.push("");
-    lines.push("## Context hygiene");
-    lines.push("- Keep CLAUDE.md short: standing facts only, not instructions that change every week.");
-    lines.push("- Put routing in this AGENTS.md: which role, which model, which effort.");
-    lines.push("- Delegate big reads to the bulk role and keep only its answer in the main thread.");
-    lines.push("- One thread at a time: finish a task before starting the next one in the same context.");
-    lines.push("- Verify with real output — a test run, a diff, a screenshot — before calling anything done.");
-    lines.push("");
-    lines.push("## How we pick");
-    lines.push("- The shortlist, the filters, the evidence behind each pick and what we never do: ./how-we-pick.html");
-    return lines.join("\n");
+  // The pane stands in for the board summary while it is open; any render keeps it current.
+  function syncInstallPane(){
+    installBtn.setAttribute("aria-expanded", String(installOpen));
+    installPane.hidden = !installOpen;
+    if (!installOpen) return;
+    bpSummary.hidden = true; bpSelected.hidden = true; bpNever.hidden = true;
+    renderInstallPane();
   }
-  function buildAgentsMd(){ return mode === "org" ? buildOrgPolicyMd() : buildPersonalAgentsMd(); }
-  var agentsTextarea = document.getElementById("agentsMdText");
-  document.getElementById("bpCopyAgents").addEventListener("click", function(){
-    var text = buildAgentsMd();
-    agentsTextarea.value = text;
-    var done = function(){ showToast(mode === "org" ? "Org policy AGENTS.md copied" : "Personal AGENTS.md copied"); };
-    if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(done).catch(function(){
-        agentsTextarea.hidden = false; agentsTextarea.select(); document.execCommand("copy"); agentsTextarea.hidden = true; done();
-      });
-    } else {
-      agentsTextarea.hidden = false; agentsTextarea.select(); document.execCommand("copy"); agentsTextarea.hidden = true; done();
-    }
-  });
+  function setInstallOpen(open){
+    installOpen = !!open;
+    if (installOpen) selected = null;
+    bpNever.hidden = false;
+    render();
+    var scroller = installPane.closest(".bp-scroll");
+    if (scroller) scroller.scrollTop = 0;
+    if (installOpen) openMobilePanel();
+  }
+  installBtn.addEventListener("click", function(){ setInstallOpen(!installOpen); });
 
   /* ============================================================ mobile sheets ============================================================ */
   var palEl = document.getElementById("palette"), panelEl = document.getElementById("brainPanel"), backdrop = document.getElementById("sheetBackdrop");
@@ -6078,14 +5729,32 @@ import { decide } from "./assets/decide.mjs";
     var bud6 = { in: 3000000, out: 1300000 }, tot6 = bud6.in + bud6.out, pct6 = 50;
     ok("changing the split keeps the total token budget", Math.abs((Math.round(tot6*pct6/100) + Math.round(tot6*(100-pct6)/100)) - tot6) <= 1, tot6);
     ok("the split shown is the split in the numbers", splitOf(bud6) === Math.round(bud6.in/tot6*100), splitOf(bud6));
-    // 7 - the panel total, the cost bar and AGENTS.md are the same number
+    // 7 - the cost bar adds up to the panel total, and the org package lists each division's
+    //     plans at their list seat prices
     var byDiv = state.org.divisions.reduce(function(sum, d){
       return sum + state.org.blocks.filter(function(b){ return b.divisionId === d.id; }).reduce(function(x, b){ return x + costOfBlock(b); }, 0);
     }, 0);
     var loose7 = state.org.blocks.filter(function(b){ return !b.divisionId; }).reduce(function(x, b){ return x + costOfBlock(b); }, 0);
     ok("cost bar segments add up to the board total", near(byDiv + loose7, computeOrgTotal(), 0.01), computeOrgTotal());
-    ok("AGENTS.md prints that same total", buildOrgPolicyMd().indexOf(fmtUsd(computeOrgTotal())) !== -1, fmtUsd(computeOrgTotal()));
-    ok("every org block prints a formula in AGENTS.md", state.org.blocks.every(function(b){ return buildOrgPolicyMd().indexOf(mdCostLine(b).split("\n")[0]) !== -1; }), state.org.blocks.length);
+    var prof7 = boardProfile("org");
+    var pkg7 = buildPackage(prof7, { models: DATA.models, guidance: DATA.guidance, plans: DATA.plans });
+    var text7 = (pkg7.parts || []).filter(function(pt){ return pt.kind === "block" || /:rules$/.test(pt.id); })
+      .map(function(pt){ return pt.content || ""; }).join("\n");
+    var divs7 = (prof7.org && prof7.org.divisions) || [];
+    var usd7 = function(n){ return "$" + (Number.isInteger(n) ? String(n) : String(Number(n.toFixed(3)))); };
+    ok("the org package lists every division", divs7.every(function(d){ return text7.indexOf("- " + d.name) !== -1; }), divs7.length);
+    // The profile keeps plan names to plain characters ("Team (Premium seat)" → "Team Premium seat"),
+    // so rows are matched the way the generator matches them: letters and digits only.
+    var key7 = function(t){ return String(t || "").toLowerCase().replace(/[^a-z0-9]+/g, ""); };
+    var missing7 = [], checked7 = 0;
+    divs7.forEach(function(d){ (d.plans || []).forEach(function(pl){
+      var row = DATA.plans.find(function(r){ return r.vendor === pl.vendor && key7(r.plan) === key7(pl.plan); });
+      if (!row || !(planPrice(row) > 0)) return;
+      checked7++;
+      if (text7.indexOf(usd7(planPrice(row)) + "/seat/month list") === -1) missing7.push(d.name + ": " + pl.plan);
+    }); });
+    ok("...with each division's plans at their list seat price", missing7.length === 0,
+       missing7.length ? missing7.join(" | ") : checked7 + " priced plans listed");
     // 8 - a block with no model costs nothing and says why, instead of throwing
     var empty8 = { type: "person", plans: [], seats: 1, models: [], usageLevel: "typical" };
     ok("a block with no model costs nothing and says so", costOfBlock(empty8) === 0 && costLines(empty8)[0].kind === "none", costLines(empty8)[0].math);
@@ -6146,34 +5815,17 @@ import { decide } from "./assets/decide.mjs";
 
   // Read-only accessors for automated testing — no write path, no effect on behavior.
   window.__mpDebug = function(){ return JSON.parse(JSON.stringify({ mode: mode, state: state, selected: selected })); };
-  window.__mpAgentsMd = function(){ return buildAgentsMd(); };
+  window.__mpPackage = function(){ var c = currentPackage(); return { profile: c.profile, pkg: c.pkg, preview: renderPreview(c.pkg), text: packageText(c.pkg) }; };
   window.__mpCost = {
     parts: costParts, total: costOfBlock, lines: costLines, budget: budgetOf,
     orgTotal: computeOrgTotal, me: meCostBlock, perRequest: PER_REQUEST, tests: runPricingTests,
     headcount: headcountOf, headcountAll: headcountOfAll, perYear: perYear, perPerson: perPerson
   };
-  // The engine, read-only: what decide() hands back for a task or a block, after the board's
-  // own rule layer. No write path, no effect on what is on screen.
   // The plan table, read-only: what a plan row reaches and whether its seat pays for tokens.
   window.__mpPlans = {
     reach: planReach, reachOf: planReachOf, reachVendors: reachableVendorsFor,
     covers: planCoversTokens, price: planPrice, priceUnknown: planPriceUnknown,
     perTokenPlatforms: perTokenPlatforms, table: PLAN_REACH
-  };
-  window.__mpEngine = {
-    shortlist: function(taskId, opts){ return engineShortlist(taskId, opts); },
-    forBlock: function(blockId){
-      var b = state.org.blocks.find(function(x){ return x.id === blockId; });
-      return b ? engineShortlistForBlock(b) : [];
-    },
-    swapFor: function(blockId){
-      var b = state.org.blocks.find(function(x){ return x.id === blockId; });
-      return b ? engineSwapFor(b) : null;
-    },
-    info: function(taskId, opts){ return engineShortlistInfo(taskId, opts); },
-    emptyText: function(taskId, opts){ return emptyShortlistText(taskId, opts); },
-    taskId: engineTaskId, have: engineHaveFor, haveForLabs: engineHaveForLabs, stance: boardStance,
-    noShortlistText: NO_SHORTLIST, ruledOutText: RULED_OUT
   };
 
 })();
