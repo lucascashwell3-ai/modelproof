@@ -804,6 +804,31 @@ test('LC-05: the printed undo line runs as printed when the state folder path ha
   ok(compare(f, before));
 });
 
+test('LC-09: a lock left by a run that is no longer alive is taken over (and said); a live one still stops the run', () => {
+  const f = setup('empty');
+  const before = snapshot(f);
+  const p = plan(f, path.join(PROFILES, 'empty.json'));
+  fs.mkdirSync(f.state, { recursive: true });
+  const lockFile = path.join(f.state, 'lock');
+  // A live holder (this test process): exit 1, and the message names it.
+  fs.writeFileSync(lockFile, JSON.stringify({ pid: process.pid, started: '2026-09-27T00:00:00.000Z' }));
+  const held = apply(f, p);
+  assert.equal(held.code, 1, held.all);
+  assert.match(held.all, new RegExp(`another modelproof run \\(pid ${process.pid}, started 2026-09-27T00:00:00.000Z\\) holds`));
+  // A crashed run: its pid is gone.
+  const dead = spawnSync(process.execPath, ['-e', '0']).pid;
+  fs.writeFileSync(lockFile, JSON.stringify({ pid: dead, started: '2026-09-26T00:00:00.000Z' }));
+  const r = apply(f, p);
+  ok(r, 'a stale lock does not block the run');
+  assert.match(r.all, new RegExp(`took over a lock left by an earlier run that is no longer running \\(pid ${dead}`));
+  assert.ok(!fs.existsSync(lockFile), 'the lock is released afterwards');
+  ok(undo(f, p.plan.id));
+  ok(compare(f, before));
+  // The lock the installer writes records its pid and start time.
+  const src = read(INSTALL);
+  assert.match(src, /JSON\.stringify\(\{ pid: process\.pid, started/);
+});
+
 test('preview paths: the notes name the real state folder, and the Apply line runs as printed', () => {
   const f = setup('empty');
   const before = snapshot(f);

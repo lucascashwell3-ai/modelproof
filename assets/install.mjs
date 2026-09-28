@@ -726,15 +726,43 @@ function loadManifest(state, id) {
   try { m = JSON.parse(b.toString('utf8')); } catch { throw new Fail(EXIT.CORRUPT, `install record ${p} is not valid JSON`); }
   return { bytes: b, m };
 }
+// The lock records who holds it (pid + start time). A lock whose pid is no longer running was left
+// by a run that stopped midway: it is taken over, and the run says so.
+function readLock(p) {
+  let text;
+  try { text = fs.readFileSync(p, 'utf8'); } catch (e) { if (e.code === 'ENOENT') return null; throw e; }
+  let pid = null; let started = null;
+  try { const j = JSON.parse(text); pid = j.pid; started = j.started || null; } catch { pid = Number(text.trim()); }
+  return { text, pid: Number.isInteger(pid) && pid > 0 ? pid : null, started };
+}
+function pidAlive(pid) {
+  try { process.kill(pid, 0); return true; } catch (e) { return e.code !== 'ESRCH'; }
+}
 function lock(state) {
   ensurePrivateDir(state);
   const p = path.join(state, 'lock');
+  const held = (h) => new Fail(EXIT.USAGE, `another modelproof run${h && h.pid ? ` (pid ${h.pid}${h.started ? `, started ${h.started}` : ''})` : ''} holds ${p}. If none is running, remove that file and try again.`);
+  const create = () => fs.openSync(p, 'wx', 0o600);
   let fd;
-  try { fd = fs.openSync(p, 'wx', 0o600); } catch (e) {
-    if (e.code === 'EEXIST') throw new Fail(EXIT.USAGE, `another modelproof run holds ${p}. If none is running, remove that file and try again.`);
-    throw e;
+  try { fd = create(); } catch (e) {
+    if (e.code !== 'EEXIST') throw e;
+    const h = readLock(p);
+    // Unknown holder (unreadable, or pid still running): leave it alone.
+    if (h && (!h.pid || pidAlive(h.pid))) throw held(h);
+    if (h) {
+      // Move the stale lock aside, then check it is still the one judged stale before dropping it.
+      const aside = `${p}.stale-${process.pid}`;
+      try { fs.renameSync(p, aside); } catch (err) { if (err.code !== 'ENOENT') throw err; }
+      let moved = null;
+      try { moved = fs.readFileSync(aside, 'utf8'); } catch { /* another run moved it first */ }
+      if (moved !== null && moved !== h.text) { try { fs.renameSync(aside, p); } catch { /* keep going */ } throw held(readLock(p)); }
+      try { fs.unlinkSync(aside); } catch { /* gone */ }
+      process.stderr.write(`Note: took over a lock left by an earlier run that is no longer running (pid ${h.pid}${h.started ? `, started ${h.started}` : ''}).\n`);
+    }
+    try { fd = create(); } catch (err) { if (err.code === 'EEXIST') throw held(readLock(p)); throw err; }
   }
-  fs.writeSync(fd, String(process.pid));
+  const started = new Date(Date.now() - Math.round(process.uptime() * 1000)).toISOString();
+  fs.writeSync(fd, JSON.stringify({ pid: process.pid, started }));
   fs.closeSync(fd);
   return () => { try { fs.unlinkSync(p); } catch { /* already gone */ } };
 }
