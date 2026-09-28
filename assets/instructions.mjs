@@ -373,6 +373,7 @@ export function normalizeProfile(input, facts) {
   if (who === 'org') {
     const o = isObj(src.org) ? src.org : {};
     const divisions = [];
+    if (arr(o.divisions).length > 20) problems.push(`org.divisions: ${arr(o.divisions).length - 20} past the first 20 left out`);
     arr(o.divisions).slice(0, 20).forEach((d, i) => {
       if (!isObj(d)) { problems.push(`org.divisions[${i}]: not an object; left out`); return; }
       const name = cleanText(d.name) || `Division ${i + 1}`;
@@ -704,6 +705,7 @@ function renderText(F, p, ctx, roles, readers, opts) {
   sections.push({ title: 'Effort', lines: ef });
 
   // Org: who uses what (facts only, no totals).
+  let who = null;
   if (p.who === 'org' && p.org && p.org.divisions.length) {
     const wu = [];
     for (const d of p.org.divisions) {
@@ -714,18 +716,32 @@ function renderText(F, p, ctx, roles, readers, opts) {
       wu.push({ t: `- ${d.name}${about.length ? ' (' + about.join(', ') + ')' : ''}: ${plans.length ? plans.join('; ') : 'no plan given'}. Lead: ${m ? m.name : 'their own choice'}.` });
       if (m) wu.push({ t: `  ${youSource(m, F.modelsAsOf)}` });
     }
-    sections.push({ title: 'Who uses what', lines: wu });
+    who = { title: 'Who uses what', lines: wu };
+    sections.push(who);
   }
 
   // Fit the cap: drop the highest-priority-number optional lines first.
   const cap = TEXT_CAP[p.who] || 40;
   const total = () => head.length + sections.reduce((n, s) => n + (s.lines.length ? s.lines.length + 2 : 0), 0) + (opts.owned ? 1 : 0) + (opts.extra || 0);
-  while (total() > cap) {
-    let best = null;
-    for (const s of sections) for (const l of s.lines) if (l.prio && (!best || l.prio > best.l.prio)) best = { s, l };
-    if (!best) break;
-    best.s.lines.splice(best.s.lines.indexOf(best.l), 1);
+  const trim = () => {
+    while (total() > cap) {
+      let best = null;
+      for (const s of sections) for (const l of s.lines) if (l.prio && (!best || l.prio > best.l.prio)) best = { s, l };
+      if (!best) break;
+      best.s.lines.splice(best.s.lines.indexOf(best.l), 1);
+    }
+  };
+  const kept = sections.map((s) => s.lines.slice());
+  trim();
+  // Still over: put the optional lines back, sum up "Who uses what" by lead model in the room
+  // the fixed lines leave, then trim optional lines again.
+  if (who && total() > cap) {
+    sections.forEach((s, i) => { s.lines = kept[i]; });
+    const fixed = total() - who.lines.length - sections.reduce((n, s) => n + (s === who ? 0 : s.lines.filter((l) => l.prio).length), 0);
+    who.lines = whoSummary(F, p.org.divisions, cap - fixed);
+    trim();
   }
+  if (total() > cap) throw new Error(`instruction text is ${total()} lines, over the ${cap}-line cap`);
   const out = [];
   if (opts.owned) out.push(OWNED_TAG);
   out.push(...head.map((l) => l.t));
@@ -735,6 +751,47 @@ function renderText(F, p, ctx, roles, readers, opts) {
     for (const l of s.lines) if (l.claim) ctx.used.add(l.claim);
   }
   return out.join('\n') + '\n';
+}
+
+// "Who uses what" in at most `room` lines: one line per lead model (its source on the next line, or
+// on the same line when space is short), teams listed up to a few names, then "and K more".
+// Every model named keeps its source; leads that don't fit are counted, not named.
+function whoSummary(F, divisions, room) {
+  const groups = new Map();
+  for (const d of divisions) {
+    const key = d.lead && F.byId.get(d.lead) ? d.lead : '';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(d.name);
+  }
+  const teams = (names, n) => names.slice(0, n).join(', ') + (names.length > n ? ` and ${names.length - n} more` : '');
+  const head = { t: `- ${divisions.length} divisions; their plans and seats stay in your Modelproof answers.` };
+  const build = (shown, inline) => {
+    const out = [head];
+    let models = 0;
+    for (const [id, names] of groups) {
+      if (!id) { out.push({ t: `- Lead their own choice: ${teams(names, shown)}.` }); continue; }
+      models += 1;
+      const m = F.byId.get(id);
+      const src = youSource(m, F.modelsAsOf);
+      if (inline) out.push({ t: `- Lead ${m.name}: ${teams(names, shown)}. ${src}` });
+      else out.push({ t: `- Lead ${m.name}: ${teams(names, shown)}.` }, { t: `  ${src}` });
+    }
+    return { out, models };
+  };
+  for (const inline of [false, true]) {
+    for (const shown of [4, 2]) {
+      const { out } = build(shown, inline);
+      if (out.length <= room) return out;
+    }
+  }
+  // Too many lead models for the room: name as many as fit, count the rest.
+  const { out } = build(2, true);
+  const keep = Math.max(0, room - 1);
+  if (out.length <= room) return out;
+  const cut = out.slice(0, keep);
+  const left = out.length - keep;
+  cut.push({ t: `- ${left} more lead ${left === 1 ? 'line' : 'lines'} left out to fit; see your Modelproof answers.` });
+  return cut.slice(0, Math.max(0, room));
 }
 
 function planFact(F, pl) {

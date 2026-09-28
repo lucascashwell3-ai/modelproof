@@ -315,11 +315,29 @@ test('text parts stay ≤40 lines for a person and ≤60 for an org; agent bodie
       assert.ok(body.trim().split('\n').length <= 15, `${n} ${p.id}`);
     }
   }
-  const big = clone(PROFILES['org-40']);
-  big.tools = ['claude-code', 'codex', 'cursor', 'agents-md'];
-  big.effort_cap = 'high';
-  for (let i = 0; i < 12; i++) big.org.divisions.push({ name: `Team ${i}`, people: 3, plans: [{ vendor: 'Anthropic', plan: 'Pro' }], tools: ['claude-code'], lead: 'claude-sonnet-5' });
-  for (const p of textParts(buildPackage(big, FACTS))) assert.ok(p.lines <= 60 || p.content.includes('Who uses what'), p.id);
+});
+
+test('an org of any size stays ≤60 lines, and every lead model named keeps its Source line', () => {
+  const leads = ['claude-sonnet-5', 'claude-opus-5-5', 'gpt-6-sol', 'claude-haiku-4-5'];
+  for (const extra of [12, 28, 31, 100]) {
+    const big = clone(PROFILES['org-40']);
+    big.tools = ['claude-code', 'codex', 'cursor', 'agents-md'];
+    big.effort_cap = 'high';
+    for (let i = 0; i < extra; i++) big.org.divisions.push({ name: `Team ${i}`, people: 1, plans: [{ vendor: 'Anthropic', plan: 'Pro' }], tools: ['claude-code'], lead: leads[i % leads.length] });
+    const pkg = buildPackage(big, FACTS);
+    for (const p of textParts(pkg)) {
+      assert.ok(p.lines <= 60, `${extra + 3} divisions: ${p.id} has ${p.lines} lines`);
+      assert.equal(p.content.split('\n').length - 1, p.lines, p.id);
+      assert.match(p.content, /Who uses what/, p.id);
+      const lines = p.content.split('\n');
+      for (const id of leads) {
+        const i = lines.findIndex((l) => modelsIn(l).has(id) && /Who uses what/.test(p.content.slice(0, p.content.indexOf(l))));
+        assert.ok(i >= 0, `${extra + 3} divisions: ${p.id} leaves out lead ${id}`);
+        assert.ok(lines[i].includes('Source:') || lines[i + 1].trim().startsWith('Source:'), `${p.id}: "${lines[i]}"`);
+      }
+    }
+    if (extra + 3 > 20) assert.ok(pkg.notes.some((n) => /past the first 20 left out/.test(n)), 'divisions past 20 are named as left out');
+  }
 });
 
 test('text parts carry the hand-off, context and effort sections and the effort link, never "always use max"', () => {
