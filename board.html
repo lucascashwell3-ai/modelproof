@@ -1060,7 +1060,7 @@
         <div id="bpInstallPane" class="bp-state" hidden></div>
         <div id="bpNever"></div>
       </div>
-      <div class="bp-actions">
+      <div class="bp-actions" id="install">
         <div class="toast" id="toast"></div>
         <button id="bpExportPng"><span class="icoSlot" data-icon="exportPng"></span>Export PNG</button>
         <button id="bpInstall" aria-expanded="false" aria-controls="bpInstallPane"><span class="icoSlot" data-icon="copyAgents"></span>Install package</button>
@@ -1188,6 +1188,8 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults } from "./a
     }
     render();
     if (restored) fitToView();
+    // board.html#install (linked from the home page) opens the Install package pane, same as the button.
+    if (location.hash === "#install") setInstallOpen(true);
     window.__mpTests = runPricingTests();
   }).catch(function(err){
     emptyEl.hidden = false;
