@@ -615,7 +615,8 @@ function renderText(F, p, ctx, roles, readers, opts) {
     const where = leadTools.length === readers.filter((t) => roles[t]).length ? '' : ` in ${leadTools.map((t) => TOOL_LABEL[t]).join(' and ')}; elsewhere the model you choose`;
     head.push({ t: `Lead: ${m.name}${where}. ${youSource(m, F.modelsAsOf)}` });
   } else {
-    head.push({ t: 'Lead: the model you choose in the tool. Helpers marked inherit run on it.' });
+    const inherits = helperReaders.some((t) => ROLES.some((r) => roles[t][r].from === 'inherit'));
+    head.push({ t: `Lead: the model you choose in the tool.${inherits ? ' Helpers marked inherit run on it.' : ''}` });
   }
   if (p.who === 'org') head.push({ t: `Shared by ${p.org && p.org.name ? p.org.name : 'the team'}; each person keeps their own rules in their own files.` });
 
@@ -638,6 +639,20 @@ function renderText(F, p, ctx, roles, readers, opts) {
   }
   if (helpers.length) sections.push({ title: 'Helpers', lines: helpers });
 
+  // When to hand off: the sourced cost facts, framed as when a helper is worth it (Claude Code).
+  if (has('claude-code')) {
+    const wh = [];
+    const v = claimLine(F, ctx, 'cc-delegate-verbose', 'claude-code', 3, 'Hand helpers verbose work (test runs, logs): only a summary comes back.');
+    if (v) wh.push(v);
+    const b = claimLine(F, ctx, 'anthropic-multi-agent-token-use', null, wants('agents') ? 3 : 5, 'Hand helpers parallel or separable work; each adds tokens (multi-agent systems used about 15 times the tokens of chat in Anthropic\'s data).');
+    if (b) wh.push(b);
+    const c = claimLine(F, ctx, 'anthropic-orchestrator-vs-lower-effort', null, 3, 'For a job one model can do alone, lower effort on that model cost less than an orchestrator.');
+    if (c) wh.push(c);
+    const a = claimLine(F, ctx, 'cc-subagent-usage-limits', 'claude-code', 2, 'Helpers share your usage limits.');
+    if (a) wh.push(a);
+    if (wh.length) sections.push({ title: 'When to hand off', lines: wh });
+  }
+
   // Hand-off.
   const hand = [
     { t: '- Brief each helper with the exact files, the goal, and a check that proves it is done.' },
@@ -645,10 +660,6 @@ function renderText(F, p, ctx, roles, readers, opts) {
   ];
   if (wants('coding', 'frontend', 'agents', 'extraction')) hand.push({ t: '- Let scripts and tests decide pass or fail, not a summary.' });
   hand.push({ t: '- A cold review gets the diff, not the author\'s summary.' });
-  if (has('claude-code')) {
-    const l = claimLine(F, ctx, 'cc-delegate-verbose', 'claude-code', 3, 'Send verbose work (test runs, logs) to a helper so only a summary comes back.');
-    if (l) hand.push(l);
-  }
   sections.push({ title: 'How to hand off', lines: hand });
 
   // Context.
@@ -659,15 +670,6 @@ function renderText(F, p, ctx, roles, readers, opts) {
   if (has('claude-code')) { const l = claimLine(F, ctx, 'cc-subagent-own-context', 'claude-code', 4); if (l) cx.push(l); }
   if (has('codex')) { const l = claimLine(F, ctx, 'codex-agents-md-size-cap', 'codex', 4); if (l) cx.push(l); }
   sections.push({ title: 'Context', lines: cx });
-
-  // Usage (Anthropic's cost facts, where Claude Code reads this).
-  if (has('claude-code')) {
-    const us = [];
-    const a = claimLine(F, ctx, 'cc-subagent-usage-limits', 'claude-code', 2); if (a) us.push(a);
-    const b = claimLine(F, ctx, 'anthropic-multi-agent-token-use', null, wants('agents') ? 3 : 5); if (b) us.push(b);
-    const c = claimLine(F, ctx, 'anthropic-orchestrator-vs-lower-effort', null, 3); if (c) us.push(c);
-    if (us.length) sections.push({ title: 'Usage', lines: us });
-  }
 
   // Effort.
   const ef = [{ t: '- Raise effort for a hard step and lower it for routine ones; don\'t leave it at max.' }];
@@ -682,7 +684,7 @@ function renderText(F, p, ctx, roles, readers, opts) {
     const c = effortClaimFor(F, ctx, lk);
     if (c) ef.push({ t: `- ${c.sentence} ${sourceOf(c)}`, prio: i < 2 ? 4 : 6, claim: c.id });
   });
-  ef.push({ t: `- Effort levels per model: ${SITE_EFFORT_URL}` });
+  ef.push({ t: `- Effort levels per model, for you: ${SITE_EFFORT_URL}` });
   if (p.effort_cap) ef.push({ t: `- Your effort cap: ${p.effort_cap}. Stay at or below it.${opts.capKey && has('claude-code') ? ' maxEffortLevel in settings.json holds it in Claude Code.' : ''}` });
   sections.push({ title: 'Effort', lines: ef });
 

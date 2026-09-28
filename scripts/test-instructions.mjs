@@ -334,9 +334,26 @@ test('text parts carry the hand-off, context and effort sections and the effort 
   }
   const cc = textParts(build('cc-max5x'))[0].content;
   assert.match(cc, /pass no model/);
-  assert.match(cc, /same usage limits/);
-  assert.match(cc, /15 times/);
-  assert.match(cc, /lower effort/);
+  // The cost facts read as when-to-delegate guidance, each with its source.
+  const when = cc.split('## When to hand off\n')[1].split('\n\n')[0].split('\n');
+  assert.equal(when.length, 4);
+  assert.match(when[0], /^- Hand helpers verbose work .+ Source: Claude Code docs, https:\/\/code\.claude\.com\/docs\/en\/costs/);
+  assert.match(when[1], /^- Hand helpers parallel or separable work; .+15 times.+ Source: Anthropic docs, https:\/\/www\.anthropic\.com\/engineering\/multi-agent-research-system/);
+  assert.match(when[2], /^- For a job one model can do alone, lower effort on that model cost less than an orchestrator\. Source: Anthropic docs, /);
+  assert.match(when[3], /^- Helpers share your usage limits\. Source: Claude Code docs, /);
+  assert.ok(!/## Usage/.test(cc));
+  assert.ok(cc.indexOf('## When to hand off') < cc.indexOf('## How to hand off'));
+  // The effort link is for the person.
+  assert.match(cc, /^- Effort levels per model, for you: https:\/\/lucascashwell3-ai\.github\.io\/modelproof\/#effort$/m);
+  // "Helpers marked inherit" only when one does.
+  assert.match(cc, /^Lead: the model you choose in the tool\. Helpers marked inherit run on it\.$/m);
+  const none = buildPackage({ ...PROFILES.empty, roles: { reviewer: 'claude-sonnet-5' } }, FACTS);
+  assert.ok(ROLES.every((r) => none.roles['claude-code'][r].from !== 'inherit'));
+  const noneText = textParts(none)[0].content;
+  assert.match(noneText, /^Lead: the model you choose in the tool\.$/m);
+  assert.ok(!/inherit/.test(noneText));
+  // No Claude Code reader → no Anthropic cost facts at all.
+  assert.ok(!/When to hand off/.test(textParts(build('codex'))[0].content));
 });
 
 test('org text lists each division with its plans and list prices, and no totals', () => {
