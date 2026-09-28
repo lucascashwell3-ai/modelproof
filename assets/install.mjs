@@ -346,6 +346,19 @@ function display(abs, ctx) {
   return abs;
 }
 function tildeDir(abs, ctx) { return '~/' + path.relative(ctx.home, abs); }
+// A folder as the preview shows it: ~ for the home prefix, else the full path.
+function tildeOr(abs, home) {
+  if (home && isInside(abs, home)) { const rel = path.relative(home, abs); return rel ? '~/' + rel : '~'; }
+  return abs;
+}
+// A path as a shell argument that runs as printed: ~/… inside the shell's own home when every
+// character is plain, the bare path when plain, otherwise single-quoted.
+function shellPath(abs) {
+  const plain = (s) => /^[A-Za-z0-9_\/.~+:=@%,-]+$/.test(s);
+  const home = os.homedir();
+  if (home && isInside(abs, home) && abs !== home && plain(abs)) return '~/' + path.relative(home, abs);
+  return plain(abs) ? abs : `'${abs.replace(/'/g, "'\\''")}'`;
+}
 // Package target path → absolute logical path.
 function targetAbs(p, ctx) {
   if (p === '~' || p.startsWith('~/')) return path.join(ctx.home, p.slice(2));
@@ -920,7 +933,7 @@ export function makePlan({ profile, facts, ctx, state }) {
     const mine = new Set(e.keys.segments.flatMap((x) => x.keys));
     s.keys = s.keys.filter((k) => !mine.has(k));
   }
-  const pkg = buildPackage(profile, facts, setup);
+  const pkg = buildPackage(profile, facts, { ...setup, state_dir: tildeOr(path.resolve(state), ctx.home) });
   const items = [];
   const seen = new Set();
   pkg.parts.forEach((part, i) => {
@@ -1000,10 +1013,10 @@ export function renderPlan(plan, planFile) {
     for (const m of plan.mentions) out.push(`  ${m.file}:${m.line}  (memory or output style; mentions a model)`);
   }
   for (const n of plan.notes) out.push(`Note: ${n}`);
-  out.push('', `Undo takes out everything above and leaves ${plan.state_dir} in place (install history).`);
+  out.push('', `Undo takes out everything above and leaves ${tildeOr(plan.state_dir, plan.home)} in place (install history).`);
   if (conflicts.length) out.push(`Needs a decision: ${conflicts.join(', ')}. Apply refuses until each is left out with --skip ${conflicts.join(',')}.`);
-  const self = path.basename(SELF);
-  out.push(planFile ? `Apply: node ${self} apply --plan ${planFile} --expect ${plan.hash}${conflicts.length ? ` --skip ${conflicts.join(',')}` : ''}` : 'Write the plan with --out <file> to apply it.');
+  // The exact command, runnable as printed from any folder: this installer's own path and the plan file's.
+  out.push(planFile ? `Apply: node ${shellPath(SELF)} apply --plan ${shellPath(path.resolve(planFile))} --expect ${plan.hash}${conflicts.length ? ` --skip ${conflicts.join(',')}` : ''}` : 'Write the plan with --out <file> to apply it.');
   return out.join('\n') + '\n';
 }
 

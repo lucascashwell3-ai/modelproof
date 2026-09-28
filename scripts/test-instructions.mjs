@@ -639,6 +639,15 @@ test('preview: facts, files and notes; no ranking words', () => {
   assert.doesNotThrow(() => renderPreview({ parts: [{}], roles: { codex: {} } }));
 });
 
+test('preview: the undo note names the state folder the installer reports', () => {
+  const note = (setup) => buildPackage(PROFILES.empty, FACTS, setup).notes.find((x) => x.startsWith('Undo removes'));
+  assert.match(note(undefined), /; ~\/\.modelproof\/ keeps the install history\.$/);
+  assert.match(note({ state_dir: '/srv/mp state' }), /; \/srv\/mp state\/ keeps the install history\.$/);
+  assert.match(note({ state_dir: '~/custom' }), /; ~\/custom\/ keeps the install history\.$/);
+  assert.match(note({ state_dir: '/tmp/a$(x)' }), /; the Modelproof state folder keeps the install history\.$/);
+  assert.match(note({}), /; ~\/\.modelproof\/ keeps/);
+});
+
 /* ======================================================================== board adapter */
 
 test('profileFromBoard: a personal board becomes a person profile', () => {

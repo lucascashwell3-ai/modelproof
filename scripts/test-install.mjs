@@ -682,6 +682,39 @@ test('state folder: 700 folders, 600 files; a held lock stops a second run; the 
   assert.match(st.out, new RegExp(`${p.plan.id} +project 0 part`));
 });
 
+test('preview paths: the notes name the real state folder, and the Apply line runs as printed', () => {
+  const f = setup('empty');
+  const before = snapshot(f);
+  const profile = path.join(PROFILES, 'empty.json');
+  // MODELPROOF_HOME outside the home folder: its full path, never ~/.modelproof/.
+  const p = plan(f, profile);
+  ok(p);
+  assert.ok(p.out.includes(`; ${f.state}/ keeps the install history`), p.out);
+  assert.doesNotMatch(p.out, /~\/\.modelproof\//);
+  // Inside the home folder: shown with ~.
+  const inHome = path.join(f.home, 'mp-state');
+  const q = plan(f, profile, { state: inHome });
+  ok(q);
+  assert.match(q.out, /; ~\/mp-state\/ keeps the install history/);
+  assert.match(q.out, /leaves ~\/mp-state in place/);
+  // The Apply line runs as printed, from another folder, with a plan file whose path has a space.
+  const dir = path.join(f.work, 'my plans');
+  fs.mkdirSync(dir);
+  const out = path.join(dir, 'plan.json');
+  const r = node(INSTALL, ['plan', '--profile', profile, '--data', DATA, '--home', f.home, '--project', f.project, '--out', out], f.env);
+  ok(r);
+  const line = /^Apply: (node .+)$/m.exec(r.out);
+  assert.ok(line, r.out);
+  const hashNow = JSON.parse(read(out)).hash;
+  assert.ok(line[1].includes(`--expect ${hashNow}`), line[1]);
+  assert.ok(line[1].includes(`'${out}'`), line[1]);
+  const run = spawnSync('/bin/sh', ['-c', line[1]], { encoding: 'utf8', cwd: os.tmpdir(), env: { ...f.env, PATH: `${path.dirname(process.execPath)}${path.delimiter}${process.env.PATH || ''}` } });
+  assert.equal(run.status, 0, run.stdout + run.stderr);
+  assert.match(run.stdout, /^Done\./);
+  ok(undo(f, JSON.parse(read(out)).id));
+  ok(compare(f, before));
+});
+
 test('ids: user scope and project scope get different install ids, stable across runs', () => {
   const f = setup('empty');
   const a = plan(f, path.join(PROFILES, 'empty.json'));

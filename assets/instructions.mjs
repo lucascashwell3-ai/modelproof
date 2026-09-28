@@ -542,8 +542,10 @@ function normalizeSetup(setup) {
     settings.push({ scope: x.scope === 'project' ? 'project' : 'user', keys: arr(x.keys).filter((k) => typeof k === 'string') });
   }
   const present = s && isObj(s.tools) ? s.tools : null;
+  // Where the installer keeps its record: the folder it will really use, when it says so.
+  const stateDir = !s || s.state_dir === undefined ? '~/.modelproof' : safePath(s.state_dir, null);
   return {
-    given: !!s,
+    given: !!s, stateDir,
     dirs: { claude: safePath(dirs.claude, '~/.claude'), codex: safePath(dirs.codex, '~/.codex'), cursor: '~/.cursor' },
     claudeReadsAgents: reads === true ? true : reads === false ? false : 'unsure',
     override: { user: ov.user === true, project: ov.project === true },
@@ -952,7 +954,7 @@ export function buildPackage(profile, facts, setup) {
   if (S.present) for (const t of p.tools) if (S.present[t] === false) notes.push(`${TOOL_LABEL[t]} was not found on this machine; its files are still listed.`);
   if (ctx.multiLab) notes.push(`You use models from ${ctx.labs.length} labs (${ctx.labs.map((l) => labName(F, l)).join(', ')}), so helpers run on the lead's model unless you choose one; each lab's own descriptions are listed as facts.`);
   if (parts.some((x) => x.kind === 'owned-file')) notes.push('Start a new session so each tool loads the new helper and rule files.');
-  notes.push('Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history.');
+  notes.push(`Undo removes every file, block and key this adds; ${S.stateDir ? S.stateDir + '/' : 'the Modelproof state folder'} keeps the install history.`);
   const allNotes = uniq([...problems.map((x) => `Left out of your answers: ${x}`), ...ctx.notes, ...notes]);
 
   const preview = previewFacts(F, p, ctx);
