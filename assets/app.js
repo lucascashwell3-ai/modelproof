@@ -9,7 +9,9 @@ const state = {
   data: null,
   filter: 'all',         // full-table lab filter: 'all', a vendor name, or 'other'
   showAll: false,        // compare table defaults to the common flagships; opt in to all 22
-  sort: { key: 'coding_score', dir: 'desc' },
+  // Opens newest release first: never by coding_score, which for many models is Modelproof's own
+  // estimate (marked est). Any column header still sorts by that column.
+  sort: { key: 'released', dir: 'desc' },
   expanded: new Set(),
   compare: [],           // model ids on the side-by-side board (2–5)
   cmpCustom: false,      // true once the user chooses models — stops the auto-seeding
@@ -564,6 +566,15 @@ function renderFilters() {
   );
 }
 
+// A release date as a sortable string: 2026-09-21, 2026-09 and 2026 as they are; a quarter
+// (2026-Q3) as its first month. Anything else sorts last.
+function releasedKey(v) {
+  const s = String(v || '');
+  if (/^\d{4}(-\d{2}){0,2}$/.test(s)) return s;
+  const q = /^(\d{4})-Q([1-4])$/.exec(s);
+  return q ? `${q[1]}-${String((q[2] - 1) * 3 + 1).padStart(2, '0')}` : null;
+}
+
 function sortedModels() {
   let list = state.data.models.slice();
   if (state.filter !== 'all') {
@@ -574,6 +585,7 @@ function sortedModels() {
   const { key, dir } = state.sort;
   const val = (m) => {
     if (key === 'name') return m.name.toLowerCase();
+    if (key === 'released') return releasedKey(m.released);
     if (key === 'context') return m.context_window;
     if (key === 'price_input') return m.price_input;
     if (key === 'price_output') return m.price_output;

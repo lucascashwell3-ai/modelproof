@@ -7,7 +7,8 @@
    Facts only: prices, context, release notes and what each lab
    says about its own models (quote + link + date). It never
    ranks models or names one for a job — that stays the user's call.
-   A missing figure is reported as null, never guessed.
+   A missing figure is reported as null. coding_score is SWE-bench
+   Verified where published, otherwise an estimate, and says so.
    ============================================================ */
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
@@ -27,36 +28,7 @@ async function getData() {
   return cache.data;
 }
 
-const num = (v) => v === null || v === undefined || Number.isNaN(v);
-
-// What the labs and reporters say about a model, as quotes with their source — grouped so a
-// quote cited for several kinds of work appears once. Empty when nothing is sourced.
-function sourcedClaims(m) {
-  const byQuote = new Map();
-  for (const [task, entry] of Object.entries(m.task_fit_judged || {})) {
-    for (const c of entry?.claims || []) {
-      if (!c?.quote || !c?.source_url) continue;
-      const key = c.quote + '\u0000' + c.source_url;
-      if (!byQuote.has(key)) byQuote.set(key, { quote: c.quote, source_url: c.source_url, date: c.date || null, from: c.tier === 'lab' ? 'the lab' : 'a reporter or tester', kinds_of_work: [] });
-      byQuote.get(key).kinds_of_work.push(task);
-    }
-  }
-  return [...byQuote.values()];
-}
-
-// Facts only: the fields below are the whole list. The editorial prose in models.json (ratings,
-// strengths, weaknesses, usage tips, task copy) is never passed on.
-const brief = (m) => ({
-  name: m.name, vendor: m.vendor,
-  status: m.status || null,
-  released: m.released || null,
-  coding_score: num(m.coding_score) ? null : m.coding_score,
-  gpqa: num(m.benchmarks?.gpqa) ? null : m.benchmarks.gpqa,
-  price_input_per_1m: num(m.price_input) ? null : m.price_input,
-  price_output_per_1m: num(m.price_output) ? null : m.price_output,
-  context_window: m.context_window ?? null,
-  sourced_claims: sourcedClaims(m),
-});
+import { brief, disclaimer as disclaimerFor } from './facts.js';
 
 // ---- tools ----
 const TOOLS = [
@@ -69,7 +41,7 @@ async function handleTool(name, args = {}) {
   const data = await getData();
   const models = data.models || [];
   const asOf = data.as_of || 'unknown';
-  const disclaimer = `Data as of ${asOf}. Figures are sourced; null = not publicly sourced (not guessed). Verify cost-critical prices against the vendor's own page. Independent tool, not affiliated with any vendor.`;
+  const disclaimer = disclaimerFor(asOf);
 
   if (name === 'compare_models') {
     const want = (args.names || []).map((s) => s.toLowerCase());
