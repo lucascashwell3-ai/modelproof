@@ -61,7 +61,7 @@ Files (numbered; answer "no to 3" to leave one out)
   10. file   .cursor/agents/modelproof-reviewer.md · 11 lines · the tool obeys it
       Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
   11. block  AGENTS.md (added at the end) · 44 lines · text
-      One block at the end of AGENTS.md, read by Claude Code, Codex, Cursor, AGENTS.md; your own text is untouched.
+      One block at the end of AGENTS.md, read by Claude Code, Codex, Cursor, GitHub Copilot and other tools that read AGENTS.md; your own text is untouched.
 
 Notes
   - Left out of your answers: tools: "rm -rf" is not a tool this package covers (Claude Code, Codex, Cursor, AGENTS.md)

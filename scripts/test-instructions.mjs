@@ -435,6 +435,22 @@ test('placement: AGENTS.override.md takes only the Codex text', () => {
   assert.ok(bad.parts.some((p) => p.target.path === '~/.codex/AGENTS.md'));
 });
 
+test('placement: the AGENTS.md block names the tools that read it, never "read by AGENTS.md"', () => {
+  const subsets = [['agents-md'], ['codex', 'agents-md'], ['cursor', 'agents-md'], ['claude-code', 'codex', 'cursor', 'agents-md'], ['codex', 'cursor']];
+  for (const tools of subsets) {
+    for (const reads of [true, false]) {
+      const pkg = buildPackage({ ...PROFILES['org-40'], tools }, FACTS, { ...setupFor('org-40'), claude_reads_project_agents_md: reads });
+      const block = pkg.parts.find((p) => p.target.path === 'AGENTS.md' && p.kind === 'block');
+      assert.ok(block, `no AGENTS.md block for ${tools}`);
+      const readBy = block.why.match(/read by (.*?);/)[1];
+      assert.ok(!/(^|, | and )AGENTS\.md(,| and |$)/.test(readBy), `AGENTS.md listed as its own reader: ${block.why}`);
+      assert.ok(!renderPreview(pkg).includes('read by AGENTS.md'));
+      if (tools.includes('agents-md')) assert.match(readBy, /^(Claude Code, )?Codex, Cursor, GitHub Copilot and other tools that read AGENTS\.md$/);
+      else assert.equal(readBy, reads && tools.includes('claude-code') ? 'Claude Code, Codex, Cursor' : 'Codex, Cursor');
+    }
+  }
+});
+
 test('placement: Cursor alone gets a .mdc rule; with a project AGENTS.md block it gets none', () => {
   const alone = build('cursor');
   const mdc = alone.parts.find((p) => p.id === 'cursor:rules');

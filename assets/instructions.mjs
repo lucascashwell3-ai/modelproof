@@ -588,6 +588,21 @@ function normalizeSetup(setup) {
 /* ------------------------------------------------------------------ text parts */
 
 function sourceOf(c) { return `Source: ${c.subject} docs, ${c.source_url} (${c.date})`; }
+// Who reads the project AGENTS.md block. 'agents-md' is the file, not a reader: it stands for the
+// tools the guidance names as AGENTS.md readers (its "<tool>-reads-agents-md" claims) and any other.
+function agentsReadBy(F, readers) {
+  const tools = readers.filter((t) => t !== 'agents-md');
+  if (!readers.includes('agents-md')) return tools.map((t) => TOOL_LABEL[t]).join(', ');
+  const others = [];
+  for (const c of F.claims) {
+    if (c.kind !== 'tool' || !/-reads-agents-md$/.test(c.id)) continue;
+    const t = HELPER_TOOLS.find((k) => TOOL_SUBJECTS[k].includes(c.subjectKey));
+    if (t) tools.push(t);
+    else others.push(c.subject);
+  }
+  const list = uniq([...HELPER_TOOLS.filter((t) => tools.includes(t)).map((t) => TOOL_LABEL[t]), ...others]);
+  return list.length ? `${list.join(', ')} and other tools that read AGENTS.md` : 'any tool that reads AGENTS.md';
+}
 function youSource(m, asOf) { return `Source: your choice (${priceText(m.price)}${asOf ? ', as of ' + asOf : ''})`; }
 
 function helperLines(F, p, ctx, roles, tool, prefix) {
@@ -1083,7 +1098,7 @@ export function buildPackage(profile, facts, setup) {
   }
   if (projectAgentsBlock && agentsReaders.length) {
     const readers = TOOLS.filter((t) => agentsReaders.includes(t));
-    textParts.push({ id: 'agents-md:text', tool: readers.includes('agents-md') ? 'agents-md' : readers[0], readers, kind: 'block', path: 'AGENTS.md', why: `One block at the end of AGENTS.md, read by ${readers.map((t) => TOOL_LABEL[t]).join(', ')}; your own text is untouched.` });
+    textParts.push({ id: 'agents-md:text', tool: readers.includes('agents-md') ? 'agents-md' : readers[0], readers, kind: 'block', path: 'AGENTS.md', why: `One block at the end of AGENTS.md, read by ${agentsReadBy(F, readers)}; your own text is untouched.` });
   }
   for (const tp of textParts) {
     let content = renderText(F, p, ctx, roles, tp.readers, { kind: tp.kind, owned: tp.kind === 'owned-file', capKey: tp.capKey, extra: tp.mdc ? 4 : 0 });

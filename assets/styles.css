@@ -686,6 +686,11 @@ sup.est { font-family: var(--mono); font-size: 9px; color: var(--warn); margin-l
 .inst-prompt, .cmdbox { flex: 1; width: 100%; resize: none; border: 0; border-radius: var(--r-sm); padding: 9px 44px 9px 11px;
   background: #0b0d13; font-family: var(--mono); font-size: .72rem; line-height: 1.55; color: #cfd6e2;
   box-shadow: inset 0 0 0 1px var(--line-soft); overflow-wrap: anywhere; overflow-y: auto; scrollbar-width: thin; max-height: 150px; }
+/* The prompt scrolls, and scrolled text runs into bottom padding up to the box edge. So the
+   bottom 9px is a border in the box colour (text stops above it), the 1px ring sits outside,
+   and the box holds exactly four lines: the last visible line always keeps its 9px. */
+.inst-prompt { flex: none; height: calc(4 * 1.55 * .72rem + 18px); padding-bottom: 0;
+  border-bottom: 9px solid #0b0d13; box-shadow: 0 0 0 1px var(--line-soft); }
 .inst-pane > .inst-keep { margin: 10px 0 0; font-size: .74rem; color: var(--ink-3); }
 .inst-keep code { font-family: var(--mono); font-size: .7rem; color: var(--ink-2); }
 .inst-keep a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 2px; }
