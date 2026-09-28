@@ -474,7 +474,14 @@ function roleFor(F, p, ctx, tool, role) {
   const chosenId = p.roles[role];
   if (chosenId) {
     const m = F.byId.get(chosenId);
-    if (m && canUse(ctx, m) && toolRuns(tool, m)) return modelRec(m, 'you', []);
+    if (m && canUse(ctx, m) && toolRuns(tool, m)) {
+      const rec = modelRec(m, 'you', []);
+      // A helper the user put on one model stays on that model: Claude Code's helper files take a
+      // full model id (cc-subagent-model-values), so a floating alias never moves it to a later
+      // release. Aliases stay only for the tool's own documented defaults (from: 'tool').
+      if (role !== 'lead' && tool === 'claude-code' && REF_RE.test(m.id)) rec.model_ref = m.id;
+      return rec;
+    }
     if (m && !toolRuns(tool, m)) ctx.notes.push(`${TOOL_LABEL[tool]} runs only ${labName(F, TOOL_LAB[tool])} models, so your ${role} choice (${m.name}) applies to your other tools; in ${TOOL_LABEL[tool]} the ${role} follows the lead.`);
   }
   if (role !== 'lead' && HELPER_TOOLS.includes(tool) && !ctx.multiLab) {

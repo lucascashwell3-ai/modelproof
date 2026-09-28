@@ -11,7 +11,7 @@ Which model each helper runs
              "Uses the fast and efficient Haiku model for simple tasks"
              https://code.claude.com/docs/en/model-config (2026-09-27)
              list price $1 in / $5 out per 1M tokens · 0.17% of OpenRouter tokens (2026-09-25)
-    builder  opus = Claude Opus 5.5 · your choice
+    builder  Claude Opus 5.5 · your choice
              list price $4 in / $20 out per 1M tokens · 0.49% of OpenRouter tokens (2026-09-25)
     reviewer inherit (runs on the lead's model)
 
@@ -31,7 +31,7 @@ Files (numbered; answer "no to 3" to leave one out)
    1. file   ~/.claude/agents/modelproof-scout.md · 13 lines · the tool obeys it
       Claude Code runs this helper on haiku, the model named in the file.
    2. file   ~/.claude/agents/modelproof-builder.md · 12 lines · the tool obeys it
-      Claude Code runs this helper on opus, the model named in the file.
+      Claude Code runs this helper on claude-opus-5-5, the model named in the file.
    3. file   ~/.claude/agents/modelproof-reviewer.md · 11 lines · the tool obeys it
       Claude Code runs this helper on the lead's model (model: inherit).
    4. file   ~/.claude/rules/modelproof.md · 35 lines · text

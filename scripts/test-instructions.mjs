@@ -222,7 +222,7 @@ test('two labs and no choice: every role is from you or inherit, never a tool or
 test('role precedence: your choice beats the tool default; never[] removes a default', () => {
   const mine = roleDefaults({ ...PROFILES.empty, roles: { scout: 'claude-sonnet-5' } }, FACTS)['claude-code'];
   assert.equal(mine.scout.from, 'you');
-  assert.equal(mine.scout.model_ref, 'sonnet');
+  assert.equal(mine.scout.model_ref, 'claude-sonnet-5');
   const nv = roleDefaults({ ...PROFILES.empty, never: ['claude-haiku-4-5'] }, FACTS)['claude-code'];
   assert.equal(nv.scout.from, 'inherit');
   assert.equal(nv.builder.from, 'tool');
@@ -230,15 +230,29 @@ test('role precedence: your choice beats the tool default; never[] removes a def
   for (const role of ROLES) assert.equal(lab[role].from, 'inherit');
 });
 
-test('roles.builder=opus: the builder file says model: opus and the text says your choice', () => {
+test('roles.builder=opus: the builder file pins the full model id; tool defaults keep their alias', () => {
   const pkg = build('cc-max5x');
   const builder = pkg.parts.find((p) => p.id === 'claude-code:agent:builder');
-  assert.match(builder.content, /^model: opus$/m);
+  // Your choice of a specific model → the full id the alias maps to in model_refs (Claude Code's
+  // docs: the model field takes "a full model ID such as claude-opus-5-5").
+  const opusRef = FACTS.guidance.model_refs.find((r) => r.tool === 'claude-code' && r.ref === 'opus');
+  assert.equal(opusRef.model_id, 'claude-opus-5-5');
+  assert.match(builder.content, /^model: claude-opus-5-5$/m);
+  assert.ok(!/^model: opus$/m.test(builder.content));
+  assert.match(CLAIMS.get('cc-subagent-model-values').quote, /full model ID such as `claude-opus-5-5`/);
+  // The tool's own documented default keeps the alias the docs name.
+  assert.match(pkg.parts.find((p) => p.id === 'claude-code:agent:scout').content, /^model: haiku$/m);
+  assert.equal(pkg.roles['claude-code'].scout.from, 'tool');
   const rules = pkg.parts.find((p) => p.id === 'claude-code:rules').content;
-  const i = rules.split('\n').findIndex((l) => l.includes('modelproof-builder') && l.includes('opus'));
+  const i = rules.split('\n').findIndex((l) => l.includes('modelproof-builder') && l.includes('Claude Opus 5.5'));
   assert.ok(i >= 0);
   assert.match(rules.split('\n')[i + 1], /Source: your choice/);
   assert.equal(pkg.roles['claude-code'].builder.from, 'you');
+  // Every chosen Claude model gets its own id, whatever name or alias the answer used.
+  for (const [answer, id] of [['sonnet', 'claude-sonnet-5'], ['Claude Haiku 4.5', 'claude-haiku-4-5'], ['claude-fable-5-1', 'claude-fable-5-1']]) {
+    const p = buildPackage({ ...PROFILES.empty, roles: { reviewer: answer } }, FACTS);
+    assert.match(p.parts.find((x) => x.id === 'claude-code:agent:reviewer').content, new RegExp(`^model: ${id}$`, 'm'), answer);
+  }
 });
 
 test('a model the tool cannot run is not written into that tool\'s files', () => {

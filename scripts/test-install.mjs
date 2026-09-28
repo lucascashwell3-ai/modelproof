@@ -255,8 +255,8 @@ test('detect (cc-max5x): heads-up names the prose model rule by file:line; memor
   assert.match(p.out, /~\/\.claude\/CLAUDE\.md:39 +- Use opus for builds/);
   assert.doesNotMatch(p.out + JSON.stringify(p.plan), /not-for-output/);
   const builder = p.plan.package.parts.find((x) => x.id === 'claude-code:agent:builder');
-  assert.match(builder.content, /^model: opus$/m);
-  assert.match(p.out, /builder +opus = Claude Opus 5\.5 · your choice/);
+  assert.match(builder.content, /^model: claude-opus-5-5$/m);
+  assert.match(p.out, /builder +Claude Opus 5\.5 · your choice/);
 });
 
 test('readers: who loads the project AGENTS.md, case by case', () => {
