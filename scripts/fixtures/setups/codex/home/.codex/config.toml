@@ -1,0 +1,6 @@
+model = "gpt-6-sol"
+model_reasoning_effort = "medium"
+approval_policy = "on-request"
+
+[projects."/home/alex/app"]
+trust_level = "trusted"

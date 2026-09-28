@@ -1,7 +1,7 @@
 {
   "name": "modelproof-mcp",
-  "version": "0.1.0",
-  "description": "Neutral, cost-first AI-model advisor as an MCP server. Reads Modelproof's live sourced data.",
+  "version": "0.3.0",
+  "description": "Sourced AI-model facts as an MCP server: prices, context, releases and what the labs say. Reads Modelproof's live data.",
   "type": "module",
   "bin": { "modelproof-mcp": "server.js" },
   "main": "server.js",

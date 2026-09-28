@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-/* Per-model `status` and `adoption` — two catalog-wide facts the decision layer's new ranking
-   rules (assets/decide.mjs) gate on directly, so they live on the MODEL itself, not buried inside
+/* (The ranking engine named below now lives in archive/engine/; nothing live ranks models.)
+   Per-model `status` and `adoption` — two catalog-wide facts the decision layer's new ranking
+   rules (archive/engine/assets/decide.mjs) gate on directly, so they live on the MODEL itself, not buried inside
    a single task's task_fit_judged record — the gate has to fire even for a task where no judged
    record exists yet (the exact gap that let a 0.16%-share preview SKU top "research" on a
    benchmark number alone; see the PR this shipped in for the full story).
@@ -28,10 +29,10 @@
    the model was released within RECENCY_WINDOW_DAYS (60) days of the data snapshot's own `as_of`.
    Fixed 2026-09-07: claude-fable-5-1 (released 2026-09-01, 6 days before as_of 2026-09-07) was
    landing on 'low' from its 0.26% share and getting demoted below older, better-established
-   models by assets/decide.mjs's low-adoption start_here gate — a thin, launch-week share number
+   models by archive/engine/assets/decide.mjs's low-adoption start_here gate — a thin, launch-week share number
    is noise, not evidence the model hasn't caught on; there simply hasn't been time for a real
    number to form. 'new' is a distinct bucket from 'low' specifically so a caller can tell "too
-   early to measure" apart from "measured and it's genuinely low" — see assets/decide.mjs's
+   early to measure" apart from "measured and it's genuinely low" — see archive/engine/assets/decide.mjs's
    ADOPTION_RANK and isDisqualifiedFromStartHere, which only ever demote 'low', never 'new'.
    The override is deliberately one-directional: it never touches a 'broad' or 'moderate' result.
    A model that already shows real, substantial share in its first days (e.g. a vendor's flagship

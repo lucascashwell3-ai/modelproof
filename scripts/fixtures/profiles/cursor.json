@@ -1,0 +1,25 @@
+{
+  "schema": "modelproof.profile/1",
+  "who": "person",
+  "tools": [
+    "cursor"
+  ],
+  "scope": "project",
+  "plans": [
+    {
+      "vendor": "Cursor",
+      "plan": "Pro"
+    }
+  ],
+  "limits": "rarely",
+  "work": [
+    "frontend",
+    "coding"
+  ],
+  "like": [
+    "claude-sonnet-5",
+    "gpt-6-sol"
+  ],
+  "never": [],
+  "roles": {}
+}

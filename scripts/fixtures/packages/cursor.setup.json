@@ -1,0 +1,37 @@
+{
+  "home": "/home/alex",
+  "project": "/home/alex/work/shop",
+  "tools": {
+    "claude-code": false,
+    "codex": false,
+    "cursor": true
+  },
+  "files": [
+    {
+      "scope": "project",
+      "path": "AGENTS.md",
+      "lines": 40,
+      "readers": [
+        "cursor"
+      ]
+    },
+    {
+      "scope": "project",
+      "path": ".cursor/rules/style.mdc",
+      "lines": 18,
+      "readers": [
+        "cursor"
+      ]
+    }
+  ],
+  "agents": [],
+  "settings": [],
+  "claude_reads_project_agents_md": false,
+  "agents_override": {
+    "user": false,
+    "project": false
+  },
+  "env": {
+    "subagent_model_force": false
+  }
+}

@@ -7,7 +7,7 @@
      chosen     real spend share on OpenRouter for that task (task-spend tags merged per task)
      preferred  blind human-vote rank on arena.ai's leaderboard for that task
 
-   `assets/decide.mjs` (the ranking) is UNTOUCHED by this file — step 3 wires standings into a
+   `archive/engine/assets/decide.mjs` (the ranking engine, now archived) is UNTOUCHED by this file — step 3 wires standings into a
    ranking; this step only collects and publishes the evidence.
 
    SOURCES (see data/testers.json for the full audit of why each one is trusted at the level it

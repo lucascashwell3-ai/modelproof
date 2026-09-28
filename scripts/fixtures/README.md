@@ -4,6 +4,9 @@ Frozen snapshot of `data/` on main, taken 2026-09-13 (brain v2 step 3 — standi
 round 2 of that same PR). The unit test suite (`scripts/test-*.mjs`) runs on this snapshot, never
 on live `data/`. Refresh it deliberately, in a PR a person reviews — never from an automated job.
 
+The ranking engine and its eval fixtures (`eval/*`, `scripts/test-eval-situations.mjs`) now live in
+`archive/engine/`. Notes below that mention them are history.
+
 Refreshed this pass (round 2, after the near-top-formula/tier-numbering fixes, the alias/naming
 coverage fixes, the deliberate 2026-09-13 Collect run, and the live-feed-claims migration were all
 final):

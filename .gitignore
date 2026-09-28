@@ -23,3 +23,6 @@ Thumbs.db
 
 # personal Claude Code config — local only
 .claude/
+
+# Test fixtures model a person's AI setup, so they keep their .claude folders
+!scripts/fixtures/setups/**/.claude/

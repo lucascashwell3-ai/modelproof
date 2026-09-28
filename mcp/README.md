@@ -1,23 +1,22 @@
 # Modelproof MCP server
 
-A neutral, cost-first **AI-model advisor** that any MCP host (Claude Desktop, Cursor, …) can call
-mid-workflow. It reads the **same live `data/models.json`** the website renders, so its answers match
-the site and stay current. Read-only, no auth, no side effects.
+Sourced **AI-model facts** that any MCP host (Claude Desktop, Cursor, …) can look up mid-workflow.
+It reads the **same live `data/models.json`** the website renders, so its answers match the site and
+stay current. Read-only, no auth, no side effects.
+
+It never ranks models or names one for a job. It hands back the facts; the choice stays yours.
 
 ## Tools
 
-- `recommend_model({ task_description?, task?, cost_attitude?, labs? })` — the pick + runners-up for a
-  task and budget attitude, plus a neutral "outside your labs…" note when relevant.
-- `my_kit({ labs, cost_attitude? })` — **make the most of what you have**: your best model per task
-  (coding / research / writing / cheap-bulk) from the labs you already pay for, each with practical
-  `use_well` tips (when thinking modes earn their cost, when the cheap tier is enough, cache/context
-  tactics), plus a neutral cost-first note when something outside your labs is meaningfully better.
-- `compare_models({ names })` — sourced facts side by side.
-- `whats_new({ limit? })` — recent releases worth knowing about.
-- `list_models()` — every model with key facts.
+- `compare_models({ names })` — models side by side: prices, context window, scores, release status,
+  and what the labs and reporters say about each model (the quote, its link and the date it was
+  checked).
+- `whats_new({ limit? })` — recent releases, newest first, each with its source.
+- `list_models()` — every model with its key facts (a count of sourced quotes per model; call
+  `compare_models` for the quotes themselves).
 
-Every response carries the data's `as_of` date and a disclaimer. Missing figures come back as `null`
-("not publicly sourced") — the server never invents a price or benchmark.
+Every response carries the data's `as_of` date and a short disclaimer. Missing figures come back as
+`null` ("not publicly sourced") — the server never invents a price or a benchmark.
 
 ## Run it (local, stdio)
 
@@ -39,17 +38,16 @@ In `claude_desktop_config.json` → `mcpServers`:
 }
 ```
 
-Restart Claude Desktop. Ask "which model should I use for cheap bulk classification?" and it will call
-`recommend_model`. **Note:** MCP hosts gate the first tool call behind a user approval — the model
-*chooses* to call it, the host asks the user once. That's expected; it is not silent.
+Restart Claude Desktop. Ask "what do Claude Opus 5 and GPT-5.6 Sol cost, and what do their labs say about
+them?" and it will call `compare_models`. MCP hosts ask you to approve the first tool call — that is
+expected.
 
 Override the data source with `Modelproof_DATA_URL` if needed.
 
-## Deploying as a remote connector (follow-up)
+## Changes in 0.3.0
 
-This is the local **stdio** build. To let others add it by pasting one URL (a remote connector), wrap
-the same tool handlers in a Streamable-HTTP transport and host it serverless (Cloudflare Worker /
-Vercel edge — free tier fits, since it only proxies a static JSON file). That's a hosting decision,
-not code work — the tool logic above is transport-agnostic and ready to reuse.
+The two ranking tools are retired (kept for history under `archive/engine/`), and model entries no
+longer carry editorial text: no ranking fields, no strengths or weaknesses, no usage tips. Each entry
+carries `sourced_claims` (quote + link + date) instead.
 
 Independent tool · not affiliated with any model vendor.

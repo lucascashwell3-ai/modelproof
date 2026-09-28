@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-09-26",
+  "as_of": "2026-09-27",
   "models": [
     {
       "id": "claude-opus-5",
@@ -11577,13 +11577,6 @@
         "writing": {
           "claims": [
             {
-              "sentence": "OpenRouter's top-apps ranking for Mistral Medium 3.1 (checked 2026-09-07) lists novelcrafter, a novel-writing tool, among the applications built on the model.",
-              "source_url": "https://openrouter.ai/mistralai/mistral-medium-3.1",
-              "tier": "usage",
-              "date": "2026-09-07",
-              "quote": "Your personal novel writing toolbox. Plan, write and tinker with your story."
-            },
-            {
               "sentence": "OpenRouter's model page for Mistral Medium 3.1 (checked 2026-09-07) describes it as combining strong reasoning and multimodal performance with substantially lower cost than larger models, which supports high-volume writing use.",
               "source_url": "https://openrouter.ai/mistralai/mistral-medium-3.1",
               "tier": "reported",
@@ -11592,7 +11585,7 @@
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-07"
+          "as_of": "2026-09-27"
         }
       },
       "usage": {
@@ -15146,15 +15139,15 @@
               "quote": "ranks second only to the frontier Opus 4.8 on repository-level software engineering"
             },
             {
-              "sentence": "Vercel's AI Gateway model listing (checked 2026-09-07) puts KAT-Coder-Pro V2.5's SWE-Bench Pro score at 65.2 with a 256K-token context window.",
-              "source_url": "https://vercel.com/ai-gateway/models/kat-coder-pro-v2.5",
+              "sentence": "MarkTechPost's write-up of the KAT-Coder-V2.5 technical report (checked 2026-09-27) says it places second on SWE-Bench Pro (65.2 vs 69.2) and on the internal KAT Code Bench (53.1 vs 57.3).",
+              "source_url": "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
               "tier": "reported",
-              "date": "2026-09-07",
-              "quote": "It scores 65.2 on SWE-Bench Pro and 94.9 on PinchBench, with a context window of 256K tokens and output up to 80K tokens."
+              "date": "2026-09-27",
+              "quote": "It places second on SWE-Bench Pro (65.2 vs 69.2) and the internal KAT Code Bench (53.1 vs 57.3)."
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-07"
+          "as_of": "2026-09-27"
         },
         "agents": {
           "claims": [
@@ -15166,15 +15159,15 @@
               "quote": "delivers the best agentic tool-use result on PinchBench"
             },
             {
-              "sentence": "Vercel's AI Gateway model listing (checked 2026-09-07) reports the same 94.9 PinchBench score for KAT-Coder-Pro V2.5.",
-              "source_url": "https://vercel.com/ai-gateway/models/kat-coder-pro-v2.5",
+              "sentence": "MarkTechPost's write-up of the KAT-Coder-V2.5 technical report (checked 2026-09-27) reports a PinchBench score of 94.9 against 93.5 for Opus 4.8.",
+              "source_url": "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
               "tier": "reported",
-              "date": "2026-09-07",
-              "quote": "It scores 65.2 on SWE-Bench Pro and 94.9 on PinchBench, with a context window of 256K tokens and output up to 80K tokens."
+              "date": "2026-09-27",
+              "quote": "KAT-Coder-V2.5 leads its panel on PinchBench with 94.9, beating Opus 4.8 at 93.5."
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-07"
+          "as_of": "2026-09-27"
         }
       },
       "usage": {

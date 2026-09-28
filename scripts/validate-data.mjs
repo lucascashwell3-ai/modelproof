@@ -4,7 +4,7 @@
    Also enforces the naming rule (scripts/naming.mjs): ids derive from names, vendors are canonical.
    Usage: node scripts/validate-data.mjs
    As a module: validate(data, registry) -> { errors, warnings } (unit-tested in test-auto-refresh.mjs). */
-import { readFileSync, realpathSync } from 'node:fs';
+import { readFileSync, realpathSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { namingProblems, canonicalVendor, VENDORS } from './naming.mjs';
@@ -30,7 +30,7 @@ const num = (v) => v === null || v === undefined || Number.isNaN(v);
 
 // --- judged task fit (task_fit_judged) — the qualitative-evidence gate ------------------------
 // A judged record (v3, 2026-09) is claims[] + reconciliation + as_of — no grade, no number.
-// `band`/`confidence` were the old AI-judged fields (assets/decide.mjs never read them for
+// `band`/`confidence` were the old AI-judged fields (archive/engine/assets/decide.mjs never read them for
 // ranking even before this — brain v2 step 3, PR #34 — this just removes them from the shape
 // entirely, so the old cloud routine's pre-v3 output can't sneak back in). This block checks
 // SHAPE ONLY: no band/confidence present, every claim carries the required fields, dates are
@@ -43,7 +43,7 @@ const num = (v) => v === null || v === undefined || Number.isNaN(v);
 // claim that quotes something the page doesn't actually say.
 export const CLAIM_TIERS = ['lab', 'reported', 'measured', 'usage'];
 // v3 (2026-09): a claim may mark itself a sourced practical drawback (rate limits, latency,
-// tool-call failures, price traps) rather than a strength — assets/decide.mjs's hasNegativeClaim
+// tool-call failures, price traps) rather than a strength — archive/engine/assets/decide.mjs's hasNegativeClaim
 // drops a model one tier for a task where any claim carries this. Absent = an ordinary claim.
 export const CLAIM_POLARITY_VALUES = ['negative'];
 // Absolute, dated facts only — a record must stay true after a newer model supersedes this one.
@@ -88,6 +88,159 @@ export function citesLiveFeed(url) {
   return LIVE_FEED_URL_PATTERNS.some((re) => re.test(String(url || '')));
 }
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Shape problems for ONE sourced claim — the same rules for a judged task-fit claim in
+ * data/models.json and a guidance claim in data/guidance.json. Returns error strings, each
+ * prefixed with `label` (empty = valid). `tiers` is the allowed tier list for the file the claim
+ * lives in (CLAIM_TIERS for models.json, GUIDANCE_TIERS for guidance.json). */
+export function claimProblems(c, label, { tiers = CLAIM_TIERS } = {}) {
+  const out = [];
+  if (!c || typeof c !== 'object') return [`${label} must be an object`];
+  if (!c.sentence || typeof c.sentence !== 'string') out.push(`${label}.sentence is required`);
+  else {
+    const hit = bannedPhraseIn(c.sentence);
+    if (hit) out.push(`${label}.sentence uses a banned relative phrase (/${hit}/) — write an absolute, dated fact instead`);
+  }
+  if (!c.source_url || !/^https?:\/\//i.test(c.source_url)) out.push(`${label}.source_url "${c.source_url}" must be http(s)`);
+  else if (citesLiveFeed(c.source_url)) out.push(`${label}.source_url "${c.source_url}" cites a live feed this codebase already re-derives daily into standings (OpenRouter rankings/arena.ai) — its numbers change every day and can never stay verified by scripts/check-sources.mjs; cite the standings record instead (model.standings[taskId]), or a stable page`);
+  if (!tiers.includes(c.tier)) out.push(`${label}.tier "${c.tier}" must be one of ${tiers.join(', ')}`);
+  if (!c.date || !DATE_RE.test(c.date)) out.push(`${label}.date "${c.date}" must be a YYYY-MM-DD date`);
+  if (!c.quote || typeof c.quote !== 'string') out.push(`${label}.quote is required (verbatim text copied from source_url)`);
+  else if (wordCount(c.quote) > 25) out.push(`${label}.quote is ${wordCount(c.quote)} word(s) — must be ≤25 words, copied verbatim from the source`);
+  if (c.polarity != null && !CLAIM_POLARITY_VALUES.includes(c.polarity)) out.push(`${label}.polarity "${c.polarity}" must be one of ${CLAIM_POLARITY_VALUES.join(', ')}`);
+  return out;
+}
+
+// --- data/guidance.json — sourced facts the instruction package is built from ----------------
+// Claims come from a coding tool's own docs (tier "tool") or a model maker's own docs about its
+// own models (tier "lab"). role_defaults may name a model for a helper job only where one of the
+// tool's or lab's own claims names that job; the reviewer always runs on the lead's model.
+export const GUIDANCE_TIERS = ['tool', 'lab'];
+export const GUIDANCE_TOPICS = ['instruction-files', 'enforced-model', 'effort', 'lead-helper', 'model-per-job', 'context'];
+// Tool ids the package targets -> the name its claims use as subject.name.
+export const GUIDANCE_TOOLS = { 'claude-code': 'Claude Code', codex: 'Codex CLI', cursor: 'Cursor', 'agents-md': 'AGENTS.md' };
+export const GUIDANCE_ROLES = ['scout', 'builder', 'reviewer'];
+// Tools with facts in the file that the package doesn't write for (yet) — still valid subjects.
+export const GUIDANCE_EXTRA_TOOL_NAMES = ['GitHub Copilot', 'Gemini CLI'];
+// Our own prose (sentence, _readme) never ranks one model against another. Quotes are exempt —
+// they are the source's words, reproduced verbatim.
+export const GUIDANCE_BANNED_PATTERNS = [
+  /\bbest\b/i, /\bbetter\b/i, /\btop\b/i, /\bwinner\b/i, /\bpick(s|ed|ing)?\b/i, /\brecommend/i,
+  /\bsuggest/i, /\bverdict\b/i, /\bconfiden/i, /\bstart here\b/i,
+];
+export function guidanceBannedIn(text) {
+  const s = String(text || '');
+  const hit = GUIDANCE_BANNED_PATTERNS.find((re) => re.test(s));
+  return hit ? hit.source : bannedPhraseIn(s);
+}
+
+/** Validate data/guidance.json against the catalog. `models` is data/models.json (or its
+ * models array). Returns { errors, warnings }. */
+export function validateGuidance(guidance, models) {
+  const errors = [], warnings = [];
+  const E = (m) => errors.push(m);
+  const list = Array.isArray(models) ? models : (models && Array.isArray(models.models) ? models.models : []);
+  const byId = new Map(list.map((m) => [m.id, m]));
+  const G = 'data/guidance.json';
+  if (!guidance || typeof guidance !== 'object' || Array.isArray(guidance)) return { errors: [`${G}: must be an object`], warnings };
+  if (!guidance._readme || typeof guidance._readme !== 'string') E(`${G}: _readme must say what the file is`);
+  else if (guidanceBannedIn(guidance._readme)) E(`${G}: _readme uses a ranking word (/${guidanceBannedIn(guidance._readme)}/)`);
+  if (!guidance.as_of || !DATE_RE.test(guidance.as_of)) E(`${G}: as_of "${guidance.as_of}" must be a YYYY-MM-DD date`);
+
+  const toolNames = new Set([...Object.values(GUIDANCE_TOOLS), ...GUIDANCE_EXTRA_TOOL_NAMES]);
+  const claims = new Map();
+  if (!Array.isArray(guidance.claims) || !guidance.claims.length) E(`${G}: claims must be a non-empty array`);
+  else guidance.claims.forEach((c, i) => {
+    const label = `${G} claims[${i}]${c && c.id ? ` (${c.id})` : ''}`;
+    if (!c || typeof c !== 'object') { E(`${label} must be an object`); return; }
+    if (!c.id || typeof c.id !== 'string' || !/^[a-z0-9][a-z0-9-]*$/.test(c.id)) E(`${label}.id must be a lowercase-hyphen id`);
+    else if (claims.has(c.id)) E(`${label}.id "${c.id}" is used twice`);
+    else claims.set(c.id, c);
+    const s = c.subject;
+    if (!s || typeof s !== 'object' || !['tool', 'lab'].includes(s.kind) || !s.name) E(`${label}.subject must be {kind: "tool"|"lab", name}`);
+    else {
+      if (s.kind === 'lab' && !VENDORS.includes(s.name)) E(`${label}.subject.name "${s.name}" is not a canonical vendor in scripts/naming.mjs VENDORS`);
+      if (s.kind === 'tool' && !toolNames.has(s.name)) E(`${label}.subject.name "${s.name}" is not a known tool (${[...toolNames].join(', ')})`);
+      if (c.tier && s.kind !== c.tier) E(`${label}.tier "${c.tier}" must match subject.kind "${s.kind}" — a tool claim cites the tool's docs, a lab claim the lab's own docs`);
+    }
+    if (!GUIDANCE_TOPICS.includes(c.topic)) E(`${label}.topic "${c.topic}" must be one of ${GUIDANCE_TOPICS.join(', ')}`);
+    for (const p of claimProblems(c, label, { tiers: GUIDANCE_TIERS })) E(p);
+    if (typeof c.sentence === 'string' && !bannedPhraseIn(c.sentence)) {
+      const hit = guidanceBannedIn(c.sentence);
+      if (hit) E(`${label}.sentence uses a ranking word (/${hit}/) — state what the source says, never a comparison`);
+    }
+  });
+
+  const basisProblems = (basis, label) => {
+    if (!Array.isArray(basis) || !basis.length) return [`${label}.basis must be a non-empty array of claim ids`];
+    return basis.filter((id) => !claims.has(id)).map((id) => `${label}.basis names "${id}", which is not a claim id in this file`);
+  };
+  const modelProblems = (modelId, label, lab) => {
+    if (modelId === null) return [];
+    if (typeof modelId !== 'string' || !byId.has(modelId)) return [`${label}.model_id "${modelId}" is not a model id in data/models.json (use null when there is none)`];
+    if (lab && byId.get(modelId).vendor !== lab) return [`${label}.model_id "${modelId}" is a ${byId.get(modelId).vendor} model — a default from ${lab} may only name ${lab}'s own models`];
+    return [];
+  };
+
+  const seenRole = new Set();
+  if (!Array.isArray(guidance.role_defaults)) E(`${G}: role_defaults must be an array`);
+  else guidance.role_defaults.forEach((r, i) => {
+    const label = `${G} role_defaults[${i}]`;
+    if (!r || typeof r !== 'object') { E(`${label} must be an object`); return; }
+    if (!Object.prototype.hasOwnProperty.call(GUIDANCE_TOOLS, r.tool)) E(`${label}.tool "${r.tool}" must be one of ${Object.keys(GUIDANCE_TOOLS).join(', ')}`);
+    if (!GUIDANCE_ROLES.includes(r.role)) E(`${label}.role "${r.role}" must be one of ${GUIDANCE_ROLES.join(', ')}`);
+    if (r.role === 'reviewer') E(`${label}: no default for the reviewer — it runs on the lead's model (inherit)`);
+    const key = `${r.tool}/${r.role}`;
+    if (seenRole.has(key)) E(`${label}: a second default for ${key}`);
+    seenRole.add(key);
+    if (!VENDORS.includes(r.lab)) E(`${label}.lab "${r.lab}" is not a canonical vendor`);
+    if (r.model_ref !== null && (typeof r.model_ref !== 'string' || !r.model_ref.trim())) E(`${label}.model_ref must be the string the tool's config accepts, or null`);
+    for (const p of modelProblems(r.model_id, label, r.lab)) E(p);
+    const bp = basisProblems(r.basis, label);
+    bp.forEach(E);
+    if (!bp.length) {
+      const own = r.basis.map((id) => claims.get(id)).some((c) => c.subject && (
+        (c.subject.kind === 'tool' && c.subject.name === GUIDANCE_TOOLS[r.tool]) || (c.subject.kind === 'lab' && c.subject.name === r.lab)));
+      if (!own) E(`${label}.basis has no claim from ${GUIDANCE_TOOLS[r.tool] || r.tool} or ${r.lab} itself — a default must come from the tool's or lab's own docs`);
+    }
+  });
+
+  const seenRef = new Set();
+  if (!Array.isArray(guidance.model_refs)) E(`${G}: model_refs must be an array`);
+  else guidance.model_refs.forEach((m, i) => {
+    const label = `${G} model_refs[${i}]`;
+    if (!m || typeof m !== 'object') { E(`${label} must be an object`); return; }
+    if (!Object.prototype.hasOwnProperty.call(GUIDANCE_TOOLS, m.tool)) E(`${label}.tool "${m.tool}" must be one of ${Object.keys(GUIDANCE_TOOLS).join(', ')}`);
+    if (!m.ref || typeof m.ref !== 'string') E(`${label}.ref must be a non-empty string`);
+    const key = `${m.tool}/${m.ref}`;
+    if (seenRef.has(key)) E(`${label}: ${key} is mapped twice`);
+    seenRef.add(key);
+    for (const p of modelProblems(m.model_id, label, null)) E(p);
+    basisProblems(m.basis, label).forEach(E);
+  });
+  // Every role default's model_ref must agree with the tool's own ref map when both exist.
+  if (Array.isArray(guidance.role_defaults) && Array.isArray(guidance.model_refs)) {
+    for (const r of guidance.role_defaults) {
+      const ref = guidance.model_refs.find((m) => m && r && m.tool === r.tool && m.ref === r.model_ref);
+      if (ref && ref.model_id !== r.model_id) E(`${G} role_defaults ${r.tool}/${r.role}: model_id "${r.model_id}" disagrees with model_refs ${r.tool}/${r.model_ref} -> "${ref.model_id}"`);
+    }
+  }
+
+  if (!Array.isArray(guidance.effort_pages)) E(`${G}: effort_pages must be an array`);
+  else guidance.effort_pages.forEach((p, i) => {
+    const label = `${G} effort_pages[${i}]`;
+    if (!p || typeof p !== 'object') { E(`${label} must be an object`); return; }
+    if (!VENDORS.includes(p.lab)) E(`${label}.lab "${p.lab}" is not a canonical vendor`);
+    if (!p.url || !/^https?:\/\//i.test(p.url)) E(`${label}.url "${p.url}" must be http(s)`);
+    const bp = basisProblems(p.basis, label);
+    bp.forEach(E);
+    if (!bp.length) for (const id of p.basis) {
+      const c = claims.get(id);
+      if (!c.subject || c.subject.kind !== 'lab' || c.subject.name !== p.lab) E(`${label}.basis "${id}" is not a claim from ${p.lab}`);
+    }
+  });
+  return { errors, warnings };
+}
 
 export function validate(data, registry) {
   const errors = [], warnings = [];
@@ -223,7 +376,7 @@ export function validate(data, registry) {
   // 10. task_fit (scripts/derive-task-fit.mjs): every model must carry a score-or-null-plus-
   //     reason for EXACTLY the ten known tasks, citing only the shared basis vocabulary. A
   //     score with no basis, or a basis token outside BASIS_TOKENS, means a fitter drifted from
-  //     the registry assets/decide.mjs's `why` builder also reads from — same class of bug the
+  //     the registry archive/engine/assets/decide.mjs's `why` builder also reads from — same class of bug the
   //     naming-rule gate exists to catch, just for the decision layer instead of the catalog.
   for (const m of data.models) {
     const id = m.name || m.id || '(unnamed)';
@@ -282,20 +435,7 @@ export function validate(data, registry) {
       }
       if (!Array.isArray(rec.claims) || !rec.claims.length) { E(`${label}.claims must be a non-empty array`); continue; }
       rec.claims.forEach((c, i) => {
-        const cl = `${label}.claims[${i}]`;
-        if (!c || typeof c !== 'object') { E(`${cl} must be an object`); return; }
-        if (!c.sentence || typeof c.sentence !== 'string') E(`${cl}.sentence is required`);
-        else {
-          const hit = bannedPhraseIn(c.sentence);
-          if (hit) E(`${cl}.sentence uses a banned relative phrase (/${hit}/) — write an absolute, dated fact instead`);
-        }
-        if (!c.source_url || !/^https?:\/\//i.test(c.source_url)) E(`${cl}.source_url "${c.source_url}" must be http(s)`);
-        else if (citesLiveFeed(c.source_url)) E(`${cl}.source_url "${c.source_url}" cites a live feed this codebase already re-derives daily into standings (OpenRouter rankings/arena.ai) — its numbers change every day and can never stay verified by scripts/check-sources.mjs; cite the standings record instead (model.standings[taskId]), or a stable page`);
-        if (!CLAIM_TIERS.includes(c.tier)) E(`${cl}.tier "${c.tier}" must be one of ${CLAIM_TIERS.join(', ')}`);
-        if (!c.date || !DATE_RE.test(c.date)) E(`${cl}.date "${c.date}" must be a YYYY-MM-DD date`);
-        if (!c.quote || typeof c.quote !== 'string') E(`${cl}.quote is required (verbatim text copied from source_url)`);
-        else if (wordCount(c.quote) > 25) E(`${cl}.quote is ${wordCount(c.quote)} word(s) — must be ≤25 words, copied verbatim from the source`);
-        if (c.polarity != null && !CLAIM_POLARITY_VALUES.includes(c.polarity)) E(`${cl}.polarity "${c.polarity}" must be one of ${CLAIM_POLARITY_VALUES.join(', ')}`);
+        for (const p of claimProblems(c, `${label}.claims[${i}]`)) E(p);
       });
     }
   }
@@ -322,7 +462,7 @@ export function validate(data, registry) {
   }
 
   // 10d. status / adoption (scripts/derive-status-adoption.mjs, added with the judged-ranking
-  // rewrite, 2026-09-07) — model-level, not per-task, because assets/decide.mjs's "a preview SKU
+  // rewrite, 2026-09-07) — model-level, not per-task, because archive/engine/assets/decide.mjs's "a preview SKU
   // or a low-adoption model can never be start_here" gate has to fire even on a task with no
   // judged record at all (the exact gap a 0.16%-share preview model exploited to top "research"
   // on a benchmark number alone). Both are pure derivations of fields the catalog already
@@ -341,7 +481,7 @@ export function validate(data, registry) {
   }
 
   // 10e. signals (scripts/derive-signals.mjs, added with the calibration fix, 2026-09-07) —
-  // per-task real-world-signal counts assets/decide.mjs's rule 3b reads to downgrade a
+  // per-task real-world-signal counts archive/engine/assets/decide.mjs's rule 3b reads to downgrade a
   // thinly-evidenced judged "strong" to "capable". Same honesty rule as everywhere else:
   // usage_rank/arena_rank are a positive integer or null (never 0 or negative — "rank 0" isn't a
   // real rank), usage_share is 0-100 or null, expert_default is `true` or null (never `false` —
@@ -531,7 +671,7 @@ function main() {
     }
   }
 
-  // 11. data/vendors.json (assets/decide.mjs's noChinaHosted data rule): every vendor in
+  // 11. data/vendors.json (archive/engine/assets/decide.mjs's noChinaHosted data rule): every vendor in
   // scripts/naming.mjs's VENDORS needs exactly one row here, or a new vendor would silently
   // read as "unknown country" (kept, not excluded) instead of a deliberate call. country is a
   // plain string or null (never a guessed default); source, when present, must be a real URL —
@@ -559,7 +699,7 @@ function main() {
     }
   }
 
-  // 12. data/usage-presets.json (assets/decide.mjs's volume input): the three named bands must
+  // 12. data/usage-presets.json (archive/engine/assets/decide.mjs's volume input): the three named bands must
   // each carry non-negative monthly token counts and a plain-English rationale — these are
   // stated assumptions, not sourced facts, but an assumption with no rationale is just a guess
   // wearing a label.
@@ -584,6 +724,26 @@ function main() {
     }
   }
 
+  // 13. data/guidance.json (the instruction package's sourced facts). Optional-if-missing so a
+  // throwaway copy of scripts+data (test-apply-judgment's sandbox) still passes; when present it
+  // must pass validateGuidance against this same catalog.
+  let guidance = null;
+  const guidanceUrl = new URL('../data/guidance.json', import.meta.url);
+  if (existsSync(guidanceUrl)) {
+    try {
+      guidance = JSON.parse(readFileSync(guidanceUrl));
+    } catch (e) {
+      E(`data/guidance.json: couldn't read/parse (${e.message})`);
+    }
+    if (guidance) {
+      const g = validateGuidance(guidance, data);
+      g.errors.forEach(E);
+      g.warnings.forEach(W);
+    }
+  } else {
+    W('data/guidance.json: not found — skipped the guidance checks');
+  }
+
   if (warnings.length) { console.log('⚠ warnings (non-blocking):'); warnings.forEach((w) => console.log('  - ' + w)); }
   if (errors.length) {
     console.error(`\n✗ ${errors.length} honesty-gate error(s) — blocking:`);
@@ -593,7 +753,7 @@ function main() {
   const ladderPts = (data.effort_ladders || []).reduce((n, L) => n + (L.series || []).reduce((k, s) => k + (s.points || []).length, 0), 0);
   const planCount = plans?.plans?.length || 0;
   const vendorCount = vendorsFile?.vendors?.length || 0;
-  console.log(`\n✓ honesty gate passed: ${data.models.length} models, ${(data.releases || []).length} releases, ${(data.effort_ladders || []).length} effort ladder(s) / ${ladderPts} points, ${planCount} plan(s), ${vendorCount} vendor(s), 0 errors.`);
+  console.log(`\n✓ honesty gate passed: ${data.models.length} models, ${(data.releases || []).length} releases, ${(data.effort_ladders || []).length} effort ladder(s) / ${ladderPts} points, ${planCount} plan(s), ${vendorCount} vendor(s), ${guidance?.claims?.length || 0} guidance claim(s), 0 errors.`);
 }
 
 const isMain = (() => {

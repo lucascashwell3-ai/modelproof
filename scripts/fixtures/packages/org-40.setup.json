@@ -1,0 +1,62 @@
+{
+  "home": "/home/alex",
+  "project": "/home/alex/work/northwind",
+  "tools": {
+    "claude-code": true,
+    "codex": true,
+    "cursor": true
+  },
+  "files": [
+    {
+      "scope": "project",
+      "path": "CLAUDE.md",
+      "lines": 12,
+      "readers": [
+        "claude-code"
+      ]
+    },
+    {
+      "scope": "project",
+      "path": "AGENTS.md",
+      "lines": 60,
+      "readers": [
+        "codex",
+        "cursor",
+        "claude-code"
+      ]
+    }
+  ],
+  "agents": [
+    {
+      "tool": "claude-code",
+      "scope": "project",
+      "name": "db-migrator",
+      "model": "sonnet",
+      "modelproof": false
+    },
+    {
+      "tool": "codex",
+      "scope": "project",
+      "name": "release-notes",
+      "model": null,
+      "modelproof": false
+    }
+  ],
+  "settings": [
+    {
+      "scope": "project",
+      "path": ".claude/settings.json",
+      "keys": [
+        "permissions"
+      ]
+    }
+  ],
+  "claude_reads_project_agents_md": true,
+  "agents_override": {
+    "user": false,
+    "project": false
+  },
+  "env": {
+    "subagent_model_force": false
+  }
+}

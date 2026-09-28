@@ -1,0 +1,12 @@
+{
+  "schema": "modelproof.profile/1",
+  "who": "person",
+  "tools": ["claude-code", "codex"],
+  "scope": "project",
+  "plans": [{ "vendor": "Anthropic", "plan": "Pro" }, { "vendor": "OpenAI", "plan": "Plus" }],
+  "limits": "sometimes",
+  "work": ["coding"],
+  "like": [],
+  "never": [],
+  "roles": {}
+}

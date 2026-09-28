@@ -1,0 +1,45 @@
+Modelproof package · facts as of 2026-09-27 · generator 1.0.0
+Your answers: person · user scope · tools: Claude Code, Codex · plans: Anthropic Max 5x, OpenAI Plus · limits: sometimes · work: coding
+
+Which model each helper runs
+  Claude Code
+    lead     the model you choose in Claude Code
+    scout    inherit (runs on the lead's model)
+    builder  inherit (runs on the lead's model)
+    reviewer inherit (runs on the lead's model)
+  Codex
+    lead     the model you choose in Codex
+    scout    inherit (runs on the lead's model)
+    builder  inherit (runs on the lead's model)
+    reviewer inherit (runs on the lead's model)
+
+What the tools and labs say (their own words)
+  Claude Code: "Sonnet handles most coding tasks well and costs less than Opus. Reserve Opus for complex architectural decisions or multi-step reasoning."
+    https://code.claude.com/docs/en/costs (2026-09-27)
+  Claude Code: "Uses the latest Sonnet model for daily coding tasks"
+    https://code.claude.com/docs/en/model-config (2026-09-27)
+  Claude Code: "Uses the latest Opus model for complex reasoning tasks"
+    https://code.claude.com/docs/en/model-config (2026-09-27)
+
+Files (numbered; answer "no to 3" to leave one out)
+   1. file   ~/.claude/agents/modelproof-scout.md · 12 lines · the tool obeys it
+      Claude Code runs this helper on the lead's model (model: inherit).
+   2. file   ~/.claude/agents/modelproof-builder.md · 11 lines · the tool obeys it
+      Claude Code runs this helper on the lead's model (model: inherit).
+   3. file   ~/.claude/agents/modelproof-reviewer.md · 11 lines · the tool obeys it
+      Claude Code runs this helper on the lead's model (model: inherit).
+   4. file   ~/.codex/agents/modelproof-scout.toml · 11 lines · the tool obeys it
+      No model set, so Codex runs this helper on the lead's model and effort.
+   5. file   ~/.codex/agents/modelproof-builder.toml · 10 lines · the tool obeys it
+      No model set, so Codex runs this helper on the lead's model and effort.
+   6. file   ~/.codex/agents/modelproof-reviewer.toml · 10 lines · the tool obeys it
+      No model set, so Codex runs this helper on the lead's model and effort.
+   7. file   ~/.claude/rules/modelproof.md · 30 lines · text
+      Claude Code loads every file in rules/ each session; your CLAUDE.md is not touched.
+   8. block  ~/.codex/AGENTS.md (added at the end) · 21 lines · text
+      Codex reads this AGENTS.md before any task.
+
+Notes
+  - You use models from 2 labs (Anthropic, OpenAI), so helpers run on the lead's model unless you choose one; each lab's own descriptions are listed as facts.
+  - Start a new session so each tool loads the new helper and rule files.
+  - Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history.

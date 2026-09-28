@@ -1,0 +1,89 @@
+Modelproof package · facts as of 2026-09-27 · generator 1.0.0
+Your answers: org Acme · project scope · tools: Claude Code, Codex, Cursor, AGENTS.md · plans: Anthropic Max 5x, etc shadow, not a plan object · limits: not given · work: coding, research
+  you use: Claude Sonnet 5, Claude Opus 5.5 · never: Claude Haiku 4.5 · effort cap: max
+
+Which model each helper runs
+  Claude Code
+    lead     the model you choose in Claude Code
+    scout    inherit (runs on the lead's model)
+             effort max: your choice (your effort cap), written into the helper file
+    builder  inherit (runs on the lead's model)
+             effort max: your choice (your effort cap), written into the helper file
+    reviewer inherit (runs on the lead's model)
+             effort max: your choice (your effort cap), written into the helper file
+  Codex
+    lead     the model you choose in Codex
+    scout    inherit (runs on the lead's model)
+             effort max: your choice (your effort cap), written into the helper file
+    builder  inherit (runs on the lead's model)
+             effort max: your choice (your effort cap), written into the helper file
+    reviewer inherit (runs on the lead's model)
+             effort max: your choice (your effort cap), written into the helper file
+  Cursor
+    lead     the model you choose in Cursor
+    scout    inherit (runs on the lead's model)
+    builder  inherit (runs on the lead's model)
+    reviewer inherit (runs on the lead's model)
+  AGENTS.md
+    lead     the model you choose in your tool
+
+Models you use
+  Claude Sonnet 5: list price $2 in / $10 out per 1M tokens · 1.02% of OpenRouter tokens (2026-09-25)
+  Claude Opus 5.5: list price $4 in / $20 out per 1M tokens · 0.49% of OpenRouter tokens (2026-09-25)
+
+What the tools and labs say (their own words)
+  Claude Code: "Sonnet handles most coding tasks well and costs less than Opus. Reserve Opus for complex architectural decisions or multi-step reasoning."
+    https://code.claude.com/docs/en/costs (2026-09-27)
+  Claude Code: "Uses the latest Sonnet model for daily coding tasks"
+    https://code.claude.com/docs/en/model-config (2026-09-27)
+  Claude Code: "Uses the latest Opus model for complex reasoning tasks"
+    https://code.claude.com/docs/en/model-config (2026-09-27)
+
+Files (numbered; answer "no to 3" to leave one out)
+   1. file   .claude/agents/modelproof-scout.md · 13 lines · the tool obeys it
+      Claude Code runs this helper on the lead's model (model: inherit).
+   2. file   .claude/agents/modelproof-builder.md · 12 lines · the tool obeys it
+      Claude Code runs this helper on the lead's model (model: inherit).
+   3. file   .claude/agents/modelproof-reviewer.md · 12 lines · the tool obeys it
+      Claude Code runs this helper on the lead's model (model: inherit).
+   4. keys   .claude/settings.json: maxEffortLevel · the tool obeys it
+      Adds only the keys you asked for, and only where they are absent.
+   5. file   .codex/agents/modelproof-scout.toml · 12 lines · the tool obeys it
+      No model set, so Codex runs this helper on the lead's model.
+   6. file   .codex/agents/modelproof-builder.toml · 11 lines · the tool obeys it
+      No model set, so Codex runs this helper on the lead's model.
+   7. file   .codex/agents/modelproof-reviewer.toml · 11 lines · the tool obeys it
+      No model set, so Codex runs this helper on the lead's model.
+   8. file   .cursor/agents/modelproof-scout.md · 12 lines · the tool obeys it
+      Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
+   9. file   .cursor/agents/modelproof-builder.md · 11 lines · the tool obeys it
+      Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
+  10. file   .cursor/agents/modelproof-reviewer.md · 11 lines · the tool obeys it
+      Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
+  11. block  AGENTS.md (added at the end) · 44 lines · text
+      One block at the end of AGENTS.md, read by Claude Code, Codex, Cursor, GitHub Copilot and other tools that read AGENTS.md; your own text is untouched.
+
+Notes
+  - Left out of your answers: tools: "rm -rf" is not a tool this package covers (Claude Code, Codex, Cursor, AGENTS.md)
+  - Left out of your answers: tools: "" is not a tool this package covers (Claude Code, Codex, Cursor, AGENTS.md)
+  - Left out of your answers: scope: cleaned to "project"
+  - Left out of your answers: limits: "always" is not one of often, sometimes, rarely, api-budget; left out
+  - Left out of your answers: work: "script alert 1 script" is not a known kind of work; left out
+  - Left out of your answers: never: "-- --" is not a model or lab in the data; left out
+  - Left out of your answers: org.divisions[0].name: cleaned to "evil"
+  - Left out of your answers: org.divisions[1]: not an object; left out
+  - Left out of your answers: org.divisions[2].name: cleaned to "Ops -- modelproof owned v1 --"
+  - Left out of your answers: org.name: cleaned to "Acme"
+  - Left out of your answers: org.divisions[1].lead: "etc passwd" is not a model in the data; left out
+  - Left out of your answers: like[2]: "-- modelproof end --" is not a model in the data; left out
+  - Left out of your answers: like[3]: "no-such-model" is not a model in the data; left out
+  - Left out of your answers: roles.admin: not a role (lead, scout, builder, reviewer); left out
+  - Left out of your answers: roles.scout: ".. .. etc passwd" is not a model in the data; left out
+  - Left out of your answers: roles.builder: Claude Haiku 4.5 is on your never list; left out
+  - Left out of your answers: roles.reviewer: "" is not a model in the data; left out
+  - Left out of your answers: effort_cap: cleaned to "max"
+  - Claude Code reads the project AGENTS.md here, so its lines go in that block and no .claude/rules file is added.
+  - Cursor reads the project AGENTS.md, so no .cursor/rules file is added.
+  - You use models from 2 labs (Anthropic, OpenAI), so helpers run on the lead's model unless you choose one; each lab's own descriptions are listed as facts.
+  - Start a new session so each tool loads the new helper and rule files.
+  - Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history.

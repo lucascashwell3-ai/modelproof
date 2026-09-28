@@ -1,0 +1,84 @@
+{
+  "schema": "modelproof.profile/1",
+  "who": "org",
+  "tools": [
+    "claude-code",
+    "codex",
+    "cursor"
+  ],
+  "scope": "project",
+  "plans": [
+    {
+      "vendor": "Anthropic",
+      "plan": "Team (Premium seat)"
+    },
+    {
+      "vendor": "OpenAI",
+      "plan": "Business"
+    },
+    {
+      "vendor": "Cursor",
+      "plan": "Teams (Standard)"
+    }
+  ],
+  "api": true,
+  "limits": "sometimes",
+  "work": [
+    "coding",
+    "agents",
+    "research"
+  ],
+  "like": [],
+  "never": [
+    "xAI"
+  ],
+  "roles": {},
+  "org": {
+    "name": "Northwind Labs",
+    "divisions": [
+      {
+        "name": "Engineering",
+        "people": 22,
+        "plans": [
+          {
+            "vendor": "Anthropic",
+            "plan": "Team (Premium seat)"
+          },
+          {
+            "vendor": "Cursor",
+            "plan": "Teams (Standard)"
+          }
+        ],
+        "tools": [
+          "claude-code",
+          "cursor"
+        ],
+        "lead": "claude-opus-5-5"
+      },
+      {
+        "name": "Product",
+        "people": 10,
+        "plans": [
+          {
+            "vendor": "OpenAI",
+            "plan": "Business"
+          }
+        ],
+        "tools": [
+          "codex"
+        ],
+        "lead": "gpt-6-sol"
+      },
+      {
+        "name": "Data",
+        "people": 8,
+        "plans": [],
+        "api": true,
+        "tools": [
+          "claude-code"
+        ],
+        "lead": "claude-sonnet-5"
+      }
+    ]
+  }
+}

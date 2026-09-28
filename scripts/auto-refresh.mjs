@@ -972,7 +972,7 @@ async function main() {
     }
 
     // signals (scripts/derive-signals.mjs) + standings (scripts/derive-standings.mjs) — brain v2
-    // step 3's ranking (assets/decide.mjs) reads standings directly and signals informationally;
+    // step 3's ranking (archive/engine/assets/decide.mjs, now archived) read standings directly and signals informationally;
     // both are refreshed every full run, same cadence as availability/usage above, not gated
     // behind `changed` from the price/new-model checks (a task's real-world evidence can shift on
     // a day nothing else about the catalog did). Each is its own try/catch: a feed failure inside

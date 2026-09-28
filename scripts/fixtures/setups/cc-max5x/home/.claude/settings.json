@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm test:*)",
+      "Bash(git status)"
+    ],
+    "deny": [
+      "Read(./.env)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo fixture-hook-command-not-for-output"
+          }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "FIXTURE_TOKEN": "fixture-env-value-not-for-output"
+  },
+  "apiKeyHelper": "/home/alex/bin/fixture-key-helper-not-for-output.sh"
+}

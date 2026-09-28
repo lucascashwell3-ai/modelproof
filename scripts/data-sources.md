@@ -257,13 +257,13 @@ quantitative score is null (`scripts/refresh-judge.md` carries the full writing 
 `scripts/check-sources.mjs` is the separate live-fetch gate that confirms every `quote` is
 actually on its cited page — the one no wording rule alone can enforce, since a well-formed claim
 can still misquote or fabricate a source). This record carries **zero ranking weight** in
-`assets/decide.mjs` (brain v2 step 3) — ranking is agreement across independent tester standings,
+`archive/engine/assets/decide.mjs` (brain v2 step 3) — ranking is agreement across independent tester standings,
 real OpenRouter spend share, and arena.ai human votes, kept separate and never averaged
-(`scripts/derive-standings.mjs`; see `assets/decide.mjs`'s own file header for the exact rule).
+(`scripts/derive-standings.mjs`; see `archive/engine/assets/decide.mjs`'s own file header for the exact rule).
 Its `claims[]` still show up next to a pick as the sourced explanation of why it fits the task —
 just never as what decided the ranking. A claim may carry `polarity: "negative"` for a sourced
-practical drawback (rate limits, latency, tool-call failures, pricing traps); `decide.mjs` drops
-the model one tier for that task when any claim on the record carries it.
+practical drawback (rate limits, latency, tool-call failures, pricing traps); the archived `decide.mjs`
+dropped the model one tier for that task when any claim on the record carried it.
 
 **`usage.openrouter`** — per-model token-volume share + rank, the machine-readable usage source
 this schema asked for. What was tried, in order:

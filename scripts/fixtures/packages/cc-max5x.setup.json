@@ -1,0 +1,57 @@
+{
+  "home": "/home/alex",
+  "project": null,
+  "tools": {
+    "claude-code": true,
+    "codex": false,
+    "cursor": false
+  },
+  "dirs": {
+    "claude": "~/.claude",
+    "codex": "~/.codex"
+  },
+  "files": [
+    {
+      "scope": "user",
+      "path": "~/.claude/CLAUDE.md",
+      "lines": 150,
+      "readers": [
+        "claude-code"
+      ]
+    }
+  ],
+  "agents": [
+    {
+      "tool": "claude-code",
+      "scope": "user",
+      "name": "code-reviewer",
+      "model": null,
+      "modelproof": false
+    },
+    {
+      "tool": "claude-code",
+      "scope": "user",
+      "name": "test-runner",
+      "model": null,
+      "modelproof": false
+    }
+  ],
+  "settings": [
+    {
+      "scope": "user",
+      "path": "~/.claude/settings.json",
+      "keys": [
+        "hooks",
+        "permissions"
+      ]
+    }
+  ],
+  "claude_reads_project_agents_md": false,
+  "agents_override": {
+    "user": false,
+    "project": false
+  },
+  "env": {
+    "subagent_model_force": false
+  }
+}

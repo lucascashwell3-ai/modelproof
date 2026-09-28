@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeText, quoteFoundIn, collectClaims, checkClaims } from './check-sources.mjs';
+import { normalizeText, quoteFoundIn, collectClaims, collectGuidanceClaims, checkClaims } from './check-sources.mjs';
 
 test('normalizeText strips tags/scripts/styles, decodes entities, collapses whitespace, lowercases', () => {
   const html = '<html><head><style>.x{color:red}</style></head><body><script>evil()</script>' +
@@ -105,4 +105,57 @@ test('checkClaims: two claims sharing one source_url only fetch the page once', 
   const results = await checkClaims(claims, { fetchImpl });
   assert.equal(fetchCount, 1);
   assert.ok(results.every((r) => r.ok));
+});
+
+// --- data/guidance.json claims (the instruction package's sourced facts) ----------------------
+const GUIDANCE = {
+  claims: [
+    { id: 'tool-a', subject: { kind: 'tool', name: 'Claude Code' }, topic: 'instruction-files', sentence: 's', source_url: 'https://docs.example/a', tier: 'tool', date: '2026-09-27', quote: 'loads the file at start' },
+    { id: 'lab-b', subject: { kind: 'lab', name: 'OpenAI' }, topic: 'effort', sentence: 's', source_url: 'https://docs.example/b', tier: 'lab', date: '2026-09-27', quote: 'defaults to medium effort' },
+  ],
+};
+
+test('collectGuidanceClaims: one record per claim, same shape as collectClaims plus claimId', () => {
+  const out = collectGuidanceClaims(GUIDANCE);
+  assert.equal(out.length, 2);
+  assert.deepEqual(out[0], {
+    modelId: null, modelName: 'Claude Code', taskId: 'instruction-files', index: 0,
+    source_url: 'https://docs.example/a', quote: 'loads the file at start', tier: 'tool', claimId: 'tool-a', file: 'guidance',
+  });
+  for (const k of Object.keys(collectClaims({ models: [{ id: 'x', name: 'X', task_fit_judged: { coding: { claims: [{ source_url: 'u', quote: 'q', tier: 'lab' }] } } }] })[0])) {
+    assert.ok(k in out[1], `guidance record carries "${k}"`);
+  }
+});
+
+test('collectGuidanceClaims: missing file or empty claims contributes nothing', () => {
+  assert.deepEqual(collectGuidanceClaims(null), []);
+  assert.deepEqual(collectGuidanceClaims({}), []);
+  assert.deepEqual(collectGuidanceClaims({ claims: [] }), []);
+});
+
+test('checkClaims over guidance claims: a quote on the page passes, a changed page fails', async () => {
+  const pages = {
+    'https://docs.example/a': normalizeText('<p>Claude Code loads the file at start of every session.</p>'),
+    'https://docs.example/b': normalizeText('<p>The model now defaults to high effort.</p>'),
+  };
+  const results = await checkClaims(collectGuidanceClaims(GUIDANCE), { fetchImpl: async (u) => pages[u] });
+  assert.equal(results.find((r) => r.claimId === 'tool-a').ok, true);
+  const b = results.find((r) => r.claimId === 'lab-b');
+  assert.equal(b.ok, false);
+  assert.match(b.reason, /not found/);
+});
+
+test('checkClaims over models + guidance together shares one fetch per URL across both files', async () => {
+  const models = { models: [{ id: 'm', name: 'M', task_fit_judged: { coding: { claims: [{ source_url: 'https://docs.example/a', quote: 'loads the file', tier: 'lab' }] } } }] };
+  let fetches = 0;
+  const fetchImpl = async () => { fetches++; return normalizeText('<p>Claude Code loads the file at start. It defaults to medium effort.</p>'); };
+  const claims = [...collectClaims(models), ...collectGuidanceClaims({ claims: [GUIDANCE.claims[0]] })];
+  const results = await checkClaims(claims, { fetchImpl });
+  assert.equal(fetches, 1);
+  assert.ok(results.every((r) => r.ok));
+});
+
+test('checkClaims over guidance claims: a 404 source is a FAILED claim', async () => {
+  const results = await checkClaims(collectGuidanceClaims(GUIDANCE), { fetchImpl: async () => { throw new Error('HTTP 404'); } });
+  assert.ok(results.every((r) => !r.ok && /could not fetch/.test(r.reason)));
 });

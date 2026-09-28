@@ -8,8 +8,9 @@
    Collect run that changes anything recomputes task_fit for the WHOLE catalog (see the "task_fit
    ... recomputed for the WHOLE catalog" block in auto-refresh.mjs), because its price/context
    normalizers are relative to every model in the catalog, so one price move or one new model can
-   shift everyone else's score too. Also imported directly by scripts/test-decide.mjs,
-   scripts/test-derive-task-fit.mjs and scripts/validate-data.mjs (the honesty gate).
+   shift everyone else's score too. Also imported directly by scripts/test-derive-task-fit.mjs
+   and scripts/validate-data.mjs (the honesty gate). The ranking engine that also read it now
+   lives in archive/engine/.
 
    Same honesty rule as the rest of this repo: every score traces to a named field (recorded in
    that task's `basis[]`), and a task with no real basis for a model gets `score: null` plus a
@@ -54,9 +55,8 @@
    value the catalog doesn't already carry, and the exact field used is always recorded in
    basis[] so a reader can trace it (never a bare word "general").
 
-   basis[] tokens are a fixed, small vocabulary (BASIS_TOKENS below) shared with
-   assets/decide.mjs, which builds its `why` text from exactly these tokens and nothing else —
-   one registry, so the two can't drift apart.
+   basis[] tokens are a fixed, small vocabulary (BASIS_TOKENS below). The archived ranking
+   engine (archive/engine/assets/decide.mjs) built its `why` text from exactly these tokens.
 
    Usage: node scripts/derive-task-fit.mjs [--dry-run]   (standalone run/preview)
 */
@@ -67,7 +67,8 @@ export const TASK_IDS = [
   'exec-summaries',
 ];
 
-// The only basis tokens any task may cite — assets/decide.mjs's WHY_FIELDS keys this same set.
+// The only basis tokens any task may cite. (The archived engine's WHY_FIELDS, in
+// archive/engine/assets/decide.mjs, keys this same set.)
 export const BASIS_TOKENS = [
   'coding_score', 'context_window', 'benchmarks.gpqa', 'benchmarks.mmlu_pro', 'price_output',
   'best_for:vision', 'best_for:speed', 'effort_ladders',

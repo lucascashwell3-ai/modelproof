@@ -1,46 +1,50 @@
 # Modelproof
 
-**Which AI model should you actually use?**
+**Always-current AI model facts, and a setup that installs into the tools you already use.**
 
-Everyone has access to more models than they can keep track of — and no time to work out which
-one fits the task and the budget in front of them. Modelproof answers that in two ways:
+Everyone has access to more models than they can keep track of. Modelproof keeps the facts
+straight and puts them where you work:
 
-- **A skill** for people who work inside Claude Code, Cursor, or any agentic AI setup: say what
-  you're about to do ("overnight bulk run", "client deck", "new project") and it names one model
-  from what you already have access to, with a plan and an undo.
-- **A site** for people deciding what their team should run: live prices, sourced scores,
-  effort-cost curves, and a release timeline — enough to choose good models without overpaying
-  for frontier ones where they aren't needed.
+- **The facts** — live prices, OpenRouter usage, sourced scores, effort-cost curves, a release
+  timeline, and what each lab says about its own models, every one with its link and date.
+  Nothing is ranked, and no model is named for you.
+- **The instruction package** — a short setup for Claude Code, Codex, Cursor, or any tool that
+  reads `AGENTS.md`. It sets which model each helper agent runs on — your choice first, then the
+  tool's or lab's own published default for that job, otherwise the same model as your main one —
+  plus a few lines on using them well. It adds files next to yours instead of overwriting them,
+  shows you the full plan before it writes anything, and undoes byte for byte.
 
 Live at **[lucascashwell3-ai.github.io/modelproof](https://lucascashwell3-ai.github.io/modelproof/)**.
-Not a leaderboard; the point is the decision.
 
-## Get the advisor
+## Get it
 
-Three ways in, all on the site's installer:
-
-- **Paste a prompt** — one short prompt into Claude Code, Cursor, or any agentic AI; it installs
-  the advisor and asks what you're about to do.
-- **Install the skill** — a one-line command that downloads
-  [`skills/modelproof-advisor/`](skills/modelproof-advisor/) into your Claude Code skills folder.
-- **MCP server** — [`mcp/`](mcp/) exposes the same data and advice over the Model Context
-  Protocol.
+- **Paste a prompt** — the prompt in [`assets/install-prompt.txt`](assets/install-prompt.txt) (also
+  on the home page) goes into Claude Code, Codex or Cursor. It reads your setup, asks a few quick
+  questions, shows every file before it writes, installs on your yes, and prints one undo line.
+- **The skill** — [`skills/modelproof-advisor/`](skills/modelproof-advisor/) runs the same flow. The
+  prompt runs it once without installing it; to keep it, copy the folder into `~/.claude/skills/`
+  (or your tool's skills folder).
+- **The board** — [`board.html`](board.html) builds the same package from a board you lay out, under
+  Install package.
+- **MCP server** — [`mcp/`](mcp/) serves the same facts (prices, releases, sourced quotes) over the
+  Model Context Protocol.
 
 ## What the site shows
 
-- **Compare** — any two models side by side: price, sourced benchmarks, strengths, verdicts.
-- **The buy zone** — every model plotted, price (→) vs. capability (↑); top-left is cheap *and*
-  capable.
+- **Compare** — any two or three models side by side: price, context, sourced scores, and what
+  the lab says about each.
+- **The model map** — every model plotted, price (→) vs. coding score (↑).
 - **Effort ladders** — what turning up a model's reasoning-effort dial actually buys, as
   published cost-accuracy curves; only ladders with a named publisher, harness, and method are
   plotted.
 - **Usage lenses** — different measures of who uses what, shown separately because they disagree.
 - **Timeline** — dated releases, price changes, and retirements, each with a one-line "should
   you care?"
-- **Full table** — every tracked model with per-model verdicts, sources, and a confidence flag.
-- **Board** ([`board.html`](board.html)) — drag out the teams and routines in a company, or your
-  own set of models, and see the monthly bill, the cost per person and per year, and what the
-  engine would pick instead. Exports a PNG and an `AGENTS.md`.
+- **Full table** — every tracked model with its sources and sourced quotes, filterable by lab.
+- **Board** ([`board.html`](board.html)) — lay out the teams and routines in a company, or your
+  own set of models, and see the monthly bill and the cost per person and per year.
+- **How we source facts** ([`how-we-pick.html`](how-we-pick.html)) — where every number and quote
+  comes from.
 
 ## The data
 
@@ -62,21 +66,19 @@ page — a `null` price means the page didn't show that number in static HTML, n
 
 - **Pricing** traces to official vendor pages (standard tier, USD per 1M tokens).
   Verify anything cost-critical against the vendor's own pricing page before relying on it.
-- **Benchmarks** are directional, cited, and confidence-flagged — never treated as truth.
-- **Ranking is never a judgment call.** A pick's grade is agreement across independent tester
-  standings, real OpenRouter spend share, and arena.ai human votes — kept separate, never averaged
-  (see [`scripts/derive-standings.mjs`](scripts/derive-standings.mjs) and the ranking rule at the
-  top of [`assets/decide.mjs`](assets/decide.mjs)). A model's judged record (claims, each with a
-  source link and a verbatim quote — no grade, no number) carries zero ranking weight — it's the
-  sourced explanation shown next to a pick, not what decided it; the site labels this text
-  "reported use, not measured" so a reader never mistakes it for a benchmark. Every quote is
-  checked against its live source before publish
-  ([`scripts/check-sources.mjs`](scripts/check-sources.mjs)) — a claim that can't be verified on
-  the page it cites is rejected, not softened.
+- **Benchmarks** are directional and cited — never treated as truth.
+- **No ranking.** The site never ranks models or names one for a job. Lab and tool quotes
+  (each with a source link, a verbatim quote and the date checked) are shown as what they are:
+  that lab's own words about its own models. Every quote is checked against its live source
+  before publish ([`scripts/check-sources.mjs`](scripts/check-sources.mjs)) — a claim that can't
+  be found on the page it cites is rejected, not softened.
 - **A blank (—) means "not reliably sourced," never a guess.** The validator
   ([`scripts/validate-data.mjs`](scripts/validate-data.mjs)) blocks any publish that breaks
   schema or sourcing rules.
 - **Independent** — not affiliated with, sponsored by, or advertising for any model vendor.
+
+Retired pieces (the old ranking code and its answer key) are kept for history in
+[`archive/`](archive/).
 
 ## Run it locally
 

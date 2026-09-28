@@ -8,7 +8,7 @@ import {
 
 // Runs on the frozen fixture (scripts/fixtures/), never on live data/ — see
 // scripts/fixtures/README.md. The live catalog's own status/adoption fields are cross-checked by
-// scripts/check-live-data.mjs (via decide() running clean) and scripts/validate-data.mjs instead.
+// scripts/validate-data.mjs instead (the ranking engine that once read them is in archive/engine/).
 const FIXTURES = new URL('./fixtures/', import.meta.url);
 const catalogData = JSON.parse(readFileSync(new URL('models.json', FIXTURES)));
 const models = catalogData.models;
@@ -133,7 +133,7 @@ test('deriveAdoption: omitting asOf entirely falls back to plain share-based buc
   assert.equal(deriveAdoption(m).adoption, 'low');
 });
 
-test('regression: claude-fable-5-1 is adoption=new (not "low") — the exact bug the 60-day rule fixes, and its low-adoption gate is never triggered by assets/decide.mjs', () => {
+test('regression: claude-fable-5-1 is adoption=new (not "low") — the exact bug the 60-day rule fixes, and its low-adoption gate is never triggered by archive/engine/assets/decide.mjs', () => {
   const m = models.find((x) => x.id === 'claude-fable-5-1');
   assert.ok(m, 'fixture assumption: claude-fable-5-1 is still in the catalog');
   assert.equal(m.released, '2026-09-01');

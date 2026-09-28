@@ -1,0 +1,22 @@
+{
+  "schema": "modelproof.profile/1",
+  "who": "person",
+  "tools": [
+    "claude-code"
+  ],
+  "scope": "project",
+  "plans": [
+    {
+      "vendor": "Anthropic",
+      "plan": "Pro"
+    }
+  ],
+  "limits": "rarely",
+  "work": [
+    "writing",
+    "research"
+  ],
+  "like": [],
+  "never": [],
+  "roles": {}
+}
