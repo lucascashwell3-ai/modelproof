@@ -133,6 +133,7 @@ function scanLines(text) {
     out.push({ text: body, eol, start: pos, end: endWithEol, fence: inFence });
     pos = endWithEol;
   }
+  out.openFence = fence !== null;
   return out;
 }
 
@@ -147,14 +148,15 @@ const PLAIN_OWNED_TOML = '# modelproof:owned v1';
 
 function bodyHash(lines) { return sha16(lines.join('\n')); }
 
-// Every modelproof block in a text file. Markers count only as whole lines outside code fences.
+// Every modelproof block in a text file. Markers count as whole lines anywhere, code fences
+// included: a marker quoted in someone's notes makes the file look damaged (exit 4) rather than
+// hiding a real block from the installer.
 export function findBlocks(text) {
   const lines = scanLines(text);
   const blocks = [];
   const corrupt = [];
   let open = null;
   lines.forEach((l, i) => {
-    if (l.fence) return;
     const b = BEGIN_RE.exec(l.text);
     if (b) {
       if (open) corrupt.push(`line ${i + 1}: a second begin marker before the end of the block at line ${open.begin + 1}`);
@@ -776,6 +778,9 @@ function decide(part, cur, entry, extra) {
     const { blocks, corrupt } = findBlocks(text);
     if (corrupt.length) throw new Fail(EXIT.CORRUPT, `${part.target.path}: damaged modelproof markers — ${corrupt.join('; ')}. Nothing was changed; fix or remove the markers by hand.`);
     if (!blocks.length) {
+      // Appended after an unclosed fence, the block would sit inside it: the tool reading the file
+      // would see code, not rules.
+      if (scanLines(text).openFence) return { ...res, action: 'conflict', reason: 'this file ends inside an open code fence (```), so a block added at the end would read as code; close the fence or pick another file' };
       const a = appendBlock(text, body);
       return { ...res, action: 'append', next: a.text, record: { block: { sha16: bodyHash(body), separator: a.separator, trailer: a.trailer, eol: a.eol, created_file: false } } };
     }

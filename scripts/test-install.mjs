@@ -668,6 +668,42 @@ test('damaged markers → plan exits 4 and writes no plan', () => {
   assert.match(p.all, /second begin marker/);
 });
 
+test('LC-01: a file that ends inside an open code fence is never appended to (exit 2); once closed, the roundtrip is exact', () => {
+  const f = setup('agents-md-only');
+  const profile = path.join(FIX, 'setups', 'agents-md-only', 'profile.json');
+  const file = path.join(f.project, 'AGENTS.md');
+  fs.writeFileSync(file, '# Notes\n\nExample:\n\n```bash\npnpm test\n');
+  const before = snapshot(f, 'before');
+  const p = plan(f, profile);
+  assert.equal(p.code, 2, p.all);
+  const item = p.plan.items.find((x) => x.path === 'AGENTS.md');
+  assert.equal(item.action, 'conflict', p.out);
+  assert.match(item.reason, /ends inside an open code fence/);
+  assert.match(item.reason, /close the fence or pick another file/);
+  // Leaving it out writes nothing to that file; undo is exact.
+  const conflicts = p.plan.items.filter((x) => x.action === 'conflict').map((x) => x.n).join(',');
+  ok(apply(f, p, { skip: conflicts }), 'apply with the fenced file left out');
+  assert.equal(read(file), '# Notes\n\nExample:\n\n```bash\npnpm test\n');
+  ok(dupes(f));
+  const u = undo(f, p.plan.id);
+  ok(u);
+  ok(compare(f, before));
+  // The user closes the fence: the full roundtrip (append, reinstall unchanged, undo byte-identical).
+  fs.appendFileSync(file, '```\n');
+  roundtrip(f, profile);
+});
+
+test('LC-01: a marker quoted inside a code fence counts as a marker, so the installer stops (exit 4) instead of adding a second block', () => {
+  const f = setup('agents-md-only');
+  const profile = path.join(FIX, 'setups', 'agents-md-only', 'profile.json');
+  const file = path.join(f.project, 'AGENTS.md');
+  fs.writeFileSync(file, '# Notes\n\n```\n<!-- modelproof:begin v1 sha=0123456789abcdef -->\n```\n');
+  const p = plan(f, profile);
+  assert.equal(p.code, 4, p.all);
+  assert.equal(p.plan, null);
+  assert.match(p.all, /begin marker with no end marker/);
+});
+
 test('verify: exit 3 when an installed file changed, exit 4 when a second block appears', () => {
   const f = setup('org-40');
   const p = plan(f, path.join(PROFILES, 'org-40.json'));
