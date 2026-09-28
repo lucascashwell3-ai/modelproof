@@ -30,7 +30,7 @@ const num = (v) => v === null || v === undefined || Number.isNaN(v);
 
 // --- judged task fit (task_fit_judged) — the qualitative-evidence gate ------------------------
 // A judged record (v3, 2026-09) is claims[] + reconciliation + as_of — no grade, no number.
-// `band`/`confidence` were the old AI-judged fields (assets/decide.mjs never read them for
+// `band`/`confidence` were the old AI-judged fields (archive/engine/assets/decide.mjs never read them for
 // ranking even before this — brain v2 step 3, PR #34 — this just removes them from the shape
 // entirely, so the old cloud routine's pre-v3 output can't sneak back in). This block checks
 // SHAPE ONLY: no band/confidence present, every claim carries the required fields, dates are
@@ -43,7 +43,7 @@ const num = (v) => v === null || v === undefined || Number.isNaN(v);
 // claim that quotes something the page doesn't actually say.
 export const CLAIM_TIERS = ['lab', 'reported', 'measured', 'usage'];
 // v3 (2026-09): a claim may mark itself a sourced practical drawback (rate limits, latency,
-// tool-call failures, price traps) rather than a strength — assets/decide.mjs's hasNegativeClaim
+// tool-call failures, price traps) rather than a strength — archive/engine/assets/decide.mjs's hasNegativeClaim
 // drops a model one tier for a task where any claim carries this. Absent = an ordinary claim.
 export const CLAIM_POLARITY_VALUES = ['negative'];
 // Absolute, dated facts only — a record must stay true after a newer model supersedes this one.
@@ -376,7 +376,7 @@ export function validate(data, registry) {
   // 10. task_fit (scripts/derive-task-fit.mjs): every model must carry a score-or-null-plus-
   //     reason for EXACTLY the ten known tasks, citing only the shared basis vocabulary. A
   //     score with no basis, or a basis token outside BASIS_TOKENS, means a fitter drifted from
-  //     the registry assets/decide.mjs's `why` builder also reads from — same class of bug the
+  //     the registry archive/engine/assets/decide.mjs's `why` builder also reads from — same class of bug the
   //     naming-rule gate exists to catch, just for the decision layer instead of the catalog.
   for (const m of data.models) {
     const id = m.name || m.id || '(unnamed)';
@@ -462,7 +462,7 @@ export function validate(data, registry) {
   }
 
   // 10d. status / adoption (scripts/derive-status-adoption.mjs, added with the judged-ranking
-  // rewrite, 2026-09-07) — model-level, not per-task, because assets/decide.mjs's "a preview SKU
+  // rewrite, 2026-09-07) — model-level, not per-task, because archive/engine/assets/decide.mjs's "a preview SKU
   // or a low-adoption model can never be start_here" gate has to fire even on a task with no
   // judged record at all (the exact gap a 0.16%-share preview model exploited to top "research"
   // on a benchmark number alone). Both are pure derivations of fields the catalog already
@@ -481,7 +481,7 @@ export function validate(data, registry) {
   }
 
   // 10e. signals (scripts/derive-signals.mjs, added with the calibration fix, 2026-09-07) —
-  // per-task real-world-signal counts assets/decide.mjs's rule 3b reads to downgrade a
+  // per-task real-world-signal counts archive/engine/assets/decide.mjs's rule 3b reads to downgrade a
   // thinly-evidenced judged "strong" to "capable". Same honesty rule as everywhere else:
   // usage_rank/arena_rank are a positive integer or null (never 0 or negative — "rank 0" isn't a
   // real rank), usage_share is 0-100 or null, expert_default is `true` or null (never `false` —
@@ -671,7 +671,7 @@ function main() {
     }
   }
 
-  // 11. data/vendors.json (assets/decide.mjs's noChinaHosted data rule): every vendor in
+  // 11. data/vendors.json (archive/engine/assets/decide.mjs's noChinaHosted data rule): every vendor in
   // scripts/naming.mjs's VENDORS needs exactly one row here, or a new vendor would silently
   // read as "unknown country" (kept, not excluded) instead of a deliberate call. country is a
   // plain string or null (never a guessed default); source, when present, must be a real URL —
@@ -699,7 +699,7 @@ function main() {
     }
   }
 
-  // 12. data/usage-presets.json (assets/decide.mjs's volume input): the three named bands must
+  // 12. data/usage-presets.json (archive/engine/assets/decide.mjs's volume input): the three named bands must
   // each carry non-negative monthly token counts and a plain-English rationale — these are
   // stated assumptions, not sourced facts, but an assumption with no rationale is just a guess
   // wearing a label.

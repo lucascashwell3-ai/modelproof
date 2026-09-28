@@ -60,7 +60,7 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
      benchmark number: real, sourced evidence about how a model behaves for a task in practice,
      for a reader to weigh themselves — when no benchmark number exists yet. **You write claims
      only. Never a grade, never a number pulled off a live leaderboard (`standings` already
-     carries those, and ranking is agreement across `standings` alone — see `assets/decide.mjs`'s
+     carries those, and ranking is agreement across `standings` alone — see `archive/engine/assets/decide.mjs`'s
      header), never comparative phrasing.** `value`:
      `{"taskId", "claims": [{"sentence", "source_url", "tier": "lab"|"reported"|"measured"|"usage",
      "date", "quote", "polarity"?: "negative"}], "reconciliation": string|null}`. There is no
@@ -86,7 +86,7 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
        "some users report issues" or a competitor's marketing dig. Use it when the vendor's own
        docs, an independent review, or an enterprise write-up documents a real limitation that
        affects this specific task; skip it if all you have is a rumor or a single complaint with no
-       specifics. `assets/decide.mjs`'s `hasNegativeClaim` drops the model one tier for that task
+       specifics. `archive/engine/assets/decide.mjs`'s `hasNegativeClaim` drops the model one tier for that task
        when any claim on the record carries it — so only mark a claim negative when the drawback
        is real and task-relevant, never to pad the claims count.
      - **Absolute and dated, never relative.** Your own `sentence` (and `reconciliation`, if any)

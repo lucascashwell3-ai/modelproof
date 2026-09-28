@@ -9,6 +9,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
@@ -96,4 +97,16 @@ test('every plan name in the example boards exists in data/plans.json', () => {
 
   assert.ok(names.length > 0, 'the example org board names no plans at all');
   for (const name of names) assert.ok(known.has(name), `example board uses unknown plan "${name}"`);
+});
+
+test('LC-12: no tracked file outside archive/ points at assets/decide.mjs; the engine lives in archive/engine/', () => {
+  const files = execFileSync('git', ['ls-files'], { cwd: ROOT, encoding: 'utf8' }).split('\n')
+    .filter((f) => f && !f.startsWith('archive/') && f !== 'scripts/test-board.mjs' && /\.(mjs|js|md|html|json|yml|yaml|txt)$/.test(f));
+  const stale = [];
+  for (const rel of files) {
+    if (!fs.existsSync(path.join(ROOT, rel))) continue;
+    read(rel).split('\n').forEach((line, i) => { if (/(?<!archive\/engine\/)assets\/decide\.mjs/.test(line)) stale.push(`${rel}:${i + 1}`); });
+  }
+  assert.ok(files.length > 50, 'git ls-files listed the repo');
+  assert.deepEqual(stale, []);
 });

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-/* Per-model, per-task REAL-WORLD signals — the calibration input assets/decide.mjs's rule 3
+/* (The ranking engine named below now lives in archive/engine/; nothing live ranks models.)
+   Per-model, per-task REAL-WORLD signals — the calibration input archive/engine/assets/decide.mjs's rule 3
    uses to stop a single vendor benchmark claim from reading as equally strong evidence as a
    model with actual independent evidence behind it (see that file's header for the exact rule).
    Without this, a claims-only judged record can't tell "Anthropic's own launch post plus
