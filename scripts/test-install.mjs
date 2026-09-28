@@ -734,6 +734,41 @@ test('LC-01: a file that ends inside an open code fence is never appended to (ex
   roundtrip(f, profile);
 });
 
+test('LC-01: a fence closes only on the same character, at least as long, with nothing after it (CommonMark), so these stay open and are never appended to', () => {
+  const cases = [
+    ['a shorter run inside a longer fence', '# Notes\n\n````\ncode\n```\n', '````'],
+    ['a shorter run inside a ````md fence', '# Notes\n\nShow the fence:\n\n````md\n```\n', '````'],
+    ['a run with an info string is not a closer', '# Notes\n\n```\ncode\n```bash\n', '```'],
+    ['a ~~~~ fence with a shorter ~~~ run', '# Notes\n\n~~~~\ncode\n~~~\n', '~~~~'],
+    ['a ~~~ fence with a ``` line inside', '# Notes\n\n~~~\n```\n', '~~~'],
+  ];
+  for (const [label, text, fenceText] of cases) {
+    const f = setup('agents-md-only');
+    const profile = path.join(FIX, 'setups', 'agents-md-only', 'profile.json');
+    const file = path.join(f.project, 'AGENTS.md');
+    fs.writeFileSync(file, text);
+    const p = plan(f, profile);
+    assert.equal(p.code, 2, `${label}: ${p.all}`);
+    const item = p.plan.items.find((x) => x.path === 'AGENTS.md');
+    assert.equal(item.action, 'conflict', `${label}: ${p.out}`);
+    assert.match(item.reason, /ends inside an open code fence/, label);
+    assert.ok(item.reason.includes(`(${fenceText})`), `${label}: the reason names the fence it saw: ${item.reason}`);
+  }
+  // Closers that do count: a longer run, and a run with trailing spaces.
+  for (const [label, text] of [
+    ['a longer closing run', '# Notes\n\n```\ncode\n`````\n'],
+    ['a closing run with trailing spaces', '# Notes\n\n````md\n```\n````  \n'],
+  ]) {
+    const f = setup('agents-md-only');
+    const profile = path.join(FIX, 'setups', 'agents-md-only', 'profile.json');
+    fs.writeFileSync(path.join(f.project, 'AGENTS.md'), text);
+    const p = plan(f, profile);
+    assert.equal(p.code, 0, `${label}: ${p.all}`);
+    assert.equal(p.plan.items.find((x) => x.path === 'AGENTS.md').action, 'append', label);
+    roundtrip(f, profile);
+  }
+});
+
 test('LC-01: a marker quoted inside a code fence counts as a marker, so the installer stops (exit 4) instead of adding a second block', () => {
   const f = setup('agents-md-only');
   const profile = path.join(FIX, 'setups', 'agents-md-only', 'profile.json');

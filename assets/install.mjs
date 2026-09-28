@@ -118,6 +118,10 @@ function detectEol(text) {
   return i > 0 && text[i - 1] === '\r' ? '\r\n' : '\n';
 }
 // Lines with their offsets; `fence` marks lines inside ``` or ~~~ code fences (fence lines included).
+// Fences follow CommonMark: an opener is 3+ backticks or tildes after at most 3 spaces (a backtick
+// opener's info string holds no backtick); the closer is the same character, a run at least as
+// long as the opener, and nothing after it but spaces or tabs. Anything else inside stays code.
+// `openFence` is the opening run when the text ends inside a fence, else null.
 function scanLines(text) {
   const out = [];
   let pos = 0;
@@ -128,15 +132,18 @@ function scanLines(text) {
     let body = text.slice(pos, nl < 0 ? text.length : nl);
     let eol = nl < 0 ? '' : '\n';
     if (body.endsWith('\r') && eol) { body = body.slice(0, -1); eol = '\r\n'; }
-    const m = /^\s{0,3}(`{3,}|~{3,})/.exec(body);
-    let inFence = !!fence;
-    if (m) {
-      if (!fence) { fence = m[1][0]; inFence = true; } else if (m[1][0] === fence) { fence = null; inFence = true; }
+    let inFence = fence !== null;
+    if (fence === null) {
+      const m = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(body);
+      if (m && !(m[1][0] === '`' && m[2].includes('`'))) { fence = m[1]; inFence = true; }
+    } else {
+      const m = /^ {0,3}(`{3,}|~{3,})[ \t]*$/.exec(body);
+      if (m && m[1][0] === fence[0] && m[1].length >= fence.length) fence = null;
     }
     out.push({ text: body, eol, start: pos, end: endWithEol, fence: inFence });
     pos = endWithEol;
   }
-  out.openFence = fence !== null;
+  out.openFence = fence;
   return out;
 }
 
@@ -794,7 +801,8 @@ function decide(part, cur, entry, extra) {
     if (!blocks.length) {
       // Appended after an unclosed fence, the block would sit inside it: the tool reading the file
       // would see code, not rules.
-      if (scanLines(text).openFence) return { ...res, action: 'conflict', reason: 'this file ends inside an open code fence (```), so a block added at the end would read as code; close the fence or pick another file' };
+      const open = scanLines(text).openFence;
+      if (open) return { ...res, action: 'conflict', reason: `this file ends inside an open code fence (${open}), so a block added at the end would read as code; close the fence or pick another file` };
       const a = appendBlock(text, body);
       return { ...res, action: 'append', next: a.text, record: { block: { sha16: bodyHash(body), separator: a.separator, trailer: a.trailer, eol: a.eol, created_file: false } } };
     }
