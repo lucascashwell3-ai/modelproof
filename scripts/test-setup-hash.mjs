@@ -117,15 +117,46 @@ test('dupes: a clean tree passes', () => {
   assert.equal(r.code, 0, r.out);
 });
 
-test('dupes: two begin markers in one file fail; a marker inside a code fence does not count', () => {
+test('dupes: two begin markers in one file fail, code fence or not (LC-06)', () => {
   const root = tree();
   const block = '<!-- modelproof:begin v1 sha=0123456789abcdef -->\nbody\n<!-- modelproof:end -->\n';
-  put(root, 'project/AGENTS.md', '```\n' + block + '```\n' + block);
-  assert.equal(run('dupes', root).code, 0);
   put(root, 'project/AGENTS.md', block + '\n' + block);
   const r = run('dupes', root);
   assert.equal(r.code, 1);
   assert.match(r.out, /project\/AGENTS\.md: 2 modelproof begin markers/);
+  // A marker inside a fence still counts: the checker must not share the installer's blind spot.
+  put(root, 'project/AGENTS.md', '```\n' + block + '```\n' + block);
+  const f = run('dupes', root);
+  assert.equal(f.code, 1, f.out);
+  assert.match(f.out, /project\/AGENTS\.md: 2 modelproof begin markers/);
+  // Two blocks after a fence that never closes (the LC-01 file).
+  put(root, 'project/AGENTS.md', '# Notes\n\nExample:\n\n```bash\npnpm test\n\n' + block + '\n' + block);
+  const g = run('dupes', root);
+  assert.equal(g.code, 1, g.out);
+  assert.match(g.out, /project\/AGENTS\.md: 2 modelproof begin markers/);
+});
+
+test('dupes: unequal begin and end marker counts fail (LC-06)', () => {
+  const root = tree();
+  put(root, 'project/AGENTS.md', 'x\n\n<!-- modelproof:begin v1 sha=0123456789abcdef -->\nbody\n');
+  const r = run('dupes', root);
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /project\/AGENTS\.md: 1 modelproof begin marker\(s\) but 0 end marker\(s\)/);
+  put(root, 'project/AGENTS.md', 'x\n\n<!-- modelproof:begin v1 sha=0123456789abcdef -->\nbody\n<!-- modelproof:end -->\n<!-- modelproof:end -->\n');
+  const e = run('dupes', root);
+  assert.equal(e.code, 1, e.out);
+  assert.match(e.out, /1 modelproof begin marker\(s\) but 2 end marker\(s\)/);
+});
+
+test('dupes: the Modelproof instructions heading twice in one file fails, markers or not (LC-06)', () => {
+  const root = tree();
+  const text = '## Modelproof helpers and hand-off (facts as of 2026-09-01)\n\n- a rule\n';
+  put(root, 'project/AGENTS.md', 'mine\n\n' + text);
+  assert.equal(run('dupes', root).code, 0);
+  put(root, 'project/AGENTS.md', 'mine\n\n' + text + '\n<!-- modelproof:begin v1 sha=0123456789abcdef -->\n' + text + '<!-- modelproof:end -->\n');
+  const r = run('dupes', root);
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /project\/AGENTS\.md: the Modelproof instructions heading appears 2 times/);
 });
 
 test('dupes: the same helper name twice in one agents folder fails (subfolders and TOML included)', () => {

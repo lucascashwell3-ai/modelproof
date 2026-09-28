@@ -10,7 +10,9 @@
 //           text) under <dir>. Uses lstat; never follows a link.
 // compare:  exit 0 iff the tree is identical to the snapshot (bytes, modes, dirs, links); else exit 1
 //           and list each difference. Every --ignore is printed.
-// dupes:    exit 0 iff no file holds more than one modelproof begin marker, no helper name repeats
+// dupes:    exit 0 iff no file holds more than one modelproof begin marker (code fences or not),
+//           every file has as many end markers as begin markers, no file repeats the Modelproof
+//           instructions heading (marked or not), no helper name repeats
 //           within one agents folder, no modelproof helper shares a name with someone else's helper
 //           in the folders the same tool loads, no settings*.json repeats a top-level key, and no
 //           TOML file repeats a table header; else exit 1 and list each.
@@ -62,6 +64,8 @@ export function compare(root, before, ignores = []) {
 
 const SKIP_DIRS = new Set(['node_modules', '.git', '.modelproof']);
 const BEGIN = /^<!-- modelproof:begin\b.*-->$/;
+const END = /^<!-- modelproof:end\b.*-->$/;
+const HEADING = /^#{1,6} Modelproof helpers and hand-off\b/;
 const OWNED = /^(<!-- modelproof:owned v1\b.*-->|# modelproof:owned v1\b.*)$/;
 
 function walkFiles(root, out, skipped) {
@@ -76,14 +80,15 @@ function walkFiles(root, out, skipped) {
   };
   walk(path.resolve(root));
 }
-// Begin markers as whole lines outside ``` / ~~~ fences.
-function beginCount(text) {
-  let fence = null; let n = 0;
+// Begin markers, end markers and instruction headings as whole lines. Code fences do not hide
+// them: this checker must not share a blind spot with the installer.
+function markerCounts(text) {
+  const n = { begin: 0, end: 0, heading: 0 };
   for (const raw of text.split('\n')) {
     const line = raw.replace(/\r$/, '');
-    const f = /^\s{0,3}(`{3,}|~{3,})/.exec(line);
-    if (f) { if (!fence) fence = f[1][0]; else if (f[1][0] === fence) fence = null; continue; }
-    if (!fence && BEGIN.test(line)) n++;
+    if (BEGIN.test(line)) n.begin++;
+    else if (END.test(line)) n.end++;
+    else if (HEADING.test(line)) n.heading++;
   }
   return n;
 }
@@ -139,8 +144,10 @@ export function dupes(roots) {
     const st = fs.statSync(f);
     if (st.size > 1024 * 1024) continue;
     const text = fs.readFileSync(f, 'utf8');
-    const n = beginCount(text);
-    if (n > 1) problems.push(`${rel(f)}: ${n} modelproof begin markers`);
+    const n = markerCounts(text);
+    if (n.begin > 1) problems.push(`${rel(f)}: ${n.begin} modelproof begin markers`);
+    if (n.begin !== n.end) problems.push(`${rel(f)}: ${n.begin} modelproof begin marker(s) but ${n.end} end marker(s)`);
+    if (n.heading > 1) problems.push(`${rel(f)}: the Modelproof instructions heading appears ${n.heading} times`);
     if (/^settings.*\.json$/.test(base)) {
       const r = repeated(jsonTopKeys(text));
       if (r.length) problems.push(`${rel(f)}: repeated top-level key(s) ${r.join(', ')}`);
