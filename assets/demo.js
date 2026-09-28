@@ -1,8 +1,10 @@
 /* The living terminal + installer tabs. One selection drives both: pick a
    way in and the terminal plays that session, abridged. Untouched, it tours
-   all three; the first click ends the tour. Every session is a shortened
-   version of a real dry-run of the skill (2026-08-22) — nothing here claims
-   a number the live data doesn't carry. */
+   both; the first click ends the tour. The install session is an abridged
+   real run of assets/install.mjs on the cc-max5x test setup (2026-09-27);
+   the MCP session uses the live data's own figures. No model is chosen for
+   anyone: each helper's model is the user's own choice, the tool's own
+   documented default (quoted), or the same as the main model. */
 (function () {
   "use strict";
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -11,31 +13,21 @@
     prompt: {
       title: "claude — 96×28",
       lines: [
-        { t: "banner", html: '<b>✻</b> Welcome to <b>Claude Code</b>! <span class="dim">/help for help · cwd: ~/work/reviews</span>' },
-        { t: "you", type: true, html: "im boutta do an overnight bulk — summarize 30k customer reviews into one-line takeaways. what should i use" },
-        { t: "tool", html: 'Modelproof: you\'re summarizing ~30k reviews overnight, Claude is what you have, cheap wins if it holds up. <span class="hi">Right?</span>' },
+        { t: "banner", html: '<b>✻</b> Welcome to <b>Claude Code</b>! <span class="dim">/help for help · cwd: ~/work/app</span>' },
+        { t: "you", html: '<span class="dim">[Pasted text #1 · the Modelproof install prompt]</span>' },
+        { t: "tool", html: 'Modelproof: set which model each helper runs in your Claude Code, for every project. <span class="hi">Right?</span>' },
         { t: "you", type: true, html: "yes" },
-        { t: "tool", html: 'Read(<span class="y">models.json</span> · snapshot 2026-08-21) <span class="dim">· ranked 49 models for bulk</span>' },
-        { t: "sub", html: 'Use <span class="ok">Claude Haiku 4.5</span>, thinking off — <span class="y">$1 / $5</span> per 1M, clears the floor for extraction' },
-        { t: "sub", html: 'Use it well: format rules in the system prompt once (cached) · Batch API for the overnight discount · run 500 first' },
-        { t: "sub", html: 'Outside your kit: <span class="hi">Gemini Flash-Lite</span> at $0.10 / $0.40 — a tenth of the price, thinner docs. Your call.' },
-        { t: "ask", html: 'Nothing to write for a one-off script — use model id <span class="ok">claude-haiku-4-5</span>. Want it as this project\'s default too?<br><span class="opt">❯ 1. Yes, set it</span> &nbsp; 2. No, I\'m set' }
-      ]
-    },
-    cli: {
-      title: "zsh — 96×28",
-      lines: [
-        { t: "sh", type: true, html: "for f in SKILL.md references/…; do curl -fsSL --create-dirs …/modelproof-advisor/$f -o ~/.claude/skills/modelproof-advisor/$f; done" },
-        { t: "out", html: '<span class="ok">✓</span> SKILL.md · data.md · detect-setup.md · consent.md · security.md <span class="dim">— 5 files, nothing piped to a shell</span>' },
-        { t: "sh", type: true, html: "claude" },
-        { t: "banner", html: '<b>✻</b> Welcome to <b>Claude Code</b>! <span class="dim">skill loaded: modelproof-advisor</span>' },
-        { t: "you", type: true, html: "im boutta create a PE presentation for a client, what should I use" },
-        { t: "tool", html: 'Modelproof: a client deck, so quality over price; you\'re in Claude Code, so Claude is what you have. <span class="hi">Right?</span>' },
-        { t: "you", type: true, html: "yes" },
-        { t: "sub", html: 'Use <span class="ok">Claude Opus 4.8</span> — <span class="y">$5 / $25</span> per 1M, the Claude model tagged for writing <span class="dim">(no benchmark tracks deck quality — said plainly)</span>' },
-        { t: "sub", html: 'Use it well: whole brief + sources in one message, let it draft end to end · stable brief first so caching cuts repeat cost' },
-        { t: "sub", html: 'Outside your kit: <span class="hi">GPT-5.6 Terra</span> at $2 / $12, close on quality. A fact, your call.' },
-        { t: "out", html: 'Nothing to change on disk — pick Opus 4.8 for this session with <span class="ok">/model</span>.' }
+        { t: "tool", html: 'Bash(node install.mjs detect) <span class="dim">· Claude Code · 2 helpers with no model set · 1 rule mentions opus</span>' },
+        { t: "ask", html: '3 quick questions. How often do you hit your plan&rsquo;s limits?<br><span class="opt">❯ 1. Often</span> &nbsp; 2. Sometimes &nbsp; 3. Rarely' },
+        { t: "you", type: true, html: "often · coding and agents · keep opus for builds, like my rule says" },
+        { t: "tool", html: 'Bash(node install.mjs plan) <span class="dim">· facts as of 2026-09-27</span>' },
+        { t: "sub", html: 'scout → <span class="ok">haiku</span> · Claude Code docs: &ldquo;For simple subagent tasks, specify model: haiku &hellip;&rdquo;' },
+        { t: "sub", html: 'builder → <span class="ok">opus</span> · your choice · <span class="y">$4 / $20</span> per 1M' },
+        { t: "sub", html: 'reviewer → the same model as your main one' },
+        { t: "sub", html: '5 new files · your CLAUDE.md is not touched' },
+        { t: "ask", html: 'Go?<br><span class="opt">❯ 1. Yes</span> &nbsp; 2. Yes, but no to #4 &nbsp; 3. No' },
+        { t: "tool", html: 'Bash(node install.mjs apply) <span class="ok">✓</span> added <span class="y">agents/modelproof-scout.md</span> · builder · reviewer · explore · <span class="y">rules/modelproof.md</span>' },
+        { t: "out", html: 'Undo any time: <span class="ok">node ~/.modelproof/bin/install.mjs undo fd1d9c01d992</span>' }
       ]
     },
     mcp: {
@@ -44,16 +36,16 @@
         { t: "sh", type: true, html: "claude mcp add modelproof -- node mcp/server.js" },
         { t: "out", html: '<span class="ok">✓</span> modelproof is now a tool in every session' },
         { t: "sh", type: true, html: "claude" },
-        { t: "you", type: true, html: "starting a new agent project this week — what should it run on, budget's mid" },
-        { t: "tool", html: 'modelproof.recommend(task: agentic, budget: value) <span class="dim">· snapshot 2026-08-21</span>' },
-        { t: "sub", html: '<span class="ok">Claude Opus 5</span> at <span class="y">medium</span> effort — the ladder shows medium within ~8 points of max at half the cost per task' },
-        { t: "sub", html: 'Outside your kit: <span class="hi">GPT-5.6 Sol</span> is cheaper per attempt at high effort, lower score. Your call.' },
-        { t: "ask", html: 'Plan: set <span class="y">.claude/settings.json</span> → model: claude-opus-5. Backup first. Go?<br><span class="opt">❯ 1. Yes</span> &nbsp; 2. No' },
-        { t: "tool", html: 'Edit(.claude/settings.json) <span class="dim">· 1 line · backup at ~/.claude/modelproof-backups/2026-08-22/</span> &nbsp; <span class="ok">✓</span> You\'re all set.' }
+        { t: "you", type: true, html: "what do claude opus 5.5 and gpt-6 sol cost, and what do their labs say about them?" },
+        { t: "tool", html: 'modelproof.compare_models(names: [&ldquo;opus 5.5&rdquo;, &ldquo;gpt-6 sol&rdquo;]) <span class="dim">· data as of 2026-09-27</span>' },
+        { t: "sub", html: '<span class="hi">Claude Opus 5.5</span> · <span class="y">$4 / $20</span> per 1M · 0.49% of OpenRouter tokens' },
+        { t: "sub", html: '<span class="hi">GPT-6 Sol</span> · <span class="y">$2 / $10</span> per 1M · 0.37% of OpenRouter tokens' },
+        { t: "sub", html: 'Lab quotes on file: none yet for either <span class="dim">— left blank, not guessed</span>' },
+        { t: "out", html: 'Prices from each lab&rsquo;s own pricing page; usage from OpenRouter (2026-09-25).' }
       ]
     }
   };
-  var ORDER = ["prompt", "cli", "mcp"];
+  var ORDER = ["prompt", "mcp"];
 
   var body = document.getElementById("termBody");
   var title = document.getElementById("termTitle");
@@ -149,13 +141,15 @@
   }
   tabs.forEach(function (t) { t.addEventListener("click", function () { setMethod(t.dataset.m, true); }); });
 
-  // the paste prompt: installs the skill and starts a session. No internal language.
-  var RAW = "https://raw.githubusercontent.com/lucascashwell3-ai/modelproof/main/skills/modelproof-advisor/";
+  // the paste-in prompt: one copy of the text, in assets/install-prompt.txt, shared with the
+  // board and skills/README.md. The textarea keeps its short fallback if the file can't load.
   var promptEl = document.getElementById("promptText");
-  if (promptEl) promptEl.value =
-    "Install the Modelproof advisor and run it. Download these five files into ~/.claude/skills/modelproof-advisor/ " +
-    "(keep the paths): SKILL.md, references/data.md, references/detect-setup.md, references/consent.md, references/security.md " +
-    "from " + RAW + " — read them; don't pipe anything into a shell. Then follow SKILL.md and ask me what I'm about to do.";
+  if (promptEl && window.fetch) {
+    fetch(promptEl.getAttribute("data-src") || "assets/install-prompt.txt", { cache: "no-cache" })
+      .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.text(); })
+      .then(function (text) { if (text.trim()) { promptEl.value = text.trim(); promptEl.classList.add("loaded"); } })
+      .catch(function () { /* keep the fallback line */ });
+  }
   function copyText(text, btn) {
     var done = function () { btn.classList.add("did"); setTimeout(function () { btn.classList.remove("did"); }, 1400); };
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () {});
