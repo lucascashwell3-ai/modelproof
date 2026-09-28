@@ -446,18 +446,6 @@
             "date": "2026-09-27"
           }
         ]
-      },
-      {
-        "subject": "OpenAI",
-        "claims": [
-          {
-            "id": "openai-gpt-6-family-roles",
-            "sentence": "OpenAI's GPT-6 guide assigns gpt-6-astra to its highest capability, gpt-6-sol to strong reasoning on demanding tasks, and gpt-6-luna to efficient, repeatable work at scale.",
-            "quote": "use gpt-6-astra for our highest level of capability, gpt-6-sol for strong reasoning on demanding tasks, or gpt-6-luna for efficient, repeatable work at scale.",
-            "source_url": "https://developers.openai.com/api/docs/guides/latest-model",
-            "date": "2026-09-27"
-          }
-        ]
       }
     ]
   },
@@ -478,8 +466,7 @@
     "codex-subagent-inherits",
     "cursor-subagent-effort",
     "cursor-subagent-inherit-default",
-    "openai-effort-speed-vs-depth",
-    "openai-gpt-6-family-roles"
+    "openai-effort-speed-vs-depth"
   ],
   "notes": [
     "Claude Code reads the project AGENTS.md here, so its lines go in that block and no .claude/rules file is added.",

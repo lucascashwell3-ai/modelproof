@@ -706,7 +706,7 @@ test('preview: facts, files and notes; no ranking words', () => {
   assert.match(cc, /list price \$1 in \/ \$5 out per 1M tokens · 0\.17% of OpenRouter tokens/);
   assert.match(cc, /Also available, not included: modelproof-explore\.md/);
   const codex = renderPreview(build('codex'));
-  assert.match(codex, /OpenAI: "use gpt-6-astra/);
+  assert.ok(!/OpenAI: "use gpt-6-astra for our highest/.test(codex), 'a lab quote with a superlative stays out of the preview');
   assert.doesNotThrow(() => renderPreview(null));
   assert.doesNotThrow(() => renderPreview({ parts: [{}], roles: { codex: {} } }));
 });
@@ -794,4 +794,27 @@ test('LC-04: helper effort comes only from the user\'s own choice, and the previ
     const shown = preview.split('\n').filter((l) => /effort high: your choice/.test(l)).length;
     assert.equal(shown, written.length, `${n}: every effort written into a helper file shows in the preview`);
   }
+});
+
+test('LC-10: preview fact lines skip lab quotes with superlatives and show a neutral one instead', () => {
+  const lab = (id, quote) => ({ id, subject: { kind: 'lab', name: 'OpenAI' }, topic: 'model-per-job', tier: 'lab',
+    sentence: 'OpenAI describes gpt-6-sol.', quote, source_url: 'https://developers.openai.com/api/docs/models/gpt-6-sol', date: '2026-09-27' });
+  const praise = [
+    lab('t-most', 'gpt-6-sol is our most intelligent workhorse model yet.'),
+    lab('t-frontier', 'gpt-6-sol brings frontier-class reasoning to coding.'),
+    lab('t-sota', 'gpt-6-sol is state-of-the-art on agentic coding.'),
+    lab('t-est', 'gpt-6-sol is the smartest model for coding agents.'),
+    lab('t-leading', 'gpt-6-sol is the leading model for coding agents.'),
+  ];
+  const neutral = lab('t-neutral', 'Use gpt-6-sol for coding tasks that need strong reasoning; it is not yet in the free plan and most tasks fit it.');
+  const facts = { ...FACTS, guidance: { ...FACTS.guidance, claims: [...praise, neutral, ...FACTS.guidance.claims] } };
+  const pkg = buildPackage(PROFILES.codex, facts, setupFor('codex'));
+  const sol = pkg.preview_facts.models_you_use.find((m) => m.id === 'gpt-6-sol');
+  assert.equal(sol.claim && sol.claim.id, 't-neutral');
+  const said = pkg.preview_facts.tools_and_labs_say.flatMap((x) => x.claims.map((c) => c.id));
+  for (const c of praise) assert.ok(!said.includes(c.id) && !pkg.facts_used.includes(c.id), c.id);
+  assert.ok(!said.includes('openai-gpt-6-family-roles'), '"our highest level of capability" is a superlative');
+  const text = renderPreview(pkg);
+  assert.ok(!/\b(our most|frontier-class|state-of-the-art|smartest|leading)\b/i.test(text), text);
+  assert.match(text, /Use gpt-6-sol for coding tasks that need strong reasoning/);
 });

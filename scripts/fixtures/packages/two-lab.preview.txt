@@ -20,8 +20,6 @@ What the tools and labs say (their own words)
     https://code.claude.com/docs/en/model-config (2026-09-27)
   Claude Code: "Uses the latest Opus model for complex reasoning tasks"
     https://code.claude.com/docs/en/model-config (2026-09-27)
-  OpenAI: "use gpt-6-astra for our highest level of capability, gpt-6-sol for strong reasoning on demanding tasks, or gpt-6-luna for efficient, repeatable work at scale."
-    https://developers.openai.com/api/docs/guides/latest-model (2026-09-27)
 
 Files (numbered; answer "no to 3" to leave one out)
    1. file   ~/.claude/agents/modelproof-scout.md · 12 lines · the tool obeys it

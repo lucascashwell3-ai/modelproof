@@ -12,11 +12,6 @@ Which model each helper runs
 Models you use
   Claude Sonnet 5: list price $2 in / $10 out per 1M tokens · 1.02% of OpenRouter tokens (2026-09-25)
   GPT-6 Sol: list price $2 in / $10 out per 1M tokens · 0.37% of OpenRouter tokens (2026-09-25)
-    "use gpt-6-astra for our highest level of capability, gpt-6-sol for strong reasoning on demanding tasks, or gpt-6-luna for efficient, repeatable work at scale." https://developers.openai.com/api/docs/guides/latest-model (2026-09-27)
-
-What the tools and labs say (their own words)
-  OpenAI: "use gpt-6-astra for our highest level of capability, gpt-6-sol for strong reasoning on demanding tasks, or gpt-6-luna for efficient, repeatable work at scale."
-    https://developers.openai.com/api/docs/guides/latest-model (2026-09-27)
 
 Files (numbered; answer "no to 3" to leave one out)
    1. file   .cursor/agents/modelproof-scout.md · 12 lines · the tool obeys it

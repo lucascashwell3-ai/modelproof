@@ -183,36 +183,16 @@
           "as_of": "2026-09-25",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         },
-        "claim": {
-          "id": "openai-gpt-6-family-roles",
-          "sentence": "OpenAI's GPT-6 guide assigns gpt-6-astra to its highest capability, gpt-6-sol to strong reasoning on demanding tasks, and gpt-6-luna to efficient, repeatable work at scale.",
-          "quote": "use gpt-6-astra for our highest level of capability, gpt-6-sol for strong reasoning on demanding tasks, or gpt-6-luna for efficient, repeatable work at scale.",
-          "source_url": "https://developers.openai.com/api/docs/guides/latest-model",
-          "date": "2026-09-27"
-        }
+        "claim": null
       }
     ],
-    "tools_and_labs_say": [
-      {
-        "subject": "OpenAI",
-        "claims": [
-          {
-            "id": "openai-gpt-6-family-roles",
-            "sentence": "OpenAI's GPT-6 guide assigns gpt-6-astra to its highest capability, gpt-6-sol to strong reasoning on demanding tasks, and gpt-6-luna to efficient, repeatable work at scale.",
-            "quote": "use gpt-6-astra for our highest level of capability, gpt-6-sol for strong reasoning on demanding tasks, or gpt-6-luna for efficient, repeatable work at scale.",
-            "source_url": "https://developers.openai.com/api/docs/guides/latest-model",
-            "date": "2026-09-27"
-          }
-        ]
-      }
-    ]
+    "tools_and_labs_say": []
   },
   "facts_used": [
     "anthropic-effort-defaults",
     "cursor-subagent-effort",
     "cursor-subagent-inherit-default",
-    "openai-effort-speed-vs-depth",
-    "openai-gpt-6-family-roles"
+    "openai-effort-speed-vs-depth"
   ],
   "notes": [
     "You use models from 2 labs (Anthropic, OpenAI), so helpers run on the lead's model unless you choose one; each lab's own descriptions are listed as facts.",

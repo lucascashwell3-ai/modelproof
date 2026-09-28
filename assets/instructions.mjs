@@ -63,6 +63,20 @@ const PER_TOKEN_VENDORS = ['openrouter', 'amazon bedrock', 'google vertex', 'mic
 const RANKING_WORDS = new RegExp('\\b(best|better|top|winner|pick\\w*|recommend\\w*|suggest\\w*|'
   + 'ver' + 'dict|confi' + 'dence|start(s|ing)? (here|with))\\b', 'i');
 
+// Lab self-praise a preview fact line must not carry (the preview shows facts, never promotion):
+// "our most ...", "...est" superlatives, "yet", frontier-class, state-of-the-art, leading, world's.
+// Plain time words (latest, newest), ordinary -est words (test, request), "most" as a count
+// ("most coding tasks") and "not yet" are not praise.
+const SUPERLATIVE_WORDS = /\b(our|its|their|the) most\b|(?<!\bnot )\byet\b|\b(frontier(-class)?|state[- ]of[- ]the[- ]art|leading|world[\u2019']s)\b/i;
+const NOT_SUPERLATIVE = new Set(['latest', 'newest', 'test', 'request', 'interest', 'suggest', 'digest', 'manifest', 'honest', 'modest',
+  'invest', 'contest', 'protest', 'rest', 'west', 'guest', 'nest', 'quest', 'chest', 'forest', 'earnest', 'harvest', 'arrest',
+  'attest', 'ingest', 'unrest', 'backtest', 'pretest', 'retest', 'fest', 'zest', 'vest', 'crest', 'jest', 'pest', 'lest']);
+function hasSuperlative(text) {
+  const s = String(text || '');
+  if (SUPERLATIVE_WORDS.test(s)) return true;
+  return (s.toLowerCase().match(/\b[a-z]+est\b/g) || []).some((w) => !NOT_SUPERLATIVE.has(w));
+}
+
 const JOB = {
   scout: 'reads and searches',
   builder: 'makes the planned change',
@@ -852,7 +866,7 @@ function previewFacts(F, p, ctx) {
     if (models.length >= 3) break;
     const m = F.byId.get(id);
     if (!m || !canUse(ctx, m)) continue;
-    const c = F.claims.find((x) => x.topic === 'model-per-job' && claimModels(F, x).includes(id) && claimShowable(F, ctx, x, 'quote'));
+    const c = F.claims.find((x) => x.topic === 'model-per-job' && claimModels(F, x).includes(id) && claimShowable(F, ctx, x, 'quote') && !hasSuperlative(x.quote));
     if (c) ctx.used.add(c.id);
     models.push({ id, name: m.name, price: m.price, usage: m.usage, claim: c ? basisRec(c) : null });
   }
@@ -870,7 +884,7 @@ function previewFacts(F, p, ctx) {
   const fits = (c) => { const tags = workTags(c.sentence + ' ' + c.quote); return !p.work.length || !tags.length || tags.some((t) => p.work.includes(t)); };
   const said = [];
   for (const s of subjects) {
-    const ok = s.list.filter((c) => claimShowable(F, ctx, c, 'quote', s.tool));
+    const ok = s.list.filter((c) => claimShowable(F, ctx, c, 'quote', s.tool) && !hasSuperlative(c.quote));
     const shown = [...ok.filter(fits), ...ok.filter((c) => !fits(c))].slice(0, 3).map(basisRec);
     for (const c of shown) ctx.used.add(c.id);
     if (shown.length) said.push({ subject: s.subject, claims: shown });
