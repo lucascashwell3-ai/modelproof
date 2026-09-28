@@ -3917,5 +3917,27 @@
       "https://arxiv.org/abs/2607.05471",
       "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/"
     ]
+  },
+  {
+    "date": "2026-09-27",
+    "model": "KAT-Coder-Pro V2.5",
+    "field": "task_fit_judged.coding",
+    "old": "2 claim(s) as of 2026-09-27",
+    "new": "2 claim(s)",
+    "sources": [
+      "https://arxiv.org/abs/2607.05471",
+      "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/"
+    ]
+  },
+  {
+    "date": "2026-09-27",
+    "model": "KAT-Coder-Pro V2.5",
+    "field": "task_fit_judged.agents",
+    "old": "2 claim(s) as of 2026-09-27",
+    "new": "2 claim(s)",
+    "sources": [
+      "https://arxiv.org/abs/2607.05471",
+      "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/"
+    ]
   }
 ]

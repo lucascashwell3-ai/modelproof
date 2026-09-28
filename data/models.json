@@ -15139,7 +15139,7 @@
               "quote": "ranks second only to the frontier Opus 4.8 on repository-level software engineering"
             },
             {
-              "sentence": "MarkTechPost's write-up of the KAT-Coder-V2.5 technical report (checked 2026-09-27) reports a SWE-Bench Pro score of 65.2 against 69.2 for Opus 4.8, under a unified Claude Code harness.",
+              "sentence": "MarkTechPost's write-up of the KAT-Coder-V2.5 technical report (checked 2026-09-27) says it places second on SWE-Bench Pro (65.2 vs 69.2) and on the internal KAT Code Bench (53.1 vs 57.3).",
               "source_url": "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
               "tier": "reported",
               "date": "2026-09-27",
@@ -15159,7 +15159,7 @@
               "quote": "delivers the best agentic tool-use result on PinchBench"
             },
             {
-              "sentence": "MarkTechPost's write-up of the KAT-Coder-V2.5 technical report (checked 2026-09-27) reports a PinchBench score of 94.9 against 93.5 for Opus 4.8, under a unified Claude Code harness.",
+              "sentence": "MarkTechPost's write-up of the KAT-Coder-V2.5 technical report (checked 2026-09-27) reports a PinchBench score of 94.9 against 93.5 for Opus 4.8.",
               "source_url": "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
               "tier": "reported",
               "date": "2026-09-27",
