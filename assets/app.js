@@ -617,15 +617,13 @@ function renderTable() {
       td.innerHTML = `
         <div class="rm-grid">
           <div>
-            ${claims.length ? `<h4>Sourced quotes</h4>
-            <ul class="claims">${claims.slice(0, 3).map((c) => `<li>${claimHTML(c)}</li>`).join('')}</ul>
-            <h4 style="margin-top:14px">Strengths</h4>` : '<h4>Strengths</h4>'}
-            <ul>${(m.strengths || []).map((s) => `<li>${s}</li>`).join('') || '<li class="na">—</li>'}</ul>
+            <h4>Sourced quotes</h4>
+            ${claims.length
+              ? `<ul class="claims">${claims.slice(0, 3).map((c) => `<li>${claimHTML(c)}</li>`).join('')}</ul>`
+              : '<p class="na" style="font-size:12.5px">No sourced quote on file yet.</p>'}
           </div>
           <div>
-            <h4>Watch out for</h4>
-            <ul>${(m.weaknesses || []).map((s) => `<li>${s}</li>`).join('') || '<li class="na">—</li>'}</ul>
-            <h4 style="margin-top:14px">Coding score: <span style="color:var(--ink)">${num(m.coding_score) ? '—' : m.coding_score}/100</span></h4>
+            <h4>Coding score: <span style="color:var(--ink)">${num(m.coding_score) ? '—' : m.coding_score}/100</span></h4>
             <p style="font-size:12.5px;color:var(--ink-3);margin-top:-4px">Basis: ${m.coding_basis || '—'}</p>
             <h4 style="margin-top:14px">Benchmarks</h4>
             <ul>
