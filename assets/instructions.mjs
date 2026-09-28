@@ -959,11 +959,20 @@ export function buildPackage(profile, facts, setup) {
 
 /* ------------------------------------------------------------------ preview */
 
+// One plan label, no doubled vendor ("Google AI Pro", not "Google Google AI Pro"). The board's
+// plan picker and the preview's answers line both use it.
+function planLabel(row) {
+  if (row.plan.indexOf(row.vendor) === 0) return row.plan;
+  const first = String(row.vendor || '').split(' ')[0];
+  if (first && row.plan.indexOf(first + ' ') === 0) return row.plan;
+  return row.vendor + ' ' + row.plan;
+}
+
 function answersLine(pkg) {
   const p = pkg.profile || {};
   const bits = [p.who === 'org' ? `org${p.org && p.org.name ? ' ' + p.org.name : ''}` : 'person', `${p.scope} scope`];
   bits.push('tools: ' + (arr(p.tools).map((t) => TOOL_LABEL[t]).join(', ') || 'none'));
-  const plans = arr(p.plans).map((x) => [x.vendor, x.plan].filter(Boolean).join(' '));
+  const plans = arr(p.plans).map((x) => (x.vendor && x.plan ? planLabel(x) : [x.vendor, x.plan].filter(Boolean).join(' ')));
   if (p.api) plans.push('API');
   bits.push('plans: ' + (plans.join(', ') || 'none'));
   bits.push('limits: ' + (p.limits || 'not given'));
@@ -1076,14 +1085,8 @@ export function profileFromBoard(state, data) {
   const blocks = arr(org.blocks);
   const isOrg = s.mode === 'org' || (s.mode !== 'personal' && divisions.length > 0);
 
-  const labelOf = (row) => {
-    if (row.plan.indexOf(row.vendor) === 0) return row.plan;
-    const first = String(row.vendor || '').split(' ')[0];
-    if (first && row.plan.indexOf(first + ' ') === 0) return row.plan;
-    return row.vendor + ' ' + row.plan;
-  };
   const splitPlan = (label) => {
-    const row = planRows.find((r) => isObj(r) && typeof r.plan === 'string' && labelOf(r) === label);
+    const row = planRows.find((r) => isObj(r) && typeof r.plan === 'string' && planLabel(r) === label);
     if (row) return { vendor: row.vendor, plan: row.plan };
     const words = String(label || '').split(' ');
     return { vendor: words[0] || '', plan: words.slice(1).join(' ') };
