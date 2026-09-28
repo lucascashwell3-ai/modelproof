@@ -18,10 +18,14 @@ Live at **[lucascashwell3-ai.github.io/modelproof](https://lucascashwell3-ai.git
 
 ## Get it
 
-- **Paste a prompt** — one short prompt into Claude Code, Cursor, or any agentic AI. It asks a few
-  quick questions about your setup, shows the plan, and installs on your yes.
-- **The skill** — [`skills/modelproof-advisor/`](skills/modelproof-advisor/) runs the same flow.
-  Copy the folder into your skills folder to keep it.
+- **Paste a prompt** — the prompt in [`assets/install-prompt.txt`](assets/install-prompt.txt) (also
+  on the home page) goes into Claude Code, Codex or Cursor. It reads your setup, asks a few quick
+  questions, shows every file before it writes, installs on your yes, and prints one undo line.
+- **The skill** — [`skills/modelproof-advisor/`](skills/modelproof-advisor/) runs the same flow. The
+  prompt runs it once without installing it; to keep it, copy the folder into `~/.claude/skills/`
+  (or your tool's skills folder).
+- **The board** — [`board.html`](board.html) builds the same package from a board you lay out, under
+  Install package.
 - **MCP server** — [`mcp/`](mcp/) serves the same facts (prices, releases, sourced quotes) over the
   Model Context Protocol.
 

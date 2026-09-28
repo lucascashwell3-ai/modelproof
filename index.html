@@ -3,24 +3,24 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Modelproof — which AI model should you actually use?</title>
-  <meta name="description" content="A no-nonsense decision tool for AI models. Tell it your goal and budget; it tells you what to use — with sourced pricing, real usage, and what changed this week." />
+  <title>Modelproof — AI model facts, and a setup that installs into yours</title>
+  <meta name="description" content="Always-current AI model facts — prices, usage, releases and each lab's own words, sourced and dated — plus an instruction package that installs into your Claude Code, Codex or Cursor setup. You choose the models; nothing is ranked." />
   <meta name="theme-color" content="#0a0b0f" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%230a0b0f'/%3E%3Ccircle cx='12' cy='12' r='9.2' fill='none' stroke='%23f2c14e' stroke-opacity='0.5' stroke-width='1.4'/%3E%3Cpath d='M7.6 12.4l3 3 5.8-6.6' fill='none' stroke='%23f2c14e' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
   <!-- social preview -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Modelproof — which AI model should you actually use?" />
-  <meta property="og:description" content="A calm, opinionated decision tool for AI models. Tell it your goal, or the lab you already use, and get a straight answer — sourced pricing, real usage, and what changed lately." />
+  <meta property="og:title" content="Modelproof — AI model facts, and a setup that installs into yours" />
+  <meta property="og:description" content="Sourced, dated model facts plus an instruction package for your own setup. It shows every file before it writes and undoes in one line. Nothing is ranked." />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Modelproof — which AI model should you actually use?" />
-  <meta name="twitter:description" content="A calm decision tool for AI models. Your goal or your lab → a straight answer, not a leaderboard." />
+  <meta name="twitter:title" content="Modelproof — AI model facts, and a setup that installs into yours" />
+  <meta name="twitter:description" content="Sourced model facts and a setup that installs into yours. You choose; nothing is ranked." />
   <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
   <link href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&f[]=cabinet-grotesk@700,800&f[]=jetbrains-mono@400,500&display=swap" rel="stylesheet" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- Fraunces cut shared with the sibling sites so the wordmarks match -->
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=mk27" />
+  <link rel="stylesheet" href="assets/styles.css?v=mk28" />
 </head>
 <body>
 
@@ -43,27 +43,23 @@
     <section class="hero" id="hero">
       <div class="hero__split" id="install">
         <div class="hero__panel">
-          <h1 class="hero__h1">Know which AI model to use <em>before</em> you start.</h1>
-          <p class="hero__sub">Say what you&rsquo;re about to do &mdash; an overnight bulk job, a client deck, a new
-          project. Modelproof checks what you already pay for, the live prices and scores, and names one model
-          and how to use it. Neutral, cost-first, no leaderboard.</p>
+          <h1 class="hero__h1">Current model facts, and a setup that installs <em>into yours</em>.</h1>
+          <p class="hero__sub">Prices, usage and each lab&rsquo;s own words, sourced and dated. One prompt sets which
+          model each helper runs in Claude Code, Codex or Cursor: it reads your setup, asks a few quick questions,
+          shows every file before it writes, and undoes in one line. You choose the models &mdash; nothing is ranked.</p>
 
           <div class="installer">
             <div class="inst-tabs" role="tablist" aria-label="Ways to get Modelproof">
               <button class="inst-tab" role="tab" aria-selected="true" data-m="prompt" id="instTab-prompt" aria-controls="instPane-prompt">Paste a prompt</button>
-              <button class="inst-tab" role="tab" aria-selected="false" data-m="cli" id="instTab-cli" aria-controls="instPane-cli">Install the skill</button>
               <button class="inst-tab" role="tab" aria-selected="false" data-m="mcp" id="instTab-mcp" aria-controls="instPane-mcp">MCP server</button>
             </div>
             <div class="inst-pane on" id="instPane-prompt" role="tabpanel" data-pane="prompt" aria-labelledby="instTab-prompt">
-              <p>Paste one short prompt into Claude Code, Cursor, or any agentic AI &mdash; it installs the advisor and asks what you&rsquo;re about to do.</p>
-              <div class="cmdwrap"><textarea id="promptText" readonly rows="3" aria-label="Advisor prompt" class="inst-prompt"></textarea><button class="copy" id="copyPrompt" type="button" aria-label="Copy prompt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>
-            </div>
-            <div class="inst-pane" id="instPane-cli" role="tabpanel" data-pane="cli" aria-labelledby="instTab-cli" hidden>
-              <p>For Claude Code. Downloads five plain-text files you can read &mdash; nothing is piped into a shell, and it never changes a setting without showing you the plan and getting your yes.</p>
-              <div class="cmdwrap"><div class="cmdbox inst-cmd">for f in SKILL.md references/data.md references/detect-setup.md references/consent.md references/security.md; do curl -fsSL --create-dirs https://raw.githubusercontent.com/lucascashwell3-ai/modelproof/main/skills/modelproof-advisor/$f -o ~/.claude/skills/modelproof-advisor/$f; done</div><button class="copy" type="button" aria-label="Copy" data-copy="for f in SKILL.md references/data.md references/detect-setup.md references/consent.md references/security.md; do curl -fsSL --create-dirs https://raw.githubusercontent.com/lucascashwell3-ai/modelproof/main/skills/modelproof-advisor/$f -o ~/.claude/skills/modelproof-advisor/$f; done"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>
+              <p>Paste into Claude Code, Codex or Cursor. It adds files next to yours and never overwrites them.</p>
+              <div class="cmdwrap"><textarea id="promptText" readonly rows="3" aria-label="Install prompt" class="inst-prompt" data-src="assets/install-prompt.txt">The install prompt didn't load. Copy it from skills/README.md: https://github.com/lucascashwell3-ai/modelproof/blob/main/skills/README.md</textarea><button class="copy" id="copyPrompt" type="button" aria-label="Copy prompt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>
+              <p class="inst-keep">To keep the skill, copy <code>skills/modelproof-advisor</code> into <code>~/.claude/skills/</code>. Or build the package on the <a href="board.html#install">board&rsquo;s Install package</a>.</p>
             </div>
             <div class="inst-pane" id="instPane-mcp" role="tabpanel" data-pane="mcp" aria-labelledby="instTab-mcp" hidden>
-              <p>For Cursor, Claude Desktop, and any MCP-capable agent &mdash; the live model data as read-only tools your agent can query mid-task.</p>
+              <p>For Cursor, Claude Desktop and any MCP host &mdash; the same live facts as read-only tools your agent can look up mid-task.</p>
               <div class="cmdwrap"><div class="cmdbox inst-cmd">git clone https://github.com/lucascashwell3-ai/modelproof && cd modelproof/mcp && npm install && claude mcp add modelproof -- node $(pwd)/server.js</div><button class="copy" type="button" aria-label="Copy" data-copy="git clone https://github.com/lucascashwell3-ai/modelproof && cd modelproof/mcp && npm install && claude mcp add modelproof -- node $(pwd)/server.js"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div>
             </div>
             <div class="inst-foot">
@@ -71,7 +67,7 @@
               <a href="https://github.com/lucascashwell3-ai/modelproof/blob/main/mcp/README.md" target="_blank" rel="noopener">MCP readme ↗</a>
             </div>
           </div>
-          <p class="hero__assure">✓ Every price and score here is sourced and dated. Nothing is guessed &mdash; unknowns stay blank.</p>
+          <p class="hero__assure">✓ Every price, score and quote is sourced and dated. Unknowns stay blank.</p>
         </div>
 
         <div class="term-col">
@@ -79,9 +75,9 @@
             <div class="term-bar">
               <span class="tdot"></span><span class="tdot"></span><span class="tdot"></span>
               <span class="term-title" id="termTitle">claude — 96×28</span>
-              <span class="term-dots" id="termDots" aria-hidden="true"><span class="mdot on"></span><span class="mdot"></span><span class="mdot"></span></span>
+              <span class="term-dots" id="termDots" aria-hidden="true"><span class="mdot on"></span><span class="mdot"></span></span>
             </div>
-            <div class="term-body" id="termBody" aria-label="Abridged demo of the advisor working"></div>
+            <div class="term-body" id="termBody" aria-label="Abridged demo of an install"></div>
           </div>
         </div>
       </div>
@@ -97,7 +93,7 @@
       <div class="panel__head">
         <div>
           <h2 class="panel__title"><span class="panel__no">01</span>Compare, side by side</h2>
-          <p class="panel__desc">Pick up to <em>three</em> models. Coding score is 0–100 — SWE-bench Verified where published, otherwise a sourced estimate (marked <em>est</em>); the dot + label show confidence. <span class="dim">"—" means not publicly sourced. We don't guess.</span></p>
+          <p class="panel__desc">Choose up to <em>three</em> models. Coding score is 0–100 — SWE-bench Verified where published, otherwise a sourced estimate (marked <em>est</em>). <span class="dim">"—" means not publicly sourced. We don't guess.</span></p>
         </div>
       </div>
       <div class="cmp-picker" id="cmpPicker" aria-label="Choose models to compare"></div>
@@ -112,9 +108,8 @@
           <h2 class="panel__title"><span class="panel__no">02</span>The model map</h2>
           <p class="panel__desc">
             Every model placed by <em>what it costs</em> (→) and <em>how capable it is</em> (↑).
-            The glow in the top-left is the <em>value zone</em> — the cheaper-and-stronger corner every model wants to be in.
-            Gold dots are smart buys: nothing is both cheaper <em>and</em> better. Grey dots are beaten on both.
-            <span class="dim">Ranked on coding; hover any dot for the numbers.</span>
+            Gold dots: no other model scores higher for less. Grey dots: another model does.
+            <span class="dim">Coding score on the up axis; hover any dot for the numbers.</span>
           </p>
         </div>
         <div class="legend" id="mapLegend"></div>
@@ -130,7 +125,7 @@
           <p class="panel__desc">
             The newest models let you turn a dial — <em>effort</em> — that trades money for accuracy on
             every request. Each line is one model; each dot is one setting of that dial, from
-            <em>low</em> to <em>max</em>. Flat line = you're paying more for nothing.
+            <em>low</em> to <em>max</em>. A flat line means more cost, same score.
             <span class="dim">Click a name to isolate it; hover any dot for the step-by-step cost.</span>
           </p>
         </div>
@@ -166,7 +161,7 @@
           </svg>
           <span>Model<b>proof</b></span>
         </div>
-        <p class="foot__note">A decision tool, not a leaderboard. Built by Lucas Cashwell. Sibling project: <strong>DATproof</strong>.</p>
+        <p class="foot__note">Sourced model facts and an installable setup. Nothing is ranked. Built by Lucas Cashwell. Sibling project: <strong>DATproof</strong>.</p>
       </div>
       <div class="foot__col">
         <h3>How it's sourced</h3>
@@ -177,8 +172,8 @@
         <h3>Freshness</h3>
         <p>
           Data snapshot: <strong id="footAsof">—</strong>.
-          Numbers are pulled from official pricing pages and public benchmarks, with a confidence
-          flag on every model. A "—" means the figure wasn't publicly sourced (we don't guess).
+          Numbers come from official pricing pages and public benchmarks, each with its source.
+          A "—" means the figure wasn't publicly sourced (we don't guess).
           Refresh instructions live in <code>scripts/refresh.md</code>.
         </p>
       </div>
@@ -202,7 +197,7 @@
 
   <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
 
-  <script src="assets/app.js?v=mk35"></script>
-  <script src="assets/demo.js"></script>
+  <script src="assets/app.js?v=mk36"></script>
+  <script src="assets/demo.js?v=mk36"></script>
 </body>
 </html>

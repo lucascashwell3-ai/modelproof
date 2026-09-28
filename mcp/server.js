@@ -44,6 +44,8 @@ function sourcedClaims(m) {
   return [...byQuote.values()];
 }
 
+// Facts only: the fields below are the whole list. The editorial prose in models.json (ratings,
+// strengths, weaknesses, usage tips, task copy) is never passed on.
 const brief = (m) => ({
   name: m.name, vendor: m.vendor,
   status: m.status || null,
@@ -53,14 +55,13 @@ const brief = (m) => ({
   price_input_per_1m: num(m.price_input) ? null : m.price_input,
   price_output_per_1m: num(m.price_output) ? null : m.price_output,
   context_window: m.context_window ?? null,
-  use_well: m.use_well || [],   // practical "get the most out of it" tips (sourced, plain English)
   sourced_claims: sourcedClaims(m),
 });
 
 // ---- tools ----
 const TOOLS = [
   { name: 'compare_models', description: 'Compare specific models side by side: prices, context, scores, and what the labs and reporters say about each (quote + link + date). Sourced facts only.', inputSchema: { type: 'object', properties: { names: { type: 'array', items: { type: 'string' } } }, required: ['names'] } },
-  { name: 'whats_new', description: 'The AI-model releases worth knowing about lately, newest first.', inputSchema: { type: 'object', properties: { limit: { type: 'number' } } } },
+  { name: 'whats_new', description: 'Recent AI-model releases, newest first, each with its source.', inputSchema: { type: 'object', properties: { limit: { type: 'number' } } } },
   { name: 'list_models', description: 'List all models with key sourced facts.', inputSchema: { type: 'object', properties: {} } },
 ];
 
