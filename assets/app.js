@@ -63,7 +63,7 @@ const isEst = (m) => num(m.benchmarks?.swe_bench);
 function fmtCoding(m, { unit = true } = {}) {
   if (num(m.coding_score)) return '<span class="na">—</span>';
   return m.coding_score + (unit ? '<span class="unit">/100</span>' : '') +
-    (isEst(m) ? `<sup class="est" title="estimate — SWE-bench Verified not published. Basis: ${esc(m.coding_basis || 'sourced signals')}">est</sup>` : '');
+    (isEst(m) ? '<sup class="est" title="estimate — SWE-bench Verified not published">est</sup>' : '');
 }
 function fmtPriceRange(m) {
   if (num(m.price_input) && num(m.price_output)) return '<span class="na">—</span>';
@@ -624,7 +624,7 @@ function renderTable() {
           </div>
           <div>
             <h4>Coding score: <span style="color:var(--ink)">${num(m.coding_score) ? '—' : m.coding_score}/100</span></h4>
-            <p style="font-size:12.5px;color:var(--ink-3);margin-top:-4px">Basis: ${m.coding_basis || '—'}</p>
+            <p style="font-size:12.5px;color:var(--ink-3);margin-top:-4px">Basis: ${sourceLinks(m)}</p>
             <h4 style="margin-top:14px">Benchmarks</h4>
             <ul>
               <li>SWE-bench Verified: ${fmtScore(m.benchmarks?.swe_bench)}</li>
@@ -632,7 +632,7 @@ function renderTable() {
               <li>AIME (math): ${fmtScore(m.benchmarks?.aime)}</li>
             </ul>
             <h4 style="margin-top:14px">Sources</h4>
-            <div class="srcs">${(m.sources || []).slice(0, 3).map((u) => `<a href="${u}" target="_blank" rel="noopener">${shortUrl(u)}</a>`).join(' · ') || '<span class="na">no public source recorded</span>'}</div>
+            <div class="srcs">${sourceLinks(m)}</div>
           </div>
         </div>`;
       mr.appendChild(td);
@@ -663,6 +663,11 @@ function renderTable() {
   }
 }
 
+// The model's own source links. Shown instead of free-text basis prose, which can carry
+// third-party ranking wording.
+function sourceLinks(m) {
+  return (m.sources || []).slice(0, 3).map((u) => `<a href="${u}" target="_blank" rel="noopener">${shortUrl(u)}</a>`).join(' · ') || '<span class="na">no public source recorded</span>';
+}
 function shortUrl(u) { try { return new URL(u).hostname.replace('www.', ''); } catch { return u.slice(0, 28); } }
 
 // ---------- who's using what ----------
