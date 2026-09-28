@@ -26,6 +26,7 @@
     "roles": {},
     "effort_cap": null,
     "set_default_model": false,
+    "explore_override": false,
     "org": null
   },
   "parts": [
@@ -85,6 +86,7 @@
       "lines": 34
     }
   ],
+  "available": [],
   "roles": {
     "claude-code": {
       "lead": {

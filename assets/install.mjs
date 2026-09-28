@@ -1098,6 +1098,14 @@ export function applyPlan(plan, { expect, skip = [] }) {
   if (actual !== plan.hash || expect !== plan.hash) throw new Fail(EXIT.DRIFT, `this plan is not the one previewed (hash ${actual}, expected ${expect}). Run plan again and review it.`);
   const ctx = ctxFromPlan(plan);
   if (ctx.realHome !== plan.real_home || (plan.project && ctx.realProject !== plan.real_project)) throw new Fail(EXIT.DRIFT, 'the home or project folder now resolves somewhere else. Run plan again.');
+  // Every package part is a numbered item and every non-remove item is a package part: apply
+  // writes only what the preview listed, never a part that sits in the package without an item.
+  const parts = plan.package && Array.isArray(plan.package.parts) ? plan.package.parts : [];
+  parts.forEach((p, i) => {
+    const it = plan.items.find((x) => x.n === i + 1);
+    if (!it || it.part_id !== p.id) throw new Fail(EXIT.USAGE, `plan items and package parts do not match at item ${i + 1}. Run plan again.`);
+  });
+  for (const it of plan.items) if (!['remove', 'conflict'].includes(it.action) && it.n > parts.length) throw new Fail(EXIT.USAGE, `plan item ${it.n} has no package part. Run plan again.`);
   const state = plan.state_dir;
   const skipSet = new Set(skip);
   const open = plan.items.filter((x) => x.action === 'conflict' && !skipSet.has(x.n));

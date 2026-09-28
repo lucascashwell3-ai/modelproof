@@ -42,6 +42,7 @@
     "roles": {},
     "effort_cap": "max",
     "set_default_model": false,
+    "explore_override": false,
     "org": {
       "name": "Acme",
       "divisions": [
@@ -224,6 +225,7 @@
       "lines": 44
     }
   ],
+  "available": [],
   "roles": {
     "claude-code": {
       "lead": {

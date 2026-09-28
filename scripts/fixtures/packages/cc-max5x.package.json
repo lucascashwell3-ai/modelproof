@@ -31,6 +31,7 @@
     },
     "effort_cap": null,
     "set_default_model": false,
+    "explore_override": false,
     "org": null
   },
   "parts": [
@@ -74,29 +75,6 @@
       "lines": 11
     },
     {
-      "id": "claude-code:agent:explore",
-      "tool": "claude-code",
-      "kind": "owned-file",
-      "enforced": true,
-      "optional": true,
-      "target": {
-        "scope": "user",
-        "path": "~/.claude/agents/modelproof-explore.md"
-      },
-      "content": "---\nname: Explore\ndescription: Fast read-only search of the codebase for files, symbols and answers.\nmodel: haiku\ndisallowedTools: Write, Edit, NotebookEdit\n---\n<!-- modelproof:owned v1 -->\nYou explore the codebase and report back; you do not edit files.\n- Search first, then read only the line ranges you need.\n- Answer briefly, with file:line for each fact.\n",
-      "why": "Optional: replaces the built-in Explore helper's model with haiku (since v2.1.198 the built-in follows the lead).",
-      "basis": [
-        {
-          "id": "cc-explore-override-haiku",
-          "sentence": "A user or project subagent named Explore with model: haiku keeps exploration on Haiku.",
-          "quote": "define one with model: haiku to keep exploration on a lower-cost model",
-          "source_url": "https://code.claude.com/docs/en/sub-agents",
-          "date": "2026-09-27"
-        }
-      ],
-      "lines": 10
-    },
-    {
       "id": "claude-code:rules",
       "tool": "claude-code",
       "readers": [
@@ -111,6 +89,14 @@
       "content": "<!-- modelproof:owned v1 -->\n# Modelproof helpers and hand-off (facts as of 2026-09-27)\nLead: the model you choose in the tool. Helpers marked inherit run on it.\n\n## Helpers\n- Call these helpers by name and pass no model: a model given per call overrides the file. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- modelproof-scout (reads and searches) → haiku (Claude Haiku 4.5)\n  Source: Claude Code docs, https://code.claude.com/docs/en/costs (2026-09-27)\n- modelproof-builder (makes the planned change) → opus (Claude Opus 5.5)\n  Source: your choice (list price $4 in / $20 out per 1M tokens, as of 2026-09-26)\n- modelproof-reviewer (reviews the diff cold) → inherit: runs on the lead's model\n  Source: Claude Code docs, https://code.claude.com/docs/en/model-config (2026-09-27)\n\n## How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n- Send verbose work (test runs, logs) to a helper so only a summary comes back. Source: Claude Code docs, https://code.claude.com/docs/en/costs (2026-09-27)\n\n## Context\n- Search before reading; read line ranges, not whole big files.\n- Hand long reading to modelproof-scout and take back a short summary.\n- Each Claude Code subagent runs in its own context window with its own system prompt, tools and permissions. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n\n## Usage\n- Subagent requests count toward the same usage limits as the main Claude Code conversation. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- Anthropic reports that in its data agents used about 4 times the tokens of chat, and multi-agent systems about 15 times. Source: Anthropic docs, https://www.anthropic.com/engineering/multi-agent-research-system (2026-09-27)\n- Anthropic's cost guide reports that, on work one model could handle alone, the same model at lower effort cost less than an orchestrator setup in every measured case. Source: Anthropic docs, https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence.md (2026-09-27)\n\n## Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- An effort field in a subagent file overrides the session effort level while that subagent runs. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-09-27)\n- Effort levels per model: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
       "why": "Claude Code loads every file in rules/ each session; your CLAUDE.md is not touched.",
       "lines": 35
+    }
+  ],
+  "available": [
+    {
+      "id": "claude-code:agent:explore",
+      "path": "~/.claude/agents/modelproof-explore.md",
+      "what": "Claude Code's built-in Explore helper on haiku",
+      "add": "\"explore_override\": true"
     }
   ],
   "roles": {
@@ -259,7 +245,6 @@
     "cc-alias-sonnet",
     "cc-costs-haiku-subagent",
     "cc-delegate-verbose",
-    "cc-explore-override-haiku",
     "cc-inherit-follows-switch",
     "cc-sonnet-vs-opus-costs",
     "cc-subagent-effort",

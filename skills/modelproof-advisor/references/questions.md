@@ -31,6 +31,10 @@ the lead's model.
 
 - "Cap effort at medium" → `"effort_cap": "medium"` (`low`, `medium`, `high`, `xhigh`, `max`).
 - "Also make X my default model" → `"set_default_model": true` and `"roles": {"lead": "X"}`.
+- Claude Code, and they hit limits **often** (question 2): one follow-up, "Also put Claude
+  Code's built-in Explore helper on haiku? It adds one more helper file." Yes →
+  `"explore_override": true`. Never ask it otherwise, never set it without their yes: without
+  it the plan leaves that file out and lists it under "Also available, not included".
 - A whole team or company → `"who": "org"` with `org.divisions`; the board at `BASE` +
   `board.html` builds that profile faster than questions. Offer it once.
 

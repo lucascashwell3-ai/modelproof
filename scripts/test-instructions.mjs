@@ -424,17 +424,35 @@ test('Claude Code agent files: frontmatter, owned tag right after it, effort onl
   assert.match(capped.parts.find((p) => p.id === 'claude-code:agent:reviewer').content, /^effort: medium$/m);
 });
 
-test('optional Explore helper: offered only when limits=often, on haiku, and never over your own Explore', () => {
+test('optional Explore helper: opt-in only (explore_override), on haiku, never over your own Explore', () => {
+  // Default: not in the package, even for someone who hits limits often; listed as available.
   const pkg = build('cc-max5x');
-  const ex = pkg.parts.find((p) => p.id === 'claude-code:agent:explore');
+  assert.ok(!pkg.parts.some((p) => p.id === 'claude-code:agent:explore'));
+  assert.ok(!pkg.facts_used.includes('cc-explore-override-haiku'));
+  assert.deepEqual(pkg.available.map((a) => a.id), ['claude-code:agent:explore']);
+  assert.match(renderPreview(pkg), /Also available, not included: modelproof-explore\.md, .+"explore_override": true/);
+  // Opted in: in the package, marked optional.
+  const on = buildPackage({ ...PROFILES['cc-max5x'], explore_override: true }, FACTS);
+  const ex = on.parts.find((p) => p.id === 'claude-code:agent:explore');
   assert.ok(ex && ex.optional === true);
   assert.match(ex.content, /^name: Explore$/m);
   assert.match(ex.content, /^model: haiku$/m);
-  assert.ok(pkg.facts_used.includes('cc-explore-override-haiku'));
-  assert.ok(!build('empty').parts.some((p) => p.id === 'claude-code:agent:explore'));
-  const mine = buildPackage(PROFILES['cc-max5x'], FACTS, { agents: [{ tool: 'claude-code', scope: 'user', name: 'Explore' }] });
+  assert.ok(on.facts_used.includes('cc-explore-override-haiku'));
+  assert.deepEqual(on.available, []);
+  assert.doesNotMatch(renderPreview(on), /Also available/);
+  // An explicit opt-in counts whatever the limits answer; with no opt-in and calm limits, nothing.
+  assert.ok(buildPackage({ ...PROFILES.empty, explore_override: true }, FACTS).parts.some((p) => p.id === 'claude-code:agent:explore'));
+  const calm = build('empty');
+  assert.ok(!calm.parts.some((p) => p.id === 'claude-code:agent:explore'));
+  assert.deepEqual(calm.available, []);
+  // Never over your own Explore, never when haiku is ruled out; both say why.
+  const mine = buildPackage({ ...PROFILES['cc-max5x'], explore_override: true }, FACTS, { agents: [{ tool: 'claude-code', scope: 'user', name: 'Explore' }] });
   assert.ok(!mine.parts.some((p) => p.id === 'claude-code:agent:explore'));
-  assert.ok(!buildPackage({ ...PROFILES['cc-max5x'], never: ['claude-haiku-4-5'] }, FACTS).parts.some((p) => p.id === 'claude-code:agent:explore'));
+  assert.ok(mine.notes.some((x) => x.includes('your own Explore helper')));
+  const noHaiku = buildPackage({ ...PROFILES['cc-max5x'], explore_override: true, never: ['claude-haiku-4-5'] }, FACTS);
+  assert.ok(!noHaiku.parts.some((p) => p.id === 'claude-code:agent:explore'));
+  assert.ok(noHaiku.notes.some((x) => x.includes('Explore helper you asked for is left out')));
+  assert.equal(normalizeProfile({ explore_override: 'yes' }, FACTS).profile.explore_override, false);
 });
 
 test('settings keys: only on opt-in, only absent keys, never a user-scope effort key that may not apply', () => {
@@ -487,6 +505,7 @@ test('changing each profile field changes the output bytes (parts, roles, facts 
     roles: [base, { ...base, roles: { lead: 'claude-opus-5-5', builder: 'claude-sonnet-5' } }],
     effort_cap: [base, { ...base, effort_cap: 'high' }],
     set_default_model: [base, { ...base, set_default_model: true }],
+    explore_override: [base, { ...base, explore_override: true }],
     org: [orgBase, { ...orgBase, org: { name: 'Acme', divisions: [{ name: 'Eng', people: 5, plans: [{ vendor: 'Anthropic', plan: 'Pro' }], tools: ['claude-code'] }] } }],
   };
   const fields = Object.keys(normalizeProfile(base, FACTS).profile).filter((k) => k !== 'schema');
@@ -582,7 +601,7 @@ test('preview: facts, files and notes; no ranking words', () => {
   const cc = renderPreview(build('cc-max5x'));
   assert.match(cc, /"For simple subagent tasks, specify model: haiku in your subagent configuration"/);
   assert.match(cc, /list price \$1 in \/ \$5 out per 1M tokens · 0\.17% of OpenRouter tokens/);
-  assert.match(cc, /optional/);
+  assert.match(cc, /Also available, not included: modelproof-explore\.md/);
   const codex = renderPreview(build('codex'));
   assert.match(codex, /OpenAI: "use gpt-6-astra/);
   assert.doesNotThrow(() => renderPreview(null));

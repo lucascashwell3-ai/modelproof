@@ -34,10 +34,9 @@ Files (numbered; answer "no to 3" to leave one out)
       Claude Code runs this helper on opus, the model named in the file.
    3. file   ~/.claude/agents/modelproof-reviewer.md · 11 lines · the tool obeys it
       Claude Code runs this helper on the lead's model (model: inherit).
-   4. file   ~/.claude/agents/modelproof-explore.md · 10 lines · the tool obeys it, optional
-      Optional: replaces the built-in Explore helper's model with haiku (since v2.1.198 the built-in follows the lead).
-   5. file   ~/.claude/rules/modelproof.md · 35 lines · text
+   4. file   ~/.claude/rules/modelproof.md · 35 lines · text
       Claude Code loads every file in rules/ each session; your CLAUDE.md is not touched.
+  Also available, not included: modelproof-explore.md, Claude Code's built-in Explore helper on haiku. Say "add it" to include it (profile "explore_override": true).
 
 Notes
   - Start a new session so each tool loads the new helper and rule files.

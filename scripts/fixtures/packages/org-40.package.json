@@ -39,6 +39,7 @@
     "roles": {},
     "effort_cap": null,
     "set_default_model": false,
+    "explore_override": false,
     "org": {
       "name": "Northwind Labs",
       "divisions": [
@@ -227,6 +228,7 @@
       "lines": 46
     }
   ],
+  "available": [],
   "roles": {
     "claude-code": {
       "lead": {

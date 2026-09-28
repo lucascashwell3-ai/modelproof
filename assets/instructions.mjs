@@ -423,7 +423,8 @@ export function normalizeProfile(input, facts) {
 
   const profile = {
     schema: PROFILE_SCHEMA, who, tools, scope, plans, api, limits, work, like, never, roles,
-    effort_cap: effortCap, set_default_model: src.set_default_model === true, org,
+    effort_cap: effortCap, set_default_model: src.set_default_model === true,
+    explore_override: src.explore_override === true, org,
   };
   return { profile, problems };
 }
@@ -804,6 +805,7 @@ export function buildPackage(profile, facts, setup) {
   const parts = [];
   const textParts = [];
   const notes = [];
+  const available = [];
   const scope = p.scope;
   const user = scope === 'user';
 
@@ -829,21 +831,28 @@ export function buildPackage(profile, facts, setup) {
           why: ref === 'inherit' ? 'Claude Code runs this helper on the lead\'s model (model: inherit).' : `Claude Code runs this helper on ${ref}, the model named in the file.`,
         });
       }
+      // The Explore override is opt-in: it is in the package only when the profile says
+      // explore_override: true. Otherwise, for someone who hits limits often, the preview lists
+      // it under "Also available, not included".
       const haiku = F.refs.find((x) => x.tool === 'claude-code' && x.ref === 'haiku');
       const exploreClaim = F.claimById.get('cc-explore-override-haiku');
-      if (p.limits === 'often' && !ctx.multiLab && haiku && exploreClaim && canUse(ctx, F.byId.get(haiku.model_id))) {
-        if (setupHasAgent('claude-code', 'Explore')) {
-          notes.push('You already have your own Explore helper, so the optional haiku Explore is left out.');
-        } else {
-          ctx.used.add(exploreClaim.id);
-          parts.push({
-            id: 'claude-code:agent:explore', tool, kind: 'owned-file', enforced: true, optional: true,
-            target: { scope, path: `${dir}/agents/modelproof-explore.md` },
-            content: ccAgent('Explore', 'Fast read-only search of the codebase for files, symbols and answers.', 'haiku', null, EXPLORE_BODY, ['disallowedTools: Write, Edit, NotebookEdit']),
-            why: 'Optional: replaces the built-in Explore helper\'s model with haiku (since v2.1.198 the built-in follows the lead).',
-            basis: [basisRec(exploreClaim)],
-          });
-        }
+      const exploreFits = !ctx.multiLab && !!haiku && !!exploreClaim && canUse(ctx, F.byId.get(haiku.model_id));
+      const explorePath = `${dir}/agents/modelproof-explore.md`;
+      if (exploreFits && setupHasAgent('claude-code', 'Explore')) {
+        if (p.explore_override) notes.push('You already have your own Explore helper, so the haiku Explore is left out.');
+      } else if (exploreFits && p.explore_override) {
+        ctx.used.add(exploreClaim.id);
+        parts.push({
+          id: 'claude-code:agent:explore', tool, kind: 'owned-file', enforced: true, optional: true,
+          target: { scope, path: explorePath },
+          content: ccAgent('Explore', 'Fast read-only search of the codebase for files, symbols and answers.', 'haiku', null, EXPLORE_BODY, ['disallowedTools: Write, Edit, NotebookEdit']),
+          why: 'Optional, added because you asked: replaces the built-in Explore helper\'s model with haiku (since v2.1.198 the built-in follows the lead).',
+          basis: [basisRec(exploreClaim)],
+        });
+      } else if (exploreFits && p.limits === 'often') {
+        available.push({ id: 'claude-code:agent:explore', path: explorePath, what: 'Claude Code\'s built-in Explore helper on haiku', add: '"explore_override": true' });
+      } else if (p.explore_override) {
+        notes.push('The haiku Explore helper you asked for is left out: it needs haiku within reach and models from one lab.');
       }
       // Settings keys: only on explicit opt-in, only keys that are absent.
       const keys = {};
@@ -949,6 +958,7 @@ export function buildPackage(profile, facts, setup) {
     as_of: F.asOf,
     profile: p,
     parts,
+    available,
     roles,
     preview_facts: preview,
     facts_used: [...ctx.used].sort(),
@@ -1056,6 +1066,10 @@ export function renderPreview(pkg) {
     });
   } else {
     out.push('', 'Files: none (no tool with a file this package can write).');
+  }
+  for (const a of arr(P.available)) {
+    if (!isObj(a) || !a.path) continue;
+    out.push(`  Also available, not included: ${String(a.path).split('/').pop()}, ${a.what}. Say "add it" to include it (profile ${a.add}).`);
   }
   if (arr(P.notes).length) {
     out.push('', 'Notes');

@@ -190,6 +190,49 @@ test('roundtrip: symlinked .claude folders and a symlinked AGENTS.md stay links;
   for (const l of ['project/.claude', 'project/AGENTS.md', 'home/.claude']) assert.ok(fs.lstatSync(path.join(f.dir, l)).isSymbolicLink());
 });
 
+test('optional parts are opt-in: no Explore unless the profile asks, and apply writes only planned parts', () => {
+  const f = setup('cc-max5x');
+  const before = snapshot(f, 'before');
+  const explore = path.join(f.home, '.claude', 'agents', 'modelproof-explore.md');
+  const base = path.join(PROFILES, 'cc-max5x.json');
+  const p = plan(f, base, { project: false });
+  ok(p);
+  assert.ok(!p.plan.items.some((x) => x.part_id === 'claude-code:agent:explore'), p.out);
+  assert.ok(!p.plan.package.parts.some((x) => x.id === 'claude-code:agent:explore'));
+  assert.match(p.out, /Also available, not included: modelproof-explore\.md/);
+  // A part slipped into the package with no numbered item is refused, even with a matching hash.
+  const on = plan(f, writeProfile(f, base, { explore_override: true }), { project: false });
+  ok(on);
+  const item = on.plan.items.find((x) => x.part_id === 'claude-code:agent:explore');
+  assert.ok(item && item.action === 'create', on.out);
+  const tampered = JSON.parse(JSON.stringify(p.plan));
+  tampered.package.parts.push(on.plan.package.parts[item.n - 1]);
+  delete tampered.hash;
+  tampered.hash = crypto.createHash('sha256').update(JSON.stringify(tampered)).digest('hex').slice(0, 16);
+  const tFile = path.join(f.work, 'tampered.json');
+  fs.writeFileSync(tFile, JSON.stringify(tampered));
+  const t = node(INSTALL, ['apply', '--plan', tFile, '--expect', tampered.hash], f.env);
+  assert.equal(t.code, 1, t.all);
+  assert.match(t.all, /do not match/);
+  ok(compare(f, before));
+  // The default plan installs no Explore file.
+  ok(apply(f, p));
+  assert.ok(!fs.existsSync(explore));
+  ok(undo(f, p.plan.id));
+  ok(compare(f, before));
+  // Opted in: the item is there; "no to N" leaves it out; a yes writes it.
+  const on2 = plan(f, writeProfile(f, base, { explore_override: true }), { project: false });
+  const n = on2.plan.items.find((x) => x.part_id === 'claude-code:agent:explore').n;
+  ok(apply(f, on2, { skip: String(n) }));
+  assert.ok(!fs.existsSync(explore));
+  ok(undo(f, on2.plan.id));
+  const on3 = plan(f, writeProfile(f, base, { explore_override: true }), { project: false });
+  ok(apply(f, on3));
+  assert.match(read(explore), /^name: Explore$/m);
+  ok(undo(f, on3.plan.id));
+  ok(compare(f, before));
+});
+
 /* ------------------------------------------------------------------ detect */
 
 test('detect (cc-max5x): heads-up names the prose model rule by file:line; memory mentions are file:line only; no secrets', () => {

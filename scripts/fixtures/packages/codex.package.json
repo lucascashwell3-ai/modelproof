@@ -27,6 +27,7 @@
     "roles": {},
     "effort_cap": "high",
     "set_default_model": false,
+    "explore_override": false,
     "org": null
   },
   "parts": [
@@ -86,6 +87,7 @@
       "lines": 22
     }
   ],
+  "available": [],
   "roles": {
     "codex": {
       "lead": {
