@@ -545,6 +545,25 @@ test('edit outside the block → reinstall → undo leaves the original plus the
   assert.equal(read(file), '# My top line\n' + original + '- a rule after the block\n');
 });
 
+test('LC-08: undo that cannot fully take out its own untouched part says so and exits 3; it never blames the user', () => {
+  const f = setup('codex');
+  const file = path.join(f.home, '.codex', 'AGENTS.md');
+  const p = plan(f, path.join(PROFILES, 'codex.json'), { project: false });
+  ok(apply(f, p));
+  // Nobody edits AGENTS.md. Damage the record of how the block went in, so the cut cannot be exact.
+  const mPath = path.join(f.state, 'installs', p.plan.id, 'manifest.json');
+  const m = JSON.parse(read(mPath));
+  const key = Object.keys(m.targets).find((k) => m.targets[k].kind === 'block');
+  assert.equal(key, '~/.codex/AGENTS.md');
+  m.targets[key].block.separator = 'XX';
+  fs.writeFileSync(mPath, JSON.stringify(m, null, 2) + '\n');
+  const u = undo(f, p.plan.id);
+  assert.equal(u.code, 3, u.all);
+  assert.match(u.all, /could not remove modelproof's part from ~\/\.codex\/AGENTS\.md/);
+  assert.doesNotMatch(u.all, /your later edits/);
+  assert.doesNotMatch(read(file), /modelproof:begin/, 'the block itself still came out');
+});
+
 test('edit inside the block → reinstall keeps it (exit 2); undo cuts the block and keeps a copy of the edit', () => {
   const f = setup('codex');
   const file = path.join(f.home, '.codex', 'AGENTS.md');

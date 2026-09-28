@@ -113,7 +113,8 @@ New answers → new profile → new plan → show it again → "Go?" again. Full
 
 They ask to take it out → `node "$MP/bin/install.mjs" status` lists install ids. Show which
 install you'll undo and ask "Go?". On yes run `node "$MP/bin/install.mjs" undo <id>` and
-repeat its last line. No record left (a teammate's install, a lost `MP`) →
+repeat its last line. Exit 3 → it names a file it could not fully clean; show that line as is.
+No record left (a teammate's install, a lost `MP`) →
 `IN undo --from-markers --home "$HOME"`, same yes first. Undo keeps `MP` (history).
 
 ## No Node

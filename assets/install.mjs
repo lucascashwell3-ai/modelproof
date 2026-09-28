@@ -1339,10 +1339,16 @@ export function undoInstall(state, id) {
     const all = Object.entries(m.targets || {});
     const entries = all.filter(([, e]) => e.active);
     const dirs = all.flatMap(([, e]) => e.created_dirs || []);
+    // Paths where modelproof's own part did not come out cleanly although nobody touched the file
+    // since the last apply: a leftover there is modelproof's failure, not the user's edit.
+    const leftover = new Set();
     for (const [logical, e] of entries) {
       const real = realTarget(targetAbs(logical, ctx));
       const cur = readBytes(real);
       const r = decideRemove(e, cur);
+      const clean = r.edited || (r.action === 'remove' && r.exact !== false);
+      const sameAsApplied = e.after_sha256 !== undefined && (cur === null ? e.after_sha256 === null : sha256(cur) === e.after_sha256);
+      if (!clean && sameAsApplied) leftover.add(logical);
       for (const o of r.ops) {
         if (o.type === 'move') ops.push({ type: 'move', real, dest: path.join(removedDir, flatName(logical)), edited: !!r.edited });
         if (o.type === 'copy') ops.push({ type: 'copy', dest: path.join(removedDir, flatName(logical) + '.edited-block'), data: o.text, note: logical });
@@ -1353,15 +1359,18 @@ export function undoInstall(state, id) {
     }
     sweepEmptyDirs(uniq(dirs), ops);
     const done = runOps(ops);
-    // Compare every path this install ever touched against its before-state, by hash only.
+    // Compare every path this install ever touched against its before-state, by hash only. A path
+    // that differs is the user's later edit, unless nobody touched it since the install: then
+    // modelproof failed to take its own part out, and that is an error, not the user's doing.
     const differs = [];
+    const failed = [];
     for (const [logical, e] of all) {
       const real = realTarget(targetAbs(logical, ctx));
       const cur = readBytes(real);
       const b = e.before || {};
       if (b.unknown) { differs.push(`${logical} (no earlier record)`); continue; }
       const same = b.existed ? cur !== null && sha256(cur) === b.sha256 : cur === null;
-      if (!same) differs.push(logical);
+      if (!same) (leftover.has(logical) ? failed : differs).push(logical);
     }
     for (const d of done) {
       if (d.op.type === 'move' && d.op.edited) report.push(`your edited ${display(d.op.real, ctx)} is kept at ${d.to}`);
@@ -1370,10 +1379,10 @@ export function undoInstall(state, id) {
     }
     const next = JSON.parse(JSON.stringify(m));
     next.history = next.history || [];
-    next.history.push({ round, at: new Date().toISOString(), action: 'undo', result: differs.length ? 'restored except your later edits' : 'byte-identical', differs });
+    next.history.push({ round, at: new Date().toISOString(), action: 'undo', result: failed.length ? 'could not remove every modelproof part' : differs.length ? 'restored except your later edits' : 'byte-identical', differs, ...(failed.length ? { failed } : {}) });
     next.targets = {};
     writePrivate(manifestPath(state, id), JSON.stringify(next, null, 2) + '\n');
-    return { differs, report, kept };
+    return { differs, failed, report, kept };
   } finally {
     release();
   }
@@ -1520,7 +1529,13 @@ export function main(argv, io = { out: (s) => process.stdout.write(s), err: (s) 
       if (!id || !/^[0-9a-f]{12}$/.test(id)) throw new Fail(EXIT.USAGE, 'undo needs an install id (see status), or --from-markers');
       const r = undoInstall(state, id);
       const lines = [...r.report];
-      lines.push(r.differs.length ? `Restored except your later edits: ${r.differs.join(', ')}` : 'Restored: every file is byte-identical to before the install.');
+      if (r.differs.length) lines.push(`Restored except your later edits: ${r.differs.join(', ')}`);
+      else if (!r.failed.length) lines.push('Restored: every file is byte-identical to before the install.');
+      if (r.failed.length) {
+        io.out(lines.join('\n') + (lines.length ? '\n' : ''));
+        io.err(`Undo could not remove modelproof's part from ${r.failed.join(', ')}. Nobody edited ${r.failed.length > 1 ? 'these files' : 'that file'} after the install; take out what is left by hand.\n`);
+        return EXIT.DRIFT;
+      }
       io.out(lines.join('\n') + '\n');
       return EXIT.OK;
     }
