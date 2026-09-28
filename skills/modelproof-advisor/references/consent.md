@@ -24,36 +24,37 @@ file, every change — and said yes.
 
 ## Before any write
 
-1. The plan has been shown and answered yes.
-2. **A backup exists.** Copy each file to `~/.claude/modelproof-backups/<YYYY-MM-DD>/` keeping
-   its path (`.../2026-08-22/.claude/settings.json`). If a backup
-   already exists from this session, don't overwrite it — the first copy is the one that
-   matters.
+1. The plan has been shown and answered yes: the installer's plan output, word for word, and
+   its hash. `apply --expect <hash>` refuses any other plan.
+2. **The undo exists before the write.** The installer records every file's state in `MP`
+   before it touches it, and apply prints the one undo command. You never make backups or
+   copies of their files yourself.
 3. **You can state the undo.** If you can't say exactly how to reverse it, you don't do it yet.
 
 ## While writing
 
-- **Never delete.** Move aside, then say where it went. This applies to lines in a file too —
-  if you're removing instructions, put them somewhere retrievable, not in the void.
-- **Never reformat, reorder, or tidy anything you weren't asked to change.** Someone else's
-  CLAUDE.md is their document. Add, don't rewrite.
+- **Only the installer writes**, and only the items in the plan. You never edit, reformat,
+  re-order or tidy their files. Someone else's CLAUDE.md is their document.
+- **Never delete.** Undo moves our files aside inside `MP` and cuts only our block or keys.
 - Stay inside the plan. No opportunistic fixes, however small and however obvious.
 
 ## After writing
 
-- **Re-read each file you wrote** — confirm the actual text is what the plan said. A write
-  that silently did nothing looks exactly like a write that worked.
-- **Confirm it works.** Say what should now be different and how they'd see it. Check what you
-  can check.
-- **Give the undo, exact:** the backup path, the file, and what to put back.
-- **Say what you couldn't confirm.** "I can't verify this triggers until you start a new
-  session" is a real and useful sentence.
+- **Run `verify`** — it confirms each block appears once and every file matches what was
+  planned. A write that silently did nothing looks exactly like a write that worked.
+- **Say what should now be different** and how they'd see it (a new session loads the
+  helpers).
+- **Give the undo, exact:** the line apply printed.
+- **Say what you couldn't confirm.** "The helpers load in your next session" is a real and
+  useful sentence.
 
 ## Things that are never okay
 
 - Writing to a file the plan never named.
-- Running a command they haven't seen in the plan.
-- `rm`, `rm -rf`, force-overwriting, or piping a download into a shell.
-- Touching anything outside the home or project they picked.
+- Running any command that writes to their setup other than the `apply` (or `undo`) they said
+  yes to. `detect`, `plan`, `verify` and `status` only read (plan writes its file inside `MP`).
+- `rm`, `rm -rf`, `sudo`, force-overwriting, or piping a download into a shell.
+- Applying a plan whose hash is not the one they saw.
+- Touching anything outside the home or project they chose.
 - Editing files that belong to another running session or agent.
 - "I went ahead and also…" — there is no also.
