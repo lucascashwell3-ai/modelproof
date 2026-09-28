@@ -222,4 +222,7 @@ function main(argv) {
   return 2;
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) process.exitCode = main(process.argv.slice(2));
+const isEntry = () => {
+  try { return !!process.argv[1] && fs.realpathSync(process.argv[1]) === fs.realpathSync(fileURLToPath(import.meta.url)); } catch { return false; }
+};
+if (isEntry()) process.exitCode = main(process.argv.slice(2));
