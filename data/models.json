@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-09-28",
+  "as_of": "2026-09-29",
   "models": [
     {
       "id": "claude-opus-5",
@@ -19299,7 +19299,12 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "coding",
+        "reasoning",
+        "agentic",
+        "long-context"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -19307,7 +19312,11 @@
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Reserve `high` reasoning effort for complex math, coding, and multi-step problems; the default `no_think` mode is faster and cheaper for simple queries.",
+        "Use the `low` effort setting as a middle ground when a task needs some reasoning but not the full chain-of-thought cost of `high`.",
+        "Hy3's improved reliability on tool calls and output formatting makes it a fit for agentic and coding workflows that need structured output."
+      ],
       "task_copy": {},
       "id": "hy3",
       "name": "Hy3",
@@ -19319,7 +19328,8 @@
       "sources": [
         "https://www.tencent.com/en-us/articles/2202386.html",
         "https://technode.com/2026/07/07/tencent-launches-hunyuan-hy3-integrates-model-across-multiple-products/",
-        "https://openrouter.ai/api/frontend/v1/rankings/models"
+        "https://openrouter.ai/api/frontend/v1/rankings/models",
+        "https://huggingface.co/tencent/Hy3"
       ],
       "best_for_line": "Tencent model · 256K ctx · $0.15/$0.59",
       "availability": {
@@ -28075,18 +28085,28 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "coding",
+        "agentic",
+        "reasoning"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/x-ai/grok-4.7"
+        "https://openrouter.ai/x-ai/grok-4.7",
+        "https://docs.x.ai/developers/grok-4-7"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Set a prompt_cache_key on every request — xAI's docs warn that without it you often pay full input price on a cache-cold server.",
+        "Reserve reasoning_effort=xhigh for genuinely hard problems; the default is high, and low/medium cost less for routine tasks.",
+        "The Fast variant costs 2x standard rates (1.5x for long-context), so use it only when latency matters more than price.",
+        "Long agent loops benefit from context compaction — pair it with function calling for tool-heavy workflows to control token costs."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {

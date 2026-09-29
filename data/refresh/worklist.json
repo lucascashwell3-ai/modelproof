@@ -137,22 +137,6 @@
       "ask": "\"TypeSafe: Jev Router\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
-      "id": "grok-4-7:guidance",
-      "model": "Grok 4.7",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
-      "observations": [
-        {
-          "source": "auto-refresh",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": null,
-          "date": "2026-09-28"
-        }
-      ],
-      "ask": "Grok 4.7 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
-    },
-    {
       "id": "hy-mt2-7b:guidance",
       "model": "Hy-MT2-7B",
       "kind": "guidance",
@@ -167,22 +151,6 @@
         }
       ],
       "ask": "Hy-MT2-7B has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
-    },
-    {
-      "id": "hy3:guidance",
-      "model": "Hy3",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
-      "observations": [
-        {
-          "source": "auto-refresh",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": null,
-          "date": "2026-09-28"
-        }
-      ],
-      "ask": "Hy3 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
       "id": "claude-fable-5:agents:re-judge",

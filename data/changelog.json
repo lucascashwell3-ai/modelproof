@@ -3993,5 +3993,25 @@
     "sources": [
       "https://openrouter.ai/anthropic/claude-sonnet-5.5"
     ]
+  },
+  {
+    "date": "2026-09-29",
+    "model": "Grok 4.7",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://docs.x.ai/developers/grok-4-7"
+    ]
+  },
+  {
+    "date": "2026-09-29",
+    "model": "Hy3",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://huggingface.co/tencent/Hy3"
+    ]
   }
 ]
