@@ -1,6 +1,5 @@
 {
   "job": "verify",
-  "ran_at": "2026-09-25T13:15:17.689Z",
-  "ok": false,
-  "error": "site not updated within 30 min (not reverted)"
+  "ran_at": "2026-09-29T14:03:14.451Z",
+  "ok": true
 }
