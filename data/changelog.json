@@ -4013,5 +4013,35 @@
     "sources": [
       "https://huggingface.co/tencent/Hy3"
     ]
+  },
+  {
+    "date": "2026-09-29",
+    "model": "Nemotron 3.5 Lightning",
+    "field": "price_input",
+    "new": 0.06,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-09-29",
+    "model": "GPT-6.1 Sol Pro",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/openai/gpt-6.1-sol-pro"
+    ]
+  },
+  {
+    "date": "2026-09-29",
+    "model": "GPT-6.1 Sol",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/openai/gpt-6.1-sol"
+    ]
   }
 ]
