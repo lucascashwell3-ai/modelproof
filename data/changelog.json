@@ -4043,5 +4043,16 @@
     "sources": [
       "https://openrouter.ai/openai/gpt-6.1-sol"
     ]
+  },
+  {
+    "date": "2026-10-01",
+    "model": "Nemotron 3.5 Lightning",
+    "field": "price_input",
+    "old": 0.06,
+    "new": 0.06,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
   }
 ]
