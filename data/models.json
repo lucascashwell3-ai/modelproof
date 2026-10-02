@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-01",
+  "as_of": "2026-10-02",
   "models": [
     {
       "id": "claude-opus-5",
@@ -13774,7 +13774,11 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "coding",
+        "agentic",
+        "long-context"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -13783,12 +13787,17 @@
         "https://openrouter.ai/meta/muse-spark-1.2",
         "https://openrouter.ai/api/frontend/v1/rankings/models",
         "https://arena.ai/leaderboard/text",
-        "https://arena.ai/leaderboard/vision"
+        "https://arena.ai/leaderboard/vision",
+        "https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Meta's own launch post points this model at whole-repository generation, large end-to-end projects, and auto-research, not just code completion.",
+        "Pair it with Meta's Muse Code terminal agent when possible — the two were co-trained together specifically so they perform best as a pair.",
+        "Its 1,048,576-token context window means you can hand it a full large repo rather than chunking files across turns."
+      ],
       "task_copy": {},
       "auto_added": "2026-08-16",
       "best_for_line": "Meta model · 1M ctx · $1.25/$4.25",
@@ -15805,7 +15814,11 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "agentic",
+        "coding",
+        "vision"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -15813,7 +15826,11 @@
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Meta's own launch post names local agents and function calling, local coding, and LLM-as-a-judge evaluation as its target use cases — it's built to run fully offline on a Mac or PC with one consumer GPU.",
+        "Use its 'Controllable Effort' setting to trade quality for speed rather than switching models when you just need a faster pass.",
+        "Turn on speculative decoding via the DFlash drafter when you need faster generation without changing the base model."
+      ],
       "task_copy": {},
       "id": "muse-glimmer-30b",
       "name": "Muse Glimmer 30B",
@@ -15823,7 +15840,8 @@
         "https://huggingface.co/meta-models/Muse-Glimmer-30B",
         "https://venturebeat.com/technology/meta-returns-to-open-source-with-muse-glimmer-an-apache-2-0-licensed-30b-parameter-ai-model-optimized-for-agents-available-now",
         "https://kingy.ai/blog/muse-glimmer-30b-benchmarks-hardware-run/",
-        "https://openrouter.ai/api/frontend/v1/rankings/models"
+        "https://openrouter.ai/api/frontend/v1/rankings/models",
+        "https://research.meta.ai/blog/introducing-muse-glimmer-open-agentic-model"
       ],
       "best_for_line": "Meta model",
       "availability": {
@@ -16328,7 +16346,11 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "coding",
+        "agentic",
+        "long-context"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -16336,7 +16358,12 @@
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Thinking is on by default and earns its cost here: Poolside's own launch post reports max thinking lifting Terminal-Bench 2.1 from 60.4% to 70.2% and DeepSWE from 16.5% to 40.4%.",
+        "Reach for no-thinking mode only for quick, simple queries where speed matters more than depth — thinking mode burns roughly 4x the completion tokens (about 101k vs 23k per trajectory on SWE Multilingual).",
+        "There's no user-configurable low/medium/high effort control yet, per the vendor — you get thinking on or off, not a dial.",
+        "It verifies its work before declaring done, so don't pad your prompt with 'double-check your answer' instructions — they're redundant here."
+      ],
       "task_copy": {},
       "id": "laguna-s-2-1",
       "name": "Laguna S 2.1",
@@ -20256,7 +20283,7 @@
         }
       },
       "status": "ga",
-      "adoption": "new",
+      "adoption": "low",
       "signals": {
         "coding": {
           "usage_rank": null,

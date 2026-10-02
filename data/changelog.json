@@ -4054,5 +4054,35 @@
       "openrouter",
       "litellm"
     ]
+  },
+  {
+    "date": "2026-10-02",
+    "model": "Laguna S 2.1",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://poolside.ai/blog/introducing-laguna-s-2-1"
+    ]
+  },
+  {
+    "date": "2026-10-02",
+    "model": "Muse Glimmer 30B",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://research.meta.ai/blog/introducing-muse-glimmer-open-agentic-model"
+    ]
+  },
+  {
+    "date": "2026-10-02",
+    "model": "Muse Spark 1.2",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2"
+    ]
   }
 ]
