@@ -95,6 +95,7 @@ test('exports exactly the documented names (the package API plus the shared mark
   assert.deepEqual(Object.keys(G).sort(), [
     'BLOCK_BEGIN_RE', 'BLOCK_END_RE', 'GENERATOR_VERSION', 'ROLES', 'TOOLS', 'TOOL_LABELS', 'blockBodyHash', 'blockBodyLines', 'blockText',
     'buildPackage', 'normalizeProfile', 'packageText', 'profileFromBoard', 'renderPreview', 'roleDefaults', 'sha256Hex', 'stampOwnedText',
+    'textWithoutHelpers',
   ]);
   assert.equal(GENERATOR_VERSION, '1.1.0');
   assert.deepEqual(TOOLS, ['claude-code', 'codex', 'cursor', 'copilot', 'antigravity', 'openrouter', 'agents-md']);
@@ -432,6 +433,25 @@ test('Antigravity: helper files on the inherit tier; text in ~/.gemini/AGENTS.md
   assert.ok(proj.parts.some((p) => p.target.path === '.agents/agents/modelproof-bulk.md'));
   assert.deepEqual(proj.parts.find((p) => p.kind === 'block').readers, ['antigravity']);
   assert.ok(!proj.parts.some((p) => /\.agents\/rules\//.test(p.target.path)), 'no rules file: Antigravity drops one without trigger frontmatter');
+});
+
+test('textWithoutHelpers: lines about a left-out helper go, lists lose the name, other text stays', () => {
+  const pkg = build('org-40');
+  const block = pkg.parts.find((p) => p.id === 'agents-md:text');
+  assert.equal(G.textWithoutHelpers(pkg, block, []), block.content, 'nothing left out: the same text');
+  assert.equal(G.textWithoutHelpers(pkg, block, ['cursor:agent:bulk']).includes('Cursor'), block.content.includes('Cursor'));
+  const t = G.textWithoutHelpers(pkg, block, ['codex:agent:reviewer', 'claude-code:agent:bulk']);
+  assert.match(t, /^- Codex helpers: modelproof-scout and modelproof-builder run on the lead's model/m);
+  assert.match(t, /^- Claude Code helpers: modelproof-scout, modelproof-builder and modelproof-reviewer run/m);
+  assert.doesNotMatch(t, /^- Claude Code bulk: modelproof-bulk/m);
+  assert.equal(block.content.split('\n').length - t.split('\n').length, block.content.split('\n').filter((l) => /^- Claude Code bulk: modelproof-bulk/.test(l)).length);
+  // One tool: every helper left out removes the helpers and bulk lines, never the lead line.
+  const cc = build('cc-max5x');
+  const rules = cc.parts.find((p) => p.id === 'claude-code:rules');
+  const none = G.textWithoutHelpers(cc, rules, ROLES.map((r) => `claude-code:agent:${r}`));
+  assert.doesNotMatch(none, /modelproof-(scout|builder|reviewer|bulk)/);
+  assert.match(none, /^- Lead: /m);
+  assert.match(none, /^# Modelproof lead, helpers and bulk/m);
 });
 
 test('preview: a quote in the future tense about a date the facts date has passed keeps its words; our line says the date has passed', () => {

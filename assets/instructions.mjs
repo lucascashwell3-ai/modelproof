@@ -1787,6 +1787,82 @@ export function sha256Hex(text) {
 }
 export function blockBodyHash(bodyLines) { return sha256Hex(bodyLines.join('\n')).slice(0, 16); }
 // A block part's body lines, wrapped in the begin/end marker lines, joined with `eol`.
+/* ------------------------------------------------------------------ text after left-out helpers */
+
+// The text part as it reads once some helper files are left out at apply (--skip, or a conflict
+// left out): lines about a left-out helper go, a list of helpers loses its name, and the "hand
+// long reading to modelproof-scout" line points at any helper. Works on this generator's own line
+// forms; the content is unchanged when no left-out helper is one its readers load.
+export function textWithoutHelpers(pkg, part, leftOutIds) {
+  const P = isObj(pkg) ? pkg : {};
+  const roles = isObj(P.roles) ? P.roles : {};
+  const content = part && typeof part.content === 'string' ? part.content : '';
+  const readers = arr(part && part.readers).filter((t) => TOOLS.includes(t));
+  const out = new Map();   // tool -> Set of left-out roles
+  for (const id of arr(leftOutIds)) {
+    const m = /^([a-z-]+):agent:([a-z]+)$/.exec(String(id));
+    if (!m || !ROLES.includes(m[2])) continue;
+    if (!out.has(m[1])) out.set(m[1], new Set());
+    out.get(m[1]).add(m[2]);
+  }
+  // A tool that loads Claude Code's helper files loses the ones left out there.
+  for (const t of readers) if (roles[t] && roles[t].shared && roles[t].shared.refs && out.has('claude-code')) {
+    if (!out.has(t)) out.set(t, new Set());
+    for (const r of out.get('claude-code')) out.get(t).add(r);
+  }
+  const plan = readers.filter((t) => t !== 'agents-md' && roles[t]);
+  const helperReaders = readers.filter((t) => HELPER_TOOLS.includes(t) && roles[t]);
+  if (!helperReaders.some((t) => out.has(t))) return content;
+  const multi = plan.length > 1;
+  const toolOf = (line) => (multi ? plan.find((t) => line.startsWith(`- ${TOOL_LABEL[t]} `)) : plan[0]) || null;
+  const roleOf = (name) => name.replace(/^modelproof-/, '');
+  const joinNames = (names) => (names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0]);
+  const LIST = /(modelproof-[a-z]+(?:, modelproof-[a-z]+)*(?: and modelproof-[a-z]+)?) (runs|run|says|say)\b/g;
+  // One clause: its helper list without the left-out names, or null when none is left.
+  const editClause = (text, gone) => {
+    let empty = false;
+    const next = text.replace(LIST, (all, list, verb) => {
+      const names = list.split(/, | and /);
+      const keep = names.filter((n) => !gone.has(roleOf(n)));
+      if (keep.length === names.length) return all;
+      if (!keep.length) { empty = true; return all; }
+      const one = keep.length === 1;
+      const v = verb.startsWith('run') ? (one ? 'runs' : 'run') : (one ? 'says' : 'say');
+      return `${joinNames(keep)} ${v}`;
+    });
+    return empty ? null : next;
+  };
+  const lines = content.split('\n');
+  const kept = [];
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+    const cont = [];
+    while (line.startsWith('- ') && i + 1 < lines.length && /^ {2}\S/.test(lines[i + 1])) cont.push(lines[++i]);
+    if (line.startsWith('- ') && /modelproof-[a-z]+/.test(line)) {
+      if (/Hand long reading to modelproof-scout\b/.test(line)) {
+        if (helperReaders.every((t) => out.has(t) && out.get(t).has('scout'))) line = line.replace('to modelproof-scout', 'to a helper');
+      } else {
+        const tool = toolOf(line);
+        const gone = tool && out.get(tool);
+        if (gone) {
+          // A line of groups ("... helper files in X: A say model: m; B says model: n. Its docs ...").
+          const g = /^(.*?: )(modelproof-.*?)(\. Its docs do not say how it reads those model lines\..*)$/.exec(line);
+          if (g) {
+            const groups = g[2].split('; ').map((x) => editClause(x, gone)).filter((x) => x !== null);
+            line = groups.length ? `${g[1]}${groups.join('; ')}${g[3]}` : null;
+          } else {
+            const names = [...line.matchAll(/modelproof-([a-z]+)/g)].map((m) => m[1]).filter((r) => ROLES.includes(r));
+            line = names.length && names.every((r) => gone.has(r)) ? null : editClause(line, gone);
+          }
+        }
+      }
+    }
+    if (line === null) continue;
+    kept.push(line, ...cont);
+  }
+  return kept.join('\n');
+}
+
 export function blockText(bodyLines, eol = '\n') {
   return [`<!-- modelproof:begin v1 sha=${blockBodyHash(bodyLines)} -->`, ...bodyLines, '<!-- modelproof:end -->'].join(eol);
 }

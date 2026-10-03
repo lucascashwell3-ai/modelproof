@@ -229,6 +229,37 @@ test('Claude Code and GitHub Copilot at different scopes: one set where Copilot 
   assert.match(d.out, /"modelproof-scout" is loaded twice by GitHub Copilot/);
 });
 
+test('a helper file left out at apply (--skip, or their own same-named file) leaves its lines out of the rules text', () => {
+  // Their own modelproof-bulk.md, on another model: a conflict, left out with --skip.
+  const f = setup('cc-max5x');
+  fs.writeFileSync(path.join(f.home, '.claude', 'agents', 'modelproof-bulk.md'), '---\nname: modelproof-bulk\ndescription: My own bulk helper.\nmodel: sonnet\n---\nDo the bulk work.\n');
+  const mine = snapshot(f, 'mine');
+  const p = plan(f, path.join(PROFILES, 'cc-max5x.json'), { project: false });
+  const bulk = p.plan.items.find((x) => x.part_id === 'claude-code:agent:bulk');
+  assert.equal(bulk.action, 'conflict', p.out);
+  const rulesPart = p.plan.package.parts.find((x) => x.id === 'claude-code:rules');
+  assert.match(rulesPart.content, /modelproof-bulk runs/, 'the planned text describes the bulk helper');
+  const a = apply(f, p, { skip: String(bulk.n) });
+  ok(a);
+  assert.match(a.out, /modelproof\.md \(without the lines about the helpers left out\)/);
+  const rules = read(path.join(f.home, '.claude', 'rules', 'modelproof.md'));
+  assert.doesNotMatch(rules, /modelproof-bulk/, rules);
+  assert.match(rules, /modelproof-scout/, 'the other helpers stay');
+  assert.match(read(path.join(f.home, '.claude', 'agents', 'modelproof-bulk.md')), /model: sonnet/, 'their file stays');
+  ok(verify(f, false));
+  ok(undo(f, p.plan.id));
+  ok(compare(f, mine));
+  // Claude Code + Copilot: leaving out Claude Code's bulk file also drops it from the text Copilot reads.
+  const g = setup('cc-copilot');
+  const q = plan(g, path.join(PROFILES, 'cc-copilot.json'));
+  const n = q.plan.items.find((x) => x.part_id === 'claude-code:agent:bulk').n;
+  ok(apply(g, q, { skip: String(n) }));
+  const block = read(path.join(g.project, 'AGENTS.md'));
+  assert.doesNotMatch(block, /modelproof-bulk/, block);
+  assert.match(block, /GitHub Copilot uses the Claude Code helper files in \.claude\/agents: modelproof-scout, modelproof-builder and modelproof-reviewer say model: inherit\./);
+  ok(verify(g));
+});
+
 test('power-user-max5x: their CLAUDE.md, import target, helpers, output style, skill and settings are never touched', () => {
   const f = setup('power-user-max5x');
   const keep = ['.claude/CLAUDE.md', 'work/notes/tone.md', '.claude/agents/code-simplifier.md', '.claude/agents/checker.md',

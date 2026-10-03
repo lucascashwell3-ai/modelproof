@@ -28,7 +28,7 @@ import os from 'node:os';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import {
-  buildPackage, renderPreview, GENERATOR_VERSION, TOOLS,
+  buildPackage, renderPreview, GENERATOR_VERSION, textWithoutHelpers, TOOLS,
   BLOCK_BEGIN_RE as BEGIN_RE, BLOCK_END_RE as END_RE, blockBodyHash as bodyHash, blockText, blockBodyLines as contentLines, stampOwnedText,
 } from './instructions.mjs';
 
@@ -1238,6 +1238,9 @@ export function applyPlan(plan, { expect, skip = [] }) {
     const round = manifest.history.length + 1;
     const removedDir = path.join(state, 'installs', plan.id, 'removed', String(round));
     const partsById = new Map(plan.package.parts.map((p, i) => [i + 1, p]));
+    // Helper files left out (by --skip, or a conflict left out): the rules text written with them
+    // must not describe them, so each text part loses its lines about those helpers.
+    const leftOut = plan.items.filter((x) => (skipSet.has(x.n) || x.action === 'conflict') && /:agent:/.test(x.part_id || '')).map((x) => x.part_id);
     const ops = [];
     const touched = [];
     const summary = [];
@@ -1263,13 +1266,17 @@ export function applyPlan(plan, { expect, skip = [] }) {
         summary.push(`  ${String(it.n).padStart(2)}. removed   ${it.path}`);
         continue;
       }
-      const part = partsById.get(it.n);
-      if (!part || part.id !== it.part_id) throw new Fail(EXIT.USAGE, `plan item ${it.n} does not match its package part`);
-      const d = decide(part, cur, entry, { nameClash: null });
-      if (d.action !== it.action) throw new Fail(EXIT.DRIFT, `${it.path}: expected "${it.action}", now "${d.action}". Run plan again.`);
+      const planned = partsById.get(it.n);
+      if (!planned || planned.id !== it.part_id) throw new Fail(EXIT.USAGE, `plan item ${it.n} does not match its package part`);
+      const d0 = decide(planned, cur, entry, { nameClash: null });
+      if (d0.action !== it.action) throw new Fail(EXIT.DRIFT, `${it.path}: expected "${it.action}", now "${d0.action}". Run plan again.`);
+      const trimmed = leftOut.length && !/:agent:/.test(planned.id) && planned.kind !== 'json-keys' ? textWithoutHelpers(plan.package, planned, leftOut) : planned.content;
+      const part = trimmed === planned.content ? planned : { ...planned, content: trimmed };
+      const d = part === planned ? d0 : decide(part, cur, entry, { nameClash: null });
+      if (d.action === 'conflict') throw new Fail(EXIT.DRIFT, `${it.path}: ${d.reason}. Run plan again.`);
       if (d.next !== null && d.next !== undefined) ops.push({ type: 'write', real, data: d.next, item: it });
       if (d.action !== 'skip') touched.push({ it, entry, d, cur });
-      summary.push(`  ${String(it.n).padStart(2)}. ${d.action.padEnd(9)} ${it.path}`);
+      summary.push(`  ${String(it.n).padStart(2)}. ${d.action.padEnd(9)} ${it.path}${part === planned ? '' : ' (without the lines about the helpers left out)'}`);
     }
     // Nothing to write (a copy-only plan, every item left out, or every file already as planned):
     // no install record, no undo command, and an earlier install stays as it is.
