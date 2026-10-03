@@ -9,8 +9,9 @@
    lowercase), and confirms the quote appears verbatim. A claim whose quote can't be found —
    including one whose source_url can't even be fetched — is an ERROR. This is the gate that
    stops a fabricated or misquoted citation from ever publishing; scripts/apply-judgment.mjs runs
-   it automatically after any judged-fit write, and it's wired into the refresh workflow and the
-   test run (see .github/workflows/auto-refresh.yml and scripts/refresh-judge.md).
+   it automatically after any judged-fit write (scoped with --only to the records that run wrote),
+   and it's wired into the refresh workflow (see .github/workflows/auto-refresh.yml and
+   scripts/refresh-judge.md).
 
    Also checks every data/plans.json row that carries a `quote` (collectPlanClaims): the quote must
    be on the row's `quote_url` (when the price and the quoted words live on different vendor pages)

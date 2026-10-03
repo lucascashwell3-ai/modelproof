@@ -22,17 +22,26 @@
        apart. Growth-only: an incoming record never overwrites one already on file with a newer
        as_of (applyOne no-ops in that case, doesn't error).
      - usage: value {category, share, rank}. Same growth-only rule.
+   Before validation, normalizeJudgment() repairs what can be repaired without guessing, so one
+   sloppy item does not cost the whole batch at the gate (2026-10-03 data contract): a new model's
+   `released` "unknown" (or any form outside YYYY-MM-DD | YYYY-MM | YYYY-Qn | YYYY) -> null; a
+   release entry's partial date -> first day of the period + `date_precision`, its missing
+   `source` -> the judgment's first source url; a ladder's missing as_of/source -> the judgment's
+   first source date/url. What still fails validation rejects the run, as before.
    On success: writes data/models.json, appends data/changelog.json (with sources), removes the
    applied ids from data/refresh/worklist.json, runs the honesty gate, THEN (only when this run
-   wrote at least one judged-fit claim) runs scripts/check-sources.mjs against the whole file — the
-   anti-fabrication gate that confirms every claim's quote is actually on its cited page. On
-   either gate's failure: restores the pre-write file content and exits 1 — nothing
-   half-published, and a fabricated/misquoted citation can never reach main through this path.
+   wrote at least one judged-fit claim) runs scripts/check-sources.mjs on the judged-fit records
+   THIS run wrote (--only <modelId>/<taskId>,...) — the anti-fabrication gate that confirms every
+   new quote is actually on its cited page. A quote elsewhere in the catalog that rotted since is
+   not this run's doing and must not roll back an unrelated write; the scheduled full
+   check-sources run reports those. On either gate's failure: restores the pre-write file content
+   and exits 1 — nothing half-published, and a fabricated/misquoted citation can never reach main
+   through this path.
 
    Usage:
      node scripts/apply-judgment.mjs <judgments.json> [--dry-run]
 */
-import { isNotablePriceChange, priceEntry, retiredEntry, addEntry } from './timeline.mjs';
+import { isNotablePriceChange, priceEntry, retiredEntry, addEntry, normalizeReleased, releaseDateFor, normalizeEntryDate } from './timeline.mjs';
 import { canonicalVendor, bareModelName, modelId as idFromName } from './naming.mjs';
 import { TASK_IDS } from './derive-task-fit.mjs';
 import { bannedPhraseIn, wordCount, CLAIM_TIERS, CLAIM_POLARITY_VALUES, citesLiveFeed } from './validate-data.mjs';
@@ -51,6 +60,39 @@ const BENCHMARK_FIELDS = ['swe_bench', 'gpqa', 'aime', 'mmlu_pro'];   // lmarena
 const RELEASE_FIELDS = ['date', 'vendor', 'title', 'summary', 'source', 'why'];
 // same vocab as validate-data.mjs — a tag outside it fails the gate anyway; failing here is earlier and clearer
 const BEST_FOR_VOCAB = ['reasoning', 'agentic', 'coding', 'research', 'long-context', 'writing', 'cheap-bulk', 'speed', 'vision'];
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+export const DATE_PRECISION_VALUES = ['month', 'quarter', 'year'];
+
+/** Repair what can be repaired without guessing, before validation. Returns {judgment, notes}:
+ * a deep copy (the input is never mutated) and one plain line per repair, for the run log. */
+export function normalizeJudgment(j) {
+  const notes = [];
+  if (!j || typeof j !== 'object' || j.hold) return { judgment: j, notes };
+  const out = JSON.parse(JSON.stringify(j));
+  const first = Array.isArray(out.sources) && out.sources[0] && /^https?:\/\//i.test(out.sources[0].url || '') ? out.sources[0] : null;
+  const v = out.value;
+  if (out.kind === 'new-model' && v && typeof v === 'object' && 'released' in v) {
+    const r = normalizeReleased(v.released);
+    if (r !== v.released) { notes.push(`${out.id}: released "${v.released}" -> ${JSON.stringify(r)}`); v.released = r; }
+  }
+  if (out.kind === 'release' && v && typeof v === 'object') {
+    if (!v.source && first) { v.source = first.url; notes.push(`${out.id}: release source filled from sources[0]`); }
+    if (v.date != null && !DATE_RE.test(String(v.date))) {
+      const d = normalizeEntryDate(v.date);
+      if (d) {
+        notes.push(`${out.id}: release date "${v.date}" -> "${d.date}"${d.date_precision ? ` (${d.date_precision} precision)` : ''}`);
+        v.date = d.date;
+        if (d.date_precision) v.date_precision = d.date_precision;
+      }
+    }
+  }
+  if (out.kind === 'ladder' && v && typeof v === 'object' && first) {
+    if (!v.as_of && first.date && DATE_RE.test(first.date)) { v.as_of = first.date; notes.push(`${out.id}: ladder as_of filled from sources[0].date`); }
+    if (!v.source) { v.source = first.url; notes.push(`${out.id}: ladder source filled from sources[0].url`); }
+  }
+  return { judgment: out, notes };
+}
 
 /** Validate one judgment. Returns an array of error strings (empty = valid). */
 export function validateJudgment(j) {
@@ -83,10 +125,14 @@ export function validateJudgment(j) {
     if (!j.value || typeof j.value !== 'object') { errs.push(`${j.id}: release judgment needs value{}`); return errs; }
     for (const f of RELEASE_FIELDS) if (!j.value[f]) errs.push(`${j.id}: release value missing "${f}"`);
     if (j.value.kind != null && !['model', 'price', 'retired'].includes(j.value.kind)) errs.push(`${j.id}: release kind must be model | price | retired`);
+    if (j.value.date && !DATE_RE.test(String(j.value.date))) errs.push(`${j.id}: release date "${j.value.date}" must be YYYY-MM-DD (a partial date YYYY-MM / YYYY-Qn / YYYY is normalized first)`);
+    if (j.value.date_precision != null && !DATE_PRECISION_VALUES.includes(j.value.date_precision)) errs.push(`${j.id}: release date_precision must be one of ${DATE_PRECISION_VALUES.join(', ')}`);
+    if (j.value.source && !/^https?:\/\//i.test(j.value.source)) errs.push(`${j.id}: release source must be http(s)`);
   } else if (j.kind === 'new-model') {
     if (!j.value || typeof j.value !== 'object') { errs.push(`${j.id}: new-model judgment needs value{}`); return errs; }
     // id is derived from name (scripts/naming.mjs) — a supplied one is ignored, so only name + vendor are required
     for (const f of ['name', 'vendor']) if (!j.value[f]) errs.push(`${j.id}: new-model value missing "${f}"`);
+    if (j.value.released != null && normalizeReleased(j.value.released) !== j.value.released) errs.push(`${j.id}: new-model released "${j.value.released}" must be YYYY-MM-DD, YYYY-MM, YYYY-Qn, YYYY or null`);
     if (j.value.release != null) {
       const r = j.value.release;
       if (typeof r !== 'object') errs.push(`${j.id}: release must be an object {summary, why, source?}`);
@@ -233,6 +279,7 @@ export function applyOne(data, j, today) {
       id, name, vendor,
       sources: Array.from(new Set([...(j.value.sources || []), ...j.sources.map((s) => s.url)])),
     };
+    if ('released' in nm) nm.released = normalizeReleased(nm.released);
     nm.status = deriveStatus(nm).status;
     nm.adoption = deriveAdoption(nm, data.as_of).adoption;
     data.models.push(nm);
@@ -243,9 +290,11 @@ export function applyOne(data, j, today) {
     const title = `${nm.vendor} releases ${nm.name}`;
     if (!data.releases.some((r) => r.title === title)) {
       const rel = j.value.release || {};
+      const when = releaseDateFor(nm.released, today);
       data.releases.push({
         kind: 'model',
-        date: nm.released ? String(nm.released).slice(0, 10) : today,
+        date: when.date,
+        ...(when.date_precision ? { date_precision: when.date_precision } : {}),
         vendor: nm.vendor,
         title,
         summary: rel.summary || `Added after Judge verification — ${j.reason}`,
@@ -317,8 +366,13 @@ async function main() {
     process.exitCode = 1;
     return;
   }
-  const judgments = JSON.parse(readFileSync(file, 'utf8'));
-  if (!Array.isArray(judgments)) throw new Error('judgments file must be a JSON array');
+  const raw = JSON.parse(readFileSync(file, 'utf8'));
+  if (!Array.isArray(raw)) throw new Error('judgments file must be a JSON array');
+  const judgments = raw.map((j) => {
+    const { judgment, notes } = normalizeJudgment(j);
+    notes.forEach((n) => console.log(`normalized ${n}`));
+    return judgment;
+  });
 
   const allErrors = [];
   for (const j of judgments) allErrors.push(...validateJudgment(j));
@@ -338,11 +392,13 @@ async function main() {
   const today = process.env.MODELPROOF_TODAY || new Date().toISOString().slice(0, 10);
 
   const applied = [];
+  const judgedKeys = [];   // "<modelId>/<taskId>" of every judged-fit record this run wrote
   const held = judgments.filter((j) => j.hold);
   for (const j of judgments) {
     if (j.hold) continue;
     const entry = applyOne(data, j, today);
     if (entry) applied.push(entry);
+    if (entry && j.kind === 'judged-fit') judgedKeys.push(`${String(j.id).split(':')[0]}/${j.value.taskId}`);
   }
   if (applied.length) data.as_of = today;
 
@@ -400,15 +456,15 @@ async function main() {
 
   // Anti-fabrication gate (scripts/check-sources.mjs): only when this run actually wrote a
   // judged-fit claim — a live network fetch per source_url on every ordinary price-conflict
-  // apply would be needless network I/O for nothing this run touched. It checks the WHOLE file
-  // (not just what changed), so a pre-existing claim whose source page changed out from under it
-  // also blocks — same "so the cloud Judge's output can't publish fabricated citations"
-  // guarantee scripts/refresh-judge.md promises.
-  if (applied.some((a) => a.field && a.field.startsWith('task_fit_judged.'))) {
-    console.log('\nrunning the anti-fabrication gate (scripts/check-sources.mjs) on judged-fit claims...');
+  // apply would be needless network I/O for nothing this run touched. Scoped to the records this
+  // run wrote (--only): a quote elsewhere in the catalog whose page changed since is not this
+  // run's doing, and blocking on it would roll back every Judge write until a person re-quoted
+  // an unrelated claim. The scheduled full check-sources run reports catalog-wide rot.
+  if (judgedKeys.length) {
+    console.log(`\nrunning the anti-fabrication gate (scripts/check-sources.mjs) on the ${judgedKeys.length} judged-fit record(s) this run wrote...`);
     let sourcesOk = true;
     try {
-      execFileSync('node', [fileURLToPath(new URL('scripts/check-sources.mjs', ROOT))], { stdio: 'inherit' });
+      execFileSync('node', [fileURLToPath(new URL('scripts/check-sources.mjs', ROOT)), '--only', judgedKeys.join(',')], { stdio: 'inherit' });
     } catch {
       sourcesOk = false;
     }
