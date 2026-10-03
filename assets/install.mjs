@@ -604,7 +604,7 @@ function scanRules(abs, ctx, out, words) {
   if (owned) return;
   lines.forEach((l, i) => {
     if (inBlock(i) || !words.test(l)) return;
-    out.push({ file: display(abs, ctx), line: i + 1, text: looksSecret(l) ? '(line not shown)' : l.trim().slice(0, 80) });
+    out.push({ file: display(abs, ctx), line: i + 1, text: looksSecret(l) ? '(line not shown)' : l.trim().slice(0, 200) });
   });
 }
 
@@ -1076,7 +1076,7 @@ export function renderPlan(plan, planFile) {
   }
   const conflicts = plan.items.filter((x) => x.action === 'conflict').map((x) => x.n);
   // Lines already listed under "Check these before you say Go" are not repeated here.
-  const checked = new Set((Array.isArray(plan.package.checks) ? plan.package.checks : []).filter((c) => c.kind === 'rule').map((c) => `${c.file}:${c.line}`));
+  const checked = new Set((Array.isArray(plan.package.checks) ? plan.package.checks : []).filter((c) => c.kind === 'rule' || c.kind === 'lead').map((c) => `${c.file}:${c.line}`));
   const heads = plan.heads_up.filter((h) => !checked.has(`${h.file}:${h.line}`));
   if (heads.length || plan.mentions.length) {
     out.push('', 'Heads-up: lines in your setup that already talk about models, effort or helpers (kept as they are)');

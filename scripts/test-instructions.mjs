@@ -773,6 +773,39 @@ test('checks: a line of theirs naming another model for a helper\'s job is liste
   assertClean(hostile, 'hostile heads-up');
 });
 
+test('checks: short names from the data ("Opus 5.5"), one clause per job, and a different lead model or effort', () => {
+  // Short names resolve in answers too: no "left out" note for "Sonnet 5.5" or "Haiku 4.5".
+  const { profile, problems } = normalizeProfile({ ...PROFILES['cc-max5x'], roles: { scout: 'Sonnet 5.5' }, never: ['Haiku 4.5'] }, FACTS);
+  assert.equal(profile.roles.scout, 'claude-sonnet-5-5');
+  assert.deepEqual(profile.never, ['claude-haiku-4-5']);
+  assert.deepEqual(problems, []);
+  // Each short name is one model's full name minus its first word; none is typed here.
+  const short = (id) => byId.get(id).name.split(' ').slice(1).join(' ');
+  const file = '~/.claude/rules/models.md';
+  const lines = [
+    `- Use ${short('claude-sonnet-5-5')} for bulk renames and ${short('claude-opus-5')} for code review.`,
+    `- Always use ${short('claude-sonnet-5-5')}.`,
+    '- Always use max effort.',
+    `- Default model: ${short('claude-opus-5-5')}.`,
+    `- ${short('claude-sonnet-5-5')} is fine for quick fixes.`,
+  ];
+  const pkg = buildPackage({ ...PROFILES['cc-max5x'], never: ['Haiku 4.5'] }, FACTS,
+    { files: [{ scope: 'user', path: file, lines: 9, readers: ['claude-code'] }], heads_up: lines.map((text, i) => ({ file, line: i + 2, text })) });
+  const item = (id) => pkg.parts.findIndex((x) => x.id === id) + 1;
+  const rules = item('claude-code:rules');
+  assert.deepEqual(pkg.checks.map((c) => [c.kind, c.line, c.role || null, c.item, c.text]), [
+    ['rule', 2, 'reviewer', item('claude-code:agent:reviewer'), `${short('claude-opus-5')} for code review.`],
+    ['rule', 2, 'bulk', item('claude-code:agent:bulk'), `- Use ${short('claude-sonnet-5-5')} for bulk renames`],
+    ['lead', 3, null, rules, lines[1]],
+    ['lead', 4, null, rules, lines[2]],
+  ]);
+  const text = renderPreview(pkg);
+  const lead = byId.get(pkg.roles['claude-code'].lead.model_id).name;
+  assert.ok(text.includes(`  - ${file}:3 says "${lines[1]}"; the Lead line in #${rules} says ${lead}. Make them match, or skip #${rules}.`), text);
+  assert.match(text, new RegExp(`models\\.md:4 says "- Always use max effort\\."; the Lead line in #${rules} says .+, effort \\w+ by default`));
+  assert.ok(text.indexOf('models.md:4') < text.indexOf('Lead, helpers and bulk per tool'), 'listed before Go');
+});
+
 test('checks: a helper of theirs doing a package helper\'s job is named with "keep both, or skip #N"', () => {
   const agents = [
     { tool: 'claude-code', scope: 'user', name: 'code-reviewer', path: '~/.claude/agents/code-reviewer.md', description: 'Reviews a diff for bugs.', modelproof: false },

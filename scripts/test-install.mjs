@@ -395,6 +395,31 @@ test('plan preview: real conflicts first; rules-file lines shown; memory mention
   assert.doesNotMatch(out + JSON.stringify(p.plan), /sk-live|not-for-output/);
 });
 
+test('plan preview: a fixture rule file with short model names, two jobs in one long line, and a different lead model and effort', () => {
+  const f = setup('cc-max5x');
+  const models = JSON.parse(fs.readFileSync(path.join(DATA, 'models.json'), 'utf8')).models;
+  const short = (id) => models.find((m) => m.id === id).name.split(' ').slice(1).join(' ');
+  const rules = path.join(f.home, '.claude', 'rules');
+  fs.mkdirSync(rules, { recursive: true });
+  const two = `- To keep usage down, use ${short('claude-sonnet-5-5')} for bulk renames and boilerplate, and ${short('claude-opus-5')} for code review.`;
+  assert.ok(two.length > 80, 'longer than the old 80-character snippet');
+  fs.writeFileSync(path.join(rules, 'models.md'), ['# Models', two, `- Always use ${short('claude-sonnet-5-5')}.`, '- Always use max effort.', ''].join('\n'));
+  const profile = writeProfile(f, path.join(PROFILES, 'cc-max5x.json'), { roles: { builder: short('claude-opus-5-5') }, never: [short('claude-haiku-4-5')] });
+  const p = plan(f, profile, { project: false });
+  ok(p);
+  const out = p.out;
+  assert.doesNotMatch(out, /Left out of your answers/, 'short names in the answers resolve');
+  const n = (id) => p.plan.items.find((x) => x.part_id === id).n;
+  const checks = out.slice(out.indexOf('Check these before you say Go'), out.indexOf('Lead, helpers and bulk per tool'));
+  assert.ok(checks.includes(`models.md:2 says "${short('claude-opus-5')} for code review."; #${n('claude-code:agent:reviewer')} modelproof-reviewer`), checks);
+  assert.ok(checks.includes(`models.md:2 says "- To keep usage down, use ${short('claude-sonnet-5-5')} for bulk renames"; #${n('claude-code:agent:bulk')} modelproof-bulk`), checks);
+  assert.ok(checks.includes(`models.md:3 says "- Always use ${short('claude-sonnet-5-5')}."; the Lead line in #${n('claude-code:rules')} says`), checks);
+  assert.ok(checks.includes(`models.md:4 says "- Always use max effort."; the Lead line in #${n('claude-code:rules')} says`), checks);
+  // Lines listed as checks are not repeated in the heads-up list.
+  const heads = out.slice(out.indexOf('Heads-up:'));
+  assert.doesNotMatch(heads, /models\.md:[234] /);
+});
+
 test('readers: who loads the project AGENTS.md, case by case', () => {
   const cases = [
     ['no CLAUDE.md', {}, true],

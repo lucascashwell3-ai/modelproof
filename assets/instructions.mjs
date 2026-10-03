@@ -218,6 +218,25 @@ function indexFacts(facts) {
   for (const m of models) {
     for (const t of uniq([m.id, stripParen(m.name)])) if (t.length >= 3) terms.push({ t: t.toLowerCase(), id: m.id });
   }
+  // Short names people write ("Opus 5.5" for "Claude Opus 5.5"), derived from the data: the name
+  // without its first word, when that word starts several names, the rest starts with a word of
+  // three or more letters and carries a version digit, and no other model gives the same short name.
+  const shortNames = new Map();
+  {
+    const words = (m) => stripParen(m.name).split(' ');
+    const starts = new Map();
+    for (const m of models) { const w = words(m)[0].toLowerCase(); starts.set(w, (starts.get(w) || 0) + 1); }
+    const full = new Set(terms.map((x) => x.t));
+    const seenShort = new Map();
+    for (const m of models) {
+      const w = words(m);
+      if (w.length < 3 || (starts.get(w[0].toLowerCase()) || 0) < 2 || !/^[A-Za-z]{3,}$/.test(w[1])) continue;
+      const short = w.slice(1).join(' ').toLowerCase();
+      if (!/\d/.test(short) || full.has(short)) continue;
+      seenShort.set(short, seenShort.has(short) ? null : m.id);
+    }
+    for (const [short, id] of seenShort) if (id) { shortNames.set(short, id); terms.push({ t: short, id }); }
+  }
   terms.sort((a, b) => b.t.length - a.t.length || (a.t < b.t ? -1 : a.t > b.t ? 1 : 0));
   for (const x of terms) x.re = new RegExp('(^|[^a-z0-9.-])' + esc(x.t) + '(?![a-z0-9-]|\\.[0-9])', 'g');
 
@@ -282,7 +301,7 @@ function indexFacts(facts) {
   const labNames = new Map();
   for (const m of models) if (m.lab && !labNames.has(m.lab)) labNames.set(m.lab, m.vendor);
   const modelsAsOf = safeDate(isObj(mfile) ? mfile.as_of : null);
-  return { models, byId, terms, claims, claimById, refs, toolPlans, effortValues, plans, asOf, modelsAsOf, labNames, namedCache: new Map() };
+  return { models, byId, terms, shortNames, claims, claimById, refs, toolPlans, effortValues, plans, asOf, modelsAsOf, labNames, namedCache: new Map() };
 }
 
 // Model ids a piece of text names (ids or display names), longest match first.
@@ -374,7 +393,8 @@ function resolveModel(F, value) {
   const ref = F.refs.find((r) => r.ref.toLowerCase() === low);
   if (ref) return { id: ref.model_id, raw };
   const byName = F.models.find((m) => cleanText(m.name, 60).toLowerCase() === low || stripParen(m.name).toLowerCase() === low);
-  return { id: byName ? byName.id : null, raw };
+  if (byName) return { id: byName.id, raw };
+  return { id: F.shortNames.get(low) || null, raw };
 }
 function normTools(list, problems, label) {
   const out = [];
@@ -681,7 +701,7 @@ function normalizeSetup(setup) {
   for (const h of arr(s && s.heads_up).slice(0, 30)) {
     if (!isObj(h) || !Number.isInteger(h.line) || h.line < 1) continue;
     const file = safeLine(h.file, 200);
-    const text = safeLine(h.text, 80);
+    const text = safeLine(h.text, 200);
     if (file && text && text !== '(line not shown)') headsUp.push({ file, line: h.line, text });
   }
   const readersOf = new Map();
@@ -1116,7 +1136,15 @@ const HELPER_JOB = {
   reviewer: /\b(review\w*|verif\w*|test-?runner\w*|runs? (the )?tests?)\b/i,
 };
 const NEGATION = /\b(never|avoid|don'?t|do not|not)\b/i;
+// A line that sets the main model or its effort, not a helper's: "always use", "default model".
+const LEAD_LINE = /\b(lead|main|default|primary|always|everything|every (session|task|chat))\b/i;
 const MAX_CHECKS = 12;
+// One line can set several jobs ("Haiku for renames and Sonnet for reviews"): each clause is
+// checked on its own and shown whole. A line with one clause is shown as written.
+function clausesOf(text) {
+  const parts = String(text).split(/;\s*|\.\s+(?=[A-Za-z])|\s+(?:and|but|while|whereas)\s+(?=[A-Za-z])/i).map((x) => x.trim()).filter(Boolean);
+  return parts.length > 1 ? parts : [String(text)];
+}
 
 // Real conflicts between their setup and this package, each tied to the numbered file it touches:
 // (a) a line of theirs that names a different model for a job a helper here does, and (b) a helper
@@ -1126,23 +1154,56 @@ function setupChecks(F, p, S, parts, roles) {
   const itemOf = (id) => parts.findIndex((x) => x.id === id) + 1;
   const helperTools = p.tools.filter((t) => HELPER_TOOLS.includes(t) && roles[t]);
   const seen = new Set();
+  const namedIn = (tool, text) => [...new Set([...namedModels(F, text), ...refsNamed(F, tool, text)])].filter((id) => toolRuns(tool, F.byId.get(id)));
+  const textItem = (tool) => { const i = parts.findIndex((x) => x.kind !== 'json-keys' && !/:agent:/.test(x.id) && arr(x.readers).includes(tool)); return i + 1; };
   for (const h of S.headsUp) {
     const fileReaders = S.readersOf.get(h.file);
     const tools = helperTools.filter((t) => !fileReaders || fileReaders.includes(t));
-    const negated = NEGATION.test(h.text);
+    const clauses = clausesOf(h.text);
+    const shown = (c) => (clauses.length > 1 ? c : h.text);
     for (const role of ROLES) {
-      if (!LINE_JOB[role].test(h.text) || seen.has(`${h.file}:${h.line}:${role}`)) continue;
+      if (seen.has(`${h.file}:${h.line}:${role}`)) continue;
+      for (const clause of clauses.filter((c) => LINE_JOB[role].test(c))) {
+        let done = false;
+        for (const tool of tools) {
+          const item = itemOf(`${tool}:agent:${role}`);
+          if (!item) continue;
+          // The clause's own models; a clause that names none ("... and reviews") takes the line's.
+          let named = namedIn(tool, clause);
+          if (!named.length) named = namedIn(tool, h.text);
+          if (!named.length) continue;
+          const negated = NEGATION.test(clause);
+          const x = roles[tool][role];
+          const own = x.from !== 'inherit' && x.model_id ? x.model_id : null;
+          if (negated ? !(own && named.includes(own)) : (own && named.includes(own))) continue;
+          seen.add(`${h.file}:${h.line}:${role}`);
+          checks.push({ kind: 'rule', file: h.file, line: h.line, text: shown(clause), tool, role, item, runs: own ? F.byId.get(own).name : null });
+          done = true;
+          break;
+        }
+        if (done) break;
+      }
+    }
+    // A line that sets a different main model, or an effort level the lead line does not say.
+    for (const clause of clauses) {
+      if (!LEAD_LINE.test(clause) || NEGATION.test(clause) || ROLES.some((role) => LINE_JOB[role].test(clause))) continue;
       for (const tool of tools) {
-        const item = itemOf(`${tool}:agent:${role}`);
-        if (!item) continue;
-        const named = [...new Set([...namedModels(F, h.text), ...refsNamed(F, tool, h.text)])].filter((id) => toolRuns(tool, F.byId.get(id)));
-        if (!named.length) continue;
-        const x = roles[tool][role];
-        const own = x.from !== 'inherit' && x.model_id ? x.model_id : null;
-        if (negated ? !(own && named.includes(own)) : (own && named.includes(own))) continue;
-        seen.add(`${h.file}:${h.line}:${role}`);
-        checks.push({ kind: 'rule', file: h.file, line: h.line, text: h.text, tool, role, item, runs: own ? F.byId.get(own).name : null });
-        break;
+        if (seen.has(`${h.file}:${h.line}:lead:${tool}`)) continue;
+        const item = textItem(tool);
+        const lead = roles[tool] && roles[tool].lead;
+        if (!item || !lead || lead.from === 'inherit' || !lead.model_id) continue;
+        const named = namedIn(tool, clause);
+        const e = lead.effort_info;
+        const plan = F.toolPlans.get(tool);
+        const levels = (plan && plan.levels) || [];
+        const level = /\beffort\b/i.test(clause) ? levels.find((l) => new RegExp(`\\b${esc(l)}\\b`, 'i').test(clause)) : null;
+        const leadName = F.byId.get(lead.model_id).name;
+        if (named.length && !named.includes(lead.model_id)) {
+          checks.push({ kind: 'lead', file: h.file, line: h.line, text: shown(clause), tool, item, runs: leadName });
+        } else if (level && e && level !== e.effort && level !== e.raise_to) {
+          checks.push({ kind: 'lead', file: h.file, line: h.line, text: shown(clause), tool, item, runs: `${leadName}, effort ${e.effort} by default${e.raise_to && e.when ? ` (${e.raise_to} for ${e.when})` : ''}` });
+        } else continue;
+        seen.add(`${h.file}:${h.line}:lead:${tool}`);
       }
     }
   }
@@ -1441,6 +1502,7 @@ export function renderPreview(pkg) {
     out.push('', 'Check these before you say Go');
     for (const c of checks) {
       if (c.kind === 'rule') out.push(`  - ${c.file}:${c.line} says "${c.text}"; ${helper(c)} runs on ${c.runs || 'the lead\'s model'}. Make them match, or skip #${c.item}.`);
+      else if (c.kind === 'lead') out.push(`  - ${c.file}:${c.line} says "${c.text}"; the Lead line in #${c.item}${several && TOOL_LABEL[c.tool] ? ` (${TOOL_LABEL[c.tool]})` : ''} says ${c.runs}. Make them match, or skip #${c.item}.`);
       else out.push(`  - Your helper ${c.name}${c.path ? ` (${c.path})` : ''} does the same job as ${helper(c)}. Keep both, or skip #${c.item}.`);
     }
   }
