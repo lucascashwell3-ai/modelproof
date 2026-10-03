@@ -641,7 +641,7 @@ function main() {
   // Foundry) sell other people's models, and they are here because that is how enterprises buy.
   const PLAN_VENDORS = [
     'Anthropic', 'OpenAI', 'Google', 'xAI', 'Cursor', 'GitHub Copilot', 'Mistral AI',
-    'Microsoft 365 Copilot', 'Windsurf', 'Perplexity', 'OpenRouter',
+    'Microsoft 365 Copilot', 'Devin', 'Perplexity', 'OpenRouter',
     'Amazon Bedrock', 'Google Vertex AI', 'Microsoft Azure AI Foundry',
   ];
   let plans = null;
