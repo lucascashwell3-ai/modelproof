@@ -658,7 +658,7 @@
       "reaches": "all",
       "covers_tokens": true,
       "source_url": "https://devin.ai/pricing",
-      "quote": "Individual plans Free $0 Download",
+      "quote": "Free $0/month",
       "renamed_from": [
         "Windsurf Free"
       ],
@@ -673,7 +673,7 @@
       "reaches": "all",
       "covers_tokens": true,
       "source_url": "https://devin.ai/pricing",
-      "quote": "Pro Popular $20 per month",
+      "quote": "Pro $20/month",
       "renamed_from": [
         "Windsurf Pro"
       ],
@@ -688,7 +688,7 @@
       "reaches": "all",
       "covers_tokens": true,
       "source_url": "https://devin.ai/pricing",
-      "quote": "Max New $200 per month",
+      "quote": "Max $200/month",
       "renamed_from": [
         "Windsurf Max"
       ],
@@ -719,7 +719,7 @@
       "reaches": "all",
       "covers_tokens": true,
       "source_url": "https://devin.ai/pricing",
-      "quote": "Enterprise Let's talk Get a Demo",
+      "quote": "Enterprise Let's talk",
       "renamed_from": [
         "Windsurf Enterprise"
       ],

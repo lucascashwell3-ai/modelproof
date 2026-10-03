@@ -262,3 +262,39 @@ test('CLI --only: a rotten quote outside the scope does not fail the run; inside
   assert.equal(run('--only', 'guidance/rotten'), 1);
   assert.equal(run('--only', 'm/vision'), 1, 'a scope that selects nothing fails');
 });
+
+// --- report-claim-rot.mjs: the alert covers exactly what the gate checks ----------------------
+import { spawnSync } from 'node:child_process';
+import { loadReportClaims } from './report-claim-rot.mjs';
+
+const verifyingCount = (out) => Number((out.match(/verifying (\d+) claim\(s\)/) || [])[1]);
+
+test('report-claim-rot checks the same claim count as a full check-sources run (live data/)', () => {
+  const dataDir = fileURLToPath(new URL('../data/', import.meta.url));
+  const empty = join(mkdtempSync(join(tmpdir(), 'claim-rot-count-')), 'pages.json');
+  writeFileSync(empty, '{}'); // every fetch fails fast — only the count line matters here
+  const script = fileURLToPath(new URL('./check-sources.mjs', import.meta.url));
+  const r = spawnSync('node', [script, '--data', dataDir], { encoding: 'utf8', env: { ...process.env, CHECK_SOURCES_PAGES: empty } });
+  const gated = verifyingCount(r.stdout);
+  assert.ok(gated > 0, `check-sources printed a count: ${r.stdout.slice(0, 200)}`);
+  const reported = loadReportClaims(dataDir);
+  assert.equal(reported.length, gated, 'every claim check-sources gates is also reported when it rots');
+  for (const f of ['models', 'guidance', 'plans']) assert.ok(reported.some((c) => c.file === f), `reporter covers ${f}`);
+});
+
+test('report-claim-rot names the file of a rotten guidance quote and a rotten plan quote', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'claim-rot-file-'));
+  writeFileSync(join(dir, 'models.json'), JSON.stringify({ models: [{ id: 'm', name: 'M', task_fit_judged: { coding: { claims: [{ source_url: 'https://a.example/m', quote: 'writes code well', tier: 'lab' }] } } }] }));
+  writeFileSync(join(dir, 'guidance.json'), JSON.stringify({ claims: [{ id: 'rotten', subject: { kind: 'tool', name: 'Cursor' }, topic: 'context', sentence: 's', source_url: 'https://a.example/g', tier: 'tool', date: '2026-10-03', quote: 'this sentence left the page' }] }));
+  writeFileSync(join(dir, 'plans.json'), JSON.stringify({ plans: [{ vendor: 'V', plan: 'Pro', source_url: 'https://a.example/p', quote: 'Pro $20/month' }] }));
+  const pagesFile = join(dir, 'pages.json');
+  writeFileSync(pagesFile, JSON.stringify({ 'https://a.example/m': '<p>It writes code well.</p>', 'https://a.example/g': '<p>The page moved on.</p>', 'https://a.example/p': '<p>Pro $25/month</p>' }));
+  const script = fileURLToPath(new URL('./report-claim-rot.mjs', import.meta.url));
+  const env = { ...process.env, REPORT_DATA_DIR: dir, CHECK_SOURCES_PAGES: pagesFile, DRY_RUN: 'true' };
+  const r = spawnSync('node', [script], { encoding: 'utf8', env });
+  assert.equal(r.status, 0, 'a report, never a gate');
+  assert.match(r.stdout, /1\/3 claim\(s\) verified/);
+  assert.match(r.stdout, /`data\/guidance\.json` \*\*Cursor\*\*/);
+  assert.match(r.stdout, /`data\/plans\.json` \*\*V \/ Pro\*\*/);
+  assert.doesNotMatch(r.stdout, /`data\/models\.json`/, 'the verified judged-fit quote is not listed');
+});
