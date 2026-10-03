@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   validateGuidance, claimProblems, GUIDANCE_TIERS, GUIDANCE_TOPICS, GUIDANCE_TOOLS, CLAIM_TIERS,
+  TOOL_PLAN_TOOLS, TOOL_PLAN_CHOICE_ONLY,
 } from './validate-data.mjs';
 
 const MODELS = {
@@ -74,6 +75,20 @@ test('the live file: reviewer never has a default, and Codex/Cursor/AGENTS.md ha
   assert.deepEqual(g.role_defaults.map((r) => `${r.role}:${r.model_ref}`).sort(), ['builder:sonnet', 'scout:haiku']);
 });
 
+test('the live file: one tool plan per tool; helpers inherit; only Claude Code and Codex name models', () => {
+  const g = JSON.parse(readFileSync(new URL('../data/guidance.json', import.meta.url)));
+  assert.deepEqual(g.tool_plans.map((t) => t.tool), TOOL_PLAN_TOOLS);
+  for (const t of g.tool_plans) {
+    if (t.helpers) assert.equal(t.helpers.model, 'inherit', `${t.tool} helpers inherit by default`);
+    const ids = [t.lead.model_id, t.bulk.model_id, t.helpers && t.helpers.push_down && t.helpers.push_down.model_id].filter(Boolean);
+    if (TOOL_PLAN_CHOICE_ONLY.includes(t.tool)) assert.deepEqual(ids, [], `${t.tool} names no model in its plan`);
+  }
+  const cc = g.tool_plans.find((t) => t.tool === 'claude-code');
+  assert.deepEqual([cc.lead.model_id, cc.lead.effort, cc.lead.raise_to, cc.helpers.push_down.model_id, cc.bulk.model_id],
+    ['claude-opus-5-5', 'medium', 'high', 'claude-sonnet-5-5', 'claude-haiku-4-5']);
+  assert.equal(g.tool_plans.find((t) => t.tool === 'openrouter').helpers, null, 'a raw API call has no helpers');
+});
+
 test('a well-formed file passes; models may be the file object or the array', () => {
   assert.deepEqual(errorsOf(good()), []);
   assert.deepEqual(errorsOf(good(), MODELS.models), []);
@@ -83,7 +98,9 @@ test('constants: guidance tiers are tool|lab; the models.json tier list is uncha
   assert.deepEqual(GUIDANCE_TIERS, ['tool', 'lab']);
   assert.deepEqual(CLAIM_TIERS, ['lab', 'reported', 'measured', 'usage']);
   assert.deepEqual(GUIDANCE_TOPICS, ['instruction-files', 'enforced-model', 'effort', 'lead-helper', 'model-per-job', 'context']);
-  assert.deepEqual(Object.keys(GUIDANCE_TOOLS), ['claude-code', 'codex', 'cursor', 'agents-md']);
+  assert.deepEqual(Object.keys(GUIDANCE_TOOLS), ['claude-code', 'codex', 'cursor', 'agents-md', 'copilot', 'antigravity', 'openrouter']);
+  assert.deepEqual(TOOL_PLAN_TOOLS, ['claude-code', 'codex', 'cursor', 'copilot', 'antigravity', 'openrouter']);
+  assert.deepEqual(TOOL_PLAN_CHOICE_ONLY, ['cursor', 'copilot', 'antigravity', 'openrouter']);
 });
 
 test('claimProblems: same rules for both files, tier list chosen by the caller', () => {
@@ -146,6 +163,68 @@ test('model_refs: model_id must exist or be null; a ref mapped twice fails; role
   const d = good(); d.model_refs.push({ ...d.model_refs[0] }); expectError(d, /mapped twice/);
   const a = good(); a.model_refs[0].model_id = 'claude-sonnet-5'; expectError(a, /disagrees with model_refs claude-code\/haiku/);
   const b = good(); b.model_refs[0].basis = ['missing']; expectError(b, /basis names "missing"/);
+});
+
+/* ---- tool_plans */
+function withPlan() {
+  const g = good();
+  g.claims.push(
+    claim('cc-default', { topic: 'enforced-model' }),
+    claim('cc-levels', { topic: 'effort' }),
+    claim('anthropic-low', { subject: { kind: 'lab', name: 'Anthropic' }, tier: 'lab', topic: 'effort' }),
+    claim('cursor-inherit', { subject: { kind: 'tool', name: 'Cursor' }, source_url: 'https://cursor.com/docs/subagents' }),
+  );
+  g.tool_plans = [
+    {
+      tool: 'claude-code', as_of: '2026-09-27',
+      instruction_files: [{ path: '~/.claude/CLAUDE.md', basis: ['cc-alias-haiku'] }],
+      enforced: [{ what: 'model in a helper file', basis: ['cc-haiku'] }],
+      effort_levels: { values: ['low', 'medium', 'high'], basis: ['cc-levels'] },
+      lead: { model_id: 'claude-sonnet-5', effort: 'medium', raise_to: 'high', when: 'hard steps', basis: ['cc-default', 'anthropic-low'] },
+      helpers: { model: 'inherit', basis: ['cc-haiku'], push_down: { model_id: 'claude-haiku-4-5', when: 'a routine thread', basis: ['cc-haiku'] } },
+      bulk: { model_id: 'claude-haiku-4-5', effort: null, when: 'mechanical work', basis: ['cc-haiku'], explore: { basis: ['cc-haiku'] } },
+    },
+    {
+      tool: 'cursor', as_of: '2026-09-27',
+      instruction_files: [{ path: 'AGENTS.md', basis: ['cursor-inherit'] }],
+      enforced: [{ what: 'model in a helper file', basis: ['cursor-inherit'] }],
+      lead: { choice: 'your pick', effort: null, basis: ['cursor-inherit'] },
+      helpers: { model: 'inherit', basis: ['cursor-inherit'] },
+      bulk: { choice: 'your pick', effort: null, when: 'loops', basis: ['cursor-inherit'] },
+    },
+  ];
+  return g;
+}
+
+test('tool_plans: a well-formed plan passes; tool_plans may be absent', () => {
+  assert.deepEqual(errorsOf(withPlan()), []);
+  assert.deepEqual(errorsOf(good()), []);
+});
+
+test('tool_plans: basis ids exist and belong to the tool or its lab', () => {
+  const g = withPlan(); g.tool_plans[0].bulk.basis = ['nope']; expectError(g, /bulk\.basis names "nope"/);
+  const o = withPlan(); o.tool_plans[0].lead.basis = ['openai-effort']; expectError(o, /lead\.basis "openai-effort" is a claim about OpenAI/);
+  const c = withPlan(); c.tool_plans[1].bulk.basis = ['cc-haiku']; expectError(c, /bulk\.basis "cc-haiku" is a claim about Claude Code/);
+  const e = withPlan(); e.tool_plans[0].helpers.basis = []; expectError(e, /helpers\.basis must name at least one claim id/);
+});
+
+test('tool_plans: model ids resolve, stay in a one-lab tool\'s lab, and a choice-only tool names none', () => {
+  const g = withPlan(); g.tool_plans[0].bulk.model_id = 'claude-haiku-9'; expectError(g, /bulk\.model_id "claude-haiku-9" is not a model id/);
+  const l = withPlan(); l.tool_plans[0].helpers.push_down.model_id = 'gpt-6-luna'; expectError(l, /OpenAI model — claude-code runs Anthropic models only/);
+  const d = withPlan(); d.tool_plans[1].bulk = { model_id: 'gpt-6-luna', when: 'loops', basis: ['cursor-inherit'] }; expectError(d, /cursor's docs give no model string/);
+  const b = withPlan(); b.tool_plans[1].lead.model_id = 'gpt-6-luna'; expectError(b, /lead needs exactly one of model_id or choice/);
+  const x = withPlan(); x.tool_plans[1].lead.choice = 'auto'; expectError(x, /lead\.choice must be "your pick"/);
+});
+
+test('tool_plans: helpers inherit; effort values come from the tool\'s own level list; prose has no ranking words', () => {
+  const h = withPlan(); h.tool_plans[0].helpers.model = 'claude-sonnet-5'; expectError(h, /helpers must be \{model: "inherit"/);
+  const e = withPlan(); e.tool_plans[0].lead.effort = 'max'; expectError(e, /lead\.effort "max" is not one of claude-code's effort levels/);
+  const n = withPlan(); n.tool_plans[1].bulk.effort = 'high'; expectError(n, /bulk\.effort "high" is not one of cursor's effort levels/);
+  const w = withPlan(); w.tool_plans[0].bulk.when = 'the best bulk model'; expectError(w, /bulk\.when uses a ranking word/);
+  const r = withPlan(); delete r.tool_plans[0].lead.when; expectError(r, /lead\.when must say when to raise effort/);
+  const t = withPlan(); t.tool_plans.push({ ...t.tool_plans[1] }); expectError(t, /a second plan for cursor/);
+  const u = withPlan(); u.tool_plans[1].tool = 'windsurf'; expectError(u, /tool "windsurf" must be one of/);
+  const v = withPlan(); v.tool_plans[1].bulk.explore = { basis: ['cursor-inherit'] }; expectError(v, /bulk\.explore is a Claude Code helper only/);
 });
 
 test('effort_pages: lab canonical, url http(s), basis claims from that same lab', () => {

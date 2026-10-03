@@ -1,5 +1,5 @@
 {
-  "_readme": "What AI coding tools and model labs publish about instruction files, which model runs each job, effort settings and context. Every claim is one plain sentence plus a quote of at most 25 words copied verbatim from source_url, with the date it was checked. tier \"tool\" = the coding tool's own docs; tier \"lab\" = the model maker's own docs about its own models. scripts/check-sources.mjs re-fetches every source_url and fails if a quote is no longer on the page; scripts/validate-data.mjs checks the shape. role_defaults names a model for a helper job only where the tool's own docs name that job; every other job runs on the same model as the lead (inherit). model_refs maps the strings a tool's config accepts (for example \"sonnet\") to catalog ids in data/models.json. effort_pages links each lab's own page on effort or reasoning settings. Nothing in this file ranks models against each other.",
+  "_readme": "What AI coding tools and model labs publish about instruction files, which model runs each job, effort settings and context. Every claim is one plain sentence plus a quote of at most 25 words copied verbatim from source_url, with the date it was checked. tier \"tool\" = the coding tool's own docs; tier \"lab\" = the model maker's own docs about its own models. scripts/check-sources.mjs re-fetches every source_url and fails if a quote is no longer on the page; scripts/validate-data.mjs checks the shape. tool_plans holds one plan per tool: where its instructions live, which settings it obeys, the lead (its documented default model and effort, or left to you), helpers (inherit the lead's model; a sourced push-down line for a near-full usage limit) and bulk (mechanical, checkable work) — every slot cites claim ids from the tool or its own lab. role_defaults records the helper jobs a tool's docs tie to a model; the install package does not apply them (helpers inherit). model_refs maps the strings a tool's config accepts (for example \"sonnet\") to catalog ids in data/models.json. effort_pages links each lab's own page on effort or reasoning settings. Nothing in this file ranks models against each other.",
   "as_of": "2026-10-03",
   "claims": [
     {
@@ -2627,6 +2627,45 @@
       "tier": "tool",
       "date": "2026-10-03",
       "quote": "Presets allow you to separate your LLM configuration from your code."
+    },
+    {
+      "id": "anthropic-effort-high-use",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "effort",
+      "sentence": "Anthropic's effort docs list complex reasoning, difficult coding problems and agentic tasks as the typical use for high effort.",
+      "source_url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "Complex reasoning, difficult coding problems, agentic tasks"
+    },
+    {
+      "id": "cc-effort-levels",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "effort",
+      "sentence": "Claude Code's settings reference lists low, medium, high, xhigh and max as the effort values maxEffortLevel takes.",
+      "source_url": "https://code.claude.com/docs/en/settings-reference",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "string, one of \"low\" , \"medium\" , \"high\" , \"xhigh\" , or \"max\""
+    },
+    {
+      "id": "codex-effort-levels",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "effort",
+      "sentence": "Codex's config reference lists low, medium, high, xhigh, max and ultra as reasoning effort values the selected model may advertise.",
+      "source_url": "https://developers.openai.com/codex/config-reference",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Reasoning effort advertised by the selected model, such as low , medium , high , xhigh , max , or ultra ."
     }
   ],
   "role_defaults": [
@@ -2691,6 +2730,24 @@
       "basis": [
         "cc-alias-fable-resolves"
       ]
+    },
+    {
+      "tool": "codex",
+      "ref": "gpt-6.1-sol",
+      "model_id": "gpt-6-1-sol",
+      "basis": [
+        "codex-default-model-key",
+        "codex-luna-fast-scans"
+      ]
+    },
+    {
+      "tool": "codex",
+      "ref": "gpt-6-luna",
+      "model_id": "gpt-6-luna",
+      "basis": [
+        "codex-luna-lighter-subagent-work",
+        "codex-luna-fast-scans"
+      ]
     }
   ],
   "effort_pages": [
@@ -2748,6 +2805,426 @@
         "mistral-high-effort-agentic-code",
         "mistral-none-effort-behavior"
       ]
+    }
+  ],
+  "tool_plans": [
+    {
+      "tool": "claude-code",
+      "as_of": "2026-10-03",
+      "instruction_files": [
+        {
+          "path": "~/.claude/CLAUDE.md",
+          "basis": [
+            "cc-user-claude-md"
+          ]
+        },
+        {
+          "path": "CLAUDE.md or .claude/CLAUDE.md",
+          "basis": [
+            "cc-project-claude-md"
+          ]
+        },
+        {
+          "path": ".claude/rules/*.md and ~/.claude/rules/*.md",
+          "basis": [
+            "cc-rules-dir",
+            "cc-user-rules"
+          ]
+        }
+      ],
+      "enforced": [
+        {
+          "what": "model in a helper file (.claude/agents/*.md)",
+          "basis": [
+            "cc-subagent-model-values",
+            "cc-subagent-model-order"
+          ]
+        },
+        {
+          "what": "effort in a helper file",
+          "basis": [
+            "cc-subagent-effort"
+          ]
+        },
+        {
+          "what": "model in settings.json",
+          "basis": [
+            "cc-settings-model-key"
+          ]
+        },
+        {
+          "what": "maxEffortLevel in settings.json",
+          "basis": [
+            "cc-max-effort"
+          ]
+        }
+      ],
+      "effort_levels": {
+        "values": [
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "basis": [
+          "cc-effort-levels"
+        ]
+      },
+      "lead": {
+        "model_id": "claude-opus-5-5",
+        "effort": "medium",
+        "raise_to": "high",
+        "when": "complex reasoning or difficult coding problems",
+        "basis": [
+          "cc-default-model-opus-5-5",
+          "cc-effort-5-5-default-medium",
+          "anthropic-effort-high-use"
+        ]
+      },
+      "helpers": {
+        "model": "inherit",
+        "basis": [
+          "cc-inherit-follows-switch",
+          "cc-subagent-model-order"
+        ],
+        "push_down": {
+          "model_id": "claude-sonnet-5-5",
+          "when": "a routine, well-scoped thread",
+          "basis": [
+            "cc-opus-quota-sonnet-routine",
+            "anthropic-sonnet-5-5-complement"
+          ]
+        }
+      },
+      "bulk": {
+        "model_id": "claude-haiku-4-5",
+        "effort": null,
+        "when": "quick mechanical work whose output a script or test can check",
+        "basis": [
+          "cc-haiku-mechanical-work",
+          "anthropic-haiku-checkable-outputs",
+          "cc-costs-haiku-subagent"
+        ],
+        "explore": {
+          "basis": [
+            "cc-explore-override-haiku",
+            "cc-explore-model"
+          ]
+        }
+      }
+    },
+    {
+      "tool": "codex",
+      "as_of": "2026-10-03",
+      "instruction_files": [
+        {
+          "path": "~/.codex/AGENTS.md (AGENTS.override.md when present)",
+          "basis": [
+            "codex-global-agents-md"
+          ]
+        },
+        {
+          "path": "AGENTS.md in each folder from the project root down",
+          "basis": [
+            "codex-project-agents-md-walk",
+            "codex-reads-agents-md"
+          ]
+        }
+      ],
+      "enforced": [
+        {
+          "what": "model and model_reasoning_effort in config.toml",
+          "basis": [
+            "codex-default-model-key",
+            "codex-reasoning-effort-key"
+          ]
+        },
+        {
+          "what": "model in a custom agent file (.codex/agents/*.toml)",
+          "basis": [
+            "codex-custom-agent-files",
+            "codex-custom-agent-model-wins"
+          ]
+        },
+        {
+          "what": "agents.default_subagent_model in config.toml",
+          "basis": [
+            "codex-subagent-default-model"
+          ]
+        }
+      ],
+      "effort_levels": {
+        "values": [
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max",
+          "ultra"
+        ],
+        "basis": [
+          "codex-effort-levels"
+        ]
+      },
+      "lead": {
+        "model_id": "gpt-6-1-sol",
+        "effort": "low",
+        "raise_to": "high",
+        "when": "complex changes or debugging",
+        "basis": [
+          "codex-6-1-sol-default-catalog",
+          "codex-catalog-6-1-sol-effort-low",
+          "codex-effort-by-task"
+        ]
+      },
+      "helpers": {
+        "model": "inherit",
+        "basis": [
+          "codex-subagent-inherits"
+        ],
+        "push_down": {
+          "model_id": "gpt-6-luna",
+          "when": "lighter helper work",
+          "basis": [
+            "codex-luna-lighter-subagent-work"
+          ]
+        }
+      },
+      "bulk": {
+        "model_id": "gpt-6-luna",
+        "effort": "high",
+        "when": "focused, repeatable tasks",
+        "basis": [
+          "codex-luna-repeatable",
+          "codex-luna-start-high",
+          "codex-luna-lighter-subagent-work"
+        ]
+      }
+    },
+    {
+      "tool": "cursor",
+      "as_of": "2026-10-03",
+      "instruction_files": [
+        {
+          "path": ".cursor/rules/*.mdc",
+          "basis": [
+            "cursor-project-rules-location",
+            "cursor-rules-need-mdc"
+          ]
+        },
+        {
+          "path": "AGENTS.md in the project root and subfolders",
+          "basis": [
+            "cursor-reads-agents-md"
+          ]
+        },
+        {
+          "path": "User Rules, in the app",
+          "basis": [
+            "cursor-user-rules"
+          ]
+        }
+      ],
+      "enforced": [
+        {
+          "what": "model in a helper file (.cursor/agents/*.md), with effort options in brackets",
+          "basis": [
+            "cursor-subagent-model-field",
+            "cursor-subagent-effort"
+          ]
+        }
+      ],
+      "lead": {
+        "choice": "your pick",
+        "effort": null,
+        "basis": [
+          "cursor-auto-everyday"
+        ]
+      },
+      "helpers": {
+        "model": "inherit",
+        "basis": [
+          "cursor-subagent-inherit-default",
+          "cursor-inherit-same-reasoning"
+        ],
+        "push_down": {
+          "choice": "your pick",
+          "when": "a planned piece of implementation",
+          "basis": [
+            "cursor-planner-cheaper-implementer"
+          ]
+        }
+      },
+      "bulk": {
+        "choice": "your pick",
+        "effort": null,
+        "when": "high-volume loops",
+        "basis": [
+          "cursor-luna-subagents",
+          "cursor-composer-cost-efficient"
+        ]
+      }
+    },
+    {
+      "tool": "copilot",
+      "as_of": "2026-10-03",
+      "instruction_files": [
+        {
+          "path": "AGENTS.md (the nearest one wins)",
+          "basis": [
+            "copilot-reads-agents-md"
+          ]
+        },
+        {
+          "path": ".github/copilot-instructions.md",
+          "basis": [
+            "copilot-instructions-file"
+          ]
+        }
+      ],
+      "enforced": [
+        {
+          "what": "model in a custom agent file (.github/agents/*.agent.md); unset runs the default model",
+          "basis": [
+            "copilot-agent-model-property",
+            "copilot-agent-model-list",
+            "copilot-custom-agent-locations"
+          ]
+        }
+      ],
+      "lead": {
+        "choice": "your pick",
+        "effort": null,
+        "basis": [
+          "copilot-model-picker",
+          "copilot-thinking-effort-default"
+        ]
+      },
+      "helpers": {
+        "model": "inherit",
+        "basis": [
+          "copilot-subagent-main-model-default"
+        ],
+        "push_down": {
+          "choice": "your pick",
+          "when": "a helper job",
+          "basis": [
+            "copilot-subagents-cheaper-models",
+            "copilot-subagent-cost-tier-cap"
+          ]
+        }
+      },
+      "bulk": {
+        "choice": "your pick",
+        "effort": null,
+        "when": "routine, well-scoped changes",
+        "basis": [
+          "copilot-lighter-models-routine"
+        ]
+      }
+    },
+    {
+      "tool": "antigravity",
+      "as_of": "2026-10-03",
+      "instruction_files": [
+        {
+          "path": "AGENTS.md or GEMINI.md in any folder of the project",
+          "basis": [
+            "antigravity-rule-files"
+          ]
+        },
+        {
+          "path": "~/.gemini/AGENTS.md",
+          "basis": [
+            "antigravity-global-rule-files"
+          ]
+        },
+        {
+          "path": ".agents/rules/*.md, each with trigger frontmatter",
+          "basis": [
+            "antigravity-rules-need-trigger"
+          ]
+        }
+      ],
+      "enforced": [
+        {
+          "what": "model tier in a helper file (.agents/agents/*.md): inherit, flash or pro",
+          "basis": [
+            "antigravity-subagent-model-tier",
+            "antigravity-subagent-folders"
+          ]
+        }
+      ],
+      "lead": {
+        "choice": "your pick",
+        "effort": null,
+        "basis": [
+          "antigravity-model-choice-persists",
+          "antigravity-core-agent-models"
+        ]
+      },
+      "helpers": {
+        "model": "inherit",
+        "basis": [
+          "antigravity-subagent-model-tier"
+        ],
+        "push_down": null
+      },
+      "bulk": {
+        "choice": "your pick",
+        "effort": null,
+        "when": "repeatable helper work",
+        "basis": [
+          "antigravity-subagent-model-tier"
+        ]
+      }
+    },
+    {
+      "tool": "openrouter",
+      "as_of": "2026-10-03",
+      "instruction_files": [
+        {
+          "path": "the system prompt in your own code, or an OpenRouter preset",
+          "basis": [
+            "openrouter-presets"
+          ]
+        }
+      ],
+      "enforced": [
+        {
+          "what": "model, or a models fallback list, in each request",
+          "basis": [
+            "openrouter-auto-slug",
+            "openrouter-models-fallback",
+            "openrouter-fallback-pricing"
+          ]
+        },
+        {
+          "what": "reasoning effort in each request",
+          "basis": [
+            "openrouter-reasoning-parameter"
+          ]
+        }
+      ],
+      "lead": {
+        "choice": "your pick",
+        "effort": null,
+        "basis": [
+          "openrouter-auto-slug",
+          "openrouter-auto-default-low"
+        ]
+      },
+      "helpers": null,
+      "bulk": {
+        "choice": "your pick",
+        "effort": null,
+        "when": "high-volume requests",
+        "basis": [
+          "openrouter-floor-variant",
+          "openrouter-auto-cost-tiers"
+        ]
+      }
     }
   ]
 }

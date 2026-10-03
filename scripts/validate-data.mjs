@@ -125,10 +125,13 @@ export function claimProblems(c, label, { tiers = CLAIM_TIERS } = {}) {
 export const GUIDANCE_TIERS = ['tool', 'lab'];
 export const GUIDANCE_TOPICS = ['instruction-files', 'enforced-model', 'effort', 'lead-helper', 'model-per-job', 'context'];
 // Tool ids the package targets -> the name its claims use as subject.name.
-export const GUIDANCE_TOOLS = { 'claude-code': 'Claude Code', codex: 'Codex CLI', cursor: 'Cursor', 'agents-md': 'AGENTS.md' };
+export const GUIDANCE_TOOLS = {
+  'claude-code': 'Claude Code', codex: 'Codex CLI', cursor: 'Cursor', 'agents-md': 'AGENTS.md',
+  copilot: 'GitHub Copilot', antigravity: 'Antigravity', openrouter: 'OpenRouter',
+};
 export const GUIDANCE_ROLES = ['scout', 'builder', 'reviewer'];
 // Tools with facts in the file that the package doesn't write for (yet) — still valid subjects.
-export const GUIDANCE_EXTRA_TOOL_NAMES = ['GitHub Copilot', 'Gemini CLI', 'Antigravity', 'OpenRouter'];
+export const GUIDANCE_EXTRA_TOOL_NAMES = ['Gemini CLI'];
 // Our own prose (sentence, _readme) never ranks one model against another. Quotes are exempt —
 // they are the source's words, reproduced verbatim.
 export const GUIDANCE_BANNED_PATTERNS = [
@@ -246,7 +249,102 @@ export function validateGuidance(guidance, models) {
       if (!c.subject || c.subject.kind !== 'lab' || c.subject.name !== p.lab) E(`${label}.basis "${id}" is not a claim from ${p.lab}`);
     }
   });
+  toolPlanProblems(guidance, claims, byId).forEach(E);
   return { errors, warnings };
+}
+
+// --- guidance.json tool_plans: one Lead / Helpers / Bulk plan per tool -----------------------
+// { tool, as_of, instruction_files[{path, basis}], enforced[{what, basis}], effort_levels?{values, basis},
+//   lead{model_id | choice, effort, raise_to?, when?, basis}, helpers{model:"inherit", basis, push_down?} | null,
+//   bulk{model_id | choice, effort, when, basis, explore?{basis}} }
+// A slot names a catalog model only where the tool's own docs give the string its files take;
+// every other slot is `choice: "your pick"` (TOOL_PLAN_CHOICE_ONLY: tools whose model strings are
+// not documented, so a value would be a guess and must never reach an enforced file).
+export const TOOL_PLAN_TOOLS = ['claude-code', 'codex', 'cursor', 'copilot', 'antigravity', 'openrouter'];
+export const TOOL_PLAN_CHOICE = 'your pick';
+export const TOOL_PLAN_CHOICE_ONLY = ['cursor', 'copilot', 'antigravity', 'openrouter'];
+export function toolPlanProblems(guidance, claims, byId) {
+  const out = [];
+  const G = 'data/guidance.json';
+  const plans = guidance && guidance.tool_plans;
+  if (plans === undefined) return out;
+  if (!Array.isArray(plans)) return [`${G}: tool_plans must be an array`];
+  const seen = new Set();
+  const isStr = (v) => typeof v === 'string' && v.trim() !== '';
+  plans.forEach((tp, i) => {
+    const who = `${G} tool_plans[${i}]${tp && tp.tool ? ` (${tp.tool})` : ''}`;
+    if (!tp || typeof tp !== 'object' || Array.isArray(tp)) { out.push(`${who} must be an object`); return; }
+    if (!TOOL_PLAN_TOOLS.includes(tp.tool)) { out.push(`${who}.tool "${tp.tool}" must be one of ${TOOL_PLAN_TOOLS.join(', ')}`); return; }
+    if (seen.has(tp.tool)) out.push(`${who}: a second plan for ${tp.tool}`);
+    seen.add(tp.tool);
+    if (!isStr(tp.as_of) || !DATE_RE.test(tp.as_of)) out.push(`${who}.as_of "${tp.as_of}" must be a YYYY-MM-DD date`);
+    const own = (basis, label, modelId) => basisOwnerProblems(basis, { tool: tp.tool, modelId, label, claims, modelsById: byId });
+    const prose = (v, label) => {
+      if (v === undefined || v === null) return;
+      if (!isStr(v)) { out.push(`${label} must be plain text`); return; }
+      const hit = guidanceBannedIn(v);
+      if (hit) out.push(`${label} uses a ranking word (/${hit}/) — say what the source says, never a comparison`);
+    };
+    const levels = tp.effort_levels;
+    if (levels !== undefined) {
+      if (!levels || !Array.isArray(levels.values) || !levels.values.length || levels.values.some((v) => !isStr(v) || !/^[a-z]+$/.test(v))
+        || new Set(levels.values).size !== levels.values.length) out.push(`${who}.effort_levels.values must be a list of distinct lowercase level names`);
+      out.push(...own(levels && levels.basis, `${who}.effort_levels`, null));
+    }
+    const levelOk = (v) => (levels && Array.isArray(levels.values) ? levels.values.includes(v) : false);
+    for (const key of ['instruction_files', 'enforced']) {
+      const list = tp[key];
+      if (!Array.isArray(list) || !list.length) { out.push(`${who}.${key} must be a non-empty array`); continue; }
+      list.forEach((x, j) => {
+        const label = `${who}.${key}[${j}]`;
+        const field = key === 'enforced' ? 'what' : 'path';
+        if (!x || !isStr(x[field])) out.push(`${label}.${field} is required`);
+        else prose(x[field], `${label}.${field}`);
+        out.push(...own(x && x.basis, label, null));
+      });
+    }
+    // One model slot: a catalog model id (that tool's own lab for a one-lab tool), or the choice marker.
+    const slot = (x, label, { effort = true } = {}) => {
+      if (!x || typeof x !== 'object' || Array.isArray(x)) { out.push(`${label} must be an object`); return; }
+      const hasId = x.model_id !== undefined && x.model_id !== null;
+      if (hasId === (x.choice !== undefined && x.choice !== null)) out.push(`${label} needs exactly one of model_id or choice "${TOOL_PLAN_CHOICE}"`);
+      if (hasId) {
+        if (!isStr(x.model_id) || !byId.has(x.model_id)) out.push(`${label}.model_id "${x.model_id}" is not a model id in data/models.json`);
+        else {
+          const lab = TOOL_OWN_LAB[tp.tool];
+          if (lab && byId.get(x.model_id).vendor !== lab) out.push(`${label}.model_id "${x.model_id}" is a ${byId.get(x.model_id).vendor} model — ${tp.tool} runs ${lab} models only`);
+        }
+        if (TOOL_PLAN_CHOICE_ONLY.includes(tp.tool)) out.push(`${label}.model_id: ${tp.tool}'s docs give no model string for its files, so this slot is choice "${TOOL_PLAN_CHOICE}" — a derived value never reaches an enforced file`);
+      } else if (x.choice !== undefined && x.choice !== null && x.choice !== TOOL_PLAN_CHOICE) out.push(`${label}.choice must be "${TOOL_PLAN_CHOICE}"`);
+      if (effort) for (const k of ['effort', 'raise_to']) {
+        const v = x[k];
+        if (v === undefined || v === null) continue;
+        if (!levelOk(v)) out.push(`${label}.${k} "${v}" is not one of ${tp.tool}'s effort levels (effort_levels.values)`);
+      }
+      if (x.raise_to != null && !isStr(x.when)) out.push(`${label}.when must say when to raise effort to ${x.raise_to}`);
+      prose(x.when, `${label}.when`);
+      out.push(...own(x.basis, label, hasId && isStr(x.model_id) ? x.model_id : null));
+    };
+    slot(tp.lead, `${who}.lead`);
+    if (tp.helpers !== null) {
+      const h = tp.helpers;
+      if (!h || typeof h !== 'object' || h.model !== 'inherit') out.push(`${who}.helpers must be {model: "inherit", basis, push_down?} (helpers run on the lead's model), or null for a tool with no helpers`);
+      else {
+        out.push(...own(h.basis, `${who}.helpers`, null));
+        if (h.push_down !== undefined && h.push_down !== null) {
+          slot(h.push_down, `${who}.helpers.push_down`, { effort: false });
+          if (!isStr(h.push_down.when)) out.push(`${who}.helpers.push_down.when is required`);
+        }
+      }
+    }
+    slot(tp.bulk, `${who}.bulk`);
+    if (tp.bulk && !isStr(tp.bulk.when)) out.push(`${who}.bulk.when is required (the kind of work it is for)`);
+    if (tp.bulk && tp.bulk.explore !== undefined) {
+      if (tp.tool !== 'claude-code') out.push(`${who}.bulk.explore is a Claude Code helper only`);
+      out.push(...own(tp.bulk.explore && tp.bulk.explore.basis, `${who}.bulk.explore`, null));
+    }
+  });
+  return out;
 }
 
 export function validate(data, registry) {
