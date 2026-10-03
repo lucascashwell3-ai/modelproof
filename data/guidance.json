@@ -1,6 +1,6 @@
 {
   "_readme": "What AI coding tools and model labs publish about instruction files, which model runs each job, effort settings and context. Every claim is one plain sentence plus a quote of at most 25 words copied verbatim from source_url, with the date it was checked. tier \"tool\" = the coding tool's own docs; tier \"lab\" = the model maker's own docs about its own models. scripts/check-sources.mjs re-fetches every source_url and fails if a quote is no longer on the page; scripts/validate-data.mjs checks the shape. role_defaults names a model for a helper job only where the tool's own docs name that job; every other job runs on the same model as the lead (inherit). model_refs maps the strings a tool's config accepts (for example \"sonnet\") to catalog ids in data/models.json. effort_pages links each lab's own page on effort or reasoning settings. Nothing in this file ranks models against each other.",
-  "as_of": "2026-09-27",
+  "as_of": "2026-10-03",
   "claims": [
     {
       "id": "cc-user-claude-md",
@@ -243,11 +243,11 @@
         "name": "Claude Code"
       },
       "topic": "context",
-      "sentence": "Files pulled in through CLAUDE.md imports still load into the context window at launch.",
+      "sentence": "Files pulled in through CLAUDE.md imports load into context at launch together with the CLAUDE.md that imports them.",
       "source_url": "https://code.claude.com/docs/en/memory",
       "tier": "tool",
-      "date": "2026-09-27",
-      "quote": "imported files still load and enter the context window at launch"
+      "date": "2026-10-03",
+      "quote": "Imported files are expanded and loaded into context at launch alongside the CLAUDE.md that references them."
     },
     {
       "id": "cc-claude-md-bloat",
@@ -562,6 +562,19 @@
       "quote": "Opus 5.5 starts at medium unless one of the sources above sets a level for it"
     },
     {
+      "id": "cc-effort-sonnet-5-5-default",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "effort",
+      "sentence": "In Claude Code, Opus 5.5 and Sonnet 5.5 default to medium effort; other models that support effort default to high, except Opus 4.7.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "high on every model that supports effort, except that Opus 5.5 and Sonnet 5.5 default to medium"
+    },
+    {
       "id": "cc-effort-by-model",
       "subject": {
         "kind": "tool",
@@ -633,11 +646,11 @@
         "name": "Claude Code"
       },
       "topic": "lead-helper",
-      "sentence": "Since v2.1.198 the built-in Explore subagent inherits the main conversation model instead of always running on Haiku.",
+      "sentence": "Claude Code's built-in Explore subagent runs on the main conversation's model; when that model is Fable, Explore's model depends on how you connect.",
       "source_url": "https://code.claude.com/docs/en/sub-agents",
       "tier": "tool",
-      "date": "2026-09-27",
-      "quote": "As of v2.1.198, Explore inherits the main conversation's model instead of always running on Haiku."
+      "date": "2026-10-03",
+      "quote": "the main conversation's model. When the main conversation runs Fable, Explore's model depends on how you connect"
     },
     {
       "id": "cc-explore-cap",
@@ -646,11 +659,24 @@
         "name": "Claude Code"
       },
       "topic": "lead-helper",
-      "sentence": "On the Claude API, the Explore subagent model is capped at Opus.",
+      "sentence": "When the main conversation runs Fable through a Claude subscription, an Anthropic Console account or an LLM gateway, Claude Code's Explore subagent runs on the model the opus alias resolves to.",
       "source_url": "https://code.claude.com/docs/en/sub-agents",
       "tier": "tool",
-      "date": "2026-09-27",
-      "quote": "inherits from the main conversation, capped at Opus on the Claude API"
+      "date": "2026-10-03",
+      "quote": "Explore runs on the Opus model that the opus alias resolves to"
+    },
+    {
+      "id": "cc-explore-stays-on-main",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "lead-helper",
+      "sentence": "On Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, Claude Platform on AWS or a Claude apps gateway, Claude Code's Explore subagent stays on the main conversation's model.",
+      "source_url": "https://code.claude.com/docs/en/sub-agents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Explore stays on the main conversation's model"
     },
     {
       "id": "cc-explore-override-haiku",
@@ -659,11 +685,11 @@
         "name": "Claude Code"
       },
       "topic": "lead-helper",
-      "sentence": "A user or project subagent named Explore with model: haiku keeps exploration on Haiku.",
+      "sentence": "A user or project subagent named Explore with model: haiku runs exploration on Haiku.",
       "source_url": "https://code.claude.com/docs/en/sub-agents",
       "tier": "tool",
-      "date": "2026-09-27",
-      "quote": "define one with model: haiku to keep exploration on a lower-cost model"
+      "date": "2026-10-03",
+      "quote": "define one with model: haiku to run exploration on a lower-cost model"
     },
     {
       "id": "cc-explore-skips-claude-md",
@@ -802,11 +828,24 @@
         "name": "Claude Code"
       },
       "topic": "enforced-model",
-      "sentence": "Claude Code's model-config table shows the opus alias resolving to Opus 5.5 and the sonnet alias to Sonnet 5 on the Anthropic API; other providers resolve to other versions.",
+      "sentence": "Claude Code's model-config table shows the opus alias resolving to Opus 5.5 and the sonnet alias to Sonnet 5.5 on the Anthropic API; other providers resolve to other versions.",
       "source_url": "https://code.claude.com/docs/en/model-config",
       "tier": "tool",
-      "date": "2026-09-27",
-      "quote": "Anthropic API Opus 5.5 Sonnet 5"
+      "date": "2026-10-03",
+      "quote": "Anthropic API Opus 5.5 Sonnet 5.5"
+    },
+    {
+      "id": "cc-sonnet-5-5-default-sonnet",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "Claude Code's changelog for v2.1.284 (2026-09-28) adds Claude Sonnet 5.5 as the default Sonnet model on the Anthropic API.",
+      "source_url": "https://code.claude.com/docs/en/changelog",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "now the default Sonnet model on the Anthropic API"
     },
     {
       "id": "codex-reads-agents-md",
@@ -883,8 +922,8 @@
       "sentence": "Codex sets its default model for the CLI and IDE with the model key in config.toml.",
       "source_url": "https://developers.openai.com/codex/config-basic",
       "tier": "tool",
-      "date": "2026-09-27",
-      "quote": "Choose the model Codex uses by default in the CLI and IDE. model = \"gpt-6-sol\""
+      "date": "2026-10-03",
+      "quote": "Choose the model Codex uses by default in the CLI and IDE. model = \"gpt-6.1-sol\""
     },
     {
       "id": "codex-reasoning-effort-key",
@@ -1322,11 +1361,24 @@
         "name": "Anthropic"
       },
       "topic": "effort",
-      "sentence": "Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium.",
+      "sentence": "On the Claude API, Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium.",
       "source_url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
       "tier": "lab",
-      "date": "2026-09-27",
+      "date": "2026-10-03",
       "quote": "the default on every model that supports effort except Claude Opus 5.5."
+    },
+    {
+      "id": "anthropic-sonnet-5-5-effort-api-default",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "effort",
+      "sentence": "Anthropic's effort docs state that Claude Sonnet 5.5 supports five effort levels and defaults to high on the Claude API.",
+      "source_url": "https://platform.claude.com/docs/en/build-with-claude/effort",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "Claude Sonnet 5.5 supports all five effort levels, and high is the default on the Claude API."
     },
     {
       "id": "openai-gpt-6-family-roles",
@@ -1335,11 +1387,11 @@
         "name": "OpenAI"
       },
       "topic": "model-per-job",
-      "sentence": "OpenAI's GPT-6 guide assigns gpt-6-astra to its highest capability, gpt-6-sol to strong reasoning on demanding tasks, and gpt-6-luna to efficient, repeatable work at scale.",
-      "source_url": "https://developers.openai.com/api/docs/guides/latest-model",
+      "sentence": "OpenAI's models page names gpt-6.1-sol for balancing intelligence and cost and gpt-6-luna for cost-sensitive, high-volume workloads.",
+      "source_url": "https://developers.openai.com/api/docs/models",
       "tier": "lab",
-      "date": "2026-09-27",
-      "quote": "use gpt-6-astra for our highest level of capability, gpt-6-sol for strong reasoning on demanding tasks, or gpt-6-luna for efficient, repeatable work at scale."
+      "date": "2026-10-03",
+      "quote": "Choose GPT-6.1 Sol to balance intelligence and cost, or GPT-6 Luna for cost-sensitive, high-volume workloads."
     },
     {
       "id": "openai-planner-and-workhorse",
@@ -1387,11 +1439,11 @@
         "name": "OpenAI"
       },
       "topic": "effort",
-      "sentence": "OpenAI's reasoning guide states gpt-6-sol and gpt-6-luna default to medium reasoning effort.",
+      "sentence": "OpenAI's reasoning guide states gpt-6.1-sol, gpt-6-sol and gpt-6-luna default to medium reasoning effort.",
       "source_url": "https://developers.openai.com/api/docs/guides/reasoning",
       "tier": "lab",
-      "date": "2026-09-27",
-      "quote": "gpt-6 sol and luna also default to medium reasoning effort."
+      "date": "2026-10-03",
+      "quote": "GPT-6.1 Sol, GPT-6 Sol, and GPT-6 Luna also default to medium reasoning effort."
     },
     {
       "id": "openai-change-effort-mid-conversation",
@@ -1413,11 +1465,11 @@
         "name": "Google"
       },
       "topic": "effort",
-      "sentence": "Google's Gemini docs state that Gemini 3 models replace token thinking budgets with discrete thinking_level settings.",
+      "sentence": "Google's Gemini docs state Gemini 3 models use a thinking_level parameter with discrete reasoning tiers.",
       "source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/thinking",
       "tier": "lab",
-      "date": "2026-09-27",
-      "quote": "gemini 3 models introduce the thinking_level parameter, which simplifies thinking budget configuration into discrete levels."
+      "date": "2026-10-03",
+      "quote": "Gemini 3 models use the thinking_level parameter. This parameter sets discrete reasoning tiers"
     },
     {
       "id": "google-thinking-level-high-use",
@@ -1426,11 +1478,11 @@
         "name": "Google"
       },
       "topic": "effort",
-      "sentence": "Google's Gemini docs describe the high thinking level as suited to complex prompts such as multi-step planning, verified code generation, or advanced function calling.",
+      "sentence": "Google's Gemini docs describe the high thinking level as for prompts needing deep reasoning, multi-step problem solving, code verification or multi-turn tool use.",
       "source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/thinking",
       "tier": "lab",
-      "date": "2026-09-27",
-      "quote": "suitable for complex prompts requiring deep reasoning, such as multi-step planning, verified code generation, or advanced function calling scenarios."
+      "date": "2026-10-03",
+      "quote": "Best for complex prompts requiring deep reasoning, multi-step problem solving, formal code verification, or multi-turn tool execution."
     },
     {
       "id": "google-gemini-2-5-thinking-budget",
@@ -1439,11 +1491,11 @@
         "name": "Google"
       },
       "topic": "effort",
-      "sentence": "Google's Gemini docs state that models earlier than Gemini 3 use a thinking_budget parameter that caps the tokens spent on thinking.",
+      "sentence": "Google's Gemini docs state Gemini 2.5 and earlier models set thinking with a thinking_budget parameter.",
       "source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/thinking",
       "tier": "lab",
-      "date": "2026-09-27",
-      "quote": "the thinking_budget parameter, which sets an upper limit on the number of tokens the model can use for its thought process."
+      "date": "2026-10-03",
+      "quote": "For Gemini 2.5 and earlier models, configure thinking using the thinking_budget parameter."
     },
     {
       "id": "google-gemini-3-8-flash-role",
@@ -1478,11 +1530,11 @@
         "name": "Google"
       },
       "topic": "lead-helper",
-      "sentence": "Google DeepMind's Gemini page shows Gemini 3.6 Flash acting as the master agent while Gemini 3.5 Flash-Lite generates 25 web design concepts.",
-      "source_url": "https://deepmind.google/models/gemini/",
+      "sentence": "Google DeepMind's Flash-Lite page shows Gemini 3.6 Flash as the master agent while Gemini 3.5 Flash-Lite generates 25 web design concepts.",
+      "source_url": "https://deepmind.google/models/gemini/flash-lite/",
       "tier": "lab",
-      "date": "2026-09-27",
-      "quote": "working alongside 3.6 flash as the master agent, 3.5 flash-lite instantly generates 25 unique, ready-to-explore web design concepts."
+      "date": "2026-10-03",
+      "quote": "Working alongside 3.6 Flash as the master agent, 3.5 Flash-Lite instantly generates 25 unique, ready-to-explore web design concepts"
     },
     {
       "id": "xai-grok-effort-default-high",
@@ -1615,6 +1667,19 @@
       "quote": "mistral small 4 hybrid model unifying instruct, reasoning, and coding in a single efficient model."
     },
     {
+      "id": "mistral-high-effort-token-cost",
+      "subject": {
+        "kind": "lab",
+        "name": "Mistral AI"
+      },
+      "topic": "effort",
+      "sentence": "Mistral's reasoning docs state that reasoning_effort high returns a full thinking chunk before the answer, at the cost of more tokens.",
+      "source_url": "https://docs.mistral.ai/capabilities/reasoning/",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "the response includes a full thinking chunk before the final answer, at the cost of increased token usage."
+    },
+    {
       "id": "deepseek-thinking-default-high",
       "subject": {
         "kind": "lab",
@@ -1652,6 +1717,32 @@
       "tier": "lab",
       "date": "2026-09-27",
       "quote": "thinking mode supports both non-thinking and thinking (default) modes"
+    },
+    {
+      "id": "deepseek-none-disables-thinking",
+      "subject": {
+        "kind": "lab",
+        "name": "DeepSeek"
+      },
+      "topic": "effort",
+      "sentence": "DeepSeek's thinking-mode docs state that a reasoning effort of none disables thinking mode.",
+      "source_url": "https://api-docs.deepseek.com/guides/thinking_mode",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "none disables thinking mode"
+    },
+    {
+      "id": "deepseek-off-peak-half-price",
+      "subject": {
+        "kind": "lab",
+        "name": "DeepSeek"
+      },
+      "topic": "model-per-job",
+      "sentence": "DeepSeek's models and pricing page states that its off-peak API rates are half of its peak rates.",
+      "source_url": "https://api-docs.deepseek.com/quick_start/pricing",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "off-peak rates are half of the peak rates."
     },
     {
       "id": "meta-muse-spark-role",
@@ -1706,17 +1797,836 @@
       "quote": "when you omit the parameter, the model still reasons at a model-determined level."
     },
     {
+      "id": "meta-effort-none-unsupported",
+      "subject": {
+        "kind": "lab",
+        "name": "Meta"
+      },
+      "topic": "effort",
+      "sentence": "Meta's reasoning docs state that reasoning_effort none disables reasoning, which Muse Spark does not support.",
+      "source_url": "https://dev.meta.ai/docs/reasoning.md",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "disables reasoning entirely, which muse spark does not support."
+    },
+    {
       "id": "anthropic-model-ids",
       "subject": {
         "kind": "lab",
         "name": "Anthropic"
       },
       "topic": "enforced-model",
-      "sentence": "Anthropic's models overview lists claude-fable-5-1, claude-opus-5-5, claude-sonnet-5 and claude-haiku-4-5 as its current Claude API aliases.",
+      "sentence": "Anthropic's models overview lists claude-fable-5-1, claude-opus-5-5, claude-sonnet-5-5 and claude-haiku-4-5 as its Claude API aliases.",
       "source_url": "https://platform.claude.com/docs/en/about-claude/models/overview",
       "tier": "lab",
-      "date": "2026-09-27",
-      "quote": "Claude API alias claude-fable-5-1 claude-opus-5-5 claude-sonnet-5 claude-haiku-4-5"
+      "date": "2026-10-03",
+      "quote": "Claude API alias claude-fable-5-1 claude-opus-5-5 claude-sonnet-5-5 claude-haiku-4-5"
+    },
+    {
+      "id": "cc-default-model-opus-5-5",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "Claude Code's model-config docs state the default model setting resolves to Opus 5.5 on Pro, Max, Team, Enterprise and Anthropic API accounts.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Pro, Max, Team, Enterprise, and Anthropic API : defaults to Opus 5.5"
+    },
+    {
+      "id": "cc-effort-5-5-default-medium",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "effort",
+      "sentence": "Claude Code's model-config docs list medium as the default effort for Opus 5.5 and Sonnet 5.5, and high for other models that support effort.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "except that Opus 5.5 and Sonnet 5.5 default to medium"
+    },
+    {
+      "id": "cc-opus-quota-sonnet-routine",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "model-per-job",
+      "sentence": "Anthropic's Claude Code usage article says Opus uses more of a plan's quota and names Sonnet for routine work.",
+      "source_url": "https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "It uses meaningfully more of your quota, so consider switching to Sonnet for routine work."
+    },
+    {
+      "id": "cc-haiku-mechanical-work",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "model-per-job",
+      "sentence": "Anthropic's Claude Code usage article names Haiku for quick mechanical work such as renames, log lines, regex explanations and boilerplate.",
+      "source_url": "https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Haiku for quick mechanical work (renames, log lines, regex explanations, boilerplate)."
+    },
+    {
+      "id": "anthropic-haiku-checkable-outputs",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "model-per-job",
+      "sentence": "Anthropic's cost guide describes Claude Haiku 4.5 as fitting high-volume work with checkable outputs, not long agentic loops.",
+      "source_url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "It fits high-volume work with checkable outputs, not long agentic loops."
+    },
+    {
+      "id": "anthropic-low-effort-subagents",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "effort",
+      "sentence": "Anthropic's effort docs list subagents among the simpler tasks that low effort is meant for.",
+      "source_url": "https://platform.claude.com/docs/en/build-with-claude/effort",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "Simpler tasks that need the best speed and lowest costs, such as subagents"
+    },
+    {
+      "id": "anthropic-sonnet-5-5-complement",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "lead-helper",
+      "sentence": "Anthropic's Sonnet 5.5 page describes Sonnet 5.5 as a faster, lower-cost complement to Claude Opus 5.5.",
+      "source_url": "https://www.anthropic.com/claude-sonnet-5-5",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "Sonnet 5.5 is a faster, lower-cost complement to Claude Opus 5.5."
+    },
+    {
+      "id": "anthropic-sonnet-5-5-lower-effort",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "effort",
+      "sentence": "Anthropic's Sonnet 5.5 page says Sonnet 5.5 pairs with Opus 5.5 at lower effort settings, where it costs less per task.",
+      "source_url": "https://www.anthropic.com/claude-sonnet-5-5",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "It complements Opus 5.5 best when running at lower effort settings, where it costs less per task."
+    },
+    {
+      "id": "anthropic-batch-half-price",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "model-per-job",
+      "sentence": "Anthropic's pricing page states the Batch API processes large volumes of requests asynchronously at a 50% discount on input and output tokens.",
+      "source_url": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "asynchronous processing of large volumes of requests with a 50% discount on both input and output tokens"
+    },
+    {
+      "id": "codex-6-1-sol-default-catalog",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "enforced-model",
+      "sentence": "Codex CLI 0.159.1 (29 September 2026) made GPT-6.1 Sol the default model in its bundled model catalog.",
+      "source_url": "https://developers.openai.com/codex/changelog",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Added GPT-6.1 Sol as the default model in the bundled catalog"
+    },
+    {
+      "id": "codex-catalog-6-1-sol-effort-low",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "effort",
+      "sentence": "Codex's bundled model catalog sets low as the default reasoning level for gpt-6.1-sol.",
+      "source_url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/models-manager/models.json",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "\"description\": \"Latest workhorse model for coding and everyday work.\", \"default_reasoning_level\": \"low\""
+    },
+    {
+      "id": "codex-luna-lighter-subagent-work",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "lead-helper",
+      "sentence": "Codex's subagent docs name gpt-6-luna as a faster, lower-cost option for lighter subagent work.",
+      "source_url": "https://developers.openai.com/codex/subagents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "use gpt-6-luna when you want a faster, lower-cost option for lighter subagent work."
+    },
+    {
+      "id": "codex-luna-fast-scans",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "lead-helper",
+      "sentence": "Codex's subagent docs give gpt-6-luna for fast scans and a higher-effort gpt-6.1-sol configuration for more demanding reasoning as examples.",
+      "source_url": "https://developers.openai.com/codex/subagents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "use gpt-6-luna for fast scans or a higher-effort gpt-6.1-sol configuration for more demanding reasoning."
+    },
+    {
+      "id": "codex-6-1-sol-most-tasks",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "model-per-job",
+      "sentence": "Codex's subagent docs say most Codex tasks start with gpt-6.1-sol when the account or workspace has access.",
+      "source_url": "https://developers.openai.com/codex/subagents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "for most tasks in Codex, start with gpt-6.1-sol when your signed-in account or workspace has access"
+    },
+    {
+      "id": "codex-default-subagent-effort-key",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "effort",
+      "sentence": "The agents.default_subagent_reasoning_effort key in config.toml sets the default reasoning effort for agents that Codex spawns.",
+      "source_url": "https://developers.openai.com/codex/subagents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "agents.default_subagent_reasoning_effort string No Set the default reasoning effort for spawned agents."
+    },
+    {
+      "id": "codex-spawn-model-own-effort",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "effort",
+      "sentence": "When a spawn request or [agents] default names a model for a Codex subagent with no effort set, the subagent runs at that model's default effort.",
+      "source_url": "https://developers.openai.com/codex/subagents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "the subagent uses that model's default reasoning effort."
+    },
+    {
+      "id": "codex-effort-by-task",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "effort",
+      "sentence": "Codex's working guide maps low effort to well-scoped tasks, medium or high to complex changes and debugging, and extra high to long agentic work.",
+      "source_url": "https://developers.openai.com/codex/learn/best-practices",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Low for faster, well-scoped tasks Medium or High for more complex changes or debugging Extra High for long, agentic, reasoning-heavy tasks"
+    },
+    {
+      "id": "codex-luna-start-high",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "effort",
+      "sentence": "Codex's working guide gives High as the starting effort for GPT-6 Luna and Light (low) for GPT-6 Astra.",
+      "source_url": "https://developers.openai.com/codex/learn/best-practices",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Start with High for GPT-6 Luna or Light for GPT-6 Astra"
+    },
+    {
+      "id": "codex-max-ultra-rare",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "effort",
+      "sentence": "OpenAI's Codex model docs state most tasks do not need the Max or Ultra effort settings.",
+      "source_url": "https://learn.chatgpt.com/docs/models",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Most tasks do not need Max or Ultra."
+    },
+    {
+      "id": "codex-luna-repeatable",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "model-per-job",
+      "sentence": "OpenAI's Codex model docs name GPT-6.1 Sol for complex coding and agentic work and Luna for focused, repeatable tasks.",
+      "source_url": "https://learn.chatgpt.com/docs/models",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Use Luna for focused, repeatable tasks."
+    },
+    {
+      "id": "openai-batch-half-price",
+      "subject": {
+        "kind": "lab",
+        "name": "OpenAI"
+      },
+      "topic": "model-per-job",
+      "sentence": "OpenAI's Batch API guide states a 50% cost discount compared with synchronous APIs.",
+      "source_url": "https://developers.openai.com/api/docs/guides/batch",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "50% cost discount compared to synchronous APIs"
+    },
+    {
+      "id": "openai-delegates-less",
+      "subject": {
+        "kind": "lab",
+        "name": "OpenAI"
+      },
+      "topic": "lead-helper",
+      "sentence": "OpenAI's latest-model guide says the model may delegate to subagents less often than a workflow needs, so prompts should say when to use them.",
+      "source_url": "https://developers.openai.com/api/docs/guides/latest-model",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "the model may delegate less often than desired for your workflow."
+    },
+    {
+      "id": "cursor-inherit-same-reasoning",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "lead-helper",
+      "sentence": "Cursor's subagent docs say to use inherit when a subagent needs the same reasoning power as the parent.",
+      "source_url": "https://cursor.com/docs/context/subagents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Choose inherit when the subagent needs the same reasoning power as the parent."
+    },
+    {
+      "id": "cursor-explore-faster-model",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "lead-helper",
+      "sentence": "Cursor's built-in explore subagent runs on a faster model by default.",
+      "source_url": "https://cursor.com/docs/context/subagents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "the explore subagent uses a faster model by default."
+    },
+    {
+      "id": "cursor-opus-5-5-high-thinking",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "effort",
+      "sentence": "Cursor's Opus 5.5 page names the high thinking variant for its results.",
+      "source_url": "https://cursor.com/docs/models/claude-opus-5-5.md",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "We recommend the high thinking variant for the best results."
+    },
+    {
+      "id": "cursor-opus-5-5-coordinator",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "lead-helper",
+      "sentence": "Cursor's Opus 5.5 page describes it as a coordinator for subagents that delegates cleanly and keeps the parent task on track.",
+      "source_url": "https://cursor.com/docs/models/claude-opus-5-5.md",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "It delegates cleanly and keeps the parent task on track across long runs."
+    },
+    {
+      "id": "cursor-luna-subagents",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "model-per-job",
+      "sentence": "Cursor's GPT-5.6 Luna page lists prototyping, subagents and high-volume loops among its uses.",
+      "source_url": "https://cursor.com/docs/models/gpt-5-6-luna.md",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "good for prototyping, subagents, and high-volume loops."
+    },
+    {
+      "id": "cursor-composer-cost-efficient",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "model-per-job",
+      "sentence": "Cursor's help page describes Composer as Cursor's fast, cost-efficient model built for interactive coding.",
+      "source_url": "https://cursor.com/help/models-and-usage/available-models.md",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "is Cursor's fast, cost-efficient model. Capable for most tasks, and built for interactive coding."
+    },
+    {
+      "id": "cursor-auto-everyday",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "model-per-job",
+      "sentence": "Cursor's help page describes Auto as selecting models that balance intelligence, cost and reliability for everyday tasks.",
+      "source_url": "https://cursor.com/help/models-and-usage/available-models.md",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "selects models that balance intelligence, cost, and reliability. Good for everyday tasks."
+    },
+    {
+      "id": "cursor-planner-cheaper-implementer",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "lead-helper",
+      "sentence": "Cursor's 23 September 2026 post says subagents can pair an expensive planning model with a cheaper implementation model.",
+      "source_url": "https://cursor.com/blog/improved-token-efficiency",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "pair an expensive planning model with a cheaper one for implementation."
+    },
+    {
+      "id": "cursor-switch-model-only-when-directed",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "lead-helper",
+      "sentence": "Cursor changed its subagent tool so agents run a subagent on a different model only when the user or harness directs it.",
+      "source_url": "https://cursor.com/blog/improved-token-efficiency",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "agents choose a different model only when directed by the user or the harness."
+    },
+    {
+      "id": "cursor-sonnet-5-5-max-effort-cost",
+      "subject": {
+        "kind": "tool",
+        "name": "Cursor"
+      },
+      "topic": "effort",
+      "sentence": "Cursor's Sonnet 5.5 page states max effort costs about 6x more per task than the default high effort on CursorBench.",
+      "source_url": "https://cursor.com/docs/models/claude-sonnet-5-5.md",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "max effort costs about 6x more per task than the default high effort."
+    },
+    {
+      "id": "copilot-custom-agent-locations",
+      "subject": {
+        "kind": "tool",
+        "name": "GitHub Copilot"
+      },
+      "topic": "instruction-files",
+      "sentence": "VS Code reads Copilot custom agents from .github/agents and .claude/agents in the workspace, and from ~/.copilot/agents or ~/.claude/agents for the user.",
+      "source_url": "https://code.visualstudio.com/docs/copilot/customization/custom-agents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "workspace .github/agents folder workspace (claude format) .claude/agents folder user ~/.copilot/agents or ~/.claude/agents"
+    },
+    {
+      "id": "copilot-agent-model-property",
+      "subject": {
+        "kind": "tool",
+        "name": "GitHub Copilot"
+      },
+      "topic": "enforced-model",
+      "sentence": "GitHub's custom-agent reference states the model property sets the model a custom agent runs on, and an unset model inherits the default model.",
+      "source_url": "https://docs.github.com/en/copilot/reference/custom-agents-configuration",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "model to use when this custom agent executes. If unset, inherits the default model."
+    },
+    {
+      "id": "copilot-agent-model-list",
+      "subject": {
+        "kind": "tool",
+        "name": "GitHub Copilot"
+      },
+      "topic": "enforced-model",
+      "sentence": "VS Code's custom-agent docs accept one model name or a prioritized list of models in an agent's model field.",
+      "source_url": "https://code.visualstudio.com/docs/copilot/customization/custom-agents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Specify a single model name (string) or a prioritized list of models (array)."
+    },
+    {
+      "id": "copilot-subagent-main-model-default",
+      "subject": {
+        "kind": "tool",
+        "name": "GitHub Copilot"
+      },
+      "topic": "lead-helper",
+      "sentence": "In VS Code, a Copilot subagent runs on the main conversation model when neither the tool call nor the agent names a model, unless the experimental Auto setting is on.",
+      "source_url": "https://code.visualstudio.com/docs/copilot/agents/subagents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "to use Auto instead of the main model when neither the tool call nor the agent specifies a model"
+    },
+    {
+      "id": "copilot-subagent-cost-tier-cap",
+      "subject": {
+        "kind": "tool",
+        "name": "GitHub Copilot"
+      },
+      "topic": "lead-helper",
+      "sentence": "VS Code checks a model named for a Copilot subagent against the main model's cost tier, and the subagent does not run if it exceeds that tier.",
+      "source_url": "https://code.visualstudio.com/docs/copilot/agents/subagents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Explicit and agent-configured model selections are checked against the main model's cost tier."
+    },
+    {
+      "id": "copilot-subagents-cheaper-models",
+      "subject": {
+        "kind": "tool",
+        "name": "GitHub Copilot"
+      },
+      "topic": "lead-helper",
+      "sentence": "GitHub's usage guide tells users to run subagents on cheaper models.",
+      "source_url": "https://docs.github.com/en/copilot/tutorials/optimize-ai-usage",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Run subagents on cheaper models."
+    },
+    {
+      "id": "copilot-lighter-models-routine",
+      "subject": {
+        "kind": "tool",
+        "name": "GitHub Copilot"
+      },
+      "topic": "model-per-job",
+      "sentence": "GitHub's usage guide names lighter models for refactoring, formatting, documentation updates and other routine, well-scoped changes.",
+      "source_url": "https://docs.github.com/en/copilot/tutorials/optimize-ai-usage",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Best for refactoring, formatting, documentation updates, and other routine, well-scoped changes."
+    },
+    {
+      "id": "copilot-auto-discount",
+      "subject": {
+        "kind": "tool",
+        "name": "GitHub Copilot"
+      },
+      "topic": "model-per-job",
+      "sentence": "GitHub gives paid Copilot plans a 10% discount on model costs when Auto model selection is used.",
+      "source_url": "https://docs.github.com/en/copilot/concepts/models/auto-model-selection",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "you qualify for a 10% discount on model costs while using auto model selection"
+    },
+    {
+      "id": "copilot-thinking-effort-default",
+      "subject": {
+        "kind": "tool",
+        "name": "GitHub Copilot"
+      },
+      "topic": "effort",
+      "sentence": "VS Code sets its own effort level per Copilot model by default, with adaptive reasoning on.",
+      "source_url": "https://code.visualstudio.com/docs/copilot/customization/language-models",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "By default, VS Code sets recommended effort levels and has adaptive reasoning enabled"
+    },
+    {
+      "id": "copilot-model-name-format",
+      "subject": {
+        "kind": "tool",
+        "name": "GitHub Copilot"
+      },
+      "topic": "enforced-model",
+      "sentence": "VS Code's custom-agent docs give handoff models as a qualified name with the vendor in brackets, such as gpt-5 (copilot).",
+      "source_url": "https://code.visualstudio.com/docs/copilot/customization/custom-agents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Use the qualified model name in the format Model Name (vendor)"
+    },
+    {
+      "id": "antigravity-rule-files",
+      "subject": {
+        "kind": "tool",
+        "name": "Antigravity"
+      },
+      "topic": "instruction-files",
+      "sentence": "Antigravity reads an AGENTS.md or GEMINI.md file, or a .agents/rules/ folder, in any folder of a project.",
+      "source_url": "https://antigravity.google/docs/rules",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "you can place an AGENTS.md or GEMINI.md file-or a .agents/rules/ directory-in any subdirectory of your project."
+    },
+    {
+      "id": "antigravity-global-rule-files",
+      "subject": {
+        "kind": "tool",
+        "name": "Antigravity"
+      },
+      "topic": "instruction-files",
+      "sentence": "Antigravity global rules live in ~/.gemini/AGENTS.md, ~/.gemini/GEMINI.md, ~/.gemini/config/AGENTS.md or ~/.gemini/config/GEMINI.md.",
+      "source_url": "https://antigravity.google/docs/rules",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "~/.gemini/AGENTS.md , ~/.gemini/GEMINI.md , ~/.gemini/config/AGENTS.md , or ~/.gemini/config/GEMINI.md"
+    },
+    {
+      "id": "antigravity-rules-need-trigger",
+      "subject": {
+        "kind": "tool",
+        "name": "Antigravity"
+      },
+      "topic": "instruction-files",
+      "sentence": "Every .md file in an Antigravity rules/ folder must start with YAML frontmatter that declares a valid trigger.",
+      "source_url": "https://antigravity.google/docs/rules",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "every .md file inside rules/ must start with YAML frontmatter declaring a valid trigger"
+    },
+    {
+      "id": "antigravity-subagent-model-tier",
+      "subject": {
+        "kind": "tool",
+        "name": "Antigravity"
+      },
+      "topic": "enforced-model",
+      "sentence": "An Antigravity custom subagent file sets a model tier of inherit, flash or pro, and inherit is the default.",
+      "source_url": "https://antigravity.google/docs/subagents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "model tier used when invoked ( inherit , flash , or pro )"
+    },
+    {
+      "id": "antigravity-subagent-folders",
+      "subject": {
+        "kind": "tool",
+        "name": "Antigravity"
+      },
+      "topic": "model-per-job",
+      "sentence": "Antigravity discovers custom subagent .md files in the workspace .agents/agents/ folder and the global ~/.gemini/config/agents/ folder.",
+      "source_url": "https://antigravity.google/docs/subagents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Antigravity automatically discovers custom subagent .md files in the following locations"
+    },
+    {
+      "id": "antigravity-subagent-clean-context",
+      "subject": {
+        "kind": "tool",
+        "name": "Antigravity"
+      },
+      "topic": "context",
+      "sentence": "An Antigravity subagent starts with a clean context and does not inherit the parent conversation history.",
+      "source_url": "https://antigravity.google/docs/subagents",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "does not inherit the parent's existing conversation history (context window), starting with a clean slate."
+    },
+    {
+      "id": "antigravity-core-agent-models",
+      "subject": {
+        "kind": "tool",
+        "name": "Antigravity"
+      },
+      "topic": "model-per-job",
+      "sentence": "Antigravity's plans page lists Gemini 3.1 Pro and Gemini 3.8 Flash among the Gemini models offered as the core agent model on every plan.",
+      "source_url": "https://antigravity.google/docs/plans",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "use of Gemini models, including Gemini 3.1 Pro, Gemini 3.8 Flash, and other offered Gemini Enterprise models as the core agent model"
+    },
+    {
+      "id": "antigravity-model-choice-persists",
+      "subject": {
+        "kind": "tool",
+        "name": "Antigravity"
+      },
+      "topic": "enforced-model",
+      "sentence": "In Antigravity the reasoning model is chosen in the model selector and stays set for the rest of the conversation.",
+      "source_url": "https://antigravity.google/docs/models",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Your choice of reasoning model persists between messages within a conversation."
+    },
+    {
+      "id": "gemini-cli-replaced-by-antigravity",
+      "subject": {
+        "kind": "tool",
+        "name": "Gemini CLI"
+      },
+      "topic": "instruction-files",
+      "sentence": "Gemini CLI's plans page states Gemini CLI was replaced by Antigravity CLI for unpaid-tier and Google One users on 18 June 2026.",
+      "source_url": "https://geminicli.com/plans/",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Gemini CLI was replaced by Antigravity CLI on June 18th, 2026."
+    },
+    {
+      "id": "google-gemini-cli-stops-serving",
+      "subject": {
+        "kind": "lab",
+        "name": "Google"
+      },
+      "topic": "model-per-job",
+      "sentence": "Google's developer blog states Gemini CLI and Gemini Code Assist IDE extensions stop serving Google AI Pro and Ultra users on 18 June 2026.",
+      "source_url": "https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "On June 18, 2026, Gemini CLI and Gemini Code Assist IDE extensions will stop serving requests for Google AI Pro and Ultra"
+    },
+    {
+      "id": "google-3-8-flash-default-medium",
+      "subject": {
+        "kind": "lab",
+        "name": "Google"
+      },
+      "topic": "effort",
+      "sentence": "Google's thinking-level table lists low, medium and high for Gemini 3.8 Flash, with medium as the default.",
+      "source_url": "https://cloud.google.com/vertex-ai/generative-ai/docs/thinking",
+      "tier": "lab",
+      "date": "2026-10-03",
+      "quote": "Gemini 3.8 Flash low , medium , high medium"
+    },
+    {
+      "id": "openrouter-auto-slug",
+      "subject": {
+        "kind": "tool",
+        "name": "OpenRouter"
+      },
+      "topic": "enforced-model",
+      "sentence": "OpenRouter's Auto Router runs when a request sends openrouter/auto as the model.",
+      "source_url": "https://openrouter.ai/docs/guides/routing/routers/auto-router",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "sending it as the model is all you need to do."
+    },
+    {
+      "id": "openrouter-auto-cost-tiers",
+      "subject": {
+        "kind": "tool",
+        "name": "OpenRouter"
+      },
+      "topic": "model-per-job",
+      "sentence": "OpenRouter's Auto Router has cost tiers from low to max, where low routes to the cheapest capable models and max ignores price.",
+      "source_url": "https://openrouter.ai/docs/guides/routing/routers/auto-router",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "low favors the cheapest capable models, while max favors the most capable models regardless of price."
+    },
+    {
+      "id": "openrouter-auto-default-low",
+      "subject": {
+        "kind": "tool",
+        "name": "OpenRouter"
+      },
+      "topic": "model-per-job",
+      "sentence": "An OpenRouter Auto Router request with no cost setting routes roughly as the low band.",
+      "source_url": "https://openrouter.ai/docs/guides/routing/routers/auto-router",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Requests that set no cost setting route as if you had asked for roughly the low band."
+    },
+    {
+      "id": "openrouter-auto-no-fee",
+      "subject": {
+        "kind": "tool",
+        "name": "OpenRouter"
+      },
+      "topic": "model-per-job",
+      "sentence": "OpenRouter charges the selected model's standard rate for Auto Router requests with no added fee.",
+      "source_url": "https://openrouter.ai/docs/guides/routing/routers/auto-router",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "There is no additional fee for using the Auto Router."
+    },
+    {
+      "id": "openrouter-models-fallback",
+      "subject": {
+        "kind": "tool",
+        "name": "OpenRouter"
+      },
+      "topic": "enforced-model",
+      "sentence": "OpenRouter's models parameter tries other models when the first model's providers are down, rate-limited or refuse the request.",
+      "source_url": "https://openrouter.ai/docs/guides/routing/model-fallbacks",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "The models parameter lets you automatically try other models if the primary model's providers are down"
+    },
+    {
+      "id": "openrouter-fallback-pricing",
+      "subject": {
+        "kind": "tool",
+        "name": "OpenRouter"
+      },
+      "topic": "enforced-model",
+      "sentence": "OpenRouter prices a fallback request at the rate of the model that served it.",
+      "source_url": "https://openrouter.ai/docs/guides/routing/model-fallbacks",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Requests are priced using the model that was ultimately used"
+    },
+    {
+      "id": "openrouter-floor-variant",
+      "subject": {
+        "kind": "tool",
+        "name": "OpenRouter"
+      },
+      "topic": "model-per-job",
+      "sentence": "OpenRouter's :floor variant sorts a model's providers by price and admits flex-tier endpoints.",
+      "source_url": "https://openrouter.ai/docs/guides/routing/model-variants/floor",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "OpenRouter sorts the model's providers by price and also makes flex service tier endpoints eligible"
+    },
+    {
+      "id": "openrouter-reasoning-parameter",
+      "subject": {
+        "kind": "tool",
+        "name": "OpenRouter"
+      },
+      "topic": "effort",
+      "sentence": "OpenRouter requests set reasoning effort or a reasoning token limit through the reasoning parameter.",
+      "source_url": "https://openrouter.ai/docs/guides/best-practices/reasoning-tokens",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "You can control reasoning tokens in your requests using the reasoning parameter"
+    },
+    {
+      "id": "openrouter-presets",
+      "subject": {
+        "kind": "tool",
+        "name": "OpenRouter"
+      },
+      "topic": "instruction-files",
+      "sentence": "OpenRouter presets hold provider routing, model selection, system prompts and other parameters outside the calling code.",
+      "source_url": "https://openrouter.ai/docs/guides/features/presets",
+      "tier": "tool",
+      "date": "2026-10-03",
+      "quote": "Presets allow you to separate your LLM configuration from your code."
     }
   ],
   "role_defaults": [
@@ -1737,7 +2647,7 @@
       "role": "builder",
       "lab": "Anthropic",
       "model_ref": "sonnet",
-      "model_id": "claude-sonnet-5",
+      "model_id": "claude-sonnet-5-5",
       "basis": [
         "cc-sonnet-vs-opus-costs",
         "cc-teams-sonnet",
@@ -1758,10 +2668,11 @@
     {
       "tool": "claude-code",
       "ref": "sonnet",
-      "model_id": "claude-sonnet-5",
+      "model_id": "claude-sonnet-5-5",
       "basis": [
         "cc-alias-sonnet",
-        "cc-alias-provider-versions"
+        "cc-alias-provider-versions",
+        "cc-sonnet-5-5-default-sonnet"
       ]
     },
     {
@@ -1787,7 +2698,8 @@
       "lab": "Anthropic",
       "url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
       "basis": [
-        "anthropic-effort-defaults"
+        "anthropic-effort-defaults",
+        "anthropic-sonnet-5-5-effort-api-default"
       ]
     },
     {

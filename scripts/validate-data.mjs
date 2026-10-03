@@ -121,7 +121,7 @@ export const GUIDANCE_TOPICS = ['instruction-files', 'enforced-model', 'effort',
 export const GUIDANCE_TOOLS = { 'claude-code': 'Claude Code', codex: 'Codex CLI', cursor: 'Cursor', 'agents-md': 'AGENTS.md' };
 export const GUIDANCE_ROLES = ['scout', 'builder', 'reviewer'];
 // Tools with facts in the file that the package doesn't write for (yet) — still valid subjects.
-export const GUIDANCE_EXTRA_TOOL_NAMES = ['GitHub Copilot', 'Gemini CLI'];
+export const GUIDANCE_EXTRA_TOOL_NAMES = ['GitHub Copilot', 'Gemini CLI', 'Antigravity', 'OpenRouter'];
 // Our own prose (sentence, _readme) never ranks one model against another. Quotes are exempt —
 // they are the source's words, reproduced verbatim.
 export const GUIDANCE_BANNED_PATTERNS = [
