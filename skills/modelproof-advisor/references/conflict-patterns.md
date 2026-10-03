@@ -61,8 +61,10 @@ one tool across user and project: a `conflict` item).
 
 ## 7. Ignored model lines
 
-**Where:** `env.subagent_model_force` true; a tool with no documented model string (Cursor
-files then say `inherit`, and the plan notes it).
+**Where:** `env.subagent_model_force` true; a tool with no documented model string (Cursor and
+Antigravity files then say `inherit`, GitHub Copilot files carry no model line, and the plan
+notes it); GitHub Copilot reading the Claude Code helper files, whose model lines its docs
+don't explain (the plan notes it).
 **Do:** say it first, before "Go?": "While `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` is set, Claude
 Code ignores the model line in every helper file." Unenforced parts are plain text only.
 

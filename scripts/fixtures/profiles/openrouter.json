@@ -1,0 +1,18 @@
+{
+  "schema": "modelproof.profile/1",
+  "who": "person",
+  "tools": [
+    "openrouter"
+  ],
+  "scope": "user",
+  "plans": [],
+  "api": true,
+  "limits": "api-budget",
+  "work": [
+    "extraction",
+    "bulk"
+  ],
+  "like": [],
+  "never": [],
+  "roles": {}
+}

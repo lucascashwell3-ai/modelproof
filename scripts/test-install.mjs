@@ -134,6 +134,182 @@ for (const [name, profile, project] of MAIN) {
   test(`roundtrip: ${name}`, () => roundtrip(setup(name), profile, { project }));
 }
 
+// The six tools: GitHub Copilot, Antigravity, Claude Code + Copilot, a heavy Claude Code user's
+// tree, and each new tool at its other scope on an empty machine.
+const SIX = [
+  ['copilot', 'copilot', path.join(PROFILES, 'copilot.json'), true, {}],
+  ['antigravity', 'antigravity', path.join(PROFILES, 'antigravity.json'), false, {}],
+  ['cc-copilot', 'cc-copilot', path.join(PROFILES, 'cc-copilot.json'), true, {}],
+  ['power-user-max5x', 'power-user-max5x', path.join(PROFILES, 'power-user-max5x.json'), false, {}],
+  ['copilot at user scope', 'empty', path.join(PROFILES, 'copilot.json'), false, { scope: 'user' }],
+  ['antigravity at project scope', 'empty', path.join(PROFILES, 'antigravity.json'), true, { scope: 'project' }],
+  ['cc-copilot at user scope', 'empty', path.join(PROFILES, 'cc-copilot.json'), false, { scope: 'user' }],
+  ['all six tools in one project', 'cc-copilot', path.join(PROFILES, 'cc-copilot.json'), true, { tools: ['claude-code', 'codex', 'cursor', 'copilot', 'antigravity', 'openrouter'], limits: 'often' }],
+];
+for (const [label, name, profile, project, over] of SIX) {
+  test(`roundtrip: ${label}`, () => {
+    const f = setup(name);
+    roundtrip(f, Object.keys(over).length ? writeProfile(f, profile, over) : profile, { project });
+  });
+}
+
+test('roundtrip: OpenRouter / API is copy only — no items, apply writes nothing, says so, and leaves no install or undo id', () => {
+  const f = setup('empty');
+  const before = snapshot(f, 'before');
+  const p = plan(f, path.join(PROFILES, 'openrouter.json'), { project: false });
+  ok(p, 'plan');
+  assert.deepEqual(p.plan.items, []);
+  assert.match(p.out, /Copy only, not installed: OpenRouter \/ API/);
+  assert.match(p.out, /Files: none \(the installer writes nothing for a copy-only tool\)\./);
+  const a = apply(f, p);
+  ok(a, 'apply');
+  assert.match(a.out, /Nothing was written: this plan has no file to add or change, so there is nothing to undo\./);
+  assert.doesNotMatch(a.out, /Undo:|Start a new session/);
+  ok(compare(f, before), 'nothing written');
+  ok(dupes(f));
+  assert.equal(inst(f, 'status', '--home', f.home).out, 'Nothing installed.\n', 'no install record to undo');
+});
+
+test('Claude Code + GitHub Copilot: one set of helpers (Copilot loads .claude/agents), the note says so', () => {
+  const f = setup('cc-copilot');
+  const p = plan(f, path.join(PROFILES, 'cc-copilot.json'));
+  ok(p);
+  assert.ok(!p.plan.items.some((x) => x.path.startsWith('.github/')), p.out);
+  assert.match(p.out, /GitHub Copilot also loads the Claude Code helper files \(\.claude\/agents\)/);
+  ok(apply(f, p));
+  const ours = fs.readdirSync(path.join(f.project, '.github', 'agents')).filter((n) => n.startsWith('modelproof-'));
+  assert.deepEqual(ours, []);
+  ok(dupes(f), 'no helper name loaded twice by Copilot');
+  // Claude Code's helpers already installed, then a Copilot-only install: still one set.
+  const g = setup('cc-copilot');
+  ok(apply(g, plan(g, writeProfile(g, path.join(PROFILES, 'cc-copilot.json'), { tools: ['claude-code'] }))));
+  const solo = plan(g, path.join(PROFILES, 'copilot.json'));
+  ok(solo);
+  assert.ok(!solo.plan.items.some((x) => x.path.startsWith('.github/agents/modelproof-')), solo.out);
+  assert.match(solo.out, /GitHub Copilot also loads the Claude Code helper files/);
+  ok(apply(g, solo));
+  ok(dupes(g));
+});
+
+test('Claude Code and GitHub Copilot at different scopes: one set where Copilot can share it, a check before Go where it cannot', () => {
+  const ccProfile = (f, scope) => writeProfile(f, path.join(PROFILES, 'cc-copilot.json'), { tools: ['claude-code'], scope });
+  const coProfile = (f, scope) => writeProfile(f, path.join(PROFILES, 'copilot.json'), { scope });
+  // Claude Code's helpers in the home folder, then Copilot for one project: Copilot loads
+  // ~/.claude/agents there too, so no Copilot copy is written.
+  const a = setup('cc-copilot');
+  ok(apply(a, plan(a, ccProfile(a, 'user'))));
+  const pa = plan(a, coProfile(a, 'project'));
+  ok(pa);
+  assert.ok(!pa.plan.items.some((x) => /modelproof-\w+\.agent\.md$/.test(x.path)), pa.out);
+  assert.match(pa.out, /GitHub Copilot also loads the Claude Code helper files \(~\/\.claude\/agents\)/);
+  ok(apply(a, pa));
+  ok(dupes(a), 'one set of helpers for Copilot');
+  // Claude Code's helpers in a project, then Copilot for the whole home folder: Copilot needs its
+  // own files for other projects, and the preview says this project would list each one twice.
+  const b = setup('cc-copilot');
+  ok(apply(b, plan(b, ccProfile(b, 'project'))));
+  const pb = plan(b, coProfile(b, 'user'));
+  ok(pb);
+  const items = pb.plan.items.filter((x) => /modelproof-\w+\.agent\.md$/.test(x.path)).map((x) => x.n);
+  assert.equal(items.length, 4, pb.out);
+  const checks = pb.out.slice(pb.out.indexOf('Check these before you say Go'));
+  assert.match(checks, new RegExp(`GitHub Copilot loads helpers from \\.claude/agents and ~/\\.copilot/agents together in a project .*so Copilot lists each one twice\\. Keep both, or skip #${items.join(', #')}\\.`));
+  ok(apply(b, pb, { skip: items.join(',') }), 'leaving them out');
+  ok(dupes(b), 'left out: one set');
+  // Copilot's helpers in a project, then Claude Code for the home folder: the check names the
+  // Copilot copies to take out.
+  const c = setup('cc-copilot');
+  ok(apply(c, plan(c, coProfile(c, 'project'))));
+  const pc = plan(c, ccProfile(c, 'user'));
+  ok(pc);
+  assert.match(pc.out, /GitHub Copilot loads helpers from \.github\/agents and ~\/\.claude\/agents together in a project .*Keep both, or take the Copilot copies out of \.github\/agents \(undo that install\)\./);
+  ok(apply(c, pc));
+  const d = dupes(c);
+  assert.equal(d.code, 1, 'setup-hash counts the same names across both scopes');
+  assert.match(d.out, /"modelproof-scout" is loaded twice by GitHub Copilot/);
+});
+
+test('a helper file left out at apply (--skip, or their own same-named file) leaves its lines out of the rules text', () => {
+  // Their own modelproof-bulk.md, on another model: a conflict, left out with --skip.
+  const f = setup('cc-max5x');
+  fs.writeFileSync(path.join(f.home, '.claude', 'agents', 'modelproof-bulk.md'), '---\nname: modelproof-bulk\ndescription: My own bulk helper.\nmodel: sonnet\n---\nDo the bulk work.\n');
+  const mine = snapshot(f, 'mine');
+  const p = plan(f, path.join(PROFILES, 'cc-max5x.json'), { project: false });
+  const bulk = p.plan.items.find((x) => x.part_id === 'claude-code:agent:bulk');
+  assert.equal(bulk.action, 'conflict', p.out);
+  const rulesPart = p.plan.package.parts.find((x) => x.id === 'claude-code:rules');
+  assert.match(rulesPart.content, /modelproof-bulk runs/, 'the planned text describes the bulk helper');
+  const a = apply(f, p, { skip: String(bulk.n) });
+  ok(a);
+  assert.match(a.out, /modelproof\.md \(without the lines about the helpers left out\)/);
+  const rules = read(path.join(f.home, '.claude', 'rules', 'modelproof.md'));
+  assert.doesNotMatch(rules, /modelproof-bulk/, rules);
+  assert.match(rules, /modelproof-scout/, 'the other helpers stay');
+  assert.match(read(path.join(f.home, '.claude', 'agents', 'modelproof-bulk.md')), /model: sonnet/, 'their file stays');
+  ok(verify(f, false));
+  ok(undo(f, p.plan.id));
+  ok(compare(f, mine));
+  // Claude Code + Copilot: leaving out Claude Code's bulk file also drops it from the text Copilot reads.
+  const g = setup('cc-copilot');
+  const q = plan(g, path.join(PROFILES, 'cc-copilot.json'));
+  const n = q.plan.items.find((x) => x.part_id === 'claude-code:agent:bulk').n;
+  ok(apply(g, q, { skip: String(n) }));
+  const block = read(path.join(g.project, 'AGENTS.md'));
+  assert.doesNotMatch(block, /modelproof-bulk/, block);
+  assert.match(block, /GitHub Copilot uses the Claude Code helper files in \.claude\/agents: modelproof-scout, modelproof-builder and modelproof-reviewer say model: inherit\./);
+  ok(verify(g));
+});
+
+test('power-user-max5x: their CLAUDE.md, import target, helpers, output style, skill and settings are never touched', () => {
+  const f = setup('power-user-max5x');
+  const keep = ['.claude/CLAUDE.md', 'work/notes/tone.md', '.claude/agents/code-simplifier.md', '.claude/agents/checker.md',
+    '.claude/output-styles/short.md', '.claude/skills/release-notes/SKILL.md', '.claude/settings.json'].map((x) => path.join(f.home, x));
+  const sums = keep.map((x) => crypto.createHash('sha256').update(fs.readFileSync(x)).digest('hex'));
+  const p = plan(f, path.join(PROFILES, 'power-user-max5x.json'), { project: false });
+  ok(p);
+  assert.deepEqual(p.plan.items.map((x) => [x.path, x.action]), [
+    ['~/.claude/agents/modelproof-scout.md', 'create'], ['~/.claude/agents/modelproof-builder.md', 'create'],
+    ['~/.claude/agents/modelproof-reviewer.md', 'create'], ['~/.claude/agents/modelproof-bulk.md', 'create'],
+    ['~/.claude/rules/modelproof.md', 'create'],
+  ]);
+  assert.match(p.out, /Your helper checker \(~\/\.claude\/agents\/checker\.md\) does the same job as #3 modelproof-reviewer/);
+  assert.doesNotMatch(p.out + JSON.stringify(p.plan), /not-for-output/);
+  ok(apply(f, p));
+  assert.deepEqual(keep.map((x) => crypto.createHash('sha256').update(fs.readFileSync(x)).digest('hex')), sums);
+  const rules = read(path.join(f.home, '.claude', 'rules', 'modelproof.md'));
+  assert.ok(rules.split('\n').length - 1 <= 41, 'the rules file stays ≤40 lines plus its owned tag');
+  assert.match(rules, /^- Lead: Claude Opus 5\.5, Claude Code's default model; effort medium by default, high for /m);
+  assert.match(rules, /^- Bulk: modelproof-bulk runs haiku \(Claude Haiku 4\.5\)/m);
+});
+
+test('the board\'s package text is the installer\'s output, byte for byte, for the same profile', async () => {
+  const { buildPackage, packageText } = await import('../assets/instructions.mjs');
+  const FACTS = {
+    models: JSON.parse(read(path.join(FIX, 'instructions-models.json'))),
+    guidance: JSON.parse(read(path.join(FIX, 'guidance.json'))),
+    plans: JSON.parse(read(path.join(FIX, 'instructions-plans.json'))),
+  };
+  for (const [name, project] of [['power-user-max5x', false], ['copilot', true], ['antigravity', false], ['cc-copilot', true], ['codex', false], ['org-40', true]]) {
+    const profile = JSON.parse(read(path.join(PROFILES, `${name}.json`)));
+    // The board builds with no setup (a fresh machine): compare against a fresh, empty one.
+    const text = packageText(buildPackage(profile, FACTS));
+    const f = setup('empty');
+    const p = plan(f, path.join(PROFILES, `${name}.json`), { project });
+    ok(p, `${name} plan`);
+    ok(apply(f, p), `${name} apply`);
+    const sections = text.split(/^=== (.+?) ===\n/m).slice(1);
+    assert.equal(sections.length / 2, p.plan.items.length, `${name}: one section per installed item`);
+    for (let i = 0; i < sections.length; i += 2) {
+      const m = /^(New file|Add at the end of|Add these keys to) (\S+)/.exec(sections[i]);
+      assert.ok(m, sections[i]);
+      const where = m[2].startsWith('~/') ? path.join(f.home, m[2].slice(2)) : path.join(f.project, m[2]);
+      const body = sections[i + 1].replace(/\n+$/, '') + '\n';
+      if (m[1] === 'Add these keys to') assert.deepEqual(JSON.parse(read(where)), JSON.parse(`{${body}}`), `${name} ${m[2]}`);
+      else assert.equal(read(where), body, `${name} ${m[2]}: board text and installed bytes differ`);
+    }
+  }
+});
+
 test('roundtrip: agents-md-only never gets a CLAUDE.md, and Claude Code shares the AGENTS.md block', () => {
   const f = setup('agents-md-only');
   const profile = path.join(FIX, 'setups', 'agents-md-only', 'profile.json');
@@ -274,7 +450,7 @@ test('plan preview: real conflicts first; rules-file lines shown; memory mention
   const out = p.out;
   const reviewer = p.plan.items.find((x) => x.part_id === 'claude-code:agent:reviewer').n;
   const check = out.indexOf('Check these before you say Go');
-  assert.ok(check > 0 && check < out.indexOf('Which model each helper runs'), out);
+  assert.ok(check > 0 && check < out.indexOf('Lead, helpers and bulk per tool'), out);
   assert.ok(out.includes(`  - ~/.claude/rules/models.md:2 says "- Keep token use low: use sonnet for reviews."; #${reviewer} modelproof-reviewer runs on the lead's model. Make them match, or skip #${reviewer}.`), out);
   assert.ok(out.includes(`  - Your helper code-reviewer (~/.claude/agents/code-reviewer.md) does the same job as #${reviewer} modelproof-reviewer. Keep both, or skip #${reviewer}.`), out);
   assert.ok(out.includes(`  - Your helper test-runner (~/.claude/agents/test-runner.md) does the same job as #${reviewer} modelproof-reviewer. Keep both, or skip #${reviewer}.`), out);
@@ -286,6 +462,31 @@ test('plan preview: real conflicts first; rules-file lines shown; memory mention
   assert.match(heads, /^  Memory and output styles: 1 line names a model \(prefs\.md; lines not shown\)$/m);
   assert.doesNotMatch(out, /memory or output style; mentions a model/);
   assert.doesNotMatch(out + JSON.stringify(p.plan), /sk-live|not-for-output/);
+});
+
+test('plan preview: a fixture rule file with short model names, two jobs in one long line, and a different lead model and effort', () => {
+  const f = setup('cc-max5x');
+  const models = JSON.parse(fs.readFileSync(path.join(DATA, 'models.json'), 'utf8')).models;
+  const short = (id) => models.find((m) => m.id === id).name.split(' ').slice(1).join(' ');
+  const rules = path.join(f.home, '.claude', 'rules');
+  fs.mkdirSync(rules, { recursive: true });
+  const two = `- To keep usage down, use ${short('claude-sonnet-5-5')} for bulk renames and boilerplate, and ${short('claude-opus-5')} for code review.`;
+  assert.ok(two.length > 80, 'longer than the old 80-character snippet');
+  fs.writeFileSync(path.join(rules, 'models.md'), ['# Models', two, `- Always use ${short('claude-sonnet-5-5')}.`, '- Always use max effort.', ''].join('\n'));
+  const profile = writeProfile(f, path.join(PROFILES, 'cc-max5x.json'), { roles: { builder: short('claude-opus-5-5') }, never: [short('claude-haiku-4-5')] });
+  const p = plan(f, profile, { project: false });
+  ok(p);
+  const out = p.out;
+  assert.doesNotMatch(out, /Left out of your answers/, 'short names in the answers resolve');
+  const n = (id) => p.plan.items.find((x) => x.part_id === id).n;
+  const checks = out.slice(out.indexOf('Check these before you say Go'), out.indexOf('Lead, helpers and bulk per tool'));
+  assert.ok(checks.includes(`models.md:2 says "${short('claude-opus-5')} for code review."; #${n('claude-code:agent:reviewer')} modelproof-reviewer`), checks);
+  assert.ok(checks.includes(`models.md:2 says "- To keep usage down, use ${short('claude-sonnet-5-5')} for bulk renames"; #${n('claude-code:agent:bulk')} modelproof-bulk`), checks);
+  assert.ok(checks.includes(`models.md:3 says "- Always use ${short('claude-sonnet-5-5')}."; the Lead line in #${n('claude-code:rules')} says`), checks);
+  assert.ok(checks.includes(`models.md:4 says "- Always use max effort."; the Lead line in #${n('claude-code:rules')} says`), checks);
+  // Lines listed as checks are not repeated in the heads-up list.
+  const heads = out.slice(out.indexOf('Heads-up:'));
+  assert.doesNotMatch(heads, /models\.md:[234] /);
 });
 
 test('readers: who loads the project AGENTS.md, case by case', () => {
@@ -582,6 +783,37 @@ test('edit inside the block → reinstall keeps it (exit 2); undo cuts the block
   assert.ok(kept, u.out);
   assert.match(read(kept[1]), /How to hand off \(my edit\)/);
   ok(compare(f, before));
+});
+
+// An upgrade over the released 1.0.0 installer (frozen in scripts/fixtures/installer-1.0.0/). The
+// install id is one per home or project, so the upgrade is a second round of the same record and
+// undo takes out both: the plan, the apply and the undo all say so, and the tree is back to before
+// the 1.0.0 install.
+test('upgrade from the 1.0.0 installer: plan, apply and undo say undo takes out both installs; undo restores the original', () => {
+  const OLD = path.join(FIX, 'installer-1.0.0', 'install.mjs');
+  const f = setup('cc-max5x');
+  const profile = path.join(PROFILES, 'cc-max5x.json');
+  const before = snapshot(f, 'before');
+  const out1 = path.join(f.work, 'plan-old.json');
+  ok(node(OLD, ['plan', '--profile', profile, '--data', DATA, '--home', f.home, '--project', f.project, '--out', out1], f.env), 'plan with 1.0.0');
+  const p1 = JSON.parse(fs.readFileSync(out1, 'utf8'));
+  ok(node(OLD, ['apply', '--plan', out1, '--expect', p1.hash], f.env), 'apply with 1.0.0');
+  const p2 = plan(f, profile);
+  ok(p2, 'plan with this installer');
+  assert.equal(p2.plan.id, p1.id, 'the same install id');
+  assert.ok(p2.plan.earlier_since, 'the plan knows about the earlier install');
+  assert.match(p2.out, new RegExp(`Undo takes out everything above together with the earlier install \\(since ${p2.plan.earlier_since}\\) under the same id ${p1.id}`));
+  const a = apply(f, p2);
+  ok(a, 'apply the upgrade');
+  assert.match(a.out, /This takes out this install and the earlier one on this home folder together, back to how the files were before \d{4}-\d\d-\d\d\./);
+  ok(verify(f));
+  ok(dupes(f));
+  const u = undo(f, p1.id);
+  ok(u, 'undo');
+  assert.match(u.out, new RegExp(`This took out all 2 installs recorded under ${p1.id} \\(the first on \\d{4}-\\d\\d-\\d\\d\\), not only the latest one\\.`));
+  assert.match(u.out, /Restored: every file is byte-identical to before the first of those installs/);
+  assert.doesNotMatch(u.out, /byte-identical to before the install\./);
+  ok(compare(f, before), 'the tree is back to before the 1.0.0 install');
 });
 
 test('profile A → profile B → undo: the tree is back to before A (remove items are numbered)', () => {

@@ -2,14 +2,21 @@
 /* Honesty gate for data/models.json. Run in CI on every push to the auto-refresh PR branch:
    a guessed/unsourced value must NOT be able to merge. Exits non-zero on any error.
    Also enforces the naming rule (scripts/naming.mjs): ids derive from names, vendors are canonical.
-   Usage: node scripts/validate-data.mjs
-   As a module: validate(data, registry) -> { errors, warnings } (unit-tested in test-auto-refresh.mjs). */
+   Also enforces the data contract (FEEDS below): every data file a page shows carries a file-level
+   as_of, and every line it shows carries a source and a date of its own or inherits them.
+   Usage: node scripts/validate-data.mjs [--data <dir>]
+     --data  validate the data files in <dir> instead of data/ (the release drill and the tests
+             run the gate on a temp copy this way). testers.json is a static registry and is
+             always read from data/.
+   As a module: validate(data, registry) -> { errors, warnings } (unit-tested in test-auto-refresh.mjs);
+   FEEDS + validateFeeds(files, {today}) -> { errors, warnings } (unit-tested in test-data-contract.mjs). */
 import { readFileSync, realpathSync, existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { namingProblems, canonicalVendor, VENDORS } from './naming.mjs';
 import { TASK_IDS, BASIS_TOKENS } from './derive-task-fit.mjs';
 import { STATUS_VALUES, ADOPTION_VALUES, deriveStatus, deriveAdoption } from './derive-status-adoption.mjs';
+import { RELEASED_RE } from './timeline.mjs';
 
 // data/testers.json's own tester ids — every standings.measured[].tester must name one of these
 // (scripts/derive-standings.mjs). Read once at module load, same as every other
@@ -118,10 +125,13 @@ export function claimProblems(c, label, { tiers = CLAIM_TIERS } = {}) {
 export const GUIDANCE_TIERS = ['tool', 'lab'];
 export const GUIDANCE_TOPICS = ['instruction-files', 'enforced-model', 'effort', 'lead-helper', 'model-per-job', 'context'];
 // Tool ids the package targets -> the name its claims use as subject.name.
-export const GUIDANCE_TOOLS = { 'claude-code': 'Claude Code', codex: 'Codex CLI', cursor: 'Cursor', 'agents-md': 'AGENTS.md' };
+export const GUIDANCE_TOOLS = {
+  'claude-code': 'Claude Code', codex: 'Codex CLI', cursor: 'Cursor', 'agents-md': 'AGENTS.md',
+  copilot: 'GitHub Copilot', antigravity: 'Antigravity', openrouter: 'OpenRouter',
+};
 export const GUIDANCE_ROLES = ['scout', 'builder', 'reviewer'];
 // Tools with facts in the file that the package doesn't write for (yet) — still valid subjects.
-export const GUIDANCE_EXTRA_TOOL_NAMES = ['GitHub Copilot', 'Gemini CLI'];
+export const GUIDANCE_EXTRA_TOOL_NAMES = ['Gemini CLI'];
 // Our own prose (sentence, _readme) never ranks one model against another. Quotes are exempt —
 // they are the source's words, reproduced verbatim.
 export const GUIDANCE_BANNED_PATTERNS = [
@@ -239,7 +249,135 @@ export function validateGuidance(guidance, models) {
       if (!c.subject || c.subject.kind !== 'lab' || c.subject.name !== p.lab) E(`${label}.basis "${id}" is not a claim from ${p.lab}`);
     }
   });
+  toolPlanProblems(guidance, claims, byId).forEach(E);
   return { errors, warnings };
+}
+
+// --- guidance.json tool_plans: one Lead / Helpers / Bulk plan per tool -----------------------
+// { tool, as_of, instruction_files[{path, basis}], enforced[{what, basis}], effort_levels?{values, basis},
+//   lead{model_id | choice, effort, raise_to?, when?, basis}, helpers{model:"inherit", basis, push_down?} | null,
+//   bulk{model_id | choice, effort, when, basis, explore?{basis}} }
+// A slot names a catalog model only where the tool's own docs give the string its files take;
+// every other slot is `choice: "your pick"` (TOOL_PLAN_CHOICE_ONLY: tools whose model strings are
+// not documented, so a value would be a guess and must never reach an enforced file).
+export const TOOL_PLAN_TOOLS = ['claude-code', 'codex', 'cursor', 'copilot', 'antigravity', 'openrouter'];
+export const TOOL_PLAN_CHOICE = 'your pick';
+export const TOOL_PLAN_CHOICE_ONLY = ['cursor', 'copilot', 'antigravity', 'openrouter'];
+// Tools whose helper files take a model string from a plan slot (the bulk helper; Claude Code's
+// optional Explore helper too). Their bulk slot reaches an enforced file.
+export const TOOL_PLAN_FILE_SLOT_TOOLS = ['claude-code', 'codex'];
+const escRe = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+/** True when `text` contains `word` as a whole token (case-insensitive; '-' and '.' count as part
+ * of a token, so "gpt-6" is not found inside "gpt-6-luna"). */
+export function namesToken(text, word) {
+  if (!word) return false;
+  return new RegExp(`(^|[^a-z0-9.-])${escRe(String(word).toLowerCase())}(?![a-z0-9-]|\\.[a-z0-9])`).test(String(text || '').toLowerCase());
+}
+export function toolPlanProblems(guidance, claims, byId) {
+  const out = [];
+  const G = 'data/guidance.json';
+  const plans = guidance && guidance.tool_plans;
+  if (plans === undefined) return out;
+  if (!Array.isArray(plans)) return [`${G}: tool_plans must be an array`];
+  const seen = new Set();
+  const isStr = (v) => typeof v === 'string' && v.trim() !== '';
+  const quoteOf = (id) => { const c = claims.get(id); return c && typeof c.quote === 'string' ? c.quote : ''; };
+  const refsFor = (tool, modelId) => (Array.isArray(guidance.model_refs) ? guidance.model_refs : [])
+    .filter((r) => r && r.tool === tool && r.model_id === modelId && isStr(r.ref));
+  // A slot that names a model must rest on a claim that names it: by one of the tool's refs for it,
+  // its catalog name or its id. Otherwise the line would cite another model's quotes.
+  const basisNamesModel = (tool, modelId, basis) => {
+    const m = byId.get(modelId);
+    const words = [modelId, m && m.name, ...refsFor(tool, modelId).map((r) => r.ref)].filter(Boolean);
+    return (Array.isArray(basis) ? basis : []).some((id) => words.some((w) => namesToken(quoteOf(id), w)));
+  };
+  plans.forEach((tp, i) => {
+    const who = `${G} tool_plans[${i}]${tp && tp.tool ? ` (${tp.tool})` : ''}`;
+    if (!tp || typeof tp !== 'object' || Array.isArray(tp)) { out.push(`${who} must be an object`); return; }
+    if (!TOOL_PLAN_TOOLS.includes(tp.tool)) { out.push(`${who}.tool "${tp.tool}" must be one of ${TOOL_PLAN_TOOLS.join(', ')}`); return; }
+    if (seen.has(tp.tool)) out.push(`${who}: a second plan for ${tp.tool}`);
+    seen.add(tp.tool);
+    if (!isStr(tp.as_of) || !DATE_RE.test(tp.as_of)) out.push(`${who}.as_of "${tp.as_of}" must be a YYYY-MM-DD date`);
+    const own = (basis, label, modelId) => basisOwnerProblems(basis, { tool: tp.tool, modelId, label, claims, modelsById: byId });
+    const prose = (v, label) => {
+      if (v === undefined || v === null) return;
+      if (!isStr(v)) { out.push(`${label} must be plain text`); return; }
+      const hit = guidanceBannedIn(v);
+      if (hit) out.push(`${label} uses a ranking word (/${hit}/) — say what the source says, never a comparison`);
+    };
+    const levels = tp.effort_levels;
+    if (levels !== undefined) {
+      if (!levels || !Array.isArray(levels.values) || !levels.values.length || levels.values.some((v) => !isStr(v) || !/^[a-z]+$/.test(v))
+        || new Set(levels.values).size !== levels.values.length) out.push(`${who}.effort_levels.values must be a list of distinct lowercase level names`);
+      out.push(...own(levels && levels.basis, `${who}.effort_levels`, null));
+    }
+    const levelOk = (v) => (levels && Array.isArray(levels.values) ? levels.values.includes(v) : false);
+    for (const key of ['instruction_files', 'enforced']) {
+      const list = tp[key];
+      if (!Array.isArray(list) || !list.length) { out.push(`${who}.${key} must be a non-empty array`); continue; }
+      list.forEach((x, j) => {
+        const label = `${who}.${key}[${j}]`;
+        const field = key === 'enforced' ? 'what' : 'path';
+        if (!x || !isStr(x[field])) out.push(`${label}.${field} is required`);
+        else prose(x[field], `${label}.${field}`);
+        out.push(...own(x && x.basis, label, null));
+      });
+    }
+    // One model slot: a catalog model id (that tool's own lab for a one-lab tool), or the choice marker.
+    const slot = (x, label, { effort = true } = {}) => {
+      if (!x || typeof x !== 'object' || Array.isArray(x)) { out.push(`${label} must be an object`); return; }
+      const hasId = x.model_id !== undefined && x.model_id !== null;
+      if (hasId === (x.choice !== undefined && x.choice !== null)) out.push(`${label} needs exactly one of model_id or choice "${TOOL_PLAN_CHOICE}"`);
+      if (hasId) {
+        if (!isStr(x.model_id) || !byId.has(x.model_id)) out.push(`${label}.model_id "${x.model_id}" is not a model id in data/models.json`);
+        else {
+          const lab = TOOL_OWN_LAB[tp.tool];
+          if (lab && byId.get(x.model_id).vendor !== lab) out.push(`${label}.model_id "${x.model_id}" is a ${byId.get(x.model_id).vendor} model — ${tp.tool} runs ${lab} models only`);
+        }
+        if (TOOL_PLAN_CHOICE_ONLY.includes(tp.tool)) out.push(`${label}.model_id: ${tp.tool}'s docs give no model string for its files, so this slot is choice "${TOOL_PLAN_CHOICE}" — a derived value never reaches an enforced file`);
+      } else if (x.choice !== undefined && x.choice !== null && x.choice !== TOOL_PLAN_CHOICE) out.push(`${label}.choice must be "${TOOL_PLAN_CHOICE}"`);
+      if (effort) for (const k of ['effort', 'raise_to']) {
+        const v = x[k];
+        if (v === undefined || v === null) continue;
+        if (!levelOk(v)) out.push(`${label}.${k} "${v}" is not one of ${tp.tool}'s effort levels (effort_levels.values)`);
+      }
+      if (x.raise_to != null && !isStr(x.when)) out.push(`${label}.when must say when to raise effort to ${x.raise_to}`);
+      prose(x.when, `${label}.when`);
+      out.push(...own(x.basis, label, hasId && isStr(x.model_id) ? x.model_id : null));
+      if (hasId && isStr(x.model_id) && byId.has(x.model_id) && Array.isArray(x.basis) && x.basis.length && !basisNamesModel(tp.tool, x.model_id, x.basis)) {
+        out.push(`${label}.basis: no quote names ${x.model_id} (by its name, its id or a ${tp.tool} model_refs string) — a slot rests on a source that names its model`);
+      }
+    };
+    slot(tp.lead, `${who}.lead`);
+    if (tp.helpers !== null) {
+      const h = tp.helpers;
+      if (!h || typeof h !== 'object' || h.model !== 'inherit') out.push(`${who}.helpers must be {model: "inherit", basis, push_down?} (helpers run on the lead's model), or null for a tool with no helpers`);
+      else {
+        out.push(...own(h.basis, `${who}.helpers`, null));
+        if (h.push_down !== undefined && h.push_down !== null) {
+          slot(h.push_down, `${who}.helpers.push_down`, { effort: false });
+          if (!isStr(h.push_down.when)) out.push(`${who}.helpers.push_down.when is required`);
+        }
+      }
+    }
+    slot(tp.bulk, `${who}.bulk`);
+    // The bulk slot's model is written into a helper file: the tool's own string for it must be on
+    // file in model_refs, with a basis that quotes that string. Never the catalog id by default.
+    const bulkId = tp.bulk && isStr(tp.bulk.model_id) ? tp.bulk.model_id : null;
+    if (bulkId && TOOL_PLAN_FILE_SLOT_TOOLS.includes(tp.tool)) {
+      const rows = refsFor(tp.tool, bulkId);
+      if (!rows.length) out.push(`${who}.bulk.model_id "${bulkId}" goes into ${tp.tool}'s bulk helper file, so it needs a model_refs row (tool ${tp.tool}, model_id ${bulkId}) whose basis quotes the string the file takes`);
+      else if (!rows.some((r) => (Array.isArray(r.basis) ? r.basis : []).some((id) => namesToken(quoteOf(id), r.ref)))) {
+        out.push(`${who}.bulk.model_id "${bulkId}": no model_refs row for it has a basis quote containing its string (${rows.map((r) => r.ref).join(', ')})`);
+      }
+    }
+    if (tp.bulk && !isStr(tp.bulk.when)) out.push(`${who}.bulk.when is required (the kind of work it is for)`);
+    if (tp.bulk && tp.bulk.explore !== undefined) {
+      if (tp.tool !== 'claude-code') out.push(`${who}.bulk.explore is a Claude Code helper only`);
+      out.push(...own(tp.bulk.explore && tp.bulk.explore.basis, `${who}.bulk.explore`, null));
+    }
+  });
+  return out;
 }
 
 export function validate(data, registry) {
@@ -594,8 +732,308 @@ export function validate(data, registry) {
   return { errors, warnings };
 }
 
+// --- the data contract (2026-10-03) -----------------------------------------------------------
+// One table of every data file a page shows (FEEDS) and one check per feed (validateFeeds). The
+// rule for every feed: the file says when it was true (a file-level `as_of`), and every line it
+// shows carries a source and a date of its own, or inherits them from something that does (a
+// guidance default inherits from the claims in its `basis`; a ladder point from its ladder). The
+// writers (scripts/auto-refresh.mjs, scripts/apply-judgment.mjs via scripts/timeline.mjs) stamp
+// dates in these same forms, so a scheduled run never writes what this gate rejects.
+
+/** Today's date in UTC. The writers stamp UTC dates (the scheduled jobs run on UTC runners), so the
+ * "not in the future" rule compares in UTC and allows one day of slack — a check run on a machine
+ * whose local date is behind UTC must never read today's run as "tomorrow". */
+export const utcToday = () => new Date().toISOString().slice(0, 10);
+const addDays = (ymd, n) => new Date(Date.parse(`${ymd}T00:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+const isRealDate = (s) => typeof s === 'string' && DATE_RE.test(s) && !Number.isNaN(Date.parse(`${s}T00:00:00Z`)) && new Date(`${s}T00:00:00Z`).toISOString().slice(0, 10) === s;
+const isUrl = (u) => typeof u === 'string' && /^https?:\/\//i.test(u);
+
+/** Problems with a date that says "as of": a real YYYY-MM-DD date, no later than today + 1 (UTC). */
+export function asOfProblems(asOf, label, { today = utcToday() } = {}) {
+  if (asOf == null || asOf === '') return [`${label} as_of is missing — every shown file says when it was true (YYYY-MM-DD)`];
+  if (!isRealDate(asOf)) return [`${label} as_of "${asOf}" must be a real YYYY-MM-DD date`];
+  if (asOf > addDays(today, 1)) return [`${label} as_of "${asOf}" is in the future (today is ${today} UTC)`];
+  return [];
+}
+
+// `released` on a model: as much of a date as the source gives, or null. Never "unknown".
+export const RELEASED_FORMS = 'YYYY-MM-DD | YYYY-MM | YYYY-Qn | YYYY | null';
+export const DATE_PRECISION_VALUES = ['month', 'quarter', 'year'];
+export const RELEASE_KINDS = ['model', 'price', 'retired'];
+// Plan rows checked on or after this date carry a verbatim `quote` (scripts/check-sources.mjs
+// checks it) whenever they print a price. A null price (contact sales, or a JS-only page —
+// scripts/refresh-plans.md) has nothing to quote.
+export const PLAN_QUOTE_FROM = '2026-10-03';
+// The seller's name as a buyer sees it on the invoice, which is not always a model vendor from
+// naming.mjs: "Microsoft 365 Copilot" and the three marketplaces (Bedrock, Vertex AI, Azure AI
+// Foundry) sell other people's models, and they are here because that is how enterprises buy.
+export const PLAN_VENDORS = [
+  'Anthropic', 'OpenAI', 'Google', 'xAI', 'Cursor', 'GitHub Copilot', 'Mistral AI',
+  'Microsoft 365 Copilot', 'Devin', 'Perplexity', 'OpenRouter',
+  'Amazon Bedrock', 'Google Vertex AI', 'Microsoft Azure AI Foundry',
+];
+/** The label a board shows for a plan row (same rule as board.html planLabel / test-board.mjs). */
+export function planLabel(p) {
+  if (p.plan.indexOf(p.vendor) === 0) return p.plan;
+  const lead = String(p.vendor || '').split(' ')[0];
+  if (lead && p.plan.indexOf(`${lead} `) === 0) return p.plan;
+  return `${p.vendor} ${p.plan}`;
+}
+
+// Tool id -> the subject names its own claims use, and the lab it runs (when it runs one lab's
+// models only). A default for a tool may rest on the tool's own docs, its own lab's docs, or —
+// for a tool that runs several labs' models (Cursor, Copilot, OpenRouter, AGENTS.md) — the docs
+// of the lab whose model that line names.
+export const TOOL_SUBJECTS = {
+  'claude-code': ['Claude Code'], codex: ['Codex CLI'], cursor: ['Cursor'], 'agents-md': ['AGENTS.md'],
+  copilot: ['GitHub Copilot'], antigravity: ['Antigravity', 'Gemini CLI'], gemini: ['Gemini CLI', 'Antigravity'],
+  openrouter: ['OpenRouter'],
+};
+export const TOOL_OWN_LAB = { 'claude-code': 'Anthropic', codex: 'OpenAI', antigravity: 'Google', gemini: 'Google' };
+
+/** Basis rule for one guidance line (a role default, a model ref, a tool plan slot): every id is a
+ * claim in the file, and every claim is the tool's own or its lab's own (see TOOL_SUBJECTS). */
+export function basisOwnerProblems(basis, { tool, modelId = null, label, claims, modelsById }) {
+  if (!Array.isArray(basis) || !basis.length) return [`${label}.basis must name at least one claim id (the line's source)`];
+  const out = [];
+  const subjects = new Set(TOOL_SUBJECTS[tool] || []);
+  const labs = new Set([TOOL_OWN_LAB[tool]].filter(Boolean));
+  if (modelId && modelsById.has(modelId)) labs.add(modelsById.get(modelId).vendor);
+  for (const id of basis) {
+    const c = claims.get(id);
+    if (!c) { out.push(`${label}.basis names "${id}", which is not a claim id in guidance.json`); continue; }
+    const s = c.subject || {};
+    const own = (s.kind === 'tool' && subjects.has(s.name)) || (s.kind === 'lab' && labs.has(s.name));
+    if (!own) out.push(`${label}.basis "${id}" is a claim about ${s.name || '?'} — a line for ${tool} rests only on ${[...subjects, ...labs].join(' / ') || tool}'s own docs`);
+  }
+  return out;
+}
+
+/** Every value under a model-naming key (model, model_id, models, have) anywhere in `obj`. */
+function modelIdsNamedIn(obj, out = []) {
+  if (Array.isArray(obj)) { obj.forEach((x) => modelIdsNamedIn(x, out)); return out; }
+  if (!obj || typeof obj !== 'object') return out;
+  for (const [k, v] of Object.entries(obj)) {
+    if (['model', 'model_id'].includes(k) && typeof v === 'string') out.push(v);
+    else if (['models', 'have'].includes(k) && Array.isArray(v)) v.forEach((x) => typeof x === 'string' && out.push(x));
+    else if (v && typeof v === 'object') modelIdsNamedIn(v, out);
+  }
+  return out;
+}
+
+const fileAsOf = (feed) => (files, ctx) => asOfProblems(files[feed.file]?.as_of, `data/${feed.file}:`, ctx);
+
+function checkModels(f, { models }, ctx) {
+  const E = [];
+  E.push(...asOfProblems(models.as_of, 'data/models.json:', ctx));
+  if (!Array.isArray(models.models)) return [...E, 'data/models.json: models must be an array'];
+  for (const m of models.models) {
+    const who = `data/models.json ${m.id || m.name || '(unnamed)'}`;
+    if (!Array.isArray(m.sources) || !m.sources.length) E.push(`${who}: sources[] is empty — every listed model traces to at least one page`);
+    else if (m.sources.some((u) => !isUrl(u))) E.push(`${who}: sources[] has a non-URL entry`);
+    if (m.released !== null && m.released !== undefined && !(typeof m.released === 'string' && RELEASED_RE.test(m.released))) {
+      E.push(`${who}: released "${m.released}" must be ${RELEASED_FORMS} — an unknown date is null`);
+    }
+  }
+  return E;
+}
+
+function checkReleases(f, { models }, ctx) {
+  const E = [];
+  (models.releases || []).forEach((r, i) => {
+    const who = `data/models.json releases[${i}] "${r && r.title}"`;
+    if (!r || typeof r !== 'object') { E.push(`${who} must be an object`); return; }
+    if (!RELEASE_KINDS.includes(r.kind)) E.push(`${who}: kind "${r.kind}" must be one of ${RELEASE_KINDS.join(', ')}`);
+    if (!isRealDate(r.date)) E.push(`${who}: date "${r.date}" must be a real YYYY-MM-DD date (a month-only date is the 1st with date_precision "month")`);
+    else if (r.date > addDays(ctx.today, 1)) E.push(`${who}: date "${r.date}" is in the future`);
+    if (r.date_precision != null && !DATE_PRECISION_VALUES.includes(r.date_precision)) E.push(`${who}: date_precision "${r.date_precision}" must be one of ${DATE_PRECISION_VALUES.join(', ')}`);
+    for (const k of ['vendor', 'title', 'summary']) if (!r[k] || typeof r[k] !== 'string') E.push(`${who}: ${k} is required`);
+    if (!isUrl(r.source)) E.push(`${who}: source "${r.source}" must be an http(s) URL — every timeline line links its source`);
+  });
+  return E;
+}
+
+function checkLadders(f, { models }, ctx) {
+  const E = [];
+  (models.effort_ladders || []).forEach((L, i) => {
+    const who = `data/models.json effort_ladders[${i}] (${L && (L.id || L.suite)})`;
+    E.push(...asOfProblems(L && L.as_of, `${who}:`, ctx));
+    if (!isUrl(L && L.source)) E.push(`${who}: source must be an http(s) URL — its points inherit it`);
+    for (const s of (L && L.series) || []) {
+      if (s.source != null && !isUrl(s.source)) E.push(`${who}/${s.model_id}: series source must be an http(s) URL when present`);
+      for (const p of s.points || []) if (p.source != null && !isUrl(p.source)) E.push(`${who}/${s.model_id}: point "${p.effort}" source must be an http(s) URL when present`);
+    }
+  });
+  return E;
+}
+
+function checkGuidanceFeed(f, { guidance, models }, ctx) {
+  const E = [];
+  E.push(...asOfProblems(guidance.as_of, 'data/guidance.json:', ctx));
+  const claims = new Map((guidance.claims || []).filter((c) => c && c.id).map((c) => [c.id, c]));
+  for (const c of claims.values()) {
+    const who = `data/guidance.json claim ${c.id}`;
+    if (!isUrl(c.source_url)) E.push(`${who}: source_url is required`);
+    if (!c.quote) E.push(`${who}: quote is required`);
+    if (!isRealDate(c.date)) E.push(`${who}: date "${c.date}" must be a real YYYY-MM-DD date`);
+    else if (c.date > addDays(ctx.today, 1)) E.push(`${who}: date "${c.date}" is in the future`);
+  }
+  const modelsById = new Map((models.models || []).map((m) => [m.id, m]));
+  (guidance.role_defaults || []).forEach((r, i) => E.push(...basisOwnerProblems(r.basis, { tool: r.tool, modelId: r.model_id, label: `data/guidance.json role_defaults[${i}] (${r.tool}/${r.role})`, claims, modelsById })));
+  (guidance.model_refs || []).forEach((r, i) => E.push(...basisOwnerProblems(r.basis, { tool: r.tool, modelId: r.model_id, label: `data/guidance.json model_refs[${i}] (${r.tool}/${r.ref})`, claims, modelsById })));
+  // tool_plans (one per tool): every slot that carries a basis follows the same rule. The slot
+  // shape is the tool_plans schema's own business; this only walks it for basis lists.
+  const walk = (node, label, tool) => {
+    if (!node || typeof node !== 'object') return;
+    if (Array.isArray(node)) { node.forEach((x, i) => walk(x, `${label}[${i}]`, tool)); return; }
+    if ('basis' in node) E.push(...basisOwnerProblems(node.basis, { tool, modelId: typeof node.model_id === 'string' ? node.model_id : null, label, claims, modelsById }));
+    for (const [k, v] of Object.entries(node)) if (k !== 'basis' && v && typeof v === 'object') walk(v, `${label}.${k}`, tool);
+  };
+  (guidance.tool_plans || []).forEach((tp, i) => {
+    const who = `data/guidance.json tool_plans[${i}] (${tp && tp.tool})`;
+    if (!tp || typeof tp !== 'object') { E.push(`${who} must be an object`); return; }
+    if (tp.as_of != null) E.push(...asOfProblems(tp.as_of, `${who}:`, ctx));
+    walk(tp, who, tp.tool);
+  });
+  return E;
+}
+
+function checkPlans(f, { plans }, ctx) {
+  const E = [];
+  E.push(...asOfProblems(plans.as_of, 'data/plans.json:', ctx));
+  if (!Array.isArray(plans.plans)) return [...E, 'data/plans.json: plans must be an array'];
+  const labels = new Set(plans.plans.filter((p) => p && p.vendor && p.plan).map(planLabel));
+  for (const p of plans.plans) {
+    const who = `data/plans.json ${p.vendor || '?'} / ${p.plan || '?'}`;
+    if (!isUrl(p.source_url)) E.push(`${who}: source_url is required`);
+    E.push(...asOfProblems(p.as_of, `${who}:`, ctx));
+    if (typeof p.price_usd_month === 'number' && isRealDate(p.as_of) && p.as_of >= PLAN_QUOTE_FROM && !(typeof p.quote === 'string' && p.quote.trim())) {
+      E.push(`${who}: a price checked on or after ${PLAN_QUOTE_FROM} needs a verbatim quote (≤25 words) from its page — scripts/check-sources.mjs confirms it`);
+    }
+    if (p.quote != null) {
+      if (typeof p.quote !== 'string' || !p.quote.trim()) E.push(`${who}: quote must be a non-empty string`);
+      else if (wordCount(p.quote) > 25) E.push(`${who}: quote is ${wordCount(p.quote)} words — ≤25, verbatim`);
+    }
+    if (p.quote_url != null && !isUrl(p.quote_url)) E.push(`${who}: quote_url must be an http(s) URL`);
+    for (const k of ['base_usd_month', 'price_usd_month_billed_monthly']) {
+      if (p[k] != null && (typeof p[k] !== 'number' || Number.isNaN(p[k]) || p[k] < 0)) E.push(`${who}: ${k} must be a non-negative number when present`);
+    }
+    if ((p.reaches === undefined) !== (p.covers_tokens === undefined)) E.push(`${who}: reaches and covers_tokens go together — set both or neither`);
+    if (p.reaches !== undefined && p.reaches !== 'all' && !(Array.isArray(p.reaches) && p.reaches.length && p.reaches.every((v) => VENDORS.includes(v)))) {
+      E.push(`${who}: reaches must be "all" or a non-empty list of canonical model vendors (scripts/naming.mjs VENDORS)`);
+    }
+    if (p.covers_tokens !== undefined && typeof p.covers_tokens !== 'boolean') E.push(`${who}: covers_tokens must be true or false`);
+    if (p.renamed_from !== undefined) {
+      if (!Array.isArray(p.renamed_from) || !p.renamed_from.length || p.renamed_from.some((n) => typeof n !== 'string' || !n.trim())) E.push(`${who}: renamed_from must be a non-empty list of earlier board labels`);
+      else for (const n of p.renamed_from) if (labels.has(n)) E.push(`${who}: renamed_from "${n}" is still the label of a current row — a saved board could not tell them apart`);
+    }
+  }
+  return E;
+}
+
+function checkVendors(f, { vendors }, ctx) {
+  const E = [...asOfProblems(vendors.as_of, 'data/vendors.json:', ctx)];
+  for (const v of vendors.vendors || []) if (!isUrl(v.source)) E.push(`data/vendors.json "${v.vendor}": source is required (http(s) URL)`);
+  return E;
+}
+
+/** tasks.json / usage-presets.json / board-samples.json: file as_of, and every model id they name
+ * is a real catalog id (and, for board-samples, every plan label a real plan row). */
+function checkNamesModels(feed) {
+  return (f, files, ctx) => {
+    const obj = files[feed.file];
+    const E = [...asOfProblems(obj.as_of, `data/${feed.file}:`, ctx)];
+    const ids = new Set((files.models.models || []).map((m) => m.id));
+    for (const id of modelIdsNamedIn(obj)) if (!ids.has(id)) E.push(`data/${feed.file}: names model "${id}", which is not an id in data/models.json`);
+    if (feed.file === 'board-samples.json') {
+      const labels = new Set(((files.plans && files.plans.plans) || []).map(planLabel));
+      const pd = obj.personal_default;
+      if (pd !== undefined) {
+        if (!pd || typeof pd !== 'object' || !Array.isArray(pd.plans) || !Array.isArray(pd.models)) E.push('data/board-samples.json: personal_default must be {plans: [plan labels], models: [model ids]}');
+      }
+      const named = [...((pd && pd.plans) || [])];
+      for (const d of (obj.org && obj.org.divisions) || []) for (const person of d.people || []) if (person.plan) named.push(person.plan);
+      for (const n of named) if (!labels.has(n)) E.push(`data/board-samples.json: names plan "${n}", which is not a plan label in data/plans.json`);
+    }
+    return E;
+  };
+}
+
+function checkPerRequest(f, { 'per-request.json': pr, models }, ctx) {
+  const E = [...asOfProblems(pr.as_of, 'data/per-request.json:', ctx)];
+  if (!isUrl(pr.source_url)) E.push('data/per-request.json: source_url is required (http(s) URL)');
+  const ids = new Set((models.models || []).map((m) => m.id));
+  if (!Array.isArray(pr.rows) || !pr.rows.length) E.push('data/per-request.json: rows must be a non-empty array of {model_id, in, out}');
+  else pr.rows.forEach((r, i) => {
+    const who = `data/per-request.json rows[${i}] (${r && r.model_id})`;
+    if (!r || typeof r !== 'object') { E.push(`${who} must be an object`); return; }
+    if (!ids.has(r.model_id)) E.push(`${who}: model_id is not an id in data/models.json`);
+    for (const k of ['in', 'out']) if (typeof r[k] !== 'number' || Number.isNaN(r[k]) || r[k] < 0) E.push(`${who}: ${k} must be a non-negative number (tokens per request)`);
+  });
+  return E;
+}
+
+/** Every data file a page shows, what it feeds, and the check that holds it to the contract.
+ * `file` is relative to the data dir; `optional` files are checked only when present. */
+export const FEEDS = [
+  { id: 'models', file: 'models.json', shows: 'model rows: name, prices, context, released, sources (index, table, board, install package)', check: checkModels },
+  { id: 'releases', file: 'models.json', shows: 'releases[]: the timeline', check: checkReleases },
+  { id: 'effort-ladders', file: 'models.json', shows: 'effort_ladders[]: the effort panel (points inherit the ladder source)', check: checkLadders },
+  // guidance.json stays optional-if-missing, as gate 13 above has always had it (a throwaway copy
+  // of scripts+data, like test-apply-judgment's sandbox, carries none); when present it is held to
+  // the contract in full.
+  { id: 'tool-defaults', file: 'guidance.json', optional: true, shows: 'claims, role_defaults, model_refs, effort_pages, tool_plans: the install package', check: checkGuidanceFeed },
+  { id: 'plans', file: 'plans.json', shows: 'plan rows: seat prices on the board', check: checkPlans },
+  { id: 'vendors', file: 'vendors.json', shows: 'vendor country rows (how-we-pick, board)', check: checkVendors },
+  { id: 'tasks', file: 'tasks.json', shows: 'task labels (board)', check: null },
+  { id: 'usage-presets', file: 'usage-presets.json', shows: 'usage levels (board)', check: null },
+  { id: 'board-samples', file: 'board-samples.json', shows: 'example boards and the default personal setup', check: null },
+  { id: 'per-request', file: 'per-request.json', optional: true, shows: 'tokens per request by model (board cost maths)', check: checkPerRequest },
+];
+for (const f of FEEDS) if (!f.check) f.check = checkNamesModels(f);
+
+/** Run every feed's check. `files` maps a FEEDS file name to its parsed JSON (missing = absent).
+ * models.json is always needed (the other feeds resolve model ids against it). */
+export function validateFeeds(files, { today = utcToday() } = {}) {
+  const errors = [], warnings = [];
+  const ctx = { today };
+  const byName = {
+    ...files,
+    models: files['models.json'], guidance: files['guidance.json'], plans: files['plans.json'], vendors: files['vendors.json'],
+  };
+  if (!byName.models) return { errors: ['data/models.json: missing — every other feed resolves model ids against it'], warnings };
+  for (const feed of FEEDS) {
+    if (files[feed.file] === undefined || files[feed.file] === null) {
+      if (!feed.optional) errors.push(`data/${feed.file}: missing — the ${feed.id} feed is shown on the site`);
+      continue;
+    }
+    for (const e of feed.check(feed, byName, ctx)) errors.push(`[${feed.id}] ${e}`);
+  }
+  return { errors, warnings };
+}
+
+/** Read every FEEDS file that exists in `dirUrl` (a file: URL ending in /). Unparseable = error. */
+export function loadFeeds(dirUrl) {
+  const files = {}, errors = [];
+  for (const name of new Set(FEEDS.map((f) => f.file))) {
+    const u = new URL(name, dirUrl);
+    if (!existsSync(u)) continue;
+    try { files[name] = JSON.parse(readFileSync(u, 'utf8')); }
+    catch (e) { errors.push(`data/${name}: couldn't read/parse (${e.message})`); }
+  }
+  return { files, errors };
+}
+
+function dataDirFromArgs(argv) {
+  const i = argv.indexOf('--data');
+  const v = i !== -1 ? argv[i + 1] : (argv.find((a) => a.startsWith('--data=')) || '').slice(7);
+  if (i !== -1 && !v) throw new Error('--data needs a directory');
+  return v ? pathToFileURL(resolve(v) + '/') : new URL('../data/', import.meta.url);
+}
+
 function main() {
-  const data = JSON.parse(readFileSync(new URL('../data/models.json', import.meta.url)));
+  const DIR = dataDirFromArgs(process.argv.slice(2));
+  const data = JSON.parse(readFileSync(new URL('models.json', DIR)));
   const registry = JSON.parse(readFileSync(new URL('./sources.json', import.meta.url)));
   const { errors, warnings } = validate(data, registry);
   const E = (m) => errors.push(m);
@@ -636,17 +1074,10 @@ function main() {
   // 10. data/plans.json (scripts/refresh-plans.md): seat pricing, refreshed manually. Same honesty
   // rule as everything else — a price with no source_url can't ship, and "contact sales" is null,
   // never a guess at what a sales call would quote.
-  // The seller's name as a buyer sees it on the invoice, which is not always a model vendor from
-  // naming.mjs: "Microsoft 365 Copilot" and the three marketplaces (Bedrock, Vertex AI, Azure AI
-  // Foundry) sell other people's models, and they are here because that is how enterprises buy.
-  const PLAN_VENDORS = [
-    'Anthropic', 'OpenAI', 'Google', 'xAI', 'Cursor', 'GitHub Copilot', 'Mistral AI',
-    'Microsoft 365 Copilot', 'Windsurf', 'Perplexity', 'OpenRouter',
-    'Amazon Bedrock', 'Google Vertex AI', 'Microsoft Azure AI Foundry',
-  ];
+  // PLAN_VENDORS lives at module level (exported for the contract tests and the board).
   let plans = null;
   try {
-    plans = JSON.parse(readFileSync(new URL('../data/plans.json', import.meta.url)));
+    plans = JSON.parse(readFileSync(new URL('plans.json', DIR)));
   } catch (e) {
     E(`data/plans.json: couldn't read/parse (${e.message})`);
   }
@@ -679,7 +1110,7 @@ function main() {
   // not the automated Collect pipeline).
   let vendorsFile = null;
   try {
-    vendorsFile = JSON.parse(readFileSync(new URL('../data/vendors.json', import.meta.url)));
+    vendorsFile = JSON.parse(readFileSync(new URL('vendors.json', DIR)));
   } catch (e) {
     E(`data/vendors.json: couldn't read/parse (${e.message})`);
   }
@@ -705,7 +1136,7 @@ function main() {
   // wearing a label.
   let presetsFile = null;
   try {
-    presetsFile = JSON.parse(readFileSync(new URL('../data/usage-presets.json', import.meta.url)));
+    presetsFile = JSON.parse(readFileSync(new URL('usage-presets.json', DIR)));
   } catch (e) {
     E(`data/usage-presets.json: couldn't read/parse (${e.message})`);
   }
@@ -728,7 +1159,7 @@ function main() {
   // throwaway copy of scripts+data (test-apply-judgment's sandbox) still passes; when present it
   // must pass validateGuidance against this same catalog.
   let guidance = null;
-  const guidanceUrl = new URL('../data/guidance.json', import.meta.url);
+  const guidanceUrl = new URL('guidance.json', DIR);
   if (existsSync(guidanceUrl)) {
     try {
       guidance = JSON.parse(readFileSync(guidanceUrl));
@@ -744,6 +1175,15 @@ function main() {
     W('data/guidance.json: not found — skipped the guidance checks');
   }
 
+  // 14. the data contract (FEEDS): file as_of + a source and a date for every shown line.
+  {
+    const { files, errors: readErrors } = loadFeeds(DIR);
+    readErrors.forEach(E);
+    const f = validateFeeds(files);
+    f.errors.forEach(E);
+    f.warnings.forEach(W);
+  }
+
   if (warnings.length) { console.log('⚠ warnings (non-blocking):'); warnings.forEach((w) => console.log('  - ' + w)); }
   if (errors.length) {
     console.error(`\n✗ ${errors.length} honesty-gate error(s) — blocking:`);
@@ -753,7 +1193,8 @@ function main() {
   const ladderPts = (data.effort_ladders || []).reduce((n, L) => n + (L.series || []).reduce((k, s) => k + (s.points || []).length, 0), 0);
   const planCount = plans?.plans?.length || 0;
   const vendorCount = vendorsFile?.vendors?.length || 0;
-  console.log(`\n✓ honesty gate passed: ${data.models.length} models, ${(data.releases || []).length} releases, ${(data.effort_ladders || []).length} effort ladder(s) / ${ladderPts} points, ${planCount} plan(s), ${vendorCount} vendor(s), ${guidance?.claims?.length || 0} guidance claim(s), 0 errors.`);
+  const feedCount = FEEDS.filter((f) => f.optional ? existsSync(new URL(f.file, DIR)) : true).length;
+  console.log(`\n✓ honesty gate passed: ${feedCount} feed(s) under the data contract, ${data.models.length} models, ${(data.releases || []).length} releases, ${(data.effort_ladders || []).length} effort ladder(s) / ${ladderPts} points, ${planCount} plan(s), ${vendorCount} vendor(s), ${guidance?.claims?.length || 0} guidance claim(s), 0 errors.`);
 }
 
 const isMain = (() => {

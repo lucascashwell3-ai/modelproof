@@ -1,50 +1,125 @@
 /* The living terminal + installer tabs. One selection drives both: pick a
    way in and the terminal plays that session, abridged. Untouched, it tours
    both; the first click ends the tour. The install session is an abridged
-   real run of assets/install.mjs on the cc-max5x test setup (2026-09-27);
-   the MCP session uses the live data's own figures. No model is chosen for
-   anyone: each helper's model is the user's own choice, the tool's own
-   documented default (quoted), or the same as the main model. */
+   run of assets/install.mjs on a test setup; every figure in both sessions —
+   the data date, prices, usage shares, the quoted doc line, which two models
+   the MCP session compares — is read from data/models.json and
+   data/guidance.json when the page loads. If they don't load, figures show
+   as "—" rather than a number we can't back. No model is chosen for anyone:
+   each helper's model is the user's own choice, the tool's own documented
+   default (quoted), or the same as the main model. */
 (function () {
   "use strict";
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var NA = "—";
 
-  var SCRIPTS = {
-    prompt: {
-      title: "claude — 96×28",
-      lines: [
-        { t: "banner", html: '<b>✻</b> Welcome to <b>Claude Code</b>! <span class="dim">/help for help · cwd: ~/work/app</span>' },
-        { t: "you", html: '<span class="dim">[Pasted text #1 · the Modelproof install prompt]</span>' },
-        { t: "tool", html: 'Modelproof: set which model each helper runs in your Claude Code, for every project. <span class="hi">Right?</span>' },
-        { t: "you", type: true, html: "yes" },
-        { t: "tool", html: 'Bash(node install.mjs detect) <span class="dim">· Claude Code · 2 helpers with no model set · 1 rule mentions opus</span>' },
-        { t: "ask", html: '3 quick questions. How often do you hit your plan&rsquo;s limits?<br><span class="opt">❯ 1. Often</span> &nbsp; 2. Sometimes &nbsp; 3. Rarely' },
-        { t: "you", type: true, html: "often · coding and agents · keep opus for builds, like my rule says" },
-        { t: "tool", html: 'Bash(node install.mjs plan) <span class="dim">· facts as of 2026-09-27</span>' },
-        { t: "sub", html: 'scout → <span class="ok">haiku</span> · Claude Code docs: &ldquo;For simple subagent tasks, specify model: haiku &hellip;&rdquo;' },
-        { t: "sub", html: 'builder → <span class="ok">opus</span> · your choice · <span class="y">$4 / $20</span> per 1M' },
-        { t: "sub", html: 'reviewer → the same model as your main one' },
-        { t: "sub", html: '5 new files · your CLAUDE.md is not touched' },
-        { t: "ask", html: 'Go?<br><span class="opt">❯ 1. Yes</span> &nbsp; 2. Yes, but no to #4 &nbsp; 3. No' },
-        { t: "tool", html: 'Bash(node install.mjs apply) <span class="ok">✓</span> added <span class="y">agents/modelproof-scout.md</span> · builder · reviewer · explore · <span class="y">rules/modelproof.md</span>' },
-        { t: "out", html: 'Undo any time: <span class="ok">node ~/.modelproof/bin/install.mjs undo fd1d9c01d992</span>' }
-      ]
-    },
-    mcp: {
-      title: "zsh — 96×28",
-      lines: [
-        { t: "sh", type: true, html: "claude mcp add modelproof -- node mcp/server.js" },
-        { t: "out", html: '<span class="ok">✓</span> modelproof is now a tool in every session' },
-        { t: "sh", type: true, html: "claude" },
-        { t: "you", type: true, html: "what do claude opus 5.5 and gpt-6 sol cost, and what do their labs say about them?" },
-        { t: "tool", html: 'modelproof.compare_models(names: [&ldquo;opus 5.5&rdquo;, &ldquo;gpt-6 sol&rdquo;]) <span class="dim">· data as of 2026-09-27</span>' },
-        { t: "sub", html: '<span class="hi">Claude Opus 5.5</span> · <span class="y">$4 / $20</span> per 1M · 0.49% of OpenRouter tokens' },
-        { t: "sub", html: '<span class="hi">GPT-6 Sol</span> · <span class="y">$2 / $10</span> per 1M · 0.37% of OpenRouter tokens' },
-        { t: "sub", html: 'Lab quotes on file: none yet for either <span class="dim">— left blank, not guessed</span>' },
-        { t: "out", html: 'Prices from each lab&rsquo;s own pricing page; usage from OpenRouter (2026-09-25).' }
-      ]
+  function esc(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function money(v) { return typeof v === "number" ? "$" + (v % 1 === 0 ? String(v) : v.toFixed(2)) : NA; }
+  function priceText(m) { return m ? money(m.price_input) + " / " + money(m.price_output) : NA + " / " + NA; }
+  function shareOf(m) { var u = m && m.usage && m.usage.openrouter; return u && typeof u.share === "number" ? u : null; }
+  function releasedKey(v) {
+    var s = String(v || "");
+    if (/^\d{4}(-\d{2}){0,2}$/.test(s)) return s;
+    var q = /^(\d{4})-Q([1-4])$/.exec(s);
+    return q ? q[1] + "-" + String((q[2] - 1) * 3 + 1).padStart(2, "0") : "";
+  }
+  function labQuotes(m) {
+    var n = 0, seen = {};
+    Object.keys((m && m.task_fit_judged) || {}).forEach(function (k) {
+      ((m.task_fit_judged[k] || {}).claims || []).forEach(function (c) {
+        if (c && c.tier === "lab" && c.quote && !seen[c.quote]) { seen[c.quote] = 1; n++; }
+      });
+    });
+    return n;
+  }
+
+  /* The facts the two sessions print, from the data files (F empty -> every figure is "—").
+     builder: the model Claude Code's "opus" alias resolves to (guidance model_refs).
+     bulk:    Claude Code's bulk helper model (guidance tool_plans), as the alias its files take
+              (model_refs), and the tool's own quote behind it. Scout, builder and reviewer
+              inherit the lead's model, the same rule the package uses.
+     pair:    the builder's model plus the newest generally available, priced model with an
+              OpenRouter usage row from another lab — a rule over the data, not a judgment. */
+  function factsFrom(modelsFile, guidance) {
+    var models = (modelsFile && modelsFile.models) || [];
+    var byId = {};
+    models.forEach(function (m) { byId[m.id] = m; });
+    var g = guidance || {};
+    var ref = (g.model_refs || []).filter(function (r) { return r.tool === "claude-code" && r.ref === "opus"; })[0];
+    var builder = ref ? byId[ref.model_id] || null : null;
+    var plan = (g.tool_plans || []).filter(function (t) { return t.tool === "claude-code"; })[0] || null;
+    var bulk = plan && plan.bulk && plan.bulk.model_id ? plan.bulk : null;
+    var bulkRef = bulk ? (g.model_refs || []).filter(function (r) { return r.tool === "claude-code" && r.model_id === bulk.model_id; })[0] || null : null;
+    var claims = {};
+    (g.claims || []).forEach(function (c) { claims[c.id] = c; });
+    var quote = null;
+    if (bulkRef) (bulk.basis || []).some(function (id) { var c = claims[id]; if (c && c.quote && c.tier === "tool") { quote = c; return true; } return false; });
+    var other = models.filter(function (m) {
+      return m.status === "ga" && typeof m.price_output === "number" && shareOf(m) && releasedKey(m.released) &&
+        (!builder || m.vendor !== builder.vendor);
+    }).sort(function (a, b) { return releasedKey(b.released).localeCompare(releasedKey(a.released)) || a.name.localeCompare(b.name); })[0] || null;
+    var pair = [builder, other].filter(Boolean);
+    var usageAsOf = pair.map(function (m) { return shareOf(m) ? shareOf(m).as_of : ""; }).filter(Boolean).sort().pop() || null;
+    return { asOf: (modelsFile && modelsFile.as_of) || null, builder: builder, bulkRef: bulkRef ? bulkRef.ref : null,
+             quote: quote, pair: pair, usageAsOf: usageAsOf };
+  }
+
+  function buildScripts(F) {
+    F = F || {};
+    var pair = F.pair || [];
+    var a = pair[0] || null, b = pair[1] || null;
+    var nameA = a ? a.name : NA, nameB = b ? b.name : NA;
+    function compareLine(m) {
+      if (!m) return '<span class="hi">' + NA + '</span>';
+      var u = shareOf(m);
+      return '<span class="hi">' + esc(m.name) + '</span> · <span class="y">' + priceText(m) + '</span> per 1M · ' +
+        (u ? u.share + "% of OpenRouter tokens" : "no OpenRouter usage row");
     }
-  };
+    var qa = labQuotes(a), qb = labQuotes(b);
+    var quotesLine = (!a || !b) ? 'Lab quotes on file: ' + NA
+      : (!qa && !qb) ? 'Lab quotes on file: none yet for either <span class="dim">— left blank, not guessed</span>'
+      : 'Lab quotes on file: ' + qa + ' for ' + esc(nameA) + ' · ' + qb + ' for ' + esc(nameB);
+    var bulkLine = F.bulkRef && F.quote
+      ? 'bulk → <span class="ok">' + esc(F.bulkRef) + '</span> · Claude Code docs: &ldquo;' + esc(F.quote.quote) + ' &hellip;&rdquo;'
+      : 'bulk → the same model as your main one';
+    return {
+      prompt: {
+        title: "claude — 96×28",
+        lines: [
+          { t: "banner", html: '<b>✻</b> Welcome to <b>Claude Code</b>! <span class="dim">/help for help · cwd: ~/work/app</span>' },
+          { t: "you", html: '<span class="dim">[Pasted text #1 · the Modelproof install prompt]</span>' },
+          { t: "tool", html: 'Modelproof: set which model each helper runs in your Claude Code, for every project. <span class="hi">Right?</span>' },
+          { t: "you", type: true, html: "yes" },
+          { t: "tool", html: 'Bash(node install.mjs detect) <span class="dim">· Claude Code · 2 helpers with no model set · 1 rule mentions opus</span>' },
+          { t: "ask", html: '3 quick questions. How often do you hit your plan&rsquo;s limits?<br><span class="opt">❯ 1. Often</span> &nbsp; 2. Sometimes &nbsp; 3. Rarely' },
+          { t: "you", type: true, html: "often · coding and agents · keep opus for builds, like my rule says" },
+          { t: "tool", html: 'Bash(node install.mjs plan) <span class="dim">· facts as of ' + esc(F.asOf || NA) + '</span>' },
+          { t: "sub", html: 'scout · reviewer → the same model as your main one' },
+          { t: "sub", html: 'builder → <span class="ok">opus</span> · your choice · <span class="y">' + priceText(F.builder) + '</span> per 1M' },
+          { t: "sub", html: bulkLine },
+          { t: "sub", html: '5 new files · your CLAUDE.md is not touched' },
+          { t: "ask", html: 'Go?<br><span class="opt">❯ 1. Yes</span> &nbsp; 2. Yes, but no to #4 &nbsp; 3. No' },
+          { t: "tool", html: 'Bash(node install.mjs apply) <span class="ok">✓</span> added <span class="y">agents/modelproof-scout.md</span> · builder · reviewer · bulk · <span class="y">rules/modelproof.md</span>' },
+          { t: "out", html: 'Undo any time: <span class="ok">node ~/.modelproof/bin/install.mjs undo fd1d9c01d992</span>' }
+        ]
+      },
+      mcp: {
+        title: "zsh — 96×28",
+        lines: [
+          { t: "sh", type: true, html: "claude mcp add modelproof -- node mcp/server.js" },
+          { t: "out", html: '<span class="ok">✓</span> modelproof is now a tool in every session' },
+          { t: "sh", type: true, html: "claude" },
+          { t: "you", type: true, html: esc("what do " + nameA.toLowerCase() + " and " + nameB.toLowerCase() + " cost, and what do their labs say about them?") },
+          { t: "tool", html: 'modelproof.compare_models(names: [&ldquo;' + esc(nameA.toLowerCase()) + '&rdquo;, &ldquo;' + esc(nameB.toLowerCase()) + '&rdquo;]) <span class="dim">· data as of ' + esc(F.asOf || NA) + '</span>' },
+          { t: "sub", html: compareLine(a) },
+          { t: "sub", html: compareLine(b) },
+          { t: "sub", html: quotesLine },
+          { t: "out", html: 'Prices from each lab&rsquo;s own pricing page; usage from OpenRouter (' + esc(F.usageAsOf || NA) + ').' }
+        ]
+      }
+    };
+  }
+  var SCRIPTS = buildScripts(null);
   var ORDER = ["prompt", "mcp"];
 
   var body = document.getElementById("termBody");
@@ -160,5 +235,18 @@
     b.addEventListener("click", function () { copyText(b.getAttribute("data-copy"), b); });
   });
 
-  play(current);
+  // Figures first, then the show: the terminal starts once the data is in (or has failed, in
+  // which case every figure reads "—").
+  function getJson(url) {
+    return fetch(url, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); });
+  }
+  var started = false;
+  function start(F) { if (started) return; started = true; SCRIPTS = buildScripts(F); play(current); }
+  if (window.fetch) {
+    Promise.all([getJson("data/models.json"), getJson("data/guidance.json")])
+      .then(function (files) { start(factsFrom(files[0], files[1])); })
+      .catch(function () { start(null); });
+  } else {
+    start(null);
+  }
 })();

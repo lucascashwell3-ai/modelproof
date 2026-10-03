@@ -4084,5 +4084,25 @@
     "sources": [
       "https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2"
     ]
+  },
+  {
+    "date": "2026-10-03",
+    "model": "Muse Spark 1.1",
+    "field": "task_fit_judged.vision",
+    "old": "1 claim(s) as of 2026-09-07",
+    "new": "1 claim(s)",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.1"
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "model": "GPT-6 Astra",
+    "field": "task_fit_judged.coding",
+    "old": "1 claim(s) as of 2026-09-07",
+    "new": "1 claim(s)",
+    "sources": [
+      "https://developers.openai.com/api/docs/models/gpt-6-astra"
+    ]
   }
 ]

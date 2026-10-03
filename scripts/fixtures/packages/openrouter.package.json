@@ -1,0 +1,135 @@
+{
+  "version": "modelproof.package/1",
+  "generator_version": "1.1.0",
+  "as_of": "2026-10-03",
+  "profile": {
+    "schema": "modelproof.profile/1",
+    "who": "person",
+    "tools": [
+      "openrouter"
+    ],
+    "scope": "user",
+    "plans": [],
+    "api": true,
+    "limits": "api-budget",
+    "work": [
+      "bulk",
+      "extraction"
+    ],
+    "like": [],
+    "never": [],
+    "roles": {},
+    "effort_cap": null,
+    "set_default_model": false,
+    "explore_override": false,
+    "org": null
+  },
+  "parts": [],
+  "copy": [
+    {
+      "id": "openrouter:copy",
+      "tool": "openrouter",
+      "content": "# Modelproof lead and bulk (facts as of 2026-10-03)\n\n## Lead and bulk\n- Lead: the model you name in each request. OpenRouter's Auto Router runs when a request sends openrouter/auto as the model.\n  Source: OpenRouter docs, https://openrouter.ai/docs/guides/routing/routers/auto-router (2026-10-03)\n- Bulk: the model you name per request, for high-volume requests. OpenRouter's :floor variant sorts a model's providers by price and admits flex-tier endpoints.\n  Source: OpenRouter docs, https://openrouter.ai/docs/guides/routing/model-variants/floor (2026-10-03)\n\n## How to hand off\n- Brief each request with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n## Context\n- Search before reading; read line ranges, not whole big files.\n\n## Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- OpenRouter requests set reasoning effort or a reasoning token limit through the reasoning parameter. Source: OpenRouter docs, https://openrouter.ai/docs/guides/best-practices/reasoning-tokens (2026-10-03)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "lines": 21,
+      "where": "your system prompt or an OpenRouter preset"
+    }
+  ],
+  "available": [],
+  "checks": [],
+  "roles": {
+    "openrouter": {
+      "lead": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "openrouter-auto-slug",
+            "sentence": "OpenRouter's Auto Router runs when a request sends openrouter/auto as the model.",
+            "quote": "sending it as the model is all you need to do.",
+            "source_url": "https://openrouter.ai/docs/guides/routing/routers/auto-router",
+            "date": "2026-10-03"
+          },
+          {
+            "id": "openrouter-auto-default-low",
+            "sentence": "An OpenRouter Auto Router request with no cost setting routes roughly as the low band.",
+            "quote": "Requests that set no cost setting route as if you had asked for roughly the low band.",
+            "source_url": "https://openrouter.ai/docs/guides/routing/routers/auto-router",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "scout": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [],
+        "price": null,
+        "usage": null
+      },
+      "builder": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [],
+        "price": null,
+        "usage": null
+      },
+      "reviewer": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [],
+        "price": null,
+        "usage": null
+      },
+      "bulk": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "openrouter-floor-variant",
+            "sentence": "OpenRouter's :floor variant sorts a model's providers by price and admits flex-tier endpoints.",
+            "quote": "OpenRouter sorts the model's providers by price and also makes flex service tier endpoints eligible",
+            "source_url": "https://openrouter.ai/docs/guides/routing/model-variants/floor",
+            "date": "2026-10-03"
+          },
+          {
+            "id": "openrouter-auto-cost-tiers",
+            "sentence": "OpenRouter's Auto Router has cost tiers from low to max, where low routes to the cheapest capable models and max ignores price.",
+            "quote": "low favors the cheapest capable models, while max favors the most capable models regardless of price.",
+            "source_url": "https://openrouter.ai/docs/guides/routing/routers/auto-router",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null,
+        "choice": true
+      }
+    }
+  },
+  "preview_facts": {
+    "models_you_use": [],
+    "tools_and_labs_say": []
+  },
+  "facts_used": [
+    "openrouter-auto-cost-tiers",
+    "openrouter-auto-default-low",
+    "openrouter-auto-slug",
+    "openrouter-floor-variant",
+    "openrouter-reasoning-parameter"
+  ],
+  "notes": [
+    "OpenRouter / API is copy only: Modelproof writes no file for it. Paste its lines into your system prompt or an OpenRouter preset.",
+    "Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history."
+  ],
+  "model_names": {}
+}

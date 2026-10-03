@@ -1,0 +1,29 @@
+Modelproof package · facts as of 2026-10-03 · generator 1.1.0
+Your answers: person · project scope · tools: GitHub Copilot · plans: GitHub Copilot Pro+ · limits: sometimes · work: coding
+
+Lead, helpers and bulk per tool
+  GitHub Copilot
+    lead     the model you choose in GitHub Copilot
+    scout    inherit (runs on the lead's model)
+    builder  inherit (runs on the lead's model)
+    reviewer inherit (runs on the lead's model)
+    bulk     inherit until you set its model (the tool's docs name no model string)
+    near a full usage limit (a text line, not a setting): the tool's own words below
+             "Run subagents on cheaper models."
+             https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)
+
+Files (numbered; answer "no to 3" to leave one out)
+   1. file   .github/agents/modelproof-scout.agent.md · 11 lines · the tool obeys it
+      No model line, so GitHub Copilot runs this helper on the default model; set one in the file's model field to change it.
+   2. file   .github/agents/modelproof-builder.agent.md · 10 lines · the tool obeys it
+      No model line, so GitHub Copilot runs this helper on the default model; set one in the file's model field to change it.
+   3. file   .github/agents/modelproof-reviewer.agent.md · 10 lines · the tool obeys it
+      No model line, so GitHub Copilot runs this helper on the default model; set one in the file's model field to change it.
+   4. file   .github/agents/modelproof-bulk.agent.md · 10 lines · the tool obeys it
+      No model line, so GitHub Copilot runs this helper on the default model; set one in the file's model field to change it.
+   5. block  AGENTS.md (added at the end) · 24 lines · text
+      One block at the end of AGENTS.md, read by GitHub Copilot; your own text is untouched.
+
+Notes
+  - Start a new session so each tool loads the new helper and rule files.
+  - Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history.

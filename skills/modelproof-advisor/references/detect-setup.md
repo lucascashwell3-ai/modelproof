@@ -8,12 +8,12 @@ places, never env values, never tokens. You read no more than it points to.
 
 | Field | What it tells you |
 |---|---|
-| `tools` | which of Claude Code, Codex, Cursor have a folder here (`true`/`false`) |
+| `tools` | which of Claude Code, Codex, Cursor have a folder here (`true`/`false`); GitHub Copilot, Antigravity and OpenRouter leave no reliable folder, so ask |
 | `dirs` | where Claude Code and Codex keep their files (`CLAUDE_CONFIG_DIR` / `CODEX_HOME` count only inside `HOME`) |
 | `files[]` | every instruction file it found: `path`, `lines`, `readers` (which tools load it), `real_path` when it is a link |
 | `claude_reads_project_agents_md` | `true`, `false` or `unsure`: whether Claude Code would load the project AGENTS.md |
 | `agents_override` | an `AGENTS.override.md` exists (Codex then reads that instead) |
-| `agents[]` | helper agents already there: tool, scope, name, model, its one-line description, whether Modelproof made it |
+| `agents[]` | helper agents already there (Claude Code, Codex, Cursor, GitHub Copilot, Antigravity): tool, scope, name, model, its one-line description, whether Modelproof made it |
 | `settings[]` | settings files and their key **names**; values only for model and effort keys |
 | `env.subagent_model_force` | `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` is set (name only): Claude Code then ignores every helper file's model line |
 | `heads_up[]` | lines that already talk about models, effort or helpers: `file`, `line`, up to 80 characters, from CLAUDE.md, AGENTS.md, rules files and imports alike; a line holding a secret-looking value says "(line not shown)" |
@@ -45,9 +45,12 @@ places, never env values, never tokens. You read no more than it points to.
 
 | Tool | Helper files (the tool obeys the model line) | Text |
 |---|---|---|
-| Claude Code | `agents/modelproof-scout.md`, `-builder.md`, `-reviewer.md` (+ `-explore.md` only with `"explore_override": true`) under `~/.claude/` or `<project>/.claude/` | `rules/modelproof.md`, or one marked block in the project AGENTS.md when Claude Code reads it. Never a CLAUDE.md. |
+| Claude Code | `agents/modelproof-scout.md`, `-builder.md`, `-reviewer.md`, `-bulk.md` (+ `-explore.md` only with `"explore_override": true`) under `~/.claude/` or `<project>/.claude/` | `rules/modelproof.md`, or one marked block in the project AGENTS.md when Claude Code reads it. Never a CLAUDE.md. |
 | Codex | `agents/modelproof-<role>.toml` under `~/.codex/` or `<project>/.codex/` | one marked block in AGENTS.md (or AGENTS.override.md when that exists) |
 | Cursor | `.cursor/agents/modelproof-<role>.md` | `.cursor/rules/modelproof.mdc`, left out when a project AGENTS.md block is installed |
+| GitHub Copilot | `.github/agents/modelproof-<role>.agent.md` (user: `~/.copilot/agents/`), no model line. Copilot also loads `.claude/agents`, so with Claude Code there it adds no second copy | one marked block in the project AGENTS.md |
+| Antigravity | `.agents/agents/modelproof-<role>.md` (user: `~/.gemini/config/agents/`), on the `inherit` tier | one marked block in the project AGENTS.md, or in `~/.gemini/AGENTS.md` at user scope |
+| OpenRouter / API | — (copy only: the installer writes nothing) | the plan prints lines for a system prompt or preset |
 | AGENTS.md tools | — | one marked block in the project AGENTS.md |
 
 A marked block sits between `<!-- modelproof:begin v1 sha=… -->` and

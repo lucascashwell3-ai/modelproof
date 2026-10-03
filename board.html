@@ -5,14 +5,17 @@
   opacity-only variants, one rust accent rationed to selection/dots/links.
 
   Data comes from the site's own files — data/models.json, data/plans.json, data/vendors.json,
-  data/tasks.json, data/usage-presets.json — and the two example boards live in
-  data/board-samples.json, and the labs' and tools' own words in data/guidance.json. The Install
+  data/tasks.json, data/usage-presets.json, data/per-request.json — and the two example boards live
+  in data/board-samples.json, and the labs' and tools' own words in data/guidance.json. What the
+  board shows from them (pickers, plan reach and cost, the default "me") is worked out in
+  assets/board-data.mjs. The Install
   pane builds its package with assets/instructions.mjs, the same generator the installer uses.
   The board ranks nothing.
 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Modelproof — board</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%230a0b0f'/%3E%3Ccircle cx='12' cy='12' r='9.2' fill='none' stroke='%23f2c14e' stroke-opacity='0.5' stroke-width='1.4'/%3E%3Cpath d='M7.6 12.4l3 3 5.8-6.6' fill='none' stroke='%23f2c14e' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -449,8 +452,11 @@
   .node.kind-routine{ border-radius: var(--radius-md); border-style: dashed; border-color: rgba(var(--ink),.12); }
   .node.kind-routine .row{ border-top-color: rgba(var(--ink),.05); }
   /* Model — same family, a slightly darker tint so a model reads as a different substance */
-  .node.kind-model{ background: rgba(var(--ink),.045); border-color: rgba(var(--ink),.12); border-radius:10px; }
-  .node.kind-model:hover{ background: rgba(var(--ink),.06); }
+  /* Opaque, not rgba(ink,.045): a see-through card let a connector that runs behind it (a model
+     above another in the same column, wired to a role below both) show across its name. These are
+     the colours the tint already rendered as on its "Your models" region (.025 over --bg). */
+  .node.kind-model{ background: rgb(232,232,228); border-color: rgba(var(--ink),.12); border-radius:10px; }
+  .node.kind-model:hover{ background: rgb(229,229,225); }
   /* Role — chamfered corners. clip-path can't carry a border, so the element itself IS the
      1px edge and ::before paints the face 1px inside it. */
   .node.kind-role{
@@ -1043,7 +1049,7 @@
         </div>
         <div class="hint">drag canvas to pan · ctrl/cmd + scroll to zoom · drag a piece from the palette to build</div>
       </div>
-      <footer class="foot" id="footNote">Seats cost plan price &times; seats. A model no plan covers is billed per token at the block’s usage level — light, typical and heavy are the data’s own stated assumptions, automated uses the measured average request for that model (OpenRouter, 14 Sep 2026). Every block shows its formula. No lab favored; prices as-is from the site’s own data. Data as of <strong id="footAsof">—</strong>.</footer>
+      <footer class="foot" id="footNote">Seats cost plan price &times; seats. A model no plan covers is billed per token at the block’s usage level — light, typical and heavy are the data’s own stated assumptions, automated uses the measured average request for that model (OpenRouter, <span id="footPerReqAsof">—</span>). Every block shows its formula. No lab favored; prices as-is from the site’s own data. Data as of <strong id="footAsof">—</strong>.</footer>
     </div>
 
     <div class="paneDivider" id="panelDivider" role="separator" aria-orientation="vertical" aria-label="Resize the board panel">
@@ -1112,7 +1118,11 @@
 /* The Install pane uses the site's one instruction generator — the same assets/instructions.mjs
    the installer runs — so the package shown here is the package that gets installed. The board
    ranks nothing. A module script is deferred, so the DOM below is already parsed. */
-import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageText } from "./assets/instructions.mjs";
+import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageText, TOOL_LABELS } from "./assets/instructions.mjs";
+/* Data -> what the board shows (pickers, plan reach and seat cost, the measured request, the
+   default "me" block): pure functions over the fetched files, in their own module so a test can
+   run them on any copy of data/. */
+import * as BD from "./assets/board-data.mjs";
 
 (function(){
   "use strict";
@@ -1152,17 +1162,25 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
     "./data/tasks.json",
     "./data/usage-presets.json",
     "./data/board-samples.json",
-    "./data/guidance.json"
+    "./data/guidance.json",
+    "./data/per-request.json"
   ];
+  // The measured-request feed only prices "automated" routines; without it those lines say
+  // "not measured" instead of the whole board failing to load.
+  var OPTIONAL_FILES = { "./data/per-request.json": true };
   function getJson(url){
     return fetch(url).then(function(r){
       if (!r.ok) throw new Error(url + " — " + r.status + " " + r.statusText);
       return r.json();
+    }).catch(function(err){
+      if (OPTIONAL_FILES[url]) return null;
+      throw err;
     });
   }
   Promise.all(DATA_FILES.map(getJson)).then(function(files){
     var modelsFile = files[0], plansFile = files[1], vendorsFile = files[2],
-        tasksFile = files[3], presetsFile = files[4], samples = files[5], guidanceFile = files[6];
+        tasksFile = files[3], presetsFile = files[4], samples = files[5], guidanceFile = files[6],
+        perRequestFile = files[7];
     DATA = {
       models: modelsFile.models,
       plans: plansFile.plans,
@@ -1172,10 +1190,14 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
       org: samples.org,
       modelMode: samples.modelMode,
       guidance: guidanceFile,
+      samples: samples,
+      perRequest: perRequestFile,
       as_of: modelsFile.as_of
     };
     var asOfEl = document.getElementById("footAsof");
     if (asOfEl && DATA.as_of) asOfEl.textContent = DATA.as_of;
+    var perReqAsOfEl = document.getElementById("footPerReqAsof");
+    if (perReqAsOfEl) perReqAsOfEl.textContent = BD.perRequestDate(DATA.perRequest) || "date not loaded";
     initState();
     // Item 2: a board you built is still there after a reload. Nothing stored means a fresh
     // board, which is exactly when the start card should be the first thing you see.
@@ -1198,83 +1220,15 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
   });
 
   function modelById(id){ for (var i=0;i<DATA.models.length;i++){ if (DATA.models[i].id === id) return DATA.models[i]; } return null; }
-  // "Anthropic" + "Pro" -> "Anthropic Pro", but a plan whose own name already opens with the
-  // vendor's first word ("Microsoft 365 Business Standard with Copilot") is left alone.
-  function planLabel(p){
-    if (p.plan.indexOf(p.vendor) === 0) return p.plan;
-    var lead = String(p.vendor || "").split(" ")[0];
-    if (lead && p.plan.indexOf(lead + " ") === 0) return p.plan;
-    return p.vendor + " " + p.plan;
-  }
-  function planByName(name){ if (!name) return null; for (var i=0;i<DATA.plans.length;i++){ if (planLabel(DATA.plans[i]) === name) return DATA.plans[i]; } return null; }
-  // One field per fact: a plan's price lives in the source data's own `price_usd_month`.
-  // A row with no price on file (an enterprise "contact sales" tier) is worth nothing to the
-  // seat maths and says so on screen — it is never guessed at.
-  function planPriceUnknown(p){ return !!p && typeof p.price_usd_month !== "number"; }
-  function planPrice(p){ return (p && typeof p.price_usd_month === "number") ? p.price_usd_month : 0; }
-
-  /* ============================================================ what a plan reaches ============================================================
-     ONE table. Adding a row to the plan data must never need a code change here, so a plan is
-     placed in this order:
-       1. its vendor is named below                      -> that row says what it reaches, and
-          whether the seat covers token use. (Named first, because a platform can carry a lab's
-          name: "Google Vertex AI" is a marketplace, not Google's own subscription.)
-       2. its vendor is also a model vendor in our data  -> it reaches that vendor's models
-          ("Mistral" matches the catalog's "Mistral AI"; any lab plan added later matches too).
-       3. its own `includes`/`billing` text says it is a per-token marketplace, or a harness that
-          reaches several labs                           -> read from the text, no table entry.
-       4. nothing matched                                -> reaches every lab (never hide models
-          behind a plan we don't recognise) and does NOT cover token use (never claim a seat pays
-          for something we can't show). It is stated on the block either way.
-     `reaches`: "all", or the model vendors this plan can actually call.
-     `covers`:  true when the seat price pays for the tokens; false for a per-token marketplace,
-                where the seat is $0 and every model on the block is billed per token. */
-  var PLAN_REACH = {
-    "Cursor":                     { reaches: "all", covers: true },
-    "GitHub Copilot":             { reaches: "all", covers: true },
-    "Codex":                      { reaches: "all", covers: true },
-    "Windsurf":                   { reaches: "all", covers: true },
-    "Perplexity":                 { reaches: "all", covers: true },
-    "Microsoft 365 Copilot":      { reaches: ["OpenAI", "Anthropic"], covers: true },
-    "OpenRouter":                 { reaches: "all", covers: false },
-    "Amazon Bedrock":             { reaches: "all", covers: false },
-    "Google Vertex AI":           { reaches: "all", covers: false },
-    "Microsoft Azure AI Foundry": { reaches: "all", covers: false }
-  };
-  var PER_TOKEN_TEXT = /pay[- ]as[- ]you[- ]go|per[- ]token|usage[- ]based|token pricing|marketplace/i;
-  var HARNESS_TEXT = /harness|any (model|provider|lab)|every (model|provider|lab)|multi[- ]model|models from (several|multiple|many)|frontier models from/i;
-  function planReach(planName){ return planReachOf(planByName(planName)); }
-  // "Mistral" and the catalog's "Mistral AI" are the same lab; match the shorter name inside the
-  // longer one so a plan feed and a model feed need not spell a vendor identically.
-  function modelVendorFor(planVendor){
-    var key = normalizeKey(planVendor);
-    if (!key) return null;
-    var exact = DATA.models.find(function(m){ return m.vendor === planVendor; });
-    if (exact) return exact.vendor;
-    var hit = DATA.models.find(function(m){
-      var k = normalizeKey(m.vendor);
-      return k === key || k.indexOf(key) === 0 || key.indexOf(k) === 0;
-    });
-    return hit ? hit.vendor : null;
-  }
-  function planReachOf(p){
-    if (!p) return { reaches: "all", covers: true };   // a plan our data doesn't carry can't restrict anything
-    // Reach and coverage are two different facts. A lab can sell both a seat and a per-token
-    // edition of the same thing ("Gemini Enterprise (Pay-as-you-go edition)"): both reach that
-    // lab's models, only one of them pays for the tokens.
-    var text = String(p.plan || "") + " " + String(p.billing || "") + " " + String(p.includes || "");
-    // Read "per token" from the plan's NAME and its BILLING line only. A feature list often
-    // mentions usage-based billing for one add-on ("Bugbot on usage-based billing") or a
-    // "marketplace" of extensions — neither makes the seat itself a per-token plan.
-    var perToken = PER_TOKEN_TEXT.test(String(p.plan || "") + " " + String(p.billing || ""));
-    var row = PLAN_REACH[p.vendor];
-    if (row) return { reaches: row.reaches, covers: perToken ? false : row.covers };
-    var own = modelVendorFor(p.vendor);
-    if (own) return { reaches: [own], covers: !perToken };
-    if (perToken) return { reaches: "all", covers: false };
-    if (HARNESS_TEXT.test(text)) return { reaches: "all", covers: true };
-    return { reaches: "all", covers: false };
-  }
+  /* Plans: label, price, reach and whether the seat pays for tokens all come from the plan rows
+     (assets/board-data.mjs reads `reaches`, `covers_tokens` and `base_usd_month` from each row,
+     and states the rule it falls back on when a row says nothing). No vendor is named here. */
+  function planLabel(p){ return BD.planLabel(p); }
+  function planByName(name){ return BD.planByName(DATA.plans, name); }
+  function planPriceUnknown(p){ return BD.planPriceUnknown(p); }
+  function planPrice(p){ return BD.planPrice(p); }
+  function planReach(planName){ return BD.planReach(DATA.plans, DATA.models, planName); }
+  function planReachOf(p){ return BD.planReachOf(p, DATA.models); }
   function planCoversTokens(planName){ return planReach(planName).covers; }
   /* The plans on a block that are marketplaces rather than seats: the block pays per token, and
      the formula says through which platform. A platform is only named for models it can actually
@@ -1538,6 +1492,7 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
 
   /* -------- initial state (empty board; "Start from an example" fills it) -------- */
   function initState(){
+    var meDefault = BD.personalDefault(DATA.samples, DATA.plans, DATA.models);
     state = {
       boardName: "Untitled board",
       startFilters: null,
@@ -1556,7 +1511,9 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
       org: { divisions: [], blocks: [] },
       personal: {
         // Item 7: plans are a list everywhere — one field, with no singular shadowing it.
-        me: { id: "me", plans: ["Anthropic Max 5x"], uses: ["Claude Fable 5", "Claude Sonnet 5"].map(fuzzyMatchModel).filter(Boolean), x: 260, y: 130 },
+        // The default "me" comes from board-samples.json (`personal_default`), kept only where
+        // the plan and model data still carry it; nothing on file means an empty block.
+        me: { id: "me", plans: meDefault.plans, uses: meDefault.models, x: 260, y: 130 },
         owned: [], roles: [],
         taskDefs: PERSONAL_TASK_DEFS.slice()
       },
@@ -1657,6 +1614,9 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
     try { saved = JSON.parse(raw); } catch(e){ clearSavedBoard(); return false; }
     if (!saved || !saved.state || !saved.state.org || !saved.state.personal){ clearSavedBoard(); return false; }
     state = saved.state;
+    // A plan the data has since renamed (its row lists the old name in `renamed_from`) keeps its
+    // place on a saved board under the new name, instead of turning into an unknown plan.
+    BD.migratePlanNames(state, DATA.plans);
     mode = saved.mode === "personal" ? "personal" : "org";
     selected = saved.selected || null;
     if (!state.dataRule) state.dataRule = (state.startFilters && state.startFilters.dataRule) || "any";
@@ -1729,38 +1689,12 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
      measured average request for the model. Every number is shown as a formula on the block, in
      the panel - nothing is costed behind the reader's back. */
 
-  /* MEASURED, not assumed. openrouter.ai/api/frontend/v1/rankings/models returns, per model per
-     day, total_prompt_tokens, total_completion_tokens AND count (requests) - so "the average
-     request for this model" is one division of two fetched numbers, the same arithmetic
-     scripts/derive-usage.mjs already runs to get `share`. Pulled 2026-09-14 (the feed is a single
-     day's snapshot): 63 of the catalog's 68 models matched it by permaslug; the rest fall back to
-     the median request across the 463 models the feed tracked that day.
+  /* MEASURED, not assumed. data/per-request.json holds, per model, the average request on
+     OpenRouter (total prompt and completion tokens over the request count for one day of the
+     public rankings feed), plus the median request across every model the feed tracked that day
+     for a model with no row of its own. Its date is the file's own `as_of`.
      What this is NOT: a measurement of YOUR runs. It is the average request for that model across
      OpenRouter's whole traffic - which is exactly why every budget on this page is editable. */
-  var PER_REQUEST = {
-    as_of: "2026-09-14",
-    as_of_label: "14 Sep 2026",
-    source_url: "https://openrouter.ai/api/frontend/v1/rankings/models",
-    median: { in: 2834, out: 325, models: 463 },
-    by: {
-      "aion-3-0":[18166,1892], "aion-3-0-mini":[12218,1206], "claude-fable-5":[74912,855], "claude-fable-5-1":[112001,1224],
-      "claude-haiku-4-5":[6068,282], "claude-opus-4-8":[58702,1074], "claude-opus-5":[73732,1448], "claude-sonnet-5":[51388,771],
-      "deepseek-v4-1-flash":[62990,1110], "deepseek-v4-flash":[22202,691], "deepseek-v4-flash-vision-exp":[51436,798], "deepseek-v4-pro":[25189,631],
-      "gemini-2-5-flash-lite":[2709,242], "gemini-3-1-pro":[15158,1808], "gemini-3-5-flash":[7951,821], "gemini-3-6-flash":[11996,1006],
-      "gemini-3-7-flash":[18807,798], "gemini-3-8-flash":[47087,886], "glm-5-2":[33249,945], "glm-5-3":[70855,1583],
-      "gpt-5-5":[18233,695], "gpt-5-6-luna":[26422,627], "gpt-5-6-sol":[54876,653], "gpt-5-6-terra":[37431,452],
-      "gpt-6-astra":[65736,667], "gpt-6-astra-pro":[155795,2534], "granite-4-2-8b":[3840,1765], "grok-4-5":[21743,822],
-      "grok-4-6":[49425,2358], "hy-mt2-1-8b":[17,2], "hy-mt2-30b-a3b":[32,5], "hy-mt2-7b":[16,3],
-      "hy3":[58665,957], "hy4-preview":[117715,1034], "inkling":[71009,675], "inkling-small":[40347,688],
-      "kimi-k2-6":[19131,1310], "kimi-k3":[56862,1035], "laguna-s-2-1":[85508,665], "laguna-xs-2-1":[42561,469],
-      "ling-3-0-flash":[4247,631], "llama-4-maverick":[1922,118], "longcat-2-0":[35615,524], "mistral-medium-3-1":[3872,137],
-      "muse-glimmer-30b":[3788,1027], "muse-spark-1-1":[15558,796], "muse-spark-1-2":[20954,1860], "muse-spark-1-2-contributor":[38794,1423],
-      "muse-spark-1-3":[84893,1499], "muse-spark-1-3-contributor":[76704,1212], "nemotron-3-5-lightning":[53041,946], "o4-mini":[3967,908],
-      "qwen3-7-flash":[3511,453], "qwen3-8-2-4t-a95b":[33874,2043], "qwen3-8-27b":[18937,947], "qwen3-8-flash":[40261,1124],
-      "qwen3-8-max":[69670,2176], "qwen3-coder-plus":[25246,543], "qwen3-max":[3752,146], "sakana-namazu":[10469,1245],
-      "seed-2-0-code":[4881,535], "seed-2-1-turbo":[9290,580], "solar-pro-4":[66766,719]
-    }
-  };
 
   var USAGE_LEVELS = ["light", "typical", "heavy", "automated"];
   var LEVEL_LABEL = { light: "Light", typical: "Typical", heavy: "Heavy", automated: "Automated" };
@@ -1778,15 +1712,11 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
     return n ? sum / n : 0;
   }
 
-  /* The average request for these models, from the feed above. Unmatched models fall back to the
-     feed's median request - still measured, just not model-specific, and the line says which. */
-  function perRequestFor(ids){
-    var rows = (ids||[]).map(function(id){ return PER_REQUEST.by[id]; }).filter(Boolean);
-    if (!rows.length) return { in: PER_REQUEST.median.in, out: PER_REQUEST.median.out, matched: 0, of: (ids||[]).length };
-    var i = 0, o = 0;
-    rows.forEach(function(r){ i += r[0]; o += r[1]; });
-    return { in: Math.round(i/rows.length), out: Math.round(o/rows.length), matched: rows.length, of: (ids||[]).length };
-  }
+  /* The average request for these models, from the per-request feed. Unmatched models fall back
+     to the feed's median request - still measured, just not model-specific, and the line says
+     which. With no feed loaded nothing is measured, and the line says that too. */
+  function perRequestFor(ids){ return BD.perRequestFor(DATA.perRequest, ids); }
+  function perRequestDate(){ return BD.perRequestDate(DATA.perRequest); }
 
   /* ============ item 3: one routine, many teams ============
      A routine names the blocks it serves. The link is drawn from the routine, never from the
@@ -1875,8 +1805,10 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
   }
 
   function costParts(b){
-    var plans = planListOf(b), seats = Math.max(0, (b && b.seats) || 0), each = planSeatPrice(plans);
-    var seat = (each > 0 && seats > 0) ? each * seats : 0;
+    var plans = planListOf(b), seats = Math.max(0, (b && b.seats) || 0);
+    // Seat price x seats, plus any flat monthly fee a plan row carries (`base_usd_month`).
+    var seatCost = BD.planSeatCost(DATA.plans, plans, seats);
+    var seat = seatCost.total;
     var bud = budgetOf(b);
     var rows = teamRows(b);
     // A usage level is one person's month. A person or team burns it once per head; a routine's
@@ -1906,7 +1838,7 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
       g.unpricedIds.forEach(function(id){ if (unpricedIds.indexOf(id) === -1) unpricedIds.push(id); });
     });
     var lead = groups[0] || { priceIn: 0, priceOut: 0 };
-    return { seat: seat, seats: seats, plans: plans, apiIds: apiIds, unpricedIds: unpricedIds,
+    return { seat: seat, seats: seats, seatFees: seatCost.fees, plans: plans, apiIds: apiIds, unpricedIds: unpricedIds,
              people: rows.length ? heads : (groups[0] ? groups[0].heads : 0), groups: groups, budget: bud,
              priceIn: lead.priceIn, priceOut: lead.priceOut, api: api, total: seat + api };
   }
@@ -1957,10 +1889,11 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
     if (bud.basis === "edited") return "You set this budget by hand.";
     if (bud.basis === "automated"){
       var pr = bud.perReq || perRequestFor(apiIds);
-      if (!pr.matched) return "Measured — median request across the " + PER_REQUEST.median.models +
-        " models OpenRouter tracked on " + PER_REQUEST.as_of_label + " (this model had no row of its own).";
+      if (pr.missing) return "Not measured — the per-request data didn't load, so these runs are costed at nothing.";
+      if (!pr.matched) return "Measured — median request across the " + (DATA.perRequest.median.models || "") +
+        " models OpenRouter tracked on " + perRequestDate() + " (this model had no row of its own).";
       return "Measured — average request for " + modelNameList(apiIds) + " on OpenRouter, " +
-        PER_REQUEST.as_of_label + ". Not a measurement of your own runs.";
+        perRequestDate() + ". Not a measurement of your own runs.";
     }
     return "Assumption — " + (bud.rationale || "no rationale recorded for this level.");
   }
@@ -1974,7 +1907,8 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
                 var p = planByName(n);
                 if (!p) return n;
                 return n + (planPriceUnknown(p) ? " contact sales" : " " + fmtUsd2(planPrice(p)));
-              }).join(" + ") + ")",
+              }).join(" + ") + ")" +
+              (c.seatFees || []).map(function(f){ return " + " + f.plan + " flat fee " + fmtUsd2(f.amount); }).join(""),
         amount: c.seat,
         src: "Plan prices as listed in this board's data."
       });
@@ -3837,15 +3771,8 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
      Used everywhere a model gets chosen (org block, Model I own, Role) — all 67 catalog
      models, ordered by popularity (item 10) with the lab named on every row — no lab favored —
      with a filter input and the blended price right-aligned per option. */
-  function releasedRank(r){
-    if (!r || r === "unknown") return 0;
-    var qm = String(r).match(/^(\d{4})-Q([1-4])$/);
-    if (qm) return Date.UTC(+qm[1], (+qm[2]-1)*3, 1);
-    var dm = String(r).match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (dm) return Date.UTC(+dm[1], +dm[2]-1, +dm[3]);
-    var t = Date.parse(r);
-    return isNaN(t) ? 0 : t;
-  }
+  function releasedRank(r){ return BD.releasedRank(r); }
+
   // Plans on a multi-model harness (Cursor, GitHub Copilot, Codex, OpenRouter…) route to any
   // model; a single-lab plan (Anthropic, OpenAI, Google, xAI…) only reaches that lab's models.
   // null means "no restriction" — every lab. Never undefined, whatever the plan's vendor is.
@@ -3854,17 +3781,8 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
     return r.reaches === "all" ? null : r.reaches[0];
   }
   // Several plans reach the union of their labs; one plan that reaches everything opens the lot.
-  function reachableVendorsFor(planNames){
-    var list = (planNames || []).filter(Boolean);
-    if (!list.length) return null;
-    var out = [];
-    for (var i=0;i<list.length;i++){
-      var r = planReach(list[i]);
-      if (r.reaches === "all") return null;
-      r.reaches.forEach(function(v){ if (out.indexOf(v) === -1) out.push(v); });
-    }
-    return out.length ? out : null;
-  }
+  function reachableVendorsFor(planNames){ return BD.reachableVendorsFor(DATA.plans, DATA.models, planNames); }
+
   function getShowBeyondPlan(){ try { return sessionStorage.getItem("mpShowBeyondPlan") === "1"; } catch(e){ return false; } }
   function setShowBeyondPlan(v){ try { sessionStorage.setItem("mpShowBeyondPlan", v ? "1" : "0"); } catch(e){} }
 
@@ -3872,19 +3790,8 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
      that as `usage.openrouter.share` - this model's percentage of the tokens OpenRouter served
      that day. A model with no usage row sorts after every model that has one, newest first among
      themselves. No invented numbers and no "popular" badge: the order is the signal. */
-  function popularityOf(m){
-    if (!m) return null;
-    var u = m.usage && m.usage.openrouter;
-    if (u && typeof u.share === "number") return u.share;
-    return null;
-  }
-  function byPopularity(a, b){
-    var pa = popularityOf(a), pb = popularityOf(b);
-    if (pa != null && pb == null) return -1;
-    if (pa == null && pb != null) return 1;
-    if (pa != null && pb != null && pa !== pb) return pb - pa;
-    return releasedRank(b.released) - releasedRank(a.released);
-  }
+  function popularityOf(m){ return BD.popularityOf(m); }
+  function byPopularity(a, b){ return BD.byPopularity(a, b); }
 
   function mountModelPicker(containerId, currentId, onChange, opts){
     opts = opts || {};
@@ -3933,25 +3840,16 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
     function renderList(q){
       q = (q||"").trim().toLowerCase();
       var beyond = showToggle && getShowBeyondPlan();
-      function matches(m){
-        if (restrict && !beyond && restrict.indexOf(m.vendor) === -1) return false;
-        return !q || m.name.toLowerCase().indexOf(q) !== -1 || m.vendor.toLowerCase().indexOf(q) !== -1;
-      }
       var html = "", any = false;
-      if (opts.ownedIds && opts.ownedIds.length){
-        var owned = DATA.models.filter(function(m){ return opts.ownedIds.indexOf(m.id) !== -1 && matches(m); }).sort(byPopularity);
-        if (owned.length){ any = true; html += '<div class="modelPickerGroup">Yours</div>' + owned.map(optRow).join(""); }
-      }
-      var rest = DATA.models.filter(matches).slice().sort(byPopularity);
-      if (rest.length){
+      // The three lists (yours, all, beyond your plan) come from assets/board-data.mjs.
+      var lists = BD.pickerLists(DATA.models, { query: q, restrict: restrict, beyond: beyond, ownedIds: opts.ownedIds });
+      if (lists.owned.length){ any = true; html += '<div class="modelPickerGroup">Yours</div>' + lists.owned.map(optRow).join(""); }
+      if (lists.rest.length){
         any = true;
         if (opts.ownedIds && opts.ownedIds.length) html += '<div class="modelPickerGroup">All models</div>';
-        html += rest.map(optRow).join("");
+        html += lists.rest.map(optRow).join("");
       }
-      if (!any && q && restrict && !beyond){
-        var outside = DATA.models.filter(function(m){ return m.name.toLowerCase().indexOf(q) !== -1 || m.vendor.toLowerCase().indexOf(q) !== -1; }).sort(byPopularity);
-        if (outside.length){ any = true; html += '<div class="modelPickerGroup">Beyond your plan</div>' + outside.map(optRow).join(""); }
-      }
+      if (lists.outside.length){ any = true; html += '<div class="modelPickerGroup">Beyond your plan</div>' + lists.outside.map(optRow).join(""); }
       listEl.innerHTML = any ? html : ('<div class="modelPickerEmpty">' + (restrict && !beyond ? 'No ' + escapeHtml(restrictLabel) + ' models match &ldquo;' + escapeHtml(q) + '&rdquo;' : 'No models match &ldquo;' + escapeHtml(q) + '&rdquo;') + '</div>');
       listEl.querySelectorAll("[data-id]").forEach(function(row){
         // pointerdown, not click: onChange re-renders the panel and detaches this row, so a
@@ -5000,7 +4898,7 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
   function boardProfile(forMode){
     return profileFromBoard(Object.assign({}, state, { mode: forMode || mode }), DATA);
   }
-  var TOOL_NAMES = { "claude-code": "Claude Code", codex: "Codex", cursor: "Cursor", "agents-md": "AGENTS.md" };
+  var TOOL_NAMES = TOOL_LABELS;   // the tools the package covers, from the generator
   function basisList(list){
     return (list || []).filter(function(b){ return b && b.quote && !RANKING_WORDS.test(b.quote); })
       .map(function(b){ return { quote: b.quote, url: b.source_url, date: b.date || null }; });
@@ -5057,11 +4955,11 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
       '&rsquo;s own docs for this job. Choose another model above to set your own.</div>' +
       (src.basis.length ? labSaysHtml(src.basis, 2) + '<div style="height:12px"></div>' : '');
   }
-  // `job` is the helper job the package knows (lead / scout / builder / reviewer).
+  // `job` is the helper job the package knows (lead / scout / builder / reviewer / bulk).
   var ROLE_SEEDS = [
     { role: "Coordinator", task: "agents", job: "lead" },
     { role: "Long-haul code", task: "coding", job: "builder" },
-    { role: "Bulk", task: "bulk", job: "scout" },
+    { role: "Bulk", task: "bulk", job: "bulk" },
     { role: "Research", task: "research", job: "scout" },
     { role: "Design", task: "frontend", job: "builder" }
   ];
@@ -5683,44 +5581,71 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
     function ok(name, cond, got){ r.push({ name: name, pass: !!cond, got: (got === undefined ? null : got) }); }
     function near(a, b, tol){ return Math.abs(a - b) <= (tol === undefined ? 0.01 : tol); }
     var pre = usagePresets(), heavy = pre.heavy || {}, typical = pre.typical || {};
-    var sonnet = modelById("claude-sonnet-5"), sol = modelById("gpt-5-6-sol"), flash = modelById("gemini-3-6-flash");
+    /* The models and plans these checks use are picked by what they are, never by name, so a
+       rename or a new release in the data can't silently skip a check:
+         seatPlan  - a priced lab seat that covers its own lab's tokens (and no other lab's);
+         sonnet    - a priced model of that lab, the seat's covered model;
+         sol       - a priced model of a lab that seat does not reach;
+         flash     - a priced model with its own row in the per-request feed (else any priced one).
+       For check 1 the pair is the first one where heavy use billed per token would cost more than
+       the seat, which is the case that check is about. */
+    var tokensCost = function(m, lv){ return ((lv.tokens_in_month||0)/1e6)*m.price_input + ((lv.tokens_out_month||0)/1e6)*m.price_output; };
+    var seatPlan = null, sonnet = null, coverPair = null;
+    DATA.plans.forEach(function(p){
+      if (coverPair || planPriceUnknown(p) || !(planPrice(p) > 0) || BD.planBaseFee(p)) return;
+      var r = planReachOf(p);
+      if (!r.covers || !Array.isArray(r.reaches) || r.reaches.length !== 1) return;
+      var labModels = DATA.models.filter(function(m){ return m.vendor === r.reaches[0] && isPriced(m); });
+      if (!labModels.length) return;
+      if (!seatPlan){ seatPlan = planLabel(p); sonnet = labModels[0]; }
+      var big = labModels.filter(function(m){ return tokensCost(m, heavy) > planPrice(p); })[0];
+      if (big) coverPair = { plan: planLabel(p), model: big };
+    });
+    var sol = sonnet ? DATA.models.filter(function(m){ return isPriced(m) && m.vendor !== sonnet.vendor; })[0] || null
+                     : DATA.models.filter(isPriced)[0] || null;
+    var perReqIds = ((DATA.perRequest && DATA.perRequest.rows) || []).map(function(x){ return x.model_id; });
+    var flash = DATA.models.filter(function(m){ return isPriced(m) && perReqIds.indexOf(m.id) !== -1; })[0] || DATA.models.filter(isPriced)[0] || null;
 
-    // 1 - a heavy Anthropic coder on Max 5x pays the seat, and never a dollar more (item 6b)
-    if (sonnet && planByName("Anthropic Max 5x")){
-      var coder = { type: "person", plans: ["Anthropic Max 5x"], seats: 1, models: ["claude-sonnet-5"], usageLevel: "heavy" };
-      var seatOnly = planSeatPrice(["Anthropic Max 5x"]);
-      var asTokens = ((heavy.tokens_in_month||0)/1e6)*sonnet.price_input + ((heavy.tokens_out_month||0)/1e6)*sonnet.price_output;
-      ok("heavy Anthropic coder on Max 5x costs the seat price", near(costOfBlock(coder), seatOnly), costOfBlock(coder));
+    // 1 - a heavy coder on a lab seat pays the seat, and never a dollar more (item 6b)
+    if (coverPair){
+      var coder = { type: "person", plans: [coverPair.plan], seats: 1, models: [coverPair.model.id], usageLevel: "heavy" };
+      var seatOnly = planSeatPrice([coverPair.plan]);
+      var asTokens = tokensCost(coverPair.model, heavy);
+      ok("heavy coder on a lab seat costs the seat price", near(costOfBlock(coder), seatOnly), costOfBlock(coder));
       ok("...never above it, though the same use billed per token would be more", costOfBlock(coder) <= seatOnly && asTokens > seatOnly, Math.round(asTokens));
       ok("...and the covered model leaves exactly one cost line", costLines(coder).length === 1, costLines(coder).length);
     }
     // 2 - no plan: priced per token, input and output at their own rates
     if (sol){
-      var apiPerson = { type: "person", plans: [], seats: 1, models: ["gpt-5-6-sol"], usageLevel: "typical" };
+      var apiPerson = { type: "person", plans: [], seats: 1, models: [sol.id], usageLevel: "typical" };
       var expect2 = ((typical.tokens_in_month||0)/1e6)*sol.price_input + ((typical.tokens_out_month||0)/1e6)*sol.price_output;
       ok("API-only person, typical use, priced in and out separately", near(costOfBlock(apiPerson), expect2), costOfBlock(apiPerson));
       ok("...and the level is an assumption, labelled as one", /^Assumption \u2014/.test(costLines(apiPerson)[0].src), costLines(apiPerson)[0].src);
     }
     // 3 - an automated routine = runs x 30 x the measured average request
     if (flash){
-      var routine = { type: "routine", plans: [], seats: 0, models: ["gemini-3-6-flash"], calls_per_day: 12000 };
-      var pr = PER_REQUEST.by["gemini-3-6-flash"] || [PER_REQUEST.median.in, PER_REQUEST.median.out];
-      var expect3 = ((12000*30*pr[0])/1e6)*flash.price_input + ((12000*30*pr[1])/1e6)*flash.price_output;
+      var routine = { type: "routine", plans: [], seats: 0, models: [flash.id], calls_per_day: 12000 };
+      var pr = BD.perRequestFor(DATA.perRequest, [flash.id]);
+      var expect3 = ((12000*30*pr.in)/1e6)*flash.price_input + ((12000*30*pr.out)/1e6)*flash.price_output;
       ok("automated routine = runs/day x 30 x measured request", near(costOfBlock(routine), expect3), costOfBlock(routine));
-      ok("...and the per-run figure is called a measurement, with its date", /^Measured \u2014/.test(costLines(routine)[0].src) && costLines(routine)[0].src.indexOf(PER_REQUEST.as_of_label) !== -1, costLines(routine)[0].src);
+      if (!pr.missing){
+        ok("...and the per-run figure is called a measurement, with its date", /^Measured \u2014/.test(costLines(routine)[0].src) && costLines(routine)[0].src.indexOf(perRequestDate()) !== -1, costLines(routine)[0].src);
+      } else {
+        ok("...and with no per-request data the line says it is not measured", /^Not measured \u2014/.test(costLines(routine)[0].src), costLines(routine)[0].src);
+      }
     }
     // 4 - a hand-set budget beats the level
     if (sol){
-      var edited = { type: "person", plans: [], seats: 1, models: ["gpt-5-6-sol"], usageLevel: "typical", tokensEdited: true, tokensIn: 1000000, tokensOut: 0 };
+      var edited = { type: "person", plans: [], seats: 1, models: [sol.id], usageLevel: "typical", tokensEdited: true, tokensIn: 1000000, tokensOut: 0 };
       ok("an edited budget overrides the level", near(costOfBlock(edited), sol.price_input), costOfBlock(edited));
     }
     // 5 - a seat plan plus a model that plan cannot reach shows both lines, added up
-    if (sonnet && sol && planByName("Anthropic Pro")){
-      var both = { type: "team", plans: ["Anthropic Pro"], seats: 2, models: ["claude-sonnet-5", "gpt-5-6-sol"], usageLevel: "typical" };
+    if (seatPlan && sonnet && sol){
+      var both = { type: "team", plans: [seatPlan], seats: 2, models: [sonnet.id, sol.id], usageLevel: "typical" };
       var ls5 = costLines(both), parts5 = costParts(both);
       ok("seat plan + an API-only model shows both lines", ls5.length === 2, ls5.length);
       ok("...and the two lines add up to the block total", near(parts5.seat + parts5.api, costOfBlock(both)), costOfBlock(both));
-      ok("...with only the unreached model billed per token", parts5.apiIds.length === 1 && parts5.apiIds[0] === "gpt-5-6-sol", parts5.apiIds.join(","));
+      ok("...with only the unreached model billed per token", parts5.apiIds.length === 1 && parts5.apiIds[0] === sol.id, parts5.apiIds.join(","));
     }
     // 6 - moving the in/out split keeps the total budget where it was
     var bud6 = { in: 3000000, out: 1300000 }, tot6 = bud6.in + bud6.out, pct6 = 50;
@@ -5757,11 +5682,11 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
     ok("a block with no model costs nothing and says so", costOfBlock(empty8) === 0 && costLines(empty8)[0].kind === "none", costLines(empty8)[0].math);
 
     // 9 - item 5: a team row pays the team's seat price and its own per-head token cost
-    if (sonnet && sol && planByName("Anthropic Pro")){
-      var withRow = { type: "team", plans: ["Anthropic Pro"], seats: 6, models: ["claude-sonnet-5"], usageLevel: "typical",
-                      rows: [{ label: "Lead", seats: 1, models: ["gpt-5-6-sol"] }] };
+    if (seatPlan && sonnet && sol){
+      var withRow = { type: "team", plans: [seatPlan], seats: 6, models: [sonnet.id], usageLevel: "typical",
+                      rows: [{ label: "Lead", seats: 1, models: [sol.id] }] };
       var bud9 = budgetOf(withRow);
-      var want9 = 6 * planPrice(planByName("Anthropic Pro")) +
+      var want9 = 6 * planPrice(planByName(seatPlan)) +
                   1 * ((bud9.in/1e6)*sol.price_input + (bud9.out/1e6)*sol.price_output);
       var p9 = costParts(withRow);
       ok("a team row costs seats x plan + per-head tokens for that row", near(costOfBlock(withRow), want9), costOfBlock(withRow));
@@ -5782,7 +5707,7 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
       try {
         if (!sol) return;
         var label = planLabel(row);
-        var mkt = { type: "person", plans: [label], seats: 1, models: ["gpt-5-6-sol"], usageLevel: "typical" };
+        var mkt = { type: "person", plans: [label], seats: 1, models: [sol.id], usageLevel: "typical" };
         var bud10 = budgetOf(mkt);
         var want10 = (bud10.in/1e6)*sol.price_input + (bud10.out/1e6)*sol.price_output;
         var ls10 = costLines(mkt);
@@ -5797,7 +5722,7 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
       var noPrice = DATA.plans.filter(function(p){ return planPriceUnknown(p); })[0];
       if (!noPrice || !sonnet) return;
       var lab = planLabel(noPrice);
-      var ent = { type: "team", plans: [lab], seats: 10, models: ["claude-sonnet-5"], usageLevel: "typical" };
+      var ent = { type: "team", plans: [lab], seats: 10, models: [sonnet.id], usageLevel: "typical" };
       var ls11 = costLines(ent);
       ok("a plan with no published price adds nothing to the seat maths", costParts(ent).seat === 0, costParts(ent).seat);
       ok("...and the formula says contact sales instead of a blank",
@@ -5815,14 +5740,14 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
   window.__mpPackage = function(){ var c = currentPackage(); return { profile: c.profile, pkg: c.pkg, preview: renderPreview(c.pkg), text: packageText(c.pkg) }; };
   window.__mpCost = {
     parts: costParts, total: costOfBlock, lines: costLines, budget: budgetOf,
-    orgTotal: computeOrgTotal, me: meCostBlock, perRequest: PER_REQUEST, tests: runPricingTests,
+    orgTotal: computeOrgTotal, me: meCostBlock, perRequest: function(){ return DATA.perRequest; }, tests: runPricingTests,
     headcount: headcountOf, headcountAll: headcountOfAll, perYear: perYear, perPerson: perPerson
   };
-  // The plan table, read-only: what a plan row reaches and whether its seat pays for tokens.
+  // Read-only: what a plan row reaches and whether its seat pays for tokens, from the plan data.
   window.__mpPlans = {
     reach: planReach, reachOf: planReachOf, reachVendors: reachableVendorsFor,
     covers: planCoversTokens, price: planPrice, priceUnknown: planPriceUnknown,
-    perTokenPlatforms: perTokenPlatforms, table: PLAN_REACH
+    perTokenPlatforms: perTokenPlatforms, view: function(){ return BD.boardView(DATA); }
   };
 
 })();

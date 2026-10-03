@@ -1,0 +1,26 @@
+{
+  "schema": "modelproof.profile/1",
+  "who": "person",
+  "tools": [
+    "claude-code",
+    "copilot"
+  ],
+  "scope": "project",
+  "plans": [
+    {
+      "vendor": "Anthropic",
+      "plan": "Max 5x"
+    },
+    {
+      "vendor": "GitHub Copilot",
+      "plan": "Pro"
+    }
+  ],
+  "limits": "sometimes",
+  "work": [
+    "coding"
+  ],
+  "like": [],
+  "never": [],
+  "roles": {}
+}

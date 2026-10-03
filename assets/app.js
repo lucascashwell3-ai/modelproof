@@ -8,7 +8,7 @@
 const state = {
   data: null,
   filter: 'all',         // full-table lab filter: 'all', a vendor name, or 'other'
-  showAll: false,        // compare table defaults to the common flagships; opt in to all 22
+  showAll: false,        // the full table defaults to the newest model per lab; opt in to every model
   // Opens newest release first: never by coding_score, which for many models is Modelproof's own
   // estimate (marked est). Any column header still sorts by that column.
   sort: { key: 'released', dir: 'desc' },
@@ -22,9 +22,20 @@ const state = {
 const FEED_CAP = 6;
 const CMP_MAX = 5;
 
-// compare-table default: one flagship per major lab (neutral — no lab over-represented).
-// The full 22 (incl. cheap/specialized tiers) are one click away via "Show all".
-const COMMON_IDS = ['claude-opus-5', 'gpt-5-6-sol', 'gemini-3-1-pro', 'grok-4-5', 'kimi-k3', 'deepseek-v4-pro', 'llama-4-maverick', 'qwen3-max'];
+// Full-table default: from each lab in LAB_ORDER, the newest generally available model with a
+// listed price (by its `released` date; same-day ties by name). A selection rule over the data, so
+// a new release takes its lab's row the day it lands — never a judgment about which model is
+// better. Every model is one click away via "Show all".
+function commonIds(models) {
+  const ids = [];
+  for (const lab of LAB_ORDER) {
+    const newest = (models || [])
+      .filter((m) => m.vendor === lab && m.status === 'ga' && !num(m.price_output) && releasedKey(m.released))
+      .sort((a, b) => releasedKey(b.released).localeCompare(releasedKey(a.released)) || a.name.localeCompare(b.name))[0];
+    if (newest) ids.push(newest.id);
+  }
+  return ids;
+}
 
 // vendor -> the brand people actually say ("I use Claude / ChatGPT / Grok…")
 const LAB_LABEL = {
@@ -580,7 +591,8 @@ function sortedModels() {
   if (state.filter !== 'all') {
     list = list.filter((m) => (state.filter === 'other' ? !LAB_ORDER.includes(m.vendor) : m.vendor === state.filter));
   } else if (!state.showAll) {
-    list = list.filter((m) => COMMON_IDS.includes(m.id));   // default: the common flagships only
+    const common = commonIds(state.data.models);
+    list = list.filter((m) => common.includes(m.id));   // default: the newest model per lab only
   }
   const { key, dir } = state.sort;
   const val = (m) => {
@@ -658,15 +670,15 @@ function renderTable() {
     if (th.getAttribute('data-sort') === state.sort.key) th.classList.add(state.sort.dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
   });
 
-  // "show all 22" toggle — only when unfiltered (a filter is its own narrowing).
-  // The dedicated table page always shows all 22, so it has no toggle.
+  // "show all" toggle — only when unfiltered (a filter is its own narrowing).
+  // The dedicated table page always shows every model, so it has no toggle.
   const more = $('#tblMore');
   if (more && document.body.dataset.page !== 'table') {
     if (state.filter === 'all') {
       const total = state.data.models.length;
       more.innerHTML = state.showAll
         ? `<button class="tbl-toggle" id="tblToggle">Show fewer</button>`
-        : `<span class="tbl-more__note">Showing one flagship from each major lab.</span> <button class="tbl-toggle" id="tblToggle">Show all ${total} models</button>`;
+        : `<span class="tbl-more__note">Showing the newest priced model from each major lab.</span> <button class="tbl-toggle" id="tblToggle">Show all ${total} models</button>`;
       const t = $('#tblToggle');
       if (t) t.addEventListener('click', () => { state.showAll = !state.showAll; renderTable(); });
     } else {
@@ -682,37 +694,18 @@ function sourceLinks(m) {
 }
 function shortUrl(u) { try { return new URL(u).hostname.replace('www.', ''); } catch { return u.slice(0, 28); } }
 
-// ---------- who's using what ----------
-function renderUsage() {
-  const u = state.data.usage;
-  const section = $('#usage');
-  if (!u || !u.lenses || !u.lenses.length) { if (section) section.style.display = 'none'; return; }
-  $('#lenses').innerHTML = u.lenses.map((l) => `
-    <div class="lens">
-      <div class="lens__head">
-        <span class="lens__label">${l.label}</span>
-        <span class="lens__sub">${l.sub}</span>
-      </div>
-      <ol class="lens__top">
-        ${l.top.map((t, i) => `
-          <li>
-            <span class="lens__rank">${i + 1}</span>
-            <span class="lens__name">${t.name}</span>
-            <span class="lens__detail">${t.detail}</span>
-          </li>`).join('')}
-      </ol>
-      <p class="lens__note">${l.note}</p>
-      ${l.source ? `<a class="lens__src" href="${l.source}" target="_blank" rel="noopener">${shortUrl(l.source)}</a>` : ''}
-    </div>`).join('');
-  $('#lensesBasis').textContent = u.basis || '';
-}
-
 // ---------- releases ----------
 const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-function relWhen(d) {
+// `precision` is the entry's date_precision: a month, quarter or year release is stored as the
+// 1st of its period (scripts/timeline.mjs), so only a full date may show a day.
+function relWhen(d, precision) {
   const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?/.exec(d || '');
   if (!m) return { mon: (d || '?').slice(5, 8).toUpperCase() || '·', day: '' };
-  return { mon: MONTHS[+m[2] - 1] || '', day: m[3] || ("'" + m[1].slice(2)) };
+  const yy = "'" + m[1].slice(2);
+  if (precision === 'year') return { mon: '', day: m[1] };
+  if (precision === 'quarter') return { mon: 'Q' + (Math.floor((+m[2] - 1) / 3) + 1), day: yy };
+  if (precision === 'month') return { mon: MONTHS[+m[2] - 1] || '', day: yy };
+  return { mon: MONTHS[+m[2] - 1] || '', day: m[3] || yy };
 }
 function renderFeed() {
   const feed = $('#feed');
@@ -751,7 +744,7 @@ function renderFeed() {
     if (toggle) toggle.addEventListener('click', () => { state.feedExpanded = !state.feedExpanded; renderFeed(); });
   }
   feed.innerHTML = visible.map((r, i) => {
-    const w = relWhen(r.date);
+    const w = relWhen(r.date, r.date_precision);
     const title = r.source
       ? `<a href="${r.source}" target="_blank" rel="noopener">${r.title}<span class="rel__ext">↗</span></a>`
       : r.title;

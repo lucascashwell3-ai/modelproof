@@ -1,0 +1,77 @@
+{
+  "schema": "modelproof.setup/1",
+  "home": "/home/sam",
+  "project": null,
+  "tools": {
+    "claude-code": true,
+    "codex": false,
+    "cursor": false
+  },
+  "dirs": {
+    "claude": "~/.claude",
+    "codex": "~/.codex"
+  },
+  "instruction_mode": "claude-md-or-agents-md",
+  "claude_reads_project_agents_md": false,
+  "agents_override": {
+    "user": false,
+    "project": false
+  },
+  "files": [
+    {
+      "scope": "user",
+      "path": "~/.claude/CLAUDE.md",
+      "lines": 16,
+      "readers": [
+        "claude-code"
+      ]
+    },
+    {
+      "scope": "user",
+      "path": "~/work/notes/tone.md",
+      "lines": 5,
+      "readers": [
+        "claude-code"
+      ]
+    }
+  ],
+  "agents": [
+    {
+      "tool": "claude-code",
+      "scope": "user",
+      "path": "~/.claude/agents/checker.md",
+      "name": "checker",
+      "model": null,
+      "description": "Runs the project's tests and verifies the result, then reports what passed and what failed.",
+      "modelproof": false
+    },
+    {
+      "tool": "claude-code",
+      "scope": "user",
+      "path": "~/.claude/agents/code-simplifier.md",
+      "name": "code-simplifier",
+      "model": null,
+      "description": "Simplifies recently changed code for clarity and consistency while keeping its behaviour.",
+      "modelproof": false
+    }
+  ],
+  "settings": [
+    {
+      "scope": "user",
+      "path": "~/.claude/settings.json",
+      "keys": [
+        "outputStyle",
+        "permissions",
+        "env",
+        "hooks",
+        "enabledPlugins"
+      ]
+    }
+  ],
+  "env": {
+    "subagent_model_force": false
+  },
+  "heads_up": [],
+  "mentions": [],
+  "notes": []
+}

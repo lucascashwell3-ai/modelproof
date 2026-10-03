@@ -1,7 +1,7 @@
 {
   "version": "modelproof.package/1",
-  "generator_version": "1.0.0",
-  "as_of": "2026-09-27",
+  "generator_version": "1.1.0",
+  "as_of": "2026-10-03",
   "profile": {
     "schema": "modelproof.profile/1",
     "who": "person",
@@ -73,6 +73,19 @@
       "lines": 11
     },
     {
+      "id": "cursor:agent:bulk",
+      "tool": "cursor",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "project",
+        "path": ".cursor/agents/modelproof-bulk.md"
+      },
+      "content": "---\nname: modelproof-bulk\ndescription: Does mechanical, repetitive work (renames, boilerplate, many small edits) whose result a script or test can check.\nmodel: inherit\n---\n<!-- modelproof:owned v1 -->\nYou are the bulk helper. You do mechanical work the lead has already planned.\n- Follow the brief exactly: the files, the change, and the check that proves it.\n- Run the check after the change and report its exact result.\n- Stop and report back when a step needs judgment the brief does not give.\n- Return in a few lines: what changed, the last lines of the check.\n",
+      "why": "Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.",
+      "lines": 11
+    },
+    {
       "id": "cursor:rules",
       "tool": "cursor",
       "readers": [
@@ -84,11 +97,12 @@
         "scope": "project",
         "path": ".cursor/rules/modelproof.mdc"
       },
-      "content": "---\ndescription: Modelproof helpers and hand-off\nalwaysApply: true\n---\n<!-- modelproof:owned v1 -->\n# Modelproof helpers and hand-off (facts as of 2026-09-27)\nLead: the model you choose in the tool. Helpers marked inherit run on it.\n\n## Helpers\n- modelproof-scout, modelproof-builder, modelproof-reviewer → inherit: they run on the lead's model\n  Source: Cursor docs, https://cursor.com/docs/context/subagents (2026-09-27)\n\n## How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n## Context\n- Search before reading; read line ranges, not whole big files.\n\n## Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- In a Cursor subagent's model field, options in square brackets after the model ID set reasoning effort, speed and context window. Source: Cursor docs, https://cursor.com/docs/context/subagents (2026-09-27)\n- Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-09-27)\n- OpenAI's reasoning guide says lower reasoning effort favors speed and lower token use, and higher effort makes the model think more completely. Source: OpenAI docs, https://developers.openai.com/api/docs/guides/reasoning (2026-09-27)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "content": "---\ndescription: Modelproof lead, helpers and bulk\nalwaysApply: true\n---\n<!-- modelproof:owned v1 -->\n# Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n## Lead, helpers and bulk\n- Lead: the model you choose in Cursor. Cursor's help page describes Auto as selecting models that balance intelligence, cost and reliability for everyday tasks.\n  Source: Cursor docs, https://cursor.com/help/models-and-usage/available-models.md (2026-10-03)\n- Helpers: modelproof-scout, modelproof-builder and modelproof-reviewer run on the lead's model (inherit).\n  Source: Cursor docs, https://cursor.com/docs/context/subagents (2026-09-27)\n- Bulk: modelproof-bulk runs on the lead's model until you set its model, for high-volume loops. Cursor's GPT-5.6 Luna page lists prototyping, subagents and high-volume loops among its uses.\n  Source: Cursor docs, https://cursor.com/docs/models/gpt-5-6-luna.md (2026-10-03)\n\n## How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n## Context\n- Search before reading; read line ranges, not whole big files.\n\n## Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- In a Cursor subagent's model field, options in square brackets after the model ID set reasoning effort, speed and context window. Source: Cursor docs, https://cursor.com/docs/context/subagents (2026-09-27)\n- On the Claude API, Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- OpenAI's reasoning guide says lower reasoning effort favors speed and lower token use, and higher effort makes the model think more completely. Source: OpenAI docs, https://developers.openai.com/api/docs/guides/reasoning (2026-09-27)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
       "why": "Cursor applies a rule with alwaysApply: true in every chat.",
-      "lines": 27
+      "lines": 30
     }
   ],
+  "copy": [],
   "available": [],
   "checks": [],
   "roles": {
@@ -98,7 +112,15 @@
         "model_id": null,
         "model_name": null,
         "from": "inherit",
-        "basis": [],
+        "basis": [
+          {
+            "id": "cursor-auto-everyday",
+            "sentence": "Cursor's help page describes Auto as selecting models that balance intelligence, cost and reliability for everyday tasks.",
+            "quote": "selects models that balance intelligence, cost, and reliability. Good for everyday tasks.",
+            "source_url": "https://cursor.com/help/models-and-usage/available-models.md",
+            "date": "2026-10-03"
+          }
+        ],
         "price": null,
         "usage": null
       },
@@ -114,6 +136,13 @@
             "quote": "Uses the same model as the parent agent. This is the default.",
             "source_url": "https://cursor.com/docs/context/subagents",
             "date": "2026-09-27"
+          },
+          {
+            "id": "cursor-inherit-same-reasoning",
+            "sentence": "Cursor's subagent docs say to use inherit when a subagent needs the same reasoning power as the parent.",
+            "quote": "Choose inherit when the subagent needs the same reasoning power as the parent.",
+            "source_url": "https://cursor.com/docs/context/subagents",
+            "date": "2026-10-03"
           }
         ],
         "price": null,
@@ -131,6 +160,13 @@
             "quote": "Uses the same model as the parent agent. This is the default.",
             "source_url": "https://cursor.com/docs/context/subagents",
             "date": "2026-09-27"
+          },
+          {
+            "id": "cursor-inherit-same-reasoning",
+            "sentence": "Cursor's subagent docs say to use inherit when a subagent needs the same reasoning power as the parent.",
+            "quote": "Choose inherit when the subagent needs the same reasoning power as the parent.",
+            "source_url": "https://cursor.com/docs/context/subagents",
+            "date": "2026-10-03"
           }
         ],
         "price": null,
@@ -148,10 +184,42 @@
             "quote": "Uses the same model as the parent agent. This is the default.",
             "source_url": "https://cursor.com/docs/context/subagents",
             "date": "2026-09-27"
+          },
+          {
+            "id": "cursor-inherit-same-reasoning",
+            "sentence": "Cursor's subagent docs say to use inherit when a subagent needs the same reasoning power as the parent.",
+            "quote": "Choose inherit when the subagent needs the same reasoning power as the parent.",
+            "source_url": "https://cursor.com/docs/context/subagents",
+            "date": "2026-10-03"
           }
         ],
         "price": null,
         "usage": null
+      },
+      "bulk": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "cursor-luna-subagents",
+            "sentence": "Cursor's GPT-5.6 Luna page lists prototyping, subagents and high-volume loops among its uses.",
+            "quote": "good for prototyping, subagents, and high-volume loops.",
+            "source_url": "https://cursor.com/docs/models/gpt-5-6-luna.md",
+            "date": "2026-10-03"
+          },
+          {
+            "id": "cursor-composer-cost-efficient",
+            "sentence": "Cursor's help page describes Composer as Cursor's fast, cost-efficient model built for interactive coding.",
+            "quote": "is Cursor's fast, cost-efficient model. Capable for most tasks, and built for interactive coding.",
+            "source_url": "https://cursor.com/help/models-and-usage/available-models.md",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null,
+        "choice": true
       }
     }
   },
@@ -165,8 +233,8 @@
           "output": 10
         },
         "usage": {
-          "openrouter_share": 1.02,
-          "as_of": "2026-09-25",
+          "openrouter_share": 0.79,
+          "as_of": "2026-10-01",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         },
         "claim": null
@@ -179,23 +247,69 @@
           "output": 10
         },
         "usage": {
-          "openrouter_share": 0.37,
-          "as_of": "2026-09-25",
+          "openrouter_share": 0.74,
+          "as_of": "2026-10-01",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         },
         "claim": null
       }
     ],
-    "tools_and_labs_say": []
+    "tools_and_labs_say": [
+      {
+        "subject": "Anthropic",
+        "claims": [
+          {
+            "id": "anthropic-batch-half-price",
+            "sentence": "Anthropic's pricing page states the Batch API processes large volumes of requests asynchronously at a 50% discount on input and output tokens.",
+            "quote": "asynchronous processing of large volumes of requests with a 50% discount on both input and output tokens",
+            "source_url": "https://platform.claude.com/docs/en/about-claude/pricing",
+            "date": "2026-10-03"
+          },
+          {
+            "id": "anthropic-haiku-checkable-outputs",
+            "sentence": "Anthropic's cost guide describes Claude Haiku 4.5 as fitting high-volume work with checkable outputs, not long agentic loops.",
+            "quote": "It fits high-volume work with checkable outputs, not long agentic loops.",
+            "source_url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+            "date": "2026-10-03"
+          }
+        ]
+      },
+      {
+        "subject": "OpenAI",
+        "claims": [
+          {
+            "id": "openai-gpt-6-family-roles",
+            "sentence": "OpenAI's models page names gpt-6.1-sol for balancing intelligence and cost and gpt-6-luna for cost-sensitive, high-volume workloads.",
+            "quote": "Choose GPT-6.1 Sol to balance intelligence and cost, or GPT-6 Luna for cost-sensitive, high-volume workloads.",
+            "source_url": "https://developers.openai.com/api/docs/models",
+            "date": "2026-10-03"
+          },
+          {
+            "id": "openai-batch-half-price",
+            "sentence": "OpenAI's Batch API guide states a 50% cost discount compared with synchronous APIs.",
+            "quote": "50% cost discount compared to synchronous APIs",
+            "source_url": "https://developers.openai.com/api/docs/guides/batch",
+            "date": "2026-10-03"
+          }
+        ]
+      }
+    ]
   },
   "facts_used": [
+    "anthropic-batch-half-price",
     "anthropic-effort-defaults",
+    "anthropic-haiku-checkable-outputs",
+    "cursor-auto-everyday",
+    "cursor-composer-cost-efficient",
+    "cursor-inherit-same-reasoning",
+    "cursor-luna-subagents",
     "cursor-subagent-effort",
     "cursor-subagent-inherit-default",
-    "openai-effort-speed-vs-depth"
+    "openai-batch-half-price",
+    "openai-effort-speed-vs-depth",
+    "openai-gpt-6-family-roles"
   ],
   "notes": [
-    "You use models from 2 labs (Anthropic, OpenAI), so helpers run on the lead's model unless you choose one; each lab's own descriptions are listed as facts.",
     "Start a new session so each tool loads the new helper and rule files.",
     "Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history."
   ],
