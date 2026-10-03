@@ -141,7 +141,8 @@ test('drill (a): the board install package shows the new bulk default with its s
   assert.match(bulkFile, new RegExp(`^model: ${drill.id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'm'), 'the bulk helper file sets the drill model');
 });
 
-test('drill (b): the index timeline renders the new release', () => {
+// assets/app.js in a vm, with just enough of a document for renderFeed to write #feed.
+function loadTimeline() {
   const feed = { innerHTML: '' };
   const noop = () => {};
   const document = {
@@ -151,14 +152,35 @@ test('drill (b): the index timeline renders the new release', () => {
   };
   const ctx = vm.createContext({ document, addEventListener: noop, setTimeout: noop, setInterval: noop, clearInterval: noop, console });
   const src = fs.readFileSync(path.join(ROOT, 'assets', 'app.js'), 'utf8');
-  const app = vm.runInContext(`${src}\n;({ state, renderFeed, relWhen })`, ctx);
+  return { feed, app: vm.runInContext(`${src}\n;({ state, renderFeed, relWhen })`, ctx) };
+}
+
+test('drill (b): the index timeline renders the new release', () => {
+  const { feed, app } = loadTimeline();
   app.state.data = files.models;
   app.renderFeed();
   assert.ok(feed.innerHTML.includes(release.title), 'the release title is on the timeline');
   const first = feed.innerHTML.split('<li class="rel"')[1] || '';
-  const when = app.relWhen(release.date);
+  const when = app.relWhen(release.date, release.date_precision);
   assert.ok(first.includes(release.title), 'the newest release is listed first');
   assert.ok(first.includes(`<span class="rel__mon">${when.mon}</span><span class="rel__day">${when.day}</span>`), `dated ${release.date}`);
+});
+
+test('drill (b): a month, quarter or year release shows no day the source never gave', () => {
+  const { feed, app } = loadTimeline();
+  const at = (date, date_precision) => ({ kind: 'model', date, date_precision, vendor: 'X', title: `t-${date_precision}`, summary: 's', source: 'https://x.example' });
+  const cases = [
+    [at('2026-07-01', 'month'), 'JUL', "'26"],
+    [at('2026-07-01', 'quarter'), 'Q3', "'26"],
+    [at('2026-01-01', 'year'), '', '2026'],
+    [at('2026-07-01'), 'JUL', '01'],
+  ];
+  for (const [entry, mon, day] of cases) {
+    app.state.data = { releases: [entry] };
+    app.renderFeed();
+    const when = (feed.innerHTML.match(/<div class="rel__when">.*?<\/div>/) || [''])[0];
+    assert.equal(when, `<div class="rel__when"><span class="rel__mon">${mon}</span><span class="rel__day">${day}</span></div>`, `${entry.date} at ${entry.date_precision || 'day'} precision`);
+  }
 });
 
 test('drill (c): install.mjs plan with the copied data names the new model', () => {

@@ -696,10 +696,16 @@ function shortUrl(u) { try { return new URL(u).hostname.replace('www.', ''); } c
 
 // ---------- releases ----------
 const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-function relWhen(d) {
+// `precision` is the entry's date_precision: a month, quarter or year release is stored as the
+// 1st of its period (scripts/timeline.mjs), so only a full date may show a day.
+function relWhen(d, precision) {
   const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?/.exec(d || '');
   if (!m) return { mon: (d || '?').slice(5, 8).toUpperCase() || '·', day: '' };
-  return { mon: MONTHS[+m[2] - 1] || '', day: m[3] || ("'" + m[1].slice(2)) };
+  const yy = "'" + m[1].slice(2);
+  if (precision === 'year') return { mon: '', day: m[1] };
+  if (precision === 'quarter') return { mon: 'Q' + (Math.floor((+m[2] - 1) / 3) + 1), day: yy };
+  if (precision === 'month') return { mon: MONTHS[+m[2] - 1] || '', day: yy };
+  return { mon: MONTHS[+m[2] - 1] || '', day: m[3] || yy };
 }
 function renderFeed() {
   const feed = $('#feed');
@@ -738,7 +744,7 @@ function renderFeed() {
     if (toggle) toggle.addEventListener('click', () => { state.feedExpanded = !state.feedExpanded; renderFeed(); });
   }
   feed.innerHTML = visible.map((r, i) => {
-    const w = relWhen(r.date);
+    const w = relWhen(r.date, r.date_precision);
     const title = r.source
       ? `<a href="${r.source}" target="_blank" rel="noopener">${r.title}<span class="rel__ext">↗</span></a>`
       : r.title;
