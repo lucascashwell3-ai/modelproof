@@ -12,21 +12,37 @@
    it automatically after any judged-fit write, and it's wired into the refresh workflow and the
    test run (see .github/workflows/auto-refresh.yml and scripts/refresh-judge.md).
 
+   Also checks every data/plans.json row that carries a `quote` (collectPlanClaims): the quote must
+   be on the row's `quote_url` (when the price and the quoted words live on different vendor pages)
+   or else on its `source_url`.
+
+   Matching is substring after normalization, with one boundary rule (quoteFoundIn): a quote that
+   starts or ends with a digit must not run into a longer number on the page — "Sonnet 5" does not
+   pass on "Sonnet 5.5", "20 per month" does not pass on "120 per month". Trailing zero cents are
+   the same number ("$40" passes on "$40.00").
+
    Usage:
-     node scripts/check-sources.mjs
-   As a module: collectClaims(data), collectGuidanceClaims(guidance), checkClaims(claims, {fetchImpl}) — unit-tested with a fake
-   fetchImpl in scripts/test-check-sources.mjs (no real network calls in the unit tests). */
+     node scripts/check-sources.mjs [--data <dir>] [--only <key>[,<key>...]]
+       --data  read models.json / guidance.json / plans.json from <dir> (default: data/)
+       --only  check only these claims. Keys: "<modelId>/<taskId>" (judged-fit claims),
+               "guidance/<claimId>", "plan/<vendor>/<plan>"; a key also selects everything under
+               it ("<modelId>" = all of that model's claims). A key that selects nothing is an
+               error, so a scoped run can never pass by checking zero claims.
+     CHECK_SOURCES_PAGES=<file.json>  (tests only) a {url: page html} map used instead of the
+               network; a url missing from the map is a failed fetch.
+   As a module: collectClaims(data), collectGuidanceClaims(guidance), collectPlanClaims(plans),
+   collectAllClaims({models, guidance, plans}), selectClaims(claims, keys),
+   checkClaims(claims, {fetchImpl}) — unit-tested with a fake fetchImpl in
+   scripts/test-check-sources.mjs (no real network calls in the unit tests). */
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { realpathSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const ROOT = new URL('../', import.meta.url);
-const dataUrl = new URL('data/models.json', ROOT);
-const guidanceUrl = new URL('data/guidance.json', ROOT);
 const CACHE_DIR = join(tmpdir(), 'modelproof-check-sources-cache');
 const FETCH_TIMEOUT_MS = 20000;
 
@@ -60,10 +76,41 @@ export function normalizeText(raw) {
  * X" are compared on equal footing regardless of curly quotes, line wraps, or nbsp noise. */
 export const normalizeQuote = (q) => normalizeText(q);
 
+const isDigit = (ch) => ch !== undefined && ch >= '0' && ch <= '9';
+
+/** True when the text just before index `i` does not continue a number into the match:
+ * "20 per month" must not pass inside "120 per month" or "1.20 per month". */
+function startBoundaryOk(page, i) {
+  const prev = page[i - 1];
+  if (isDigit(prev)) return false;
+  if (prev === '.' && isDigit(page[i - 2])) return false;
+  return true;
+}
+
+/** True when the text from index `j` on does not continue the number the quote ends with:
+ * "Sonnet 5" must not pass on "Sonnet 5.5" or "Sonnet 50". Zero-only decimals are the same
+ * number, so "$40" passes on "$40.00". */
+function endBoundaryOk(page, j) {
+  const next = page[j];
+  if (isDigit(next)) return false;
+  if (next === '.' && isDigit(page[j + 1])) {
+    let k = j + 1;
+    while (isDigit(page[k])) { if (page[k] !== '0') return false; k += 1; }
+    if (page[k] === '.' && isDigit(page[k + 1])) return false; // "5.0.1" is a version, not 5
+  }
+  return true;
+}
+
 export function quoteFoundIn(quote, normalizedPageText) {
   const q = normalizeQuote(quote);
   if (!q) return false;
-  return normalizedPageText.includes(q);
+  const page = String(normalizedPageText || '');
+  const checkStart = isDigit(q[0]);
+  const checkEnd = isDigit(q[q.length - 1]);
+  for (let i = page.indexOf(q); i !== -1; i = page.indexOf(q, i + 1)) {
+    if ((!checkStart || startBoundaryOk(page, i)) && (!checkEnd || endBoundaryOk(page, i + q.length))) return true;
+  }
+  return false;
 }
 
 /** Every claim across every model's task_fit_judged, flattened for checking. Pure — no I/O. */
@@ -80,6 +127,7 @@ export function collectClaims(data) {
         out.push({
           modelId: m.id, modelName: m.name, taskId, index,
           source_url: c.source_url, quote: c.quote, tier: c.tier,
+          key: `${m.id}/${taskId}`,
         });
       });
     }
@@ -99,9 +147,51 @@ export function collectGuidanceClaims(g) {
     out.push({
       modelId: null, modelName: c.subject && c.subject.name, taskId: c.topic, index,
       source_url: c.source_url, quote: c.quote, tier: c.tier, claimId: c.id, file: 'guidance',
+      key: `guidance/${c.id}`,
     });
   });
   return out;
+}
+
+/** Every data/plans.json row that carries a `quote`, in the same record shape. The quote is
+ * checked on `quote_url` when the row has one (the price page and the quoted words can be two
+ * pages of the same vendor), else on `source_url`. Rows without a quote are not collected —
+ * scripts/validate-data.mjs decides which rows must carry one. Pure — no I/O. */
+export function collectPlanClaims(plans) {
+  const out = [];
+  if (!plans || !Array.isArray(plans.plans)) return out;
+  plans.plans.forEach((p, index) => {
+    if (!p || typeof p.quote !== 'string' || !p.quote.trim()) return;
+    out.push({
+      modelId: null, modelName: `${p.vendor} / ${p.plan}`, taskId: 'plan', index,
+      source_url: p.quote_url || p.source_url, quote: p.quote, tier: 'plan', file: 'plans',
+      key: `plan/${p.vendor}/${p.plan}`,
+    });
+  });
+  return out;
+}
+
+/** All three collectors in one list (models.json judged fit, guidance.json, plans.json). */
+export function collectAllClaims({ models = null, guidance = null, plans = null } = {}) {
+  return [
+    ...(models ? collectClaims(models) : []),
+    ...collectGuidanceClaims(guidance),
+    ...collectPlanClaims(plans),
+  ];
+}
+
+/** The claims a scoped run checks. `keys` as in --only. Returns {claims, unmatched}: unmatched
+ * lists keys that selected nothing (the CLI treats that as an error). */
+export function selectClaims(claims, keys) {
+  if (!keys || !keys.length) return { claims, unmatched: [] };
+  const hit = new Set();
+  const picked = claims.filter((c) => {
+    const k = c.key || `${c.modelId}/${c.taskId}`;
+    const m = keys.find((want) => k === want || k.startsWith(`${want}/`));
+    if (m) hit.add(m);
+    return !!m;
+  });
+  return { claims: picked, unmatched: keys.filter((k) => !hit.has(k)) };
 }
 
 const cacheKey = (url) => createHash('sha1').update(url).digest('hex');
@@ -168,20 +258,55 @@ export async function checkClaims(claims, { fetchImpl = fetchNormalizedPage } = 
   return results;
 }
 
+/** A fetchImpl that serves pages from a {url: html} JSON file instead of the network (tests). */
+export function fixturePageFetcher(file) {
+  const pages = JSON.parse(readFileSync(file, 'utf8'));
+  return async (url) => {
+    if (!Object.prototype.hasOwnProperty.call(pages, url)) throw new Error(`HTTP 404 (not in ${file})`);
+    return normalizeText(pages[url]);
+  };
+}
+
+export function parseArgs(argv) {
+  const out = { dataDir: null, only: [] };
+  for (let i = 0; i < argv.length; i += 1) {
+    const a = argv[i];
+    if (a === '--data') out.dataDir = argv[++i];
+    else if (a.startsWith('--data=')) out.dataDir = a.slice(7);
+    else if (a === '--only') out.only.push(...String(argv[++i] || '').split(',').filter(Boolean));
+    else if (a.startsWith('--only=')) out.only.push(...a.slice(7).split(',').filter(Boolean));
+    else throw new Error(`unknown argument "${a}" (usage: check-sources.mjs [--data <dir>] [--only <key>[,<key>...]])`);
+  }
+  return out;
+}
+
 async function main() {
-  const data = JSON.parse(readFileSync(dataUrl, 'utf8'));
-  // data/guidance.json is optional (a throwaway copy of scripts+data may not carry it); when it
-  // exists, every one of its claims is checked exactly like a judged task-fit claim.
-  const guidance = existsSync(guidanceUrl) ? JSON.parse(readFileSync(guidanceUrl, 'utf8')) : null;
-  const modelClaims = collectClaims(data);
-  const guidanceClaims = collectGuidanceClaims(guidance);
-  const claims = [...modelClaims, ...guidanceClaims];
-  if (!claims.length) {
-    console.log('check-sources: no claims in data/models.json or data/guidance.json to verify.');
+  const args = parseArgs(process.argv.slice(2));
+  const dir = args.dataDir ? pathToFileURL(resolve(args.dataDir) + '/') : new URL('data/', ROOT);
+  const readOptional = (name) => {
+    const u = new URL(name, dir);
+    return existsSync(u) ? JSON.parse(readFileSync(u, 'utf8')) : null;
+  };
+  const data = JSON.parse(readFileSync(new URL('models.json', dir), 'utf8'));
+  // guidance.json and plans.json are optional (a throwaway copy of scripts+data may not carry
+  // them); when they exist, every claim in them is checked exactly like a judged task-fit claim.
+  const guidance = readOptional('guidance.json');
+  const plans = readOptional('plans.json');
+  const all = collectAllClaims({ models: data, guidance, plans });
+  const { claims, unmatched } = selectClaims(all, args.only);
+  if (unmatched.length) {
+    console.error(`✗ --only selected no claims for: ${unmatched.join(', ')} — a scoped check that checks nothing cannot pass.`);
+    process.exitCode = 1;
     return;
   }
-  console.log(`check-sources: verifying ${claims.length} claim(s) (${modelClaims.length} in models.json, ${guidanceClaims.length} in guidance.json) against their cited source_url...`);
-  const results = await checkClaims(claims);
+  if (!claims.length) {
+    console.log('check-sources: no claims in models.json, guidance.json or plans.json to verify.');
+    return;
+  }
+  const count = (f) => claims.filter(f).length;
+  console.log(`check-sources: verifying ${claims.length} claim(s) (${count((c) => !c.file)} in models.json, ${count((c) => c.file === 'guidance')} in guidance.json, ${count((c) => c.file === 'plans')} in plans.json)${args.only.length ? ` scoped to ${args.only.join(', ')}` : ''} against their cited source_url...`);
+  const fetchImpl = process.env.CHECK_SOURCES_PAGES ? fixturePageFetcher(process.env.CHECK_SOURCES_PAGES) : fetchNormalizedPage;
+  const results = await checkClaims(claims, { fetchImpl });
   for (const r of results) {
     const what = r.claimId ? `${r.modelName} / ${r.taskId} (${r.claimId})` : `${r.modelName} / ${r.taskId}`;
     console.log(`  ${r.ok ? '✓' : '✗'} ${what} [${r.tier}] ${r.source_url}${r.ok ? '' : ` — ${r.reason}`}`);
