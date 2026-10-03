@@ -13,7 +13,7 @@
 // dupes:    exit 0 iff no file holds more than one modelproof begin marker (code fences or not),
 //           every file has as many end markers as begin markers, no file repeats the Modelproof
 //           instructions heading (marked or not), no helper name repeats
-//           within one agents folder, no modelproof helper shares a name with someone else's helper
+//           within one agents folder or across the two folders GitHub Copilot loads together, no modelproof helper shares a name with someone else's helper
 //           in the folders the same tool loads, no settings*.json repeats a top-level key, and no
 //           TOML file repeats a table header; else exit 1 and list each.
 import fs from 'node:fs';
@@ -65,7 +65,8 @@ export function compare(root, before, ignores = []) {
 const SKIP_DIRS = new Set(['node_modules', '.git', '.modelproof']);
 const BEGIN = /^<!-- modelproof:begin\b.*-->$/;
 const END = /^<!-- modelproof:end\b.*-->$/;
-const HEADING = /^#{1,6} Modelproof helpers and hand-off\b/;
+// The instructions heading, old wording and new.
+const HEADING = /^#{1,6} Modelproof (helpers and hand-off|lead, helpers and bulk)\b/;
 const OWNED = /^(<!-- modelproof:owned v1\b.*-->|# modelproof:owned v1\b.*)$/;
 
 function walkFiles(root, out, skipped) {
@@ -157,12 +158,15 @@ export function dupes(roots) {
       const r = repeated(heads);
       if (r.length) problems.push(`${rel(f)}: repeated table header(s) ${r.map((h) => `[${h}]`).join(', ')}`);
     }
-    // Agent folders: .claude/agents (any depth below it), .codex/agents, .cursor/agents.
-    const m = /(^|\/)(\.claude|\.codex|\.cursor)\/agents(\/|$)/.exec(posix(f));
+    // Agent folders: .claude/agents (any depth below it), .codex/agents, .cursor/agents,
+    // .github/agents and ~/.copilot/agents (GitHub Copilot, *.agent.md), .agents/agents and
+    // ~/.gemini/config/agents (Antigravity).
+    const m = /(^|\/)(\.claude|\.codex|\.cursor|\.github|\.copilot|\.agents|\.gemini\/config)\/agents(\/|$)/.exec(posix(f));
     if (m) {
       const family = m[2];
       const toml = family === '.codex';
       if ((toml && !/\.toml$/.test(base)) || (!toml && !/\.md$/.test(base))) continue;
+      if ((family === '.github' || family === '.copilot') && !/\.agent\.md$/.test(base)) continue;
       if (family !== '.claude' && path.basename(path.dirname(f)) !== 'agents') continue;
       const dir = posix(f).slice(0, m.index + m[0].length).replace(/\/$/, '');
       const name = agentName(text, toml);
@@ -188,6 +192,19 @@ export function dupes(roots) {
     for (const ours of list.filter((a) => a.owned)) {
       const clash = list.find((a) => !a.owned && a.name === ours.name && path.dirname(a.file) !== path.dirname(ours.file));
       if (clash) problems.push(`modelproof helper ${rel(ours.file)} shares the name "${ours.shown}" with ${rel(clash.file)}`);
+    }
+  }
+  // GitHub Copilot loads .claude/agents next to its own folder (.github/agents in a workspace,
+  // .copilot/agents in a home folder): one name twice across that pair is two helpers in Copilot.
+  const parentOf = (dir) => dir.replace(/\/?(\.claude|\.github|\.copilot)\/agents$/, '');
+  for (const [dir, list] of agentDirs) {
+    const fam = list[0] && list[0].family;
+    if (fam !== '.github' && fam !== '.copilot') continue;
+    const claude = [...agentDirs.entries()].find(([d, l]) => l[0] && l[0].family === '.claude' && /\.claude\/agents$/.test(d) && parentOf(d) === parentOf(dir));
+    if (!claude) continue;
+    for (const a of list) {
+      const twin = claude[1].find((b) => b.name === a.name);
+      if (twin) problems.push(`helper name "${a.shown}" is loaded twice by GitHub Copilot: ${rel(a.file)} and ${rel(twin.file)}`);
     }
   }
   return { problems: [...new Set(problems)].sort(), skipped: [...skipped].sort() };

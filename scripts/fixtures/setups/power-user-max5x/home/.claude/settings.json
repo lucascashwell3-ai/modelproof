@@ -1,0 +1,15 @@
+{
+  "outputStyle": "Terse",
+  "permissions": {
+    "allow": ["Bash(git status)", "Bash(npm test)"]
+  },
+  "env": {
+    "FIXTURE_TOKEN": "fixture-env-value-not-for-output"
+  },
+  "hooks": {
+    "Stop": [{ "hooks": [{ "type": "command", "command": "echo fixture-hook-not-for-output" }] }]
+  },
+  "enabledPlugins": {
+    "example-plugin@example-market": true
+  }
+}

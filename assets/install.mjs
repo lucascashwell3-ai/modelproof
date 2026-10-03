@@ -28,11 +28,11 @@ import os from 'node:os';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import {
-  buildPackage, renderPreview, GENERATOR_VERSION,
+  buildPackage, renderPreview, GENERATOR_VERSION, TOOLS,
   BLOCK_BEGIN_RE as BEGIN_RE, BLOCK_END_RE as END_RE, blockBodyHash as bodyHash, blockText, blockBodyLines as contentLines, stampOwnedText,
 } from './instructions.mjs';
 
-export const INSTALLER_VERSION = '1.0.0';
+export const INSTALLER_VERSION = '1.1.0';
 export const EXIT = Object.freeze({ OK: 0, USAGE: 1, CONFLICT: 2, DRIFT: 3, CORRUPT: 4 });
 const PLAN_SCHEMA = 'modelproof.plan/1';
 const MANIFEST_SCHEMA = 'modelproof.manifest/1';
@@ -323,6 +323,7 @@ export function makeContext({ home, project, env = process.env }) {
   return {
     home: homeAbs, realHome, project: projectAbs, realProject,
     claudeDir, codexDir, cursorDir: path.join(homeAbs, '.cursor'),
+    copilotDir: path.join(homeAbs, '.copilot'), geminiDir: path.join(homeAbs, '.gemini'),
     force: Object.prototype.hasOwnProperty.call(env, 'CLAUDE_CODE_SUBAGENT_MODEL_FORCE'),
     notes,
   };
@@ -362,19 +363,31 @@ function targetAbs(p, ctx) {
   return path.join(ctx.project, p);
 }
 
+// The helper names a package writes (one file per role), as a regex alternation.
+const HELPER_ROLES = ['scout', 'builder', 'reviewer', 'bulk'];
+const HELPER_NAMES = HELPER_ROLES.join('|');
+// Tools with helper files the installer reads and writes, and the tools that read instruction text.
+const AGENT_TOOLS = ['claude-code', 'codex', 'cursor', 'copilot', 'antigravity'];
+const READER_TOOLS = TOOLS.filter((t) => t !== 'openrouter');
+
 // The fixed list of places the installer may write. Checked on the logical path and the real path.
 function allowedTarget(abs, ctx) {
   const rel = (base) => (base && isInside(abs, base) ? path.relative(base, abs).split(path.sep).join('/') : null);
   const tests = [];
+  const R = HELPER_NAMES;
   const cc = rel(ctx.claudeDir); const cx = rel(ctx.codexDir); const cu = rel(ctx.cursorDir);
-  if (cc !== null) tests.push(/^agents\/modelproof-(scout|builder|reviewer|explore)\.md$/.test(cc) || /^rules\/modelproof\.md$/.test(cc) || cc === 'settings.json');
-  if (cx !== null) tests.push(/^agents\/modelproof-(scout|builder|reviewer)\.toml$/.test(cx) || /^AGENTS(\.override)?\.md$/.test(cx));
-  if (cu !== null) tests.push(/^agents\/modelproof-(scout|builder|reviewer)\.md$/.test(cu));
+  const gh = rel(ctx.copilotDir); const gm = rel(ctx.geminiDir);
+  if (cc !== null) tests.push(new RegExp(`^agents/modelproof-(${R}|explore)\\.md$`).test(cc) || /^rules\/modelproof\.md$/.test(cc) || cc === 'settings.json');
+  if (cx !== null) tests.push(new RegExp(`^agents/modelproof-(${R})\\.toml$`).test(cx) || /^AGENTS(\.override)?\.md$/.test(cx));
+  if (cu !== null) tests.push(new RegExp(`^agents/modelproof-(${R})\\.md$`).test(cu));
+  if (gh !== null) tests.push(new RegExp(`^agents/modelproof-(${R})\\.agent\\.md$`).test(gh));
+  if (gm !== null) tests.push(new RegExp(`^config/agents/modelproof-(${R})\\.md$`).test(gm) || gm === 'AGENTS.md');
   const pr = rel(ctx.project);
   if (pr !== null) {
     tests.push(new RegExp('^(' + [
-      '\\.claude/agents/modelproof-(scout|builder|reviewer|explore)\\.md', '\\.claude/rules/modelproof\\.md', '\\.claude/settings\\.json',
-      '\\.codex/agents/modelproof-(scout|builder|reviewer)\\.toml', '\\.cursor/agents/modelproof-(scout|builder|reviewer)\\.md',
+      `\\.claude/agents/modelproof-(${R}|explore)\\.md`, '\\.claude/rules/modelproof\\.md', '\\.claude/settings\\.json',
+      `\\.codex/agents/modelproof-(${R})\\.toml`, `\\.cursor/agents/modelproof-(${R})\\.md`,
+      `\\.github/agents/modelproof-(${R})\\.agent\\.md`, `\\.agents/agents/modelproof-(${R})\\.md`,
       '\\.cursor/rules/modelproof\\.mdc', 'AGENTS\\.md', 'AGENTS\\.override\\.md',
     ].join('|') + ')$').test(pr));
   }
@@ -427,6 +440,8 @@ function agentDirs(tool, ctx) {
   if (tool === 'claude-code') { dirs.push(['user', path.join(ctx.claudeDir, 'agents')]); if (ctx.project) dirs.push(['project', path.join(ctx.project, '.claude', 'agents')]); }
   if (tool === 'codex') { dirs.push(['user', path.join(ctx.codexDir, 'agents')]); if (ctx.project) dirs.push(['project', path.join(ctx.project, '.codex', 'agents')]); }
   if (tool === 'cursor') { dirs.push(['user', path.join(ctx.cursorDir, 'agents')]); if (ctx.project) dirs.push(['project', path.join(ctx.project, '.cursor', 'agents')]); }
+  if (tool === 'copilot') { dirs.push(['user', path.join(ctx.copilotDir, 'agents')]); if (ctx.project) dirs.push(['project', path.join(ctx.project, '.github', 'agents')]); }
+  if (tool === 'antigravity') { dirs.push(['user', path.join(ctx.geminiDir, 'config', 'agents')]); if (ctx.project) dirs.push(['project', path.join(ctx.project, '.agents', 'agents')]); }
   return dirs;
 }
 function readAgents(tool, ctx) {
@@ -558,7 +573,7 @@ export function readers(target, ctx, cache = {}) {
   if (ctx.project) {
     if (same(path.join(ctx.project, 'AGENTS.md'))) {
       if (!statOrNull(path.join(ctx.project, 'AGENTS.override.md'))) tools.add('codex');
-      tools.add('cursor'); tools.add('agents-md');
+      tools.add('cursor'); tools.add('copilot'); tools.add('antigravity'); tools.add('agents-md');
       const cc = claudeReadsProjectAgents(ctx, cache);
       if (cc === true) tools.add('claude-code');
       if (cc === 'unsure') { tools.add('claude-code'); unsure = true; }
@@ -567,6 +582,7 @@ export function readers(target, ctx, cache = {}) {
     if (/\.mdc$/.test(abs) && isInside(abs, path.join(ctx.project, '.cursor', 'rules'))) tools.add('cursor');
   }
   if (same(path.join(ctx.codexDir, 'AGENTS.override.md'))) tools.add('codex');
+  if (same(path.join(ctx.geminiDir, 'AGENTS.md'))) tools.add('antigravity');
   if (same(path.join(ctx.codexDir, 'AGENTS.md')) && !statOrNull(path.join(ctx.codexDir, 'AGENTS.override.md'))) tools.add('codex');
   const ccFiles = ccLoadedFiles(ctx).map((f) => realOr(f.abs));
   if (ccFiles.includes(real)) tools.add('claude-code');
@@ -574,7 +590,7 @@ export function readers(target, ctx, cache = {}) {
   if (ctx.project && isInside(abs, path.join(ctx.project, '.claude', 'rules')) && /\.md$/.test(abs)) tools.add('claude-code');
   const imp = cache.imports || (cache.imports = importClosure(ctx));
   if (imp.imported.has(real)) tools.add('claude-code');
-  return { tools: ['claude-code', 'codex', 'cursor', 'agents-md'].filter((t) => tools.has(t)), unsure };
+  return { tools: READER_TOOLS.filter((t) => tools.has(t)), unsure };
 }
 
 function scanRules(abs, ctx, out, words) {
@@ -610,6 +626,7 @@ export function detect(ctx) {
   for (const f of listFiles(path.join(ctx.claudeDir, 'rules'), /\.md$/, true)) addFile('user', f);
   addFile('user', path.join(ctx.codexDir, 'AGENTS.md'));
   addFile('user', path.join(ctx.codexDir, 'AGENTS.override.md'));
+  addFile('user', path.join(ctx.geminiDir, 'AGENTS.md'));
   if (ctx.project) {
     for (const n of ['CLAUDE.md', '.claude/CLAUDE.md', 'CLAUDE.local.md', 'AGENTS.md', 'AGENTS.override.md']) addFile('project', path.join(ctx.project, n));
     for (const f of listFiles(path.join(ctx.project, '.claude', 'rules'), /\.md$/, true)) addFile('project', f);
@@ -643,7 +660,7 @@ export function detect(ctx) {
   // Helper agents: name, model and the one-line description (so a helper doing the same job as
   // one of the package's can be named in the plan).
   const agents = [];
-  for (const tool of ['claude-code', 'codex', 'cursor']) {
+  for (const tool of AGENT_TOOLS) {
     for (const a of readAgents(tool, ctx)) agents.push({ tool, scope: a.scope, path: display(a.path, ctx), name: a.name, model: a.model, description: a.description, modelproof: a.modelproof });
   }
   // Settings: key names, plus model/effort values. Never env values, hooks or apiKeyHelper.
@@ -901,7 +918,7 @@ function decideRemove(entry, cur) {
 }
 
 function nameClash(part, abs, ctx) {
-  const m = /^(claude-code|codex|cursor):agent:/.exec(part.id);
+  const m = /^(claude-code|codex|cursor|copilot|antigravity):agent:/.exec(part.id);
   if (!m) return null;
   const tool = m[1];
   const name = partName(part.content, tool === 'codex');
@@ -925,10 +942,12 @@ function otherScopeCopy(part, ctx, scope) {
     if (scope === 'project') {
       if (tool === 'claude-code' && ownedAt(path.join(ctx.claudeDir, 'rules', 'modelproof.md'))) found.push(['Claude Code', display(path.join(ctx.claudeDir, 'rules', 'modelproof.md'), ctx)]);
       if (tool === 'codex') for (const n of ['AGENTS.md', 'AGENTS.override.md']) if (blockAt(path.join(ctx.codexDir, n))) found.push(['Codex', display(path.join(ctx.codexDir, n), ctx)]);
+      if (tool === 'antigravity' && blockAt(path.join(ctx.geminiDir, 'AGENTS.md'))) found.push(['Antigravity', display(path.join(ctx.geminiDir, 'AGENTS.md'), ctx)]);
     } else if (ctx.project) {
       if (tool === 'claude-code' && ownedAt(path.join(ctx.project, '.claude', 'rules', 'modelproof.md'))) found.push(['Claude Code', display(path.join(ctx.project, '.claude', 'rules', 'modelproof.md'), ctx)]);
       if (tool === 'claude-code' && blockAt(path.join(ctx.project, 'AGENTS.md')) && readers(path.join(ctx.project, 'AGENTS.md'), ctx).tools.includes('claude-code')) found.push(['Claude Code', 'AGENTS.md']);
       if (tool === 'codex') for (const n of ['AGENTS.md', 'AGENTS.override.md']) if (blockAt(path.join(ctx.project, n))) found.push(['Codex', n]);
+      if (tool === 'antigravity' && blockAt(path.join(ctx.project, 'AGENTS.md'))) found.push(['Antigravity', 'AGENTS.md']);
     }
   }
   if (!found.length) return null;
@@ -1342,7 +1361,7 @@ function sweepEmptyDirs(dirs, ops) {
 function guessDirs(real, base) {
   const out = [];
   let cur = path.dirname(real);
-  while (isInside(cur, base) && cur !== base && /^(\.claude|\.codex|\.cursor|agents|rules)$/.test(path.basename(cur))) { out.push(cur); cur = path.dirname(cur); }
+  while (isInside(cur, base) && cur !== base && /^(\.claude|\.codex|\.cursor|\.copilot|\.gemini|\.github|\.agents|agents|rules|config)$/.test(path.basename(cur))) { out.push(cur); cur = path.dirname(cur); }
   return out;
 }
 
@@ -1416,14 +1435,25 @@ export function undoFromMarkers(ctx, state) {
   try {
     const cands = [];
     const push = (scope, abs, kind) => { if (statOrNull(abs)) cands.push({ scope, abs, kind }); };
-    for (const r of ['scout', 'builder', 'reviewer', 'explore']) push('user', path.join(ctx.claudeDir, 'agents', `modelproof-${r}.md`), 'owned-file');
+    for (const r of [...HELPER_ROLES, 'explore']) push('user', path.join(ctx.claudeDir, 'agents', `modelproof-${r}.md`), 'owned-file');
     push('user', path.join(ctx.claudeDir, 'rules', 'modelproof.md'), 'owned-file');
-    for (const r of ['scout', 'builder', 'reviewer']) { push('user', path.join(ctx.codexDir, 'agents', `modelproof-${r}.toml`), 'owned-file'); push('user', path.join(ctx.cursorDir, 'agents', `modelproof-${r}.md`), 'owned-file'); }
+    for (const r of HELPER_ROLES) {
+      push('user', path.join(ctx.codexDir, 'agents', `modelproof-${r}.toml`), 'owned-file');
+      push('user', path.join(ctx.cursorDir, 'agents', `modelproof-${r}.md`), 'owned-file');
+      push('user', path.join(ctx.copilotDir, 'agents', `modelproof-${r}.agent.md`), 'owned-file');
+      push('user', path.join(ctx.geminiDir, 'config', 'agents', `modelproof-${r}.md`), 'owned-file');
+    }
     for (const n of ['AGENTS.md', 'AGENTS.override.md']) push('user', path.join(ctx.codexDir, n), 'block');
+    push('user', path.join(ctx.geminiDir, 'AGENTS.md'), 'block');
     if (ctx.project) {
       const P = (...x) => path.join(ctx.project, ...x);
-      for (const r of ['scout', 'builder', 'reviewer', 'explore']) push('project', P('.claude', 'agents', `modelproof-${r}.md`), 'owned-file');
-      for (const r of ['scout', 'builder', 'reviewer']) { push('project', P('.codex', 'agents', `modelproof-${r}.toml`), 'owned-file'); push('project', P('.cursor', 'agents', `modelproof-${r}.md`), 'owned-file'); }
+      for (const r of [...HELPER_ROLES, 'explore']) push('project', P('.claude', 'agents', `modelproof-${r}.md`), 'owned-file');
+      for (const r of HELPER_ROLES) {
+        push('project', P('.codex', 'agents', `modelproof-${r}.toml`), 'owned-file');
+        push('project', P('.cursor', 'agents', `modelproof-${r}.md`), 'owned-file');
+        push('project', P('.github', 'agents', `modelproof-${r}.agent.md`), 'owned-file');
+        push('project', P('.agents', 'agents', `modelproof-${r}.md`), 'owned-file');
+      }
       push('project', P('.claude', 'rules', 'modelproof.md'), 'owned-file');
       push('project', P('.cursor', 'rules', 'modelproof.mdc'), 'owned-file');
       for (const n of ['AGENTS.md', 'AGENTS.override.md']) push('project', P(n), 'block');
