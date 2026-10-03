@@ -1115,7 +1115,7 @@
 /* The Install pane uses the site's one instruction generator — the same assets/instructions.mjs
    the installer runs — so the package shown here is the package that gets installed. The board
    ranks nothing. A module script is deferred, so the DOM below is already parsed. */
-import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageText } from "./assets/instructions.mjs";
+import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageText, TOOL_LABELS } from "./assets/instructions.mjs";
 /* Data -> what the board shows (pickers, plan reach and seat cost, the measured request, the
    default "me" block): pure functions over the fetched files, in their own module so a test can
    run them on any copy of data/. */
@@ -4895,7 +4895,7 @@ import * as BD from "./assets/board-data.mjs";
   function boardProfile(forMode){
     return profileFromBoard(Object.assign({}, state, { mode: forMode || mode }), DATA);
   }
-  var TOOL_NAMES = { "claude-code": "Claude Code", codex: "Codex", cursor: "Cursor", "agents-md": "AGENTS.md" };
+  var TOOL_NAMES = TOOL_LABELS;   // the tools the package covers, from the generator
   function basisList(list){
     return (list || []).filter(function(b){ return b && b.quote && !RANKING_WORDS.test(b.quote); })
       .map(function(b){ return { quote: b.quote, url: b.source_url, date: b.date || null }; });
@@ -4952,11 +4952,11 @@ import * as BD from "./assets/board-data.mjs";
       '&rsquo;s own docs for this job. Choose another model above to set your own.</div>' +
       (src.basis.length ? labSaysHtml(src.basis, 2) + '<div style="height:12px"></div>' : '');
   }
-  // `job` is the helper job the package knows (lead / scout / builder / reviewer).
+  // `job` is the helper job the package knows (lead / scout / builder / reviewer / bulk).
   var ROLE_SEEDS = [
     { role: "Coordinator", task: "agents", job: "lead" },
     { role: "Long-haul code", task: "coding", job: "builder" },
-    { role: "Bulk", task: "bulk", job: "scout" },
+    { role: "Bulk", task: "bulk", job: "bulk" },
     { role: "Research", task: "research", job: "scout" },
     { role: "Design", task: "frontend", job: "builder" }
   ];

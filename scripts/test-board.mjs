@@ -53,7 +53,9 @@ test('board.html imports the instruction generator, not the retired ranking engi
 test('every name board.html imports is exported by assets/instructions.mjs', async () => {
   const mod = await import('../assets/instructions.mjs');
   const names = BOARD.match(GENERATOR_IMPORT)[1].split(',').map((x) => x.trim()).filter(Boolean);
-  for (const name of names) assert.equal(typeof mod[name], 'function', `instructions.mjs does not export ${name}`);
+  for (const name of names) assert.ok(typeof mod[name] === 'function' || (name === 'TOOL_LABELS' && typeof mod[name] === 'object'), `instructions.mjs does not export ${name}`);
+  assert.ok(names.includes('TOOL_LABELS'), 'the install pane names tools from the generator, not a typed list');
+  assert.doesNotMatch(BOARD, /TOOL_NAMES\s*=\s*\{/, 'board.html types its own tool list');
 });
 
 test('board.html fetches the install prompt the installer skill ships', () => {

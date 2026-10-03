@@ -35,7 +35,9 @@
 
   /* The facts the two sessions print, from the data files (F empty -> every figure is "—").
      builder: the model Claude Code's "opus" alias resolves to (guidance model_refs).
-     scout:   Claude Code's scout role default and the quote behind it (guidance role_defaults).
+     bulk:    Claude Code's bulk helper model (guidance tool_plans), as the alias its files take
+              (model_refs), and the tool's own quote behind it. Scout, builder and reviewer
+              inherit the lead's model, the same rule the package uses.
      pair:    the builder's model plus the newest generally available, priced model with an
               OpenRouter usage row from another lab — a rule over the data, not a judgment. */
   function factsFrom(modelsFile, guidance) {
@@ -45,18 +47,20 @@
     var g = guidance || {};
     var ref = (g.model_refs || []).filter(function (r) { return r.tool === "claude-code" && r.ref === "opus"; })[0];
     var builder = ref ? byId[ref.model_id] || null : null;
-    var scout = (g.role_defaults || []).filter(function (r) { return r.tool === "claude-code" && r.role === "scout"; })[0] || null;
+    var plan = (g.tool_plans || []).filter(function (t) { return t.tool === "claude-code"; })[0] || null;
+    var bulk = plan && plan.bulk && plan.bulk.model_id ? plan.bulk : null;
+    var bulkRef = bulk ? (g.model_refs || []).filter(function (r) { return r.tool === "claude-code" && r.model_id === bulk.model_id; })[0] || null : null;
     var claims = {};
     (g.claims || []).forEach(function (c) { claims[c.id] = c; });
     var quote = null;
-    if (scout) (scout.basis || []).some(function (id) { var c = claims[id]; if (c && c.quote) { quote = c; return true; } return false; });
+    if (bulkRef) (bulk.basis || []).some(function (id) { var c = claims[id]; if (c && c.quote && c.tier === "tool") { quote = c; return true; } return false; });
     var other = models.filter(function (m) {
       return m.status === "ga" && typeof m.price_output === "number" && shareOf(m) && releasedKey(m.released) &&
         (!builder || m.vendor !== builder.vendor);
     }).sort(function (a, b) { return releasedKey(b.released).localeCompare(releasedKey(a.released)) || a.name.localeCompare(b.name); })[0] || null;
     var pair = [builder, other].filter(Boolean);
     var usageAsOf = pair.map(function (m) { return shareOf(m) ? shareOf(m).as_of : ""; }).filter(Boolean).sort().pop() || null;
-    return { asOf: (modelsFile && modelsFile.as_of) || null, builder: builder, scoutRef: scout ? scout.model_ref : null,
+    return { asOf: (modelsFile && modelsFile.as_of) || null, builder: builder, bulkRef: bulkRef ? bulkRef.ref : null,
              quote: quote, pair: pair, usageAsOf: usageAsOf };
   }
 
@@ -75,9 +79,9 @@
     var quotesLine = (!a || !b) ? 'Lab quotes on file: ' + NA
       : (!qa && !qb) ? 'Lab quotes on file: none yet for either <span class="dim">— left blank, not guessed</span>'
       : 'Lab quotes on file: ' + qa + ' for ' + esc(nameA) + ' · ' + qb + ' for ' + esc(nameB);
-    var scoutLine = F.scoutRef && F.quote
-      ? 'scout → <span class="ok">' + esc(F.scoutRef) + '</span> · Claude Code docs: &ldquo;' + esc(F.quote.quote) + ' &hellip;&rdquo;'
-      : 'scout → the same model as your main one';
+    var bulkLine = F.bulkRef && F.quote
+      ? 'bulk → <span class="ok">' + esc(F.bulkRef) + '</span> · Claude Code docs: &ldquo;' + esc(F.quote.quote) + ' &hellip;&rdquo;'
+      : 'bulk → the same model as your main one';
     return {
       prompt: {
         title: "claude — 96×28",
@@ -90,12 +94,12 @@
           { t: "ask", html: '3 quick questions. How often do you hit your plan&rsquo;s limits?<br><span class="opt">❯ 1. Often</span> &nbsp; 2. Sometimes &nbsp; 3. Rarely' },
           { t: "you", type: true, html: "often · coding and agents · keep opus for builds, like my rule says" },
           { t: "tool", html: 'Bash(node install.mjs plan) <span class="dim">· facts as of ' + esc(F.asOf || NA) + '</span>' },
-          { t: "sub", html: scoutLine },
+          { t: "sub", html: 'scout · reviewer → the same model as your main one' },
           { t: "sub", html: 'builder → <span class="ok">opus</span> · your choice · <span class="y">' + priceText(F.builder) + '</span> per 1M' },
-          { t: "sub", html: 'reviewer → the same model as your main one' },
+          { t: "sub", html: bulkLine },
           { t: "sub", html: '5 new files · your CLAUDE.md is not touched' },
           { t: "ask", html: 'Go?<br><span class="opt">❯ 1. Yes</span> &nbsp; 2. Yes, but no to #4 &nbsp; 3. No' },
-          { t: "tool", html: 'Bash(node install.mjs apply) <span class="ok">✓</span> added <span class="y">agents/modelproof-scout.md</span> · builder · reviewer · explore · <span class="y">rules/modelproof.md</span>' },
+          { t: "tool", html: 'Bash(node install.mjs apply) <span class="ok">✓</span> added <span class="y">agents/modelproof-scout.md</span> · builder · reviewer · bulk · <span class="y">rules/modelproof.md</span>' },
           { t: "out", html: 'Undo any time: <span class="ok">node ~/.modelproof/bin/install.mjs undo fd1d9c01d992</span>' }
         ]
       },
