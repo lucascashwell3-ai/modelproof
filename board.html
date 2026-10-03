@@ -452,8 +452,11 @@
   .node.kind-routine{ border-radius: var(--radius-md); border-style: dashed; border-color: rgba(var(--ink),.12); }
   .node.kind-routine .row{ border-top-color: rgba(var(--ink),.05); }
   /* Model — same family, a slightly darker tint so a model reads as a different substance */
-  .node.kind-model{ background: rgba(var(--ink),.045); border-color: rgba(var(--ink),.12); border-radius:10px; }
-  .node.kind-model:hover{ background: rgba(var(--ink),.06); }
+  /* Opaque, not rgba(ink,.045): a see-through card let a connector that runs behind it (a model
+     above another in the same column, wired to a role below both) show across its name. These are
+     the colours the tint already rendered as on its "Your models" region (.025 over --bg). */
+  .node.kind-model{ background: rgb(232,232,228); border-color: rgba(var(--ink),.12); border-radius:10px; }
+  .node.kind-model:hover{ background: rgb(229,229,225); }
   /* Role — chamfered corners. clip-path can't carry a border, so the element itself IS the
      1px edge and ::before paints the face 1px inside it. */
   .node.kind-role{
