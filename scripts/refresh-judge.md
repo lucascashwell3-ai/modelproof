@@ -31,7 +31,10 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
      `source` (the page that dates it) and `why`. A month-only date is written as the 1st with
      `"date_precision": "month"` (also `"quarter"`, `"year"`) — the apply does this for you from
      `YYYY-MM` / `YYYY-Qn` / `YYYY`; a missing `source` is filled from your first `sources[]` url.
-     Any other date ("soon", "Q3?") rejects the run.
+     Any other date ("soon", "Q3?") rejects the run. A release dated after tomorrow (UTC) — an
+     announced date that has not come yet — is held by the apply with its reason (the same goes for
+     a `new-model` whose `released` is after tomorrow), so it does not cost the rest of the batch;
+     it stays on the worklist and is judged again once the date comes.
      The apply also writes a "what changed" timeline entry. Add
      `"release": {"summary": "...", "why": "...", "source": "https://..."}` inside `value` when the
      vendor page gives you something concrete to say (one or two plain sentences each); leave it out

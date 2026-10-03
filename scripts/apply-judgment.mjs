@@ -27,7 +27,9 @@
    `released` "unknown" (or any form outside YYYY-MM-DD | YYYY-MM | YYYY-Qn | YYYY) -> null; a
    release entry's partial date -> first day of the period + `date_precision`, its missing
    `source` -> the judgment's first source url; a ladder's missing as_of/source -> the judgment's
-   first source date/url. What still fails validation rejects the run, as before.
+   first source date/url; a release (or a new model's timeline entry) dated after today + 1 day
+   (UTC) -> a hold with its reason, since the gate rejects a future date and one such item must not
+   roll back the batch. What still fails validation rejects the run, as before.
    On success: writes data/models.json, appends data/changelog.json (with sources), removes the
    applied ids from data/refresh/worklist.json, runs the honesty gate, THEN (only when this run
    wrote at least one judged-fit claim) runs scripts/check-sources.mjs on the judged-fit records
@@ -44,7 +46,7 @@
 import { isNotablePriceChange, priceEntry, retiredEntry, addEntry, normalizeReleased, releaseDateFor, normalizeEntryDate } from './timeline.mjs';
 import { canonicalVendor, bareModelName, modelId as idFromName } from './naming.mjs';
 import { TASK_IDS } from './derive-task-fit.mjs';
-import { bannedPhraseIn, wordCount, CLAIM_TIERS, CLAIM_POLARITY_VALUES, citesLiveFeed } from './validate-data.mjs';
+import { bannedPhraseIn, wordCount, CLAIM_TIERS, CLAIM_POLARITY_VALUES, citesLiveFeed, utcToday } from './validate-data.mjs';
 import { deriveStatus, deriveAdoption, deriveStatusAdoptionForCatalog } from './derive-status-adoption.mjs';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -64,9 +66,14 @@ const BEST_FOR_VOCAB = ['reasoning', 'agentic', 'coding', 'research', 'long-cont
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 export const DATE_PRECISION_VALUES = ['month', 'quarter', 'year'];
 
+const addDays = (ymd, n) => new Date(Date.parse(`${ymd}T00:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+
 /** Repair what can be repaired without guessing, before validation. Returns {judgment, notes}:
- * a deep copy (the input is never mutated) and one plain line per repair, for the run log. */
-export function normalizeJudgment(j) {
+ * a deep copy (the input is never mutated) and one plain line per repair, for the run log.
+ * A release (or a new model's timeline entry) dated after `today` + 1 day (UTC) is turned into a
+ * hold with its reason: the honesty gate rejects a future date, and one such item must not roll
+ * back the rest of the batch. It comes back on a later run, once the date has come. */
+export function normalizeJudgment(j, { today = utcToday() } = {}) {
   const notes = [];
   if (!j || typeof j !== 'object' || j.hold) return { judgment: j, notes };
   const out = JSON.parse(JSON.stringify(j));
@@ -86,6 +93,14 @@ export function normalizeJudgment(j) {
         if (d.date_precision) v.date_precision = d.date_precision;
       }
     }
+  }
+  const latest = addDays(today, 1);
+  const future = out.kind === 'release' && v && typeof v === 'object' && DATE_RE.test(String(v.date)) ? String(v.date)
+    : out.kind === 'new-model' && v && typeof v === 'object' && v.released ? releaseDateFor(v.released, today).date : null;
+  if (future && future > latest) {
+    const reason = `${out.kind === 'release' ? 'release' : 'new model\'s release'} dated ${future}, after ${latest} (today ${today} UTC + 1 day); held until that date comes`;
+    notes.push(`${out.id}: ${reason}`);
+    return { judgment: { id: out.id, hold: true, reason }, notes };
   }
   if (out.kind === 'ladder' && v && typeof v === 'object' && first) {
     if (!v.as_of && first.date && DATE_RE.test(first.date)) { v.as_of = first.date; notes.push(`${out.id}: ladder as_of filled from sources[0].date`); }
@@ -368,8 +383,12 @@ async function main() {
   }
   const raw = JSON.parse(readFileSync(file, 'utf8'));
   if (!Array.isArray(raw)) throw new Error('judgments file must be a JSON array');
+  // MODELPROOF_TODAY: test-only override so a date-boundary case (e.g. a model aging out of the
+  // 60-day "new" adoption window) can be pinned instead of depending on the real clock. Unset in
+  // every real run — falls straight through to the real date.
+  const today = process.env.MODELPROOF_TODAY || utcToday();
   const judgments = raw.map((j) => {
-    const { judgment, notes } = normalizeJudgment(j);
+    const { judgment, notes } = normalizeJudgment(j, { today });
     notes.forEach((n) => console.log(`normalized ${n}`));
     return judgment;
   });
@@ -386,11 +405,6 @@ async function main() {
   const originalText = readFileSync(dataUrl, 'utf8');
   const data = JSON.parse(originalText);
   const changelog = existsSync(changelogUrl) ? JSON.parse(readFileSync(changelogUrl)) : [];
-  // MODELPROOF_TODAY: test-only override so a date-boundary case (e.g. a model aging out of the
-  // 60-day "new" adoption window) can be pinned instead of depending on the real clock. Unset in
-  // every real run — falls straight through to the real date.
-  const today = process.env.MODELPROOF_TODAY || new Date().toISOString().slice(0, 10);
-
   const applied = [];
   const judgedKeys = [];   // "<modelId>/<taskId>" of every judged-fit record this run wrote
   const held = judgments.filter((j) => j.hold);

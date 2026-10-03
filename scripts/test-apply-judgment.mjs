@@ -458,6 +458,47 @@ test('normalizeJudgment: a release with a month-only date gets the 1st + date_pr
   assert.equal(data.releases[0].source, 'https://acme.example/blog');
 });
 
+test('normalizeJudgment: a release dated after today + 1 day (UTC) becomes a hold with its reason', () => {
+  const rel = (date) => ({ id: 'rel:acme', kind: 'release', reason: 'vendor blog post announces it', sources: SOURCES,
+    value: { date, vendor: 'Acme', title: 'Acme ships Zeta', summary: 'Zeta is out.', why: 'New option.', source: 'https://acme.example/blog' } });
+  const today = '2026-10-03';
+  const held = normalizeJudgment(rel('2026-10-05'), { today });
+  assert.equal(held.judgment.hold, true);
+  assert.equal(held.judgment.id, 'rel:acme');
+  assert.match(held.judgment.reason, /dated 2026-10-05, after 2026-10-04/);
+  assert.match(held.notes.at(-1), /held until that date comes/);
+  assert.deepEqual(validateJudgment(held.judgment), [], 'a hold is valid, so the batch is not rejected');
+  // Tomorrow is inside the gate's one day of slack; a year-only date in the future is held too.
+  assert.equal(normalizeJudgment(rel('2026-10-04'), { today }).judgment.hold, undefined);
+  assert.equal(normalizeJudgment(rel('2027'), { today }).judgment.hold, true);
+  // A new model whose release date (the timeline entry the apply writes) is in the future.
+  const nm = { ...NEW_MODEL, value: { ...NEW_MODEL.value, released: '2026-11-20' } };
+  assert.equal(normalizeJudgment(nm, { today }).judgment.hold, true);
+  assert.equal(normalizeJudgment({ ...NEW_MODEL, value: { ...NEW_MODEL.value, released: '2026-10' } }, { today }).judgment.hold, undefined);
+});
+
+test('CLI: a future-dated release is held and the rest of the batch still applies', () => {
+  withSandbox((dir) => {
+    const models = JSON.parse(readFileSync(join(dir, 'data', 'models.json')));
+    const target = models.models.find((m) => m.benchmarks && 'gpqa' in m.benchmarks);
+    const later = new Date(Date.parse(`${FIXTURE_AS_OF}T00:00:00Z`) + 30 * 86_400_000).toISOString().slice(0, 10);
+    const judgments = [
+      { id: `${target.id}:gpqa`, kind: 'benchmark', field: 'gpqa', value: 77.7, sources: SOURCES, reason: REASON },
+      { id: 'rel:future', kind: 'release', reason: 'vendor blog post announces the date', sources: SOURCES,
+        value: { date: later, vendor: 'Acme', title: 'Acme ships Zeta', summary: 'Zeta is out.', why: 'New option.', source: 'https://acme.example/blog' } },
+    ];
+    const jFile = join(dir, 'judgments.json');
+    writeFileSync(jFile, JSON.stringify(judgments));
+    const out = execFileSync('node', [join(dir, 'scripts', 'apply-judgment.mjs'), jFile], { cwd: dir, stdio: 'pipe', env: { ...process.env, MODELPROOF_TODAY: FIXTURE_AS_OF } }).toString();
+    assert.match(out, /applied: 1 {2}held: 1/);
+    assert.match(out, new RegExp(`HELD rel:future: release dated ${later}`));
+    const after = JSON.parse(readFileSync(join(dir, 'data', 'models.json'), 'utf8'));
+    assert.equal(after.models.find((m) => m.id === target.id).benchmarks.gpqa, 77.7);
+    assert.ok(!(after.releases || []).some((r) => r.title === 'Acme ships Zeta'), 'the held release is not written');
+    assert.equal(JSON.parse(readFileSync(join(dir, 'data', 'refresh', 'receipt-judge.json'), 'utf8')).ok, true);
+  });
+});
+
 test('validateJudgment: a release date that cannot be normalized is rejected (YYYY-MM-DD)', () => {
   const j = { id: 'rel:acme', kind: 'release', reason: 'vendor blog post announces it', sources: SOURCES,
     value: { date: 'soon', vendor: 'Acme', title: 'Acme ships Zeta', summary: 'Zeta is out.', why: 'New option.', source: 'https://acme.example/blog' } };
