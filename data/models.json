@@ -5826,7 +5826,7 @@
       "id": "o4-mini",
       "name": "o4-mini",
       "vendor": "OpenAI",
-      "released": "unknown",
+      "released": null,
       "context_window": null,
       "price_input": 1.1,
       "price_output": 4.4,
@@ -10411,7 +10411,7 @@
       "id": "qwen3-max",
       "name": "Qwen3-Max",
       "vendor": "Alibaba (Qwen)",
-      "released": "unknown",
+      "released": null,
       "context_window": 256000,
       "price_input": 1.2,
       "price_output": 6,
@@ -10758,7 +10758,7 @@
       "id": "qwen3-coder-plus",
       "name": "Qwen3-Coder-Plus",
       "vendor": "Alibaba (Qwen)",
-      "released": "unknown",
+      "released": null,
       "context_window": 1000000,
       "price_input": 1,
       "price_output": 5,
@@ -11069,7 +11069,7 @@
       "id": "qwen-turbo",
       "name": "Qwen-Turbo",
       "vendor": "Alibaba (Qwen)",
-      "released": "unknown",
+      "released": null,
       "context_window": null,
       "price_input": 0.05,
       "price_output": 0.2,
@@ -11361,7 +11361,7 @@
       "id": "mistral-medium-3-1",
       "name": "Mistral Medium 3.1",
       "vendor": "Mistral AI",
-      "released": "unknown",
+      "released": null,
       "context_window": null,
       "price_input": 0.4,
       "price_output": 2,
@@ -11667,7 +11667,7 @@
       "id": "gemini-3-6-flash",
       "name": "Gemini 3.6 Flash",
       "vendor": "Google",
-      "released": "unknown",
+      "released": null,
       "context_window": null,
       "price_input": 0.75,
       "price_output": 3.75,
@@ -12155,7 +12155,7 @@
       "id": "glm-5-2",
       "name": "GLM-5.2",
       "vendor": "Z.ai (Zhipu)",
-      "released": "unknown",
+      "released": null,
       "context_window": null,
       "price_input": 1.4,
       "price_output": 4.4,
@@ -32170,11 +32170,11 @@
       "kind": "model"
     },
     {
-      "date": "2026-05",
+      "date": "2026-05-28",
       "vendor": "Anthropic",
       "title": "Claude Opus 4.8",
       "summary": "Flagship Opus tier at $5/$25 per M, 1M context, 88.6% SWE-bench Verified — the strong coding/agentic default below Fable's price.",
-      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "source": "https://www.anthropic.com/news/claude-opus-4-8",
       "why": "Anthropic's flagship you'll actually reach for — top-tier coding and reasoning at $5/$25.",
       "kind": "model"
     },
@@ -32663,52 +32663,6 @@
     "mmlu_pro": "MMLU-Pro — % on a harder, multi-discipline knowledge and reasoning benchmark."
   },
   "notes": "Pricing is verified against official vendor pricing pages (standard tier, USD per 1M tokens) — treat it as the reliable layer. Benchmarks are directional: they mix primary leaderboards, Epoch AI's independently-run figures, and third-party aggregators, and a confidence flag rides on every model. Claude Opus 5 (released 2026-07-23) is priced at Anthropic's published $5/$25; its GPQA (93.9) is Epoch's independent run, but SWE-bench Verified is still unpublished, so its coding score remains an agentic-suite-led estimate at medium confidence. Kimi K3 is scored on its frontend-coding lead (#1 in the Frontend Code Arena); its GPQA (93.1) is Epoch-run, SWE-bench Verified is still unpublished, and its open-weight release (slated 2026-07-27) has not been re-verified as shipped here — treat self-hosting as unconfirmed. Several 2026 models publish only agentic evals that don't map to SWE-bench Verified; those cells are left blank rather than cross-filed. A blank (—) means 'not reliably sourced,' never a guess. Sonnet 5 shows its current intro price ($2/$10; rises to $3/$15 on Sept 1, 2026). Re-verify any single benchmark against a primary leaderboard before betting real spend on it.",
-  "usage": {
-    "as_of": "2026-06 → 07",
-    "basis": "No single \"most used\" exists — each lens measures a different population and ranks models differently. Figures are ~June–July 2026 and lag a couple of weeks, so the newest models (GPT-5.6, Grok 4.5, Sonnet 5) aren't ranked yet.",
-    "lenses": [
-      {
-        "label": "Developers",
-        "sub": "OpenRouter API token volume",
-        "note": "Cheap open-weight models win on raw volume; Anthropic & OpenAI win on dollars spent. Chinese labs are ~44–52% of all tokens.",
-        "top": [
-          {
-            "name": "DeepSeek V4-Flash",
-            "detail": "#1 model · ~6.4T tokens/mo"
-          },
-          {
-            "name": "DeepSeek",
-            "detail": "top lab · ~16% of all tokens"
-          },
-          {
-            "name": "Anthropic",
-            "detail": "#1 lab by $ spend"
-          }
-        ],
-        "source": "https://officechai.com/ai/these-are-the-most-popular-ai-model-companies-on-openrouter-june-2026/"
-      },
-      {
-        "label": "Consumers",
-        "sub": "AI-assistant web traffic",
-        "note": "Consumer web visits only (undercounts mobile & embedded) — a totally different crowd from the API developers.",
-        "top": [
-          {
-            "name": "ChatGPT",
-            "detail": "53.9%"
-          },
-          {
-            "name": "Gemini",
-            "detail": "27.9%"
-          },
-          {
-            "name": "Claude",
-            "detail": "9.2%"
-          }
-        ],
-        "source": "https://momenticmarketing.com/blog/top-ai-chatbots"
-      }
-    ]
-  },
   "coding_score_note": "Coding score (0–100) is a unified, comparable coding-ability estimate. Where an official SWE-bench Verified % exists it IS that number (high confidence). Where it doesn't — several strong 2026 models ship before formal benchmarks — it's estimated from sourced signals (Artificial Analysis Coding Index, LMArena Code Elo, SWE-bench Pro, LiveCodeBench) calibrated against the benchmarked models (medium confidence), or expert consensus (low). Each row shows its basis and confidence. These signals sometimes disagree — treat medium/low scores as directional.",
   "use_well_note": "use_well = practical, plain-English guidance on getting the most from a model you already have. Derived from the model's sourced pricing, context, cache and mode facts above (plus vendor-documented features like Claude's adaptive thinking) — guidance, not benchmarks. Same independence rule: factual, cost-first, never promotional.",
   "effort_ladders": [

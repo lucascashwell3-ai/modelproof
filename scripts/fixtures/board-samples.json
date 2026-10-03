@@ -1,6 +1,6 @@
 {
   "_readme": "Two fictional example boards the Board page offers as a starting point: `org` (a made-up company with four divisions) and `modelMode` (a made-up personal setup). Team and division names are generic on purpose — no real company, team or person appears here. Every model id must exist in data/models.json and every plan name must exist in data/plans.json; scripts/test-board.mjs checks both. `personal_default` is the setup the board starts from when it has nothing saved: plan labels as the board shows them (vendor + plan) and model ids — current ones, chosen as a neutral example of one lab's plan and two of its models, not a verdict. `as_of` is the date the file was last reviewed against data/plans.json and data/models.json.",
-  "as_of": "2026-10-03",
+  "as_of": "2026-09-13",
   "org": {
     "name": "Northwind Labs",
     "divisions": [
@@ -119,8 +119,8 @@
       "Anthropic Max 5x"
     ],
     "models": [
-      "claude-opus-5-5",
-      "claude-sonnet-5-5"
+      "claude-opus-5",
+      "claude-sonnet-5"
     ]
   }
 }

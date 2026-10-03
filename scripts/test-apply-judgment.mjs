@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validateJudgment, applyOne } from './apply-judgment.mjs';
+import { validateJudgment, applyOne, normalizeJudgment } from './apply-judgment.mjs';
 
 const SOURCES = [{ url: 'https://vendor.example.com/pricing', date: '2026-08-16' }];
 const REASON = 'confirmed on vendor pricing page';
@@ -125,6 +125,10 @@ function mktempRepo() {
   writeFileSync(join(dir, 'data', 'vendors.json'), readFileSync(REAL_VENDORS));
   writeFileSync(join(dir, 'data', 'usage-presets.json'), readFileSync(REAL_PRESETS));
   writeFileSync(join(dir, 'data', 'testers.json'), readFileSync(REAL_TESTERS));
+  // the data contract (validate-data.mjs FEEDS) also holds tasks.json and board-samples.json —
+  // frozen fixture copies, like the rest.
+  writeFileSync(join(dir, 'data', 'tasks.json'), readFileSync(fileURLToPath(new URL('./fixtures/tasks.json', import.meta.url))));
+  writeFileSync(join(dir, 'data', 'board-samples.json'), readFileSync(fileURLToPath(new URL('./fixtures/board-samples.json', import.meta.url))));
   writeFileSync(join(dir, 'data', 'changelog.json'), '[]');
   writeFileSync(join(dir, 'data', 'refresh', 'worklist.json'), JSON.stringify({ generated: '2026-08-16', items: [{ id: 'm1:price_input', kind: 'conflict' }] }));
   return dir;
@@ -412,4 +416,118 @@ test('a usage field never changes the fill-vs-change guard on judged-fit (indepe
   applyOne(data, USAGE_JUDGMENT, '2026-09-06');
   assert.ok(data.models[0].task_fit_judged.coding);
   assert.ok(data.models[0].usage.openrouter);
+});
+
+// --- writers normalize before the data contract (2026-10-03) ------------------------------------
+// One sloppy item must not cost the whole batch at the gate: what can be repaired without guessing
+// is repaired before validation (normalizeJudgment), and every repair is logged.
+test('normalizeJudgment: a new model released "unknown" becomes null; allowed partial forms stay', () => {
+  const mk = (released) => ({ ...NEW_MODEL, value: { ...NEW_MODEL.value, released } });
+  assert.equal(normalizeJudgment(mk('unknown')).judgment.value.released, null);
+  assert.match(normalizeJudgment(mk('unknown')).notes[0], /released "unknown" -> null/);
+  assert.equal(normalizeJudgment(mk('2026-Q1')).judgment.value.released, '2026-Q1');
+  assert.equal(normalizeJudgment(mk('2026-05')).judgment.value.released, '2026-05');
+  assert.equal(normalizeJudgment(mk('2026')).judgment.value.released, '2026');
+  assert.equal(normalizeJudgment(mk('2026-09-28T12:00:00Z')).judgment.value.released, '2026-09-28');
+  assert.equal(normalizeJudgment(mk('May 2026')).judgment.value.released, null);
+  assert.deepEqual(validateJudgment(normalizeJudgment(mk('unknown')).judgment), []);
+  assert.ok(validateJudgment(mk('unknown')).some((e) => /released "unknown"/.test(e)), 'un-normalized input is still rejected');
+});
+
+test('normalizeJudgment never mutates its input and leaves holds alone', () => {
+  const j = { ...NEW_MODEL, value: { ...NEW_MODEL.value, released: 'unknown' } };
+  const before = JSON.stringify(j);
+  normalizeJudgment(j);
+  assert.equal(JSON.stringify(j), before);
+  const hold = { id: 'x', hold: true, reason: 'waiting on the vendor page' };
+  assert.equal(normalizeJudgment(hold).judgment, hold);
+});
+
+test('normalizeJudgment: a release with a month-only date gets the 1st + date_precision; a missing source comes from sources[0]', () => {
+  const j = { id: 'rel:acme', kind: 'release', reason: 'vendor blog post announces it', sources: [{ url: 'https://acme.example/blog', date: '2026-05-02' }],
+    value: { date: '2026-05', vendor: 'Acme', title: 'Acme ships Zeta', summary: 'Zeta is out.', why: 'New option.' } };
+  const { judgment, notes } = normalizeJudgment(j);
+  assert.equal(judgment.value.date, '2026-05-01');
+  assert.equal(judgment.value.date_precision, 'month');
+  assert.equal(judgment.value.source, 'https://acme.example/blog');
+  assert.equal(notes.length, 2);
+  assert.deepEqual(validateJudgment(judgment), []);
+  const data = { models: [], releases: [] };
+  applyOne(data, judgment, '2026-10-03');
+  assert.equal(data.releases[0].date, '2026-05-01');
+  assert.equal(data.releases[0].source, 'https://acme.example/blog');
+});
+
+test('validateJudgment: a release date that cannot be normalized is rejected (YYYY-MM-DD)', () => {
+  const j = { id: 'rel:acme', kind: 'release', reason: 'vendor blog post announces it', sources: SOURCES,
+    value: { date: 'soon', vendor: 'Acme', title: 'Acme ships Zeta', summary: 'Zeta is out.', why: 'New option.', source: 'https://acme.example/blog' } };
+  assert.equal(normalizeJudgment(j).judgment.value.date, 'soon');
+  assert.ok(validateJudgment(normalizeJudgment(j).judgment).some((e) => /release date "soon"/.test(e)));
+});
+
+test('normalizeJudgment: a ladder missing as_of/source takes them from the judgment\'s first source', () => {
+  const j = { id: 'ladder:x', kind: 'ladder', reason: 'vendor chart read off the launch post', sources: [{ url: 'https://acme.example/ladder', date: '2026-09-30' }], value: { id: 'x', series: [] } };
+  const { judgment } = normalizeJudgment(j);
+  assert.equal(judgment.value.as_of, '2026-09-30');
+  assert.equal(judgment.value.source, 'https://acme.example/ladder');
+});
+
+test('applyOne new-model: the timeline date follows released — partial -> 1st of the period + precision, none -> today', () => {
+  for (const [released, date, precision] of [['2026-05', '2026-05-01', 'month'], ['2026-Q1', '2026-01-01', 'quarter'], ['2026', '2026-01-01', 'year'], [null, '2026-10-03', undefined], ['2026-09-30', '2026-09-30', undefined]]) {
+    const data = { models: [], releases: [] };
+    applyOne(data, normalizeJudgment({ ...NEW_MODEL, value: { ...NEW_MODEL.value, released } }).judgment, '2026-10-03');
+    assert.equal(data.releases[0].date, date, `released ${released}`);
+    assert.equal(data.releases[0].date_precision, precision, `released ${released}`);
+    assert.equal(data.models[0].released, released);
+  }
+});
+
+test('applyOne new-model never stores "unknown" even when handed it directly', () => {
+  const data = { models: [], releases: [] };
+  applyOne(data, { ...NEW_MODEL, value: { ...NEW_MODEL.value, released: 'unknown' } }, '2026-10-03');
+  assert.equal(data.models[0].released, null);
+  assert.equal(data.releases[0].date, '2026-10-03');
+});
+
+// --- the anti-fabrication gate checks only what this run wrote (2026-10-03) ----------------------
+// Pages are served from a fixture map (CHECK_SOURCES_PAGES), so no network. Every other judged
+// claim in the fixture catalog cites a URL missing from the map — i.e. it "rotted". A catalog-wide
+// gate would roll this write back for that; the scoped gate must not.
+test('CLI: an unrelated rotten quote elsewhere in the catalog does not block a judged-fit write', () => {
+  withSandbox((dir) => {
+    const models = JSON.parse(readFileSync(join(dir, 'data', 'models.json')));
+    const others = models.models.filter((m) => m.task_fit_judged && Object.values(m.task_fit_judged).some((r) => r && r.claims && r.claims.length));
+    assert.ok(others.length > 0, 'the fixture catalog carries judged claims that will read as rotted');
+    const target = models.models.find((m) => !m.task_fit_judged || !m.task_fit_judged.coding);
+    const claim = { sentence: 'The vendor launch page states the model writes and fixes code.', source_url: 'https://lab.example/new-coding', tier: 'lab', date: FIXTURE_AS_OF, quote: 'It writes and fixes code.' };
+    const judgments = [{ id: `${target.id}:coding:judged-fit`, kind: 'judged-fit', reason: 'vendor launch page has a quoted coding claim', sources: [{ url: claim.source_url, date: FIXTURE_AS_OF }], value: { taskId: 'coding', claims: [claim], reconciliation: null } }];
+    const jFile = join(dir, 'judgments.json');
+    writeFileSync(jFile, JSON.stringify(judgments));
+    const pages = join(dir, 'pages.json');
+    writeFileSync(pages, JSON.stringify({ 'https://lab.example/new-coding': '<p>It writes and fixes code.</p>' }));
+    const env = { ...process.env, MODELPROOF_TODAY: FIXTURE_AS_OF, CHECK_SOURCES_PAGES: pages };
+    execFileSync('node', [join(dir, 'scripts', 'apply-judgment.mjs'), jFile], { cwd: dir, stdio: 'pipe', env });
+    const after = JSON.parse(readFileSync(join(dir, 'data', 'models.json'), 'utf8'));
+    assert.equal(after.models.find((m) => m.id === target.id).task_fit_judged.coding.claims[0].quote, claim.quote);
+    // the same pages make an unscoped run fail — proof the scope is what let the write through
+    let full = 0;
+    try { execFileSync('node', [join(dir, 'scripts', 'check-sources.mjs')], { cwd: dir, stdio: 'pipe', env }); } catch (e) { full = e.status; }
+    assert.equal(full, 1);
+  });
+});
+
+test('CLI: a judged-fit write whose own quote is not on its page is still rolled back', () => {
+  withSandbox((dir) => {
+    const before = readFileSync(join(dir, 'data', 'models.json'), 'utf8');
+    const target = JSON.parse(before).models[0];
+    const claim = { sentence: 'The vendor launch page states the model writes and fixes code.', source_url: 'https://lab.example/new-coding', tier: 'lab', date: FIXTURE_AS_OF, quote: 'It writes flawless code every time.' };
+    const jFile = join(dir, 'judgments.json');
+    writeFileSync(jFile, JSON.stringify([{ id: `${target.id}:coding:judged-fit`, kind: 'judged-fit', reason: 'vendor launch page has a quoted coding claim', sources: [{ url: claim.source_url, date: FIXTURE_AS_OF }], value: { taskId: 'coding', claims: [claim], reconciliation: null } }]));
+    const pages = join(dir, 'pages.json');
+    writeFileSync(pages, JSON.stringify({ 'https://lab.example/new-coding': '<p>It writes and fixes code.</p>' }));
+    let status = 0;
+    try { execFileSync('node', [join(dir, 'scripts', 'apply-judgment.mjs'), jFile], { cwd: dir, stdio: 'pipe', env: { ...process.env, MODELPROOF_TODAY: FIXTURE_AS_OF, CHECK_SOURCES_PAGES: pages } }); } catch (e) { status = e.status; }
+    assert.equal(status, 1);
+    assert.equal(readFileSync(join(dir, 'data', 'models.json'), 'utf8'), before);
+  });
 });
