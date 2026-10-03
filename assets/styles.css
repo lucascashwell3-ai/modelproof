@@ -461,26 +461,6 @@ sup.est { font-family: var(--mono); font-size: 9px; color: var(--warn); margin-l
 .row-more .srcs a { color: var(--gold-2); text-decoration: underline; text-underline-offset: 2px;
   word-break: break-all; font-size: 12px; }
 
-/* ---------- who's using what (usage lenses) ---------- */
-.lenses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-.lens { background: linear-gradient(180deg, rgba(20,22,29,0.66), rgba(14,16,21,0.64));
-  backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-line);
-  border-radius: var(--r-lg); padding: 18px 18px 16px; box-shadow: var(--shadow); }
-.lens__head { display: flex; flex-direction: column; gap: 3px; margin-bottom: 14px;
-  padding-bottom: 12px; border-bottom: 1px solid var(--line-soft); }
-.lens__label { font-family: var(--display); font-weight: 600; font-size: 1.15rem; letter-spacing: -0.01em; }
-.lens__sub { font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.05em; }
-.lens__top { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.lens__top li { display: grid; grid-template-columns: 18px 1fr; align-items: baseline; gap: 9px; }
-.lens__rank { font-family: var(--mono); font-size: 13px; color: var(--gold); font-weight: 500; }
-.lens__name { font-weight: 700; font-size: 0.95rem; }
-.lens__detail { grid-column: 2; font-family: var(--mono); font-size: 11px; color: var(--ink-3); margin-top: 1px; }
-.lens__note { color: var(--ink-3); font-size: 12px; line-height: 1.5; margin-top: 15px;
-  padding-top: 13px; border-top: 1px solid var(--line-soft); }
-.lens__src { display: inline-block; margin-top: 10px; font-family: var(--mono); font-size: 11px;
-  color: var(--gold-2); text-decoration: underline; text-underline-offset: 2px; }
-.lenses__basis { color: var(--ink-4); font-size: 12.5px; margin-top: 18px; line-height: 1.5; max-width: 62rem; }
-
 /* ---------- releases timeline ---------- */
 .feed { list-style: none; }
 .rel { position: relative; display: grid; grid-template-columns: 62px 1fr; gap: 18px; padding: 0 0 18px 0; }
@@ -566,7 +546,7 @@ sup.est { font-family: var(--mono); font-size: 9px; color: var(--warn); margin-l
   .promptgen { background: var(--panel); }
   .chart { background: linear-gradient(180deg, var(--panel), var(--bg-2)); }
   .cmp-board-wrap, .table-wrap { background: var(--panel); }
-  .lens, .promptgen__panel { background: linear-gradient(180deg, var(--panel), var(--panel-2)); }
+  .promptgen__panel { background: linear-gradient(180deg, var(--panel), var(--panel-2)); }
   .rel__card { background: var(--panel); }
   .foot { background: linear-gradient(180deg, rgba(10,11,15,0.6), rgba(7,8,12,0.94)); }
 }
@@ -592,9 +572,6 @@ sup.est { font-family: var(--mono); font-size: 9px; color: var(--warn); margin-l
 }
 
 /* ---------- responsive ---------- */
-@media (max-width: 920px) {
-  .lenses { grid-template-columns: 1fr; }
-}
 @media (max-width: 860px) {
   /* four labelled curves squeezed into a phone width turn into unreadable 4px type.
      Pan instead of shrink — same answer the comparator board uses. */

@@ -1,0 +1,8 @@
+[
+  {
+    "file": "board.html",
+    "substring": "return \"<$1\"",
+    "reason": "display floor in fmtUsd: any amount under half a dollar prints as less than one dollar; a formatting rule, not a price from data",
+    "kind": "price"
+  }
+]
