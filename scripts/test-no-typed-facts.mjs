@@ -15,7 +15,10 @@
 //   name     - a model id or name that carries a version digit. The default list is the frozen
 //              fixture scripts/fixtures/instructions-models.json, so a new model arriving in data/
 //              never turns this test red on its own; NO_TYPED_FACTS_DATA=<dir> reads <dir>/models.json
-//              and <dir>/guidance.json instead (the live scan and the new-release drill use it).
+//              and <dir>/guidance.json instead (only the pull-request run in tests.yml does, with
+//              data/). NO_TYPED_FACTS_NAMES='["Name", "id"]' adds names to the fixture list (the
+//              new-release drill adds its made-up model this way, so the scheduled unit run that
+//              gates Collect never reads a live name).
 //              Plus generic future-name patterns, each needing a version digit, so a lab or a tier
 //              word ("flash", "pro", "auto") is never a hit.
 //   price    - "$" followed by a digit, or an amount followed by "USD".
@@ -206,7 +209,9 @@ export function defaultTerms(env = process.env) {
     return termsFrom({ models: models.models || [], guidance: readJsonIf(join(base, 'guidance.json')) });
   }
   const fx = readJsonIf(join(ROOT, 'scripts', 'fixtures', 'instructions-models.json'));
-  return termsFrom({ models: (fx && fx.models) || [] });
+  const extra = env.NO_TYPED_FACTS_NAMES ? JSON.parse(env.NO_TYPED_FACTS_NAMES) : [];
+  if (!Array.isArray(extra)) throw new Error('NO_TYPED_FACTS_NAMES: a JSON array of names');
+  return termsFrom({ models: [...((fx && fx.models) || []), ...extra.map((name) => ({ name }))] });
 }
 
 // Names not yet in any data, each needing a version digit.
@@ -321,7 +326,8 @@ if (process.argv.includes('--scan')) {
   const hits = scan(ROOT);
   console.log(formatHits(hits));
   process.exitCode = hits.some((h) => !h.allowed && !h.todo) ? 1 : 0;
-} else {
+} else if (process.argv[1] && join(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  // Tests register only when this file is the one run, never when another test imports its scanner.
   const { test } = await import('node:test');
   const assert = (await import('node:assert/strict')).default;
   const fixtureTerms = termsFrom({ models: [
@@ -382,6 +388,8 @@ if (process.argv.includes('--scan')) {
     assert.ok(def.length > 20 && def.every((t) => /\d/.test(t)), 'fixture terms, each with a digit');
     const live = defaultTerms({ NO_TYPED_FACTS_DATA: 'data' });
     assert.ok(live.length > 20 && live.every((t) => /\d/.test(t)));
+    const more = defaultTerms({ NO_TYPED_FACTS_NAMES: JSON.stringify(['Made Up 9.9']) });
+    assert.deepEqual(more.filter((t) => !def.includes(t)), ['Made Up 9.9'], 'NO_TYPED_FACTS_NAMES adds to the fixture list');
   });
 
   test('allowlist: at most 8 entries, each with a reason and kind, each still matching a hit', () => {
