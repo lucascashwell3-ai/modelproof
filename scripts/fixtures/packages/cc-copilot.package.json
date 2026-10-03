@@ -114,9 +114,9 @@
         "scope": "project",
         "path": "AGENTS.md"
       },
-      "content": "## Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n### Lead, helpers and bulk\n- Lead: the model you choose in GitHub Copilot. In VS Code, the Copilot Chat model is chosen from a dropdown at the bottom of the chat view.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model (2026-09-27)\n- Helpers: modelproof-scout, modelproof-builder and modelproof-reviewer run on the lead's model (inherit).\n  Source: GitHub Copilot docs, https://code.visualstudio.com/docs/copilot/agents/subagents (2026-10-03)\n- Near a full usage limit: GitHub's usage guide tells users to run subagents on cheaper models.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)\n- Bulk: modelproof-bulk runs on the lead's model until you set its model, for routine, well-scoped changes. GitHub's usage guide names lighter models for refactoring, formatting, documentation updates and other routine, well-scoped changes.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)\n\n### How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n### Context\n- Search before reading; read line ranges, not whole big files.\n\n### Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- On the Claude API, Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "content": "## Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n### Lead, helpers and bulk\n- Lead: the model you choose in GitHub Copilot. In VS Code, the Copilot Chat model is chosen from a dropdown at the bottom of the chat view.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model (2026-09-27)\n- Helpers: GitHub Copilot uses the Claude Code helper files in .claude/agents: modelproof-scout, modelproof-builder and modelproof-reviewer say model: inherit; modelproof-bulk says model: haiku. Its docs do not say how it reads those model lines.\n  Source: GitHub Copilot docs, https://code.visualstudio.com/docs/copilot/customization/custom-agents (2026-10-03)\n  Source: Claude Code docs, https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)\n- Near a full usage limit: GitHub's usage guide tells users to run subagents on cheaper models.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)\n\n### How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n### Context\n- Search before reading; read line ranges, not whole big files.\n\n### Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- On the Claude API, Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
       "why": "One block at the end of AGENTS.md, read by GitHub Copilot; your own text is untouched.",
-      "lines": 25
+      "lines": 24
     }
   ],
   "copy": [],
@@ -441,6 +441,24 @@
           }
         ],
         "choice": true
+      },
+      "shared": {
+        "dir": ".claude/agents",
+        "refs": {
+          "scout": "inherit",
+          "builder": "inherit",
+          "reviewer": "inherit",
+          "bulk": "haiku"
+        },
+        "basis": [
+          {
+            "id": "copilot-custom-agent-locations",
+            "sentence": "VS Code reads Copilot custom agents from .github/agents and .claude/agents in the workspace, and from ~/.copilot/agents or ~/.claude/agents for the user.",
+            "quote": "workspace .github/agents folder workspace (claude format) .claude/agents folder user ~/.copilot/agents or ~/.claude/agents",
+            "source_url": "https://code.visualstudio.com/docs/copilot/customization/custom-agents",
+            "date": "2026-10-03"
+          }
+        ]
       }
     }
   },
@@ -516,6 +534,7 @@
     "cc-subagent-model-order",
     "cc-subagent-own-context",
     "cc-subagent-usage-limits",
+    "copilot-custom-agent-locations",
     "copilot-lighter-models-routine",
     "copilot-model-picker",
     "copilot-subagent-main-model-default",

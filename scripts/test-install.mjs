@@ -191,6 +191,44 @@ test('Claude Code + GitHub Copilot: one set of helpers (Copilot loads .claude/ag
   ok(dupes(g));
 });
 
+test('Claude Code and GitHub Copilot at different scopes: one set where Copilot can share it, a check before Go where it cannot', () => {
+  const ccProfile = (f, scope) => writeProfile(f, path.join(PROFILES, 'cc-copilot.json'), { tools: ['claude-code'], scope });
+  const coProfile = (f, scope) => writeProfile(f, path.join(PROFILES, 'copilot.json'), { scope });
+  // Claude Code's helpers in the home folder, then Copilot for one project: Copilot loads
+  // ~/.claude/agents there too, so no Copilot copy is written.
+  const a = setup('cc-copilot');
+  ok(apply(a, plan(a, ccProfile(a, 'user'))));
+  const pa = plan(a, coProfile(a, 'project'));
+  ok(pa);
+  assert.ok(!pa.plan.items.some((x) => /modelproof-\w+\.agent\.md$/.test(x.path)), pa.out);
+  assert.match(pa.out, /GitHub Copilot also loads the Claude Code helper files \(~\/\.claude\/agents\)/);
+  ok(apply(a, pa));
+  ok(dupes(a), 'one set of helpers for Copilot');
+  // Claude Code's helpers in a project, then Copilot for the whole home folder: Copilot needs its
+  // own files for other projects, and the preview says this project would list each one twice.
+  const b = setup('cc-copilot');
+  ok(apply(b, plan(b, ccProfile(b, 'project'))));
+  const pb = plan(b, coProfile(b, 'user'));
+  ok(pb);
+  const items = pb.plan.items.filter((x) => /modelproof-\w+\.agent\.md$/.test(x.path)).map((x) => x.n);
+  assert.equal(items.length, 4, pb.out);
+  const checks = pb.out.slice(pb.out.indexOf('Check these before you say Go'));
+  assert.match(checks, new RegExp(`GitHub Copilot loads helpers from \\.claude/agents and ~/\\.copilot/agents together in a project .*so Copilot lists each one twice\\. Keep both, or skip #${items.join(', #')}\\.`));
+  ok(apply(b, pb, { skip: items.join(',') }), 'leaving them out');
+  ok(dupes(b), 'left out: one set');
+  // Copilot's helpers in a project, then Claude Code for the home folder: the check names the
+  // Copilot copies to take out.
+  const c = setup('cc-copilot');
+  ok(apply(c, plan(c, coProfile(c, 'project'))));
+  const pc = plan(c, ccProfile(c, 'user'));
+  ok(pc);
+  assert.match(pc.out, /GitHub Copilot loads helpers from \.github\/agents and ~\/\.claude\/agents together in a project .*Keep both, or take the Copilot copies out of \.github\/agents \(undo that install\)\./);
+  ok(apply(c, pc));
+  const d = dupes(c);
+  assert.equal(d.code, 1, 'setup-hash counts the same names across both scopes');
+  assert.match(d.out, /"modelproof-scout" is loaded twice by GitHub Copilot/);
+});
+
 test('power-user-max5x: their CLAUDE.md, import target, helpers, output style, skill and settings are never touched', () => {
   const f = setup('power-user-max5x');
   const keep = ['.claude/CLAUDE.md', 'work/notes/tone.md', '.claude/agents/code-simplifier.md', '.claude/agents/checker.md',

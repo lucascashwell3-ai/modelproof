@@ -693,6 +693,7 @@ function normalizeSetup(setup) {
     if (!isObj(a) || typeof a.name !== 'string') continue;
     agents.push({
       tool: TOOLS.includes(a.tool) ? a.tool : null, scope: a.scope === 'project' ? 'project' : 'user', name: a.name, modelproof: a.modelproof === true,
+      model: typeof a.model === 'string' ? safeLine(a.model, 60) || null : null,
       path: safeLine(a.path, 200) || null, description: safeLine(a.description, 200) || null,
     });
   }
@@ -792,8 +793,28 @@ function planLines(F, p, ctx, roles, tool, multi) {
     lines.push(planItem(`${pre('lead')}${where}.${said ? ' ' + said : ''}`, srcLines(F, lead.basis, 1), multi));
   }
 
+  // Helpers Copilot shares with Claude Code: say what those files hold, not what Copilot's own
+  // files would. A model line is named only when this package writes it, with its source.
+  const sh = r.shared;
+  if (sh) {
+    const src = srcLines(F, sh.basis, 1);
+    if (sh.refs) {
+      const groups = [];
+      for (const ref of uniq(ROLES.map((role) => sh.refs[role]))) {
+        const names = ROLES.filter((role) => sh.refs[role] === ref).map((role) => `modelproof-${role}`);
+        const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0];
+        groups.push(`${list} ${names.length > 1 ? 'say' : 'says'} model: ${ref}`);
+      }
+      const cc = roles['claude-code'];
+      const named = ROLES.filter((role) => sh.refs[role] !== 'inherit');
+      const more = named.flatMap((role) => srcLines(F, cc[role].from === 'you' ? [] : cc[role].basis, 1).concat(cc[role].from === 'you' ? [youSource(F.byId.get(cc[role].model_id), F.modelsAsOf)] : []));
+      lines.push(planItem(`${pre('helpers')}${L} uses the Claude Code helper files in ${sh.dir}: ${groups.join('; ')}. Its docs do not say how it reads those model lines.`, [...src, ...uniq(more)], multi));
+    } else {
+      lines.push(planItem(`${pre('helpers')}${L} uses the Modelproof Claude Code helper files in ${sh.dir}, with the model lines written there. Its docs do not say how it reads them.`, src, multi));
+    }
+  }
   // Helpers: inherit unless the user chose a model for one.
-  if (HELPER_TOOLS.includes(tool)) {
+  if (HELPER_TOOLS.includes(tool) && !sh) {
     const inherit = HELPER_ROLES.filter((role) => r[role].from === 'inherit');
     for (const role of HELPER_ROLES) {
       const x = r[role];
@@ -817,11 +838,14 @@ function planLines(F, p, ctx, roles, tool, multi) {
     lines.push(planItem(main, srcLines(F, nl.basis, 2), multi));
   }
 
-  // Bulk: the one helper pushed down by default.
+  // Bulk: the one helper pushed down by default (for a tool sharing Claude Code's files, the
+  // helpers line above already says what modelproof-bulk holds).
   const b = r.bulk;
   const slot = plan && plan.bulk;
   const forWhat = slot && slot.when ? `, for ${slot.when}` : '';
-  if (b.from !== 'inherit') {
+  if (sh) {
+    // nothing more to say
+  } else if (b.from !== 'inherit') {
     const m = F.byId.get(b.model_id);
     const where = HELPER_TOOLS.includes(tool) ? 'modelproof-bulk runs ' : '';
     const main = `${pre('bulk')}${where}${shownModel(F, b)}${b.from === 'you' ? ' (your choice)' : forWhat}.`;
@@ -1242,6 +1266,8 @@ export function buildPackage(profile, facts, setup) {
   const agentsReaders = [];
 
   const setupHasAgent = (tool, name) => S.agents.some((a) => !a.modelproof && a.name.toLowerCase() === name.toLowerCase() && (!a.tool || a.tool === tool));
+  const mpHelpers = (tool, sc) => S.agents.some((a) => a.tool === tool && a.modelproof && a.scope === sc && /^modelproof-/.test(a.name));
+  const dupes = [];
   const setupHasKey = (key) => S.settings.some((x) => x.scope === scope && x.keys.includes(key));
   const ownedPart = (tool, role, path, content, why) => ({
     id: `${tool}:agent:${role}`, tool, kind: 'owned-file', enforced: true, target: { scope, path }, content, why,
@@ -1311,6 +1337,12 @@ export function buildPackage(profile, facts, setup) {
         textParts.push({ id: 'claude-code:rules', tool, readers: ['claude-code'], kind: 'owned-file', path: `${dir}/rules/modelproof.md`, why: 'Claude Code loads every file in rules/ each session; your CLAUDE.md is not touched.', capKey: !!keys.maxEffortLevel });
       }
       if (S.force) notes.push('CLAUDE_CODE_SUBAGENT_MODEL_FORCE is set: while it stays set, Claude Code ignores the model line in every helper file.');
+      // Modelproof's Copilot helpers at the other scope: GitHub Copilot loads them and these
+      // Claude Code files together in a project, so it would list each helper twice.
+      const other = user ? 'project' : 'user';
+      if (!has('copilot') && mpHelpers('copilot', other)) {
+        dupes.push({ kind: 'dupe', tool, items: ROLES.map((role) => `claude-code:agent:${role}`), here: `${dir}/agents`, there: other === 'user' ? `${S.dirs.copilot}/agents` : '.github/agents', claim: F.claimById.get('copilot-custom-agent-locations') });
+      }
     } else if (tool === 'codex') {
       const dir = user ? S.dirs.codex : '.codex';
       for (const role of ROLES) {
@@ -1343,19 +1375,30 @@ export function buildPackage(profile, facts, setup) {
         textParts.push({ id: 'cursor:rules', tool, readers: ['cursor'], kind: 'owned-file', path: '.cursor/rules/modelproof.mdc', why: 'Cursor applies a rule with alwaysApply: true in every chat.', mdc: true });
       }
     } else if (tool === 'copilot') {
-      // Copilot also loads helpers from .claude/agents (and ~/.claude/agents), so with Claude Code
-      // at the same scope, or Modelproof's Claude Code helpers already there, those files serve
+      // Copilot also loads helpers from .claude/agents in the workspace and from ~/.claude/agents,
+      // next to its own folders. So with Claude Code in this package, or Modelproof's Claude Code
+      // helpers already at this scope (or, for one project, in the home folder), those files serve
       // both: no second, same-named copy.
-      const shared = has('claude-code') || S.agents.some((a) => a.tool === 'claude-code' && a.modelproof && a.scope === scope && /^modelproof-/.test(a.name));
-      if (shared) {
-        const c = F.claimById.get('copilot-custom-agent-locations');
-        const ref = roles['claude-code'] && roles['claude-code'].bulk.model_ref;
-        notes.push(`GitHub Copilot also loads the Claude Code helper files (${user ? '~/.claude/agents' : '.claude/agents'})${c ? ` (${c.source_url})` : ''}, so no second copy is added. Its docs do not say how it reads their model lines${ref ? ` (such as ${ref})` : ''}; check modelproof-bulk in Copilot's agent list.`);
+      const sharedAt = has('claude-code') || mpHelpers('claude-code', scope) ? scope : !user && mpHelpers('claude-code', 'user') ? 'user' : null;
+      const c = F.claimById.get('copilot-custom-agent-locations');
+      if (sharedAt) {
+        const dir = sharedAt === 'user' ? `${S.dirs.claude}/agents` : '.claude/agents';
+        const ref = has('claude-code') && roles['claude-code'] ? roles['claude-code'].bulk.model_ref : null;
+        notes.push(`GitHub Copilot also loads the Claude Code helper files (${dir})${c ? ` (${c.source_url})` : ''}, so no second copy is added. Its docs do not say how it reads their model lines${ref ? ` (such as ${ref})` : ''}; check modelproof-bulk in Copilot's agent list.`);
+        // What Copilot actually loads, for its text and preview lines: the model line of each
+        // shared file, when this package writes it (with its sources); otherwise only where.
+        r.shared = { dir, refs: has('claude-code') && roles['claude-code'] ? Object.fromEntries(ROLES.map((role) => [role, roles['claude-code'][role].model_ref || 'inherit'])) : null, basis: c ? [basisRec(c)] : [] };
+        if (c) ctx.used.add(c.id);
       } else {
         const dir = user ? S.dirs.copilot : '.github';
         for (const role of ROLES) {
           parts.push(ownedPart(tool, role, `${dir}/agents/modelproof-${role}.agent.md`, copilotAgent(role),
             'No model line, so GitHub Copilot runs this helper on the default model; set one in the file\'s model field to change it.'));
+        }
+        // Modelproof's Claude Code helpers in a project, and these in the home folder: Copilot in
+        // that project loads both folders, so each helper shows up twice there.
+        if (user && mpHelpers('claude-code', 'project')) {
+          dupes.push({ kind: 'dupe', tool, items: ROLES.map((role) => `copilot:agent:${role}`), here: `${dir}/agents`, there: '.claude/agents', claim: c });
         }
       }
       for (const role of ROLES) if (r[role].from === 'you') notes.push(`GitHub Copilot's docs give the model name format only for hand-offs, so your ${role} choice (${r[role].model_name}) is not written into its file; choose it in Copilot's model picker.`);
@@ -1400,6 +1443,13 @@ export function buildPackage(profile, facts, setup) {
   const allNotes = uniq([...problems.map((x) => `Left out of your answers: ${x}`), ...ctx.notes, ...notes]);
 
   const checks = setupChecks(F, p, S, parts, roles);
+  // Same-named helpers GitHub Copilot would load from two folders: listed first, with the items.
+  for (const d of dupes) {
+    const items = d.items.map((id) => parts.findIndex((x) => x.id === id) + 1).filter((n) => n > 0);
+    if (!items.length) continue;
+    if (d.claim) ctx.used.add(d.claim.id);
+    checks.unshift({ kind: 'dupe', tool: d.tool, items, item: items[0], here: d.here, there: d.there, source_url: d.claim ? d.claim.source_url : null });
+  }
   const preview = previewFacts(F, p, ctx);
   for (const part of parts) for (const b of arr(part.basis)) ctx.used.add(b.id);
   const model_names = {};
@@ -1502,6 +1552,7 @@ export function renderPreview(pkg) {
     out.push('', 'Check these before you say Go');
     for (const c of checks) {
       if (c.kind === 'rule') out.push(`  - ${c.file}:${c.line} says "${c.text}"; ${helper(c)} runs on ${c.runs || 'the lead\'s model'}. Make them match, or skip #${c.item}.`);
+      else if (c.kind === 'dupe') out.push(`  - GitHub Copilot loads helpers from ${c.there} and ${c.here} together in a project${c.source_url ? ` (${c.source_url})` : ''}, and both will hold modelproof helpers of the same names, so Copilot lists each one twice. ${c.tool === 'copilot' ? `Keep both, or skip #${c.items.join(', #')}` : `Keep both, or take the Copilot copies out of ${c.there} (undo that install)`}.`);
       else if (c.kind === 'lead') out.push(`  - ${c.file}:${c.line} says "${c.text}"; the Lead line in #${c.item}${several && TOOL_LABEL[c.tool] ? ` (${TOOL_LABEL[c.tool]})` : ''} says ${c.runs}. Make them match, or skip #${c.item}.`);
       else out.push(`  - Your helper ${c.name}${c.path ? ` (${c.path})` : ''} does the same job as ${helper(c)}. Keep both, or skip #${c.item}.`);
     }
@@ -1524,6 +1575,11 @@ export function renderPreview(pkg) {
         const x = t[role];
         if (!x) continue;
         if (COPY_ONLY_TOOLS.includes(tool) && HELPER_ROLES.includes(role)) continue;
+        if (t.shared && role !== 'lead') {
+          const ref = t.shared.refs ? t.shared.refs[role] : null;
+          out.push(`    ${role.padEnd(9)}the Claude Code file ${t.shared.dir}/modelproof-${role}.md${ref ? ` (model: ${ref})` : ''}; its docs do not say how it reads that line`);
+          continue;
+        }
         if (role === 'lead' && x.from === 'inherit') {
           out.push(`    ${'lead'.padEnd(9)}${COPY_ONLY_TOOLS.includes(tool) ? 'the model you name in each request' : `the model you choose in ${tool === 'agents-md' ? 'your tool' : TOOL_LABEL[tool]}`}`);
           continue;

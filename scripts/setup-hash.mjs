@@ -13,7 +13,9 @@
 // dupes:    exit 0 iff no file holds more than one modelproof begin marker (code fences or not),
 //           every file has as many end markers as begin markers, no file repeats the Modelproof
 //           instructions heading (marked or not), no helper name repeats
-//           within one agents folder or across the two folders GitHub Copilot loads together, no modelproof helper shares a name with someone else's helper
+//           within one agents folder or across the folders GitHub Copilot loads together (workspace
+//           .github/agents and .claude/agents, home ~/.copilot/agents and ~/.claude/agents, at any
+//           scope), no modelproof helper shares a name with someone else's helper
 //           in the folders the same tool loads, no settings*.json repeats a top-level key, and no
 //           TOML file repeats a table header; else exit 1 and list each.
 import fs from 'node:fs';
@@ -194,17 +196,23 @@ export function dupes(roots) {
       if (clash) problems.push(`modelproof helper ${rel(ours.file)} shares the name "${ours.shown}" with ${rel(clash.file)}`);
     }
   }
-  // GitHub Copilot loads .claude/agents next to its own folder (.github/agents in a workspace,
-  // .copilot/agents in a home folder): one name twice across that pair is two helpers in Copilot.
-  const parentOf = (dir) => dir.replace(/\/?(\.claude|\.github|\.copilot)\/agents$/, '');
-  for (const [dir, list] of agentDirs) {
-    const fam = list[0] && list[0].family;
-    if (fam !== '.github' && fam !== '.copilot') continue;
-    const claude = [...agentDirs.entries()].find(([d, l]) => l[0] && l[0].family === '.claude' && /\.claude\/agents$/.test(d) && parentOf(d) === parentOf(dir));
-    if (!claude) continue;
-    for (const a of list) {
-      const twin = claude[1].find((b) => b.name === a.name);
-      if (twin) problems.push(`helper name "${a.shown}" is loaded twice by GitHub Copilot: ${rel(a.file)} and ${rel(twin.file)}`);
+  // GitHub Copilot loads .github/agents and .claude/agents in the workspace and ~/.copilot/agents
+  // and ~/.claude/agents in the home folder, all together. The roots given are one machine (a home
+  // and the projects it opens), so a name in two of those folders, one of them Copilot's own, is
+  // two helpers in Copilot, whichever scope each copy sits at.
+  const copilotSeen = [...agentDirs.entries()].filter(([d, l]) => l[0] && (l[0].family === '.github' || l[0].family === '.copilot' || (l[0].family === '.claude' && /\.claude\/agents$/.test(d))));
+  const byName = new Map();
+  for (const [d, list] of copilotSeen) for (const a of list) {
+    if (!byName.has(a.name)) byName.set(a.name, []);
+    byName.get(a.name).push({ ...a, dir: d });
+  }
+  for (const list of byName.values()) {
+    const dirs = new Set(list.map((a) => a.dir));
+    if (dirs.size < 2 || !list.some((a) => a.family === '.github' || a.family === '.copilot')) continue;
+    const own = list.filter((a) => a.family === '.github' || a.family === '.copilot');
+    for (const a of own) for (const b of list) {
+      if (b.dir === a.dir || (b.family !== '.claude' && b.file < a.file)) continue;
+      problems.push(`helper name "${a.shown}" is loaded twice by GitHub Copilot: ${rel(a.file)} and ${rel(b.file)}`);
     }
   }
   return { problems: [...new Set(problems)].sort(), skipped: [...skipped].sort() };

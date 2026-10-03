@@ -404,6 +404,13 @@ test('Claude Code + GitHub Copilot: Copilot also loads .claude/agents, so no sec
   assert.ok(pkg.notes.some((x) => x.includes('GitHub Copilot also loads the Claude Code helper files') && x.includes('modelproof-bulk')));
   const block = pkg.parts.find((p) => p.kind === 'block');
   assert.ok(block.readers.includes('copilot'));
+  // The text Copilot reads describes the files it loads: the Claude Code helpers, model lines and all.
+  const bulkFile = pkg.parts.find((p) => p.id === 'claude-code:agent:bulk').content;
+  const bulkRef = /^model: (.+)$/m.exec(bulkFile)[1];
+  assert.notEqual(bulkRef, 'inherit', 'the fixture bulk file names a model');
+  assert.match(block.content, new RegExp(`^- Helpers: GitHub Copilot uses the Claude Code helper files in \\.claude/agents: .*modelproof-bulk says model: ${bulkRef}\\. Its docs do not say how it reads those model lines\\.$`, 'm'));
+  assert.doesNotMatch(block.content, /modelproof-bulk runs on the lead's model until you set its model/);
+  assert.match(renderPreview(pkg), new RegExp(`bulk     the Claude Code file \\.claude/agents/modelproof-bulk\\.md \\(model: ${bulkRef}\\)`));
   for (const scope of ['user', 'project']) {
     const p = buildPackage({ ...PROFILES['cc-copilot'], scope }, FACTS);
     const all = p.parts.filter((x) => /\/agents\/modelproof-/.test(x.target.path)).map((x) => /^name: (.+)$/m.exec(x.content)[1]);

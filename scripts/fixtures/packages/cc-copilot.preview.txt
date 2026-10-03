@@ -30,10 +30,10 @@ Lead, helpers and bulk per tool
              https://www.anthropic.com/claude-sonnet-5-5 (2026-10-03)
   GitHub Copilot
     lead     the model you choose in GitHub Copilot
-    scout    inherit (runs on the lead's model)
-    builder  inherit (runs on the lead's model)
-    reviewer inherit (runs on the lead's model)
-    bulk     inherit until you set its model (the tool's docs name no model string)
+    scout    the Claude Code file .claude/agents/modelproof-scout.md (model: inherit); its docs do not say how it reads that line
+    builder  the Claude Code file .claude/agents/modelproof-builder.md (model: inherit); its docs do not say how it reads that line
+    reviewer the Claude Code file .claude/agents/modelproof-reviewer.md (model: inherit); its docs do not say how it reads that line
+    bulk     the Claude Code file .claude/agents/modelproof-bulk.md (model: haiku); its docs do not say how it reads that line
     near a full usage limit (a text line, not a setting): the tool's own words below
              "Run subagents on cheaper models."
              https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)
@@ -61,7 +61,7 @@ Files (numbered; answer "no to 3" to leave one out)
       Claude Code runs this helper on haiku, the model named in the file.
    5. file   .claude/rules/modelproof.md · 38 lines · text
       Claude Code loads every file in rules/ each session; your CLAUDE.md is not touched.
-   6. block  AGENTS.md (added at the end) · 25 lines · text
+   6. block  AGENTS.md (added at the end) · 24 lines · text
       One block at the end of AGENTS.md, read by GitHub Copilot; your own text is untouched.
 
 Notes
