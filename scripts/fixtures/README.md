@@ -57,3 +57,16 @@ Data-contract pass (2026-10-03, scripts/validate-data.mjs FEEDS):
 - `tasks.json` — gained a file-level `as_of` (the contract asks every shown file for one).
 - `board-samples.json` — added (new file): a copy of data/board-samples.json whose
   `personal_default` names ids that exist in this fixture catalog; the sandbox gate checks it.
+
+Lead / Helpers / Bulk pass (2026-10-03, guidance.json tool_plans):
+- `guidance.json` — re-copied from live `data/guidance.json`: it now carries `tool_plans` (one plan
+  per tool), the refreshed claims, the Codex `model_refs` and the Sonnet 5.5 alias. 205 claims.
+- `instructions-models.json` — re-projected from live `data/models.json` (80 models, incl. Claude
+  Sonnet 5.5 and GPT-6.1 Sol, which the plans name).
+- `instructions-plans.json` — re-projected from live `data/plans.json`, now with the `reaches` and
+  `covers_tokens` columns the generator reads instead of a typed table.
+- `profiles/` — added `copilot`, `antigravity`, `openrouter`, `cc-copilot` (Claude Code + GitHub
+  Copilot) and `power-user-max5x` (a heavy Claude Code user on Max 5x). `packages/` — every golden
+  regenerated with `UPDATE_GOLDENS=1 node --test scripts/test-instructions.mjs` and reviewed; the
+  new `*.setup.json` files are `install.mjs detect` output on the matching `setups/` folder, with the
+  temp paths replaced by made-up ones.

@@ -1,1202 +1,1376 @@
 {
- "_readme": "Frozen projection of data/models.json (taken 2026-09-27) with only the fields assets/instructions.mjs reads: id, name, vendor, status, released, list prices and the OpenRouter usage share. Used by scripts/test-instructions.mjs so live data changes never move its golden packages. Refresh by hand only.",
- "as_of": "2026-09-26",
- "models": [
-  {
-   "id": "claude-opus-5",
-   "name": "Claude Opus 5",
-   "vendor": "Anthropic",
-   "status": "ga",
-   "released": "2026-07-23",
-   "price_input": 5,
-   "price_output": 25,
-   "usage": {
-    "openrouter": {
-     "share": 0.74,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "kimi-k3",
-   "name": "Kimi K3",
-   "vendor": "Moonshot AI",
-   "status": "ga",
-   "released": "2026-07-16",
-   "price_input": 3,
-   "price_output": 15,
-   "usage": {
-    "openrouter": {
-     "share": 0.98,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "claude-fable-5",
-   "name": "Claude Fable 5",
-   "vendor": "Anthropic",
-   "status": "ga",
-   "released": "2026-07",
-   "price_input": 10,
-   "price_output": 50,
-   "usage": {
-    "openrouter": {
-     "share": 0.04,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "claude-opus-4-8",
-   "name": "Claude Opus 4.8",
-   "vendor": "Anthropic",
-   "status": "ga",
-   "released": "2026-05",
-   "price_input": 5,
-   "price_output": 25,
-   "usage": {
-    "openrouter": {
-     "share": 0.21,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "claude-sonnet-5",
-   "name": "Claude Sonnet 5",
-   "vendor": "Anthropic",
-   "status": "ga",
-   "released": "2026-06-30",
-   "price_input": 2,
-   "price_output": 10,
-   "usage": {
-    "openrouter": {
-     "share": 1.02,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gpt-5-5",
-   "name": "GPT-5.5",
-   "vendor": "OpenAI",
-   "status": "ga",
-   "released": "2026-04-23",
-   "price_input": 5,
-   "price_output": 30,
-   "usage": {
-    "openrouter": {
-     "share": 0.04,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gemini-3-1-pro",
-   "name": "Gemini 3.1 Pro (Preview)",
-   "vendor": "Google",
-   "status": "preview",
-   "released": "2026",
-   "price_input": 2,
-   "price_output": 12,
-   "usage": {
-    "openrouter": {
-     "share": 0.17,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "deepseek-v4-pro",
-   "name": "DeepSeek V4-Pro",
-   "vendor": "DeepSeek",
-   "status": "ga",
-   "released": "2026-04-24",
-   "price_input": 1.32,
-   "price_output": 3.96,
-   "usage": {
-    "openrouter": {
-     "share": 0.74,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "kimi-k2-6",
-   "name": "Kimi K2.6",
-   "vendor": "Moonshot AI",
-   "status": "ga",
-   "released": "2026-04-20",
-   "price_input": 0.95,
-   "price_output": 4,
-   "usage": {
-    "openrouter": {
-     "share": 0.13,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "llama-4-maverick",
-   "name": "Llama 4 Maverick",
-   "vendor": "Meta",
-   "status": "ga",
-   "released": "2026-Q1",
-   "price_input": 0.22,
-   "price_output": 0.88,
-   "usage": {
-    "openrouter": {
-     "share": 0.01,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "o4-mini",
-   "name": "o4-mini",
-   "vendor": "OpenAI",
-   "status": "ga",
-   "released": "unknown",
-   "price_input": 1.1,
-   "price_output": 4.4,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "claude-haiku-4-5",
-   "name": "Claude Haiku 4.5",
-   "vendor": "Anthropic",
-   "status": "ga",
-   "released": "2025-10-01",
-   "price_input": 1,
-   "price_output": 5,
-   "usage": {
-    "openrouter": {
-     "share": 0.17,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gpt-5-6-sol",
-   "name": "GPT-5.6 Sol",
-   "vendor": "OpenAI",
-   "status": "ga",
-   "released": "2026-07-09",
-   "price_input": 4,
-   "price_output": 20,
-   "usage": {
-    "openrouter": {
-     "share": 1.16,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gpt-5-6-terra",
-   "name": "GPT-5.6 Terra",
-   "vendor": "OpenAI",
-   "status": "ga",
-   "released": "2026-07-09",
-   "price_input": 2,
-   "price_output": 12,
-   "usage": {
-    "openrouter": {
-     "share": 0.4,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gpt-5-6-luna",
-   "name": "GPT-5.6 Luna",
-   "vendor": "OpenAI",
-   "status": "ga",
-   "released": "2026-07-09",
-   "price_input": 0.2,
-   "price_output": 1.2,
-   "usage": {
-    "openrouter": {
-     "share": 6.13,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gemini-3-5-flash",
-   "name": "Gemini 3.5 Flash",
-   "vendor": "Google",
-   "status": "ga",
-   "released": "2026-05-19",
-   "price_input": 1.5,
-   "price_output": 9,
-   "usage": {
-    "openrouter": {
-     "share": 0.07,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gemini-2-5-flash-lite",
-   "name": "Gemini 2.5 Flash-Lite",
-   "vendor": "Google",
-   "status": "ga",
-   "released": "2025",
-   "price_input": 0.1,
-   "price_output": 0.4,
-   "usage": {
-    "openrouter": {
-     "share": 0.49,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "grok-4-5",
-   "name": "Grok 4.5",
-   "vendor": "xAI",
-   "status": "ga",
-   "released": "2026-07-08",
-   "price_input": 2,
-   "price_output": 6,
-   "usage": {
-    "openrouter": {
-     "share": 0.05,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "deepseek-v4-flash",
-   "name": "DeepSeek V4-Flash",
-   "vendor": "DeepSeek",
-   "status": "ga",
-   "released": "2026-04-24",
-   "price_input": 0.44,
-   "price_output": 1.32,
-   "usage": {
-    "openrouter": {
-     "share": 2.4,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "qwen3-max",
-   "name": "Qwen3-Max",
-   "vendor": "Alibaba (Qwen)",
-   "status": "ga",
-   "released": "unknown",
-   "price_input": 1.2,
-   "price_output": 6,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "qwen3-coder-plus",
-   "name": "Qwen3-Coder-Plus",
-   "vendor": "Alibaba (Qwen)",
-   "status": "ga",
-   "released": "unknown",
-   "price_input": 1,
-   "price_output": 5,
-   "usage": {
-    "openrouter": {
-     "share": 0.01,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "qwen-turbo",
-   "name": "Qwen-Turbo",
-   "vendor": "Alibaba (Qwen)",
-   "status": "ga",
-   "released": "unknown",
-   "price_input": 0.05,
-   "price_output": 0.2,
-   "usage": null
-  },
-  {
-   "id": "mistral-medium-3-1",
-   "name": "Mistral Medium 3.1",
-   "vendor": "Mistral AI",
-   "status": "ga",
-   "released": "unknown",
-   "price_input": 0.4,
-   "price_output": 2,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gemini-3-6-flash",
-   "name": "Gemini 3.6 Flash",
-   "vendor": "Google",
-   "status": "ga",
-   "released": "unknown",
-   "price_input": 0.75,
-   "price_output": 3.75,
-   "usage": {
-    "openrouter": {
-     "share": 0.14,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "glm-5-2",
-   "name": "GLM-5.2",
-   "vendor": "Z.ai (Zhipu)",
-   "status": "ga",
-   "released": "unknown",
-   "price_input": 1.4,
-   "price_output": 4.4,
-   "usage": {
-    "openrouter": {
-     "share": 1.19,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gemini-3-7-flash",
-   "name": "Gemini 3.7 Flash",
-   "vendor": "Google",
-   "status": "ga",
-   "released": "2026-08-13",
-   "price_input": 0.75,
-   "price_output": 3.75,
-   "usage": {
-    "openrouter": {
-     "share": 0.37,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "grok-4-6",
-   "name": "Grok 4.6",
-   "vendor": "xAI",
-   "status": "ga",
-   "released": "2026-08-12",
-   "price_input": 2,
-   "price_output": 6,
-   "usage": {
-    "openrouter": {
-     "share": 0.19,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "muse-spark-1-2",
-   "name": "Muse Spark 1.2",
-   "vendor": "Meta",
-   "status": "ga",
-   "released": "2026-08-05",
-   "price_input": 1.25,
-   "price_output": 4.25,
-   "usage": {
-    "openrouter": {
-     "share": 0.01,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "muse-spark-1-1",
-   "name": "Muse Spark 1.1",
-   "vendor": "Meta",
-   "status": "ga",
-   "released": "2026-07-16",
-   "price_input": 1.25,
-   "price_output": 4.25,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "ling-3-0-flash",
-   "name": "Ling-3.0-flash",
-   "vendor": "InclusionAI (Ant Group)",
-   "status": "ga",
-   "released": null,
-   "price_input": 0.06,
-   "price_output": 0.18,
-   "usage": {
-    "openrouter": {
-     "share": 0.07,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "kat-coder-pro-v2-5",
-   "name": "KAT-Coder-Pro V2.5",
-   "vendor": "Kwaipilot",
-   "status": "ga",
-   "released": null,
-   "price_input": 0.74,
-   "price_output": 2.96,
-   "usage": null
-  },
-  {
-   "id": "kat-coder-air-v2-5",
-   "name": "KAT-Coder-Air V2.5",
-   "vendor": "Kwaipilot",
-   "status": "ga",
-   "released": null,
-   "price_input": null,
-   "price_output": null,
-   "usage": null
-  },
-  {
-   "id": "longcat-2-0",
-   "name": "LongCat 2.0",
-   "vendor": "Meituan",
-   "status": "ga",
-   "released": null,
-   "price_input": null,
-   "price_output": null,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "muse-glimmer-30b",
-   "name": "Muse Glimmer 30B",
-   "vendor": "Meta",
-   "status": "ga",
-   "released": null,
-   "price_input": 0.35,
-   "price_output": 1.5,
-   "usage": {
-    "openrouter": {
-     "share": 0.01,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "nemotron-3-5-lightning",
-   "name": "Nemotron 3.5 Lightning",
-   "vendor": "NVIDIA",
-   "status": "ga",
-   "released": null,
-   "price_input": null,
-   "price_output": null,
-   "usage": {
-    "openrouter": {
-     "share": 0.38,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "laguna-s-2-1",
-   "name": "Laguna S 2.1",
-   "vendor": "Poolside",
-   "status": "ga",
-   "released": null,
-   "price_input": 0.09,
-   "price_output": 0.18,
-   "usage": {
-    "openrouter": {
-     "share": 0.86,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "qwen3-7-flash",
-   "name": "Qwen3.7 Flash",
-   "vendor": "Alibaba (Qwen)",
-   "status": "ga",
-   "released": null,
-   "price_input": 0.03,
-   "price_output": 0.13,
-   "usage": {
-    "openrouter": {
-     "share": 0.31,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "seed-2-1-turbo",
-   "name": "Seed 2.1 Turbo",
-   "vendor": "ByteDance",
-   "status": "ga",
-   "released": null,
-   "price_input": 0.5,
-   "price_output": 2.5,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "aion-3-0",
-   "name": "Aion-3.0",
-   "vendor": "AionLabs",
-   "status": "ga",
-   "released": "2026-07-07",
-   "price_input": 3,
-   "price_output": 6,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "aion-3-0-mini",
-   "name": "Aion-3.0-Mini",
-   "vendor": "AionLabs",
-   "status": "ga",
-   "released": "2026-07-07",
-   "price_input": 0.7,
-   "price_output": 1.4,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "seed-2-0-code",
-   "name": "Seed-2.0-Code",
-   "vendor": "ByteDance",
-   "status": "ga",
-   "released": "2026-02-14",
-   "price_input": 0.5,
-   "price_output": 3,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "laguna-xs-2-1",
-   "name": "Laguna XS 2.1",
-   "vendor": "Poolside",
-   "status": "ga",
-   "released": "2026-07-02",
-   "price_input": 0.06,
-   "price_output": 0.12,
-   "usage": {
-    "openrouter": {
-     "share": 0.06,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "qwen3-8-2-4t-a95b",
-   "name": "Qwen3.8 2.4T A95B",
-   "vendor": "Alibaba (Qwen)",
-   "status": "ga",
-   "released": "2026-08-01",
-   "price_input": 2,
-   "price_output": 6,
-   "usage": {
-    "openrouter": {
-     "share": 0.02,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "qwen3-8-27b",
-   "name": "Qwen3.8 27B",
-   "vendor": "Alibaba (Qwen)",
-   "status": "ga",
-   "released": "2026-08-14",
-   "price_input": null,
-   "price_output": 3,
-   "usage": {
-    "openrouter": {
-     "share": 0.28,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "sakana-namazu",
-   "name": "Sakana Namazu",
-   "vendor": "Sakana AI",
-   "status": "ga",
-   "released": "2026-08-03",
-   "price_input": 0.95,
-   "price_output": 4,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "hy3",
-   "name": "Hy3",
-   "vendor": "Tencent",
-   "status": "ga",
-   "released": "2026-07-06",
-   "price_input": 0.15,
-   "price_output": 0.59,
-   "usage": {
-    "openrouter": {
-     "share": 2.17,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "inkling",
-   "name": "Inkling",
-   "vendor": "Thinking Machines Lab",
-   "status": "ga",
-   "released": "2026-07-15",
-   "price_input": 1,
-   "price_output": 4.05,
-   "usage": {
-    "openrouter": {
-     "share": 0.25,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "inkling-small",
-   "name": "Inkling Small",
-   "vendor": "Thinking Machines Lab",
-   "status": "ga",
-   "released": "2026-08-02",
-   "price_input": 0.45,
-   "price_output": 1.2,
-   "usage": {
-    "openrouter": {
-     "share": 0.09,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "solar-pro-4",
-   "name": "Solar Pro 4",
-   "vendor": "Upstage",
-   "status": "ga",
-   "released": "2026-08-10",
-   "price_input": 0.09,
-   "price_output": 0.36,
-   "usage": {
-    "openrouter": {
-     "share": 1.22,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "hy-mt2-1-8b",
-   "name": "Hy-MT2-1.8B",
-   "vendor": "Tencent",
-   "status": "ga",
-   "released": "2026-05-21",
-   "price_input": 0.044,
-   "price_output": 0.177,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "hy-mt2-30b-a3b",
-   "name": "Hy-MT2-30B-A3B",
-   "vendor": "Tencent",
-   "status": "ga",
-   "released": "2026-05-21",
-   "price_input": 0.074,
-   "price_output": 0.295,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "glm-5-3",
-   "name": "GLM-5.3",
-   "vendor": "Z.ai (Zhipu)",
-   "status": "ga",
-   "released": "2026-08-14",
-   "price_input": 1.4,
-   "price_output": 4.4,
-   "usage": {
-    "openrouter": {
-     "share": 2.16,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "qwen3-8-max",
-   "name": "Qwen3.8 Max",
-   "vendor": "Alibaba (Qwen)",
-   "status": "ga",
-   "released": "2026-08-03",
-   "price_input": 2,
-   "price_output": 6,
-   "usage": {
-    "openrouter": {
-     "share": 0.22,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "qwen3-8-flash",
-   "name": "Qwen3.8 Flash",
-   "vendor": "Alibaba (Qwen)",
-   "status": "ga",
-   "released": "2026-08-26",
-   "price_input": 0.15,
-   "price_output": 0.47,
-   "usage": {
-    "openrouter": {
-     "share": 0.36,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "hy4-preview",
-   "name": "Hy4 preview",
-   "vendor": "Tencent",
-   "status": "preview",
-   "released": "2026-08-28",
-   "price_input": 0.834,
-   "price_output": 2.501,
-   "usage": {
-    "openrouter": {
-     "share": 7.93,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "hy-mt2-7b",
-   "name": "Hy-MT2-7B",
-   "vendor": "Tencent",
-   "status": "ga",
-   "released": "2026-05-21",
-   "price_input": 0.074,
-   "price_output": 0.295,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "granite-4-2-8b",
-   "name": "Granite 4.2 8B",
-   "vendor": "IBM",
-   "status": "ga",
-   "released": "2026-08-25",
-   "price_input": null,
-   "price_output": null,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "muse-spark-1-3-contributor",
-   "name": "Muse Spark 1.3 Contributor",
-   "vendor": "Meta",
-   "status": "ga",
-   "released": "2026-09-02",
-   "price_input": 0.1,
-   "price_output": 0.2,
-   "usage": {
-    "openrouter": {
-     "share": 1.33,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "muse-spark-1-3",
-   "name": "Muse Spark 1.3",
-   "vendor": "Meta",
-   "status": "ga",
-   "released": "2026-09-02",
-   "price_input": 1.25,
-   "price_output": 4.25,
-   "usage": {
-    "openrouter": {
-     "share": 0.34,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gemini-3-8-flash",
-   "name": "Gemini 3.8 Flash",
-   "vendor": "Google",
-   "status": "ga",
-   "released": "2026-09-02",
-   "price_input": 0.75,
-   "price_output": 3.75,
-   "usage": {
-    "openrouter": {
-     "share": 1.56,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gpt-6-astra",
-   "name": "GPT-6 Astra",
-   "vendor": "OpenAI",
-   "status": "ga",
-   "released": "2026-09-04",
-   "price_input": 10,
-   "price_output": 50,
-   "usage": {
-    "openrouter": {
-     "share": 0.72,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gpt-6-astra-pro",
-   "name": "GPT-6 Astra Pro",
-   "vendor": "OpenAI",
-   "status": "ga",
-   "released": "2026-09-04",
-   "price_input": 10,
-   "price_output": 50,
-   "usage": {
-    "openrouter": {
-     "share": 0.03,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "claude-fable-5-1",
-   "name": "Claude Fable 5.1",
-   "vendor": "Anthropic",
-   "status": "ga",
-   "released": "2026-09-01",
-   "price_input": 10,
-   "price_output": 50,
-   "usage": {
-    "openrouter": {
-     "share": 0.43,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "muse-spark-1-2-contributor",
-   "name": "Muse Spark 1.2 Contributor",
-   "vendor": "Meta",
-   "status": "ga",
-   "released": "2026-08-21",
-   "price_input": 0.1,
-   "price_output": 0.2,
-   "usage": {
-    "openrouter": {
-     "share": 0.02,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "deepseek-v4-flash-vision-exp",
-   "name": "DeepSeek V4 Flash Vision Exp",
-   "vendor": "DeepSeek",
-   "status": "ga",
-   "released": "2026-08-21",
-   "price_input": 0.44,
-   "price_output": 1.32,
-   "usage": {
-    "openrouter": {
-     "share": 0.13,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "deepseek-v4-pro-0813",
-   "name": "DeepSeek V4 Pro 0813",
-   "vendor": "DeepSeek",
-   "status": "ga",
-   "released": "2026-08-12",
-   "price_input": 0.58,
-   "price_output": 1.73,
-   "usage": null
-  },
-  {
-   "id": "deepseek-v4-flash-0731",
-   "name": "DeepSeek V4 Flash 0731",
-   "vendor": "DeepSeek",
-   "status": "ga",
-   "released": "2026-07-31",
-   "price_input": 0.05,
-   "price_output": 0.1,
-   "usage": null
-  },
-  {
-   "id": "deepseek-v4-1-flash",
-   "name": "DeepSeek V4.1 Flash",
-   "vendor": "DeepSeek",
-   "status": "ga",
-   "released": "2026-09-10",
-   "price_input": 0.15,
-   "price_output": 0.6,
-   "usage": {
-    "openrouter": {
-     "share": 13.69,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "grok-4-7",
-   "name": "Grok 4.7",
-   "vendor": "xAI",
-   "status": "ga",
-   "released": "2026-09-21",
-   "price_input": 1.6,
-   "price_output": 4.8,
-   "usage": {
-    "openrouter": {
-     "share": 0.19,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gpt-6-luna-pro",
-   "name": "GPT-6 Luna Pro",
-   "vendor": "OpenAI",
-   "status": "ga",
-   "released": "2026-09-22",
-   "price_input": 0.1,
-   "price_output": 0.5,
-   "usage": {
-    "openrouter": {
-     "share": 0.12,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gpt-6-luna",
-   "name": "GPT-6 Luna",
-   "vendor": "OpenAI",
-   "status": "ga",
-   "released": "2026-09-22",
-   "price_input": 0.1,
-   "price_output": 0.5,
-   "usage": {
-    "openrouter": {
-     "share": 1.18,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gpt-6-sol-pro",
-   "name": "GPT-6 Sol Pro",
-   "vendor": "OpenAI",
-   "status": "ga",
-   "released": "2026-09-22",
-   "price_input": 2,
-   "price_output": 10,
-   "usage": {
-    "openrouter": {
-     "share": 0.01,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "gpt-6-sol",
-   "name": "GPT-6 Sol",
-   "vendor": "OpenAI",
-   "status": "ga",
-   "released": "2026-09-22",
-   "price_input": 2,
-   "price_output": 10,
-   "usage": {
-    "openrouter": {
-     "share": 0.37,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "claude-opus-5-5",
-   "name": "Claude Opus 5.5",
-   "vendor": "Anthropic",
-   "status": "ga",
-   "released": "2026-09-22",
-   "price_input": 4,
-   "price_output": 20,
-   "usage": {
-    "openrouter": {
-     "share": 0.49,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "qwen3-8-omni-flash",
-   "name": "Qwen3.8 Omni Flash",
-   "vendor": "Alibaba (Qwen)",
-   "status": "ga",
-   "released": "2026-09-21",
-   "price_input": 0.15,
-   "price_output": 0.47,
-   "usage": {
-    "openrouter": {
-     "share": 0.01,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  },
-  {
-   "id": "command-a",
-   "name": "Command A+",
-   "vendor": "Cohere",
-   "status": "ga",
-   "released": "2026-09-22",
-   "price_input": 0.3,
-   "price_output": 1.5,
-   "usage": null
-  },
-  {
-   "id": "qwen3-8-max-prime",
-   "name": "Qwen3.8 Max Prime",
-   "vendor": "Alibaba (Qwen)",
-   "status": "ga",
-   "released": "2026-09-23",
-   "price_input": 4,
-   "price_output": 12,
-   "usage": {
-    "openrouter": {
-     "share": 0,
-     "as_of": "2026-09-25",
-     "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-    }
-   }
-  }
- ]
+  "_readme": "Frozen projection of data/models.json (taken 2026-10-03) with only the fields assets/instructions.mjs reads: id, name, vendor, status, released, list prices and the OpenRouter usage share. Used by scripts/test-instructions.mjs so live data changes never move its golden packages. Refresh by hand only.",
+  "as_of": "2026-10-03",
+  "models": [
+    {
+      "id": "claude-opus-5",
+      "name": "Claude Opus 5",
+      "vendor": "Anthropic",
+      "status": "ga",
+      "released": "2026-07-23",
+      "price_input": 5,
+      "price_output": 25,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.34,
+          "rank": 36,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "kimi-k3",
+      "name": "Kimi K3",
+      "vendor": "Moonshot AI",
+      "status": "ga",
+      "released": "2026-07-16",
+      "price_input": 3,
+      "price_output": 15,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.99,
+          "rank": 17,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "claude-fable-5",
+      "name": "Claude Fable 5",
+      "vendor": "Anthropic",
+      "status": "ga",
+      "released": "2026-07",
+      "price_input": 10,
+      "price_output": 50,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.03,
+          "rank": 116,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "claude-opus-4-8",
+      "name": "Claude Opus 4.8",
+      "vendor": "Anthropic",
+      "status": "ga",
+      "released": "2026-05",
+      "price_input": 5,
+      "price_output": 25,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.14,
+          "rank": 64,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "claude-sonnet-5",
+      "name": "Claude Sonnet 5",
+      "vendor": "Anthropic",
+      "status": "ga",
+      "released": "2026-06-30",
+      "price_input": 2,
+      "price_output": 10,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.79,
+          "rank": 20,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gpt-5-5",
+      "name": "GPT-5.5",
+      "vendor": "OpenAI",
+      "status": "ga",
+      "released": "2026-04-23",
+      "price_input": 5,
+      "price_output": 30,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.03,
+          "rank": 103,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gemini-3-1-pro",
+      "name": "Gemini 3.1 Pro (Preview)",
+      "vendor": "Google",
+      "status": "preview",
+      "released": "2026",
+      "price_input": 2,
+      "price_output": 12,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.13,
+          "rank": 66,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "deepseek-v4-pro",
+      "name": "DeepSeek V4-Pro",
+      "vendor": "DeepSeek",
+      "status": "ga",
+      "released": "2026-04-24",
+      "price_input": 1.32,
+      "price_output": 3.96,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.44,
+          "rank": 31,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "kimi-k2-6",
+      "name": "Kimi K2.6",
+      "vendor": "Moonshot AI",
+      "status": "ga",
+      "released": "2026-04-20",
+      "price_input": 0.95,
+      "price_output": 4,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.11,
+          "rank": 69,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "llama-4-maverick",
+      "name": "Llama 4 Maverick",
+      "vendor": "Meta",
+      "status": "ga",
+      "released": "2026-Q1",
+      "price_input": 0.22,
+      "price_output": 0.88,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.01,
+          "rank": 157,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "o4-mini",
+      "name": "o4-mini",
+      "vendor": "OpenAI",
+      "status": "ga",
+      "released": null,
+      "price_input": 1.1,
+      "price_output": 4.4,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 222,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "claude-haiku-4-5",
+      "name": "Claude Haiku 4.5",
+      "vendor": "Anthropic",
+      "status": "ga",
+      "released": "2025-10-01",
+      "price_input": 1,
+      "price_output": 5,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.15,
+          "rank": 60,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gpt-5-6-sol",
+      "name": "GPT-5.6 Sol",
+      "vendor": "OpenAI",
+      "status": "ga",
+      "released": "2026-07-09",
+      "price_input": 4,
+      "price_output": 20,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.99,
+          "rank": 16,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gpt-5-6-terra",
+      "name": "GPT-5.6 Terra",
+      "vendor": "OpenAI",
+      "status": "ga",
+      "released": "2026-07-09",
+      "price_input": 2,
+      "price_output": 12,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.25,
+          "rank": 49,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gpt-5-6-luna",
+      "name": "GPT-5.6 Luna",
+      "vendor": "OpenAI",
+      "status": "ga",
+      "released": "2026-07-09",
+      "price_input": 0.2,
+      "price_output": 1.2,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 4.36,
+          "rank": 5,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gemini-3-5-flash",
+      "name": "Gemini 3.5 Flash",
+      "vendor": "Google",
+      "status": "ga",
+      "released": "2026-05-19",
+      "price_input": 1.5,
+      "price_output": 9,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.07,
+          "rank": 82,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gemini-2-5-flash-lite",
+      "name": "Gemini 2.5 Flash-Lite",
+      "vendor": "Google",
+      "status": "ga",
+      "released": "2025",
+      "price_input": 0.1,
+      "price_output": 0.4,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.46,
+          "rank": 30,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "grok-4-5",
+      "name": "Grok 4.5",
+      "vendor": "xAI",
+      "status": "ga",
+      "released": "2026-07-08",
+      "price_input": 2,
+      "price_output": 6,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.04,
+          "rank": 96,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "deepseek-v4-flash",
+      "name": "DeepSeek V4-Flash",
+      "vendor": "DeepSeek",
+      "status": "ga",
+      "released": "2026-04-24",
+      "price_input": 0.44,
+      "price_output": 1.32,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 2.01,
+          "rank": 10,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "qwen3-max",
+      "name": "Qwen3-Max",
+      "vendor": "Alibaba (Qwen)",
+      "status": "ga",
+      "released": null,
+      "price_input": 1.2,
+      "price_output": 6,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 255,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "qwen3-coder-plus",
+      "name": "Qwen3-Coder-Plus",
+      "vendor": "Alibaba (Qwen)",
+      "status": "ga",
+      "released": null,
+      "price_input": 1,
+      "price_output": 5,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.01,
+          "rank": 176,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "qwen-turbo",
+      "name": "Qwen-Turbo",
+      "vendor": "Alibaba (Qwen)",
+      "status": "ga",
+      "released": null,
+      "price_input": 0.05,
+      "price_output": 0.2
+    },
+    {
+      "id": "mistral-medium-3-1",
+      "name": "Mistral Medium 3.1",
+      "vendor": "Mistral AI",
+      "status": "ga",
+      "released": null,
+      "price_input": 0.4,
+      "price_output": 2,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 201,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gemini-3-6-flash",
+      "name": "Gemini 3.6 Flash",
+      "vendor": "Google",
+      "status": "ga",
+      "released": null,
+      "price_input": 0.75,
+      "price_output": 3.75,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.07,
+          "rank": 79,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "glm-5-2",
+      "name": "GLM-5.2",
+      "vendor": "Z.ai (Zhipu)",
+      "status": "ga",
+      "released": null,
+      "price_input": 1.4,
+      "price_output": 4.4,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.82,
+          "rank": 19,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gemini-3-7-flash",
+      "name": "Gemini 3.7 Flash",
+      "vendor": "Google",
+      "status": "ga",
+      "released": "2026-08-13",
+      "price_input": 0.75,
+      "price_output": 3.75,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.3,
+          "rank": 40,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "grok-4-6",
+      "name": "Grok 4.6",
+      "vendor": "xAI",
+      "status": "ga",
+      "released": "2026-08-12",
+      "price_input": 2,
+      "price_output": 6,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.11,
+          "rank": 71,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "muse-spark-1-2",
+      "name": "Muse Spark 1.2",
+      "vendor": "Meta",
+      "status": "ga",
+      "released": "2026-08-05",
+      "price_input": 1.25,
+      "price_output": 4.25,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.01,
+          "rank": 174,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "muse-spark-1-1",
+      "name": "Muse Spark 1.1",
+      "vendor": "Meta",
+      "status": "ga",
+      "released": "2026-07-16",
+      "price_input": 1.25,
+      "price_output": 4.25,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 241,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "ling-3-0-flash",
+      "name": "Ling-3.0-flash",
+      "vendor": "InclusionAI (Ant Group)",
+      "status": "ga",
+      "price_input": 0.06,
+      "price_output": 0.18,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.07,
+          "rank": 76,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "kat-coder-pro-v2-5",
+      "name": "KAT-Coder-Pro V2.5",
+      "vendor": "Kwaipilot",
+      "status": "ga",
+      "price_input": 0.74,
+      "price_output": 2.96
+    },
+    {
+      "id": "kat-coder-air-v2-5",
+      "name": "KAT-Coder-Air V2.5",
+      "vendor": "Kwaipilot",
+      "status": "ga"
+    },
+    {
+      "id": "longcat-2-0",
+      "name": "LongCat 2.0",
+      "vendor": "Meituan",
+      "status": "ga",
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.01,
+          "rank": 180,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "muse-glimmer-30b",
+      "name": "Muse Glimmer 30B",
+      "vendor": "Meta",
+      "status": "ga",
+      "price_input": 0.35,
+      "price_output": 1.5,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.01,
+          "rank": 148,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "nemotron-3-5-lightning",
+      "name": "Nemotron 3.5 Lightning",
+      "vendor": "NVIDIA",
+      "status": "ga",
+      "price_input": 0.06,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.36,
+          "rank": 35,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "laguna-s-2-1",
+      "name": "Laguna S 2.1",
+      "vendor": "Poolside",
+      "status": "ga",
+      "price_input": 0.09,
+      "price_output": 0.18,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.65,
+          "rank": 27,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "qwen3-7-flash",
+      "name": "Qwen3.7 Flash",
+      "vendor": "Alibaba (Qwen)",
+      "status": "ga",
+      "price_input": 0.03,
+      "price_output": 0.13,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.27,
+          "rank": 44,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "seed-2-1-turbo",
+      "name": "Seed 2.1 Turbo",
+      "vendor": "ByteDance",
+      "status": "ga",
+      "price_input": 0.5,
+      "price_output": 2.5,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 269,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "aion-3-0",
+      "name": "Aion-3.0",
+      "vendor": "AionLabs",
+      "status": "ga",
+      "released": "2026-07-07",
+      "price_input": 3,
+      "price_output": 6,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 260,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "aion-3-0-mini",
+      "name": "Aion-3.0-Mini",
+      "vendor": "AionLabs",
+      "status": "ga",
+      "released": "2026-07-07",
+      "price_input": 0.7,
+      "price_output": 1.4,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 305,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "seed-2-0-code",
+      "name": "Seed-2.0-Code",
+      "vendor": "ByteDance",
+      "status": "ga",
+      "released": "2026-02-14",
+      "price_input": 0.5,
+      "price_output": 3,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 359,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "laguna-xs-2-1",
+      "name": "Laguna XS 2.1",
+      "vendor": "Poolside",
+      "status": "ga",
+      "released": "2026-07-02",
+      "price_input": 0.06,
+      "price_output": 0.12,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.05,
+          "rank": 87,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "qwen3-8-2-4t-a95b",
+      "name": "Qwen3.8 2.4T A95B",
+      "vendor": "Alibaba (Qwen)",
+      "status": "ga",
+      "released": "2026-08-01",
+      "price_input": 2,
+      "price_output": 6,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.02,
+          "rank": 127,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "qwen3-8-27b",
+      "name": "Qwen3.8 27B",
+      "vendor": "Alibaba (Qwen)",
+      "status": "ga",
+      "released": "2026-08-14",
+      "price_input": null,
+      "price_output": 3,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.27,
+          "rank": 43,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "sakana-namazu",
+      "name": "Sakana Namazu",
+      "vendor": "Sakana AI",
+      "status": "ga",
+      "released": "2026-08-03",
+      "price_input": 0.95,
+      "price_output": 4,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 418,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "hy3",
+      "name": "Hy3",
+      "vendor": "Tencent",
+      "status": "ga",
+      "released": "2026-07-06",
+      "price_input": 0.15,
+      "price_output": 0.59,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 1.38,
+          "rank": 13,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "inkling",
+      "name": "Inkling",
+      "vendor": "Thinking Machines Lab",
+      "status": "ga",
+      "released": "2026-07-15",
+      "price_input": 1,
+      "price_output": 4.05,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.17,
+          "rank": 57,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "inkling-small",
+      "name": "Inkling Small",
+      "vendor": "Thinking Machines Lab",
+      "status": "ga",
+      "released": "2026-08-02",
+      "price_input": 0.45,
+      "price_output": 1.2,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.07,
+          "rank": 80,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "solar-pro-4",
+      "name": "Solar Pro 4",
+      "vendor": "Upstage",
+      "status": "ga",
+      "released": "2026-08-10",
+      "price_input": 0.09,
+      "price_output": 0.36,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.75,
+          "rank": 24,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "hy-mt2-1-8b",
+      "name": "Hy-MT2-1.8B",
+      "vendor": "Tencent",
+      "status": "ga",
+      "released": "2026-05-21",
+      "price_input": 0.044,
+      "price_output": 0.177,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 400,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "hy-mt2-30b-a3b",
+      "name": "Hy-MT2-30B-A3B",
+      "vendor": "Tencent",
+      "status": "ga",
+      "released": "2026-05-21",
+      "price_input": 0.074,
+      "price_output": 0.295,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 317,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "glm-5-3",
+      "name": "GLM-5.3",
+      "vendor": "Z.ai (Zhipu)",
+      "status": "ga",
+      "released": "2026-08-14",
+      "price_input": 1.4,
+      "price_output": 4.4,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 1.6,
+          "rank": 12,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "qwen3-8-max",
+      "name": "Qwen3.8 Max",
+      "vendor": "Alibaba (Qwen)",
+      "status": "ga",
+      "released": "2026-08-03",
+      "price_input": 2,
+      "price_output": 6,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.15,
+          "rank": 61,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "qwen3-8-flash",
+      "name": "Qwen3.8 Flash",
+      "vendor": "Alibaba (Qwen)",
+      "status": "ga",
+      "released": "2026-08-26",
+      "price_input": 0.15,
+      "price_output": 0.47,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.32,
+          "rank": 38,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "hy4-preview",
+      "name": "Hy4 preview",
+      "vendor": "Tencent",
+      "status": "preview",
+      "released": "2026-08-28",
+      "price_input": 0.834,
+      "price_output": 2.501,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 4.27,
+          "rank": 7,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "hy-mt2-7b",
+      "name": "Hy-MT2-7B",
+      "vendor": "Tencent",
+      "status": "ga",
+      "released": "2026-05-21",
+      "price_input": 0.074,
+      "price_output": 0.295,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 379,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "granite-4-2-8b",
+      "name": "Granite 4.2 8B",
+      "vendor": "IBM",
+      "status": "ga",
+      "released": "2026-08-25",
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.01,
+          "rank": 177,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "muse-spark-1-3-contributor",
+      "name": "Muse Spark 1.3 Contributor",
+      "vendor": "Meta",
+      "status": "ga",
+      "released": "2026-09-02",
+      "price_input": 0.1,
+      "price_output": 0.2,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.94,
+          "rank": 18,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "muse-spark-1-3",
+      "name": "Muse Spark 1.3",
+      "vendor": "Meta",
+      "status": "ga",
+      "released": "2026-09-02",
+      "price_input": 1.25,
+      "price_output": 4.25,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.26,
+          "rank": 46,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gemini-3-8-flash",
+      "name": "Gemini 3.8 Flash",
+      "vendor": "Google",
+      "status": "ga",
+      "released": "2026-09-02",
+      "price_input": 0.75,
+      "price_output": 3.75,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 1.34,
+          "rank": 14,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gpt-6-astra",
+      "name": "GPT-6 Astra",
+      "vendor": "OpenAI",
+      "status": "ga",
+      "released": "2026-09-04",
+      "price_input": 10,
+      "price_output": 50,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.77,
+          "rank": 23,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gpt-6-astra-pro",
+      "name": "GPT-6 Astra Pro",
+      "vendor": "OpenAI",
+      "status": "ga",
+      "released": "2026-09-04",
+      "price_input": 10,
+      "price_output": 50,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.03,
+          "rank": 114,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "claude-fable-5-1",
+      "name": "Claude Fable 5.1",
+      "vendor": "Anthropic",
+      "status": "ga",
+      "released": "2026-09-01",
+      "price_input": 10,
+      "price_output": 50,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.36,
+          "rank": 34,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "muse-spark-1-2-contributor",
+      "name": "Muse Spark 1.2 Contributor",
+      "vendor": "Meta",
+      "status": "ga",
+      "released": "2026-08-21",
+      "price_input": 0.1,
+      "price_output": 0.2,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.01,
+          "rank": 136,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "deepseek-v4-flash-vision-exp",
+      "name": "DeepSeek V4 Flash Vision Exp",
+      "vendor": "DeepSeek",
+      "status": "ga",
+      "released": "2026-08-21",
+      "price_input": 0.44,
+      "price_output": 1.32,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.07,
+          "rank": 81,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "deepseek-v4-pro-0813",
+      "name": "DeepSeek V4 Pro 0813",
+      "vendor": "DeepSeek",
+      "status": "ga",
+      "released": "2026-08-12",
+      "price_input": 0.58,
+      "price_output": 1.73
+    },
+    {
+      "id": "deepseek-v4-flash-0731",
+      "name": "DeepSeek V4 Flash 0731",
+      "vendor": "DeepSeek",
+      "status": "ga",
+      "released": "2026-07-31",
+      "price_input": 0.05,
+      "price_output": 0.1
+    },
+    {
+      "id": "deepseek-v4-1-flash",
+      "name": "DeepSeek V4.1 Flash",
+      "vendor": "DeepSeek",
+      "status": "ga",
+      "released": "2026-09-10",
+      "price_input": 0.3,
+      "price_output": 1.2,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 14.73,
+          "rank": 2,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "grok-4-7",
+      "name": "Grok 4.7",
+      "vendor": "xAI",
+      "status": "ga",
+      "released": "2026-09-21",
+      "price_input": 2,
+      "price_output": 6,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.26,
+          "rank": 47,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gpt-6-luna-pro",
+      "name": "GPT-6 Luna Pro",
+      "vendor": "OpenAI",
+      "status": "ga",
+      "released": "2026-09-22",
+      "price_input": 0.1,
+      "price_output": 0.5,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.26,
+          "rank": 45,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gpt-6-luna",
+      "name": "GPT-6 Luna",
+      "vendor": "OpenAI",
+      "status": "ga",
+      "released": "2026-09-22",
+      "price_input": 0.1,
+      "price_output": 0.5,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 3.6,
+          "rank": 9,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gpt-6-sol-pro",
+      "name": "GPT-6 Sol Pro",
+      "vendor": "OpenAI",
+      "status": "ga",
+      "released": "2026-09-22",
+      "price_input": 2,
+      "price_output": 10,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.03,
+          "rank": 110,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gpt-6-sol",
+      "name": "GPT-6 Sol",
+      "vendor": "OpenAI",
+      "status": "ga",
+      "released": "2026-09-22",
+      "price_input": 2,
+      "price_output": 10,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.74,
+          "rank": 25,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "claude-opus-5-5",
+      "name": "Claude Opus 5.5",
+      "vendor": "Anthropic",
+      "status": "ga",
+      "released": "2026-09-22",
+      "price_input": 4,
+      "price_output": 20,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 1.3,
+          "rank": 15,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "qwen3-8-omni-flash",
+      "name": "Qwen3.8 Omni Flash",
+      "vendor": "Alibaba (Qwen)",
+      "status": "ga",
+      "released": "2026-09-21",
+      "price_input": 0.15,
+      "price_output": 0.47,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.01,
+          "rank": 141,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "command-a",
+      "name": "Command A+",
+      "vendor": "Cohere",
+      "status": "ga",
+      "released": "2026-09-22",
+      "price_input": 0.3,
+      "price_output": 1.5
+    },
+    {
+      "id": "qwen3-8-max-prime",
+      "name": "Qwen3.8 Max Prime",
+      "vendor": "Alibaba (Qwen)",
+      "status": "ga",
+      "released": "2026-09-23",
+      "price_input": 4,
+      "price_output": 12,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.02,
+          "rank": 132,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "claude-sonnet-5-5",
+      "name": "Claude Sonnet 5.5",
+      "vendor": "Anthropic",
+      "status": "ga",
+      "released": "2026-09-28",
+      "price_input": 2,
+      "price_output": 10,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.25,
+          "rank": 48,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gpt-6-1-sol-pro",
+      "name": "GPT-6.1 Sol Pro",
+      "vendor": "OpenAI",
+      "status": "ga",
+      "released": "2026-09-29",
+      "price_input": 2,
+      "price_output": 10,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.01,
+          "rank": 158,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    {
+      "id": "gpt-6-1-sol",
+      "name": "GPT-6.1 Sol",
+      "vendor": "OpenAI",
+      "status": "ga",
+      "released": "2026-09-29",
+      "price_input": 2,
+      "price_output": 10,
+      "usage": {
+        "openrouter": {
+          "category": "overall",
+          "share": 0.17,
+          "rank": 56,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    }
+  ]
 }
