@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-02",
+  "as_of": "2026-10-03",
   "models": [
     {
       "id": "claude-opus-5",
@@ -14277,15 +14277,15 @@
         "vision": {
           "claims": [
             {
-              "sentence": "OpenRouter's model description for Muse Spark 1.1 (checked 2026-09-07) states it accepts text, images, video, audio, and PDF documents as input with a 1M-token context window.",
+              "sentence": "OpenRouter's model description for Muse Spark 1.1 (checked 2026-10-03) states it accepts text, images, video and PDF documents as input with a 1M-token context window.",
               "source_url": "https://openrouter.ai/meta/muse-spark-1.1",
               "tier": "reported",
-              "date": "2026-09-07",
-              "quote": "It accepts text, images, video, audio, and PDF documents and returns text, with a 1M-token context window."
+              "date": "2026-10-03",
+              "quote": "It accepts text, images, video, and PDF documents and returns text, with a 1M-token context window."
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-07"
+          "as_of": "2026-10-03"
         },
         "research": {
           "claims": [
@@ -19120,7 +19120,7 @@
         }
       },
       "status": "ga",
-      "adoption": "new",
+      "adoption": "low",
       "signals": {
         "coding": {
           "usage_rank": null,
@@ -22006,7 +22006,7 @@
         }
       },
       "status": "ga",
-      "adoption": "new",
+      "adoption": "low",
       "signals": {
         "coding": {
           "usage_rank": null,
@@ -24785,7 +24785,8 @@
         "https://openrouter.ai/openai/gpt-6-astra",
         "https://platform.openai.com/docs/models/gpt-6-astra.md",
         "https://openrouter.ai/api/frontend/v1/rankings/models",
-        "https://arena.ai/leaderboard/code/webdev"
+        "https://arena.ai/leaderboard/code/webdev",
+        "https://developers.openai.com/api/docs/models/gpt-6-astra"
       ],
       "coding_score": null,
       "coding_basis": null,
@@ -24863,15 +24864,15 @@
         "coding": {
           "claims": [
             {
-              "sentence": "OpenAI's own documentation states GPT-6 Astra is built for the hardest end-to-end work, covering complex reasoning, coding, computer use, research, and document creation, with a 1,050,000-token context window.",
-              "source_url": "https://platform.openai.com/docs/models/gpt-6-astra.md",
+              "sentence": "OpenAI's GPT-6 Astra model page (checked 2026-10-03) lists coding among the uses it names for GPT-6 Astra, with complex reasoning, computer use, research and document creation, and a 1,050,000-token context window.",
+              "source_url": "https://developers.openai.com/api/docs/models/gpt-6-astra",
               "tier": "lab",
-              "date": "2026-09-06",
-              "quote": "GPT-6 Astra is our most capable model, built for the hardest end-to-end work."
+              "date": "2026-10-03",
+              "quote": "Use it for complex reasoning, coding, computer use, research, and document creation."
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-07"
+          "as_of": "2026-10-03"
         }
       },
       "usage": {
