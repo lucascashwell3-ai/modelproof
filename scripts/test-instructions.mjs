@@ -372,9 +372,9 @@ test('power-user-max5x: Lead Opus 5.5 at medium (high for hard steps) · helpers
   for (const role of HELPERS) assert.match(pkg.parts.find((p) => p.id === `claude-code:agent:${role}`).content, /^model: inherit$/m, role);
   assert.match(pkg.parts.find((p) => p.id === 'claude-code:agent:bulk').content, /^model: haiku$/m);
   assert.ok(!pkg.parts.some((p) => p.kind === 'json-keys'), 'nothing goes into settings.json without an opt-in');
-  // Their own verify-work helper does the reviewer's job: named, nothing overwritten.
+  // Their own checker helper does the reviewer's job: named, nothing overwritten.
   const reviewer = pkg.parts.findIndex((p) => p.id === 'claude-code:agent:reviewer') + 1;
-  assert.deepEqual(pkg.checks.map((c) => [c.kind, c.name, c.item]), [['helper', 'verify-work', reviewer]]);
+  assert.deepEqual(pkg.checks.map((c) => [c.kind, c.name, c.item]), [['helper', 'checker', reviewer]]);
 });
 
 test('GitHub Copilot: helper files with no model line (it runs the default model) plus the project AGENTS.md block', () => {

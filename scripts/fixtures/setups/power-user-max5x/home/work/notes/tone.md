@@ -1,4 +1,4 @@
-# Writing style
+# Tone
 
 - Short sentences. Active voice.
 - No filler words.

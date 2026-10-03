@@ -28,7 +28,7 @@
     },
     {
       "scope": "user",
-      "path": "~/work/.claude/rules/writing-style.md",
+      "path": "~/work/notes/tone.md",
       "lines": 5,
       "readers": [
         "claude-code"
@@ -39,19 +39,19 @@
     {
       "tool": "claude-code",
       "scope": "user",
-      "path": "~/.claude/agents/code-simplifier.md",
-      "name": "code-simplifier",
+      "path": "~/.claude/agents/checker.md",
+      "name": "checker",
       "model": null,
-      "description": "Simplifies recently changed code for clarity and consistency while keeping its behaviour.",
+      "description": "Runs the project's tests and verifies the result, then reports what passed and what failed.",
       "modelproof": false
     },
     {
       "tool": "claude-code",
       "scope": "user",
-      "path": "~/.claude/agents/verify-work.md",
-      "name": "verify-work",
+      "path": "~/.claude/agents/code-simplifier.md",
+      "name": "code-simplifier",
       "model": null,
-      "description": "Finds and runs the project's real checks, then reports what passed and what failed.",
+      "description": "Simplifies recently changed code for clarity and consistency while keeping its behaviour.",
       "modelproof": false
     }
   ],

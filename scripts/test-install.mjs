@@ -193,8 +193,8 @@ test('Claude Code + GitHub Copilot: one set of helpers (Copilot loads .claude/ag
 
 test('power-user-max5x: their CLAUDE.md, import target, helpers, output style, skill and settings are never touched', () => {
   const f = setup('power-user-max5x');
-  const keep = ['.claude/CLAUDE.md', 'work/.claude/rules/writing-style.md', '.claude/agents/code-simplifier.md', '.claude/agents/verify-work.md',
-    '.claude/output-styles/terse.md', '.claude/skills/release-notes/SKILL.md', '.claude/settings.json'].map((x) => path.join(f.home, x));
+  const keep = ['.claude/CLAUDE.md', 'work/notes/tone.md', '.claude/agents/code-simplifier.md', '.claude/agents/checker.md',
+    '.claude/output-styles/short.md', '.claude/skills/release-notes/SKILL.md', '.claude/settings.json'].map((x) => path.join(f.home, x));
   const sums = keep.map((x) => crypto.createHash('sha256').update(fs.readFileSync(x)).digest('hex'));
   const p = plan(f, path.join(PROFILES, 'power-user-max5x.json'), { project: false });
   ok(p);
@@ -203,7 +203,7 @@ test('power-user-max5x: their CLAUDE.md, import target, helpers, output style, s
     ['~/.claude/agents/modelproof-reviewer.md', 'create'], ['~/.claude/agents/modelproof-bulk.md', 'create'],
     ['~/.claude/rules/modelproof.md', 'create'],
   ]);
-  assert.match(p.out, /Your helper verify-work \(~\/\.claude\/agents\/verify-work\.md\) does the same job as #3 modelproof-reviewer/);
+  assert.match(p.out, /Your helper checker \(~\/\.claude\/agents\/checker\.md\) does the same job as #3 modelproof-reviewer/);
   assert.doesNotMatch(p.out + JSON.stringify(p.plan), /not-for-output/);
   ok(apply(f, p));
   assert.deepEqual(keep.map((x) => crypto.createHash('sha256').update(fs.readFileSync(x)).digest('hex')), sums);

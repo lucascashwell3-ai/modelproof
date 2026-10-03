@@ -1,5 +1,5 @@
 {
-  "outputStyle": "Terse",
+  "outputStyle": "Short",
   "permissions": {
     "allow": ["Bash(git status)", "Bash(npm test)"]
   },

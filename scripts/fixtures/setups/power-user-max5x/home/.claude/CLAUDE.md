@@ -7,10 +7,10 @@ Applies to every project on this machine.
 - Plain words; define a technical word the first time.
 - Verify before saying something works.
 
-## Work habits
-- Commit and push at the end of each session.
-- One thread at a time; capture new ideas in the inbox file.
-- Read the project's status file before starting.
+## Code
+- Run the tests before each commit.
+- Keep each change small enough to review in one sitting.
+- Ask before deleting a file.
 
-## Writing rules
-@~/work/.claude/rules/writing-style.md
+## Tone
+@~/work/notes/tone.md

@@ -111,8 +111,8 @@
   "checks": [
     {
       "kind": "helper",
-      "name": "verify-work",
-      "path": "~/.claude/agents/verify-work.md",
+      "name": "checker",
+      "path": "~/.claude/agents/checker.md",
       "tool": "claude-code",
       "role": "reviewer",
       "item": 3
