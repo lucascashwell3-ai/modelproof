@@ -23,6 +23,8 @@ jobs:
 
       - name: Unit tests (frozen fixture)
         run: node --test scripts/test-*.mjs
+        env:
+          NO_TYPED_FACTS_DATA: data
 
       - name: Honesty gate
         run: node scripts/validate-data.mjs
