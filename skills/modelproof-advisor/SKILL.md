@@ -109,14 +109,16 @@ New answers → new profile → new plan → show it again → "Go?" again. Full
    undo.
 3. Close: "You're all set", which helper now runs on which model (words from the preview),
    "Start a new session to load them", and the undo line exactly as apply printed it
-   (`node <MP>/bin/install.mjs undo <id>`). If something couldn't be confirmed, one line.
-   Then stop. No summary.
+   (`node <MP>/bin/install.mjs undo <id>`), with the line under it when apply says the undo also
+   takes out an earlier install. If apply said "Nothing was written", say that in one line, with
+   no undo line. If something couldn't be confirmed, one line. Then stop. No summary.
 
 ## Undo
 
 They ask to take it out → `node "$MP/bin/install.mjs" status` lists install ids. Show which
-install you'll undo and ask "Go?". On yes run `node "$MP/bin/install.mjs" undo <id>` and
-repeat its last line. Exit 3 → it names a file it could not fully clean; show that line as is.
+install you'll undo and ask "Go?" (the plan said when one undo takes out an earlier install
+too: say so). On yes run `node "$MP/bin/install.mjs" undo <id>` and repeat its last line, plus
+the line saying it took out more than one install when it prints one. Exit 3 → it names a file it could not fully clean; show that line as is.
 No record left (a teammate's install, a lost `MP`) →
 `IN undo --from-markers --home "$HOME"`, same yes first. Undo keeps `MP` (history).
 
