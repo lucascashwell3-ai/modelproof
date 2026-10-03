@@ -12,6 +12,7 @@ Lead, helpers and bulk per tool
 What the tools and labs say (their own words)
   Google: "On June 18, 2026, Gemini CLI and Gemini Code Assist IDE extensions will stop serving requests for Google AI Pro and Ultra"
     https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli (2026-10-03)
+    That date (2026-06-18) has passed: the source said "will" before it came (facts as of 2026-10-03).
 
 Files (numbered; answer "no to 3" to leave one out)
    1. file   ~/.gemini/config/agents/modelproof-scout.md · 15 lines · the tool obeys it

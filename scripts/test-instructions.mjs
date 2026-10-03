@@ -427,6 +427,20 @@ test('Antigravity: helper files on the inherit tier; text in ~/.gemini/AGENTS.md
   assert.ok(!proj.parts.some((p) => /\.agents\/rules\//.test(p.target.path)), 'no rules file: Antigravity drops one without trigger frontmatter');
 });
 
+test('preview: a quote in the future tense about a date the facts date has passed keeps its words; our line says the date has passed', () => {
+  const pkg = build('antigravity');
+  const said = pkg.preview_facts.tools_and_labs_say.flatMap((x) => x.claims).find((c) => /\bwill\b/.test(c.quote));
+  assert.ok(said, 'the fixture has a future-tense quote');
+  const text = renderPreview(pkg);
+  assert.ok(text.includes(`"${said.quote}"`), 'the quote stays word for word');
+  const note = text.split('\n').find((l) => /has passed/.test(l));
+  assert.ok(note && note.includes(`facts as of ${pkg.as_of}`), text);
+  const d = note.match(/\((\d{4}-\d\d-\d\d)\)/)[1];
+  assert.ok(d < pkg.as_of);
+  // Read on a facts date before that day, the same quote gets no note.
+  assert.doesNotMatch(renderPreview({ ...pkg, as_of: d }), /has passed/);
+});
+
 test('OpenRouter / API is copy only: the package writes nothing, the preview says so, and the text keeps its sources', () => {
   const pkg = build('openrouter');
   assert.deepEqual(pkg.parts, []);

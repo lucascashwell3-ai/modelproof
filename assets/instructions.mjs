@@ -1393,6 +1393,29 @@ function usageText(u) {
   return u && num(u.openrouter_share) ? `${u.openrouter_share}% of OpenRouter tokens${u.as_of ? ' (' + u.as_of + ')' : ''}` : null;
 }
 
+// A quoted source line written in the future tense about a date that the facts date has passed:
+// the quote stays word for word, and our own line under it says, in the past tense, that the date
+// has passed. The date comes from the quote, the facts date from the data.
+const MONTH_NAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+function quotedDate(q) {
+  const s = String(q || '');
+  const pad = (n) => String(n).padStart(2, '0');
+  const ymd = (y, mi, d) => (mi >= 0 && d >= 1 && d <= 31 ? `${y}-${pad(mi + 1)}-${pad(d)}` : null);
+  let m = /\b(\d{4})-(\d\d)-(\d\d)\b/.exec(s);
+  if (m) return ymd(m[1], Number(m[2]) - 1, Number(m[3]));
+  const mon = MONTH_NAMES.join('|');
+  m = new RegExp(`\\b(${mon})\\s+(\\d{1,2})(?:st|nd|rd|th)?,?\\s+(\\d{4})\\b`, 'i').exec(s);
+  if (m) return ymd(m[3], MONTH_NAMES.indexOf(m[1].toLowerCase()), Number(m[2]));
+  m = new RegExp(`\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(${mon})\\s+(\\d{4})\\b`, 'i').exec(s);
+  if (m) return ymd(m[3], MONTH_NAMES.indexOf(m[2].toLowerCase()), Number(m[1]));
+  return null;
+}
+function passedDateNote(quote, asOf) {
+  if (!/\bwill\b/i.test(String(quote || '')) || !asOf) return null;
+  const d = quotedDate(quote);
+  return d && d < asOf ? `That date (${d}) has passed: the source said "will" before it came (facts as of ${asOf}).` : null;
+}
+
 export function renderPreview(pkg) {
   const P = isObj(pkg) ? pkg : {};
   const out = [];
@@ -1424,7 +1447,13 @@ export function renderPreview(pkg) {
 
   if (Object.keys(roles).length) {
     out.push('', Object.keys(roles).some((t) => HELPER_TOOLS.includes(t)) ? 'Lead, helpers and bulk per tool' : 'Lead and bulk per tool');
-    const quotes = (list) => { for (const b of arr(list)) out.push(`             "${b.quote}"`, `             ${b.source_url} (${b.date})`); };
+    const quotes = (list) => {
+      for (const b of arr(list)) {
+        out.push(`             "${b.quote}"`, `             ${b.source_url} (${b.date})`);
+        const late = passedDateNote(b.quote, P.as_of);
+        if (late) out.push(`             ${late}`);
+      }
+    };
     for (const tool of TOOLS) {
       const t = roles[tool];
       if (!t) continue;
@@ -1462,12 +1491,18 @@ export function renderPreview(pkg) {
       const u = usageText(m.usage);
       out.push(`  ${m.name}: ${priceText(m.price)}${u ? ' · ' + u : ''}`);
       if (m.claim) out.push(`    "${m.claim.quote}" ${m.claim.source_url} (${m.claim.date})`);
+      const late = m.claim ? passedDateNote(m.claim.quote, P.as_of) : null;
+      if (late) out.push(`    ${late}`);
     }
   }
   if (arr(pf.tools_and_labs_say).length) {
     out.push('', 'What the tools and labs say (their own words)');
     for (const s of pf.tools_and_labs_say) {
-      for (const c of s.claims) out.push(`  ${s.subject}: "${c.quote}"`, `    ${c.source_url} (${c.date})`);
+      for (const c of s.claims) {
+        out.push(`  ${s.subject}: "${c.quote}"`, `    ${c.source_url} (${c.date})`);
+        const late = passedDateNote(c.quote, P.as_of);
+        if (late) out.push(`    ${late}`);
+      }
     }
   }
   for (const c of arr(P.copy)) {
