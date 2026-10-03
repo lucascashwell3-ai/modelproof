@@ -4,18 +4,24 @@
 // installer (Node) and the skill all call it, so the same answers always give the same bytes.
 //
 // A package is a list of parts: helper-agent files that set a model the tool obeys (the backbone),
-// plus one short text part per tool (never the only lever). Which model a helper runs comes from,
-// in order: the user's own choice; a tool or lab that names a model for that exact job in its own
-// docs (data/guidance.json, quoted with url + date); otherwise `inherit` (the lead's model). Two or
-// more labs in use and no choice → every helper inherits and each lab's own descriptions are shown
-// side by side as facts. Nothing here ranks models.
+// plus one short text part per tool (never the only lever). The plan per tool comes from
+// data/guidance.json tool_plans (each slot quoted with url + date):
+// - Lead: the user's own choice, else the model the tool's docs name as its default, else the
+//   model they choose in the tool. Effort is shown as information with its source, never set.
+// - Helpers (scout, builder, reviewer): inherit the lead's model unless the user chose one. When
+//   the user hits limits often or sometimes, a sourced text line names the tool's own push-down
+//   for a well-scoped thread (a habit, not a setting).
+// - Bulk: the only helper pushed down by default, to the model the tool's docs name for
+//   mechanical, checkable work, written only when the docs give the string its file takes.
+// A tool with no instruction file of its own (OpenRouter / a raw API) gets copy-only text: the
+// installer writes nothing for it. Nothing here ranks models.
 //
 // It also holds the one definition of the marker lines the installer writes around a block and
 // the owned-file stamp (end of file), so the board's Copy text prints the same bytes.
 
-export const GENERATOR_VERSION = '1.0.0';
-export const TOOLS = ['claude-code', 'codex', 'cursor', 'agents-md'];
-export const ROLES = ['scout', 'builder', 'reviewer'];
+export const GENERATOR_VERSION = '1.1.0';
+export const TOOLS = ['claude-code', 'codex', 'cursor', 'copilot', 'antigravity', 'openrouter', 'agents-md'];
+export const ROLES = ['scout', 'builder', 'reviewer', 'bulk'];
 
 /* ------------------------------------------------------------------ constants */
 
@@ -25,9 +31,11 @@ const SITE_EFFORT_URL = 'https://lucascashwell3-ai.github.io/modelproof/#effort'
 const OWNED_TAG = '<!-- modelproof:owned v1 -->';
 const OWNED_TAG_TOML = '# modelproof:owned v1';
 const LIMITS = ['often', 'sometimes', 'rarely', 'api-budget'];
-const EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max'];
 const WORK_IDS = ['coding', 'agents', 'bulk', 'writing', 'research', 'extraction', 'chat', 'vision', 'frontend', 'exec-summaries'];
-const ALL_ROLE_KEYS = ['lead', 'scout', 'builder', 'reviewer'];
+const ALL_ROLE_KEYS = ['lead', ...ROLES];
+// The helpers that run on the lead's model unless the user chose one; bulk is the one pushed down.
+const HELPER_ROLES = ['scout', 'builder', 'reviewer'];
+const PUSH_DOWN_LIMITS = ['often', 'sometimes'];
 const TEXT_CAP = { person: 40, org: 60 };
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const ID_RE = /^[a-z0-9][a-z0-9._-]{0,79}$/;
@@ -37,26 +45,33 @@ const URL_RE = /^https:\/\/[A-Za-z0-9._~:/?#[\]@!$&'()*+,;=%-]+$/;
 const LINE_BREAK = new RegExp('\\r\\n|\\r|\\n|\\u2028|\\u2029|\\u0085');
 const DEAD_STATUS =['deprecated', 'retired', 'shutdown', 'removed'];
 
-const TOOL_LABEL = { 'claude-code': 'Claude Code', codex: 'Codex', cursor: 'Cursor', 'agents-md': 'AGENTS.md' };
-const TOOL_SUBJECTS = { 'claude-code': ['claude code'], codex: ['codex cli', 'codex'], cursor: ['cursor'], 'agents-md': ['agents.md'] };
+const TOOL_LABEL = {
+  'claude-code': 'Claude Code', codex: 'Codex', cursor: 'Cursor', copilot: 'GitHub Copilot', antigravity: 'Antigravity',
+  openrouter: 'OpenRouter / API', 'agents-md': 'AGENTS.md',
+};
+// The tools a package covers and their display names (the board's install pane lists these).
+export const TOOL_LABELS = Object.freeze({ ...TOOL_LABEL });
+const TOOL_SUBJECTS = {
+  'claude-code': ['claude code'], codex: ['codex cli', 'codex'], cursor: ['cursor'], copilot: ['github copilot'],
+  antigravity: ['antigravity', 'gemini cli'], openrouter: ['openrouter'], 'agents-md': ['agents.md'],
+};
 const TOOL_ALIASES = {
   'claude-code': 'claude-code', 'claude code': 'claude-code', claude: 'claude-code', cc: 'claude-code',
   codex: 'codex', 'codex cli': 'codex', 'openai codex': 'codex', 'codex-cli': 'codex',
   cursor: 'cursor',
+  copilot: 'copilot', 'github copilot': 'copilot', 'github-copilot': 'copilot', 'gh copilot': 'copilot',
+  antigravity: 'antigravity', 'google antigravity': 'antigravity', gemini: 'antigravity', 'gemini cli': 'antigravity', 'gemini-cli': 'antigravity',
+  openrouter: 'openrouter', 'open router': 'openrouter', api: 'openrouter', 'raw api': 'openrouter', 'openrouter api': 'openrouter',
   'agents-md': 'agents-md', 'agents.md': 'agents-md', agentsmd: 'agents-md', 'agents md': 'agents-md',
 };
 // The lab whose models a tool runs, when it runs only one lab's models.
 const TOOL_LAB = { 'claude-code': 'anthropic', codex: 'openai' };
-const HELPER_TOOLS = ['claude-code', 'codex', 'cursor'];
-// Plan vendors that reach more than one lab (same table the board uses). A plan whose vendor is a
-// model vendor reaches that lab; an unknown vendor reaches every lab (never hide models behind a
-// plan the data doesn't carry).
-const PLAN_REACH = {
-  cursor: 'all', 'github copilot': 'all', codex: 'all', windsurf: 'all', perplexity: 'all',
-  'microsoft 365 copilot': ['openai', 'anthropic'],
-  openrouter: 'all', 'amazon bedrock': 'all', 'google vertex': 'all', 'microsoft azure ai foundry': 'all',
-};
-const PER_TOKEN_VENDORS = ['openrouter', 'amazon bedrock', 'google vertex', 'microsoft azure ai foundry'];
+// What a tool reaches without a plan saying more: its own lab, or every lab for a tool that runs
+// several labs' models.
+const TOOL_REACH = { 'claude-code': ['anthropic'], codex: ['openai'], antigravity: ['google'], cursor: 'all', copilot: 'all', openrouter: 'all' };
+// Tools that get helper files. OpenRouter / a raw API has no helper file and no instruction file.
+const HELPER_TOOLS = ['claude-code', 'codex', 'cursor', 'copilot', 'antigravity'];
+const COPY_ONLY_TOOLS = ['openrouter'];
 
 // Words a displayed quote or sentence must not carry: the package shows facts, never a ranking.
 // Two terms are split so the shipped-wording scan stays clean on this file.
@@ -81,11 +96,13 @@ const JOB = {
   scout: 'reads and searches',
   builder: 'makes the planned change',
   reviewer: 'reviews the diff cold',
+  bulk: 'does mechanical work a check can verify',
 };
 const AGENT_DESCRIPTION = {
   scout: 'Reads, searches and sums up code or docs for the lead. Use it for long reading and lookups. It does not edit files.',
   builder: 'Makes one planned change from a brief (exact files, goal, done check) and reports the check result.',
   reviewer: 'Reviews a change cold from the diff, runs the checks itself, and reports problems with file:line.',
+  bulk: 'Does mechanical, repetitive work (renames, boilerplate, many small edits) whose result a script or test can check.',
 };
 const AGENT_BODY = {
   scout: [
@@ -110,6 +127,20 @@ const AGENT_BODY = {
     '- Report problems worst first, each with file:line and a one-line fix.',
     '- Say plainly when you found nothing wrong. Do not edit files.',
   ],
+  bulk: [
+    'You are the bulk helper. You do mechanical work the lead has already planned.',
+    '- Follow the brief exactly: the files, the change, and the check that proves it.',
+    '- Run the check after the change and report its exact result.',
+    '- Stop and report back when a step needs judgment the brief does not give.',
+    '- Return in a few lines: what changed, the last lines of the check.',
+  ],
+};
+// Antigravity helper files list the tools a helper may use (names from Antigravity's own docs).
+const ANTIGRAVITY_TOOLS = {
+  scout: ['view_file', 'grep_search'],
+  builder: ['view_file', 'grep_search', 'replace_file_content', 'run_command'],
+  reviewer: ['view_file', 'grep_search', 'run_command'],
+  bulk: ['view_file', 'grep_search', 'replace_file_content', 'run_command'],
 };
 const EXPLORE_BODY = [
   'You explore the codebase and report back; you do not edit files.',
@@ -212,27 +243,46 @@ function indexFacts(facts) {
     if (typeof r.model_id !== 'string' || !byId.has(r.model_id)) continue;
     refs.push({ tool: r.tool, ref: r.ref, model_id: r.model_id, basis: arr(r.basis).filter((id) => claimById.has(id)) });
   }
-  const roleDefaults = [];
-  for (const d of arr(g.role_defaults)) {
-    if (!isObj(d) || !TOOLS.includes(d.tool) || !ROLES.includes(d.role)) continue;
-    roleDefaults.push({
-      tool: d.tool, role: d.role, lab: labKey(d.lab),
-      model_ref: typeof d.model_ref === 'string' && REF_RE.test(d.model_ref) ? d.model_ref : null,
-      model_id: typeof d.model_id === 'string' ? d.model_id : null,
-      basis: arr(d.basis).filter((id) => claimById.has(id)),
+  // tool_plans: one Lead / Helpers / Bulk plan per tool. Only ids that are claims in this file
+  // are kept as a basis; a slot names a catalog model only where the data gives one.
+  const toolPlans = new Map();
+  const effortValues = [];
+  const word = (v) => (typeof v === 'string' && /^[a-z]{1,12}$/.test(v) ? v : null);
+  const ids = (v) => arr(v).filter((id) => claimById.has(id));
+  const slotOf = (x) => {
+    if (!isObj(x)) return null;
+    const modelId = typeof x.model_id === 'string' && byId.has(x.model_id) ? x.model_id : null;
+    return { model_id: modelId, effort: word(x.effort), raise_to: word(x.raise_to), when: safeLine(x.when, 120) || null, basis: ids(x.basis) };
+  };
+  for (const t of arr(g.tool_plans)) {
+    if (!isObj(t) || !TOOLS.includes(t.tool) || toolPlans.has(t.tool)) continue;
+    const levels = isObj(t.effort_levels) ? arr(t.effort_levels.values).map(word).filter(Boolean) : [];
+    for (const v of levels) if (!effortValues.includes(v)) effortValues.push(v);
+    const h = isObj(t.helpers) ? t.helpers : null;
+    const bulk = slotOf(t.bulk);
+    if (bulk) bulk.explore = isObj(t.bulk.explore) ? ids(t.bulk.explore.basis) : [];
+    toolPlans.set(t.tool, {
+      levels,
+      lead: slotOf(t.lead),
+      helpers: h ? { basis: ids(h.basis), push_down: slotOf(h.push_down) } : null,
+      bulk,
     });
   }
   const plans = [];
   const prow = Array.isArray(f.plans) ? f.plans : arr(isObj(f.plans) ? f.plans.plans : null);
   for (const p of prow) {
     if (!isObj(p) || typeof p.vendor !== 'string' || typeof p.plan !== 'string') continue;
-    plans.push({ vendor: safeLine(p.vendor, 60), plan: safeLine(p.plan, 80), price: num(p.price_usd_month) ? p.price_usd_month : null });
+    const reaches = p.reaches === 'all' ? 'all' : Array.isArray(p.reaches) ? p.reaches.map(labKey).filter(Boolean) : null;
+    plans.push({
+      vendor: safeLine(p.vendor, 60), plan: safeLine(p.plan, 80), price: num(p.price_usd_month) ? p.price_usd_month : null,
+      reaches, covers_tokens: typeof p.covers_tokens === 'boolean' ? p.covers_tokens : null,
+    });
   }
   const asOf = safeDate(g.as_of) || safeDate(isObj(mfile) ? mfile.as_of : null) || null;
   const labNames = new Map();
   for (const m of models) if (m.lab && !labNames.has(m.lab)) labNames.set(m.lab, m.vendor);
   const modelsAsOf = safeDate(isObj(mfile) ? mfile.as_of : null);
-  return { models, byId, terms, claims, claimById, refs, roleDefaults, plans, asOf, modelsAsOf, labNames, namedCache: new Map() };
+  return { models, byId, terms, claims, claimById, refs, toolPlans, effortValues, plans, asOf, modelsAsOf, labNames, namedCache: new Map() };
 }
 
 // Model ids a piece of text names (ids or display names), longest match first.
@@ -265,10 +315,17 @@ function labName(F, key) { return F.labNames.get(key) || key; }
 
 /* ------------------------------------------------------------------ reach */
 
+// Which labs a plan reaches: the plan rows' own `reaches` (data/plans.json) for that vendor; else a
+// plan from a model vendor reaches that lab; an unknown vendor reaches every lab (never hide models
+// behind a plan the data doesn't carry).
 function planReach(F, vendor) {
   const key = labKey(vendor);
   if (!key) return 'all';
-  if (Object.prototype.hasOwnProperty.call(PLAN_REACH, key)) return PLAN_REACH[key];
+  const rows = F.plans.filter((r) => labKey(r.vendor) === key && r.reaches);
+  if (rows.length) {
+    if (rows.some((r) => r.reaches === 'all')) return 'all';
+    return uniq(rows.flatMap((r) => r.reaches));
+  }
   for (const lab of F.labNames.keys()) {
     if (lab === key || key.startsWith(lab + ' ') || lab.startsWith(key + ' ')) return [lab];
   }
@@ -282,8 +339,9 @@ function reachOf(F, plans, api, tools) {
     else for (const l of reach) { r.labs.add(l); r.planLabs.add(l); }
   }
   for (const t of tools) {
-    if (TOOL_LAB[t]) r.labs.add(TOOL_LAB[t]);
-    if (t === 'cursor') r.all = true;
+    const tr = TOOL_REACH[t];
+    if (tr === 'all') r.all = true;
+    else for (const l of arr(tr)) r.labs.add(l);
   }
   return r;
 }
@@ -324,7 +382,7 @@ function normTools(list, problems, label) {
     const key = cleanText(t, 30).toLowerCase();
     const id = TOOL_ALIASES[key];
     if (id) out.push(id);
-    else problems.push(`${label}: "${cleanText(t, 30)}" is not a tool this package covers (Claude Code, Codex, Cursor, AGENTS.md)`);
+    else problems.push(`${label}: "${cleanText(t, 30)}" is not a tool this package covers (${TOOLS.map((x) => TOOL_LABEL[x]).join(', ')})`);
   }
   return TOOLS.filter((t) => out.includes(t));
 }
@@ -435,9 +493,12 @@ export function normalizeProfile(input, facts) {
   arr(src.like).slice(0, 12).forEach((v, i) => { const id = checkModel(v, `like[${i}]`); if (id && !like.includes(id)) like.push(id); });
   const roles = {};
   const srcRoles = isObj(src.roles) ? src.roles : {};
-  for (const k of Object.keys(srcRoles)) if (!ALL_ROLE_KEYS.includes(k)) problems.push(`roles.${cleanText(k, 20)}: not a role (lead, scout, builder, reviewer); left out`);
+  for (const k of Object.keys(srcRoles)) if (!ALL_ROLE_KEYS.includes(k)) problems.push(`roles.${cleanText(k, 20)}: not a role (${ALL_ROLE_KEYS.join(', ')}); left out`);
   for (const k of ALL_ROLE_KEYS) { const id = checkModel(srcRoles[k], `roles.${k}`); if (id) roles[k] = id; }
-  const effortCap = pickEnum('effort_cap', EFFORTS);
+  // Effort levels come from the tools' own docs (tool_plans effort_levels); with no data, any
+  // plain level word is kept and each tool checks it against its own list.
+  const effortCap = F && F.effortValues.length ? pickEnum('effort_cap', F.effortValues)
+    : (src.effort_cap === undefined || src.effort_cap === null ? null : (/^[a-z]{1,12}$/.test(cleanText(src.effort_cap, 12).toLowerCase()) ? cleanText(src.effort_cap, 12).toLowerCase() : pickEnum('effort_cap', [])));
 
   const profile = {
     schema: PROFILE_SCHEMA, who, tools, scope, plans, api, limits, work, like, never, roles,
@@ -454,9 +515,9 @@ function makeContext(p, F) {
   if (p.org) for (const d of p.org.divisions) reach = mergeReach(reach, reachOf(F, d.plans, d.api, d.tools));
   const nv = neverSets(F, p.never);
   const inUse = new Set(reach.planLabs);
-  for (const t of p.tools) if (TOOL_LAB[t]) inUse.add(TOOL_LAB[t]);
+  for (const t of p.tools) for (const l of arr(TOOL_REACH[t])) inUse.add(l);
   const chosen = [...p.like, ...Object.values(p.roles)];
-  if (p.org) for (const d of p.org.divisions) { if (d.lead) chosen.push(d.lead); for (const t of d.tools) if (TOOL_LAB[t]) inUse.add(TOOL_LAB[t]); }
+  if (p.org) for (const d of p.org.divisions) { if (d.lead) chosen.push(d.lead); for (const t of d.tools) for (const l of arr(TOOL_REACH[t])) inUse.add(l); }
   for (const id of chosen) { const m = F.byId.get(id); if (m) inUse.add(m.lab); }
   for (const l of [...inUse]) if (nv.labs.has(l)) inUse.delete(l);
   const labs = [...inUse].sort((a, b) => (labName(F, a) < labName(F, b) ? -1 : 1));
@@ -482,13 +543,32 @@ function refFor(F, tool, m) {
   if ((tool === 'claude-code' || tool === 'codex') && toolRuns(tool, m) && REF_RE.test(m.id)) return m.id;
   return null;
 }
-const INHERIT_CLAIM = { 'claude-code': 'cc-inherit-follows-switch', codex: 'codex-subagent-inherits', cursor: 'cursor-subagent-inherit-default' };
+// The claims of a plan slot a line may show (no ranking words in the field shown, every model
+// named reachable), as basis records.
+function showable(F, ctx, ids, tool, field) {
+  return ids.map((id) => F.claimById.get(id)).filter((c) => claimShowable(F, ctx, c, field, tool)).map(basisRec);
+}
+// A slot's sentence claim: the first basis claim whose own sentence can be shown.
+function slotSentence(F, ctx, ids, tool) {
+  const c = ids.map((id) => F.claimById.get(id)).find((x) => claimShowable(F, ctx, x, 'sentence', tool));
+  return c || null;
+}
+const emptyRole = (basis = []) => ({ model_ref: null, model_id: null, model_name: null, from: 'inherit', basis, price: null, usage: null });
 
 function roleFor(F, p, ctx, tool, role) {
+  const plan = F.toolPlans.get(tool) || null;
   const modelRec = (m, from, basis) => ({
     model_ref: refFor(F, tool, m), model_id: m.id, model_name: m.name, from,
     basis: basis.map(basisRec), price: m.price, usage: m.usage,
   });
+  // Effort for the lead, as information: the tool's documented default and when to raise it,
+  // shown only for the model the tool's plan names.
+  const effortInfo = (m) => {
+    const L = plan && plan.lead;
+    if (!L || !m || L.model_id !== m.id || !L.effort) return null;
+    const basis = showable(F, ctx, L.basis, tool, 'quote');
+    return basis.length ? { effort: L.effort, raise_to: L.raise_to, when: L.when, basis } : null;
+  };
   const chosenId = p.roles[role];
   if (chosenId) {
     const m = F.byId.get(chosenId);
@@ -498,25 +578,60 @@ function roleFor(F, p, ctx, tool, role) {
       // full model id (cc-subagent-model-values), so a floating alias never moves it to a later
       // release. Aliases stay only for the tool's own documented defaults (from: 'tool').
       if (role !== 'lead' && tool === 'claude-code' && REF_RE.test(m.id)) rec.model_ref = m.id;
+      if (role === 'lead') { const e = effortInfo(m); if (e) rec.effort_info = e; }
       return rec;
     }
     if (m && !toolRuns(tool, m)) ctx.notes.push(`${TOOL_LABEL[tool]} runs only ${labName(F, TOOL_LAB[tool])} models, so your ${role} choice (${m.name}) applies to your other tools; in ${TOOL_LABEL[tool]} the ${role} follows the lead.`);
   }
-  if (role !== 'lead' && HELPER_TOOLS.includes(tool) && !ctx.multiLab) {
-    for (const d of F.roleDefaults) {
-      if (d.tool !== tool || d.role !== role || !d.model_ref || !d.model_id) continue;
-      const m = F.byId.get(d.model_id);
-      const basis = d.basis.map((id) => F.claimById.get(id)).filter((c) => claimShowable(F, ctx, c, 'quote', tool));
-      if (!m || !canUse(ctx, m) || !toolRuns(tool, m) || !basis.length) continue;
-      if (d.lab && d.lab !== m.lab) continue;
-      const rec = modelRec(m, basis.every((c) => c.tier === 'tool') ? 'tool' : 'lab', basis);
-      rec.model_ref = d.model_ref;
-      return rec;
+  // A slot of the tool's plan that names a model the user can run: from the tool's (or its lab's)
+  // own docs. `needRef`: the model is written into a file, so the tool's own string for it must be
+  // on file (model_refs, or a full id where the tool documents that) — never a guessed one.
+  const fromPlan = (slot, needRef) => {
+    if (!slot || !slot.model_id) return null;
+    const m = F.byId.get(slot.model_id);
+    if (!m || !toolRuns(tool, m)) return null;
+    if (!canUse(ctx, m)) {
+      // Said without naming the model: a model on the never list is never named back.
+      if (ctx.nv.ids.has(m.id) || ctx.nv.labs.has(m.lab)) ctx.notes.push(`${TOOL_LABEL[tool]}: the model its docs name for ${role === 'lead' ? 'the lead' : `modelproof-${role}`} is on your never list, so ${role === 'lead' ? 'the lead is the model you choose' : 'it runs on the lead\'s model'}.`);
+      return null;
     }
+    const basis = slot.basis.map((id) => F.claimById.get(id)).filter((c) => claimShowable(F, ctx, c, 'quote', tool));
+    if (!basis.length) return null;
+    const rec = modelRec(m, basis.some((c) => c.tier === 'tool') ? 'tool' : 'lab', basis);
+    const ref = F.refs.find((x) => x.tool === tool && x.model_id === m.id);
+    if (needRef && !ref && !(tool === 'claude-code' && REF_RE.test(m.id))) return null;
+    rec.model_ref = ref ? ref.ref : rec.model_ref;
+    return rec;
+  };
+  if (role === 'lead') {
+    const rec = plan ? fromPlan(plan.lead, false) : null;
+    if (rec) { const e = effortInfo(F.byId.get(rec.model_id)); if (e) rec.effort_info = e; return rec; }
+    // No default the user can run: the model they choose in the tool, with the tool's own words.
+    return emptyRole(plan && plan.lead ? showable(F, ctx, plan.lead.basis, tool, 'sentence') : []);
   }
-  const ic = role === 'lead' ? null : F.claimById.get(INHERIT_CLAIM[tool]);
-  const basis = ic && claimShowable(F, ctx, ic, 'quote', tool) ? [basisRec(ic)] : [];
-  return { model_ref: null, model_id: null, model_name: null, from: 'inherit', basis, price: null, usage: null };
+  if (role === 'bulk') {
+    const rec = plan ? fromPlan(plan.bulk, HELPER_TOOLS.includes(tool)) : null;
+    if (rec) return rec;
+    const out = emptyRole(plan && plan.bulk ? showable(F, ctx, plan.bulk.basis, tool, 'sentence') : []);
+    out.choice = true;
+    return out;
+  }
+  return emptyRole(plan && plan.helpers ? showable(F, ctx, plan.helpers.basis, tool, 'quote') : []);
+}
+// The near-a-full-limit line: a TEXT line, never a model setting. Only for someone who hits their
+// limits often or sometimes, and only where the tool's plan has a sourced push-down.
+function nearLimitFor(F, p, ctx, tool) {
+  const plan = F.toolPlans.get(tool);
+  const pd = plan && plan.helpers && plan.helpers.push_down;
+  if (!pd || !PUSH_DOWN_LIMITS.includes(p.limits)) return null;
+  if (pd.model_id) {
+    const m = F.byId.get(pd.model_id);
+    const basis = showable(F, ctx, pd.basis, tool, 'quote');
+    if (!m || !canUse(ctx, m) || !toolRuns(tool, m) || !basis.length) return null;
+    return { model_ref: refFor(F, tool, m), model_id: m.id, model_name: m.name, when: pd.when, basis, price: m.price, usage: m.usage };
+  }
+  const c = slotSentence(F, ctx, pd.basis, tool);
+  return c ? { model_ref: null, model_id: null, model_name: null, when: pd.when, basis: [basisRec(c)], choice: true } : null;
 }
 function rolesFor(F, p, ctx) {
   const out = {};
@@ -525,7 +640,10 @@ function rolesFor(F, p, ctx) {
     for (const role of ALL_ROLE_KEYS) {
       t[role] = roleFor(F, p, ctx, tool, role);
       for (const b of t[role].basis) ctx.used.add(b.id);
+      if (t[role].effort_info) for (const b of t[role].effort_info.basis) ctx.used.add(b.id);
     }
+    const nl = nearLimitFor(F, p, ctx, tool);
+    if (nl) { t.near_limit = nl; for (const b of nl.basis) ctx.used.add(b.id); }
     out[tool] = t;
   }
   return out;
@@ -577,7 +695,7 @@ function normalizeSetup(setup) {
   const stateDir = !s || s.state_dir === undefined ? '~/.modelproof' : safePath(s.state_dir, null);
   return {
     given: !!s, stateDir,
-    dirs: { claude: safePath(dirs.claude, '~/.claude'), codex: safePath(dirs.codex, '~/.codex'), cursor: '~/.cursor' },
+    dirs: { claude: safePath(dirs.claude, '~/.claude'), codex: safePath(dirs.codex, '~/.codex'), cursor: '~/.cursor', copilot: '~/.copilot', gemini: '~/.gemini' },
     claudeReadsAgents: reads === true ? true : reads === false ? false : 'unsure',
     override: { user: ov.user === true, project: ov.project === true },
     force: !!(s && isObj(s.env) && s.env.subagent_model_force === true),
@@ -605,27 +723,94 @@ function agentsReadBy(F, readers) {
 }
 function youSource(m, asOf) { return `Source: your choice (${priceText(m.price)}${asOf ? ', as of ' + asOf : ''})`; }
 
-function helperLines(F, p, ctx, roles, tool, prefix) {
-  const t = roles[tool];
-  const lines = [];
-  const lead = prefix ? `- ${TOOL_LABEL[tool]}: ` : '- ';
-  if (ROLES.every((r) => t[r].from === 'inherit')) {
-    lines.push({ t: `${lead}modelproof-scout, modelproof-builder, modelproof-reviewer → inherit: they run on the lead's model` });
-    const b = t.scout.basis[0];
-    if (b) lines.push({ t: `  ${sourceOf(F.claimById.get(b.id))}` });
-    return lines;
+// Source lines for a slot: one per distinct page, at most `max`.
+function srcLines(F, basis, max) {
+  const out = [];
+  const urls = new Set();
+  for (const b of arr(basis)) {
+    if (out.length >= max) break;
+    const c = F.claimById.get(b.id);
+    if (!c || urls.has(c.source_url)) continue;
+    urls.add(c.source_url);
+    out.push(sourceOf(c));
   }
-  for (const r of ROLES) {
-    const x = t[r];
-    if (x.from === 'inherit') {
-      lines.push({ t: `${lead}modelproof-${r} (${JOB[r]}) → inherit: runs on the lead's model` });
-      if (x.basis[0]) lines.push({ t: `  ${sourceOf(F.claimById.get(x.basis[0].id))}` });
-      continue;
+  return out;
+}
+// One line of the plan with its sources: on their own lines for one tool, inline (the first one)
+// when several tools share the text. Every model line keeps a Source.
+function planItem(main, sources, multi) {
+  const srcs = sources.filter(Boolean);
+  if (multi || !srcs.length) return { t: srcs.length ? `${main} ${srcs[0]}` : main };
+  return { t: [main, ...srcs.map((x) => `  ${x}`)].join('\n') };
+}
+function shownModel(F, x) {
+  const m = F.byId.get(x.model_id);
+  return x.model_ref && x.model_ref !== m.id ? `${x.model_ref} (${m.name})` : m.name;
+}
+// The Lead / Helpers / Bulk lines for one tool.
+function planLines(F, p, ctx, roles, tool, multi) {
+  const r = roles[tool];
+  const L = TOOL_LABEL[tool];
+  const plan = F.toolPlans.get(tool) || null;
+  const pre = (slot) => (multi ? `- ${L} ${slot}: ` : `- ${slot[0].toUpperCase()}${slot.slice(1)}: `);
+  const sentenceOf = (basis) => { const c = basis[0] ? F.claimById.get(basis[0].id) : null; return c ? c.sentence : ''; };
+  const lines = [];
+
+  // Lead.
+  const lead = r.lead;
+  if (lead.from !== 'inherit') {
+    const m = F.byId.get(lead.model_id);
+    const e = lead.effort_info;
+    let main = `${pre('lead')}${m.name}${lead.from === 'you' ? ' (your choice)' : `, ${L}'s default model`}`;
+    if (e) main += `; effort ${e.effort} by default${e.raise_to && e.when ? `, ${e.raise_to} for ${e.when}` : ''}`;
+    const srcs = lead.from === 'you' ? [youSource(m, F.modelsAsOf), ...srcLines(F, e ? e.basis : [], 1)] : srcLines(F, e ? e.basis : lead.basis, 2);
+    lines.push(planItem(main + '.', srcs, multi));
+  } else {
+    const where = COPY_ONLY_TOOLS.includes(tool) ? 'the model you name in each request' : `the model you choose in ${L}`;
+    const said = multi ? '' : sentenceOf(lead.basis);
+    lines.push(planItem(`${pre('lead')}${where}.${said ? ' ' + said : ''}`, srcLines(F, lead.basis, 1), multi));
+  }
+
+  // Helpers: inherit unless the user chose a model for one.
+  if (HELPER_TOOLS.includes(tool)) {
+    const inherit = HELPER_ROLES.filter((role) => r[role].from === 'inherit');
+    for (const role of HELPER_ROLES) {
+      const x = r[role];
+      if (x.from === 'inherit') continue;
+      lines.push(planItem(`${pre(role)}modelproof-${role} (${JOB[role]}) runs ${shownModel(F, x)} (your choice).`, [youSource(F.byId.get(x.model_id), F.modelsAsOf)], multi));
     }
-    const m = F.byId.get(x.model_id);
-    const shown = x.model_ref && x.model_ref !== m.id ? `${x.model_ref} (${m.name})` : x.model_ref ? m.name : `${m.name} (choose it in ${TOOL_LABEL[tool]}'s model menu; the file says inherit)`;
-    lines.push({ t: `${lead}modelproof-${r} (${JOB[r]}) → ${shown}` });
-    lines.push({ t: x.from === 'you' ? `  ${youSource(m, F.modelsAsOf)}` : `  ${sourceOf(F.claimById.get(x.basis[0].id))}` });
+    if (inherit.length) {
+      const names = inherit.map((role) => `modelproof-${role}`);
+      const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0];
+      const call = tool === 'claude-code' ? ' Call them by name and pass no model.' : '';
+      lines.push(planItem(`${pre('helpers')}${list} ${names.length > 1 ? 'run' : 'runs'} on the lead's model (inherit).${call}`, srcLines(F, r[inherit[0]].basis, 2), multi));
+    }
+  }
+
+  // Near a full usage limit: a habit, not a setting.
+  const nl = r.near_limit;
+  if (nl) {
+    const main = nl.model_id
+      ? `${pre('near a full usage limit')}${nl.when} can run on ${shownModel(F, nl)}; name that model in the call (no file sets it).`
+      : `${pre('near a full usage limit')}${sentenceOf(nl.basis)}`;
+    lines.push(planItem(main, srcLines(F, nl.basis, 2), multi));
+  }
+
+  // Bulk: the one helper pushed down by default.
+  const b = r.bulk;
+  const slot = plan && plan.bulk;
+  const forWhat = slot && slot.when ? `, for ${slot.when}` : '';
+  if (b.from !== 'inherit') {
+    const m = F.byId.get(b.model_id);
+    const where = HELPER_TOOLS.includes(tool) ? 'modelproof-bulk runs ' : '';
+    const main = `${pre('bulk')}${where}${shownModel(F, b)}${b.from === 'you' ? ' (your choice)' : forWhat}.`;
+    lines.push(planItem(main, b.from === 'you' ? [youSource(m, F.modelsAsOf)] : srcLines(F, b.basis, 2), multi));
+  } else if (plan && plan.bulk) {
+    const said = multi ? '' : sentenceOf(b.basis);
+    const main = HELPER_TOOLS.includes(tool)
+      ? `${pre('bulk')}modelproof-bulk runs on the lead's model until you set its model${forWhat}.`
+      : `${pre('bulk')}the model you name per request${forWhat}.`;
+    lines.push(planItem(`${main}${said ? ' ' + said : ''}`, srcLines(F, b.basis, 1), multi));
   }
   return lines;
 }
@@ -653,46 +838,37 @@ function renderText(F, p, ctx, roles, readers, opts) {
   const has = (t) => readers.includes(t);
   const helperReaders = readers.filter((t) => HELPER_TOOLS.includes(t) && roles[t]);
   const work = p.work;
+  const rows = (l) => l.t.split('\n').length;
   const wants = (...ids) => !work.length || ids.some((w) => work.includes(w));
 
-  const head = [{ t: `${h1} Modelproof helpers and hand-off (facts as of ${F.asOf || 'the data date'})` }];
-  // Lead line.
-  const leadTools = readers.filter((t) => roles[t] && roles[t].lead.from === 'you');
-  if (leadTools.length) {
-    const m = F.byId.get(roles[leadTools[0]].lead.model_id);
-    const where = leadTools.length === readers.filter((t) => roles[t]).length ? '' : ` in ${leadTools.map((t) => TOOL_LABEL[t]).join(' and ')}; elsewhere the model you choose`;
-    head.push({ t: `Lead: ${m.name}${where}. ${youSource(m, F.modelsAsOf)}` });
-  } else {
-    const inherits = helperReaders.some((t) => ROLES.some((r) => roles[t][r].from === 'inherit'));
-    head.push({ t: `Lead: the model you choose in the tool.${inherits ? ' Helpers marked inherit run on it.' : ''}` });
-  }
+  const head = [{ t: `${h1} Modelproof lead, helpers and bulk (facts as of ${F.asOf || 'the data date'})` }];
   if (p.who === 'org') head.push({ t: `Shared by ${p.org && p.org.name ? p.org.name : 'the team'}; each person keeps their own rules in their own files.` });
 
   const sections = [];
-  // Helpers.
+  // Lead, helpers, bulk: one set of lines per tool that reads this text.
   const helpers = [];
-  if (has('claude-code')) {
-    const l = claimLine(F, ctx, 'cc-subagent-model-order', 'claude-code', 0, 'Call these helpers by name and pass no model: a model given per call overrides the file.');
-    if (l) helpers.push(l);
-  }
-  for (const t of helperReaders) helpers.push(...helperLines(F, p, ctx, roles, t, helperReaders.length > 1));
-  if (has('agents-md') && !helperReaders.length) {
+  const planReaders = readers.filter((t) => t !== 'agents-md' && roles[t]);
+  for (const t of planReaders) helpers.push(...planLines(F, p, ctx, roles, t, planReaders.length > 1));
+  if (has('agents-md') && !planReaders.length) {
     const r = roles['agents-md'];
+    if (r && r.lead.from === 'you') {
+      const m = F.byId.get(r.lead.model_id);
+      helpers.push(planItem(`- Lead: ${m.name} (your choice).`, [youSource(m, F.modelsAsOf)], false));
+    } else helpers.push({ t: '- Lead: the model you choose in your tool. Helpers run on it unless a line below names another.' });
     for (const role of ROLES) {
       if (!r || r[role].from !== 'you') continue;
       const m = F.byId.get(r[role].model_id);
-      helpers.push({ t: `- If your tool has helpers, the ${role} (${JOB[role]}) runs ${m.name}.` });
-      helpers.push({ t: `  ${youSource(m, F.modelsAsOf)}` });
+      helpers.push(planItem(`- If your tool has helpers, the ${role} (${JOB[role]}) runs ${m.name}.`, [youSource(m, F.modelsAsOf)], false));
     }
   }
-  if (helpers.length) sections.push({ title: 'Helpers', lines: helpers });
+  if (helpers.length) sections.push({ title: 'Lead, helpers and bulk', lines: helpers });
 
   // When to hand off: the sourced cost facts, framed as when a helper is worth it (Claude Code).
   if (has('claude-code')) {
     const wh = [];
     const v = claimLine(F, ctx, 'cc-delegate-verbose', 'claude-code', 3, 'Hand helpers verbose work (test runs, logs): only a summary comes back.');
     if (v) wh.push(v);
-    const b = claimLine(F, ctx, 'anthropic-multi-agent-token-use', null, wants('agents') ? 3 : 5, 'Hand helpers parallel or separable work; each adds tokens (multi-agent systems used about 15 times the tokens of chat in Anthropic\'s data).');
+    const b = claimLine(F, ctx, 'anthropic-multi-agent-token-use', null, wants('agents') ? 3 : 5, 'Hand helpers parallel or separable work; each one adds tokens.');
     if (b) wh.push(b);
     const c = claimLine(F, ctx, 'anthropic-orchestrator-vs-lower-effort', null, 3, 'For a job one model can do alone, lower effort on that model cost less than an orchestrator.');
     if (c) wh.push(c);
@@ -723,10 +899,12 @@ function renderText(F, p, ctx, roles, readers, opts) {
   const ef = [{ t: '- Raise effort for a hard step and lower it for routine ones; don\'t leave it at max.' }];
   if (has('claude-code')) { const l = claimLine(F, ctx, 'cc-subagent-effort', 'claude-code', 4); if (l) ef.push(l); }
   if (has('cursor')) { const l = claimLine(F, ctx, 'cursor-subagent-effort', 'cursor', 5); if (l) ef.push(l); }
+  if (has('openrouter')) { const l = claimLine(F, ctx, 'openrouter-reasoning-parameter', 'openrouter', 5); if (l) ef.push(l); }
   const effortLabs = [];
   if (has('claude-code')) effortLabs.push('anthropic');
   if (has('codex')) effortLabs.push('openai');
-  if (has('cursor') || has('agents-md')) for (const l of ctx.labs) if (!effortLabs.includes(l)) effortLabs.push(l);
+  if (has('antigravity')) effortLabs.push('google');
+  if (['cursor', 'copilot', 'openrouter', 'agents-md'].some(has)) for (const l of ctx.labs) if (!effortLabs.includes(l)) effortLabs.push(l);
   effortLabs.forEach((lk, i) => {
     if (!ctx.labs.includes(lk)) return;
     const c = effortClaimFor(F, ctx, lk);
@@ -754,7 +932,7 @@ function renderText(F, p, ctx, roles, readers, opts) {
 
   // Fit the cap: drop the highest-priority-number optional lines first.
   const cap = TEXT_CAP[p.who] || 40;
-  const total = () => head.length + sections.reduce((n, s) => n + (s.lines.length ? s.lines.length + 2 : 0), 0) + (opts.owned ? 1 : 0) + (opts.extra || 0);
+  const total = () => head.length + sections.reduce((n, s) => n + (s.lines.length ? s.lines.reduce((k, l) => k + rows(l), 0) + 2 : 0), 0) + (opts.owned ? 1 : 0) + (opts.extra || 0);
   const trim = () => {
     while (total() > cap) {
       let best = null;
@@ -769,7 +947,7 @@ function renderText(F, p, ctx, roles, readers, opts) {
   // the fixed lines leave, then trim optional lines again.
   if (who && total() > cap) {
     sections.forEach((s, i) => { s.lines = kept[i]; });
-    const fixed = total() - who.lines.length - sections.reduce((n, s) => n + (s === who ? 0 : s.lines.filter((l) => l.prio).length), 0);
+    const fixed = total() - who.lines.length - sections.reduce((n, s) => n + (s === who ? 0 : s.lines.filter((l) => l.prio).reduce((k, l) => k + rows(l), 0)), 0);
     who.lines = whoSummary(F, p.org.divisions, cap - fixed);
     trim();
   }
@@ -842,9 +1020,12 @@ function planFact(F, pl) {
 
 // A helper file carries an effort only when the user chose one (their effort cap); nothing is
 // inferred from how often they hit limits. The preview shows each one as their choice.
-function helperEffort(p, x) {
+// It is written only where that tool's own docs list the level (tool_plans effort_levels).
+function helperEffort(F, p, tool, x) {
   const e = p.effort_cap || null;
-  if (e) x.effort = e;
+  const plan = F.toolPlans.get(tool);
+  if (!e || !plan || !plan.levels.includes(e)) return null;
+  x.effort = e;
   return e;
 }
 function ccAgent(name, description, modelRef, effort, body, extra) {
@@ -858,9 +1039,20 @@ function tomlString(s) { return '"' + String(s).replace(/\\/g, '\\\\').replace(/
 function codexAgent(role, modelRef, effort) {
   const out = [OWNED_TAG_TOML, `name = ${tomlString('modelproof-' + role)}`, `description = ${tomlString(AGENT_DESCRIPTION[role])}`];
   if (modelRef) out.push(`model = ${tomlString(modelRef)}`);
-  if (effort) out.push(`model_reasoning_effort = ${tomlString(effort === 'max' ? 'xhigh' : effort)}`);
+  if (effort) out.push(`model_reasoning_effort = ${tomlString(effort)}`);
   out.push('developer_instructions = """', ...AGENT_BODY[role], '"""');
   return out.join('\n') + '\n';
+}
+
+// A GitHub Copilot custom agent: no model line, so it runs the default model (the model property
+// unset); Copilot's docs show the name format only for hand-offs, so none is written here.
+function copilotAgent(role) {
+  return ['---', `name: modelproof-${role}`, `description: ${AGENT_DESCRIPTION[role]}`, '---', OWNED_TAG, ...AGENT_BODY[role]].join('\n') + '\n';
+}
+// An Antigravity subagent: name and description are required; the model tier is inherit (its default).
+function antigravityAgent(role) {
+  return ['---', `name: modelproof-${role}`, `description: ${AGENT_DESCRIPTION[role]}`, 'tools:', ...ANTIGRAVITY_TOOLS[role].map((t) => `  - ${t}`),
+    'model: inherit', '---', OWNED_TAG, ...AGENT_BODY[role]].join('\n') + '\n';
 }
 
 /* ------------------------------------------------------------------ preview facts */
@@ -914,6 +1106,7 @@ const LINE_JOB = {
   scout: /\b(scout\w*|search\w*|explor\w*|research\w*|look-?ups?)\b/i,
   builder: /\b(build|builds|builder|building|implement\w*)\b/i,
   reviewer: /\b(review\w*|verif\w*|audit\w*)\b/i,
+  bulk: /\b(bulk|batch\w*|mechanical|boilerplate|renames?)\b/i,
 };
 const HELPER_JOB = {
   scout: /\b(scout\w*|explor\w*|research\w*)\b/i,
@@ -972,55 +1165,58 @@ export function buildPackage(profile, facts, setup) {
   const roles = rolesFor(F, p, ctx);
   const parts = [];
   const textParts = [];
+  const copy = [];
   const notes = [];
   const available = [];
   const scope = p.scope;
   const user = scope === 'user';
+  const has = (t) => p.tools.includes(t);
 
   // Where the project AGENTS.md block goes, and who reads it.
-  const codexOverride = p.tools.includes('codex') && (user ? S.override.user : S.override.project);
-  const projectAgentsBlock = !user && ((p.tools.includes('codex') && !codexOverride) || p.tools.includes('agents-md'));
+  const codexOverride = has('codex') && (user ? S.override.user : S.override.project);
+  const projectAgentsBlock = !user && ((has('codex') && !codexOverride) || has('agents-md') || has('copilot') || has('antigravity'));
   const agentsReaders = [];
 
   const setupHasAgent = (tool, name) => S.agents.some((a) => !a.modelproof && a.name.toLowerCase() === name.toLowerCase() && (!a.tool || a.tool === tool));
   const setupHasKey = (key) => S.settings.some((x) => x.scope === scope && x.keys.includes(key));
+  const ownedPart = (tool, role, path, content, why) => ({
+    id: `${tool}:agent:${role}`, tool, kind: 'owned-file', enforced: true, target: { scope, path }, content, why,
+  });
+  const ccWhy = (ref) => (ref === 'inherit' ? 'Claude Code runs this helper on the lead\'s model (model: inherit).' : `Claude Code runs this helper on ${ref}, the model named in the file.`);
 
   for (const tool of p.tools) {
     const r = roles[tool];
     if (tool === 'claude-code') {
       const dir = user ? S.dirs.claude : '.claude';
       for (const role of ROLES) {
-        const x = r[role];
-        const ref = x.model_ref || 'inherit';
-        parts.push({
-          id: `claude-code:agent:${role}`, tool, kind: 'owned-file', enforced: true,
-          target: { scope, path: `${dir}/agents/modelproof-${role}.md` },
-          content: ccAgent(`modelproof-${role}`, AGENT_DESCRIPTION[role], ref, helperEffort(p, r[role]), AGENT_BODY[role]),
-          why: ref === 'inherit' ? 'Claude Code runs this helper on the lead\'s model (model: inherit).' : `Claude Code runs this helper on ${ref}, the model named in the file.`,
-        });
+        const ref = r[role].model_ref || 'inherit';
+        parts.push(ownedPart(tool, role, `${dir}/agents/modelproof-${role}.md`,
+          ccAgent(`modelproof-${role}`, AGENT_DESCRIPTION[role], ref, helperEffort(F, p, tool, r[role]), AGENT_BODY[role]), ccWhy(ref)));
       }
       // The Explore override is opt-in: it is in the package only when the profile says
-      // explore_override: true. Otherwise, for someone who hits limits often, the preview lists
-      // it under "Also available, not included".
-      const haiku = F.refs.find((x) => x.tool === 'claude-code' && x.ref === 'haiku');
-      const exploreClaim = F.claimById.get('cc-explore-override-haiku');
-      const exploreFits = !ctx.multiLab && !!haiku && !!exploreClaim && canUse(ctx, F.byId.get(haiku.model_id));
+      // explore_override: true. It runs Claude Code's built-in Explore helper on the bulk model the
+      // tool's own docs name. Otherwise, for someone who hits limits often, the preview lists it
+      // under "Also available, not included".
+      const plan = F.toolPlans.get(tool);
+      const bulkRef = r.bulk.from !== 'inherit' && r.bulk.from !== 'you' ? r.bulk.model_ref : null;
+      const exploreClaim = plan && plan.bulk ? plan.bulk.explore.map((id) => F.claimById.get(id)).find((c) => claimShowable(F, ctx, c, 'quote', tool)) : null;
+      const exploreFits = !!bulkRef && !!exploreClaim;
       const explorePath = `${dir}/agents/modelproof-explore.md`;
       if (exploreFits && setupHasAgent('claude-code', 'Explore')) {
-        if (p.explore_override) notes.push('You already have your own Explore helper, so the haiku Explore is left out.');
+        if (p.explore_override) notes.push(`You already have your own Explore helper, so the ${bulkRef} Explore is left out.`);
       } else if (exploreFits && p.explore_override) {
         ctx.used.add(exploreClaim.id);
         parts.push({
           id: 'claude-code:agent:explore', tool, kind: 'owned-file', enforced: true, optional: true,
           target: { scope, path: explorePath },
-          content: ccAgent('Explore', 'Fast read-only search of the codebase for files, symbols and answers.', 'haiku', null, EXPLORE_BODY, ['disallowedTools: Write, Edit, NotebookEdit']),
-          why: 'Optional, added because you asked: replaces the built-in Explore helper\'s model with haiku (since v2.1.198 the built-in follows the lead).',
+          content: ccAgent('Explore', 'Fast read-only search of the codebase for files, symbols and answers.', bulkRef, null, EXPLORE_BODY, ['disallowedTools: Write, Edit, NotebookEdit']),
+          why: `Optional, added because you asked: an Explore helper of your own replaces the built-in one, here on ${bulkRef}; the built-in runs on the lead's model.`,
           basis: [basisRec(exploreClaim)],
         });
       } else if (exploreFits && p.limits === 'often') {
-        available.push({ id: 'claude-code:agent:explore', path: explorePath, what: 'Claude Code\'s built-in Explore helper on haiku', add: '"explore_override": true' });
+        available.push({ id: 'claude-code:agent:explore', path: explorePath, what: `Claude Code's built-in Explore helper on ${bulkRef}`, add: '"explore_override": true' });
       } else if (p.explore_override) {
-        notes.push('The haiku Explore helper you asked for is left out: it needs haiku within reach and models from one lab.');
+        notes.push('The Explore helper you asked for is left out: it needs the bulk model Claude Code\'s docs name, within your reach.');
       }
       // Settings keys: only on explicit opt-in, only keys that are absent.
       const keys = {};
@@ -1032,11 +1228,8 @@ export function buildPackage(profile, facts, setup) {
         }
       }
       if (p.effort_cap) {
-        const leadM = r.lead.model_id ? F.byId.get(r.lead.model_id) : null;
-        const opus55 = F.byId.get('claude-opus-5-5');
-        const newLead = !leadM || (opus55 && opus55.released && leadM.released && leadM.released >= opus55.released && leadM.lab === 'anthropic');
         if (setupHasKey('maxEffortLevel')) notes.push('settings.json already sets maxEffortLevel; it is left as is.');
-        else if (user && newLead) notes.push('Your effort cap stays in the text only: Claude Code ignores user-level effort keys on Opus 5.5 and later, and your lead may be one.');
+        else if (!plan || !plan.levels.includes(p.effort_cap)) notes.push(`Claude Code's docs do not list ${p.effort_cap} as an effort level, so your cap stays in the text only.`);
         else keys.maxEffortLevel = p.effort_cap;
       }
       if (Object.keys(keys).length) {
@@ -1058,13 +1251,11 @@ export function buildPackage(profile, facts, setup) {
       const dir = user ? S.dirs.codex : '.codex';
       for (const role of ROLES) {
         const x = r[role];
-        parts.push({
-          id: `codex:agent:${role}`, tool, kind: 'owned-file', enforced: true,
-          target: { scope, path: `${dir}/agents/modelproof-${role}.toml` },
-          content: codexAgent(role, x.model_ref, helperEffort(p, x)),
-          why: x.model_ref ? `Codex runs this helper on ${x.model_ref}; a model in a custom agent file wins for that agent.` : `No model set, so Codex runs this helper on the lead's model${x.effort ? '' : ' and effort'}.`,
-        });
+        const effort = helperEffort(F, p, tool, x);
+        parts.push(ownedPart(tool, role, `${dir}/agents/modelproof-${role}.toml`, codexAgent(role, x.model_ref, effort),
+          x.model_ref ? `Codex runs this helper on ${x.model_ref}; a model in a custom agent file wins for that agent.` : `No model set, so Codex runs this helper on the lead's model${effort ? '' : ' and effort'}.`));
       }
+      if (p.effort_cap && !(F.toolPlans.get(tool) || { levels: [] }).levels.includes(p.effort_cap)) notes.push(`Codex's docs do not list ${p.effort_cap} as an effort level, so its helper files carry none.`);
       if (user) {
         textParts.push({ id: 'codex:text', tool, readers: ['codex'], kind: 'block', path: `${S.dirs.codex}/${S.override.user ? 'AGENTS.override.md' : 'AGENTS.md'}`, why: S.override.user ? 'Codex reads AGENTS.override.md instead of AGENTS.md at this level, so the block goes there.' : 'Codex reads this AGENTS.md before any task.' });
       } else if (codexOverride) {
@@ -1076,12 +1267,8 @@ export function buildPackage(profile, facts, setup) {
       const dir = user ? S.dirs.cursor : '.cursor';
       for (const role of ROLES) {
         const x = r[role];
-        parts.push({
-          id: `cursor:agent:${role}`, tool, kind: 'owned-file', enforced: true,
-          target: { scope, path: `${dir}/agents/modelproof-${role}.md` },
-          content: ccAgent(`modelproof-${role}`, AGENT_DESCRIPTION[role], x.model_ref || 'inherit', null, AGENT_BODY[role]),
-          why: 'Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.',
-        });
+        parts.push(ownedPart(tool, role, `${dir}/agents/modelproof-${role}.md`, ccAgent(`modelproof-${role}`, AGENT_DESCRIPTION[role], x.model_ref || 'inherit', null, AGENT_BODY[role]),
+          'Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.'));
         if (x.from === 'you' && !x.model_ref) notes.push(`Cursor has no documented model string for ${x.model_name}; its ${role} file says inherit, so choose ${x.model_name} in Cursor's model menu.`);
       }
       if (user) notes.push('Cursor keeps user rules in its app (Customize → Rules), not in a file; paste the Cursor lines there to use them everywhere.');
@@ -1091,6 +1278,37 @@ export function buildPackage(profile, facts, setup) {
       } else {
         textParts.push({ id: 'cursor:rules', tool, readers: ['cursor'], kind: 'owned-file', path: '.cursor/rules/modelproof.mdc', why: 'Cursor applies a rule with alwaysApply: true in every chat.', mdc: true });
       }
+    } else if (tool === 'copilot') {
+      // Copilot also loads helpers from .claude/agents (and ~/.claude/agents), so with Claude Code
+      // at the same scope, or Modelproof's Claude Code helpers already there, those files serve
+      // both: no second, same-named copy.
+      const shared = has('claude-code') || S.agents.some((a) => a.tool === 'claude-code' && a.modelproof && a.scope === scope && /^modelproof-/.test(a.name));
+      if (shared) {
+        const c = F.claimById.get('copilot-custom-agent-locations');
+        const ref = roles['claude-code'] && roles['claude-code'].bulk.model_ref;
+        notes.push(`GitHub Copilot also loads the Claude Code helper files (${user ? '~/.claude/agents' : '.claude/agents'})${c ? ` (${c.source_url})` : ''}, so no second copy is added. Its docs do not say how it reads their model lines${ref ? ` (such as ${ref})` : ''}; check modelproof-bulk in Copilot's agent list.`);
+      } else {
+        const dir = user ? S.dirs.copilot : '.github';
+        for (const role of ROLES) {
+          parts.push(ownedPart(tool, role, `${dir}/agents/modelproof-${role}.agent.md`, copilotAgent(role),
+            'No model line, so GitHub Copilot runs this helper on the default model; set one in the file\'s model field to change it.'));
+        }
+      }
+      for (const role of ROLES) if (r[role].from === 'you') notes.push(`GitHub Copilot's docs give the model name format only for hand-offs, so your ${role} choice (${r[role].model_name}) is not written into its file; choose it in Copilot's model picker.`);
+      if (user) notes.push('GitHub Copilot reads AGENTS.md in a repository; answer "this project" to add its lines there.');
+      else agentsReaders.push('copilot');
+    } else if (tool === 'antigravity') {
+      const dir = user ? `${S.dirs.gemini}/config` : '.agents';
+      for (const role of ROLES) {
+        parts.push(ownedPart(tool, role, `${dir}/agents/modelproof-${role}.md`, antigravityAgent(role),
+          'Antigravity runs this helper on the lead\'s model (model: inherit, its default tier).'));
+      }
+      for (const role of ROLES) if (r[role].from === 'you') notes.push(`Antigravity helper files take a tier (inherit, flash or pro), not a model, so your ${role} choice (${r[role].model_name}) is not written there.`);
+      if (user) textParts.push({ id: 'antigravity:text', tool, readers: ['antigravity'], kind: 'block', path: `${S.dirs.gemini}/AGENTS.md`, why: 'Antigravity reads ~/.gemini/AGENTS.md as global rules for every project.' });
+      else agentsReaders.push('antigravity');
+    } else if (tool === 'openrouter') {
+      copy.push({ id: 'openrouter:copy', tool, readers: ['openrouter'] });
+      notes.push('OpenRouter / API is copy only: Modelproof writes no file for it. Paste its lines into your system prompt or an OpenRouter preset.');
     } else if (tool === 'agents-md') {
       if (user) notes.push('AGENTS.md is a project file; answer "this project" to add it.');
       else agentsReaders.push('agents-md');
@@ -1102,14 +1320,17 @@ export function buildPackage(profile, facts, setup) {
   }
   for (const tp of textParts) {
     let content = renderText(F, p, ctx, roles, tp.readers, { kind: tp.kind, owned: tp.kind === 'owned-file', capKey: tp.capKey, extra: tp.mdc ? 4 : 0 });
-    if (tp.mdc) content = ['---', 'description: Modelproof helpers and hand-off', 'alwaysApply: true', '---', content].join('\n');
+    if (tp.mdc) content = ['---', 'description: Modelproof lead, helpers and bulk', 'alwaysApply: true', '---', content].join('\n');
     const part = { id: tp.id, tool: tp.tool, readers: tp.readers, kind: tp.kind, enforced: false, target: { scope, path: tp.path }, content, why: tp.why };
     parts.push(part);
   }
   for (const part of parts) part.lines = part.kind === 'json-keys' ? Object.keys(part.keys).length : countLines(part.content);
+  const copies = copy.map((c) => {
+    const content = renderText(F, p, ctx, roles, c.readers, { kind: 'copy', owned: false });
+    return { id: c.id, tool: c.tool, content, lines: countLines(content), where: 'your system prompt or an OpenRouter preset' };
+  });
 
   if (S.present) for (const t of p.tools) if (S.present[t] === false) notes.push(`${TOOL_LABEL[t]} was not found on this machine; its files are still listed.`);
-  if (ctx.multiLab) notes.push(`You use models from ${ctx.labs.length} labs (${ctx.labs.map((l) => labName(F, l)).join(', ')}), so helpers run on the lead's model unless you choose one; each lab's own descriptions are listed as facts.`);
   if (parts.some((x) => x.kind === 'owned-file')) notes.push('Start a new session so each tool loads the new helper and rule files.');
   notes.push(`Undo removes every file, block and key this adds; ${S.stateDir ? S.stateDir + '/' : 'the Modelproof state folder'} keeps the install history.`);
   const allNotes = uniq([...problems.map((x) => `Left out of your answers: ${x}`), ...ctx.notes, ...notes]);
@@ -1127,6 +1348,7 @@ export function buildPackage(profile, facts, setup) {
     as_of: F.asOf,
     profile: p,
     parts,
+    copy: copies,
     available,
     checks,
     roles,
@@ -1159,10 +1381,10 @@ function answersLine(pkg) {
   bits.push('work: ' + (arr(p.work).join(', ') || 'any'));
   return bits.join(' · ');
 }
-function roleSummary(x) {
-  if (x.from === 'inherit') return 'inherit (runs on the lead\'s model)';
+function roleSummary(x, role) {
+  if (x.from === 'inherit') return role === 'bulk' && x.choice ? 'inherit until you set its model (the tool\'s docs name no model string)' : 'inherit (runs on the lead\'s model)';
   const name = x.model_ref && x.model_ref !== x.model_id ? `${x.model_ref} = ${x.model_name}` : x.model_name;
-  return `${name} · ${x.from === 'you' ? 'your choice' : 'from the tool\'s own docs'}`;
+  return `${name} · ${x.from === 'you' ? 'your choice' : role === 'lead' ? 'the tool\'s default, from its own docs' : x.from === 'lab' ? 'from the lab\'s own docs' : 'from the tool\'s own docs'}`;
 }
 function usageText(u) {
   return u && num(u.openrouter_share) ? `${u.openrouter_share}% of OpenRouter tokens${u.as_of ? ' (' + u.as_of + ')' : ''}` : null;
@@ -1198,23 +1420,35 @@ export function renderPreview(pkg) {
   }
 
   if (Object.keys(roles).length) {
-    out.push('', 'Which model each helper runs');
+    out.push('', 'Lead, helpers and bulk per tool');
+    const quotes = (list) => { for (const b of arr(list)) out.push(`             "${b.quote}"`, `             ${b.source_url} (${b.date})`); };
     for (const tool of TOOLS) {
       const t = roles[tool];
       if (!t) continue;
-      out.push(`  ${TOOL_LABEL[tool]}`);
+      out.push(`  ${TOOL_LABEL[tool]}${COPY_ONLY_TOOLS.includes(tool) ? ' (copy only)' : ''}`);
       for (const role of ALL_ROLE_KEYS) {
         const x = t[role];
         if (!x) continue;
-        if (role === 'lead' && x.from === 'inherit') { out.push(`    ${'lead'.padEnd(9)}the model you choose in ${tool === 'agents-md' ? 'your tool' : TOOL_LABEL[tool]}`); continue; }
+        if (COPY_ONLY_TOOLS.includes(tool) && HELPER_ROLES.includes(role)) continue;
+        if (role === 'lead' && x.from === 'inherit') {
+          out.push(`    ${'lead'.padEnd(9)}${COPY_ONLY_TOOLS.includes(tool) ? 'the model you name in each request' : `the model you choose in ${tool === 'agents-md' ? 'your tool' : TOOL_LABEL[tool]}`}`);
+          continue;
+        }
         if (tool === 'agents-md' && role !== 'lead' && x.from === 'inherit') continue;
-        out.push(`    ${role.padEnd(9)}${roleSummary(x)}`);
+        out.push(`    ${role.padEnd(9)}${COPY_ONLY_TOOLS.includes(tool) && role === 'bulk' && x.from === 'inherit' ? 'the model you name per request' : roleSummary(x, role)}`);
         if (x.effort) out.push(`             effort ${x.effort}: your choice (your effort cap), written into the helper file`);
-        for (const b of arr(x.basis)) if (x.from !== 'inherit') out.push(`             "${b.quote}"`, `             ${b.source_url} (${b.date})`);
+        const e = x.effort_info;
+        if (e) out.push(`             effort ${e.effort} by default${e.raise_to && e.when ? `; ${e.raise_to} for ${e.when}` : ''} (information, not a setting)`);
+        if (x.from !== 'inherit') quotes(e && x.from === 'you' ? e.basis : x.basis);
         if (x.model_id) {
           const u = usageText(x.usage);
           out.push(`             ${priceText(x.price)}${u ? ' · ' + u : ''}`);
         }
+      }
+      const nl = t.near_limit;
+      if (nl) {
+        out.push(`    near a full usage limit (a text line, not a setting): ${nl.model_id ? `${nl.when} can run on ${nl.model_ref && nl.model_ref !== nl.model_id ? `${nl.model_ref} = ${nl.model_name}` : nl.model_name}` : 'the tool\'s own words below'}`);
+        quotes(nl.basis);
       }
     }
   }
@@ -1233,6 +1467,11 @@ export function renderPreview(pkg) {
       for (const c of s.claims) out.push(`  ${s.subject}: "${c.quote}"`, `    ${c.source_url} (${c.date})`);
     }
   }
+  for (const c of arr(P.copy)) {
+    if (!isObj(c) || typeof c.content !== 'string') continue;
+    out.push('', `Copy only, not installed: ${TOOL_LABEL[c.tool] || c.tool} (paste into ${c.where}) · ${c.lines} lines`);
+    for (const l of c.content.replace(/\n+$/, '').split('\n')) out.push(l ? `  ${l}` : '');
+  }
   const parts = arr(P.parts);
   if (parts.length) {
     out.push('', 'Files (numbered; answer "no to 3" to leave one out)');
@@ -1247,7 +1486,7 @@ export function renderPreview(pkg) {
       if (x.why) out.push(`      ${x.why}`);
     });
   } else {
-    out.push('', 'Files: none (no tool with a file this package can write).');
+    out.push('', arr(P.copy).length ? 'Files: none (the installer writes nothing for a copy-only tool).' : 'Files: none (no tool with a file this package can write).');
   }
   for (const a of arr(P.available)) {
     if (!isObj(a) || !a.path) continue;
@@ -1265,7 +1504,8 @@ export function renderPreview(pkg) {
 const BOARD_ROLE_RULES = [
   { role: 'lead', re: /coordinat|\blead\b|orchestr|main|planner/i },
   { role: 'reviewer', re: /review|check|audit|\bqa\b|verif/i },
-  { role: 'scout', re: /research|scout|explor|read|search|bulk/i },
+  { role: 'bulk', re: /bulk|mechanical|batch|boilerplate/i },
+  { role: 'scout', re: /research|scout|explor|read|search/i },
   { role: 'builder', re: /code|coding|build|design|dev|engineer|frontend/i },
 ];
 const USAGE_TO_LIMITS = { heavy: 'often', typical: 'sometimes', light: 'rarely', automated: 'api-budget' };
@@ -1287,17 +1527,15 @@ export function profileFromBoard(state, data) {
     const words = String(label || '').split(' ');
     return { vendor: words[0] || '', plan: words.slice(1).join(' ') };
   };
+  // The tool a plan's vendor makes: a lab's own coding tool, or the tool the vendor is.
+  const VENDOR_TOOL = { anthropic: 'claude-code', openai: 'codex', cursor: 'cursor', 'github copilot': 'copilot', google: 'antigravity', openrouter: 'openrouter' };
   const toolsFor = (plans) => {
-    const t = [];
-    for (const pl of plans) {
-      const v = labKey(pl.vendor);
-      if (v === 'anthropic') t.push('claude-code');
-      else if (v === 'openai') t.push('codex');
-      else if (v === 'cursor') t.push('cursor');
-    }
+    const t = plans.map((pl) => VENDOR_TOOL[labKey(pl.vendor)]).filter(Boolean);
     return TOOLS.filter((x) => t.includes(x));
   };
-  const perToken = (plans) => plans.some((pl) => PER_TOKEN_VENDORS.includes(labKey(pl.vendor)));
+  // A plan billed per token (its row says the seat does not cover tokens) means API use.
+  const rowOf = (pl) => planRows.find((r) => isObj(r) && r.vendor === pl.vendor && r.plan === pl.plan);
+  const perToken = (plans) => plans.some((pl) => { const row = rowOf(pl); return !!row && row.covers_tokens === false; });
   const roles = {};
   for (const r of arr(personal.roles)) {
     if (!isObj(r) || r.auto || !r.model) continue;
@@ -1338,7 +1576,7 @@ export function profileFromBoard(state, data) {
     raw.roles = roles;
   }
   if (!raw.tools.length) raw.tools = ['agents-md'];
-  return normalizeProfile(raw, { models: d.models, guidance: d.guidance }).profile;
+  return normalizeProfile(raw, { models: d.models, guidance: d.guidance, plans: d.plans }).profile;
 }
 
 /* ------------------------------------------------------------------ block markers */
@@ -1421,8 +1659,7 @@ export function stampOwnedText(content) {
 // carries its marker lines, a file its stamped owned tag, and settings keys are listed to add by
 // hand, so a later install adopts what was pasted.
 export function packageText(pkg) {
-  const parts = isObj(pkg) ? arr(pkg.parts) : [];
-  return parts.map((part) => {
+  const parts = (isObj(pkg) ? arr(pkg.parts) : []).map((part) => {
     const where = part.target && part.target.path ? part.target.path : part.id;
     if (part.kind === 'block' && typeof part.content === 'string') {
       return `=== Add at the end of ${where} (keep the two modelproof marker lines) ===\n${blockText(blockBodyLines(part.content))}\n`;
@@ -1433,5 +1670,8 @@ export function packageText(pkg) {
     }
     if (typeof part.content === 'string') return `=== New file ${where} ===\n${(stampOwnedText(part.content) || part.content).replace(/\n+$/, '')}\n`;
     return null;
-  }).filter(Boolean).join('\n');
+  });
+  const copies = (isObj(pkg) ? arr(pkg.copy) : []).filter((c) => isObj(c) && typeof c.content === 'string')
+    .map((c) => `=== Copy into ${c.where} (copy only; the installer writes nothing for ${TOOL_LABEL[c.tool] || c.tool}) ===\n${c.content.replace(/\n+$/, '')}\n`);
+  return [...parts, ...copies].filter(Boolean).join('\n');
 }

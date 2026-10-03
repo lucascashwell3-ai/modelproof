@@ -6,20 +6,24 @@
     "schema": "modelproof.profile/1",
     "who": "person",
     "tools": [
-      "claude-code"
+      "claude-code",
+      "copilot"
     ],
     "scope": "project",
     "plans": [
       {
         "vendor": "Anthropic",
+        "plan": "Max 5x"
+      },
+      {
+        "vendor": "GitHub Copilot",
         "plan": "Pro"
       }
     ],
     "api": false,
-    "limits": "rarely",
+    "limits": "sometimes",
     "work": [
-      "writing",
-      "research"
+      "coding"
     ],
     "like": [],
     "never": [],
@@ -94,9 +98,25 @@
         "scope": "project",
         "path": ".claude/rules/modelproof.md"
       },
-      "content": "<!-- modelproof:owned v1 -->\n# Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n## Lead, helpers and bulk\n- Lead: Claude Opus 5.5, Claude Code's default model; effort medium by default, high for complex reasoning or difficult coding problems.\n  Source: Claude Code docs, https://code.claude.com/docs/en/model-config (2026-10-03)\n  Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Helpers: modelproof-scout, modelproof-builder and modelproof-reviewer run on the lead's model (inherit). Call them by name and pass no model.\n  Source: Claude Code docs, https://code.claude.com/docs/en/model-config (2026-09-27)\n  Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- Bulk: modelproof-bulk runs haiku (Claude Haiku 4.5), for quick mechanical work whose output a script or test can check.\n  Source: Claude Code docs, https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)\n  Source: Anthropic docs, https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence (2026-10-03)\n\n## When to hand off\n- Hand helpers verbose work (test runs, logs): only a summary comes back. Source: Claude Code docs, https://code.claude.com/docs/en/costs (2026-09-27)\n- Hand helpers parallel or separable work; each one adds tokens. Source: Anthropic docs, https://www.anthropic.com/engineering/multi-agent-research-system (2026-09-27)\n- For a job one model can do alone, lower effort on that model cost less than an orchestrator. Source: Anthropic docs, https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence.md (2026-09-27)\n- Helpers share your usage limits. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n\n## How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- A cold review gets the diff, not the author's summary.\n\n## Context\n- Search before reading; read line ranges, not whole big files.\n- Hand long reading to modelproof-scout and take back a short summary.\n- Each Claude Code subagent runs in its own context window with its own system prompt, tools and permissions. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n\n## Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- An effort field in a subagent file overrides the session effort level while that subagent runs. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- On the Claude API, Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "content": "<!-- modelproof:owned v1 -->\n# Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n## Lead, helpers and bulk\n- Lead: Claude Opus 5.5, Claude Code's default model; effort medium by default, high for complex reasoning or difficult coding problems.\n  Source: Claude Code docs, https://code.claude.com/docs/en/model-config (2026-10-03)\n  Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Helpers: modelproof-scout, modelproof-builder and modelproof-reviewer run on the lead's model (inherit). Call them by name and pass no model.\n  Source: Claude Code docs, https://code.claude.com/docs/en/model-config (2026-09-27)\n  Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- Near a full usage limit: a routine, well-scoped thread can run on sonnet (Claude Sonnet 5.5); name that model in the call (no file sets it).\n  Source: Claude Code docs, https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)\n  Source: Anthropic docs, https://www.anthropic.com/claude-sonnet-5-5 (2026-10-03)\n- Bulk: modelproof-bulk runs haiku (Claude Haiku 4.5), for quick mechanical work whose output a script or test can check.\n  Source: Claude Code docs, https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)\n  Source: Anthropic docs, https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence (2026-10-03)\n\n## When to hand off\n- Hand helpers verbose work (test runs, logs): only a summary comes back. Source: Claude Code docs, https://code.claude.com/docs/en/costs (2026-09-27)\n- Hand helpers parallel or separable work; each one adds tokens. Source: Anthropic docs, https://www.anthropic.com/engineering/multi-agent-research-system (2026-09-27)\n- For a job one model can do alone, lower effort on that model cost less than an orchestrator. Source: Anthropic docs, https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence.md (2026-09-27)\n- Helpers share your usage limits. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n\n## How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n## Context\n- Search before reading; read line ranges, not whole big files.\n- Each Claude Code subagent runs in its own context window with its own system prompt, tools and permissions. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n\n## Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- An effort field in a subagent file overrides the session effort level while that subagent runs. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- On the Claude API, Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
       "why": "Claude Code loads every file in rules/ each session; your CLAUDE.md is not touched.",
-      "lines": 35
+      "lines": 38
+    },
+    {
+      "id": "agents-md:text",
+      "tool": "copilot",
+      "readers": [
+        "copilot"
+      ],
+      "kind": "block",
+      "enforced": false,
+      "target": {
+        "scope": "project",
+        "path": "AGENTS.md"
+      },
+      "content": "## Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n### Lead, helpers and bulk\n- Lead: the model you choose in GitHub Copilot. In VS Code, the Copilot Chat model is chosen from a dropdown at the bottom of the chat view.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model (2026-09-27)\n- Helpers: modelproof-scout, modelproof-builder and modelproof-reviewer run on the lead's model (inherit).\n  Source: GitHub Copilot docs, https://code.visualstudio.com/docs/copilot/agents/subagents (2026-10-03)\n- Near a full usage limit: GitHub's usage guide tells users to run subagents on cheaper models.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)\n- Bulk: modelproof-bulk runs on the lead's model until you set its model, for routine, well-scoped changes. GitHub's usage guide names lighter models for refactoring, formatting, documentation updates and other routine, well-scoped changes.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)\n\n### How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n### Context\n- Search before reading; read line ranges, not whole big files.\n\n### Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- On the Claude API, Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "why": "One block at the end of AGENTS.md, read by GitHub Copilot; your own text is untouched.",
+      "lines": 25
     }
   ],
   "copy": [],
@@ -279,6 +299,148 @@
           "as_of": "2026-10-01",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
+      },
+      "near_limit": {
+        "model_ref": "sonnet",
+        "model_id": "claude-sonnet-5-5",
+        "model_name": "Claude Sonnet 5.5",
+        "when": "a routine, well-scoped thread",
+        "basis": [
+          {
+            "id": "cc-opus-quota-sonnet-routine",
+            "sentence": "Anthropic's Claude Code usage article says Opus uses more of a plan's quota and names Sonnet for routine work.",
+            "quote": "It uses meaningfully more of your quota, so consider switching to Sonnet for routine work.",
+            "source_url": "https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code",
+            "date": "2026-10-03"
+          },
+          {
+            "id": "anthropic-sonnet-5-5-complement",
+            "sentence": "Anthropic's Sonnet 5.5 page describes Sonnet 5.5 as a faster, lower-cost complement to Claude Opus 5.5.",
+            "quote": "Sonnet 5.5 is a faster, lower-cost complement to Claude Opus 5.5.",
+            "source_url": "https://www.anthropic.com/claude-sonnet-5-5",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": {
+          "input": 2,
+          "output": 10
+        },
+        "usage": {
+          "openrouter_share": 0.25,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      }
+    },
+    "copilot": {
+      "lead": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "copilot-model-picker",
+            "sentence": "In VS Code, the Copilot Chat model is chosen from a dropdown at the bottom of the chat view.",
+            "quote": "At the bottom of the chat view, select the CURRENT-MODEL dropdown menu, then click the AI model of your choice.",
+            "source_url": "https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model",
+            "date": "2026-09-27"
+          },
+          {
+            "id": "copilot-thinking-effort-default",
+            "sentence": "VS Code sets its own effort level per Copilot model by default, with adaptive reasoning on.",
+            "quote": "By default, VS Code sets recommended effort levels and has adaptive reasoning enabled",
+            "source_url": "https://code.visualstudio.com/docs/copilot/customization/language-models",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "scout": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "copilot-subagent-main-model-default",
+            "sentence": "In VS Code, a Copilot subagent runs on the main conversation model when neither the tool call nor the agent names a model, unless the experimental Auto setting is on.",
+            "quote": "to use Auto instead of the main model when neither the tool call nor the agent specifies a model",
+            "source_url": "https://code.visualstudio.com/docs/copilot/agents/subagents",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "builder": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "copilot-subagent-main-model-default",
+            "sentence": "In VS Code, a Copilot subagent runs on the main conversation model when neither the tool call nor the agent names a model, unless the experimental Auto setting is on.",
+            "quote": "to use Auto instead of the main model when neither the tool call nor the agent specifies a model",
+            "source_url": "https://code.visualstudio.com/docs/copilot/agents/subagents",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "reviewer": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "copilot-subagent-main-model-default",
+            "sentence": "In VS Code, a Copilot subagent runs on the main conversation model when neither the tool call nor the agent names a model, unless the experimental Auto setting is on.",
+            "quote": "to use Auto instead of the main model when neither the tool call nor the agent specifies a model",
+            "source_url": "https://code.visualstudio.com/docs/copilot/agents/subagents",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "bulk": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "copilot-lighter-models-routine",
+            "sentence": "GitHub's usage guide names lighter models for refactoring, formatting, documentation updates and other routine, well-scoped changes.",
+            "quote": "Best for refactoring, formatting, documentation updates, and other routine, well-scoped changes.",
+            "source_url": "https://docs.github.com/en/copilot/tutorials/optimize-ai-usage",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null,
+        "choice": true
+      },
+      "near_limit": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "when": "a helper job",
+        "basis": [
+          {
+            "id": "copilot-subagents-cheaper-models",
+            "sentence": "GitHub's usage guide tells users to run subagents on cheaper models.",
+            "quote": "Run subagents on cheaper models.",
+            "source_url": "https://docs.github.com/en/copilot/tutorials/optimize-ai-usage",
+            "date": "2026-10-03"
+          }
+        ],
+        "choice": true
       }
     }
   },
@@ -296,16 +458,16 @@
             "date": "2026-09-27"
           },
           {
-            "id": "cc-alias-opus",
-            "sentence": "Claude Code describes its opus alias as the latest Opus model for complex reasoning tasks.",
-            "quote": "Uses the latest Opus model for complex reasoning tasks",
+            "id": "cc-alias-sonnet",
+            "sentence": "Claude Code describes its sonnet alias as the latest Sonnet model for daily coding tasks.",
+            "quote": "Uses the latest Sonnet model for daily coding tasks",
             "source_url": "https://code.claude.com/docs/en/model-config",
             "date": "2026-09-27"
           },
           {
-            "id": "cc-alias-sonnet",
-            "sentence": "Claude Code describes its sonnet alias as the latest Sonnet model for daily coding tasks.",
-            "quote": "Uses the latest Sonnet model for daily coding tasks",
+            "id": "cc-alias-opus",
+            "sentence": "Claude Code describes its opus alias as the latest Opus model for complex reasoning tasks.",
+            "quote": "Uses the latest Opus model for complex reasoning tasks",
             "source_url": "https://code.claude.com/docs/en/model-config",
             "date": "2026-09-27"
           }
@@ -339,6 +501,7 @@
     "anthropic-haiku-checkable-outputs",
     "anthropic-multi-agent-token-use",
     "anthropic-orchestrator-vs-lower-effort",
+    "anthropic-sonnet-5-5-complement",
     "cc-alias-opus",
     "cc-alias-sonnet",
     "cc-costs-haiku-subagent",
@@ -347,13 +510,20 @@
     "cc-effort-5-5-default-medium",
     "cc-haiku-mechanical-work",
     "cc-inherit-follows-switch",
+    "cc-opus-quota-sonnet-routine",
     "cc-sonnet-vs-opus-costs",
     "cc-subagent-effort",
     "cc-subagent-model-order",
     "cc-subagent-own-context",
-    "cc-subagent-usage-limits"
+    "cc-subagent-usage-limits",
+    "copilot-lighter-models-routine",
+    "copilot-model-picker",
+    "copilot-subagent-main-model-default",
+    "copilot-subagents-cheaper-models",
+    "copilot-thinking-effort-default"
   ],
   "notes": [
+    "GitHub Copilot also loads the Claude Code helper files (.claude/agents) (https://code.visualstudio.com/docs/copilot/customization/custom-agents), so no second copy is added. Its docs do not say how it reads their model lines (such as haiku); check modelproof-bulk in Copilot's agent list.",
     "Start a new session so each tool loads the new helper and rule files.",
     "Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history."
   ],

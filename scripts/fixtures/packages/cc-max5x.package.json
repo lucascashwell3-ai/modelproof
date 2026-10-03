@@ -1,7 +1,7 @@
 {
   "version": "modelproof.package/1",
-  "generator_version": "1.0.0",
-  "as_of": "2026-09-27",
+  "generator_version": "1.1.0",
+  "as_of": "2026-10-03",
   "profile": {
     "schema": "modelproof.profile/1",
     "who": "person",
@@ -44,8 +44,8 @@
         "scope": "user",
         "path": "~/.claude/agents/modelproof-scout.md"
       },
-      "content": "---\nname: modelproof-scout\ndescription: Reads, searches and sums up code or docs for the lead. Use it for long reading and lookups. It does not edit files.\nmodel: haiku\n---\n<!-- modelproof:owned v1 -->\nYou are the scout. You find and read; you do not edit files.\n- Search first (grep or glob), then open only the line ranges you need.\n- Never read a large file whole.\n- Answer in a few lines: what you found, with file:line for each fact.\n- Say what you could not find.\n- Put long findings in a file on disk and return its path.\n",
-      "why": "Claude Code runs this helper on haiku, the model named in the file.",
+      "content": "---\nname: modelproof-scout\ndescription: Reads, searches and sums up code or docs for the lead. Use it for long reading and lookups. It does not edit files.\nmodel: inherit\n---\n<!-- modelproof:owned v1 -->\nYou are the scout. You find and read; you do not edit files.\n- Search first (grep or glob), then open only the line ranges you need.\n- Never read a large file whole.\n- Answer in a few lines: what you found, with file:line for each fact.\n- Say what you could not find.\n- Put long findings in a file on disk and return its path.\n",
+      "why": "Claude Code runs this helper on the lead's model (model: inherit).",
       "lines": 12
     },
     {
@@ -75,6 +75,19 @@
       "lines": 11
     },
     {
+      "id": "claude-code:agent:bulk",
+      "tool": "claude-code",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.claude/agents/modelproof-bulk.md"
+      },
+      "content": "---\nname: modelproof-bulk\ndescription: Does mechanical, repetitive work (renames, boilerplate, many small edits) whose result a script or test can check.\nmodel: haiku\n---\n<!-- modelproof:owned v1 -->\nYou are the bulk helper. You do mechanical work the lead has already planned.\n- Follow the brief exactly: the files, the change, and the check that proves it.\n- Run the check after the change and report its exact result.\n- Stop and report back when a step needs judgment the brief does not give.\n- Return in a few lines: what changed, the last lines of the check.\n",
+      "why": "Claude Code runs this helper on haiku, the model named in the file.",
+      "lines": 11
+    },
+    {
       "id": "claude-code:rules",
       "tool": "claude-code",
       "readers": [
@@ -86,11 +99,12 @@
         "scope": "user",
         "path": "~/.claude/rules/modelproof.md"
       },
-      "content": "<!-- modelproof:owned v1 -->\n# Modelproof helpers and hand-off (facts as of 2026-09-27)\nLead: the model you choose in the tool. Helpers marked inherit run on it.\n\n## Helpers\n- Call these helpers by name and pass no model: a model given per call overrides the file. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- modelproof-scout (reads and searches) → haiku (Claude Haiku 4.5)\n  Source: Claude Code docs, https://code.claude.com/docs/en/costs (2026-09-27)\n- modelproof-builder (makes the planned change) → Claude Opus 5.5\n  Source: your choice (list price $4 in / $20 out per 1M tokens, as of 2026-09-26)\n- modelproof-reviewer (reviews the diff cold) → inherit: runs on the lead's model\n  Source: Claude Code docs, https://code.claude.com/docs/en/model-config (2026-09-27)\n\n## When to hand off\n- Hand helpers verbose work (test runs, logs): only a summary comes back. Source: Claude Code docs, https://code.claude.com/docs/en/costs (2026-09-27)\n- Hand helpers parallel or separable work; each adds tokens (multi-agent systems used about 15 times the tokens of chat in Anthropic's data). Source: Anthropic docs, https://www.anthropic.com/engineering/multi-agent-research-system (2026-09-27)\n- For a job one model can do alone, lower effort on that model cost less than an orchestrator. Source: Anthropic docs, https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence.md (2026-09-27)\n- Helpers share your usage limits. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n\n## How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n## Context\n- Search before reading; read line ranges, not whole big files.\n- Hand long reading to modelproof-scout and take back a short summary.\n- Each Claude Code subagent runs in its own context window with its own system prompt, tools and permissions. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n\n## Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- An effort field in a subagent file overrides the session effort level while that subagent runs. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-09-27)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "content": "<!-- modelproof:owned v1 -->\n# Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n## Lead, helpers and bulk\n- Lead: Claude Opus 5.5, Claude Code's default model; effort medium by default, high for complex reasoning or difficult coding problems.\n  Source: Claude Code docs, https://code.claude.com/docs/en/model-config (2026-10-03)\n  Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Builder: modelproof-builder (makes the planned change) runs Claude Opus 5.5 (your choice).\n  Source: your choice (list price $4 in / $20 out per 1M tokens, as of 2026-10-03)\n- Helpers: modelproof-scout and modelproof-reviewer run on the lead's model (inherit). Call them by name and pass no model.\n  Source: Claude Code docs, https://code.claude.com/docs/en/model-config (2026-09-27)\n  Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- Near a full usage limit: a routine, well-scoped thread can run on sonnet (Claude Sonnet 5.5); name that model in the call (no file sets it).\n  Source: Claude Code docs, https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)\n  Source: Anthropic docs, https://www.anthropic.com/claude-sonnet-5-5 (2026-10-03)\n- Bulk: modelproof-bulk runs haiku (Claude Haiku 4.5), for quick mechanical work whose output a script or test can check.\n  Source: Claude Code docs, https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)\n  Source: Anthropic docs, https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence (2026-10-03)\n\n## When to hand off\n- Hand helpers verbose work (test runs, logs): only a summary comes back. Source: Claude Code docs, https://code.claude.com/docs/en/costs (2026-09-27)\n- Hand helpers parallel or separable work; each one adds tokens. Source: Anthropic docs, https://www.anthropic.com/engineering/multi-agent-research-system (2026-09-27)\n- For a job one model can do alone, lower effort on that model cost less than an orchestrator. Source: Anthropic docs, https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence.md (2026-09-27)\n- Helpers share your usage limits. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n\n## How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n## Context\n- Search before reading; read line ranges, not whole big files.\n- Hand long reading to modelproof-scout and take back a short summary.\n\n## Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- An effort field in a subagent file overrides the session effort level while that subagent runs. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- On the Claude API, Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
       "why": "Claude Code loads every file in rules/ each session; your CLAUDE.md is not touched.",
-      "lines": 35
+      "lines": 40
     }
   ],
+  "copy": [],
   "available": [
     {
       "id": "claude-code:agent:explore",
@@ -120,44 +134,94 @@
   "roles": {
     "claude-code": {
       "lead": {
+        "model_ref": "opus",
+        "model_id": "claude-opus-5-5",
+        "model_name": "Claude Opus 5.5",
+        "from": "tool",
+        "basis": [
+          {
+            "id": "cc-default-model-opus-5-5",
+            "sentence": "Claude Code's model-config docs state the default model setting resolves to Opus 5.5 on Pro, Max, Team, Enterprise and Anthropic API accounts.",
+            "quote": "Pro, Max, Team, Enterprise, and Anthropic API : defaults to Opus 5.5",
+            "source_url": "https://code.claude.com/docs/en/model-config",
+            "date": "2026-10-03"
+          },
+          {
+            "id": "cc-effort-5-5-default-medium",
+            "sentence": "Claude Code's model-config docs list medium as the default effort for Opus 5.5 and Sonnet 5.5, and high for other models that support effort.",
+            "quote": "except that Opus 5.5 and Sonnet 5.5 default to medium",
+            "source_url": "https://code.claude.com/docs/en/model-config",
+            "date": "2026-10-03"
+          },
+          {
+            "id": "anthropic-effort-high-use",
+            "sentence": "Anthropic's effort docs list complex reasoning, difficult coding problems and agentic tasks as the typical use for high effort.",
+            "quote": "Complex reasoning, difficult coding problems, agentic tasks",
+            "source_url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": {
+          "input": 4,
+          "output": 20
+        },
+        "usage": {
+          "openrouter_share": 1.3,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        },
+        "effort_info": {
+          "effort": "medium",
+          "raise_to": "high",
+          "when": "complex reasoning or difficult coding problems",
+          "basis": [
+            {
+              "id": "cc-default-model-opus-5-5",
+              "sentence": "Claude Code's model-config docs state the default model setting resolves to Opus 5.5 on Pro, Max, Team, Enterprise and Anthropic API accounts.",
+              "quote": "Pro, Max, Team, Enterprise, and Anthropic API : defaults to Opus 5.5",
+              "source_url": "https://code.claude.com/docs/en/model-config",
+              "date": "2026-10-03"
+            },
+            {
+              "id": "cc-effort-5-5-default-medium",
+              "sentence": "Claude Code's model-config docs list medium as the default effort for Opus 5.5 and Sonnet 5.5, and high for other models that support effort.",
+              "quote": "except that Opus 5.5 and Sonnet 5.5 default to medium",
+              "source_url": "https://code.claude.com/docs/en/model-config",
+              "date": "2026-10-03"
+            },
+            {
+              "id": "anthropic-effort-high-use",
+              "sentence": "Anthropic's effort docs list complex reasoning, difficult coding problems and agentic tasks as the typical use for high effort.",
+              "quote": "Complex reasoning, difficult coding problems, agentic tasks",
+              "source_url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
+              "date": "2026-10-03"
+            }
+          ]
+        }
+      },
+      "scout": {
         "model_ref": null,
         "model_id": null,
         "model_name": null,
         "from": "inherit",
-        "basis": [],
-        "price": null,
-        "usage": null
-      },
-      "scout": {
-        "model_ref": "haiku",
-        "model_id": "claude-haiku-4-5",
-        "model_name": "Claude Haiku 4.5",
-        "from": "tool",
         "basis": [
           {
-            "id": "cc-costs-haiku-subagent",
-            "sentence": "Claude Code cost docs suggest model: haiku in the subagent file for simple subagent tasks.",
-            "quote": "For simple subagent tasks, specify model: haiku in your subagent configuration",
-            "source_url": "https://code.claude.com/docs/en/costs",
+            "id": "cc-inherit-follows-switch",
+            "sentence": "A subagent that inherits the session model follows a /model switch; a model field in its file keeps it fixed.",
+            "quote": "To keep a custom subagent on a smaller model, set model in its definition.",
+            "source_url": "https://code.claude.com/docs/en/model-config",
             "date": "2026-09-27"
           },
           {
-            "id": "cc-alias-haiku",
-            "sentence": "Claude Code describes its haiku alias as the Haiku model for simple tasks.",
-            "quote": "Uses the fast and efficient Haiku model for simple tasks",
-            "source_url": "https://code.claude.com/docs/en/model-config",
+            "id": "cc-subagent-model-order",
+            "sentence": "Claude Code resolves a subagent's model from the per-call model parameter, then the file model field, then CLAUDE_CODE_SUBAGENT_MODEL, then the main conversation model.",
+            "quote": "Claude Code resolves the subagent's model in this order:",
+            "source_url": "https://code.claude.com/docs/en/sub-agents",
             "date": "2026-09-27"
           }
         ],
-        "price": {
-          "input": 1,
-          "output": 5
-        },
-        "usage": {
-          "openrouter_share": 0.17,
-          "as_of": "2026-09-25",
-          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
-        }
+        "price": null,
+        "usage": null
       },
       "builder": {
         "model_ref": "claude-opus-5-5",
@@ -170,8 +234,8 @@
           "output": 20
         },
         "usage": {
-          "openrouter_share": 0.49,
-          "as_of": "2026-09-25",
+          "openrouter_share": 1.3,
+          "as_of": "2026-10-01",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -187,10 +251,86 @@
             "quote": "To keep a custom subagent on a smaller model, set model in its definition.",
             "source_url": "https://code.claude.com/docs/en/model-config",
             "date": "2026-09-27"
+          },
+          {
+            "id": "cc-subagent-model-order",
+            "sentence": "Claude Code resolves a subagent's model from the per-call model parameter, then the file model field, then CLAUDE_CODE_SUBAGENT_MODEL, then the main conversation model.",
+            "quote": "Claude Code resolves the subagent's model in this order:",
+            "source_url": "https://code.claude.com/docs/en/sub-agents",
+            "date": "2026-09-27"
           }
         ],
         "price": null,
         "usage": null
+      },
+      "bulk": {
+        "model_ref": "haiku",
+        "model_id": "claude-haiku-4-5",
+        "model_name": "Claude Haiku 4.5",
+        "from": "tool",
+        "basis": [
+          {
+            "id": "cc-haiku-mechanical-work",
+            "sentence": "Anthropic's Claude Code usage article names Haiku for quick mechanical work such as renames, log lines, regex explanations and boilerplate.",
+            "quote": "Haiku for quick mechanical work (renames, log lines, regex explanations, boilerplate).",
+            "source_url": "https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code",
+            "date": "2026-10-03"
+          },
+          {
+            "id": "anthropic-haiku-checkable-outputs",
+            "sentence": "Anthropic's cost guide describes Claude Haiku 4.5 as fitting high-volume work with checkable outputs, not long agentic loops.",
+            "quote": "It fits high-volume work with checkable outputs, not long agentic loops.",
+            "source_url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+            "date": "2026-10-03"
+          },
+          {
+            "id": "cc-costs-haiku-subagent",
+            "sentence": "Claude Code cost docs say to set model: haiku in the subagent file for simple subagent tasks.",
+            "quote": "For simple subagent tasks, specify model: haiku in your subagent configuration",
+            "source_url": "https://code.claude.com/docs/en/costs",
+            "date": "2026-09-27"
+          }
+        ],
+        "price": {
+          "input": 1,
+          "output": 5
+        },
+        "usage": {
+          "openrouter_share": 0.15,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
+      },
+      "near_limit": {
+        "model_ref": "sonnet",
+        "model_id": "claude-sonnet-5-5",
+        "model_name": "Claude Sonnet 5.5",
+        "when": "a routine, well-scoped thread",
+        "basis": [
+          {
+            "id": "cc-opus-quota-sonnet-routine",
+            "sentence": "Anthropic's Claude Code usage article says Opus uses more of a plan's quota and names Sonnet for routine work.",
+            "quote": "It uses meaningfully more of your quota, so consider switching to Sonnet for routine work.",
+            "source_url": "https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code",
+            "date": "2026-10-03"
+          },
+          {
+            "id": "anthropic-sonnet-5-5-complement",
+            "sentence": "Anthropic's Sonnet 5.5 page describes Sonnet 5.5 as a faster, lower-cost complement to Claude Opus 5.5.",
+            "quote": "Sonnet 5.5 is a faster, lower-cost complement to Claude Opus 5.5.",
+            "source_url": "https://www.anthropic.com/claude-sonnet-5-5",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": {
+          "input": 2,
+          "output": 10
+        },
+        "usage": {
+          "openrouter_share": 0.25,
+          "as_of": "2026-10-01",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
       }
     }
   },
@@ -204,8 +344,8 @@
           "output": 20
         },
         "usage": {
-          "openrouter_share": 0.49,
-          "as_of": "2026-09-25",
+          "openrouter_share": 1.3,
+          "as_of": "2026-10-01",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         },
         "claim": null
@@ -218,8 +358,8 @@
           "output": 10
         },
         "usage": {
-          "openrouter_share": 1.02,
-          "as_of": "2026-09-25",
+          "openrouter_share": 0.79,
+          "as_of": "2026-10-01",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         },
         "claim": null
@@ -251,23 +391,48 @@
             "date": "2026-09-27"
           }
         ]
+      },
+      {
+        "subject": "Anthropic",
+        "claims": [
+          {
+            "id": "anthropic-haiku-checkable-outputs",
+            "sentence": "Anthropic's cost guide describes Claude Haiku 4.5 as fitting high-volume work with checkable outputs, not long agentic loops.",
+            "quote": "It fits high-volume work with checkable outputs, not long agentic loops.",
+            "source_url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+            "date": "2026-10-03"
+          },
+          {
+            "id": "anthropic-batch-half-price",
+            "sentence": "Anthropic's pricing page states the Batch API processes large volumes of requests asynchronously at a 50% discount on input and output tokens.",
+            "quote": "asynchronous processing of large volumes of requests with a 50% discount on both input and output tokens",
+            "source_url": "https://platform.claude.com/docs/en/about-claude/pricing",
+            "date": "2026-10-03"
+          }
+        ]
       }
     ]
   },
   "facts_used": [
+    "anthropic-batch-half-price",
     "anthropic-effort-defaults",
+    "anthropic-effort-high-use",
+    "anthropic-haiku-checkable-outputs",
     "anthropic-multi-agent-token-use",
     "anthropic-orchestrator-vs-lower-effort",
-    "cc-alias-haiku",
+    "anthropic-sonnet-5-5-complement",
     "cc-alias-opus",
     "cc-alias-sonnet",
     "cc-costs-haiku-subagent",
+    "cc-default-model-opus-5-5",
     "cc-delegate-verbose",
+    "cc-effort-5-5-default-medium",
+    "cc-haiku-mechanical-work",
     "cc-inherit-follows-switch",
+    "cc-opus-quota-sonnet-routine",
     "cc-sonnet-vs-opus-costs",
     "cc-subagent-effort",
     "cc-subagent-model-order",
-    "cc-subagent-own-context",
     "cc-subagent-usage-limits"
   ],
   "notes": [

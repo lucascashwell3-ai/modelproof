@@ -1,19 +1,43 @@
-Modelproof package · facts as of 2026-09-27 · generator 1.0.0
+Modelproof package · facts as of 2026-10-03 · generator 1.1.0
 Your answers: person · user scope · tools: Codex · plans: OpenAI Plus · limits: sometimes · work: coding
   you use: GPT-6 Sol · effort cap: high
 
-Which model each helper runs
+Lead, helpers and bulk per tool
   Codex
-    lead     the model you choose in Codex
+    lead     gpt-6.1-sol = GPT-6.1 Sol · the tool's default, from its own docs
+             effort low by default; high for complex changes or debugging (information, not a setting)
+             "Added GPT-6.1 Sol as the default model in the bundled catalog"
+             https://developers.openai.com/codex/changelog (2026-10-03)
+             ""description": "Latest workhorse model for coding and everyday work.", "default_reasoning_level": "low""
+             https://raw.githubusercontent.com/openai/codex/main/codex-rs/models-manager/models.json (2026-10-03)
+             "Low for faster, well-scoped tasks Medium or High for more complex changes or debugging Extra High for long, agentic, reasoning-heavy tasks"
+             https://developers.openai.com/codex/learn/best-practices (2026-10-03)
+             list price $2 in / $10 out per 1M tokens · 0.17% of OpenRouter tokens (2026-10-01)
     scout    inherit (runs on the lead's model)
              effort high: your choice (your effort cap), written into the helper file
     builder  inherit (runs on the lead's model)
              effort high: your choice (your effort cap), written into the helper file
     reviewer inherit (runs on the lead's model)
              effort high: your choice (your effort cap), written into the helper file
+    bulk     GPT-6 Luna · from the tool's own docs
+             effort high: your choice (your effort cap), written into the helper file
+             "Use Luna for focused, repeatable tasks."
+             https://learn.chatgpt.com/docs/models (2026-10-03)
+             "use gpt-6-luna when you want a faster, lower-cost option for lighter subagent work."
+             https://developers.openai.com/codex/subagents (2026-10-03)
+             list price $0.1 in / $0.5 out per 1M tokens · 3.6% of OpenRouter tokens (2026-10-01)
+    near a full usage limit (a text line, not a setting): lighter helper work can run on GPT-6 Luna
+             "use gpt-6-luna when you want a faster, lower-cost option for lighter subagent work."
+             https://developers.openai.com/codex/subagents (2026-10-03)
 
 Models you use
-  GPT-6 Sol: list price $2 in / $10 out per 1M tokens · 0.37% of OpenRouter tokens (2026-09-25)
+  GPT-6 Sol: list price $2 in / $10 out per 1M tokens · 0.74% of OpenRouter tokens (2026-10-01)
+
+What the tools and labs say (their own words)
+  OpenAI: "Choose GPT-6.1 Sol to balance intelligence and cost, or GPT-6 Luna for cost-sensitive, high-volume workloads."
+    https://developers.openai.com/api/docs/models (2026-10-03)
+  OpenAI: "50% cost discount compared to synchronous APIs"
+    https://developers.openai.com/api/docs/guides/batch (2026-10-03)
 
 Files (numbered; answer "no to 3" to leave one out)
    1. file   ~/.codex/agents/modelproof-scout.toml · 12 lines · the tool obeys it
@@ -22,7 +46,9 @@ Files (numbered; answer "no to 3" to leave one out)
       No model set, so Codex runs this helper on the lead's model.
    3. file   ~/.codex/agents/modelproof-reviewer.toml · 11 lines · the tool obeys it
       No model set, so Codex runs this helper on the lead's model.
-   4. block  ~/.codex/AGENTS.md (added at the end) · 22 lines · text
+   4. file   ~/.codex/agents/modelproof-bulk.toml · 12 lines · the tool obeys it
+      Codex runs this helper on gpt-6-luna; a model in a custom agent file wins for that agent.
+   5. block  ~/.codex/AGENTS.md (added at the end) · 29 lines · text
       Codex reads this AGENTS.md before any task.
 
 Notes

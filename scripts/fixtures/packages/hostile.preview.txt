@@ -1,35 +1,61 @@
-Modelproof package · facts as of 2026-09-27 · generator 1.0.0
+Modelproof package · facts as of 2026-10-03 · generator 1.1.0
 Your answers: org Acme · project scope · tools: Claude Code, Codex, Cursor, AGENTS.md · plans: Anthropic Max 5x, etc shadow, not a plan object · limits: not given · work: coding, research
   you use: Claude Sonnet 5, Claude Opus 5.5 · never: Claude Haiku 4.5 · effort cap: max
 
-Which model each helper runs
+Lead, helpers and bulk per tool
   Claude Code
-    lead     the model you choose in Claude Code
+    lead     opus = Claude Opus 5.5 · the tool's default, from its own docs
+             effort medium by default; high for complex reasoning or difficult coding problems (information, not a setting)
+             "Pro, Max, Team, Enterprise, and Anthropic API : defaults to Opus 5.5"
+             https://code.claude.com/docs/en/model-config (2026-10-03)
+             "except that Opus 5.5 and Sonnet 5.5 default to medium"
+             https://code.claude.com/docs/en/model-config (2026-10-03)
+             "Complex reasoning, difficult coding problems, agentic tasks"
+             https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)
+             list price $4 in / $20 out per 1M tokens · 1.3% of OpenRouter tokens (2026-10-01)
     scout    inherit (runs on the lead's model)
              effort max: your choice (your effort cap), written into the helper file
     builder  inherit (runs on the lead's model)
              effort max: your choice (your effort cap), written into the helper file
     reviewer inherit (runs on the lead's model)
+             effort max: your choice (your effort cap), written into the helper file
+    bulk     inherit until you set its model (the tool's docs name no model string)
              effort max: your choice (your effort cap), written into the helper file
   Codex
-    lead     the model you choose in Codex
+    lead     gpt-6.1-sol = GPT-6.1 Sol · the tool's default, from its own docs
+             effort low by default; high for complex changes or debugging (information, not a setting)
+             "Added GPT-6.1 Sol as the default model in the bundled catalog"
+             https://developers.openai.com/codex/changelog (2026-10-03)
+             ""description": "Latest workhorse model for coding and everyday work.", "default_reasoning_level": "low""
+             https://raw.githubusercontent.com/openai/codex/main/codex-rs/models-manager/models.json (2026-10-03)
+             "Low for faster, well-scoped tasks Medium or High for more complex changes or debugging Extra High for long, agentic, reasoning-heavy tasks"
+             https://developers.openai.com/codex/learn/best-practices (2026-10-03)
+             list price $2 in / $10 out per 1M tokens · 0.17% of OpenRouter tokens (2026-10-01)
     scout    inherit (runs on the lead's model)
              effort max: your choice (your effort cap), written into the helper file
     builder  inherit (runs on the lead's model)
              effort max: your choice (your effort cap), written into the helper file
     reviewer inherit (runs on the lead's model)
              effort max: your choice (your effort cap), written into the helper file
+    bulk     GPT-6 Luna · from the tool's own docs
+             effort max: your choice (your effort cap), written into the helper file
+             "Use Luna for focused, repeatable tasks."
+             https://learn.chatgpt.com/docs/models (2026-10-03)
+             "use gpt-6-luna when you want a faster, lower-cost option for lighter subagent work."
+             https://developers.openai.com/codex/subagents (2026-10-03)
+             list price $0.1 in / $0.5 out per 1M tokens · 3.6% of OpenRouter tokens (2026-10-01)
   Cursor
     lead     the model you choose in Cursor
     scout    inherit (runs on the lead's model)
     builder  inherit (runs on the lead's model)
     reviewer inherit (runs on the lead's model)
+    bulk     inherit until you set its model (the tool's docs name no model string)
   AGENTS.md
     lead     the model you choose in your tool
 
 Models you use
-  Claude Sonnet 5: list price $2 in / $10 out per 1M tokens · 1.02% of OpenRouter tokens (2026-09-25)
-  Claude Opus 5.5: list price $4 in / $20 out per 1M tokens · 0.49% of OpenRouter tokens (2026-09-25)
+  Claude Sonnet 5: list price $2 in / $10 out per 1M tokens · 0.79% of OpenRouter tokens (2026-10-01)
+  Claude Opus 5.5: list price $4 in / $20 out per 1M tokens · 1.3% of OpenRouter tokens (2026-10-01)
 
 What the tools and labs say (their own words)
   Claude Code: "Sonnet handles most coding tasks well and costs less than Opus. Reserve Opus for complex architectural decisions or multi-step reasoning."
@@ -38,6 +64,12 @@ What the tools and labs say (their own words)
     https://code.claude.com/docs/en/model-config (2026-09-27)
   Claude Code: "Uses the latest Opus model for complex reasoning tasks"
     https://code.claude.com/docs/en/model-config (2026-09-27)
+  Anthropic: "asynchronous processing of large volumes of requests with a 50% discount on both input and output tokens"
+    https://platform.claude.com/docs/en/about-claude/pricing (2026-10-03)
+  OpenAI: "Choose GPT-6.1 Sol to balance intelligence and cost, or GPT-6 Luna for cost-sensitive, high-volume workloads."
+    https://developers.openai.com/api/docs/models (2026-10-03)
+  OpenAI: "50% cost discount compared to synchronous APIs"
+    https://developers.openai.com/api/docs/guides/batch (2026-10-03)
 
 Files (numbered; answer "no to 3" to leave one out)
    1. file   .claude/agents/modelproof-scout.md · 13 lines · the tool obeys it
@@ -46,26 +78,32 @@ Files (numbered; answer "no to 3" to leave one out)
       Claude Code runs this helper on the lead's model (model: inherit).
    3. file   .claude/agents/modelproof-reviewer.md · 12 lines · the tool obeys it
       Claude Code runs this helper on the lead's model (model: inherit).
-   4. keys   .claude/settings.json: maxEffortLevel · the tool obeys it
+   4. file   .claude/agents/modelproof-bulk.md · 12 lines · the tool obeys it
+      Claude Code runs this helper on the lead's model (model: inherit).
+   5. keys   .claude/settings.json: maxEffortLevel · the tool obeys it
       Adds only the keys you asked for, and only where they are absent.
-   5. file   .codex/agents/modelproof-scout.toml · 12 lines · the tool obeys it
+   6. file   .codex/agents/modelproof-scout.toml · 12 lines · the tool obeys it
       No model set, so Codex runs this helper on the lead's model.
-   6. file   .codex/agents/modelproof-builder.toml · 11 lines · the tool obeys it
+   7. file   .codex/agents/modelproof-builder.toml · 11 lines · the tool obeys it
       No model set, so Codex runs this helper on the lead's model.
-   7. file   .codex/agents/modelproof-reviewer.toml · 11 lines · the tool obeys it
+   8. file   .codex/agents/modelproof-reviewer.toml · 11 lines · the tool obeys it
       No model set, so Codex runs this helper on the lead's model.
-   8. file   .cursor/agents/modelproof-scout.md · 12 lines · the tool obeys it
+   9. file   .codex/agents/modelproof-bulk.toml · 12 lines · the tool obeys it
+      Codex runs this helper on gpt-6-luna; a model in a custom agent file wins for that agent.
+  10. file   .cursor/agents/modelproof-scout.md · 12 lines · the tool obeys it
       Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
-   9. file   .cursor/agents/modelproof-builder.md · 11 lines · the tool obeys it
+  11. file   .cursor/agents/modelproof-builder.md · 11 lines · the tool obeys it
       Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
-  10. file   .cursor/agents/modelproof-reviewer.md · 11 lines · the tool obeys it
+  12. file   .cursor/agents/modelproof-reviewer.md · 11 lines · the tool obeys it
       Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
-  11. block  AGENTS.md (added at the end) · 44 lines · text
+  13. file   .cursor/agents/modelproof-bulk.md · 11 lines · the tool obeys it
+      Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
+  14. block  AGENTS.md (added at the end) · 45 lines · text
       One block at the end of AGENTS.md, read by Claude Code, Codex, Cursor, GitHub Copilot and other tools that read AGENTS.md; your own text is untouched.
 
 Notes
-  - Left out of your answers: tools: "rm -rf" is not a tool this package covers (Claude Code, Codex, Cursor, AGENTS.md)
-  - Left out of your answers: tools: "" is not a tool this package covers (Claude Code, Codex, Cursor, AGENTS.md)
+  - Left out of your answers: tools: "rm -rf" is not a tool this package covers (Claude Code, Codex, Cursor, GitHub Copilot, Antigravity, OpenRouter / API, AGENTS.md)
+  - Left out of your answers: tools: "" is not a tool this package covers (Claude Code, Codex, Cursor, GitHub Copilot, Antigravity, OpenRouter / API, AGENTS.md)
   - Left out of your answers: scope: cleaned to "project"
   - Left out of your answers: limits: "always" is not one of often, sometimes, rarely, api-budget; left out
   - Left out of your answers: work: "script alert 1 script" is not a known kind of work; left out
@@ -77,13 +115,13 @@ Notes
   - Left out of your answers: org.divisions[1].lead: "etc passwd" is not a model in the data; left out
   - Left out of your answers: like[2]: "-- modelproof end --" is not a model in the data; left out
   - Left out of your answers: like[3]: "no-such-model" is not a model in the data; left out
-  - Left out of your answers: roles.admin: not a role (lead, scout, builder, reviewer); left out
+  - Left out of your answers: roles.admin: not a role (lead, scout, builder, reviewer, bulk); left out
   - Left out of your answers: roles.scout: ".. .. etc passwd" is not a model in the data; left out
   - Left out of your answers: roles.builder: Claude Haiku 4.5 is on your never list; left out
   - Left out of your answers: roles.reviewer: "" is not a model in the data; left out
   - Left out of your answers: effort_cap: cleaned to "max"
+  - Claude Code: the model its docs name for modelproof-bulk is on your never list, so it runs on the lead's model.
   - Claude Code reads the project AGENTS.md here, so its lines go in that block and no .claude/rules file is added.
   - Cursor reads the project AGENTS.md, so no .cursor/rules file is added.
-  - You use models from 2 labs (Anthropic, OpenAI), so helpers run on the lead's model unless you choose one; each lab's own descriptions are listed as facts.
   - Start a new session so each tool loads the new helper and rule files.
   - Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history.

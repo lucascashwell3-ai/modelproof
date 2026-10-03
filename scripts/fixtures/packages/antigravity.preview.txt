@@ -1,0 +1,30 @@
+Modelproof package · facts as of 2026-10-03 · generator 1.1.0
+Your answers: person · user scope · tools: Antigravity · plans: Google AI Pro · limits: often · work: coding, agents
+
+Lead, helpers and bulk per tool
+  Antigravity
+    lead     the model you choose in Antigravity
+    scout    inherit (runs on the lead's model)
+    builder  inherit (runs on the lead's model)
+    reviewer inherit (runs on the lead's model)
+    bulk     inherit until you set its model (the tool's docs name no model string)
+
+What the tools and labs say (their own words)
+  Google: "On June 18, 2026, Gemini CLI and Gemini Code Assist IDE extensions will stop serving requests for Google AI Pro and Ultra"
+    https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli (2026-10-03)
+
+Files (numbered; answer "no to 3" to leave one out)
+   1. file   ~/.gemini/config/agents/modelproof-scout.md · 15 lines · the tool obeys it
+      Antigravity runs this helper on the lead's model (model: inherit, its default tier).
+   2. file   ~/.gemini/config/agents/modelproof-builder.md · 16 lines · the tool obeys it
+      Antigravity runs this helper on the lead's model (model: inherit, its default tier).
+   3. file   ~/.gemini/config/agents/modelproof-reviewer.md · 15 lines · the tool obeys it
+      Antigravity runs this helper on the lead's model (model: inherit, its default tier).
+   4. file   ~/.gemini/config/agents/modelproof-bulk.md · 16 lines · the tool obeys it
+      Antigravity runs this helper on the lead's model (model: inherit, its default tier).
+   5. block  ~/.gemini/AGENTS.md (added at the end) · 24 lines · text
+      Antigravity reads ~/.gemini/AGENTS.md as global rules for every project.
+
+Notes
+  - Start a new session so each tool loads the new helper and rule files.
+  - Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history.

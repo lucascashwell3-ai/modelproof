@@ -36,11 +36,7 @@ export const ALLOWLIST_MAX = 8;
 /* The typed facts still in the instruction generator. Each entry is reported instead of failing,
    and must still match a hit (so it is removed the moment its fact moves to data). Done when this
    list is empty. */
-export const GENERATOR_TODO = [
-  { file: 'assets/instructions.mjs', substring: 'v2.1.198', kind: 'version', reason: 'tool version in the Explore helper note; quote the sourced claim instead' },
-  { file: 'assets/instructions.mjs', substring: "'claude-opus-5-5'", kind: 'name', reason: 'model id for the effort-key note; needs a sourced rule in guidance data' },
-  { file: 'assets/instructions.mjs', substring: 'Opus 5.5 and later', kind: 'name', reason: 'unsourced effort-key sentence; source it or remove it' },
-];
+export const GENERATOR_TODO = [];
 
 /* ---------- files ---------- */
 const SKIP_DIRS = new Set(['node_modules', '.git']);
