@@ -22,7 +22,7 @@ installer checks their shape. Mention `as_of` once. Missing = "unknown", never f
 |---|---|
 | models.json, per model | `id`, `name`, `vendor`, `status`, `released`, `price_input` / `price_output` (USD per 1M tokens), `context_window`, `benchmarks` with their cited source, `usage` share with its source and date, and `task_fit_judged` claims — only the `quote`, `source_url` and `date` |
 | models.json, whole file | `as_of`, `releases[]` (what changed, dated), `effort_ladders[]` (each with its `publisher` and `caveat`) |
-| guidance.json | `claims[]` (`subject`, `sentence`, `quote`, `source_url`, `date`), `role_defaults[]`, `model_refs[]`, `effort_pages[]` |
+| guidance.json | `claims[]` (`subject`, `sentence`, `quote`, `source_url`, `date`), `tool_plans[]` (per tool: where its instructions live, what it obeys, and the lead / helpers / bulk slots, each with its claim ids), `model_refs[]`, `effort_pages[]`, `role_defaults[]` (facts only; the package does not apply them) |
 | plans.json | vendor, plan name, list price, the page it came from |
 
 Every other field in models.json is editorial and off limits: don't quote it, summarize it,

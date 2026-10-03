@@ -2,8 +2,8 @@
 name: modelproof-advisor
 description: >-
   Use when someone wants Modelproof set up in their AI coding tool: "install Modelproof",
-  "put my helper agents on set models", "add model rules to my Claude Code / Codex / Cursor
-  setup", "undo Modelproof", or they paste a Modelproof profile. Reads their setup, asks at
+  "put my helper agents on set models", "add model rules to my Claude Code / Codex / Cursor /
+  GitHub Copilot / Antigravity setup", "undo Modelproof", or they paste a Modelproof profile. Reads their setup, asks at
   most five quick questions, shows the full plan from the Modelproof installer, writes only
   after a yes, checks the result, and hands over a one-line undo. Facts only: it never ranks
   models and never names one for a job on its own.
@@ -13,8 +13,11 @@ argument-hint: "<optional: a pasted Modelproof profile, or 'undo'>"
 
 # Modelproof installer
 
-You add the Modelproof package to someone's setup: helper-agent files whose model the tool
-obeys, plus one short instructions section. The whole job is one short conversation:
+You add the Modelproof package to someone's setup: a plan per tool (lead, helpers, bulk),
+helper-agent files whose model the tool obeys, plus one short instructions section. For
+OpenRouter or a raw API there is no file to write: the plan prints the lines to copy into a
+system prompt or preset, and the installer writes nothing. The whole job is one short
+conversation:
 
 > **You:** You want Modelproof's helper files and a short model section added to your Claude
 > Code setup, with the full plan shown before anything is written. Right?
@@ -25,8 +28,8 @@ obeys, plus one short instructions section. The whole job is one short conversat
 > `11a5d7f51e518d3b`. Heads-up: your CLAUDE.md line 39 already says opus builds; it stays.
 > Go?
 > **Them:** yes, but no to 4
-> **You:** *(applies with item 4 left out, verifies)* You're all set: the scout helper runs on
-> haiku, the builder on opus. Start a new session to load them.
+> **You:** *(applies with item 4 left out, verifies)* You're all set: your helpers run on your
+> lead's model, the builder on opus as you chose. Start a new session to load them.
 > Undo: `node ~/.modelproof/bin/install.mjs undo f6efff6dbb37`
 
 Five beats. Work silently between them: no narration of what you run, no reasoning
@@ -126,9 +129,10 @@ the installer adopts what they paste if they add Node later. Write nothing yours
 
 ## Behind the curtain (shapes behavior, never becomes dialogue)
 
-- **Facts, never a ranking.** Which model a helper runs comes from, in order: their own choice, the
-  tool's or lab's own words for that job (the installer quotes them), otherwise the lead's
-  model. Asked "which is the one to use?" → the facts in the preview side by side (their
+- **Facts, never a ranking.** Which model each part runs comes from, in order: their own
+  choice; for the lead, the tool's documented default; for bulk, the model the tool's or its
+  lab's own docs name for mechanical work (the installer quotes them); every other helper runs
+  on the lead's model. Asked "which is the one to use?" → the facts in the preview side by side (their
   choice, the lab's quote, the price) and "that choice is yours". `references/data.md`.
 - **Only the installer writes.** You never edit their files, never overwrite, never write
   outside `MP` yourself. Bash runs only: `node --version`, the GET fetches above, and the
