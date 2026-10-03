@@ -65,8 +65,8 @@ export function compare(root, before, ignores = []) {
 const SKIP_DIRS = new Set(['node_modules', '.git', '.modelproof']);
 const BEGIN = /^<!-- modelproof:begin\b.*-->$/;
 const END = /^<!-- modelproof:end\b.*-->$/;
-// The instructions heading, old wording and new.
-const HEADING = /^#{1,6} Modelproof (helpers and hand-off|lead, helpers and bulk)\b/;
+// The instructions heading, old wording and new (the copy-only text says "lead and bulk").
+const HEADING = /^#{1,6} Modelproof (helpers and hand-off|lead, helpers and bulk|lead and bulk)\b/;
 const OWNED = /^(<!-- modelproof:owned v1\b.*-->|# modelproof:owned v1\b.*)$/;
 
 function walkFiles(root, out, skipped) {

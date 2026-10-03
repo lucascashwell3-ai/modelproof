@@ -841,8 +841,10 @@ function renderText(F, p, ctx, roles, readers, opts) {
   const work = p.work;
   const rows = (l) => l.t.split('\n').length;
   const wants = (...ids) => !work.length || ids.some((w) => work.includes(w));
+  // Copy-only text (OpenRouter / API): no helper files exist, so it says nothing about helpers.
+  const copyOnly = readers.length > 0 && readers.every((t) => COPY_ONLY_TOOLS.includes(t));
 
-  const head = [{ t: `${h1} Modelproof lead, helpers and bulk (facts as of ${F.asOf || 'the data date'})` }];
+  const head = [{ t: `${h1} Modelproof ${copyOnly ? 'lead and bulk' : 'lead, helpers and bulk'} (facts as of ${F.asOf || 'the data date'})` }];
   if (p.who === 'org') head.push({ t: `Shared by ${p.org && p.org.name ? p.org.name : 'the team'}; each person keeps their own rules in their own files.` });
 
   const sections = [];
@@ -862,7 +864,7 @@ function renderText(F, p, ctx, roles, readers, opts) {
       helpers.push(planItem(`- If your tool has helpers, the ${role} (${JOB[role]}) runs ${m.name}.`, [youSource(m, F.modelsAsOf)], false));
     }
   }
-  if (helpers.length) sections.push({ title: 'Lead, helpers and bulk', lines: helpers });
+  if (helpers.length) sections.push({ title: copyOnly ? 'Lead and bulk' : 'Lead, helpers and bulk', lines: helpers });
 
   // When to hand off: the sourced cost facts, framed as when a helper is worth it (Claude Code).
   if (has('claude-code')) {
@@ -880,7 +882,7 @@ function renderText(F, p, ctx, roles, readers, opts) {
 
   // Hand-off.
   const hand = [
-    { t: '- Brief each helper with the exact files, the goal, and a check that proves it is done.' },
+    { t: `- Brief each ${copyOnly ? 'request' : 'helper'} with the exact files, the goal, and a check that proves it is done.` },
     { t: '- Ask for a short return; details go in a file on disk.' },
   ];
   if (wants('coding', 'frontend', 'agents', 'extraction')) hand.push({ t: '- Let scripts and tests decide pass or fail, not a summary.' });
@@ -889,7 +891,7 @@ function renderText(F, p, ctx, roles, readers, opts) {
 
   // Context.
   const cx = [{ t: '- Search before reading; read line ranges, not whole big files.' }];
-  if (wants('research', 'writing', 'exec-summaries', 'extraction', 'agents', 'bulk')) {
+  if (!copyOnly && wants('research', 'writing', 'exec-summaries', 'extraction', 'agents', 'bulk')) {
     cx.push({ t: helperReaders.length ? '- Hand long reading to modelproof-scout and take back a short summary.' : '- Hand long reading to a helper and take back a short summary.' });
   }
   if (has('claude-code')) { const l = claimLine(F, ctx, 'cc-subagent-own-context', 'claude-code', 4); if (l) cx.push(l); }
@@ -1421,7 +1423,7 @@ export function renderPreview(pkg) {
   }
 
   if (Object.keys(roles).length) {
-    out.push('', 'Lead, helpers and bulk per tool');
+    out.push('', Object.keys(roles).some((t) => HELPER_TOOLS.includes(t)) ? 'Lead, helpers and bulk per tool' : 'Lead and bulk per tool');
     const quotes = (list) => { for (const b of arr(list)) out.push(`             "${b.quote}"`, `             ${b.source_url} (${b.date})`); };
     for (const tool of TOOLS) {
       const t = roles[tool];

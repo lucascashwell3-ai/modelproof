@@ -188,6 +188,13 @@ test('dupes: the new instructions heading is caught too', () => {
   const r = run('dupes', root);
   assert.equal(r.code, 1, r.out);
   assert.match(r.out, /heading appears 2 times/);
+  // The copy-only (OpenRouter / API) heading, pasted twice into one file.
+  const copy = '# Modelproof lead and bulk (facts as of 2026-10-03)\n\n- a rule\n';
+  const root2 = tree();
+  put(root2, 'project/notes.md', copy + '\n' + copy);
+  const r2 = run('dupes', root2);
+  assert.equal(r2.code, 1, r2.out);
+  assert.match(r2.out, /heading appears 2 times/);
 });
 
 test('dupes: GitHub Copilot and Antigravity agent folders; one name in .github/agents and .claude/agents is two helpers in Copilot', () => {

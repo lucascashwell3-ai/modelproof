@@ -440,7 +440,11 @@ test('OpenRouter / API is copy only: the package writes nothing, the preview say
   assert.match(preview, /Files: none \(the installer writes nothing for a copy-only tool\)\./);
   assert.ok(pkg.notes.some((x) => x.includes('copy only')));
   const text = G.packageText(pkg);
-  assert.match(text, /^=== Copy into your system prompt or an OpenRouter preset \(copy only; the installer writes nothing for OpenRouter \/ API\) ===\n# Modelproof lead, helpers and bulk/);
+  assert.match(text, /^=== Copy into your system prompt or an OpenRouter preset \(copy only; the installer writes nothing for OpenRouter \/ API\) ===\n# Modelproof lead and bulk/);
+  // No helper files exist for a copy-only tool, so the text never talks about helpers.
+  assert.doesNotMatch(c.content, /\bhelpers?\b/i, c.content);
+  assert.match(c.content, /^## Lead and bulk$/m);
+  assert.match(preview, /^Lead and bulk per tool$/m);
 });
 
 test('values the data marks as your pick never reach an enforced file', () => {

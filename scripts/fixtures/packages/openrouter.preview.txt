@@ -1,29 +1,28 @@
 Modelproof package · facts as of 2026-10-03 · generator 1.1.0
 Your answers: person · user scope · tools: OpenRouter / API · plans: API · limits: api-budget · work: bulk, extraction
 
-Lead, helpers and bulk per tool
+Lead and bulk per tool
   OpenRouter / API (copy only)
     lead     the model you name in each request
     bulk     the model you name per request
 
-Copy only, not installed: OpenRouter / API (paste into your system prompt or an OpenRouter preset) · 22 lines
-  # Modelproof lead, helpers and bulk (facts as of 2026-10-03)
+Copy only, not installed: OpenRouter / API (paste into your system prompt or an OpenRouter preset) · 21 lines
+  # Modelproof lead and bulk (facts as of 2026-10-03)
 
-  ## Lead, helpers and bulk
+  ## Lead and bulk
   - Lead: the model you name in each request. OpenRouter's Auto Router runs when a request sends openrouter/auto as the model.
     Source: OpenRouter docs, https://openrouter.ai/docs/guides/routing/routers/auto-router (2026-10-03)
   - Bulk: the model you name per request, for high-volume requests. OpenRouter's :floor variant sorts a model's providers by price and admits flex-tier endpoints.
     Source: OpenRouter docs, https://openrouter.ai/docs/guides/routing/model-variants/floor (2026-10-03)
 
   ## How to hand off
-  - Brief each helper with the exact files, the goal, and a check that proves it is done.
+  - Brief each request with the exact files, the goal, and a check that proves it is done.
   - Ask for a short return; details go in a file on disk.
   - Let scripts and tests decide pass or fail, not a summary.
   - A cold review gets the diff, not the author's summary.
 
   ## Context
   - Search before reading; read line ranges, not whole big files.
-  - Hand long reading to a helper and take back a short summary.
 
   ## Effort
   - Raise effort for a hard step and lower it for routine ones; don't leave it at max.
