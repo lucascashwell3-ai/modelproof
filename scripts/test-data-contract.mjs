@@ -115,7 +115,11 @@ for (const file of ['models.json', 'guidance.json', 'plans.json', 'vendors.json'
 test('as_of: compared in UTC with one day of slack', () => {
   assert.deepEqual(asOfProblems('2026-10-04', 'x', { today: '2026-10-03' }), [], 'a UTC stamp read on a machine a day behind passes');
   assert.equal(asOfProblems('2026-10-05', 'x', { today: '2026-10-03' }).length, 1);
-  assert.equal(utcToday(), new Date().toISOString().slice(0, 10));
+  // Read the clock on both sides of the call, so a run across UTC midnight still passes.
+  const before = new Date().toISOString().slice(0, 10);
+  const got = utcToday();
+  const after = new Date().toISOString().slice(0, 10);
+  assert.ok(got === before || got === after, `utcToday() ${got} is the UTC date (${before}..${after})`);
 });
 
 // --- models ----------------------------------------------------------------------------------
