@@ -68,25 +68,40 @@ test('the live data/guidance.json passes against the live catalog', () => {
   assert.ok(Math.min(...counts) >= 3 && Math.max(...counts) <= 3 * Math.min(...counts), `labs stay balanced: ${JSON.stringify(perLab)}`);
 });
 
+// The live file is checked for rules only (a data-only change of a default must not fail a test);
+// the values those rules produce today are pinned on the frozen copy, scripts/fixtures/guidance.json.
+const LIVE = () => JSON.parse(readFileSync(new URL('../data/guidance.json', import.meta.url)));
+const FROZEN = () => JSON.parse(readFileSync(new URL('./fixtures/guidance.json', import.meta.url)));
+
+function planRules(g, models, where) {
+  const byId = new Set((models.models || models).map((m) => m.id));
+  assert.deepEqual(g.tool_plans.map((t) => t.tool), TOOL_PLAN_TOOLS, `${where}: one plan per tool`);
+  for (const t of g.tool_plans) {
+    if (t.helpers) assert.equal(t.helpers.model, 'inherit', `${where}: ${t.tool} helpers inherit by default`);
+    const ids = [t.lead.model_id, t.bulk.model_id, t.helpers && t.helpers.push_down && t.helpers.push_down.model_id].filter(Boolean);
+    for (const id of ids) assert.ok(byId.has(id), `${where}: ${t.tool} names ${id}, which is in the catalog`);
+    if (TOOL_PLAN_CHOICE_ONLY.includes(t.tool)) assert.deepEqual(ids, [], `${where}: ${t.tool} names no model in its plan`);
+  }
+  assert.equal(g.tool_plans.find((t) => t.tool === 'openrouter').helpers, null, `${where}: a raw API call has no helpers`);
+}
+
 test('the live file: reviewer never has a default, and Codex/Cursor/AGENTS.md have none either', () => {
-  const g = JSON.parse(readFileSync(new URL('../data/guidance.json', import.meta.url)));
+  const g = LIVE();
   assert.ok(!g.role_defaults.some((r) => r.role === 'reviewer'));
   assert.deepEqual([...new Set(g.role_defaults.map((r) => r.tool))], ['claude-code']);
-  assert.deepEqual(g.role_defaults.map((r) => `${r.role}:${r.model_ref}`).sort(), ['builder:sonnet', 'scout:haiku']);
 });
 
-test('the live file: one tool plan per tool; helpers inherit; only Claude Code and Codex name models', () => {
-  const g = JSON.parse(readFileSync(new URL('../data/guidance.json', import.meta.url)));
-  assert.deepEqual(g.tool_plans.map((t) => t.tool), TOOL_PLAN_TOOLS);
-  for (const t of g.tool_plans) {
-    if (t.helpers) assert.equal(t.helpers.model, 'inherit', `${t.tool} helpers inherit by default`);
-    const ids = [t.lead.model_id, t.bulk.model_id, t.helpers && t.helpers.push_down && t.helpers.push_down.model_id].filter(Boolean);
-    if (TOOL_PLAN_CHOICE_ONLY.includes(t.tool)) assert.deepEqual(ids, [], `${t.tool} names no model in its plan`);
-  }
+test('the live file: one tool plan per tool; ids resolve; helpers inherit; choice-only tools name no model', () => {
+  planRules(LIVE(), JSON.parse(readFileSync(new URL('../data/models.json', import.meta.url))), 'data/guidance.json');
+});
+
+test('the frozen copy: the defaults those rules gave on the day it was taken', () => {
+  const g = FROZEN();
+  planRules(g, JSON.parse(readFileSync(new URL('./fixtures/instructions-models.json', import.meta.url))), 'fixtures/guidance.json');
+  assert.deepEqual(g.role_defaults.map((r) => `${r.role}:${r.model_ref}`).sort(), ['builder:sonnet', 'scout:haiku']);
   const cc = g.tool_plans.find((t) => t.tool === 'claude-code');
   assert.deepEqual([cc.lead.model_id, cc.lead.effort, cc.lead.raise_to, cc.helpers.push_down.model_id, cc.bulk.model_id],
     ['claude-opus-5-5', 'medium', 'high', 'claude-sonnet-5-5', 'claude-haiku-4-5']);
-  assert.equal(g.tool_plans.find((t) => t.tool === 'openrouter').helpers, null, 'a raw API call has no helpers');
 });
 
 test('a well-formed file passes; models may be the file object or the array', () => {
@@ -169,7 +184,7 @@ test('model_refs: model_id must exist or be null; a ref mapped twice fails; role
 function withPlan() {
   const g = good();
   g.claims.push(
-    claim('cc-default', { topic: 'enforced-model' }),
+    claim('cc-default', { topic: 'enforced-model', quote: 'The default model is claude-sonnet-5 unless you set another' }),
     claim('cc-levels', { topic: 'effort' }),
     claim('anthropic-low', { subject: { kind: 'lab', name: 'Anthropic' }, tier: 'lab', topic: 'effort' }),
     claim('cursor-inherit', { subject: { kind: 'tool', name: 'Cursor' }, source_url: 'https://cursor.com/docs/subagents' }),
@@ -214,6 +229,30 @@ test('tool_plans: model ids resolve, stay in a one-lab tool\'s lab, and a choice
   const d = withPlan(); d.tool_plans[1].bulk = { model_id: 'gpt-6-luna', when: 'loops', basis: ['cursor-inherit'] }; expectError(d, /cursor's docs give no model string/);
   const b = withPlan(); b.tool_plans[1].lead.model_id = 'gpt-6-luna'; expectError(b, /lead needs exactly one of model_id or choice/);
   const x = withPlan(); x.tool_plans[1].lead.choice = 'auto'; expectError(x, /lead\.choice must be "your pick"/);
+});
+
+test('tool_plans: a bulk model goes into a helper file only by a model_refs string some basis quote gives', () => {
+  // No model_refs row for the bulk model: the catalog id would be written with no source for it.
+  const n = withPlan(); n.claims.push(claim('cc-sonnet-bulk', { quote: 'use claude-sonnet-5 for mechanical work' }));
+  n.tool_plans[0].bulk = { ...n.tool_plans[0].bulk, model_id: 'claude-sonnet-5', basis: ['cc-sonnet-bulk'] };
+  expectError(n, /bulk\.model_id "claude-sonnet-5" goes into claude-code's bulk helper file, so it needs a model_refs row/);
+  // A row whose basis never quotes its string.
+  const q = withPlan(); q.claims.find((c) => c.id === 'cc-alias-haiku').quote = 'Uses the fast and efficient model for simple tasks';
+  expectError(q, /bulk\.model_id "claude-haiku-4-5": no model_refs row for it has a basis quote containing its string \(haiku\)/);
+  // With a row whose claim quotes the string, it passes.
+  const ok = withPlan(); ok.claims.push(claim('cc-sonnet-bulk', { quote: 'use claude-sonnet-5 for mechanical work' }), claim('cc-sonnet-string', { quote: 'set model: claude-sonnet-5 in the file' }));
+  ok.model_refs.push({ tool: 'claude-code', ref: 'claude-sonnet-5', model_id: 'claude-sonnet-5', basis: ['cc-sonnet-string'] });
+  ok.tool_plans[0].bulk = { ...ok.tool_plans[0].bulk, model_id: 'claude-sonnet-5', basis: ['cc-sonnet-bulk'] };
+  assert.deepEqual(errorsOf(ok), []);
+});
+
+test('tool_plans: a slot that names a model rests on a quote that names it (no other model\'s quotes)', () => {
+  const g = withPlan(); g.claims.push(claim('cc-sonnet-string', { quote: 'set model: claude-sonnet-5 in the file' }));
+  g.model_refs.push({ tool: 'claude-code', ref: 'claude-sonnet-5', model_id: 'claude-sonnet-5', basis: ['cc-sonnet-string'] });
+  g.tool_plans[0].bulk.model_id = 'claude-sonnet-5'; // basis still the Haiku quote
+  expectError(g, /bulk\.basis: no quote names claude-sonnet-5/);
+  const l = withPlan(); l.tool_plans[0].lead.basis = ['anthropic-low'];
+  expectError(l, /lead\.basis: no quote names claude-sonnet-5/);
 });
 
 test('tool_plans: helpers inherit; effort values come from the tool\'s own level list; prose has no ranking words', () => {

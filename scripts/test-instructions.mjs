@@ -1020,3 +1020,15 @@ test('LC-10: preview fact lines skip lab quotes with superlatives and show a neu
   assert.ok(!/\b(our most|frontier-class|state-of-the-art|smartest|leading)\b/i.test(text), text);
   assert.match(text, /Use gpt-6-sol for coding tasks that need strong reasoning/);
 });
+
+test('a plan bulk slot with no model_refs row for its model writes no model into the helper file', () => {
+  const guidance = clone(FACTS.guidance);
+  const cc = guidance.tool_plans.find((t) => t.tool === 'claude-code');
+  const other = MODELS.find((m) => m.vendor === 'Anthropic' && m.id !== cc.bulk.model_id && !guidance.model_refs.some((r) => r.tool === 'claude-code' && r.model_id === m.id));
+  assert.ok(other, 'the frozen catalog has an Anthropic model with no Claude Code string on file');
+  cc.bulk.model_id = other.id;
+  const pkg = buildPackage(PROFILES['power-user-max5x'], { ...FACTS, guidance }, setupFor('power-user-max5x'));
+  const bulk = pkg.parts.find((p) => p.id === 'claude-code:agent:bulk');
+  assert.match(bulk.content, /^model: inherit$/m, 'no source gives a string for it, so the file inherits');
+  assert.ok(!bulk.content.includes(other.id), 'the catalog id is never written as a guess');
+});

@@ -1,8 +1,8 @@
 // New-release drill: a model that does not exist yet lands in a copy of data/, and every page and
 // tool picks it up with no code change. The copy gets a made-up Anthropic model (admitted through
 // the Judge writer's own functions, then given the derived fields Collect computes), a release
-// entry dated one day after the newest one on file, a basis claim, and Claude Code's bulk default
-// moved onto it. Then, with the shipped code untouched:
+// entry dated one day after the newest one on file, a basis claim, a model_refs row whose claim
+// quotes the model string, and Claude Code's bulk default moved onto it. Then, with the shipped code untouched:
 //   (a) the board's data module lists it in the pickers, and the board's install package (the
 //       same buildPackage call board.html makes) names it as the bulk default with its source;
 //   (b) the index timeline (assets/app.js in a vm) renders its release title and date;
@@ -31,6 +31,7 @@ import { buildPackage, profileFromBoard, packageText, renderPreview } from '../a
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const DRILL_NAME = 'Claude Drill 9.1';
 const DRILL_CLAIM = 'drill-cc-bulk-basis';
+const DRILL_REF_CLAIM = 'drill-cc-model-string';
 const DRILL_URL = 'https://www.anthropic.com/news/claude-drill-9-1';
 
 const readJson = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
@@ -92,6 +93,15 @@ before(() => {
     source_url: DRILL_URL, tier: 'tool', date: day,
     quote: `${DRILL_NAME} for quick mechanical work`,
   });
+  // The bulk helper file takes Claude Code's own string for the model, so a model_refs row maps
+  // it, resting on a claim that quotes that string (validate-data checks both).
+  guidance.claims.push({
+    id: DRILL_REF_CLAIM, subject: { kind: 'tool', name: 'Claude Code' }, topic: 'model-per-job',
+    sentence: `Claude Code's drill page gives ${drill.id} as the model string for ${DRILL_NAME}.`,
+    source_url: DRILL_URL, tier: 'tool', date: day,
+    quote: `set model: ${drill.id} in your subagent configuration`,
+  });
+  guidance.model_refs.push({ tool: 'claude-code', ref: drill.id, model_id: drill.id, basis: [DRILL_REF_CLAIM] });
   const cc = (guidance.tool_plans || []).find((t) => t.tool === 'claude-code');
   assert.ok(cc && cc.bulk, 'guidance.json has a Claude Code tool plan with a bulk slot');
   cc.bulk = { ...cc.bulk, model_id: drill.id, basis: [DRILL_CLAIM] };

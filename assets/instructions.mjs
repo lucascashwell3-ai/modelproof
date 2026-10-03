@@ -585,7 +585,8 @@ function roleFor(F, p, ctx, tool, role) {
   }
   // A slot of the tool's plan that names a model the user can run: from the tool's (or its lab's)
   // own docs. `needRef`: the model is written into a file, so the tool's own string for it must be
-  // on file (model_refs, or a full id where the tool documents that) — never a guessed one.
+  // on file in model_refs (scripts/validate-data.mjs checks its basis quotes that string) — never
+  // the catalog id by default, which no source gives.
   const fromPlan = (slot, needRef) => {
     if (!slot || !slot.model_id) return null;
     const m = F.byId.get(slot.model_id);
@@ -599,7 +600,7 @@ function roleFor(F, p, ctx, tool, role) {
     if (!basis.length) return null;
     const rec = modelRec(m, basis.some((c) => c.tier === 'tool') ? 'tool' : 'lab', basis);
     const ref = F.refs.find((x) => x.tool === tool && x.model_id === m.id);
-    if (needRef && !ref && !(tool === 'claude-code' && REF_RE.test(m.id))) return null;
+    if (needRef && !ref) return null;
     rec.model_ref = ref ? ref.ref : rec.model_ref;
     return rec;
   };

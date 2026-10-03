@@ -263,6 +263,16 @@ export function validateGuidance(guidance, models) {
 export const TOOL_PLAN_TOOLS = ['claude-code', 'codex', 'cursor', 'copilot', 'antigravity', 'openrouter'];
 export const TOOL_PLAN_CHOICE = 'your pick';
 export const TOOL_PLAN_CHOICE_ONLY = ['cursor', 'copilot', 'antigravity', 'openrouter'];
+// Tools whose helper files take a model string from a plan slot (the bulk helper; Claude Code's
+// optional Explore helper too). Their bulk slot reaches an enforced file.
+export const TOOL_PLAN_FILE_SLOT_TOOLS = ['claude-code', 'codex'];
+const escRe = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+/** True when `text` contains `word` as a whole token (case-insensitive; '-' and '.' count as part
+ * of a token, so "gpt-6" is not found inside "gpt-6-luna"). */
+export function namesToken(text, word) {
+  if (!word) return false;
+  return new RegExp(`(^|[^a-z0-9.-])${escRe(String(word).toLowerCase())}(?![a-z0-9-]|\\.[a-z0-9])`).test(String(text || '').toLowerCase());
+}
 export function toolPlanProblems(guidance, claims, byId) {
   const out = [];
   const G = 'data/guidance.json';
@@ -271,6 +281,16 @@ export function toolPlanProblems(guidance, claims, byId) {
   if (!Array.isArray(plans)) return [`${G}: tool_plans must be an array`];
   const seen = new Set();
   const isStr = (v) => typeof v === 'string' && v.trim() !== '';
+  const quoteOf = (id) => { const c = claims.get(id); return c && typeof c.quote === 'string' ? c.quote : ''; };
+  const refsFor = (tool, modelId) => (Array.isArray(guidance.model_refs) ? guidance.model_refs : [])
+    .filter((r) => r && r.tool === tool && r.model_id === modelId && isStr(r.ref));
+  // A slot that names a model must rest on a claim that names it: by one of the tool's refs for it,
+  // its catalog name or its id. Otherwise the line would cite another model's quotes.
+  const basisNamesModel = (tool, modelId, basis) => {
+    const m = byId.get(modelId);
+    const words = [modelId, m && m.name, ...refsFor(tool, modelId).map((r) => r.ref)].filter(Boolean);
+    return (Array.isArray(basis) ? basis : []).some((id) => words.some((w) => namesToken(quoteOf(id), w)));
+  };
   plans.forEach((tp, i) => {
     const who = `${G} tool_plans[${i}]${tp && tp.tool ? ` (${tp.tool})` : ''}`;
     if (!tp || typeof tp !== 'object' || Array.isArray(tp)) { out.push(`${who} must be an object`); return; }
@@ -324,6 +344,9 @@ export function toolPlanProblems(guidance, claims, byId) {
       if (x.raise_to != null && !isStr(x.when)) out.push(`${label}.when must say when to raise effort to ${x.raise_to}`);
       prose(x.when, `${label}.when`);
       out.push(...own(x.basis, label, hasId && isStr(x.model_id) ? x.model_id : null));
+      if (hasId && isStr(x.model_id) && byId.has(x.model_id) && Array.isArray(x.basis) && x.basis.length && !basisNamesModel(tp.tool, x.model_id, x.basis)) {
+        out.push(`${label}.basis: no quote names ${x.model_id} (by its name, its id or a ${tp.tool} model_refs string) — a slot rests on a source that names its model`);
+      }
     };
     slot(tp.lead, `${who}.lead`);
     if (tp.helpers !== null) {
@@ -338,6 +361,16 @@ export function toolPlanProblems(guidance, claims, byId) {
       }
     }
     slot(tp.bulk, `${who}.bulk`);
+    // The bulk slot's model is written into a helper file: the tool's own string for it must be on
+    // file in model_refs, with a basis that quotes that string. Never the catalog id by default.
+    const bulkId = tp.bulk && isStr(tp.bulk.model_id) ? tp.bulk.model_id : null;
+    if (bulkId && TOOL_PLAN_FILE_SLOT_TOOLS.includes(tp.tool)) {
+      const rows = refsFor(tp.tool, bulkId);
+      if (!rows.length) out.push(`${who}.bulk.model_id "${bulkId}" goes into ${tp.tool}'s bulk helper file, so it needs a model_refs row (tool ${tp.tool}, model_id ${bulkId}) whose basis quotes the string the file takes`);
+      else if (!rows.some((r) => (Array.isArray(r.basis) ? r.basis : []).some((id) => namesToken(quoteOf(id), r.ref)))) {
+        out.push(`${who}.bulk.model_id "${bulkId}": no model_refs row for it has a basis quote containing its string (${rows.map((r) => r.ref).join(', ')})`);
+      }
+    }
     if (tp.bulk && !isStr(tp.bulk.when)) out.push(`${who}.bulk.when is required (the kind of work it is for)`);
     if (tp.bulk && tp.bulk.explore !== undefined) {
       if (tp.tool !== 'claude-code') out.push(`${who}.bulk.explore is a Claude Code helper only`);
