@@ -70,3 +70,9 @@ Lead / Helpers / Bulk pass (2026-10-03, guidance.json tool_plans):
   regenerated with `UPDATE_GOLDENS=1 node --test scripts/test-instructions.mjs` and reviewed; the
   new `*.setup.json` files are `install.mjs detect` output on the matching `setups/` folder, with the
   temp paths replaced by made-up ones.
+
+Installer 1.0.0 (2026-10-03):
+- `installer-1.0.0/install.mjs`, `installer-1.0.0/instructions.mjs` — the released 1.0.0 installer
+  and generator, byte for byte (the two files as first published). scripts/test-install.mjs installs
+  with them, upgrades with the current installer, then undoes, so an upgrade from the shipped
+  version stays covered. Never edit them; they are what people already have.

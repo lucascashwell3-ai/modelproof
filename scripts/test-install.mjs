@@ -153,7 +153,7 @@ for (const [label, name, profile, project, over] of SIX) {
   });
 }
 
-test('roundtrip: OpenRouter / API is copy only — no items, apply writes nothing, undo is byte-identical', () => {
+test('roundtrip: OpenRouter / API is copy only — no items, apply writes nothing, says so, and leaves no install or undo id', () => {
   const f = setup('empty');
   const before = snapshot(f, 'before');
   const p = plan(f, path.join(PROFILES, 'openrouter.json'), { project: false });
@@ -161,13 +161,13 @@ test('roundtrip: OpenRouter / API is copy only — no items, apply writes nothin
   assert.deepEqual(p.plan.items, []);
   assert.match(p.out, /Copy only, not installed: OpenRouter \/ API/);
   assert.match(p.out, /Files: none \(the installer writes nothing for a copy-only tool\)\./);
-  ok(apply(f, p), 'apply');
+  const a = apply(f, p);
+  ok(a, 'apply');
+  assert.match(a.out, /Nothing was written: this plan has no file to add or change, so there is nothing to undo\./);
+  assert.doesNotMatch(a.out, /Undo:|Start a new session/);
   ok(compare(f, before), 'nothing written');
   ok(dupes(f));
-  const u = undo(f, p.plan.id);
-  ok(u, 'undo');
-  assert.match(u.out, /byte-identical/);
-  ok(compare(f, before));
+  assert.equal(inst(f, 'status', '--home', f.home).out, 'Nothing installed.\n', 'no install record to undo');
 });
 
 test('Claude Code + GitHub Copilot: one set of helpers (Copilot loads .claude/agents), the note says so', () => {
@@ -689,6 +689,37 @@ test('edit inside the block → reinstall keeps it (exit 2); undo cuts the block
   assert.ok(kept, u.out);
   assert.match(read(kept[1]), /How to hand off \(my edit\)/);
   ok(compare(f, before));
+});
+
+// An upgrade over the released 1.0.0 installer (frozen in scripts/fixtures/installer-1.0.0/). The
+// install id is one per home or project, so the upgrade is a second round of the same record and
+// undo takes out both: the plan, the apply and the undo all say so, and the tree is back to before
+// the 1.0.0 install.
+test('upgrade from the 1.0.0 installer: plan, apply and undo say undo takes out both installs; undo restores the original', () => {
+  const OLD = path.join(FIX, 'installer-1.0.0', 'install.mjs');
+  const f = setup('cc-max5x');
+  const profile = path.join(PROFILES, 'cc-max5x.json');
+  const before = snapshot(f, 'before');
+  const out1 = path.join(f.work, 'plan-old.json');
+  ok(node(OLD, ['plan', '--profile', profile, '--data', DATA, '--home', f.home, '--project', f.project, '--out', out1], f.env), 'plan with 1.0.0');
+  const p1 = JSON.parse(fs.readFileSync(out1, 'utf8'));
+  ok(node(OLD, ['apply', '--plan', out1, '--expect', p1.hash], f.env), 'apply with 1.0.0');
+  const p2 = plan(f, profile);
+  ok(p2, 'plan with this installer');
+  assert.equal(p2.plan.id, p1.id, 'the same install id');
+  assert.ok(p2.plan.earlier_since, 'the plan knows about the earlier install');
+  assert.match(p2.out, new RegExp(`Undo takes out everything above together with the earlier install \\(since ${p2.plan.earlier_since}\\) under the same id ${p1.id}`));
+  const a = apply(f, p2);
+  ok(a, 'apply the upgrade');
+  assert.match(a.out, /This takes out this install and the earlier one on this home folder together, back to how the files were before \d{4}-\d\d-\d\d\./);
+  ok(verify(f));
+  ok(dupes(f));
+  const u = undo(f, p1.id);
+  ok(u, 'undo');
+  assert.match(u.out, new RegExp(`This took out all 2 installs recorded under ${p1.id} \\(the first on \\d{4}-\\d\\d-\\d\\d\\), not only the latest one\\.`));
+  assert.match(u.out, /Restored: every file is byte-identical to before the first of those installs/);
+  assert.doesNotMatch(u.out, /byte-identical to before the install\./);
+  ok(compare(f, before), 'the tree is back to before the 1.0.0 install');
 });
 
 test('profile A → profile B → undo: the tree is back to before A (remove items are numbered)', () => {

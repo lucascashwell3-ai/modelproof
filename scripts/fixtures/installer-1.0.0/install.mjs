@@ -28,11 +28,11 @@ import os from 'node:os';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import {
-  buildPackage, renderPreview, GENERATOR_VERSION, TOOLS,
+  buildPackage, renderPreview, GENERATOR_VERSION,
   BLOCK_BEGIN_RE as BEGIN_RE, BLOCK_END_RE as END_RE, blockBodyHash as bodyHash, blockText, blockBodyLines as contentLines, stampOwnedText,
 } from './instructions.mjs';
 
-export const INSTALLER_VERSION = '1.1.0';
+export const INSTALLER_VERSION = '1.0.0';
 export const EXIT = Object.freeze({ OK: 0, USAGE: 1, CONFLICT: 2, DRIFT: 3, CORRUPT: 4 });
 const PLAN_SCHEMA = 'modelproof.plan/1';
 const MANIFEST_SCHEMA = 'modelproof.manifest/1';
@@ -323,7 +323,6 @@ export function makeContext({ home, project, env = process.env }) {
   return {
     home: homeAbs, realHome, project: projectAbs, realProject,
     claudeDir, codexDir, cursorDir: path.join(homeAbs, '.cursor'),
-    copilotDir: path.join(homeAbs, '.copilot'), geminiDir: path.join(homeAbs, '.gemini'),
     force: Object.prototype.hasOwnProperty.call(env, 'CLAUDE_CODE_SUBAGENT_MODEL_FORCE'),
     notes,
   };
@@ -363,31 +362,19 @@ function targetAbs(p, ctx) {
   return path.join(ctx.project, p);
 }
 
-// The helper names a package writes (one file per role), as a regex alternation.
-const HELPER_ROLES = ['scout', 'builder', 'reviewer', 'bulk'];
-const HELPER_NAMES = HELPER_ROLES.join('|');
-// Tools with helper files the installer reads and writes, and the tools that read instruction text.
-const AGENT_TOOLS = ['claude-code', 'codex', 'cursor', 'copilot', 'antigravity'];
-const READER_TOOLS = TOOLS.filter((t) => t !== 'openrouter');
-
 // The fixed list of places the installer may write. Checked on the logical path and the real path.
 function allowedTarget(abs, ctx) {
   const rel = (base) => (base && isInside(abs, base) ? path.relative(base, abs).split(path.sep).join('/') : null);
   const tests = [];
-  const R = HELPER_NAMES;
   const cc = rel(ctx.claudeDir); const cx = rel(ctx.codexDir); const cu = rel(ctx.cursorDir);
-  const gh = rel(ctx.copilotDir); const gm = rel(ctx.geminiDir);
-  if (cc !== null) tests.push(new RegExp(`^agents/modelproof-(${R}|explore)\\.md$`).test(cc) || /^rules\/modelproof\.md$/.test(cc) || cc === 'settings.json');
-  if (cx !== null) tests.push(new RegExp(`^agents/modelproof-(${R})\\.toml$`).test(cx) || /^AGENTS(\.override)?\.md$/.test(cx));
-  if (cu !== null) tests.push(new RegExp(`^agents/modelproof-(${R})\\.md$`).test(cu));
-  if (gh !== null) tests.push(new RegExp(`^agents/modelproof-(${R})\\.agent\\.md$`).test(gh));
-  if (gm !== null) tests.push(new RegExp(`^config/agents/modelproof-(${R})\\.md$`).test(gm) || gm === 'AGENTS.md');
+  if (cc !== null) tests.push(/^agents\/modelproof-(scout|builder|reviewer|explore)\.md$/.test(cc) || /^rules\/modelproof\.md$/.test(cc) || cc === 'settings.json');
+  if (cx !== null) tests.push(/^agents\/modelproof-(scout|builder|reviewer)\.toml$/.test(cx) || /^AGENTS(\.override)?\.md$/.test(cx));
+  if (cu !== null) tests.push(/^agents\/modelproof-(scout|builder|reviewer)\.md$/.test(cu));
   const pr = rel(ctx.project);
   if (pr !== null) {
     tests.push(new RegExp('^(' + [
-      `\\.claude/agents/modelproof-(${R}|explore)\\.md`, '\\.claude/rules/modelproof\\.md', '\\.claude/settings\\.json',
-      `\\.codex/agents/modelproof-(${R})\\.toml`, `\\.cursor/agents/modelproof-(${R})\\.md`,
-      `\\.github/agents/modelproof-(${R})\\.agent\\.md`, `\\.agents/agents/modelproof-(${R})\\.md`,
+      '\\.claude/agents/modelproof-(scout|builder|reviewer|explore)\\.md', '\\.claude/rules/modelproof\\.md', '\\.claude/settings\\.json',
+      '\\.codex/agents/modelproof-(scout|builder|reviewer)\\.toml', '\\.cursor/agents/modelproof-(scout|builder|reviewer)\\.md',
       '\\.cursor/rules/modelproof\\.mdc', 'AGENTS\\.md', 'AGENTS\\.override\\.md',
     ].join('|') + ')$').test(pr));
   }
@@ -440,8 +427,6 @@ function agentDirs(tool, ctx) {
   if (tool === 'claude-code') { dirs.push(['user', path.join(ctx.claudeDir, 'agents')]); if (ctx.project) dirs.push(['project', path.join(ctx.project, '.claude', 'agents')]); }
   if (tool === 'codex') { dirs.push(['user', path.join(ctx.codexDir, 'agents')]); if (ctx.project) dirs.push(['project', path.join(ctx.project, '.codex', 'agents')]); }
   if (tool === 'cursor') { dirs.push(['user', path.join(ctx.cursorDir, 'agents')]); if (ctx.project) dirs.push(['project', path.join(ctx.project, '.cursor', 'agents')]); }
-  if (tool === 'copilot') { dirs.push(['user', path.join(ctx.copilotDir, 'agents')]); if (ctx.project) dirs.push(['project', path.join(ctx.project, '.github', 'agents')]); }
-  if (tool === 'antigravity') { dirs.push(['user', path.join(ctx.geminiDir, 'config', 'agents')]); if (ctx.project) dirs.push(['project', path.join(ctx.project, '.agents', 'agents')]); }
   return dirs;
 }
 function readAgents(tool, ctx) {
@@ -573,7 +558,7 @@ export function readers(target, ctx, cache = {}) {
   if (ctx.project) {
     if (same(path.join(ctx.project, 'AGENTS.md'))) {
       if (!statOrNull(path.join(ctx.project, 'AGENTS.override.md'))) tools.add('codex');
-      tools.add('cursor'); tools.add('copilot'); tools.add('antigravity'); tools.add('agents-md');
+      tools.add('cursor'); tools.add('agents-md');
       const cc = claudeReadsProjectAgents(ctx, cache);
       if (cc === true) tools.add('claude-code');
       if (cc === 'unsure') { tools.add('claude-code'); unsure = true; }
@@ -582,7 +567,6 @@ export function readers(target, ctx, cache = {}) {
     if (/\.mdc$/.test(abs) && isInside(abs, path.join(ctx.project, '.cursor', 'rules'))) tools.add('cursor');
   }
   if (same(path.join(ctx.codexDir, 'AGENTS.override.md'))) tools.add('codex');
-  if (same(path.join(ctx.geminiDir, 'AGENTS.md'))) tools.add('antigravity');
   if (same(path.join(ctx.codexDir, 'AGENTS.md')) && !statOrNull(path.join(ctx.codexDir, 'AGENTS.override.md'))) tools.add('codex');
   const ccFiles = ccLoadedFiles(ctx).map((f) => realOr(f.abs));
   if (ccFiles.includes(real)) tools.add('claude-code');
@@ -590,7 +574,7 @@ export function readers(target, ctx, cache = {}) {
   if (ctx.project && isInside(abs, path.join(ctx.project, '.claude', 'rules')) && /\.md$/.test(abs)) tools.add('claude-code');
   const imp = cache.imports || (cache.imports = importClosure(ctx));
   if (imp.imported.has(real)) tools.add('claude-code');
-  return { tools: READER_TOOLS.filter((t) => tools.has(t)), unsure };
+  return { tools: ['claude-code', 'codex', 'cursor', 'agents-md'].filter((t) => tools.has(t)), unsure };
 }
 
 function scanRules(abs, ctx, out, words) {
@@ -626,7 +610,6 @@ export function detect(ctx) {
   for (const f of listFiles(path.join(ctx.claudeDir, 'rules'), /\.md$/, true)) addFile('user', f);
   addFile('user', path.join(ctx.codexDir, 'AGENTS.md'));
   addFile('user', path.join(ctx.codexDir, 'AGENTS.override.md'));
-  addFile('user', path.join(ctx.geminiDir, 'AGENTS.md'));
   if (ctx.project) {
     for (const n of ['CLAUDE.md', '.claude/CLAUDE.md', 'CLAUDE.local.md', 'AGENTS.md', 'AGENTS.override.md']) addFile('project', path.join(ctx.project, n));
     for (const f of listFiles(path.join(ctx.project, '.claude', 'rules'), /\.md$/, true)) addFile('project', f);
@@ -660,7 +643,7 @@ export function detect(ctx) {
   // Helper agents: name, model and the one-line description (so a helper doing the same job as
   // one of the package's can be named in the plan).
   const agents = [];
-  for (const tool of AGENT_TOOLS) {
+  for (const tool of ['claude-code', 'codex', 'cursor']) {
     for (const a of readAgents(tool, ctx)) agents.push({ tool, scope: a.scope, path: display(a.path, ctx), name: a.name, model: a.model, description: a.description, modelproof: a.modelproof });
   }
   // Settings: key names, plus model/effort values. Never env values, hooks or apiKeyHelper.
@@ -728,17 +711,6 @@ function writePrivate(file, data) {
   fs.chmodSync(file, 0o600);
 }
 function manifestPath(state, id) { return path.join(state, 'installs', id, 'manifest.json'); }
-// The apply rounds an undo of this record takes out: every apply since the last undo. One install
-// id per home or project, so an upgrade adds a round to the same record rather than a new id.
-function liveRounds(m) {
-  const h = (m && Array.isArray(m.history)) ? m.history : [];
-  let from = 0;
-  h.forEach((x, i) => { if (x && x.action === 'undo') from = i + 1; });
-  // A round that changed nothing (every item unchanged or left out) is not an install of its own.
-  const wrote = (x) => !Array.isArray(x.items) || x.items.some((it) => !['unchanged', 'left out', 'skip', 'conflict'].includes(it.action));
-  return h.slice(from).filter((x) => x && x.action === 'apply' && wrote(x));
-}
-const dayOf = (iso) => (typeof iso === 'string' ? iso.slice(0, 10) : 'an earlier day');
 function loadManifest(state, id) {
   const p = manifestPath(state, id);
   const b = (() => { try { return fs.readFileSync(p); } catch (e) { if (e.code === 'ENOENT') return null; throw e; } })();
@@ -929,7 +901,7 @@ function decideRemove(entry, cur) {
 }
 
 function nameClash(part, abs, ctx) {
-  const m = /^(claude-code|codex|cursor|copilot|antigravity):agent:/.exec(part.id);
+  const m = /^(claude-code|codex|cursor):agent:/.exec(part.id);
   if (!m) return null;
   const tool = m[1];
   const name = partName(part.content, tool === 'codex');
@@ -953,12 +925,10 @@ function otherScopeCopy(part, ctx, scope) {
     if (scope === 'project') {
       if (tool === 'claude-code' && ownedAt(path.join(ctx.claudeDir, 'rules', 'modelproof.md'))) found.push(['Claude Code', display(path.join(ctx.claudeDir, 'rules', 'modelproof.md'), ctx)]);
       if (tool === 'codex') for (const n of ['AGENTS.md', 'AGENTS.override.md']) if (blockAt(path.join(ctx.codexDir, n))) found.push(['Codex', display(path.join(ctx.codexDir, n), ctx)]);
-      if (tool === 'antigravity' && blockAt(path.join(ctx.geminiDir, 'AGENTS.md'))) found.push(['Antigravity', display(path.join(ctx.geminiDir, 'AGENTS.md'), ctx)]);
     } else if (ctx.project) {
       if (tool === 'claude-code' && ownedAt(path.join(ctx.project, '.claude', 'rules', 'modelproof.md'))) found.push(['Claude Code', display(path.join(ctx.project, '.claude', 'rules', 'modelproof.md'), ctx)]);
       if (tool === 'claude-code' && blockAt(path.join(ctx.project, 'AGENTS.md')) && readers(path.join(ctx.project, 'AGENTS.md'), ctx).tools.includes('claude-code')) found.push(['Claude Code', 'AGENTS.md']);
       if (tool === 'codex') for (const n of ['AGENTS.md', 'AGENTS.override.md']) if (blockAt(path.join(ctx.project, n))) found.push(['Codex', n]);
-      if (tool === 'antigravity' && blockAt(path.join(ctx.project, 'AGENTS.md'))) found.push(['Antigravity', 'AGENTS.md']);
     }
   }
   if (!found.length) return null;
@@ -1050,8 +1020,6 @@ export function makePlan({ profile, facts, ctx, state }) {
     dirs: { claude: ctx.claudeDir, codex: ctx.codexDir },
     state_dir: state,
     manifest_sha: mBytes ? sha256(mBytes) : null,
-    // An install already recorded under this id: undo takes it out together with this one.
-    earlier_since: Object.values(targets).some((e) => e.active) && liveRounds(manifest).length ? dayOf(liveRounds(manifest)[0].at) : null,
     package: pkg,
     items,
     heads_up: setup.heads_up,
@@ -1088,9 +1056,7 @@ export function renderPlan(plan, planFile) {
     }
   }
   for (const n of plan.notes) out.push(`Note: ${n}`);
-  out.push('', plan.earlier_since
-    ? `Undo takes out everything above together with the earlier install (since ${plan.earlier_since}) under the same id ${plan.id}, back to how the files were before it, and leaves ${tildeOr(plan.state_dir, plan.home)} in place (install history).`
-    : `Undo takes out everything above and leaves ${tildeOr(plan.state_dir, plan.home)} in place (install history).`);
+  out.push('', `Undo takes out everything above and leaves ${tildeOr(plan.state_dir, plan.home)} in place (install history).`);
   if (conflicts.length) out.push(`Needs a decision: ${conflicts.join(', ')}. Apply refuses until each is left out with --skip ${conflicts.join(',')}.`);
   // The exact command, runnable as printed from any folder: this installer's own path and the plan file's.
   out.push(planFile ? `Apply: node ${shellPath(SELF)} apply --plan ${shellPath(path.resolve(planFile))} --expect ${plan.hash}${conflicts.length ? ` --skip ${conflicts.join(',')}` : ''}` : 'Write the plan with --out <file> to apply it.');
@@ -1271,10 +1237,6 @@ export function applyPlan(plan, { expect, skip = [] }) {
       if (d.action !== 'skip') touched.push({ it, entry, d, cur });
       summary.push(`  ${String(it.n).padStart(2)}. ${d.action.padEnd(9)} ${it.path}`);
     }
-    // Nothing to write (a copy-only plan, every item left out, or every file already as planned):
-    // no install record, no undo command, and an earlier install stays as it is.
-    const earlier = liveRounds(old).length && Object.values((old && old.targets) || {}).some((e) => e.active) ? liveRounds(old) : [];
-    if (!touched.length) return { id: plan.id, summary, nothing: true, earlier: earlier.length ? { since: dayOf(earlier[0].at), undo: `node ${shellPath(path.join(state, 'bin', 'install.mjs'))} undo ${plan.id}` } : null };
     // New manifest (union by target). Before-state is recorded the first time a path is touched.
     const next = JSON.parse(JSON.stringify(manifest));
     next.last_installed = new Date().toISOString();
@@ -1324,7 +1286,7 @@ export function applyPlan(plan, { expect, skip = [] }) {
     delete next.pending;
     writePrivate(mPath, JSON.stringify(next, null, 2) + '\n');
     const bin = copyBin(state);
-    return { id: plan.id, summary, undo: `node ${shellPath(bin)} undo ${plan.id}`, earlier: earlier.length ? { since: dayOf(earlier[0].at), installs: earlier.length } : null };
+    return { id: plan.id, summary, undo: `node ${shellPath(bin)} undo ${plan.id}` };
   } finally {
     release();
   }
@@ -1380,7 +1342,7 @@ function sweepEmptyDirs(dirs, ops) {
 function guessDirs(real, base) {
   const out = [];
   let cur = path.dirname(real);
-  while (isInside(cur, base) && cur !== base && /^(\.claude|\.codex|\.cursor|\.copilot|\.gemini|\.github|\.agents|agents|rules|config)$/.test(path.basename(cur))) { out.push(cur); cur = path.dirname(cur); }
+  while (isInside(cur, base) && cur !== base && /^(\.claude|\.codex|\.cursor|agents|rules)$/.test(path.basename(cur))) { out.push(cur); cur = path.dirname(cur); }
   return out;
 }
 
@@ -1437,13 +1399,12 @@ export function undoInstall(state, id) {
       else if (d.op.type === 'move') report.push(`moved ${display(d.op.real, ctx)} to ${d.to}`);
       if (d.op.type === 'copy') report.push(`your edited block from ${d.op.note} is kept at ${d.copied}`);
     }
-    const rounds = liveRounds(m);
     const next = JSON.parse(JSON.stringify(m));
     next.history = next.history || [];
     next.history.push({ round, at: new Date().toISOString(), action: 'undo', result: failed.length ? 'could not remove every modelproof part' : differs.length ? 'restored except your later edits' : 'byte-identical', differs, ...(failed.length ? { failed } : {}) });
     next.targets = {};
     writePrivate(manifestPath(state, id), JSON.stringify(next, null, 2) + '\n');
-    return { differs, failed, report, kept, installs: rounds.length, since: rounds.length ? dayOf(rounds[0].at) : null };
+    return { differs, failed, report, kept };
   } finally {
     release();
   }
@@ -1455,25 +1416,14 @@ export function undoFromMarkers(ctx, state) {
   try {
     const cands = [];
     const push = (scope, abs, kind) => { if (statOrNull(abs)) cands.push({ scope, abs, kind }); };
-    for (const r of [...HELPER_ROLES, 'explore']) push('user', path.join(ctx.claudeDir, 'agents', `modelproof-${r}.md`), 'owned-file');
+    for (const r of ['scout', 'builder', 'reviewer', 'explore']) push('user', path.join(ctx.claudeDir, 'agents', `modelproof-${r}.md`), 'owned-file');
     push('user', path.join(ctx.claudeDir, 'rules', 'modelproof.md'), 'owned-file');
-    for (const r of HELPER_ROLES) {
-      push('user', path.join(ctx.codexDir, 'agents', `modelproof-${r}.toml`), 'owned-file');
-      push('user', path.join(ctx.cursorDir, 'agents', `modelproof-${r}.md`), 'owned-file');
-      push('user', path.join(ctx.copilotDir, 'agents', `modelproof-${r}.agent.md`), 'owned-file');
-      push('user', path.join(ctx.geminiDir, 'config', 'agents', `modelproof-${r}.md`), 'owned-file');
-    }
+    for (const r of ['scout', 'builder', 'reviewer']) { push('user', path.join(ctx.codexDir, 'agents', `modelproof-${r}.toml`), 'owned-file'); push('user', path.join(ctx.cursorDir, 'agents', `modelproof-${r}.md`), 'owned-file'); }
     for (const n of ['AGENTS.md', 'AGENTS.override.md']) push('user', path.join(ctx.codexDir, n), 'block');
-    push('user', path.join(ctx.geminiDir, 'AGENTS.md'), 'block');
     if (ctx.project) {
       const P = (...x) => path.join(ctx.project, ...x);
-      for (const r of [...HELPER_ROLES, 'explore']) push('project', P('.claude', 'agents', `modelproof-${r}.md`), 'owned-file');
-      for (const r of HELPER_ROLES) {
-        push('project', P('.codex', 'agents', `modelproof-${r}.toml`), 'owned-file');
-        push('project', P('.cursor', 'agents', `modelproof-${r}.md`), 'owned-file');
-        push('project', P('.github', 'agents', `modelproof-${r}.agent.md`), 'owned-file');
-        push('project', P('.agents', 'agents', `modelproof-${r}.md`), 'owned-file');
-      }
+      for (const r of ['scout', 'builder', 'reviewer', 'explore']) push('project', P('.claude', 'agents', `modelproof-${r}.md`), 'owned-file');
+      for (const r of ['scout', 'builder', 'reviewer']) { push('project', P('.codex', 'agents', `modelproof-${r}.toml`), 'owned-file'); push('project', P('.cursor', 'agents', `modelproof-${r}.md`), 'owned-file'); }
       push('project', P('.claude', 'rules', 'modelproof.md'), 'owned-file');
       push('project', P('.cursor', 'rules', 'modelproof.mdc'), 'owned-file');
       for (const n of ['AGENTS.md', 'AGENTS.override.md']) push('project', P(n), 'block');
@@ -1580,16 +1530,7 @@ export function main(argv, io = { out: (s) => process.stdout.write(s), err: (s) 
       let plan;
       try { plan = JSON.parse(fs.readFileSync(args.plan, 'utf8')); } catch { throw new Fail(EXIT.USAGE, `cannot read plan ${args.plan}`); }
       const r = applyPlan(plan, { expect: args.expect, skip: args.skip });
-      if (r.nothing) {
-        const lines = [...r.summary, 'Nothing was written: this plan has no file to add or change, so there is nothing to undo.'];
-        if (r.earlier) lines.push(`Your earlier install (since ${r.earlier.since}) stays as it was. Undo it with: ${r.earlier.undo}`);
-        io.out(lines.join('\n') + '\n');
-        return EXIT.OK;
-      }
-      const undoLine = r.earlier
-        ? `Undo: ${r.undo}\n  This takes out this install and the ${r.earlier.installs === 1 ? 'earlier one' : `${r.earlier.installs} earlier ones`} on this ${plan.scope === 'project' ? 'project' : 'home folder'} together, back to how the files were before ${r.earlier.since}.`
-        : `Undo: ${r.undo}`;
-      io.out(['Done.', ...r.summary, 'Start a new session so each tool loads the new files.', undoLine].join('\n') + '\n');
+      io.out(['Done.', ...r.summary, 'Start a new session so each tool loads the new files.', `Undo: ${r.undo}`].join('\n') + '\n');
       return EXIT.OK;
     }
     if (cmd === 'verify') {
@@ -1610,10 +1551,8 @@ export function main(argv, io = { out: (s) => process.stdout.write(s), err: (s) 
       if (!id || !/^[0-9a-f]{12}$/.test(id)) throw new Fail(EXIT.USAGE, 'undo needs an install id (see status), or --from-markers');
       const r = undoInstall(state, id);
       const lines = [...r.report];
-      const many = r.installs > 1;
-      if (many) lines.push(`This took out all ${r.installs} installs recorded under ${id} (the first on ${r.since}), not only the latest one.`);
       if (r.differs.length) lines.push(`Restored except your later edits: ${r.differs.join(', ')}`);
-      else if (!r.failed.length) lines.push(many ? `Restored: every file is byte-identical to before the first of those installs (${r.since}).` : 'Restored: every file is byte-identical to before the install.');
+      else if (!r.failed.length) lines.push('Restored: every file is byte-identical to before the install.');
       if (r.failed.length) {
         io.out(lines.join('\n') + (lines.length ? '\n' : ''));
         io.err(`Undo could not remove modelproof's part from ${r.failed.join(', ')}. Nobody edited ${r.failed.length > 1 ? 'these files' : 'that file'} after the install; take out what is left by hand.\n`);
