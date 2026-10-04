@@ -888,10 +888,13 @@ function liveReads(env) {
   };
 }
 
+const GIT_TIMEOUT_MS = 120_000;
+
 /** git in `cwd`. Output is trimmed unless `raw` (file contents keep their last newline). */
 function gitAt(cwd) {
   return (args, { input = null, env = {}, raw = false } = {}) => {
-    const out = execFileSync('git', args, { cwd, encoding: 'utf8', input, env: { ...process.env, ...env }, stdio: ['pipe', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 });
+    // a time limit on every git call: a stuck git fails the run loudly instead of holding a runner for hours
+    const out = execFileSync('git', args, { cwd, encoding: 'utf8', input, env: { ...process.env, ...env }, stdio: [input == null ? 'ignore' : 'pipe', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024, timeout: GIT_TIMEOUT_MS });
     return raw ? out : out.trim();
   };
 }
@@ -901,8 +904,13 @@ function commitFiles(git, parent, files, message) {
   const index = join(mkdtempSync(join(tmpdir(), 'defaults-watch-index-')), 'index');
   const env = { GIT_INDEX_FILE: index, GIT_AUTHOR_NAME: BOT_NAME, GIT_AUTHOR_EMAIL: BOT_EMAIL, GIT_COMMITTER_NAME: BOT_NAME, GIT_COMMITTER_EMAIL: BOT_EMAIL };
   git(['read-tree', parent], { env });
+  const blobDir = mkdtempSync(join(tmpdir(), 'defaults-watch-blob-'));
   for (const [p, content] of Object.entries(files)) {
-    const blob = git(['hash-object', '-w', '--stdin'], { input: content });
+    if (typeof content !== 'string') throw new Error(`commitFiles: ${p} has no text content`);
+    // hash from a file, not stdin: nothing can leave git waiting on an open pipe
+    const tmp = join(blobDir, 'blob');
+    writeFileSync(tmp, content);
+    const blob = git(['hash-object', '-w', '--', tmp]);
     git(['update-index', '--add', '--cacheinfo', `100644,${blob},${p}`], { env });
   }
   const tree = git(['write-tree'], { env });

@@ -44,6 +44,7 @@ jobs:
   watch:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    timeout-minutes: 30   # a stuck page fetch or git call fails the run instead of holding a runner for hours
     permissions:
       contents: write
       pull-requests: write
@@ -80,6 +81,7 @@ jobs:
   dry-run:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    timeout-minutes: 30   # a stuck page fetch or git call fails the run instead of holding a runner for hours
     permissions:
       contents: read
     env:
