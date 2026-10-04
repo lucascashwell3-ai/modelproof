@@ -19,9 +19,9 @@
 export const FEED_FRESHNESS = {
   models: { maxDays: 7, cadence: 'daily' },
   'tool-defaults': { maxDays: 21, cadence: 'weekly' },
-  plans: { maxDays: 30, cadence: 'by hand, about every two weeks' },
-  'per-request': { maxDays: 60, cadence: 'by hand, about monthly' },
-  vendors: { maxDays: 90, cadence: 'by hand, about every two months' },
+  plans: { maxDays: 30, cadence: 'by hand, about every two weeks', byHand: true },
+  'per-request': { maxDays: 60, cadence: 'by hand, about monthly', byHand: true },
+  vendors: { maxDays: 90, cadence: 'by hand, about every two months', byHand: true },
   // each ladder in models.json carries its own as_of: the date its publisher's runs are from
   'effort-ladders': { maxDays: 120, cadence: 'when the publisher posts new runs' },
 };

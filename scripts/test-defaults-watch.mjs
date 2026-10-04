@@ -708,7 +708,8 @@ test('the commit status is checked every run and posted again when it is missing
 });
 
 test('hand-kept files: listed within 7 days of their limit, red once past it, limits read from assets/freshness.mjs', () => {
-  assert.deepEqual(HAND_FEEDS.slice().sort(), Object.keys(FEED_FRESHNESS).filter((k) => FEED_FRESHNESS[k].cadence === 'by hand').sort());
+  assert.deepEqual(HAND_FEEDS.slice().sort(), Object.keys(FEED_FRESHNESS).filter((k) => FEED_FRESHNESS[k].byHand === true).sort());
+  for (const id of HAND_FEEDS) assert.match(FEED_FRESHNESS[id].cadence, /^by hand, about /, `${id}: a hand-kept file says how often`);
   assert.ok(HAND_FEEDS.includes('per-request') && HAND_FEEDS.includes('vendors') && HAND_FEEDS.includes('plans'));
   const at = (days) => new Date(Date.parse(`${TODAY}T00:00:00Z`) - days * 86_400_000).toISOString().slice(0, 10);
   const base = { guidanceAsOf: TODAY, plansAsOf: TODAY, today: TODAY };

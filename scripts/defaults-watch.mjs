@@ -1113,7 +1113,7 @@ function summarize(outcomes) {
 export const STAMP_RED_MARGIN_DAYS = 7;
 
 /** The feeds kept by hand (cadence "by hand" in assets/freshness.mjs — the one list of limits). */
-export const HAND_FEEDS = Object.keys(FEED_FRESHNESS).filter((id) => FEED_FRESHNESS[id].cadence === 'by hand');
+export const HAND_FEEDS = Object.keys(FEED_FRESHNESS).filter((id) => FEED_FRESHNESS[id].byHand === true);
 
 /** The data file of a feed id (FEEDS in validate-data.mjs). */
 export const feedFile = (id) => `data/${(FEEDS.find((f) => f.id === id) || { file: `${id}.json` }).file}`;
