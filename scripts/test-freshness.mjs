@@ -62,7 +62,7 @@ test('a missing or broken date is stale and says so; a feed with no limit never 
     assert.equal(FR.isStale('models', asOf, NOW), true, JSON.stringify(asOf));
     assert.equal(FR.stampText(asOf), 'Date not on file');
     assert.equal(FR.stampText(asOf, { label: 'Plan prices' }), 'Plan prices: date not on file');
-    assert.match(FR.staleText('plans', asOf, NOW), /^No date on file\. Usually updated about every two weeks\. Check the source/);
+    assert.match(FR.staleText('plans', asOf, NOW), /^No date on file\. Usually updated by hand\. Check the source/);
     assert.match(FR.staleText('plans', asOf, NOW, { label: 'Plan prices' }), /^Plan prices: no date on file\./);
   }
   for (const feed of ['tasks', 'usage-presets', 'board-samples', 'no-such-feed']) {

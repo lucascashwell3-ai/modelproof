@@ -16,7 +16,7 @@
 export const FEED_FRESHNESS = {
   models: { maxDays: 7, cadence: 'daily' },
   'tool-defaults': { maxDays: 21, cadence: 'weekly' },
-  plans: { maxDays: 30, cadence: 'about every two weeks' },
+  plans: { maxDays: 30, cadence: 'by hand' },
   'per-request': { maxDays: 60, cadence: 'by hand' },
   vendors: { maxDays: 90, cadence: 'by hand' },
 };
