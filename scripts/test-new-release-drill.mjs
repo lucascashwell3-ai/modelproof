@@ -283,6 +283,7 @@ test('drill date: a release on file dated tomorrow keeps the drill inside the ho
 /* ---------- (f) the stale drill ---------- */
 
 // A copy of data/ with each dated file's as_of set to `daysPast(limit)` days before today (UTC).
+// The effort ladders carry their own dates inside models.json: every ladder's as_of is set for them.
 function datedCopy(name, daysPast) {
   const dir = path.join(TMP, name);
   fs.cpSync(path.join(ROOT, 'data'), dir, { recursive: true });
@@ -292,6 +293,12 @@ function datedCopy(name, daysPast) {
     const p = path.join(dir, file);
     if (!fs.existsSync(p)) continue;
     const j = readJson(p);
+    if (feed === 'effort-ladders') {
+      asOf[feed] = addDays(utcToday(), -daysPast(lim.maxDays));
+      for (const L of j.effort_ladders) L.as_of = asOf[feed];
+      writeJson(p, j);
+      continue;
+    }
     j.as_of = addDays(utcToday(), -daysPast(lim.maxDays));
     // models.json's as_of is also the day its adoption labels are worked out against; re-derive
     // them for the older day, as the last Collect run on that day would have written them.
@@ -335,9 +342,11 @@ test('drill (f): one day past every limit, every section shows the stale notice'
     app.state.fresh = FR;
     app.renderFreshness();
     for (const s of slots) {
+      const feed = FR.FEED_ALIASES[s.dataset.fresh] || s.dataset.fresh;
+      const slotAge = FR.FEED_FRESHNESS[feed].maxDays + 1;
       assert.match(s.innerHTML, /class="mp-stale" role="note"/, `${page} [data-fresh=${s.dataset.fresh}] shows the notice`);
-      assert.ok(s.innerHTML.includes(`Not updated in ${age} days.`), `${page} [data-fresh=${s.dataset.fresh}] says how old`);
-      assert.ok(s.innerHTML.includes(`datetime="${asOf.models}"`), `${page} stamp carries the data date`);
+      assert.ok(s.innerHTML.includes(`Not updated in ${slotAge} days.`), `${page} [data-fresh=${s.dataset.fresh}] says how old`);
+      assert.ok(s.innerHTML.includes(`datetime="${asOf[feed]}"`), `${page} stamp carries the data date`);
     }
     assert.ok(nav.classList.on && nav.innerHTML.includes(`Not updated in ${age} days`), `${page} nav badge`);
     assert.equal(foot.textContent, FR.dayLabel(asOf.models));
@@ -364,8 +373,9 @@ test('drill (f): at exactly every limit, no section shows the notice', () => {
     app.state.fresh = FR;
     app.renderFreshness();
     for (const s of slots) {
+      const feed = FR.FEED_ALIASES[s.dataset.fresh] || s.dataset.fresh;
       assert.doesNotMatch(s.innerHTML, /mp-stale/, `${page} [data-fresh=${s.dataset.fresh}]`);
-      assert.ok(s.innerHTML.includes(`As of ${FR.dayLabel(asOf.models)}`), `${page} stamp`);
+      assert.ok(s.innerHTML.includes(`As of ${FR.dayLabel(asOf[feed])}`), `${page} stamp`);
     }
     assert.ok(!nav.classList.on && nav.innerHTML.includes(`As of ${FR.dayLabel(asOf.models)}`), `${page} nav badge`);
   }
@@ -378,4 +388,31 @@ test('drill (f): with no module loaded, the sections keep the facts and show no 
   app.state.fresh = null;
   app.renderFreshness();
   assert.ok(slots.every((s) => s.innerHTML === ''));
+});
+
+test('section 03 stamps the date of the effort ladder on screen, not models.json\'s, and follows a switch', () => {
+  const { slots, app } = loadSlots('index.html');
+  const models = readJson(path.join(ROOT, 'data', 'models.json'));
+  models.as_of = '2026-10-04';
+  models.effort_ladders = [{ ...models.effort_ladders[0], as_of: '2026-07-24' }, { ...models.effort_ladders[0], as_of: '2026-09-22' }];
+  app.state.data = models;
+  app.state.fresh = FR;
+  const now = Date.parse('2026-10-04T12:00:00Z');
+  app.state.now = now;
+  const slot = slots.find((s) => s.dataset.fresh === 'effort-ladders');
+  assert.ok(slot, 'index.html has the effort-ladders slot');
+  app.state.ladder = 0;
+  app.renderFreshness();
+  assert.ok(slot.innerHTML.includes('datetime="2026-07-24"') && slot.innerHTML.includes('As of 24 Jul 2026'), slot.innerHTML);
+  assert.ok(!slot.innerHTML.includes('2026-10-04'), 'never the catalog date');
+  app.state.ladder = 1;
+  app.renderFreshness();
+  assert.ok(slot.innerHTML.includes('datetime="2026-09-22"'), slot.innerHTML);
+  // an old ladder shows its own notice
+  models.effort_ladders[1].as_of = '2026-05-01';
+  app.renderFreshness();
+  assert.match(slot.innerHTML, /Not updated in 156 days\. Usually updated when the publisher posts new runs\./);
+  // the ladder switch fills the stamp again
+  const src = fs.readFileSync(path.join(ROOT, 'assets', 'app.js'), 'utf8');
+  assert.match(src, /state\.ladder = \+b\.getAttribute\('data-lad'\);[^\n]*renderEffort\(\); renderFreshness\(\);/);
 });

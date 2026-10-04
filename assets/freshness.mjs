@@ -19,10 +19,12 @@ export const FEED_FRESHNESS = {
   plans: { maxDays: 30, cadence: 'by hand' },
   'per-request': { maxDays: 60, cadence: 'by hand' },
   vendors: { maxDays: 90, cadence: 'by hand' },
+  // each ladder in models.json carries its own as_of: the date its publisher's runs are from
+  'effort-ladders': { maxDays: 120, cadence: 'when the publisher posts new runs' },
 };
 
 // Feeds that live in another feed's file share its date and its limit.
-export const FEED_ALIASES = { releases: 'models', 'effort-ladders': 'models' };
+export const FEED_ALIASES = { releases: 'models' };
 
 const DAY_MS = 86_400_000;
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

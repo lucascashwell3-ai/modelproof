@@ -547,7 +547,7 @@ function wireEffortChips() {
     };
   });
   document.querySelectorAll('.lad-suite[data-lad]').forEach((b) => {
-    b.onclick = () => { state.ladder = +b.getAttribute('data-lad'); state.ladderOff.clear(); renderEffort(); };
+    b.onclick = () => { state.ladder = +b.getAttribute('data-lad'); state.ladderOff.clear(); renderEffort(); renderFreshness(); };
   });
 }
 
@@ -949,13 +949,21 @@ function initReveal() {
 // ---------- freshness: the data's own date on every section, and a notice once it is old ----------
 // Every section that shows model facts carries an empty [data-fresh="<feed id>"] slot in the page;
 // this fills each one with the shared stamp (and the notice when the file is past its limit).
-// Every feed on index and table lives in models.json, so all of them read its as_of.
+// Every feed on index and table lives in models.json and reads its as_of, except the effort
+// ladders: each ladder carries its own date (its publisher's runs), so that slot shows the date of
+// the ladder on screen and is filled again when the reader switches ladders.
 function renderFreshness() {
   const F = state.fresh;
   if (!F || !state.data) return;
   const asOf = state.data.as_of, now = state.now ?? Date.now();
   document.querySelectorAll('[data-fresh]').forEach((slot) => {
-    slot.innerHTML = F.freshHtml(slot.dataset.fresh || 'models', asOf, { now });
+    const feed = slot.dataset.fresh || 'models';
+    if (feed === 'effort-ladders') {
+      const L = activeLadder();
+      slot.innerHTML = L ? F.freshHtml(feed, L.as_of, { now }) : '';
+      return;
+    }
+    slot.innerHTML = F.freshHtml(feed, asOf, { now });
   });
   const f = F.freshness('models', asOf, now);
   const nav = $('#navAsof');
