@@ -9,7 +9,7 @@ import {
   loadFixtures, evaluate, evaluateGated, inProcessGate, runJob, memoryRemote, prBody, prTitle, fingerprint,
   declinedFrom, assertAllowedPaths, assertAsOfOnly, restampText, BRANCH_PATHS, MAIN_PATHS, ISSUE_TITLE,
   RECEIPT_PATH, json, runDrill, drillPages, getPath, latestClaim, fillPlaceholders, spanQuote, swapForms, nextClaimId,
-  BOT_BRANCH,
+  BOT_BRANCH, ISSUE_KINDS, issueBody,
 } from './defaults-watch.mjs';
 import { quoteFoundIn, normalizeText, collectGuidanceClaims } from './check-sources.mjs';
 import { validateGuidance, validateWatchList } from './validate-data.mjs';
@@ -156,8 +156,9 @@ test('a second run on the same input does nothing new', async () => {
   const one = await job({ pages, remote });
   assert.equal(one.prAction, 'created');
   const first = remote.actions.splice(0);
-  assert.deepEqual(first.map((a) => a.kind), ['push-branch', 'create-pr', 'status', 'push-main']);
+  assert.deepEqual(first.map((a) => a.kind), ['push-branch', 'create-pr', 'status', 'push-main', 'open-issue']);
   assert.deepEqual(first[0].files, ['data/guidance.json']);
+  assert.match(remote.state.issues[0].body, /#1 carries 1 change\(s\)/, 'the open PR is listed in the issue');
   const two = await job({ pages, remote });
   assert.equal(two.prAction, 'unchanged');
   assert.deepEqual(remote.actions, []);
@@ -170,11 +171,11 @@ test('a new value while the PR is open updates that PR; no change left closes it
   const more = swap('https://devin.ai/pricing', 'pro $20/month', 'pro $25/month', LEAD_SWAP());
   const upd = await job({ pages: more, remote });
   assert.equal(upd.prAction, 'updated');
-  assert.deepEqual(remote.actions.map((a) => a.kind), ['push-branch', 'edit-pr', 'status', 'push-main']);
+  assert.deepEqual(remote.actions.map((a) => a.kind), ['push-branch', 'edit-pr', 'status', 'push-main', 'update-issue']);
   remote.actions.splice(0);
-  const done = await job({ remote });
+  const done = await job({ remote, sweepFn: async () => ({ failed: [] }) });
   assert.equal(done.prAction, 'closed');
-  assert.deepEqual(remote.actions.map((a) => a.kind), ['close-pr', 'delete-branch', 'push-main']);
+  assert.deepEqual(remote.actions.map((a) => a.kind), ['close-pr', 'delete-branch', 'push-main', 'close-issue']);
   assert.match(remote.state.pulls[0].body, /defaults-watch:closed-by-bot/);
   assert.equal(remote.state.pulls.length, 1, 'one PR number for the whole story');
 });
@@ -382,4 +383,146 @@ test('never re-arms: the workflow and the script create no trigger, schedule or 
 test(`the bot branch and the issue title are fixed (${BOT_BRANCH}, "${ISSUE_TITLE}")`, () => {
   assert.equal(BOT_BRANCH, 'auto/defaults-watch');
   assert.ok(ISSUE_TITLE.length > 10);
+});
+
+/* ---------- loud on every path: declined values, red reasons, stale stamps, drift, blocked sources ---------- */
+
+const closedDecline = () => {
+  const shown = evaluateGated(input({ pages: LEAD_SWAP() }), gate);
+  return { number: 7, state: 'closed', merged_at: null, title: prTitle(shown.outcomes), body: prBody(shown.outcomes, { today: TODAY }) };
+};
+
+test('declined: the old quote stays in the sweep (no skip ids), so a gone quote turns the run red, and the issue lists the decline', async () => {
+  const remote = freshRemote({ pulls: [closedDecline()] });
+  let skipped = null;
+  const gone = (ids) => { skipped = ids; return { failed: [{ key: 'guidance/cc-default-model-opus-5-5', source_url: MC, kind: 'not_found' }] }; };
+  const run = await job({ pages: LEAD_SWAP(), remote, sweepFn: async (ids) => gone(ids) });
+  assert.equal(by(run, 'cc-default-model').outcome, 'declined');
+  assert.equal(by(run, 'cc-default-model').pending, undefined);
+  assert.deepEqual(skipped, [], 'a declined change sends no skip ids to the sweep');
+  assert.ok(!quoteFoundIn(fx.data.guidance.claims.find((c) => c.id === 'cc-default-model-opus-5-5').quote, normalizeText(LEAD_SWAP()[MC])), 'the old quote is gone from the page');
+  assert.ok(run.red.some((r) => r.startsWith('source sweep')));
+  assert.match(run.issue, /### Declined: the data disagrees with the page/);
+  assert.match(run.issue, /`cc-default-model`.*page says claude-sonnet-5-5, data says claude-opus-5-5/);
+  assert.equal(remote.state.issues[0].state, 'open');
+  assert.ok(!remote.actions.some((a) => a.kind === 'close-issue'));
+});
+
+test('declined counts as ok for the re-stamp (the data the owner kept), but still shows in the issue', async () => {
+  const remote = freshRemote({ pulls: [closedDecline()] });
+  const run = await job({ pages: LEAD_SWAP(), remote, sweepFn: async () => ({ failed: [] }) });
+  assert.equal(run.clean, true);
+  assert.deepEqual(run.red, []);
+  assert.match(run.issue, /Declined/);
+  assert.equal(JSON.parse(remote.state.main['data/guidance.json']).as_of, TODAY);
+});
+
+test('every outcome kind that is not ok gets a section in the issue', () => {
+  for (const kind of ISSUE_KINDS) {
+    const body = issueBody({ outcomes: [{ rule: 'r', url: 'https://x.example', outcome: kind, reason: 'why', old: 'a', new: 'b' }], today: TODAY });
+    assert.ok(body && body.includes('`r`') || (kind === 'blocked' && body && body.includes('https://x.example')), `${kind} is listed`);
+  }
+});
+
+test('red reasons that are not a rule outcome reach the issue, and a red run never closes it', async () => {
+  const remote = freshRemote({ issues: [{ number: 7, title: ISSUE_TITLE, body: 'old', state: 'open' }] });
+  const run = await job({ remote, sweepFn: async () => ({ failed: [], error: 'x' }) });
+  assert.deepEqual(run.red, ['source sweep: x']);
+  assert.equal(remote.state.issues[0].state, 'open');
+  assert.match(remote.state.issues[0].body, /### Run problems \(red\)\n\n- source sweep: x/);
+  assert.ok(!remote.actions.some((a) => a.kind === 'close-issue'));
+});
+
+test('a run that throws still writes the issue with the error, then fails', async () => {
+  const remote = freshRemote();
+  remote.pushMain = async () => { throw new Error('main push rejected 3 times'); };
+  await assert.rejects(job({ remote, sweepFn: async () => ({ failed: [] }) }), /main push rejected 3 times/);
+  assert.equal(remote.state.issues.length, 1);
+  assert.equal(remote.state.issues[0].state, 'open');
+  assert.match(remote.state.issues[0].body, /stopped with an error[\s\S]*main push rejected 3 times/);
+});
+
+test('a guidance as_of within 7 days of the stale notice turns the run red and names what stopped the re-stamp', async () => {
+  const old = JSON.parse(JSON.stringify(fx.data.guidance));
+  old.as_of = '2026-09-20'; // 14 days before TODAY; the pages call it stale after 21
+  const remote = freshRemote();
+  const run = await job({ data: { ...fx.data, guidance: old }, pages: LEAD_SWAP(), remote });
+  assert.equal(run.prAction, 'created');
+  const line = run.red.find((r) => r.startsWith('data/guidance.json as_of is 14 days old'));
+  assert.ok(line, run.red.join('\n'));
+  assert.match(line, /bot pull request #1 is open/);
+  assert.match(run.issue, /Run problems \(red\)[\s\S]*guidance\.json as_of is 14 days old/);
+  // 13 days old: not yet red
+  old.as_of = '2026-09-21';
+  const fine = await job({ data: { ...fx.data, guidance: old }, pages: LEAD_SWAP(), remote: freshRemote() });
+  assert.deepEqual(fine.red, []);
+  // a clean run re-stamps it, so the same old date is no problem then
+  old.as_of = '2026-09-01';
+  const clean = await job({ data: { ...fx.data, guidance: old }, remote: freshRemote(), sweepFn: async () => ({ failed: [] }) });
+  assert.equal(clean.clean, true);
+  assert.deepEqual(clean.red, []);
+});
+
+test('plans.json is kept by hand: an as_of within 7 days of its stale notice turns the run red', async () => {
+  const plans = { ...fx.data.plans, as_of: '2026-09-11' }; // 23 days; stale after 30
+  const run = await job({ data: { ...fx.data, plans }, remote: freshRemote(), sweepFn: async () => ({ failed: [] }) });
+  assert.ok(run.red.some((r) => /^data\/plans\.json as_of is 23 days old .*kept by hand/.test(r)), run.red.join('\n'));
+  const ok = await job({ data: { ...fx.data, plans: { ...fx.data.plans, as_of: '2026-09-12' } }, remote: freshRemote(), sweepFn: async () => ({ failed: [] }) });
+  assert.deepEqual(ok.red, []);
+  assert.throws(() => assertAllowedPaths(['data/plans.json'], MAIN_PATHS), /refusing/, 'the watch never writes plans.json on main');
+});
+
+test('an open PR whose base moved under it (main changed a file it changes) is rebuilt from main, not left as "unchanged"', async () => {
+  const remote = freshRemote();
+  await job({ pages: LEAD_SWAP(), remote });
+  remote.actions.splice(0);
+  // someone edits guidance.json on main (e.g. the old claim's date)
+  remote.state.main['data/guidance.json'] = remote.state.main['data/guidance.json'].replace('"as_of": "2026-10-03"', '"as_of": "2026-10-02"');
+  const run = await job({ pages: LEAD_SWAP(), remote });
+  assert.equal(run.prAction, 'updated');
+  assert.deepEqual(remote.actions.map((a) => a.kind).slice(0, 3), ['push-branch', 'edit-pr', 'status']);
+  remote.actions.splice(0);
+  // a receipt-only commit on main is not drift
+  remote.state.main[RECEIPT_PATH] = 'something else';
+  const again = await job({ pages: LEAD_SWAP(), remote });
+  assert.equal(again.prAction, 'unchanged');
+  assert.ok(!remote.actions.some((a) => a.kind === 'push-branch'));
+});
+
+test('a merged bot branch whose tip is a person\'s commit (already in main, no open PR) is reused, not red forever', async () => {
+  const issues = [{ number: 7, title: ISSUE_TITLE, body: 'old', state: 'open' }];
+  const merged = { number: 3, state: 'closed', merged_at: '2026-10-01T00:00:00Z', body: '' };
+  const r1 = await job({ pages: LEAD_SWAP(), remote: freshRemote({ branch: { sha: 'abc', author: 'Owner', inMain: true }, pulls: [merged], issues }) });
+  assert.deepEqual(r1.red, []);
+  assert.equal(r1.prAction, 'created');
+  // tip not in main but no open PR (its PR was merged or closed; GitHub keeps the PR's commits): reused too
+  const r2 = await job({ pages: LEAD_SWAP(), remote: freshRemote({ branch: { sha: 'abc', author: 'Owner' }, pulls: [{ ...merged }] }) });
+  assert.deepEqual(r2.red, []);
+  assert.equal(r2.prAction, 'created');
+  // tip already in main with an open PR: nothing to lose, so the branch is rebuilt
+  const r3 = await job({ pages: LEAD_SWAP(), remote: freshRemote({ branch: { sha: 'abc', author: 'Owner', inMain: true }, pulls: [{ number: 4, state: 'open', title: 't', body: 'x', merged_at: null }] }) });
+  assert.deepEqual(r3.red, []);
+  assert.equal(r3.prAction, 'updated');
+});
+
+test('a foreign commit on the open PR is red and reaches the issue', async () => {
+  const remote = freshRemote({ branch: { sha: 'abc', author: 'someone-else' }, pulls: [{ number: 3, state: 'open', title: 't', body: 'no fingerprint', merged_at: null }] });
+  const run = await job({ pages: LEAD_SWAP(), remote });
+  assert.match(run.issue, /Run problems \(red\)[\s\S]*has a commit by someone-else/);
+  assert.equal(remote.state.issues[0].state, 'open');
+});
+
+test('sweep sources that cannot be read: counted per page in the receipt, listed, red after 3 runs in a row, and no re-stamp while a guidance page is unread', async () => {
+  const u = 'https://example.com/blocked';
+  const sweep = async () => ({ failed: [], blocked: [{ key: 'guidance/cc-default-model-opus-5-5', source_url: u }] });
+  const first = await job({ remote: freshRemote(), sweepFn: sweep });
+  assert.deepEqual(first.red, []);
+  assert.equal(first.clean, false, 'a guidance quote that was not read is not re-stamped');
+  assert.deepEqual(first.receipt.sweep_blocked_runs, { [u]: 1 });
+  assert.match(first.issue, /Source sweep: pages that could not be read[\s\S]*example\.com\/blocked — 1 run\(s\) in a row: `guidance\/cc-default-model-opus-5-5`/);
+  const third = await job({ remote: freshRemote(), sweepFn: sweep, receipt: { sweep_blocked_runs: { [u]: 2 } } });
+  assert.ok(third.red.some((r) => r.includes(`${u} could not be read 3 runs in a row`)), third.red.join('\n'));
+  const back = await job({ remote: freshRemote(), sweepFn: async () => ({ failed: [] }), receipt: { sweep_blocked_runs: { [u]: 2 } } });
+  assert.deepEqual(back.receipt.sweep_blocked_runs, {}, 'a page read again resets its count');
+  assert.equal(back.clean, true);
 });

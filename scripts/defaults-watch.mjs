@@ -17,7 +17,9 @@
      needs-review      a "flag" rule's page value differs (or a field change could not be written
                        honestly, e.g. no quote fits): no write; listed in the issue for the Judge.
      declined          a change whose value sits in a bot PR that was closed without merging:
-                       skipped until the page says something else.
+                       not proposed again until the page says something else; listed in the issue,
+                       and its old quote stays in the source sweep (which turns red once that
+                       quote is gone from the page).
      gate-failed       a change that makes validate-data or check-live-data --group plans report a
                        problem main does not have: not written; red.
      blocked           the page could not be read (403/429/5xx/timeout/short body): a warning; red
@@ -34,12 +36,20 @@
    the page uses. Each change is gated alone on main + that change (only problems main does not
    already have count), then all passing changes together.
 
+   An open bot PR is rebuilt from main when main has since changed a file the PR changes; a commit
+   by anyone else on the branch stops the force-push only while it is not in main and its PR is
+   open.
+
    After the rules: the full source sweep (check-sources --blocked-ok --fresh, skipping the quotes
    a pending change replaces) and its claim-rot report, plus check-live-data --group plans on main.
-   A run where every rule is ok, no change PR is open, and the sweep and plans gate pass re-stamps
-   guidance.json's as_of (that one line) with today. Every live run on main pushes its receipt
-   (data/refresh/receipt-defaults-watch.json) straight to main. One issue ("Defaults watch: rules
-   need attention") lists everything that is not ok, and closes itself on the next run with none.
+   A sweep page that could not be read is a warning, red once it has been unreadable 3 runs in a
+   row (count in the receipt). A run where every rule is ok (or declined), no change PR is open,
+   nothing is red, and the sweep read and found every guidance quote re-stamps guidance.json's
+   as_of (that one line) with today. guidance.json or plans.json (kept by hand) whose as_of is
+   within 7 days of the pages' stale notice turns the run red. Every live run on main pushes its
+   receipt (data/refresh/receipt-defaults-watch.json) straight to main. One issue ("Defaults watch:
+   rules need attention") lists everything that is not ok and every red reason, and closes itself
+   only on a run with nothing to list and nothing red; a run that throws writes the error to it.
 
    Remote writes — branch push, pull request, commit status, issue, main push — happen only in a
    live run: not DRY_RUN, on refs/heads/main, not a pull_request event, with a token. PR, status,
@@ -67,6 +77,7 @@ import { matchAlias } from './auto-refresh.mjs';
 import { ghRead, ghWrite, upsertIssue, closeIssue, writeBlockReason } from './lib/gh-issue.mjs';
 import { validateGuidance, wordCount, getPath, setPath, planRow, PLACEHOLDER_RE } from './validate-data.mjs';
 import { runChecks } from './check-live-data.mjs';
+import { FEED_FRESHNESS, ageDays } from '../assets/freshness.mjs';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 export const BOT_BRANCH = 'auto/defaults-watch';
@@ -415,7 +426,8 @@ function evaluateField(rule, o, now, cap, page, env) {
   }
   if (rule.value === 'price' && now.key == null) { o.outcome = 'broken:missing'; o.reason = `"${now.raw}" is not a price`; return; }
   const dKey = `${rule.id}\t${valueKey(o.new)}`;
-  if (declined.has(dKey)) { o.outcome = 'declined'; o.reason = `a closed, unmerged bot PR declined ${valueKey(o.new)}`; o.pending = pendingKeys(rule, ctx); return; }
+  // no pending keys: nothing will replace the old quotes, so the sweep must keep checking them
+  if (declined.has(dKey)) { o.outcome = 'declined'; o.reason = `a closed, unmerged bot PR declined ${valueKey(o.new)}; the data still says ${show(held)}`; return; }
   if (skipWrite.has(rule.id)) { o.outcome = 'gate-failed'; o.pending = pendingKeys(rule, ctx); return; }
   if (onlyWrite && !onlyWrite.has(rule.id)) { o.outcome = 'change'; o.unwritten = true; return; }
   // write on a scratch copy; keep it only if every piece could be written honestly
@@ -706,10 +718,17 @@ export function memoryRemote(state = {}) {
     actions, state,
     async openPr() { return state.pulls.find((p) => p.state === 'open') || null; },
     async closedPrs() { return state.pulls.filter((p) => p.state === 'closed'); },
-    async branchHead() { return state.branch ? { sha: state.branch.sha, author: state.branch.author || BOT_NAME } : null; },
+    // `inMain`: the tip is already in main (a merged branch). `drift`: main changed a file the
+    // branch changes since the branch was built (the branch would conflict or undo it).
+    async branchHead() {
+      if (!state.branch) return null;
+      const b = state.branch;
+      const drift = Object.entries(b.base || {}).some(([p, c]) => state.main[p] !== c);
+      return { sha: b.sha, author: b.author || BOT_NAME, inMain: !!b.inMain, drift };
+    },
     async pushBranch({ files, message }) {
       const sha = createHash('sha1').update(JSON.stringify(files) + message).digest('hex');
-      state.branch = { sha, files, author: BOT_NAME };
+      state.branch = { sha, files, author: BOT_NAME, base: Object.fromEntries(Object.keys(files).map((p) => [p, state.main[p]])) };
       actions.push({ kind: 'push-branch', branch: BOT_BRANCH, files: Object.keys(files), message });
       return sha;
     },
@@ -752,7 +771,9 @@ export function dryRemote({ env = process.env, log = console.log } = {}) {
   const say = (a, line) => { actions.push(a); log(`[dry run] would ${line}`); };
   return {
     actions,
-    openPr: live.openPr, closedPrs: live.closedPrs, branchHead: async () => null,
+    openPr: live.openPr, closedPrs: live.closedPrs,
+    // a dry run never reads the bot branch: it is taken as the job's own, built on main as it is
+    branchHead: async () => ({ sha: null, author: BOT_NAME, inMain: false, drift: false }),
     async pushBranch({ files, message }) { say({ kind: 'push-branch', files: Object.keys(files), message }, `force-push ${BOT_BRANCH} (from main) with ${Object.keys(files).join(', ')}: "${message}"`); return '0'.repeat(40); },
     async createPr({ title, body }) { say({ kind: 'create-pr', title, body }, `open a pull request\n  branch: ${BOT_BRANCH} -> main\n  title:  ${title}\n  body:\n${body.split('\n').map((l) => `    ${l}`).join('\n')}`); return 0; },
     async editPr(num, { title, body }) { say({ kind: 'edit-pr', number: num, title, body }, `update pull request #${num}: ${title}`); },
@@ -809,8 +830,20 @@ export function liveRemote({ env = process.env, log = console.log } = {}) {
     actions: [],
     ...reads,
     async branchHead() {
-      try { git(['fetch', '--quiet', 'origin', `+refs/heads/${BOT_BRANCH}:refs/remotes/origin/${BOT_BRANCH}`]); } catch { return null; }
-      return { sha: git(['rev-parse', `refs/remotes/origin/${BOT_BRANCH}`]), author: git(['log', '-1', '--format=%an', `refs/remotes/origin/${BOT_BRANCH}`]) };
+      const B = `refs/remotes/origin/${BOT_BRANCH}`;
+      const M = 'refs/remotes/origin/main';
+      try { git(['fetch', '--quiet', 'origin', `+refs/heads/${BOT_BRANCH}:${B}`]); } catch { return null; }
+      git(['fetch', '--quiet', 'origin', `+refs/heads/main:${M}`]);
+      const ok = (args) => { try { git(args); return true; } catch { return false; } };
+      // drift: main changed a file the branch changes since the branch was built. Any git failure
+      // counts as drift — rebuilding the branch from main is always safe.
+      let drift = true;
+      try {
+        const base = git(['merge-base', M, B]);
+        const touched = git(['diff', '--name-only', base, B]).split('\n').filter(Boolean);
+        drift = touched.length > 0 && git(['diff', '--name-only', base, M, '--', ...touched]).length > 0;
+      } catch { drift = true; }
+      return { sha: git(['rev-parse', B]), author: git(['log', '-1', '--format=%an', B]), inMain: ok(['merge-base', '--is-ancestor', B, M]), drift };
     },
     async pushBranch({ files, message }) {
       guard();
@@ -879,25 +912,35 @@ export async function fetchPages(urls, { fetchImpl = (u) => fetchNormalizedPage(
   return out;
 }
 
-const ISSUE_KINDS = ['broken:missing', 'broken:ambiguous', 'gate-failed', 'needs-review', 'waiting:catalog', 'waiting:not-ga', 'blocked'];
+/** Every outcome that is neither ok nor a change in the open PR gets a section in the issue. */
+export const ISSUE_KINDS = ['broken:missing', 'broken:ambiguous', 'gate-failed', 'needs-review', 'waiting:catalog', 'waiting:not-ga', 'declined', 'blocked'];
 
-/** The issue body, or null when nothing needs attention. */
-export function issueBody({ outcomes, blockedRuns = {}, sweep = null, plansProblems = [], today }) {
+/** The issue body, or null when nothing needs attention. `pr`: the open bot PR ({number, changes})
+ * or null. `runProblems`: red reasons that are not a rule outcome (a foreign commit on the bot
+ * branch, a sweep error, a stale stamp, sources blocked too long). */
+export function issueBody({ outcomes, blockedRuns = {}, sweep = null, sweepBlockedRuns = {}, plansProblems = [], pr = null, runProblems = [], today }) {
   const pick = (k) => outcomes.filter((o) => o.outcome === k);
   const L = [];
   const section = (title, list, fmt) => { if (list.length) { L.push(`### ${title}`, '', ...list.map(fmt), ''); } };
+  section('Run problems (red)', runProblems, (p) => `- ${p}`);
   section('Rule broken (red): the anchor or pattern is gone, the page is gone, or the pattern is ambiguous', [...pick('broken:missing'), ...pick('broken:ambiguous')],
     (o) => `- \`${o.rule}\` — ${o.outcome}: ${o.reason} (${o.url}). Fix the rule in data/defaults-watch.json or re-source the fact; never guess.`);
   section('Change failed its gate (red): not written', pick('gate-failed'), (o) => `- \`${o.rule}\`: ${show(o.old)} → ${show(o.new)} — ${o.reason}`);
   section('Needs review: the page changed and there is nothing safe to write', pick('needs-review'),
     (o) => `- \`${o.rule}\` (${o.url}): ${o.reason}${o.judge ? `\n  - Question: ${o.judge}` : ''}`);
   section('Waiting: the page names a model the catalog cannot take yet', [...pick('waiting:catalog'), ...pick('waiting:not-ga')], (o) => `- \`${o.rule}\` — ${o.outcome}: ${o.reason}`);
+  section('Declined: the data disagrees with the page (a bot pull request with this value was closed without merging)', pick('declined'),
+    (o) => `- \`${o.rule}\` (${o.url}): page says ${show(o.new)}, data says ${show(o.old)}. Correct the data or the claim by hand; the old quote stays in the source sweep until then.`);
+  if (pr) section('Waiting for review: the bot pull request', [pr], (x) => `- #${x.number} carries ${x.changes} change(s). Until it is merged or closed, guidance.json's as_of is not re-stamped.`);
   const blocked = [...new Set(pick('blocked').map((o) => o.url))];
-  section('Could not read the page (warning; red after 3 runs in a row)', blocked, (u) => `- ${u} — ${blockedRuns[u] || 1} run(s) in a row`);
+  section(`Could not read the rule page (warning; red after ${BLOCKED_RED_RUNS} runs in a row)`, blocked, (u) => `- ${u} — ${blockedRuns[u] || 1} run(s) in a row`);
   if (sweep && sweep.failed.length) section('Source sweep: quotes gone from their pages (red)', sweep.failed, (r) => `- \`${r.key}\` ${r.source_url} — ${r.kind}`);
+  const sweepBlocked = Object.keys(sweepBlockedRuns).sort();
+  section(`Source sweep: pages that could not be read (warning; red after ${BLOCKED_RED_RUNS} runs in a row)`, sweepBlocked,
+    (u) => `- ${u} — ${sweepBlockedRuns[u]} run(s) in a row${sweep && sweep.blocked ? `: ${sweep.blocked.filter((r) => r.source_url === u).map((r) => `\`${r.key}\``).join(', ')}` : ''}`);
   section('Plan lines (check-live-data --group plans) on main (red)', plansProblems, (p) => `- ${p}`);
   if (!L.length) return null;
-  return [`The weekly defaults watch (${today}) found rules that need a person or the Judge. Nothing below was written to data/.`, '', ...L].join('\n').trim();
+  return [`The weekly defaults watch (${today}) found things that need a person or the Judge. Nothing below was written to data/.`, '', ...L].join('\n').trim();
 }
 
 function summarize(outcomes) {
@@ -906,8 +949,48 @@ function summarize(outcomes) {
   return counts;
 }
 
-/** One full run. All I/O is injected so tests and drills use frozen pages and an in-memory remote. */
-export async function runJob({
+/** Days before a feed's freshness limit at which the watch turns red: one weekly run ahead of the
+ * board's "not updated" notice. */
+export const STAMP_RED_MARGIN_DAYS = 7;
+
+/** Red lines for a data file whose as_of is about to show as stale on the board. */
+export function stampProblems({ guidanceAsOf, plansAsOf, today, why = [] }) {
+  const now = Date.parse(`${today}T00:00:00Z`);
+  const out = [];
+  const check = (feed, file, asOf, tail) => {
+    const lim = FEED_FRESHNESS[feed];
+    const age = ageDays(asOf, now);
+    if (age === null || age >= lim.maxDays - STAMP_RED_MARGIN_DAYS) {
+      out.push(`${file} as_of is ${age === null ? 'missing' : `${age} days old (${asOf})`}; the pages call it stale after ${lim.maxDays} days. ${tail}`);
+    }
+  };
+  check('tool-defaults', 'data/guidance.json', guidanceAsOf, `This run did not re-stamp it: ${why.length ? why.join('; ') : 'see the sections below'}.`);
+  check('plans', 'data/plans.json', plansAsOf, 'It is kept by hand: re-check the prices and its as_of (scripts/refresh-plans.md).');
+  return out;
+}
+
+/** Count runs in a row per url: urls seen this run get prev + 1, the rest drop out. */
+function runsInARow(urls, prev = {}) {
+  const out = {};
+  for (const u of [...new Set(urls)].sort()) out[u] = (prev[u] || 0) + 1;
+  return out;
+}
+
+/** One full run. All I/O is injected so tests and drills use frozen pages and an in-memory remote.
+ * A run that throws still writes the issue (with the error) before the error goes on. */
+export async function runJob(args) {
+  try {
+    return await runJobInner(args);
+  } catch (e) {
+    const msg = String((e && e.message) || e).split('\n').slice(0, 6).join('\n');
+    const body = [`The weekly defaults watch (${args.today}) stopped with an error before it finished. Nothing after the error was written.`, '',
+      '### Run problems (red)', '', '```', msg, '```'].join('\n');
+    try { await args.remote.upsertIssue({ title: ISSUE_TITLE, body }); } catch (e2) { (args.log || console.log)(`could not write the issue either: ${e2.message}`); }
+    throw e;
+  }
+}
+
+async function runJobInner({
   watch, data, models, aliases, pages, today, nowIso = new Date().toISOString(), remote, gate,
   receipt = null, sweepFn = null, plansGateFn = null, log = console.log, dryRun = false,
 }) {
@@ -918,35 +1001,34 @@ export async function runJob({
   for (const o of outcomes) log(`  ${o.outcome.padEnd(17)} ${o.rule}${o.captured !== undefined ? ` = "${o.captured}"` : ''}${o.reason ? ` — ${o.reason}` : ''}`);
 
   // blocked pages: count runs in a row per url
-  const prevBlocked = (receipt && receipt.blocked_runs) || {};
-  const blockedRuns = {};
-  for (const u of new Set(outcomes.filter((o) => o.outcome === 'blocked').map((o) => o.url))) blockedRuns[u] = (prevBlocked[u] || 0) + 1;
+  const blockedRuns = runsInARow(outcomes.filter((o) => o.outcome === 'blocked').map((o) => o.url), (receipt && receipt.blocked_runs) || {});
   const blockedRed = Object.entries(blockedRuns).filter(([, n]) => n >= BLOCKED_RED_RUNS).map(([u]) => u);
 
   // the pull request
   const changes = outcomes.filter((o) => o.outcome === 'change');
   const open = await remote.openPr();
   const red = [];
+  const runProblems = [];
   let prNumber = open ? open.number : null;
   let prAction = 'none';
   if (changes.length) {
     const body = prBody(outcomes, { today });
     const title = prTitle(outcomes);
-    if (open && fpOf(open.body) === fingerprint(outcomes)) {
+    const head = await remote.branchHead();
+    if (open && fpOf(open.body) === fingerprint(outcomes) && head && !head.drift) {
       prAction = 'unchanged';
       log(`pull request #${open.number} already carries these ${changes.length} change(s) — nothing new`);
+    } else if (open && head && head.author !== BOT_NAME && !head.inMain) {
+      // someone's own work on the open PR: never force-push over it
+      runProblems.push(`${BOT_BRANCH} has a commit by ${head.author} that is not in main, on open pull request #${open.number}; not force-pushing over it. Merge or close #${open.number}.`);
     } else {
-      const head = await remote.branchHead();
-      if (head && head.author !== BOT_NAME) {
-        red.push(`${BOT_BRANCH} has a commit by ${head.author}; not force-pushing over it`);
-      } else {
-        const files = {};
-        for (const f of changedFiles(outcomes)) files[f] = json(f === 'data/guidance.json' ? res.data.guidance : res.data.plans);
-        assertAllowedPaths(Object.keys(files), BRANCH_PATHS);
-        const sha = await remote.pushBranch({ files, message: `defaults watch ${today}: ${changes.length} data change${changes.length === 1 ? '' : 's'}` });
-        if (open) { await remote.editPr(open.number, { title, body }); prAction = 'updated'; } else { prNumber = await remote.createPr({ title, body }); prAction = 'created'; }
-        if (sha) await remote.postStatus(sha, { state: 'success', description: `validate-data + check-live-data --group plans passed for ${changes.length} change(s)` });
-      }
+      if (head && head.drift) log(`main changed a file ${BOT_BRANCH} changes — rebuilding the branch from main`);
+      const files = {};
+      for (const f of changedFiles(outcomes)) files[f] = json(f === 'data/guidance.json' ? res.data.guidance : res.data.plans);
+      assertAllowedPaths(Object.keys(files), BRANCH_PATHS);
+      const sha = await remote.pushBranch({ files, message: `defaults watch ${today}: ${changes.length} data change${changes.length === 1 ? '' : 's'}` });
+      if (open) { await remote.editPr(open.number, { title, body }); prAction = 'updated'; } else { prNumber = await remote.createPr({ title, body }); prAction = 'created'; }
+      if (sha) await remote.postStatus(sha, { state: 'success', description: `validate-data + check-live-data --group plans passed for ${changes.length} change(s)` });
     }
   } else if (open) {
     await remote.closePr(open.number, { body: `${open.body || ''}\n\n<!-- ${MARK}:closed-by-bot -->\nClosed by the defaults watch: the pages no longer differ from data/.` });
@@ -954,28 +1036,46 @@ export async function runJob({
     prAction = 'closed';
     prNumber = null;
   }
-  const prOpen = changes.length > 0 && !red.length;
+  const prOpen = changes.length > 0 && !runProblems.length;
 
   // the source sweep (skipping quotes a pending change replaces) + the plans gate on main
   const pending = [...new Set(outcomes.flatMap((o) => o.pending || []))].sort();
   const sweep = sweepFn ? await sweepFn(pending) : null;
   const plansProblems = plansGateFn ? await plansGateFn() : [];
+  const sweepBlocked = (sweep && sweep.blocked) || [];
+  const sweepBlockedRuns = runsInARow(sweepBlocked.map((r) => r.source_url), (receipt && receipt.sweep_blocked_runs) || {});
+  if (sweep && sweep.error) runProblems.push(`source sweep: ${sweep.error}`);
+  for (const [u, n] of Object.entries(sweepBlockedRuns)) if (n >= BLOCKED_RED_RUNS) runProblems.push(`source sweep: ${u} could not be read ${n} runs in a row, so its quotes are unverified`);
+
+  // re-stamp guidance.json's as_of: every rule ok (a declined value is the data the owner kept),
+  // no change PR open, nothing red, and every guidance quote read and found by the sweep
+  const okish = (o) => o.outcome === 'ok' || o.outcome === 'declined';
+  const sweepGuidanceBlocked = sweepBlocked.some((r) => String(r.key || '').startsWith('guidance/'));
+  const why = [];
+  const notOk = summarize(outcomes.filter((o) => !okish(o)));
+  if (Object.keys(notOk).length) why.push(`rules not ok (${Object.entries(notOk).map(([k, v]) => `${k} ${v}`).join(', ')})`);
+  if (prOpen) why.push(`bot pull request${prNumber ? ` #${prNumber}` : ''} is open`);
+  if (!sweep) why.push('no source sweep ran');
+  else if (sweep.failed.length || sweep.error) why.push('the source sweep failed');
+  else if (sweepGuidanceBlocked) why.push('the source sweep could not read every guidance page');
+  if (plansProblems.length) why.push('the plans gate failed');
 
   // red?
   for (const o of outcomes) if (o.outcome.startsWith('broken:') || o.outcome === 'gate-failed') red.push(`${o.rule}: ${o.outcome}`);
   for (const u of blockedRed) red.push(`${u}: blocked ${blockedRuns[u]} runs in a row`);
   if (sweep && sweep.failed.length) red.push(`source sweep: ${sweep.failed.length} quote(s) gone`);
-  if (sweep && sweep.error) red.push(`source sweep: ${sweep.error}`);
   for (const p of plansProblems) red.push(`plans gate: ${p}`);
+  const clean = !why.length && !red.length && !runProblems.length;
+  if (!clean && !why.length) why.push('the run is red');
+  runProblems.push(...stampProblems({ guidanceAsOf: clean ? today : data.guidance.as_of, plansAsOf: data.plans.as_of, today, why }));
+  red.push(...runProblems);
 
-  // re-stamp + receipt -> main
-  const allOk = outcomes.every((o) => o.outcome === 'ok');
-  const clean = allOk && !prOpen && !red.length && (!sweep || !sweep.failed.length) && !plansProblems.length;
+  // receipt (+ the re-stamp) -> main
   const files = {};
   const newReceipt = {
     job: 'defaults-watch', ran_at: nowIso, ok: !red.length, rules: outcomes.length, outcomes: summarize(outcomes),
     changes: changes.map((o) => ({ rule: o.rule, old: o.old, new: o.new })), pr: prOpen ? prNumber : null,
-    restamped: clean, blocked_runs: blockedRuns,
+    restamped: clean, blocked_runs: blockedRuns, sweep_blocked_runs: sweepBlockedRuns,
   };
   files[RECEIPT_PATH] = json(newReceipt);
   if (clean) {
@@ -986,8 +1086,9 @@ export async function runJob({
   assertAllowedPaths(Object.keys(files), MAIN_PATHS);
   await remote.pushMain({ files, message: `defaults watch ${today}${clean ? ' (re-stamp)' : ''}` });
 
-  // the issue
-  const body = issueBody({ outcomes, blockedRuns, sweep, plansProblems, today });
+  // the issue: open (or updated) while anything needs attention; never closed while red
+  let body = issueBody({ outcomes, blockedRuns, sweep, sweepBlockedRuns, plansProblems, pr: prOpen && prNumber ? { number: prNumber, changes: changes.length } : null, runProblems, today });
+  if (!body && red.length) body = issueBody({ outcomes: [], runProblems: red, today });
   if (body) await remote.upsertIssue({ title: ISSUE_TITLE, body });
   else await remote.closeIssue({ title: ISSUE_TITLE });
 
@@ -1065,7 +1166,10 @@ function realSweep(log) {
     const results = readJson(out).results || [];
     const rot = spawnSync(process.execPath, [join(ROOT, 'scripts/report-claim-rot.mjs'), '--results', out], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] });
     if (process.env.GITHUB_STEP_SUMMARY && rot.stdout) appendFileSync(process.env.GITHUB_STEP_SUMMARY, rot.stdout + '\n');
-    return { failed: results.filter((x) => !x.ok && (x.kind === 'not_found' || x.kind === 'gone')), blocked: results.filter((x) => x.kind === 'blocked').length };
+    return {
+      failed: results.filter((x) => !x.ok && (x.kind === 'not_found' || x.kind === 'gone')),
+      blocked: results.filter((x) => x.kind === 'blocked').map((x) => ({ key: x.key, source_url: x.source_url })),
+    };
   };
 }
 

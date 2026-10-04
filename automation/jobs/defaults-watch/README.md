@@ -22,8 +22,8 @@ only).
 2. Outcomes: `ok` · `change` (a field rule; for a model, the name resolves to a GA catalog id) ·
    `waiting:catalog` / `waiting:not-ga` (the catalog can't take that model yet; no write) ·
    `needs-review` (a flag rule changed, or a change can't be written honestly; no write; issue) ·
-   `declined` (the value sits in a bot PR closed without merging; skipped until the page says
-   something else) · `gate-failed` (red) · `blocked` (page unreadable; warning, red after 3 runs in
+   `declined` (the value sits in a bot PR closed without merging; not proposed again until the
+   page says something else; listed in the issue, and its old quote stays in the source sweep) · `gate-failed` (red) · `blocked` (page unreadable; warning, red after 3 runs in
    a row) · `broken:missing` / `broken:ambiguous` (red; fix the rule, never guess).
 3. A change writes the value at `maps_to` (+ `also`), a new claim per `claim_ids` (quote copied
    from the page and confirmed on it, sentence from the rule's template, dated today), marks the old
@@ -35,8 +35,14 @@ only).
    closes its own PR and deletes the branch.
 5. The full source sweep (`check-sources --blocked-ok --fresh`, skipping quotes a pending change
    replaces) + `report-claim-rot`, and `check-live-data --group plans` on main.
-6. Receipt to main; re-stamp `guidance.json` `as_of` only when every rule is ok, no change PR is
-   open, and the sweep and the plans gate pass.
+6. Receipt to main; re-stamp `guidance.json` `as_of` only when every rule is ok (or declined), no
+   change PR is open, nothing is red, and the sweep read and found every guidance quote.
+7. Red, and in the issue, when `guidance.json` or `plans.json` (kept by hand,
+   `scripts/refresh-plans.md`) has an `as_of` within 7 days of the pages' stale notice; when a
+   sweep page could not be read 3 runs in a row; and on any run problem (sweep error, a foreign
+   commit on the open PR). A run that throws writes the error to the issue before it fails. An
+   open PR is listed in the issue; when main has since changed a file it changes, the branch is
+   rebuilt from main.
 
 ## Guards
 
@@ -45,7 +51,8 @@ only).
 - PR, label, issue, status and branch delete go through `ghWrite`'s allowlist. The bot branch push
   takes `data/guidance.json` and `data/plans.json` only; the main push takes the receipt and an
   `as_of`-only change to `guidance.json`. A commit on the bot branch by anyone else stops the
-  force-push and turns the run red.
+  force-push and turns the run red while it is not in main and its PR is open (a merged or closed
+  PR's branch is reused; GitHub keeps a PR's commits).
 - The pull-request dry run has a read-only token. Nothing in the job creates or edits a workflow,
   a schedule or a dispatch (a static test checks the job files).
 - GitHub turns off schedules in a public repo after 60 days without activity; the weekly receipt
