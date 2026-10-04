@@ -1396,13 +1396,16 @@ import * as FR from "./assets/freshness.mjs";
     return '<div class="labSays">' + claims.slice(0, max || 3).map(function(c){
       return '<div class="labSay"><q>' + escapeHtml(c.quote) + '</q><span class="labSrc">' +
         '<a href="' + escapeAttr(c.url) + '" target="_blank" rel="noopener">' + escapeHtml(hostOf(c.url)) + '</a>' +
-        (c.date ? ' &middot; read ' + escapeHtml(c.date) : '') + '</span></div>';
+        (c.date ? ' &middot; read ' + escapeHtml(FR.dayLabel(c.date)) : '') + '</span></div>';
     }).join("") + '</div>';
   }
   function fmtTokens(n){ return n >= 1e6 ? (Math.round(n / 1e5) / 10) + "M" : Math.round(n / 1000) + "K"; }
   /* List price, context, release date and OpenRouter share, each straight from data/models.json. */
-  /* Freshness. Each stamp reads its own file's as_of; a notice shows only past the file's limit. */
-  function freshStamp(feed, asOf, label){ return FR.stampHtml(feed, asOf, { label: label }); }
+  /* Freshness. Each stamp reads its own file's as_of; a notice shows only past the file's limit.
+     freshStamp sits beside its notice (freshNote), so it leaves the age to the notice; menuStamp
+     stands alone (the picker menus) and says "N days old" in words once the file is stale. */
+  function freshStamp(feed, asOf, label){ return FR.stampHtml(feed, asOf, { label: label, flag: false }); }
+  function menuStamp(feed, asOf, label){ return FR.stampHtml(feed, asOf, { label: label }); }
   function freshNote(feed, asOf, label){ return FR.staleHtml(feed, asOf, { label: label, icon: icon("routine", 13) }); }
   // The board summary: the dates its totals rest on (token prices, seat prices), then a notice for
   // any file past its limit, including the measured request sizes automated routines are billed at.
@@ -1419,9 +1422,9 @@ import * as FR from "./assets/freshness.mjs";
       ? 'List price <b>' + fmtPrice(m.price_input) + '</b> in &middot; <b>' + fmtPrice(m.price_output) + '</b> out per 1M tokens'
       : 'List price not on file');
     if (typeof m.context_window === "number") f.push('Context <b>' + fmtTokens(m.context_window) + '</b> tokens');
-    if (m.released) f.push('Released ' + escapeHtml(m.released));
+    if (m.released) f.push('Released ' + escapeHtml(FR.dayLabel(m.released)));
     var u = m.usage && m.usage.openrouter;
-    if (u && typeof u.share === "number") f.push('<b>' + u.share + '%</b> of OpenRouter tokens' + (u.as_of ? ' (' + escapeHtml(u.as_of) + ')' : ''));
+    if (u && typeof u.share === "number") f.push('<b>' + u.share + '%</b> of OpenRouter tokens' + (u.as_of ? ' (' + escapeHtml(FR.dayLabel(u.as_of)) + ')' : ''));
     f.push('<span class="mp-fresh">' + freshStamp("models", DATA.as_of, "Facts") + freshNote("models", DATA.as_of, "Model facts") + '</span>');
     return '<div class="bp-facts">' + f.map(function(x){ return '<div class="bp-fact">' + x + '</div>'; }).join("") + '</div>';
   }
@@ -3734,7 +3737,7 @@ import * as FR from "./assets/freshness.mjs";
       var breach = row.model ? dataRuleBreach(row.model) : null;
       var labLine = row.claim
         ? '<div class="labSay tt-lab"><q>' + escapeHtml(row.claim.quote) + '</q><span class="labSrc"><a href="' + escapeAttr(row.claim.url) + '" target="_blank" rel="noopener">' +
-          escapeHtml(hostOf(row.claim.url)) + '</a>' + (row.claim.date ? ' &middot; read ' + escapeHtml(row.claim.date) : '') + '</span></div>'
+          escapeHtml(hostOf(row.claim.url)) + '</a>' + (row.claim.date ? ' &middot; read ' + escapeHtml(FR.dayLabel(row.claim.date)) : '') + '</span></div>'
         : '';
       tableBody += '<tr><td><div class="tt-task">' + escapeHtml(row.label) + '</div><div class="tt-reason">' + escapeHtml(row.reason) + '</div>' + labLine + '</td>' +
         '<td class="tt-model">' + (row.model ? (escapeHtml(shortModelName(modelById(row.model))) + (breach ? ' ' + icon("shieldSlash", 11) : '')) : '<span class="notMeasured">Not set</span>') + '</td>' +
@@ -3848,7 +3851,7 @@ import * as FR from "./assets/freshness.mjs";
         '<input type="text" class="modelPickerFilter" placeholder="Search models…" aria-label="Search models" />' +
         (showToggle ? '<label class="mpPlanToggle"><input type="checkbox" id="mpBeyondPlan" /> Show models beyond my plan</label>' : '') +
         '<div class="modelPickerList" role="listbox"></div>' +
-        '<div class="mpFresh">' + freshStamp("models", DATA.as_of, "Prices") + '</div>' +
+        '<div class="mpFresh">' + menuStamp("models", DATA.as_of, "Prices") + '</div>' +
       '</div>';
     var btn = root.querySelector(".modelPickerBtn");
     var menu = root.querySelector(".modelPickerMenu");
@@ -3935,7 +3938,7 @@ import * as FR from "./assets/freshness.mjs";
       '<div class="modelPickerMenu" hidden>' +
         '<input type="text" class="modelPickerFilter" placeholder="Search plans…" aria-label="Search plans" />' +
         '<div class="modelPickerList" role="listbox" aria-multiselectable="true"></div>' +
-        '<div class="mpFresh">' + freshStamp("plans", DATA.plans_as_of, "Plan prices") + '</div>' +
+        '<div class="mpFresh">' + menuStamp("plans", DATA.plans_as_of, "Plan prices") + '</div>' +
       '</div>';
     var btn = root.querySelector(".modelPickerBtn");
     var menu = root.querySelector(".modelPickerMenu");

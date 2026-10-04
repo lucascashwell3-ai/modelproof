@@ -331,7 +331,7 @@ function loadSlots(page) {
   return { slots, nav, foot, app: vm.runInContext(`${src}\n;({ state, renderFreshness })`, ctx) };
 }
 
-test('drill (f): one day past every limit, every section shows the stale notice', () => {
+test('drill (f): one day past every limit, every section says it is stale; each file\'s notice shows once per page', () => {
   const { dir, asOf } = datedCopy('stale', (max) => max + 1);
   const models = readJson(path.join(dir, 'models.json'));
   const age = FR.FEED_FRESHNESS.models.maxDays + 1;
@@ -341,14 +341,24 @@ test('drill (f): one day past every limit, every section shows the stale notice'
     app.state.data = models;
     app.state.fresh = FR;
     app.renderFreshness();
+    const told = new Set();
     for (const s of slots) {
       const feed = FR.FEED_ALIASES[s.dataset.fresh] || s.dataset.fresh;
       const slotAge = FR.FEED_FRESHNESS[feed].maxDays + 1;
-      assert.match(s.innerHTML, /class="mp-stale" role="note"/, `${page} [data-fresh=${s.dataset.fresh}] shows the notice`);
-      assert.ok(s.innerHTML.includes(`Not updated in ${slotAge} days.`), `${page} [data-fresh=${s.dataset.fresh}] says how old`);
+      assert.match(s.innerHTML, /mp-asof--stale/, `${page} [data-fresh=${s.dataset.fresh}] stamp is stale`);
+      if (!told.has(feed)) {
+        // the first slot for a file carries the full notice
+        told.add(feed);
+        assert.match(s.innerHTML, /class="mp-stale" role="note"/, `${page} [data-fresh=${s.dataset.fresh}] shows the notice`);
+        assert.ok(s.innerHTML.includes(`Not updated in ${slotAge} days.`), `${page} [data-fresh=${s.dataset.fresh}] says how old`);
+      } else {
+        // every later slot for the same file says how old in words, without repeating the notice
+        assert.doesNotMatch(s.innerHTML, /class="mp-stale"/, `${page} [data-fresh=${s.dataset.fresh}] repeats the notice`);
+        assert.ok(s.innerHTML.includes(` · ${slotAge} days old</span>`), `${page} [data-fresh=${s.dataset.fresh}] says how old`);
+      }
       assert.ok(s.innerHTML.includes(`datetime="${asOf[feed]}"`), `${page} stamp carries the data date`);
     }
-    assert.ok(nav.classList.on && nav.innerHTML.includes(`Not updated in ${age} days`), `${page} nav badge`);
+    assert.ok(nav.classList.on && nav.innerHTML.replace(/<[^>]+>/g, '').includes(`As of ${FR.dayLabel(asOf.models)} · ${age} days old`), `${page} nav badge keeps the date and says how old`);
     assert.equal(foot.textContent, FR.dayLabel(asOf.models));
   }
   // The board and how-we-pick build theirs from the same module with the file's own date.
