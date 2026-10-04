@@ -13,6 +13,9 @@
 //       frozen fixture list (NO_TYPED_FACTS_NAMES). It never reads the live names in data/: this
 //       suite gates the scheduled Collect run, and a real model whose name happens to match some
 //       shipped text must not stop Collect. The live-name scan runs on pull requests (tests.yml).
+// The stale drill (f) dates a copy of every dated file one day past its limit (today minus the
+// limit plus one, computed): every section on index and table, the board's stamps and the vendor
+// list show the stale notice, and validate-data still passes (stale is shown, never a gate).
 // Nothing here counts models or releases or fixes a date: the drill reads whatever data/ holds
 // today and must pass on any valid future data. Temp dirs are removed at the end.
 import { test, before, after } from 'node:test';
@@ -28,7 +31,9 @@ import { deriveTaskFit } from './derive-task-fit.mjs';
 import { deriveSignalsForCatalog } from './derive-signals.mjs';
 import { assembleStandings } from './derive-standings.mjs';
 import { deriveAvailabilityForModel } from './derive-availability.mjs';
-import { planLabel, utcToday } from './validate-data.mjs';
+import { deriveStatusAdoptionForCatalog } from './derive-status-adoption.mjs';
+import { planLabel, utcToday, FEEDS } from './validate-data.mjs';
+import * as FR from '../assets/freshness.mjs';
 import * as BD from '../assets/board-data.mjs';
 import { scannedFiles, scanText } from './test-no-typed-facts.mjs';
 import { buildPackage, profileFromBoard, packageText, renderPreview } from '../assets/instructions.mjs';
@@ -273,4 +278,104 @@ test('drill date: a release on file dated tomorrow keeps the drill inside the ho
   assert.equal(built.release.date, tomorrow, 'the drill is dated tomorrow, not the day after');
   const r = run([path.join(ROOT, 'scripts', 'validate-data.mjs'), '--data', dir]);
   assert.equal(r.status, 0, r.out.split('\n').slice(-30).join('\n'));
+});
+
+/* ---------- (f) the stale drill ---------- */
+
+// A copy of data/ with each dated file's as_of set to `daysPast(limit)` days before today (UTC).
+function datedCopy(name, daysPast) {
+  const dir = path.join(TMP, name);
+  fs.cpSync(path.join(ROOT, 'data'), dir, { recursive: true });
+  const asOf = {};
+  for (const [feed, lim] of Object.entries(FR.FEED_FRESHNESS)) {
+    const file = FEEDS.find((f) => f.id === feed).file;
+    const p = path.join(dir, file);
+    if (!fs.existsSync(p)) continue;
+    const j = readJson(p);
+    j.as_of = addDays(utcToday(), -daysPast(lim.maxDays));
+    // models.json's as_of is also the day its adoption labels are worked out against; re-derive
+    // them for the older day, as the last Collect run on that day would have written them.
+    if (feed === 'models') {
+      const derived = deriveStatusAdoptionForCatalog(j.models, j.as_of);
+      for (const m of j.models) m.adoption = derived.get(m.id).adoption;
+    }
+    writeJson(p, j);
+    asOf[feed] = j.as_of;
+  }
+  return { dir, asOf };
+}
+
+// assets/app.js in a vm with one stub element per [data-fresh] slot the real page carries, plus the
+// nav badge and the footer date.
+function loadSlots(page) {
+  const html = fs.readFileSync(path.join(ROOT, page), 'utf8');
+  const slots = [...html.matchAll(/data-fresh="([^"]+)"/g)].map((m) => ({ dataset: { fresh: m[1] }, innerHTML: '' }));
+  const nav = { innerHTML: '', title: '', classList: { on: false, toggle(c, v) { this.on = v; } } };
+  const foot = { textContent: '' };
+  const noop = () => {};
+  const document = {
+    readyState: 'loading', addEventListener: noop,
+    querySelector: (s) => ({ '#navAsof': nav, '#footAsof': foot }[s] || null),
+    querySelectorAll: (s) => (s === '[data-fresh]' ? slots : []),
+    documentElement: { classList: { contains: () => false } },
+  };
+  const ctx = vm.createContext({ document, addEventListener: noop, setTimeout: noop, setInterval: noop, clearInterval: noop, console });
+  const src = fs.readFileSync(path.join(ROOT, 'assets', 'app.js'), 'utf8');
+  return { slots, nav, foot, app: vm.runInContext(`${src}\n;({ state, renderFreshness })`, ctx) };
+}
+
+test('drill (f): one day past every limit, every section shows the stale notice', () => {
+  const { dir, asOf } = datedCopy('stale', (max) => max + 1);
+  const models = readJson(path.join(dir, 'models.json'));
+  const age = FR.FEED_FRESHNESS.models.maxDays + 1;
+  for (const page of ['index.html', 'table.html']) {
+    const { slots, nav, foot, app } = loadSlots(page);
+    assert.ok(slots.length >= 1, `${page} has freshness slots`);
+    app.state.data = models;
+    app.state.fresh = FR;
+    app.renderFreshness();
+    for (const s of slots) {
+      assert.match(s.innerHTML, /class="mp-stale" role="note"/, `${page} [data-fresh=${s.dataset.fresh}] shows the notice`);
+      assert.ok(s.innerHTML.includes(`Not updated in ${age} days.`), `${page} [data-fresh=${s.dataset.fresh}] says how old`);
+      assert.ok(s.innerHTML.includes(`datetime="${asOf.models}"`), `${page} stamp carries the data date`);
+    }
+    assert.ok(nav.classList.on && nav.innerHTML.includes(`Not updated in ${age} days`), `${page} nav badge`);
+    assert.equal(foot.textContent, FR.dayLabel(asOf.models));
+  }
+  // The board and how-we-pick build theirs from the same module with the file's own date.
+  const files = { models: 'Model prices', plans: 'Plan prices', 'tool-defaults': 'Tool defaults', 'per-request': 'Request sizes', vendors: 'Vendor countries' };
+  for (const [feed, label] of Object.entries(files)) {
+    if (!asOf[feed]) continue;
+    const html = FR.freshHtml(feed, asOf[feed], { label });
+    assert.match(html, /mp-asof--stale/, `${feed} stamp`);
+    assert.ok(html.includes(`${label} not updated in ${FR.FEED_FRESHNESS[feed].maxDays + 1} days.`), `${feed} notice`);
+  }
+  // Stale is a display state: the copy still passes the data gate, so Collect is never blocked.
+  const r = run([path.join(ROOT, 'scripts', 'validate-data.mjs'), '--data', dir]);
+  assert.equal(r.status, 0, r.out.split('\n').slice(-30).join('\n'));
+});
+
+test('drill (f): at exactly every limit, no section shows the notice', () => {
+  const { dir, asOf } = datedCopy('at-limit', (max) => max);
+  const models = readJson(path.join(dir, 'models.json'));
+  for (const page of ['index.html', 'table.html']) {
+    const { slots, nav, app } = loadSlots(page);
+    app.state.data = models;
+    app.state.fresh = FR;
+    app.renderFreshness();
+    for (const s of slots) {
+      assert.doesNotMatch(s.innerHTML, /mp-stale/, `${page} [data-fresh=${s.dataset.fresh}]`);
+      assert.ok(s.innerHTML.includes(`As of ${FR.dayLabel(asOf.models)}`), `${page} stamp`);
+    }
+    assert.ok(!nav.classList.on && nav.innerHTML.includes(`As of ${FR.dayLabel(asOf.models)}`), `${page} nav badge`);
+  }
+  for (const feed of Object.keys(asOf)) assert.equal(FR.staleHtml(feed, asOf[feed]), '', feed);
+});
+
+test('drill (f): with no module loaded, the sections keep the facts and show no broken stamp', () => {
+  const { slots, app } = loadSlots('index.html');
+  app.state.data = readJson(path.join(ROOT, 'data', 'models.json'));
+  app.state.fresh = null;
+  app.renderFreshness();
+  assert.ok(slots.every((s) => s.innerHTML === ''));
 });
