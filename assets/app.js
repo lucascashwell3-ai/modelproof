@@ -100,7 +100,7 @@ function sourcedClaims(m) {
   const seen = new Map();
   for (const entry of Object.values(m.task_fit_judged || {})) {
     for (const c of entry?.claims || []) {
-      if (!c?.quote || !c?.source_url) continue;
+      if (!c?.quote || !c?.source_url || c.superseded_by) continue; // a replaced claim stays as history, never shown
       const k = c.quote + '\u0000' + c.source_url;
       if (!seen.has(k)) seen.set(k, c);
     }

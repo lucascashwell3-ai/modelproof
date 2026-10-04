@@ -1382,11 +1382,11 @@ import * as FR from "./assets/freshness.mjs";
     }
     var tfj = m.task_fit_judged || {};
     (taskId ? [taskId] : Object.keys(tfj)).forEach(function(k){
-      ((tfj[k] || {}).claims || []).forEach(function(c){ if (c.tier === "lab") add(c); });
+      ((tfj[k] || {}).claims || []).forEach(function(c){ if (BD.isLiveClaim(c) && c.tier === "lab") add(c); });
     });
     ((DATA.guidance && DATA.guidance.claims) || []).forEach(function(c){
       // Only what the lab says a model is FOR; alias tables and effort defaults stay in the package.
-      if (c.tier !== "lab" || c.topic !== "model-per-job" || !c.subject || c.subject.name !== m.vendor) return;
+      if (!BD.isLiveClaim(c) || c.tier !== "lab" || c.topic !== "model-per-job" || !c.subject || c.subject.name !== m.vendor) return;
       if (namesModel(c.sentence + " " + c.quote, m)) add(c);
     });
     return out;
