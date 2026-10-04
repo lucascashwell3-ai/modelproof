@@ -1,0 +1,68 @@
+{
+  "schema": "modelproof.setup/1",
+  "home": "/home/sam",
+  "project": "/home/sam/app",
+  "tools": {
+    "claude-code": true,
+    "codex": false,
+    "cursor": false
+  },
+  "dirs": {
+    "claude": "~/.claude",
+    "codex": "~/.codex"
+  },
+  "instruction_mode": "claude-md-or-agents-md",
+  "claude_reads_project_agents_md": false,
+  "agents_override": {
+    "user": false,
+    "project": false
+  },
+  "files": [
+    {
+      "scope": "project",
+      "path": "CLAUDE.md",
+      "lines": 4,
+      "readers": [
+        "claude-code"
+      ]
+    },
+    {
+      "scope": "project",
+      "path": "AGENTS.md",
+      "lines": 3,
+      "readers": [
+        "codex",
+        "cursor",
+        "copilot",
+        "antigravity",
+        "agents-md"
+      ]
+    }
+  ],
+  "agents": [
+    {
+      "tool": "copilot",
+      "scope": "project",
+      "path": ".github/agents/docs-writer.agent.md",
+      "name": "docs-writer",
+      "model": null,
+      "description": "Writes and updates docs pages from a short brief.",
+      "modelproof": false
+    }
+  ],
+  "settings": [
+    {
+      "scope": "project",
+      "path": ".claude/settings.json",
+      "keys": [
+        "permissions"
+      ]
+    }
+  ],
+  "env": {
+    "subagent_model_force": false
+  },
+  "heads_up": [],
+  "mentions": [],
+  "notes": []
+}

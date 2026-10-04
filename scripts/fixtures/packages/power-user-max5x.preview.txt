@@ -1,0 +1,62 @@
+Modelproof package · facts as of 2026-10-03 · generator 1.1.0
+Your answers: person · user scope · tools: Claude Code · plans: Anthropic Max 5x · limits: often · work: coding, agents
+
+Check these before you say Go
+  - Your helper checker (~/.claude/agents/checker.md) does the same job as #3 modelproof-reviewer. Keep both, or skip #3.
+
+Lead, helpers and bulk per tool
+  Claude Code
+    lead     opus = Claude Opus 5.5 · the tool's default, from its own docs
+             effort medium by default; high for complex reasoning or difficult coding problems (information, not a setting)
+             "Pro, Max, Team, Enterprise, and Anthropic API : defaults to Opus 5.5"
+             https://code.claude.com/docs/en/model-config (2026-10-03)
+             "except that Opus 5.5 and Sonnet 5.5 default to medium"
+             https://code.claude.com/docs/en/model-config (2026-10-03)
+             "Complex reasoning, difficult coding problems, agentic tasks"
+             https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)
+             list price $4 in / $20 out per 1M tokens · 1.3% of OpenRouter tokens (2026-10-01)
+    scout    inherit (runs on the lead's model)
+    builder  inherit (runs on the lead's model)
+    reviewer inherit (runs on the lead's model)
+    bulk     haiku = Claude Haiku 4.5 · from the tool's own docs
+             "Haiku for quick mechanical work (renames, log lines, regex explanations, boilerplate)."
+             https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)
+             "It fits high-volume work with checkable outputs, not long agentic loops."
+             https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence (2026-10-03)
+             "For simple subagent tasks, specify model: haiku in your subagent configuration"
+             https://code.claude.com/docs/en/costs (2026-09-27)
+             list price $1 in / $5 out per 1M tokens · 0.15% of OpenRouter tokens (2026-10-01)
+    near a full usage limit (a text line, not a setting): a routine, well-scoped thread can run on sonnet = Claude Sonnet 5.5
+             "It uses meaningfully more of your quota, so consider switching to Sonnet for routine work."
+             https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)
+             "Sonnet 5.5 is a faster, lower-cost complement to Claude Opus 5.5."
+             https://www.anthropic.com/claude-sonnet-5-5 (2026-10-03)
+
+What the tools and labs say (their own words)
+  Claude Code: "Sonnet handles most coding tasks well and costs less than Opus. Reserve Opus for complex architectural decisions or multi-step reasoning."
+    https://code.claude.com/docs/en/costs (2026-09-27)
+  Claude Code: "Uses the latest Sonnet model for daily coding tasks"
+    https://code.claude.com/docs/en/model-config (2026-09-27)
+  Claude Code: "Uses the latest Opus model for complex reasoning tasks"
+    https://code.claude.com/docs/en/model-config (2026-09-27)
+  Anthropic: "It fits high-volume work with checkable outputs, not long agentic loops."
+    https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence (2026-10-03)
+  Anthropic: "asynchronous processing of large volumes of requests with a 50% discount on both input and output tokens"
+    https://platform.claude.com/docs/en/about-claude/pricing (2026-10-03)
+
+Files (numbered; answer "no to 3" to leave one out)
+   1. file   ~/.claude/agents/modelproof-scout.md · 12 lines · the tool obeys it
+      Claude Code runs this helper on the lead's model (model: inherit).
+   2. file   ~/.claude/agents/modelproof-builder.md · 11 lines · the tool obeys it
+      Claude Code runs this helper on the lead's model (model: inherit).
+   3. file   ~/.claude/agents/modelproof-reviewer.md · 11 lines · the tool obeys it
+      Claude Code runs this helper on the lead's model (model: inherit).
+   4. file   ~/.claude/agents/modelproof-bulk.md · 11 lines · the tool obeys it
+      Claude Code runs this helper on haiku, the model named in the file.
+   5. file   ~/.claude/rules/modelproof.md · 39 lines · text
+      Claude Code loads every file in rules/ each session; your CLAUDE.md is not touched.
+  Also available, not included: modelproof-explore.md, Claude Code's built-in Explore helper on haiku. Say "add it" to include it (profile "explore_override": true).
+
+Notes
+  - Start a new session so each tool loads the new helper and rule files.
+  - Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history.

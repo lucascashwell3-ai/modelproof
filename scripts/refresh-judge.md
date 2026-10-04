@@ -24,6 +24,17 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
      a vendor not listed there fails the gate, so hold and say so). The `id` is derived from the
      name by the rule in that file; any id you supply is ignored. Never admit an OpenRouter
      "~vendor/…" community re-host — it is not the vendor's listing.
+     Dates follow the data contract (`scripts/validate-data.mjs` FEEDS): `released` is
+     `YYYY-MM-DD`, or as much of it as the source gives (`YYYY-MM`, `YYYY-Qn`, `YYYY`), or `null`
+     when no page dates it — never "unknown" or "TBD" (the apply turns those into `null`).
+   - **`release` items**: `value` needs `date` (`YYYY-MM-DD`), `vendor`, `title`, `summary`,
+     `source` (the page that dates it) and `why`. A month-only date is written as the 1st with
+     `"date_precision": "month"` (also `"quarter"`, `"year"`) — the apply does this for you from
+     `YYYY-MM` / `YYYY-Qn` / `YYYY`; a missing `source` is filled from your first `sources[]` url.
+     Any other date ("soon", "Q3?") rejects the run. A release dated after tomorrow (UTC) — an
+     announced date that has not come yet — is held by the apply with its reason (the same goes for
+     a `new-model` whose `released` is after tomorrow), so it does not cost the rest of the batch;
+     it stays on the worklist and is judged again once the date comes.
      The apply also writes a "what changed" timeline entry. Add
      `"release": {"summary": "...", "why": "...", "source": "https://..."}` inside `value` when the
      vendor page gives you something concrete to say (one or two plain sentences each); leave it out
@@ -116,10 +127,13 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
      rankings JSON (`scripts/derive-usage.mjs`) every full run, so you should rarely see one of
      these on the worklist; if you do, treat it the same as any other sourced numeric fact — a
      real number from a real page, or hold.
-5. Run `node scripts/apply-judgment.mjs judgments.json`. It enforces the schema, applies, runs
-   the honesty gate, and — if this run wrote at least one `judged-fit` claim — the anti-fabrication
-   gate (`scripts/check-sources.mjs`), which lives-fetches every claim's `source_url` and confirms
-   the `quote` is really on the page. It restores the file and exits non-zero if any gate fails —
+5. Run `node scripts/apply-judgment.mjs judgments.json`. It repairs what it safely can (dates
+   above), enforces the schema, applies, runs the honesty gate (which includes the data contract:
+   every shown line has a source and a date), and — if this run wrote at least one `judged-fit`
+   claim — the anti-fabrication gate (`scripts/check-sources.mjs --only` the records you wrote),
+   which live-fetches each of YOUR claims' `source_url` and confirms the `quote` is really on the
+   page. A quote elsewhere in the catalog that has since rotted does not block your run; the
+   scheduled full check reports it. It restores the file and exits non-zero if any gate fails —
    trust its exit code either way.
 6. If it exits 0: `git add data/` (data/ files only — models.json, changelog.json,
    refresh/worklist.json, refresh/receipt-judge.json). Commit, `git pull --rebase origin main`, then

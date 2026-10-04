@@ -17,8 +17,9 @@ const FACTS = Object.freeze({
   guidance: load('guidance.json'),
   plans: load('instructions-plans.json'),
 });
-const NAMES = ['cc-max5x', 'codex', 'cursor', 'org-40', 'empty', 'hostile', 'two-lab'];
+const NAMES = ['cc-max5x', 'codex', 'cursor', 'org-40', 'empty', 'hostile', 'two-lab', 'copilot', 'antigravity', 'openrouter', 'cc-copilot', 'power-user-max5x'];
 const PROFILES = Object.fromEntries(NAMES.map((n) => [n, load(`profiles/${n}.json`)]));
+const ALL_KEYS = ['lead', ...ROLES];
 const setupFor = (n) => (existsSync(new URL(`packages/${n}.setup.json`, FIX)) ? load(`packages/${n}.setup.json`) : undefined);
 const build = (n, over) => buildPackage(over || PROFILES[n], FACTS, setupFor(n));
 const clone = (x) => JSON.parse(JSON.stringify(x));
@@ -43,7 +44,7 @@ function modelsIn(text) {
   }
   return out;
 }
-const ALIAS = { haiku: 'claude-haiku-4-5', sonnet: 'claude-sonnet-5', opus: 'claude-opus-5-5', fable: 'claude-fable-5-1' };
+const ALIAS = { haiku: 'claude-haiku-4-5', sonnet: 'claude-sonnet-5-5', opus: 'claude-opus-5-5', fable: 'claude-fable-5-1' };
 function modelsAndAliasesIn(text) {
   const out = modelsIn(text);
   for (const [a, id] of Object.entries(ALIAS)) if (new RegExp(`(^|[^a-z0-9-])${a}(?![a-z0-9-])`, 'i').test(text)) out.add(id);
@@ -51,7 +52,7 @@ function modelsAndAliasesIn(text) {
 }
 
 // ---- an independent reach rule (what a profile can call), written apart from the generator's.
-const MULTI = ['cursor', 'github copilot', 'codex', 'windsurf', 'perplexity', 'openrouter', 'amazon bedrock', 'google vertex ai', 'microsoft azure ai foundry'];
+const MULTI = ['cursor', 'github copilot', 'devin', 'perplexity', 'openrouter', 'amazon bedrock', 'google vertex ai', 'microsoft azure ai foundry'];
 const vendorLab = (v) => String(v).toLowerCase().replace(/\(.*?\)/g, '').replace(/\s+ai$/, '').trim();
 function allowedModels(rawProfile) {
   const { profile: p } = normalizeProfile(rawProfile, FACTS);
@@ -70,7 +71,8 @@ function allowedModels(rawProfile) {
     for (const t of tools) {
       if (t === 'claude-code') labs.add('anthropic');
       if (t === 'codex') labs.add('openai');
-      if (t === 'cursor') all = true;
+      if (t === 'antigravity') labs.add('google');
+      if (['cursor', 'copilot', 'openrouter'].includes(t)) all = true;
     }
   };
   addPlans(p.plans); addTools(p.tools);
@@ -91,12 +93,15 @@ function shownText(pkg) {
 
 test('exports exactly the documented names (the package API plus the shared marker helpers)', () => {
   assert.deepEqual(Object.keys(G).sort(), [
-    'BLOCK_BEGIN_RE', 'BLOCK_END_RE', 'GENERATOR_VERSION', 'ROLES', 'TOOLS', 'blockBodyHash', 'blockBodyLines', 'blockText',
+    'BLOCK_BEGIN_RE', 'BLOCK_END_RE', 'GENERATOR_VERSION', 'ROLES', 'TOOLS', 'TOOL_LABELS', 'blockBodyHash', 'blockBodyLines', 'blockText',
     'buildPackage', 'normalizeProfile', 'packageText', 'profileFromBoard', 'renderPreview', 'roleDefaults', 'sha256Hex', 'stampOwnedText',
+    'textWithoutHelpers',
   ]);
-  assert.equal(GENERATOR_VERSION, '1.0.0');
-  assert.deepEqual(TOOLS, ['claude-code', 'codex', 'cursor', 'agents-md']);
-  assert.deepEqual(ROLES, ['scout', 'builder', 'reviewer']);
+  assert.equal(GENERATOR_VERSION, '1.1.0');
+  assert.deepEqual(TOOLS, ['claude-code', 'codex', 'cursor', 'copilot', 'antigravity', 'openrouter', 'agents-md']);
+  assert.deepEqual(ROLES, ['scout', 'builder', 'reviewer', 'bulk']);
+  assert.deepEqual(Object.keys(G.TOOL_LABELS), TOOLS);
+  assert.ok(Object.isFrozen(G.TOOL_LABELS));
 });
 
 test('package shape: version, as_of from the data, parts with target/kind/lines/why', () => {
@@ -183,54 +188,109 @@ test('normalizeProfile is idempotent', () => {
 
 /* ======================================================================== roleDefaults: no winner */
 
-test('roleDefaults: Claude Code alone uses the jobs its own docs name; reviewer inherits', () => {
+const HELPERS = ['scout', 'builder', 'reviewer'];
+const PLAN = (tool) => FACTS.guidance.tool_plans.find((t) => t.tool === tool);
+
+test('roleDefaults: helpers inherit by default; bulk is the one pushed down; the lead is the tool\'s documented default', () => {
   const r = roleDefaults(PROFILES.empty, FACTS)['claude-code'];
-  assert.equal(r.scout.model_ref, 'haiku');
-  assert.equal(r.scout.from, 'tool');
-  assert.equal(r.builder.model_ref, 'sonnet');
-  assert.equal(r.builder.from, 'tool');
-  assert.equal(r.reviewer.from, 'inherit');
-  assert.equal(r.lead.from, 'inherit');
-  for (const b of [...r.scout.basis, ...r.builder.basis]) {
+  for (const role of HELPERS) {
+    assert.equal(r[role].from, 'inherit', role);
+    assert.equal(r[role].model_id, null, role);
+    assert.ok(r[role].basis.length && r[role].basis.every((b) => PLAN('claude-code').helpers.basis.includes(b.id)), `${role} cites the tool's inherit claim`);
+  }
+  assert.equal(r.bulk.from, 'tool');
+  assert.equal(r.bulk.model_ref, 'haiku');
+  assert.equal(r.bulk.model_id, PLAN('claude-code').bulk.model_id);
+  assert.equal(r.lead.from, 'tool');
+  assert.equal(r.lead.model_id, PLAN('claude-code').lead.model_id);
+  assert.deepEqual([r.lead.effort_info.effort, r.lead.effort_info.raise_to], [PLAN('claude-code').lead.effort, PLAN('claude-code').lead.raise_to]);
+  for (const b of [...r.bulk.basis, ...r.lead.basis]) {
     assert.ok(CLAIMS.has(b.id));
     assert.ok(b.quote && b.source_url.startsWith('https://') && /^\d{4}-\d{2}-\d{2}$/.test(b.date));
   }
-  assert.deepEqual(r.scout.price, { input: byId.get('claude-haiku-4-5').price_input, output: byId.get('claude-haiku-4-5').price_output });
+  assert.deepEqual(r.bulk.price, { input: byId.get(r.bulk.model_id).price_input, output: byId.get(r.bulk.model_id).price_output });
 });
 
-test('roleDefaults: Codex, Cursor and AGENTS.md name no job, so every role inherits', () => {
-  for (const n of ['codex', 'cursor']) {
-    const all = roleDefaults(PROFILES[n], FACTS);
-    for (const tool of Object.keys(all)) for (const role of ROLES) assert.equal(all[tool][role].from, 'inherit', `${n} ${tool} ${role}`);
+test('role_defaults in the data are never applied to helpers: every helper file says inherit', () => {
+  assert.ok(FACTS.guidance.role_defaults.some((d) => d.tool === 'claude-code' && d.role === 'builder' && d.model_ref), 'the data still names a builder model');
+  for (const n of ['empty', 'cc-max5x', 'two-lab', 'org-40']) {
+    const pkg = build(n, { ...PROFILES[n], roles: {} });
+    for (const part of pkg.parts.filter((x) => /:agent:(scout|builder|reviewer)$/.test(x.id))) {
+      assert.match(part.content, /^model: inherit$|^(?![\s\S]*^model = )/m, `${n} ${part.id}`);
+      assert.ok(!/^model: (haiku|sonnet|opus)/m.test(part.content), `${n} ${part.id}`);
+    }
+  }
+  // No tool_plans in the data: nothing is pushed down, not even bulk.
+  const bare = { ...FACTS, guidance: { ...FACTS.guidance, tool_plans: [] } };
+  const r = roleDefaults(PROFILES['cc-max5x'], bare)['claude-code'];
+  for (const role of [...HELPERS, 'bulk']) assert.notEqual(r[role].from, 'tool', role);
+  assert.equal(r.lead.from, 'inherit');
+});
+
+test('roleDefaults: Codex pushes bulk to its documented model; tools with no documented model string leave bulk to you', () => {
+  const cx = roleDefaults(PROFILES.codex, FACTS).codex;
+  for (const role of HELPERS) assert.equal(cx[role].from, 'inherit', role);
+  assert.equal(cx.bulk.model_ref, FACTS.guidance.model_refs.find((m) => m.tool === 'codex' && m.model_id === PLAN('codex').bulk.model_id).ref);
+  assert.equal(cx.lead.model_id, PLAN('codex').lead.model_id);
+  for (const tool of ['cursor', 'copilot', 'antigravity', 'openrouter']) {
+    const all = roleDefaults({ tools: [tool], scope: 'project', plans: [{ vendor: 'Cursor', plan: 'Pro' }] }, FACTS)[tool];
+    for (const role of ROLES) assert.equal(all[role].from, 'inherit', `${tool} ${role}`);
+    assert.equal(all.lead.from, 'inherit', `${tool} lead is the model you choose`);
+    assert.equal(all.bulk.choice, true, `${tool} bulk is left to you`);
+    assert.ok(all.bulk.basis.length, `${tool} bulk still cites the tool's own words`);
   }
   const a = roleDefaults({ tools: ['agents-md'], scope: 'project', plans: [{ vendor: 'Anthropic', plan: 'Pro' }] }, FACTS)['agents-md'];
   for (const role of ROLES) assert.equal(a[role].from, 'inherit');
 });
 
-test('two labs and no choice: every role is from you or inherit, never a tool or lab default', () => {
+test('two labs: helpers still inherit, and each one-lab tool keeps its own documented bulk model', () => {
   for (const p of [PROFILES['two-lab'], PROFILES['org-40'], PROFILES.cursor,
     { ...PROFILES['two-lab'], roles: { builder: 'claude-opus-5-5' } },
     { ...PROFILES['cc-max5x'], roles: {}, like: ['gpt-6-sol'], api: true }]) {
     const all = roleDefaults(p, FACTS);
-    for (const tool of Object.keys(all)) for (const role of [...ROLES, 'lead']) {
-      assert.ok(['you', 'inherit'].includes(all[tool][role].from), `${tool} ${role} = ${all[tool][role].from}`);
+    for (const tool of Object.keys(all)) {
+      for (const role of HELPERS) assert.ok(['you', 'inherit'].includes(all[tool][role].from), `${tool} ${role} = ${all[tool][role].from}`);
+      const b = all[tool].bulk;
+      if (b.model_id) assert.equal(byId.get(b.model_id).vendor, { 'claude-code': 'Anthropic', codex: 'OpenAI' }[tool], `${tool} bulk stays in its own lab`);
     }
   }
   const pkg = build('two-lab');
-  assert.ok(pkg.notes.some((x) => x.includes('2 labs')));
+  assert.equal(pkg.roles['claude-code'].bulk.model_ref, 'haiku');
+  assert.equal(pkg.roles.codex.bulk.model_id, PLAN('codex').bulk.model_id);
   const pf = pkg.preview_facts.tools_and_labs_say.map((s) => s.subject);
   assert.ok(pf.includes('Claude Code') || pf.includes('Anthropic'));
 });
 
-test('role precedence: your choice beats the tool default; never[] removes a default', () => {
-  const mine = roleDefaults({ ...PROFILES.empty, roles: { scout: 'claude-sonnet-5' } }, FACTS)['claude-code'];
-  assert.equal(mine.scout.from, 'you');
-  assert.equal(mine.scout.model_ref, 'claude-sonnet-5');
-  const nv = roleDefaults({ ...PROFILES.empty, never: ['claude-haiku-4-5'] }, FACTS)['claude-code'];
-  assert.equal(nv.scout.from, 'inherit');
-  assert.equal(nv.builder.from, 'tool');
+test('role precedence: your choice beats the tool default; never[] removes a default, with a note', () => {
+  const mine = roleDefaults({ ...PROFILES.empty, roles: { bulk: 'claude-sonnet-5' } }, FACTS)['claude-code'];
+  assert.equal(mine.bulk.from, 'you');
+  assert.equal(mine.bulk.model_ref, 'claude-sonnet-5');
+  const nv = buildPackage({ ...PROFILES.empty, never: ['claude-haiku-4-5'] }, FACTS);
+  assert.equal(nv.roles['claude-code'].bulk.from, 'inherit');
+  assert.ok(nv.notes.some((x) => x.includes('never list') && x.includes('modelproof-bulk')));
+  assert.equal(nv.roles['claude-code'].lead.from, 'tool');
   const lab = roleDefaults({ ...PROFILES.empty, never: ['Anthropic'] }, FACTS)['claude-code'];
-  for (const role of ROLES) assert.equal(lab[role].from, 'inherit');
+  for (const role of ALL_KEYS) assert.equal(lab[role].from, 'inherit');
+  const lead = roleDefaults({ ...PROFILES.empty, roles: { lead: 'claude-sonnet-5-5' } }, FACTS)['claude-code'].lead;
+  assert.equal(lead.from, 'you');
+  assert.equal(lead.effort_info, undefined, 'effort info belongs to the model the tool names, not your choice of another');
+});
+
+test('near a full usage limit: a sourced text line only when limits are hit often or sometimes, never a setting', () => {
+  for (const limits of ['often', 'sometimes']) {
+    const pkg = buildPackage({ ...PROFILES['cc-max5x'], limits }, FACTS);
+    const nl = pkg.roles['claude-code'].near_limit;
+    assert.equal(nl.model_id, PLAN('claude-code').helpers.push_down.model_id, limits);
+    const rules = pkg.parts.find((x) => x.id === 'claude-code:rules').content.split('\n');
+    const i = rules.findIndex((l) => l.startsWith('- Near a full usage limit:'));
+    assert.ok(i > 0 && rules[i + 1].trim().startsWith('Source:'), limits);
+    for (const part of pkg.parts.filter((x) => /:agent:/.test(x.id))) assert.ok(!part.content.includes(`model: ${nl.model_ref}`), part.id);
+  }
+  for (const limits of ['rarely', 'api-budget', null]) {
+    const pkg = buildPackage({ ...PROFILES['cc-max5x'], limits }, FACTS);
+    assert.equal(pkg.roles['claude-code'].near_limit, undefined, String(limits));
+    assert.ok(!/Near a full usage limit/.test(pkg.parts.map((x) => x.content || '').join('\n')), String(limits));
+  }
 });
 
 test('roles.builder=opus: the builder file pins the full model id; tool defaults keep their alias', () => {
@@ -244,15 +304,16 @@ test('roles.builder=opus: the builder file pins the full model id; tool defaults
   assert.ok(!/^model: opus$/m.test(builder.content));
   assert.match(CLAIMS.get('cc-subagent-model-values').quote, /full model ID such as `claude-opus-5-5`/);
   // The tool's own documented default keeps the alias the docs name.
-  assert.match(pkg.parts.find((p) => p.id === 'claude-code:agent:scout').content, /^model: haiku$/m);
-  assert.equal(pkg.roles['claude-code'].scout.from, 'tool');
+  assert.match(pkg.parts.find((p) => p.id === 'claude-code:agent:bulk').content, /^model: haiku$/m);
+  assert.equal(pkg.roles['claude-code'].bulk.from, 'tool');
+  assert.match(pkg.parts.find((p) => p.id === 'claude-code:agent:scout').content, /^model: inherit$/m);
   const rules = pkg.parts.find((p) => p.id === 'claude-code:rules').content;
   const i = rules.split('\n').findIndex((l) => l.includes('modelproof-builder') && l.includes('Claude Opus 5.5'));
   assert.ok(i >= 0);
   assert.match(rules.split('\n')[i + 1], /Source: your choice/);
   assert.equal(pkg.roles['claude-code'].builder.from, 'you');
   // Every chosen Claude model gets its own id, whatever name or alias the answer used.
-  for (const [answer, id] of [['sonnet', 'claude-sonnet-5'], ['Claude Haiku 4.5', 'claude-haiku-4-5'], ['claude-fable-5-1', 'claude-fable-5-1']]) {
+  for (const [answer, id] of [['sonnet', 'claude-sonnet-5-5'], ['Claude Haiku 4.5', 'claude-haiku-4-5'], ['claude-fable-5-1', 'claude-fable-5-1']]) {
     const p = buildPackage({ ...PROFILES.empty, roles: { reviewer: answer } }, FACTS);
     assert.match(p.parts.find((x) => x.id === 'claude-code:agent:reviewer').content, new RegExp(`^model: ${id}$`, 'm'), answer);
   }
@@ -272,12 +333,14 @@ test('no output ever names a model the user cannot reach or listed in never[]', 
   const variants = [];
   for (const n of NAMES) {
     variants.push(PROFILES[n]);
-    variants.push({ ...PROFILES[n], never: ['claude-haiku-4-5', 'claude-sonnet-5', 'claude-opus-5-5', 'gpt-6-astra'] });
+    variants.push({ ...PROFILES[n], never: ['claude-haiku-4-5', 'claude-sonnet-5', 'claude-sonnet-5-5', 'claude-opus-5-5', 'gpt-6-astra', 'gpt-6-luna', 'gpt-6-1-sol'] });
     variants.push({ ...PROFILES[n], never: ['Anthropic'] });
     variants.push({ ...PROFILES[n], never: ['OpenAI', 'Google'] });
   }
   variants.push({ tools: ['codex'], plans: [{ vendor: 'OpenAI', plan: 'Plus' }], work: [] });
   variants.push({ tools: ['claude-code'], plans: [{ vendor: 'Anthropic', plan: 'Pro' }], limits: 'often', work: [] });
+  for (const t of ['copilot', 'antigravity', 'openrouter']) variants.push({ tools: [t], scope: 'project', limits: 'often', work: [] });
+  variants.push({ tools: ['claude-code', 'copilot'], scope: 'project', plans: [{ vendor: 'Anthropic', plan: 'Max 5x' }], limits: 'sometimes', never: ['claude-haiku-4-5'] });
   for (const v of variants) {
     const allowed = allowedModels(v);
     const pkg = buildPackage(v, FACTS);
@@ -291,6 +354,151 @@ test('no output ever names a model the user cannot reach or listed in never[]', 
   for (const id of modelsAndAliasesIn(shownText(codexOnly))) assert.notEqual(byId.get(id).vendor, 'Anthropic', id);
   const noHaiku = buildPackage({ ...PROFILES['cc-max5x'], never: ['claude-haiku-4-5'] }, FACTS);
   assert.ok(!/haiku/i.test(noHaiku.parts.map((p) => p.content || '').join('\n')));
+});
+
+/* ======================================================================== the six tools */
+
+test('power-user-max5x: Lead Opus 5.5 at medium (high for hard steps) · helpers inherit, Sonnet 5.5 near a full limit · Bulk Haiku 4.5, each with a Source line', () => {
+  const pkg = build('power-user-max5x');
+  const rules = pkg.parts.find((p) => p.id === 'claude-code:rules');
+  assert.equal(rules.target.path, '~/.claude/rules/modelproof.md');
+  assert.ok(rules.lines <= 40, `${rules.lines} lines`);
+  const lines = rules.content.split('\n');
+  const at = (re) => { const i = lines.findIndex((l) => re.test(l)); assert.ok(i >= 0, `no line matching ${re}\n${rules.content}`); return i; };
+  const sourced = (i) => assert.match(lines[i + 1], /^  Source: (Claude Code|Anthropic) docs, https:\/\/\S+ \(\d{4}-\d{2}-\d{2}\)$/, lines[i]);
+  sourced(at(/^- Lead: Claude Opus 5\.5, Claude Code's default model; effort medium by default, high for complex reasoning or difficult coding problems\.$/));
+  sourced(at(/^- Helpers: modelproof-scout, modelproof-builder and modelproof-reviewer run on the lead's model \(inherit\)\./));
+  sourced(at(/^- Near a full usage limit: .+ can run on sonnet \(Claude Sonnet 5\.5\); name that model in the call \(no file sets it\)\.$/));
+  sourced(at(/^- Bulk: modelproof-bulk runs haiku \(Claude Haiku 4\.5\), for .*mechanical.*check.*\.$/));
+  for (const role of HELPERS) assert.match(pkg.parts.find((p) => p.id === `claude-code:agent:${role}`).content, /^model: inherit$/m, role);
+  assert.match(pkg.parts.find((p) => p.id === 'claude-code:agent:bulk').content, /^model: haiku$/m);
+  assert.ok(!pkg.parts.some((p) => p.kind === 'json-keys'), 'nothing goes into settings.json without an opt-in');
+  // Their own checker helper does the reviewer's job: named, nothing overwritten.
+  const reviewer = pkg.parts.findIndex((p) => p.id === 'claude-code:agent:reviewer') + 1;
+  assert.deepEqual(pkg.checks.map((c) => [c.kind, c.name, c.item]), [['helper', 'checker', reviewer]]);
+});
+
+test('GitHub Copilot: helper files with no model line (it runs the default model) plus the project AGENTS.md block', () => {
+  const pkg = build('copilot');
+  const agents = pkg.parts.filter((p) => p.tool === 'copilot' && /:agent:/.test(p.id));
+  assert.deepEqual(agents.map((p) => p.target.path), ROLES.map((r) => `.github/agents/modelproof-${r}.agent.md`));
+  for (const a of agents) {
+    assert.match(a.content, /^---\nname: modelproof-[a-z]+\ndescription: .+\n---\n<!-- modelproof:owned v1 -->\n/);
+    assert.ok(!/^model:/m.test(a.content), 'a derived model string never goes into a Copilot file');
+  }
+  const block = pkg.parts.find((p) => p.kind === 'block');
+  assert.equal(block.target.path, 'AGENTS.md');
+  assert.deepEqual(block.readers, ['copilot']);
+  assert.match(block.content, /^- Lead: the model you choose in GitHub Copilot\./m);
+  assert.match(block.content, /^- Bulk: modelproof-bulk runs on the lead's model until you set its model/m);
+  const user = buildPackage({ ...PROFILES.copilot, scope: 'user' }, FACTS);
+  assert.ok(user.parts.every((p) => p.target.path.startsWith('~/.copilot/agents/')));
+  assert.ok(user.notes.some((x) => x.includes('this project')));
+});
+
+test('Claude Code + GitHub Copilot: Copilot also loads .claude/agents, so no second, same-named helper; the note says so', () => {
+  const pkg = build('cc-copilot');
+  const copilotLoads = pkg.parts.filter((p) => /^(\.claude|\.github)\/agents\//.test(p.target.path));
+  const names = copilotLoads.map((p) => /^name: (.+)$/m.exec(p.content)[1]);
+  assert.equal(new Set(names).size, names.length, `duplicate helper names: ${names}`);
+  assert.ok(!pkg.parts.some((p) => p.target.path.startsWith('.github/')));
+  assert.ok(pkg.notes.some((x) => x.includes('GitHub Copilot also loads the Claude Code helper files') && x.includes('modelproof-bulk')));
+  const block = pkg.parts.find((p) => p.kind === 'block');
+  assert.ok(block.readers.includes('copilot'));
+  // The text Copilot reads describes the files it loads: the Claude Code helpers, model lines and all.
+  const bulkFile = pkg.parts.find((p) => p.id === 'claude-code:agent:bulk').content;
+  const bulkRef = /^model: (.+)$/m.exec(bulkFile)[1];
+  assert.notEqual(bulkRef, 'inherit', 'the fixture bulk file names a model');
+  assert.match(block.content, new RegExp(`^- Helpers: GitHub Copilot uses the Claude Code helper files in \\.claude/agents: .*modelproof-bulk says model: ${bulkRef}\\. Its docs do not say how it reads those model lines\\.$`, 'm'));
+  assert.doesNotMatch(block.content, /modelproof-bulk runs on the lead's model until you set its model/);
+  assert.match(renderPreview(pkg), new RegExp(`bulk     the Claude Code file \\.claude/agents/modelproof-bulk\\.md \\(model: ${bulkRef}\\)`));
+  for (const scope of ['user', 'project']) {
+    const p = buildPackage({ ...PROFILES['cc-copilot'], scope }, FACTS);
+    const all = p.parts.filter((x) => /\/agents\/modelproof-/.test(x.target.path)).map((x) => /^name: (.+)$/m.exec(x.content)[1]);
+    assert.equal(new Set(all).size, all.length, scope);
+  }
+});
+
+test('Antigravity: helper files on the inherit tier; text in ~/.gemini/AGENTS.md (user) or the project AGENTS.md block', () => {
+  const pkg = build('antigravity');
+  const agents = pkg.parts.filter((p) => /:agent:/.test(p.id));
+  assert.deepEqual(agents.map((p) => p.target.path), ROLES.map((r) => `~/.gemini/config/agents/modelproof-${r}.md`));
+  for (const a of agents) {
+    assert.match(a.content, /^---\nname: modelproof-[a-z]+\ndescription: .+\ntools:\n(  - [a-z_]+\n)+model: inherit\n---\n<!-- modelproof:owned v1 -->\n/);
+    assert.ok(!/^model: (?!inherit$)/m.test(a.content), 'the flash tier for bulk is derived, so it is never written');
+  }
+  const block = pkg.parts.find((p) => p.kind === 'block');
+  assert.equal(block.target.path, '~/.gemini/AGENTS.md');
+  const proj = buildPackage({ ...PROFILES.antigravity, scope: 'project' }, FACTS);
+  assert.ok(proj.parts.some((p) => p.target.path === '.agents/agents/modelproof-bulk.md'));
+  assert.deepEqual(proj.parts.find((p) => p.kind === 'block').readers, ['antigravity']);
+  assert.ok(!proj.parts.some((p) => /\.agents\/rules\//.test(p.target.path)), 'no rules file: Antigravity drops one without trigger frontmatter');
+});
+
+test('textWithoutHelpers: lines about a left-out helper go, lists lose the name, other text stays', () => {
+  const pkg = build('org-40');
+  const block = pkg.parts.find((p) => p.id === 'agents-md:text');
+  assert.equal(G.textWithoutHelpers(pkg, block, []), block.content, 'nothing left out: the same text');
+  assert.equal(G.textWithoutHelpers(pkg, block, ['cursor:agent:bulk']).includes('Cursor'), block.content.includes('Cursor'));
+  const t = G.textWithoutHelpers(pkg, block, ['codex:agent:reviewer', 'claude-code:agent:bulk']);
+  assert.match(t, /^- Codex helpers: modelproof-scout and modelproof-builder run on the lead's model/m);
+  assert.match(t, /^- Claude Code helpers: modelproof-scout, modelproof-builder and modelproof-reviewer run/m);
+  assert.doesNotMatch(t, /^- Claude Code bulk: modelproof-bulk/m);
+  assert.equal(block.content.split('\n').length - t.split('\n').length, block.content.split('\n').filter((l) => /^- Claude Code bulk: modelproof-bulk/.test(l)).length);
+  // One tool: every helper left out removes the helpers and bulk lines, never the lead line.
+  const cc = build('cc-max5x');
+  const rules = cc.parts.find((p) => p.id === 'claude-code:rules');
+  const none = G.textWithoutHelpers(cc, rules, ROLES.map((r) => `claude-code:agent:${r}`));
+  assert.doesNotMatch(none, /modelproof-(scout|builder|reviewer|bulk)/);
+  assert.match(none, /^- Lead: /m);
+  assert.match(none, /^# Modelproof lead, helpers and bulk/m);
+});
+
+test('preview: a quote in the future tense about a date the facts date has passed keeps its words; our line says the date has passed', () => {
+  const pkg = build('antigravity');
+  const said = pkg.preview_facts.tools_and_labs_say.flatMap((x) => x.claims).find((c) => /\bwill\b/.test(c.quote));
+  assert.ok(said, 'the fixture has a future-tense quote');
+  const text = renderPreview(pkg);
+  assert.ok(text.includes(`"${said.quote}"`), 'the quote stays word for word');
+  const note = text.split('\n').find((l) => /has passed/.test(l));
+  assert.ok(note && note.includes(`facts as of ${pkg.as_of}`), text);
+  const d = note.match(/\((\d{4}-\d\d-\d\d)\)/)[1];
+  assert.ok(d < pkg.as_of);
+  // Read on a facts date before that day, the same quote gets no note.
+  assert.doesNotMatch(renderPreview({ ...pkg, as_of: d }), /has passed/);
+});
+
+test('OpenRouter / API is copy only: the package writes nothing, the preview says so, and the text keeps its sources', () => {
+  const pkg = build('openrouter');
+  assert.deepEqual(pkg.parts, []);
+  assert.equal(pkg.copy.length, 1);
+  const c = pkg.copy[0];
+  assert.match(c.content, /^- Lead: the model you name in each request\. .+\n  Source: OpenRouter docs, https:\/\/openrouter\.ai\//m);
+  assert.match(c.content, /^- Bulk: the model you name per request/m);
+  assert.ok(!/modelproof-(scout|builder|reviewer|bulk) /.test(c.content.split('## How to hand off')[0]), 'no helper files to name');
+  const preview = renderPreview(pkg);
+  assert.match(preview, /Copy only, not installed: OpenRouter \/ API/);
+  assert.match(preview, /Files: none \(the installer writes nothing for a copy-only tool\)\./);
+  assert.ok(pkg.notes.some((x) => x.includes('copy only')));
+  const text = G.packageText(pkg);
+  assert.match(text, /^=== Copy into your system prompt or an OpenRouter preset \(copy only; the installer writes nothing for OpenRouter \/ API\) ===\n# Modelproof lead and bulk/);
+  // No helper files exist for a copy-only tool, so the text never talks about helpers.
+  assert.doesNotMatch(c.content, /\bhelpers?\b/i, c.content);
+  assert.match(c.content, /^## Lead and bulk$/m);
+  assert.match(preview, /^Lead and bulk per tool$/m);
+});
+
+test('values the data marks as your pick never reach an enforced file', () => {
+  const choiceOnly = FACTS.guidance.tool_plans.filter((t) => !t.lead.model_id && !t.bulk.model_id).map((t) => t.tool);
+  assert.deepEqual(choiceOnly, ['cursor', 'copilot', 'antigravity', 'openrouter']);
+  for (const tool of choiceOnly) {
+    for (const scope of ['user', 'project']) {
+      const pkg = buildPackage({ tools: [tool], scope, plans: [], limits: 'often' }, FACTS);
+      for (const part of pkg.parts.filter((p) => p.enforced)) {
+        assert.ok(!/^model: (?!inherit$)/m.test(part.content || ''), `${tool} ${part.id}`);
+      }
+    }
+  }
 });
 
 /* ======================================================================== text parts */
@@ -359,20 +567,24 @@ test('text parts carry the hand-off, context and effort sections and the effort 
   const when = cc.split('## When to hand off\n')[1].split('\n\n')[0].split('\n');
   assert.equal(when.length, 4);
   assert.match(when[0], /^- Hand helpers verbose work .+ Source: Claude Code docs, https:\/\/code\.claude\.com\/docs\/en\/costs/);
-  assert.match(when[1], /^- Hand helpers parallel or separable work; .+15 times.+ Source: Anthropic docs, https:\/\/www\.anthropic\.com\/engineering\/multi-agent-research-system/);
+  assert.match(when[1], /^- Hand helpers parallel or separable work; each one adds tokens\. Source: Anthropic docs, https:\/\/www\.anthropic\.com\/engineering\/multi-agent-research-system/);
   assert.match(when[2], /^- For a job one model can do alone, lower effort on that model cost less than an orchestrator\. Source: Anthropic docs, /);
   assert.match(when[3], /^- Helpers share your usage limits\. Source: Claude Code docs, /);
   assert.ok(!/## Usage/.test(cc));
   assert.ok(cc.indexOf('## When to hand off') < cc.indexOf('## How to hand off'));
   // The effort link is for the person.
   assert.match(cc, /^- Effort levels per model, for you: https:\/\/lucascashwell3-ai\.github\.io\/modelproof\/#effort$/m);
-  // "Helpers marked inherit" only when one does.
-  assert.match(cc, /^Lead: the model you choose in the tool\. Helpers marked inherit run on it\.$/m);
-  const none = buildPackage({ ...PROFILES.empty, roles: { reviewer: 'claude-sonnet-5' } }, FACTS);
-  assert.ok(ROLES.every((r) => none.roles['claude-code'][r].from !== 'inherit'));
-  const noneText = textParts(none)[0].content;
-  assert.match(noneText, /^Lead: the model you choose in the tool\.$/m);
-  assert.ok(!/inherit/.test(noneText));
+  // The lead is the tool's documented default, with its effort as information and two sources.
+  const lines = cc.split('\n');
+  const li = lines.findIndex((l) => l.startsWith('- Lead: '));
+  assert.match(lines[li], /^- Lead: Claude Opus 5\.5, Claude Code's default model; effort medium by default, high for .+\.$/);
+  assert.match(lines[li + 1], /^  Source: Claude Code docs, https:\/\/code\.claude\.com\/docs\/en\/model-config /);
+  assert.match(lines[li + 2], /^  Source: Anthropic docs, https:\/\/platform\.claude\.com\/docs\/en\/build-with-claude\/effort/);
+  assert.match(cc, /^- Helpers: modelproof-scout and modelproof-reviewer run on the lead's model \(inherit\)\./m);
+  assert.match(cc, /^- Bulk: modelproof-bulk runs haiku \(Claude Haiku 4\.5\), for .+\.$/m);
+  // A lead the user rules out: the model they choose, with the tool's own words.
+  const none = buildPackage({ ...PROFILES.empty, never: ['claude-opus-5-5'] }, FACTS);
+  assert.match(textParts(none)[0].content, /^- Lead: the model you choose in Claude Code\./m);
   // No Claude Code reader → no Anthropic cost facts at all.
   assert.ok(!/When to hand off/.test(textParts(build('codex'))[0].content));
 });
@@ -398,7 +610,7 @@ test('placement: user scope Claude Code goes under ~/.claude; project scope unde
   assert.ok(proj.includes('.claude/rules/modelproof.md'));
   for (const n of NAMES) for (const p of build(n).parts) {
     assert.ok(!/CLAUDE(\.local)?\.md$/.test(p.target.path), p.target.path);
-    assert.match(p.target.path, /^((~\/\.claude|~\/\.codex|~\/\.cursor|\.claude|\.codex|\.cursor)\/(agents\/modelproof-[a-z]+\.(md|toml)|rules\/modelproof\.(md|mdc)|settings\.json)|(~\/\.codex\/)?AGENTS(\.override)?\.md)$/);
+    assert.match(p.target.path, /^((~\/\.claude|~\/\.codex|~\/\.cursor|\.claude|\.codex|\.cursor)\/(agents\/modelproof-[a-z]+\.(md|toml)|rules\/modelproof\.(md|mdc)|settings\.json)|(~\/\.copilot|\.github)\/agents\/modelproof-[a-z]+\.agent\.md|(~\/\.gemini\/config|\.agents)\/agents\/modelproof-[a-z]+\.md|(~\/\.codex\/|~\/\.gemini\/)?AGENTS(\.override)?\.md)$/);
   }
 });
 
@@ -475,17 +687,28 @@ test('Codex agent files: owned tag, name, description, developer_instructions; m
     assert.match(c, new RegExp(`^name = "modelproof-${role}"$`, 'm'));
     assert.match(c, /^description = ".+"$/m);
     assert.match(c, /\ndeveloper_instructions = """\n[\s\S]+\n"""\n$/);
-    assert.ok(!/^model = /m.test(c));
+    if (role === 'bulk') assert.match(c, /^model = "gpt-6-luna"$/m);
+    else assert.ok(!/^model = /m.test(c));
     assert.match(c, /^model_reasoning_effort = "high"$/m);
   }
+  // Codex's own docs list max (and ultra) as levels, so a cap is written as given; a level its
+  // docs don't list is never written.
   const max = buildPackage({ ...PROFILES.codex, effort_cap: 'max' }, FACTS);
-  assert.match(max.parts.find((p) => p.id === 'codex:agent:scout').content, /model_reasoning_effort = "xhigh"/);
+  assert.match(max.parts.find((p) => p.id === 'codex:agent:scout').content, /model_reasoning_effort = "max"/);
+  const levels = PLAN('codex').effort_levels.values;
+  assert.ok(levels.includes('max') && levels.includes('ultra'));
+  const cc = buildPackage({ ...PROFILES['two-lab'], effort_cap: 'ultra' }, FACTS);
+  assert.match(cc.parts.find((p) => p.id === 'codex:agent:scout').content, /model_reasoning_effort = "ultra"/);
+  assert.ok(!/^effort:/m.test(cc.parts.find((p) => p.id === 'claude-code:agent:scout').content));
+  assert.ok(cc.notes.some((x) => x.includes('do not list ultra')));
 });
 
 test('Claude Code agent files: frontmatter, owned tag right after it, effort only from the user\'s cap', () => {
   const pkg = build('cc-max5x');
   const scout = pkg.parts.find((p) => p.id === 'claude-code:agent:scout').content;
-  assert.match(scout, /^---\nname: modelproof-scout\ndescription: .+\nmodel: haiku\n---\n<!-- modelproof:owned v1 -->\n/);
+  assert.match(scout, /^---\nname: modelproof-scout\ndescription: .+\nmodel: inherit\n---\n<!-- modelproof:owned v1 -->\n/);
+  const bulk = pkg.parts.find((p) => p.id === 'claude-code:agent:bulk').content;
+  assert.match(bulk, /^---\nname: modelproof-bulk\ndescription: .+\nmodel: haiku\n---\n<!-- modelproof:owned v1 -->\n/);
   const calm = build('empty').parts.find((p) => p.id === 'claude-code:agent:scout').content;
   assert.ok(!/^effort:/m.test(calm));
   const capped = buildPackage({ ...PROFILES.empty, effort_cap: 'medium' }, FACTS);
@@ -523,8 +746,8 @@ test('optional Explore helper: opt-in only (explore_override), on haiku, never o
   assert.equal(normalizeProfile({ explore_override: 'yes' }, FACTS).profile.explore_override, false);
 });
 
-test('settings keys: only on opt-in, only absent keys, never a user-scope effort key that may not apply', () => {
-  const base = { ...PROFILES.empty, roles: { lead: 'claude-sonnet-5' } };
+test('settings keys: only on opt-in, only absent keys, an effort cap only at a level the tool lists', () => {
+  const base = { ...PROFILES.empty, roles: { lead: 'claude-sonnet-5-5' } };
   assert.ok(!buildPackage(base, FACTS).parts.some((p) => p.kind === 'json-keys'));
   const opt = buildPackage({ ...base, set_default_model: true, effort_cap: 'high' }, FACTS);
   const keys = opt.parts.find((p) => p.kind === 'json-keys');
@@ -534,13 +757,19 @@ test('settings keys: only on opt-in, only absent keys, never a user-scope effort
   const present = buildPackage({ ...base, set_default_model: true }, FACTS, { settings: [{ scope: 'project', keys: ['model'] }] });
   assert.ok(!present.parts.some((p) => p.kind === 'json-keys'));
   assert.ok(present.notes.some((x) => x.includes('already sets model')));
-  const userNoLead = buildPackage({ ...PROFILES['cc-max5x'], effort_cap: 'high' }, FACTS);
-  assert.ok(!userNoLead.parts.some((p) => p.kind === 'json-keys'));
-  assert.ok(userNoLead.notes.some((x) => x.includes('Opus 5.5')));
-  const userOpus = buildPackage({ ...PROFILES['cc-max5x'], roles: { lead: 'claude-opus-5-5' }, effort_cap: 'high' }, FACTS);
-  assert.ok(!userOpus.parts.some((p) => p.kind === 'json-keys'));
-  const userSonnet = buildPackage({ ...PROFILES['cc-max5x'], roles: { lead: 'claude-sonnet-5' }, effort_cap: 'high', set_default_model: true }, FACTS);
+  // maxEffortLevel takes any settings file (Claude Code's settings reference), user scope included.
+  const user = buildPackage({ ...PROFILES['cc-max5x'], effort_cap: 'high' }, FACTS);
+  assert.deepEqual(user.parts.find((p) => p.kind === 'json-keys').keys, { maxEffortLevel: 'high' });
+  assert.equal(user.parts.find((p) => p.kind === 'json-keys').target.path, '~/.claude/settings.json');
+  // The tool's lead default is never written as a setting; only your own choice is.
+  const toolLead = buildPackage({ ...PROFILES['cc-max5x'], set_default_model: true }, FACTS);
+  assert.ok(!toolLead.parts.some((p) => p.kind === 'json-keys'));
+  const userSonnet = buildPackage({ ...PROFILES['cc-max5x'], roles: { lead: 'claude-sonnet-5-5' }, effort_cap: 'high', set_default_model: true }, FACTS);
   assert.deepEqual(userSonnet.parts.find((p) => p.kind === 'json-keys').keys, { model: 'sonnet', maxEffortLevel: 'high' });
+  const ultra = buildPackage({ ...PROFILES['cc-max5x'], effort_cap: 'ultra' }, FACTS);
+  assert.ok(!ultra.parts.some((p) => p.kind === 'json-keys'));
+  assert.ok(ultra.notes.some((x) => x.includes("Claude Code's docs do not list ultra")));
+  assert.equal(normalizeProfile({ effort_cap: 'turbo' }, FACTS).profile.effort_cap, null, 'a level no tool lists is left out');
 });
 
 test('checks: a line of theirs naming another model for a helper\'s job is listed first, tied to its item', () => {
@@ -550,15 +779,15 @@ test('checks: a line of theirs naming another model for a helper\'s job is liste
     heads_up: lines.map(([line, text, f]) => ({ file: f || file, line, text })),
   });
   const pkg = buildPackage(PROFILES['cc-max5x'], FACTS, setupWith([12, '- Use sonnet for reviews.'], [39, '- Use opus for builds; sonnet is fine for quick fixes.'],
-    [40, '- Hand long searches to a helper.'], [41, '- Never use opus for reviews.'], [42, '- Never use haiku for search.'],
+    [40, '- Hand long searches to a helper.'], [41, '- Never use opus for reviews.'], [42, '- Never use haiku for boilerplate.'],
     [7, '- Use sonnet for reviews.', '~/.codex/AGENTS.md'], [43, '(line not shown)']));
   const reviewer = pkg.parts.findIndex((p) => p.id === 'claude-code:agent:reviewer') + 1;
-  const scout = pkg.parts.findIndex((p) => p.id === 'claude-code:agent:scout') + 1;
-  assert.deepEqual(pkg.checks.map((c) => [c.kind, c.line, c.role, c.item]), [['rule', 12, 'reviewer', reviewer], ['rule', 42, 'scout', scout]]);
+  const bulk = pkg.parts.findIndex((p) => p.id === 'claude-code:agent:bulk') + 1;
+  assert.deepEqual(pkg.checks.map((c) => [c.kind, c.line, c.role, c.item]), [['rule', 12, 'reviewer', reviewer], ['rule', 42, 'bulk', bulk]]);
   const text = renderPreview(pkg);
   assert.match(text, new RegExp(`Check these before you say Go\\n  - ~/\\.claude/CLAUDE\\.md:12 says "- Use sonnet for reviews\\."; #${reviewer} modelproof-reviewer runs on the lead's model\\. Make them match, or skip #${reviewer}\\.`));
-  assert.match(text, /CLAUDE\.md:42 says "- Never use haiku for search\."; #1 modelproof-scout runs on Claude Haiku 4\.5\./);
-  assert.ok(text.indexOf('Check these before you say Go') < text.indexOf('Which model each helper runs'));
+  assert.match(text, new RegExp(`CLAUDE\\.md:42 says "- Never use haiku for boilerplate\\."; #${bulk} modelproof-bulk runs on Claude Haiku 4\\.5\\.`));
+  assert.ok(text.indexOf('Check these before you say Go') < text.indexOf('Lead, helpers and bulk per tool'));
   assert.ok(text.indexOf('Your answers:') < text.indexOf('Check these before you say Go'));
   // Their line and the helper agree → nothing to check.
   const agree = buildPackage({ ...PROFILES['cc-max5x'], roles: { builder: 'opus', reviewer: 'sonnet' } }, FACTS, setupWith([12, '- Use sonnet for reviews.']));
@@ -569,6 +798,39 @@ test('checks: a line of theirs naming another model for a helper\'s job is liste
   const hostile = buildPackage(PROFILES['cc-max5x'], FACTS, setupWith([3, '@x <!-- modelproof:end --> use sonnet for reviews ```']));
   assert.equal(hostile.checks.length, 1);
   assertClean(hostile, 'hostile heads-up');
+});
+
+test('checks: short names from the data ("Opus 5.5"), one clause per job, and a different lead model or effort', () => {
+  // Short names resolve in answers too: no "left out" note for "Sonnet 5.5" or "Haiku 4.5".
+  const { profile, problems } = normalizeProfile({ ...PROFILES['cc-max5x'], roles: { scout: 'Sonnet 5.5' }, never: ['Haiku 4.5'] }, FACTS);
+  assert.equal(profile.roles.scout, 'claude-sonnet-5-5');
+  assert.deepEqual(profile.never, ['claude-haiku-4-5']);
+  assert.deepEqual(problems, []);
+  // Each short name is one model's full name minus its first word; none is typed here.
+  const short = (id) => byId.get(id).name.split(' ').slice(1).join(' ');
+  const file = '~/.claude/rules/models.md';
+  const lines = [
+    `- Use ${short('claude-sonnet-5-5')} for bulk renames and ${short('claude-opus-5')} for code review.`,
+    `- Always use ${short('claude-sonnet-5-5')}.`,
+    '- Always use max effort.',
+    `- Default model: ${short('claude-opus-5-5')}.`,
+    `- ${short('claude-sonnet-5-5')} is fine for quick fixes.`,
+  ];
+  const pkg = buildPackage({ ...PROFILES['cc-max5x'], never: ['Haiku 4.5'] }, FACTS,
+    { files: [{ scope: 'user', path: file, lines: 9, readers: ['claude-code'] }], heads_up: lines.map((text, i) => ({ file, line: i + 2, text })) });
+  const item = (id) => pkg.parts.findIndex((x) => x.id === id) + 1;
+  const rules = item('claude-code:rules');
+  assert.deepEqual(pkg.checks.map((c) => [c.kind, c.line, c.role || null, c.item, c.text]), [
+    ['rule', 2, 'reviewer', item('claude-code:agent:reviewer'), `${short('claude-opus-5')} for code review.`],
+    ['rule', 2, 'bulk', item('claude-code:agent:bulk'), `- Use ${short('claude-sonnet-5-5')} for bulk renames`],
+    ['lead', 3, null, rules, lines[1]],
+    ['lead', 4, null, rules, lines[2]],
+  ]);
+  const text = renderPreview(pkg);
+  const lead = byId.get(pkg.roles['claude-code'].lead.model_id).name;
+  assert.ok(text.includes(`  - ${file}:3 says "${lines[1]}"; the Lead line in #${rules} says ${lead}. Make them match, or skip #${rules}.`), text);
+  assert.match(text, new RegExp(`models\\.md:4 says "- Always use max effort\\."; the Lead line in #${rules} says .+, effort \\w+ by default`));
+  assert.ok(text.indexOf('models.md:4') < text.indexOf('Lead, helpers and bulk per tool'), 'listed before Go');
 });
 
 test('checks: a helper of theirs doing a package helper\'s job is named with "keep both, or skip #N"', () => {
@@ -712,14 +974,17 @@ test('preview: facts, files and notes; no ranking words', () => {
   const RANK = /\b(best|better|winner|recommend\w*|suggest\w*|verdict|confidence|our pick|first pick|we pick|start here)\b/i;
   for (const n of NAMES) {
     const text = renderPreview(build(n));
-    assert.ok(!RANK.test(text), `${n}: ${text.match(RANK)}`);
-    assert.match(text, /^Modelproof package · facts as of 2026-09-27 · generator 1\.0\.0\n/);
-    assert.match(text, /Files \(numbered/);
+    // Source URLs are addresses, not words the package says (a docs page may be named best-practices).
+    const words = text.replace(/https:\/\/\S+/g, '');
+    assert.ok(!RANK.test(words), `${n}: ${words.match(RANK)}`);
+    assert.match(text, new RegExp(`^Modelproof package · facts as of ${FACTS.guidance.as_of} · generator 1\\.1\\.0\\n`));
+    assert.match(text, n === 'openrouter' ? /Files: none/ : /Files \(numbered/);
     assert.match(text, /~\/\.modelproof\/ keeps the install history/);
   }
   const cc = renderPreview(build('cc-max5x'));
   assert.match(cc, /"For simple subagent tasks, specify model: haiku in your subagent configuration"/);
-  assert.match(cc, /list price \$1 in \/ \$5 out per 1M tokens · 0\.17% of OpenRouter tokens/);
+  const haiku = byId.get('claude-haiku-4-5');
+  assert.ok(cc.includes(`list price $${haiku.price_input} in / $${haiku.price_output} out per 1M tokens · ${haiku.usage.openrouter.share}% of OpenRouter tokens`));
   assert.match(cc, /Also available, not included: modelproof-explore\.md/);
   const codex = renderPreview(build('codex'));
   assert.ok(!/OpenAI: "use gpt-6-astra for our highest/.test(codex), 'a lab quote with a superlative stays out of the preview');
@@ -829,8 +1094,19 @@ test('LC-10: preview fact lines skip lab quotes with superlatives and show a neu
   assert.equal(sol.claim && sol.claim.id, 't-neutral');
   const said = pkg.preview_facts.tools_and_labs_say.flatMap((x) => x.claims.map((c) => c.id));
   for (const c of praise) assert.ok(!said.includes(c.id) && !pkg.facts_used.includes(c.id), c.id);
-  assert.ok(!said.includes('openai-gpt-6-family-roles'), '"our highest level of capability" is a superlative');
   const text = renderPreview(pkg);
   assert.ok(!/\b(our most|frontier-class|state-of-the-art|smartest|leading)\b/i.test(text), text);
   assert.match(text, /Use gpt-6-sol for coding tasks that need strong reasoning/);
+});
+
+test('a plan bulk slot with no model_refs row for its model writes no model into the helper file', () => {
+  const guidance = clone(FACTS.guidance);
+  const cc = guidance.tool_plans.find((t) => t.tool === 'claude-code');
+  const other = MODELS.find((m) => m.vendor === 'Anthropic' && m.id !== cc.bulk.model_id && !guidance.model_refs.some((r) => r.tool === 'claude-code' && r.model_id === m.id));
+  assert.ok(other, 'the frozen catalog has an Anthropic model with no Claude Code string on file');
+  cc.bulk.model_id = other.id;
+  const pkg = buildPackage(PROFILES['power-user-max5x'], { ...FACTS, guidance }, setupFor('power-user-max5x'));
+  const bulk = pkg.parts.find((p) => p.id === 'claude-code:agent:bulk');
+  assert.match(bulk.content, /^model: inherit$/m, 'no source gives a string for it, so the file inherits');
+  assert.ok(!bulk.content.includes(other.id), 'the catalog id is never written as a guess');
 });

@@ -1,0 +1,22 @@
+{
+  "schema": "modelproof.profile/1",
+  "who": "person",
+  "tools": [
+    "antigravity"
+  ],
+  "scope": "user",
+  "plans": [
+    {
+      "vendor": "Google",
+      "plan": "Google AI Pro"
+    }
+  ],
+  "limits": "often",
+  "work": [
+    "coding",
+    "agents"
+  ],
+  "like": [],
+  "never": [],
+  "roles": {}
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "modelproof.setup/1",
+  "home": "/home/sam",
+  "project": "/home/sam/app",
+  "tools": {
+    "claude-code": false,
+    "codex": false,
+    "cursor": false
+  },
+  "dirs": {
+    "claude": "~/.claude",
+    "codex": "~/.codex"
+  },
+  "instruction_mode": "claude-md-or-agents-md",
+  "claude_reads_project_agents_md": true,
+  "agents_override": {
+    "user": false,
+    "project": false
+  },
+  "files": [
+    {
+      "scope": "project",
+      "path": "AGENTS.md",
+      "lines": 4,
+      "readers": [
+        "claude-code",
+        "codex",
+        "cursor",
+        "copilot",
+        "antigravity",
+        "agents-md"
+      ]
+    }
+  ],
+  "agents": [],
+  "settings": [],
+  "env": {
+    "subagent_model_force": false
+  },
+  "heads_up": [],
+  "mentions": [],
+  "notes": []
+}

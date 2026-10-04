@@ -15,3 +15,9 @@ and values inside are made up (`/home/alex`, `fixture-...-not-for-output`).
 | `empty` | nothing at all (no folder in git) | `profiles/empty.json` |
 | `symlink` | `project/.claude` → `config/claude`, `project/AGENTS.md` → `docs/AGENTS.md`, `home/.claude` → `dotfiles/claude`; every link target is inside the setup | `symlink/profile.json`, `symlink/profile-user.json` |
 | `agents-md-only` | a project with only `AGENTS.md`, used with Claude Code (must never get a `CLAUDE.md`) | `agents-md-only/profile.json` |
+| `copilot` | project `AGENTS.md` and `.github/copilot-instructions.md` (both must stay as they are) | `profiles/copilot.json` |
+| `antigravity` | `~/.gemini/AGENTS.md` with the user's own global rules (the block goes after them) | `profiles/antigravity.json` (user scope) |
+| `cc-copilot` | project `CLAUDE.md`, `AGENTS.md`, `.claude/settings.json` and someone's own `.github/agents/docs-writer.agent.md`; GitHub Copilot also loads `.claude/agents`, so no helper may be added twice | `profiles/cc-copilot.json` |
+| `power-user-max5x` | a heavy Claude Code user on Max 5x: `~/.claude/CLAUDE.md` with an `@~/work/notes/tone.md` import, helpers `code-simplifier` and `checker` (its description says it verifies, so it overlaps the reviewer) with no model line, an output style, a skill, and `settings.json` with permissions, env, hooks and plugins (none printed) | `profiles/power-user-max5x.json` (user scope) |
+
+OpenRouter / API is copy only: `profiles/openrouter.json` runs on the `empty` setup and must write nothing.

@@ -1,0 +1,231 @@
+{
+  "version": "modelproof.package/1",
+  "generator_version": "1.1.0",
+  "as_of": "2026-10-03",
+  "profile": {
+    "schema": "modelproof.profile/1",
+    "who": "person",
+    "tools": [
+      "antigravity"
+    ],
+    "scope": "user",
+    "plans": [
+      {
+        "vendor": "Google",
+        "plan": "Google AI Pro"
+      }
+    ],
+    "api": false,
+    "limits": "often",
+    "work": [
+      "coding",
+      "agents"
+    ],
+    "like": [],
+    "never": [],
+    "roles": {},
+    "effort_cap": null,
+    "set_default_model": false,
+    "explore_override": false,
+    "org": null
+  },
+  "parts": [
+    {
+      "id": "antigravity:agent:scout",
+      "tool": "antigravity",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.gemini/config/agents/modelproof-scout.md"
+      },
+      "content": "---\nname: modelproof-scout\ndescription: Reads, searches and sums up code or docs for the lead. Use it for long reading and lookups. It does not edit files.\ntools:\n  - view_file\n  - grep_search\nmodel: inherit\n---\n<!-- modelproof:owned v1 -->\nYou are the scout. You find and read; you do not edit files.\n- Search first (grep or glob), then open only the line ranges you need.\n- Never read a large file whole.\n- Answer in a few lines: what you found, with file:line for each fact.\n- Say what you could not find.\n- Put long findings in a file on disk and return its path.\n",
+      "why": "Antigravity runs this helper on the lead's model (model: inherit, its default tier).",
+      "lines": 15
+    },
+    {
+      "id": "antigravity:agent:builder",
+      "tool": "antigravity",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.gemini/config/agents/modelproof-builder.md"
+      },
+      "content": "---\nname: modelproof-builder\ndescription: Makes one planned change from a brief (exact files, goal, done check) and reports the check result.\ntools:\n  - view_file\n  - grep_search\n  - replace_file_content\n  - run_command\nmodel: inherit\n---\n<!-- modelproof:owned v1 -->\nYou are the builder. You make the change the lead planned.\n- Touch only the files the brief names; ask before touching others.\n- Run the done check from the brief and report its exact result.\n- Return in a few lines: files changed, the last lines of the check, anything left undone.\n- Put long logs in a file on disk and return its path.\n",
+      "why": "Antigravity runs this helper on the lead's model (model: inherit, its default tier).",
+      "lines": 16
+    },
+    {
+      "id": "antigravity:agent:reviewer",
+      "tool": "antigravity",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.gemini/config/agents/modelproof-reviewer.md"
+      },
+      "content": "---\nname: modelproof-reviewer\ndescription: Reviews a change cold from the diff, runs the checks itself, and reports problems with file:line.\ntools:\n  - view_file\n  - grep_search\n  - run_command\nmodel: inherit\n---\n<!-- modelproof:owned v1 -->\nYou are the reviewer. You review cold: the diff, not the author's summary.\n- Read the diff (git diff) and the files it touches.\n- Run the project's checks yourself; scripts decide pass or fail.\n- Report problems worst first, each with file:line and a one-line fix.\n- Say plainly when you found nothing wrong. Do not edit files.\n",
+      "why": "Antigravity runs this helper on the lead's model (model: inherit, its default tier).",
+      "lines": 15
+    },
+    {
+      "id": "antigravity:agent:bulk",
+      "tool": "antigravity",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.gemini/config/agents/modelproof-bulk.md"
+      },
+      "content": "---\nname: modelproof-bulk\ndescription: Does mechanical, repetitive work (renames, boilerplate, many small edits) whose result a script or test can check.\ntools:\n  - view_file\n  - grep_search\n  - replace_file_content\n  - run_command\nmodel: inherit\n---\n<!-- modelproof:owned v1 -->\nYou are the bulk helper. You do mechanical work the lead has already planned.\n- Follow the brief exactly: the files, the change, and the check that proves it.\n- Run the check after the change and report its exact result.\n- Stop and report back when a step needs judgment the brief does not give.\n- Return in a few lines: what changed, the last lines of the check.\n",
+      "why": "Antigravity runs this helper on the lead's model (model: inherit, its default tier).",
+      "lines": 16
+    },
+    {
+      "id": "antigravity:text",
+      "tool": "antigravity",
+      "readers": [
+        "antigravity"
+      ],
+      "kind": "block",
+      "enforced": false,
+      "target": {
+        "scope": "user",
+        "path": "~/.gemini/AGENTS.md"
+      },
+      "content": "## Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n### Lead, helpers and bulk\n- Lead: the model you choose in Antigravity. In Antigravity the reasoning model is chosen in the model selector and stays set for the rest of the conversation.\n  Source: Antigravity docs, https://antigravity.google/docs/models (2026-10-03)\n- Helpers: modelproof-scout, modelproof-builder and modelproof-reviewer run on the lead's model (inherit).\n  Source: Antigravity docs, https://antigravity.google/docs/subagents (2026-10-03)\n- Bulk: modelproof-bulk runs on the lead's model until you set its model, for repeatable helper work. An Antigravity custom subagent file sets a model tier of inherit, flash or pro, and inherit is the default.\n  Source: Antigravity docs, https://antigravity.google/docs/subagents (2026-10-03)\n\n### How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n### Context\n- Search before reading; read line ranges, not whole big files.\n- Hand long reading to modelproof-scout and take back a short summary.\n\n### Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- Google's Gemini docs state Gemini 3 models use a thinking_level parameter with discrete reasoning tiers. Source: Google docs, https://cloud.google.com/vertex-ai/generative-ai/docs/thinking (2026-10-03)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "why": "Antigravity reads ~/.gemini/AGENTS.md as global rules for every project.",
+      "lines": 24
+    }
+  ],
+  "copy": [],
+  "available": [],
+  "checks": [],
+  "roles": {
+    "antigravity": {
+      "lead": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "antigravity-model-choice-persists",
+            "sentence": "In Antigravity the reasoning model is chosen in the model selector and stays set for the rest of the conversation.",
+            "quote": "Your choice of reasoning model persists between messages within a conversation.",
+            "source_url": "https://antigravity.google/docs/models",
+            "date": "2026-10-03"
+          },
+          {
+            "id": "antigravity-core-agent-models",
+            "sentence": "Antigravity's plans page lists Gemini 3.1 Pro and Gemini 3.8 Flash among the Gemini models offered as the core agent model on every plan.",
+            "quote": "use of Gemini models, including Gemini 3.1 Pro, Gemini 3.8 Flash, and other offered Gemini Enterprise models as the core agent model",
+            "source_url": "https://antigravity.google/docs/plans",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "scout": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "antigravity-subagent-model-tier",
+            "sentence": "An Antigravity custom subagent file sets a model tier of inherit, flash or pro, and inherit is the default.",
+            "quote": "model tier used when invoked ( inherit , flash , or pro )",
+            "source_url": "https://antigravity.google/docs/subagents",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "builder": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "antigravity-subagent-model-tier",
+            "sentence": "An Antigravity custom subagent file sets a model tier of inherit, flash or pro, and inherit is the default.",
+            "quote": "model tier used when invoked ( inherit , flash , or pro )",
+            "source_url": "https://antigravity.google/docs/subagents",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "reviewer": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "antigravity-subagent-model-tier",
+            "sentence": "An Antigravity custom subagent file sets a model tier of inherit, flash or pro, and inherit is the default.",
+            "quote": "model tier used when invoked ( inherit , flash , or pro )",
+            "source_url": "https://antigravity.google/docs/subagents",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "bulk": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "antigravity-subagent-model-tier",
+            "sentence": "An Antigravity custom subagent file sets a model tier of inherit, flash or pro, and inherit is the default.",
+            "quote": "model tier used when invoked ( inherit , flash , or pro )",
+            "source_url": "https://antigravity.google/docs/subagents",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null,
+        "choice": true
+      }
+    }
+  },
+  "preview_facts": {
+    "models_you_use": [],
+    "tools_and_labs_say": [
+      {
+        "subject": "Google",
+        "claims": [
+          {
+            "id": "google-gemini-cli-stops-serving",
+            "sentence": "Google's developer blog states Gemini CLI and Gemini Code Assist IDE extensions stop serving Google AI Pro and Ultra users on 18 June 2026.",
+            "quote": "On June 18, 2026, Gemini CLI and Gemini Code Assist IDE extensions will stop serving requests for Google AI Pro and Ultra",
+            "source_url": "https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli",
+            "date": "2026-10-03"
+          }
+        ]
+      }
+    ]
+  },
+  "facts_used": [
+    "antigravity-core-agent-models",
+    "antigravity-model-choice-persists",
+    "antigravity-subagent-model-tier",
+    "google-gemini-3-thinking-level",
+    "google-gemini-cli-stops-serving"
+  ],
+  "notes": [
+    "Start a new session so each tool loads the new helper and rule files.",
+    "Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history."
+  ],
+  "model_names": {}
+}

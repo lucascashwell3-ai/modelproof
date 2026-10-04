@@ -1,0 +1,233 @@
+{
+  "version": "modelproof.package/1",
+  "generator_version": "1.1.0",
+  "as_of": "2026-10-03",
+  "profile": {
+    "schema": "modelproof.profile/1",
+    "who": "person",
+    "tools": [
+      "copilot"
+    ],
+    "scope": "project",
+    "plans": [
+      {
+        "vendor": "GitHub Copilot",
+        "plan": "Pro+"
+      }
+    ],
+    "api": false,
+    "limits": "sometimes",
+    "work": [
+      "coding"
+    ],
+    "like": [],
+    "never": [],
+    "roles": {},
+    "effort_cap": null,
+    "set_default_model": false,
+    "explore_override": false,
+    "org": null
+  },
+  "parts": [
+    {
+      "id": "copilot:agent:scout",
+      "tool": "copilot",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "project",
+        "path": ".github/agents/modelproof-scout.agent.md"
+      },
+      "content": "---\nname: modelproof-scout\ndescription: Reads, searches and sums up code or docs for the lead. Use it for long reading and lookups. It does not edit files.\n---\n<!-- modelproof:owned v1 -->\nYou are the scout. You find and read; you do not edit files.\n- Search first (grep or glob), then open only the line ranges you need.\n- Never read a large file whole.\n- Answer in a few lines: what you found, with file:line for each fact.\n- Say what you could not find.\n- Put long findings in a file on disk and return its path.\n",
+      "why": "No model line, so GitHub Copilot runs this helper on the default model; set one in the file's model field to change it.",
+      "lines": 11
+    },
+    {
+      "id": "copilot:agent:builder",
+      "tool": "copilot",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "project",
+        "path": ".github/agents/modelproof-builder.agent.md"
+      },
+      "content": "---\nname: modelproof-builder\ndescription: Makes one planned change from a brief (exact files, goal, done check) and reports the check result.\n---\n<!-- modelproof:owned v1 -->\nYou are the builder. You make the change the lead planned.\n- Touch only the files the brief names; ask before touching others.\n- Run the done check from the brief and report its exact result.\n- Return in a few lines: files changed, the last lines of the check, anything left undone.\n- Put long logs in a file on disk and return its path.\n",
+      "why": "No model line, so GitHub Copilot runs this helper on the default model; set one in the file's model field to change it.",
+      "lines": 10
+    },
+    {
+      "id": "copilot:agent:reviewer",
+      "tool": "copilot",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "project",
+        "path": ".github/agents/modelproof-reviewer.agent.md"
+      },
+      "content": "---\nname: modelproof-reviewer\ndescription: Reviews a change cold from the diff, runs the checks itself, and reports problems with file:line.\n---\n<!-- modelproof:owned v1 -->\nYou are the reviewer. You review cold: the diff, not the author's summary.\n- Read the diff (git diff) and the files it touches.\n- Run the project's checks yourself; scripts decide pass or fail.\n- Report problems worst first, each with file:line and a one-line fix.\n- Say plainly when you found nothing wrong. Do not edit files.\n",
+      "why": "No model line, so GitHub Copilot runs this helper on the default model; set one in the file's model field to change it.",
+      "lines": 10
+    },
+    {
+      "id": "copilot:agent:bulk",
+      "tool": "copilot",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "project",
+        "path": ".github/agents/modelproof-bulk.agent.md"
+      },
+      "content": "---\nname: modelproof-bulk\ndescription: Does mechanical, repetitive work (renames, boilerplate, many small edits) whose result a script or test can check.\n---\n<!-- modelproof:owned v1 -->\nYou are the bulk helper. You do mechanical work the lead has already planned.\n- Follow the brief exactly: the files, the change, and the check that proves it.\n- Run the check after the change and report its exact result.\n- Stop and report back when a step needs judgment the brief does not give.\n- Return in a few lines: what changed, the last lines of the check.\n",
+      "why": "No model line, so GitHub Copilot runs this helper on the default model; set one in the file's model field to change it.",
+      "lines": 10
+    },
+    {
+      "id": "agents-md:text",
+      "tool": "copilot",
+      "readers": [
+        "copilot"
+      ],
+      "kind": "block",
+      "enforced": false,
+      "target": {
+        "scope": "project",
+        "path": "AGENTS.md"
+      },
+      "content": "## Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n### Lead, helpers and bulk\n- Lead: the model you choose in GitHub Copilot. In VS Code, the Copilot Chat model is chosen from a dropdown at the bottom of the chat view.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model (2026-09-27)\n- Helpers: modelproof-scout, modelproof-builder and modelproof-reviewer run on the lead's model (inherit).\n  Source: GitHub Copilot docs, https://code.visualstudio.com/docs/copilot/agents/subagents (2026-10-03)\n- Near a full usage limit: GitHub's usage guide tells users to run subagents on cheaper models.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)\n- Bulk: modelproof-bulk runs on the lead's model until you set its model, for routine, well-scoped changes. GitHub's usage guide names lighter models for refactoring, formatting, documentation updates and other routine, well-scoped changes.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)\n\n### How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n### Context\n- Search before reading; read line ranges, not whole big files.\n\n### Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "why": "One block at the end of AGENTS.md, read by GitHub Copilot; your own text is untouched.",
+      "lines": 24
+    }
+  ],
+  "copy": [],
+  "available": [],
+  "checks": [],
+  "roles": {
+    "copilot": {
+      "lead": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "copilot-model-picker",
+            "sentence": "In VS Code, the Copilot Chat model is chosen from a dropdown at the bottom of the chat view.",
+            "quote": "At the bottom of the chat view, select the CURRENT-MODEL dropdown menu, then click the AI model of your choice.",
+            "source_url": "https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model",
+            "date": "2026-09-27"
+          },
+          {
+            "id": "copilot-thinking-effort-default",
+            "sentence": "VS Code sets its own effort level per Copilot model by default, with adaptive reasoning on.",
+            "quote": "By default, VS Code sets recommended effort levels and has adaptive reasoning enabled",
+            "source_url": "https://code.visualstudio.com/docs/copilot/customization/language-models",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "scout": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "copilot-subagent-main-model-default",
+            "sentence": "In VS Code, a Copilot subagent runs on the main conversation model when neither the tool call nor the agent names a model, unless the experimental Auto setting is on.",
+            "quote": "to use Auto instead of the main model when neither the tool call nor the agent specifies a model",
+            "source_url": "https://code.visualstudio.com/docs/copilot/agents/subagents",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "builder": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "copilot-subagent-main-model-default",
+            "sentence": "In VS Code, a Copilot subagent runs on the main conversation model when neither the tool call nor the agent names a model, unless the experimental Auto setting is on.",
+            "quote": "to use Auto instead of the main model when neither the tool call nor the agent specifies a model",
+            "source_url": "https://code.visualstudio.com/docs/copilot/agents/subagents",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "reviewer": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "copilot-subagent-main-model-default",
+            "sentence": "In VS Code, a Copilot subagent runs on the main conversation model when neither the tool call nor the agent names a model, unless the experimental Auto setting is on.",
+            "quote": "to use Auto instead of the main model when neither the tool call nor the agent specifies a model",
+            "source_url": "https://code.visualstudio.com/docs/copilot/agents/subagents",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
+      "bulk": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "copilot-lighter-models-routine",
+            "sentence": "GitHub's usage guide names lighter models for refactoring, formatting, documentation updates and other routine, well-scoped changes.",
+            "quote": "Best for refactoring, formatting, documentation updates, and other routine, well-scoped changes.",
+            "source_url": "https://docs.github.com/en/copilot/tutorials/optimize-ai-usage",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null,
+        "choice": true
+      },
+      "near_limit": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "when": "a helper job",
+        "basis": [
+          {
+            "id": "copilot-subagents-cheaper-models",
+            "sentence": "GitHub's usage guide tells users to run subagents on cheaper models.",
+            "quote": "Run subagents on cheaper models.",
+            "source_url": "https://docs.github.com/en/copilot/tutorials/optimize-ai-usage",
+            "date": "2026-10-03"
+          }
+        ],
+        "choice": true
+      }
+    }
+  },
+  "preview_facts": {
+    "models_you_use": [],
+    "tools_and_labs_say": []
+  },
+  "facts_used": [
+    "copilot-lighter-models-routine",
+    "copilot-model-picker",
+    "copilot-subagent-main-model-default",
+    "copilot-subagents-cheaper-models",
+    "copilot-thinking-effort-default"
+  ],
+  "notes": [
+    "Start a new session so each tool loads the new helper and rule files.",
+    "Undo removes every file, block and key this adds; ~/.modelproof/ keeps the install history."
+  ],
+  "model_names": {}
+}

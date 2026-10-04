@@ -22,7 +22,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { isNotablePriceChange, priceEntry, addEntry } from './timeline.mjs';
+import { isNotablePriceChange, priceEntry, addEntry, normalizeReleased, releaseDateFor } from './timeline.mjs';
 import { deriveAvailabilityForModel, availabilityEquals, fetchBedrockModelKeys } from './derive-availability.mjs';
 import { deriveUsageForCatalog, fetchOpenRouterRankings } from './derive-usage.mjs';
 import { deriveTaskFit, TASK_IDS } from './derive-task-fit.mjs';
@@ -839,7 +839,7 @@ async function main() {
         id,
         name,
         vendor,
-        released: c.created || null,
+        released: normalizeReleased(c.created),   // YYYY-MM-DD or null — never "unknown" (data contract)
         context_window: c.contextWindow ?? llmSame?.contextWindow ?? null,
         price_input: c.priceInput != null ? Math.round(c.priceInput * 100) / 100 : (llmSame?.priceInput ?? null),
         price_output: c.priceOutput != null ? Math.round(c.priceOutput * 100) / 100 : (llmSame?.priceOutput ?? null),
@@ -958,9 +958,11 @@ async function main() {
       changed = true;
       changelog.push({ date: today, model: nm.name, field: 'added', old: null, new: 'new model', sources: nm.sources });
       data.releases = data.releases || [];
+      const when = releaseDateFor(nm.released, today);
       data.releases.push({
         kind: 'model',
-        date: nm.released ? String(nm.released).slice(0, 10) : today,
+        date: when.date,
+        ...(when.date_precision ? { date_precision: when.date_precision } : {}),
         vendor: nm.vendor,
         title: releaseTitle(nm),
         summary: 'Listed with sourced pricing and context window; benchmark scores are pending publication.',

@@ -48,3 +48,31 @@ migration — item 3 — were both final):
   the key's own additional evidence families — vendor expert-default rosters, cited enterprise
   case studies — that this engine deliberately doesn't rank on): S10, S11, S12, S14, S23, S26,
   S27, S29, S33, S37. must-never stays a hard 15/15.
+
+Data-contract pass (2026-10-03, scripts/validate-data.mjs FEEDS):
+- `models.json` — the seven `released: "unknown"` values are now `null`, the Claude Opus 4.8
+  timeline entry carries its sourced full date (2026-05-28, Anthropic's announcement), and the dead
+  top-level `usage` lens block is gone — the same three edits made to live `data/models.json`, so
+  the fixture still passes the gate test-apply-judgment's sandbox runs. Nothing else changed.
+- `tasks.json` — gained a file-level `as_of` (the contract asks every shown file for one).
+- `board-samples.json` — added (new file): a copy of data/board-samples.json whose
+  `personal_default` names ids that exist in this fixture catalog; the sandbox gate checks it.
+
+Lead / Helpers / Bulk pass (2026-10-03, guidance.json tool_plans):
+- `guidance.json` — re-copied from live `data/guidance.json`: it now carries `tool_plans` (one plan
+  per tool), the refreshed claims, the Codex `model_refs` and the Sonnet 5.5 alias. 205 claims.
+- `instructions-models.json` — re-projected from live `data/models.json` (80 models, incl. Claude
+  Sonnet 5.5 and GPT-6.1 Sol, which the plans name).
+- `instructions-plans.json` — re-projected from live `data/plans.json`, now with the `reaches` and
+  `covers_tokens` columns the generator reads instead of a typed table.
+- `profiles/` — added `copilot`, `antigravity`, `openrouter`, `cc-copilot` (Claude Code + GitHub
+  Copilot) and `power-user-max5x` (a heavy Claude Code user on Max 5x). `packages/` — every golden
+  regenerated with `UPDATE_GOLDENS=1 node --test scripts/test-instructions.mjs` and reviewed; the
+  new `*.setup.json` files are `install.mjs detect` output on the matching `setups/` folder, with the
+  temp paths replaced by made-up ones.
+
+Installer 1.0.0 (2026-10-03):
+- `installer-1.0.0/install.mjs`, `installer-1.0.0/instructions.mjs` — the released 1.0.0 installer
+  and generator, byte for byte (the two files as first published). scripts/test-install.mjs installs
+  with them, upgrades with the current installer, then undoes, so an upgrade from the shipped
+  version stays covered. Never edit them; they are what people already have.

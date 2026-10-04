@@ -1,0 +1,21 @@
+{
+  "schema": "modelproof.profile/1",
+  "who": "person",
+  "tools": [
+    "copilot"
+  ],
+  "scope": "project",
+  "plans": [
+    {
+      "vendor": "GitHub Copilot",
+      "plan": "Pro+"
+    }
+  ],
+  "limits": "sometimes",
+  "work": [
+    "coding"
+  ],
+  "like": [],
+  "never": [],
+  "roles": {}
+}

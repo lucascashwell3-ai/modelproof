@@ -181,6 +181,68 @@ test('dupes: a modelproof helper sharing a name with someone else\'s helper in t
   assert.match(r.out, /shares the name "modelproof-scout"/);
 });
 
+test('dupes: the new instructions heading is caught too', () => {
+  const root = tree();
+  const text = '## Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n- a rule\n';
+  put(root, 'project/AGENTS.md', text + '\n' + text);
+  const r = run('dupes', root);
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /heading appears 2 times/);
+  // The copy-only (OpenRouter / API) heading, pasted twice into one file.
+  const copy = '# Modelproof lead and bulk (facts as of 2026-10-03)\n\n- a rule\n';
+  const root2 = tree();
+  put(root2, 'project/notes.md', copy + '\n' + copy);
+  const r2 = run('dupes', root2);
+  assert.equal(r2.code, 1, r2.out);
+  assert.match(r2.out, /heading appears 2 times/);
+});
+
+test('dupes: GitHub Copilot and Antigravity agent folders; one name in .github/agents and .claude/agents is two helpers in Copilot', () => {
+  let root = tree();
+  put(root, 'project/.github/agents/a.agent.md', agent('modelproof-scout', true));
+  put(root, 'project/.claude/agents/modelproof-scout.md', agent('modelproof-scout', true));
+  let r = run('dupes', root);
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /helper name "modelproof-scout" is loaded twice by GitHub Copilot/);
+  root = tree();
+  put(root, 'home/.copilot/agents/x.agent.md', agent('a', false));
+  r = run('dupes', root);
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /loaded twice by GitHub Copilot: home\/\.copilot\/agents\/x\.agent\.md and home\/\.claude\/agents\/a\.md/);
+  root = tree();
+  put(root, 'project/.github/agents/b.agent.md', agent('modelproof-bulk', true));
+  put(root, 'project/.github/agents/notes.md', agent('modelproof-bulk', false));
+  put(root, 'home/.gemini/config/agents/modelproof-bulk.md', agent('modelproof-bulk', true));
+  put(root, 'project/.agents/agents/modelproof-bulk.md', agent('modelproof-bulk', true));
+  assert.equal(run('dupes', root).code, 0, 'a plain .md in .github/agents is not a Copilot agent; each folder holds one');
+  put(root, 'project/.agents/agents/other.md', agent('modelproof-bulk', false));
+  r = run('dupes', root);
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /helper name "modelproof-bulk" appears more than once/);
+});
+
+test('dupes: Copilot loads workspace and home folders together, so one name at two scopes is two helpers', () => {
+  // Copilot in the home folder, Claude Code's helpers in a project.
+  let root = tree();
+  put(root, 'home/.copilot/agents/modelproof-scout.agent.md', agent('modelproof-scout', true));
+  put(root, 'project/.claude/agents/modelproof-scout.md', agent('modelproof-scout', true));
+  let r = run('dupes', root);
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /"modelproof-scout" is loaded twice by GitHub Copilot: home\/\.copilot\/agents\/modelproof-scout\.agent\.md and project\/\.claude\/agents\/modelproof-scout\.md/);
+  // Copilot in a project, Claude Code's helpers in the home folder.
+  root = tree();
+  put(root, 'project/.github/agents/modelproof-bulk.agent.md', agent('modelproof-bulk', true));
+  put(root, 'home/.claude/agents/modelproof-bulk.md', agent('modelproof-bulk', true));
+  r = run('dupes', root);
+  assert.equal(r.code, 1, r.out);
+  assert.match(r.out, /"modelproof-bulk" is loaded twice by GitHub Copilot/);
+  // Claude Code at both scopes and no Copilot folder: Claude Code's own precedence, not a Copilot dupe.
+  root = tree();
+  put(root, 'home/.claude/agents/modelproof-bulk.md', agent('modelproof-bulk', true));
+  put(root, 'project/.claude/agents/modelproof-bulk.md', agent('modelproof-bulk', true));
+  assert.equal(run('dupes', root).code, 0);
+});
+
 test('dupes: repeated top-level settings keys and repeated TOML table headers fail', () => {
   let root = tree();
   put(root, 'home/.claude/settings.json', '{\n  "model": "a",\n  "hooks": {},\n  "model": "b"\n}\n');

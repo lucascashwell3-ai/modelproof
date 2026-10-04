@@ -1,0 +1,38 @@
+{
+  "schema": "modelproof.setup/1",
+  "home": "/home/sam",
+  "project": null,
+  "tools": {
+    "claude-code": false,
+    "codex": false,
+    "cursor": false
+  },
+  "dirs": {
+    "claude": "~/.claude",
+    "codex": "~/.codex"
+  },
+  "instruction_mode": "claude-md-or-agents-md",
+  "claude_reads_project_agents_md": false,
+  "agents_override": {
+    "user": false,
+    "project": false
+  },
+  "files": [
+    {
+      "scope": "user",
+      "path": "~/.gemini/AGENTS.md",
+      "lines": 4,
+      "readers": [
+        "antigravity"
+      ]
+    }
+  ],
+  "agents": [],
+  "settings": [],
+  "env": {
+    "subagent_model_force": false
+  },
+  "heads_up": [],
+  "mentions": [],
+  "notes": []
+}
