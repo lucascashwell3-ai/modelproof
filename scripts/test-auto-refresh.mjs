@@ -989,3 +989,63 @@ test('reportIssue: opens the held-items issue on main; a branch run (or DRY_RUN)
   assert.equal(issues[0].title, 'Held for review — modelproof data refresh');
   assert.deepEqual(issues[0].labels, ['data-refresh']);
 });
+
+// --- static checks on .github/workflows/auto-refresh.yml: every remote write is guarded to main,
+// nothing re-arms a schedule, and the gates Collect runs are exactly the feed gates. ----------
+const WORKFLOW = readFileSync(new URL('../.github/workflows/auto-refresh.yml', import.meta.url), 'utf8');
+/** [{name, if, body}] for each step of the one job (text-level split; no YAML dependency). */
+function workflowSteps(text) {
+  const lines = text.split('\n');
+  const start = lines.findIndex((l) => /^    steps:\s*$/.test(l));
+  const steps = [];
+  for (const l of lines.slice(start + 1)) {
+    if (/^      - /.test(l)) steps.push({ body: [l] });
+    else if (steps.length) steps[steps.length - 1].body.push(l);
+  }
+  return steps.map((s) => {
+    const body = s.body.join('\n');
+    const name = (body.match(/^ {6}- name: (.+)$/m) || body.match(/^ {6}- uses: (.+)$/m) || [])[1];
+    const cond = (body.match(/^ {8}if: (.+)$/m) || [])[1] || null;
+    return { name, if: cond, body };
+  });
+}
+const STEPS = workflowSteps(WORKFLOW);
+/** The workflow without comment lines — what actually runs. */
+const WORKFLOW_CODE = WORKFLOW.split('\n').filter((l) => !/^\s*#/.test(l)).join('\n');
+const MAIN_ONLY = /env\.DRY_RUN != 'true' && github\.ref == 'refs\/heads\/main'/;
+
+test('auto-refresh.yml: DRY_RUN is on for every branch run and every dispatch that asks for it', () => {
+  assert.match(WORKFLOW, /DRY_RUN: \$\{\{ inputs\.dry_run == true \|\| github\.ref != 'refs\/heads\/main' \}\}/);
+  assert.doesNotMatch(WORKFLOW, /^\s*pull_request/m, 'no pull_request trigger');
+});
+
+test('auto-refresh.yml: every step that pushes, reverts or verifies runs only on main with DRY_RUN off', () => {
+  const writers = STEPS.filter((s) => /git push|git revert|verify-live\.mjs/.test(s.body));
+  assert.deepEqual(writers.map((s) => s.name), ['Commit and push straight to main', 'Wait for Pages deploy, then verify as_of matches']);
+  for (const s of writers) assert.match(s.if || '', MAIN_ONLY, `${s.name} must be guarded to main`);
+});
+
+test('auto-refresh.yml: the token reaches Collect only on the live branch of its own DRY_RUN check', () => {
+  const run = STEPS.find((s) => /auto-refresh\.mjs/.test(s.body) && /^ {6}- name: Run collect/m.test(s.body));
+  const body = run.body;
+  assert.ok(body.indexOf('if [ "$DRY_RUN" = "true" ]') < body.indexOf('GH_TOKEN='), 'dry-run branch comes first');
+  assert.ok(body.indexOf('else') < body.indexOf('GH_TOKEN='), 'GH_TOKEN only in the else (live) branch');
+});
+
+test('auto-refresh.yml: Collect gates on --group feed before publish; no source sweep, no plans group, no continue-on-error', () => {
+  const gate = STEPS.findIndex((s) => /check-live-data\.mjs --group feed/.test(s.body));
+  const push = STEPS.findIndex((s) => /git push/.test(s.body));
+  assert.ok(gate > -1 && gate < push, 'feed gate runs before the push');
+  assert.equal(STEPS[gate].if, null, 'the feed gate always runs');
+  assert.doesNotMatch(WORKFLOW_CODE, /check-sources\.mjs|report-claim-rot\.mjs/, 'the full source sweep is not Collect\'s job');
+  assert.doesNotMatch(WORKFLOW_CODE, /--group (plans|all)/);
+  assert.doesNotMatch(WORKFLOW_CODE, /continue-on-error/);
+});
+
+test('auto-refresh.yml + auto-refresh.mjs: nothing creates or re-arms a trigger', () => {
+  const script = readFileSync(new URL('./auto-refresh.mjs', import.meta.url), 'utf8');
+  for (const [name, text] of [['auto-refresh.yml', WORKFLOW_CODE], ['auto-refresh.mjs', script]]) {
+    assert.doesNotMatch(text, /gh workflow|\/dispatches|repository_dispatch|workflow_run|createWorkflowDispatch/i, name);
+    assert.doesNotMatch(text, /api\.anthropic\.com|@anthropic-ai|ANTHROPIC_API_KEY|anthropics\//i, `${name}: 0 model tokens`);
+  }
+});
