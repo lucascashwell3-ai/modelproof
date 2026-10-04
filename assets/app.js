@@ -18,7 +18,16 @@ const state = {
   ladder: 0,             // which published effort ladder is on screen
   ladderOff: new Set(),  // model ids toggled off in the effort chart
   feedExpanded: false,   // timeline defaults to the latest FEED_CAP; "Show all" reveals the rest
+  fresh: null,           // assets/freshness.mjs once loaded: the date stamps and stale notices
+  now: null,             // the clock the stamps read; null = the viewer's clock (tests set it)
 };
+// freshness.mjs sits next to this file. app.js is a classic script, so it loads the module with a
+// dynamic import() from its own URL (document.currentScript is only set while this file first runs),
+// carrying the same ?v= cache key. Null where there is no script URL (tests set state.fresh).
+const FRESH_URL = (() => {
+  try { const src = document.currentScript.src; return new URL('freshness.mjs' + new URL(src).search, src).href; }
+  catch { return null; }
+})();
 const FEED_CAP = 6;
 const CMP_MAX = 5;
 
@@ -937,6 +946,29 @@ function initReveal() {
   setTimeout(() => els.forEach((el2) => el2.classList.add('is-in')), 2500);
 }
 
+// ---------- freshness: the data's own date on every section, and a notice once it is old ----------
+// Every section that shows model facts carries an empty [data-fresh="<feed id>"] slot in the page;
+// this fills each one with the shared stamp (and the notice when the file is past its limit).
+// Every feed on index and table lives in models.json, so all of them read its as_of.
+function renderFreshness() {
+  const F = state.fresh;
+  if (!F || !state.data) return;
+  const asOf = state.data.as_of, now = state.now ?? Date.now();
+  document.querySelectorAll('[data-fresh]').forEach((slot) => {
+    slot.innerHTML = F.freshHtml(slot.dataset.fresh || 'models', asOf, { now });
+  });
+  const f = F.freshness('models', asOf, now);
+  const nav = $('#navAsof');
+  if (nav) {
+    nav.classList.toggle('nav__asof--stale', f.stale);
+    nav.title = f.notice || f.stamp;
+    nav.innerHTML = f.stale
+      ? '● ' + esc(f.age === null ? 'Date not on file' : `Not updated in ${f.age} days`)
+      : '● ' + esc(f.stamp) + '<span class="nav__asof-extra"> · pricing verified</span>';
+  }
+  setText('#footAsof', f.day || '—');
+}
+
 // ---------- boot ----------
 // set text on an element only if it exists (app.js runs on both index.html and table.html)
 function setText(sel, txt) { const e = $(sel); if (e) e.textContent = txt; }
@@ -976,6 +1008,8 @@ async function boot() {
   // the standalone full-table page (table.html) marks itself so we always show all 22
   const isTablePage = document.body.dataset.page === 'table';
   if (isTablePage) state.showAll = true;
+  // the stamps module loads alongside the data; a page whose module fails still shows every fact
+  const freshP = (!state.fresh && FRESH_URL) ? import(FRESH_URL).catch(() => null) : Promise.resolve(state.fresh);
   try {
     const ctl = new AbortController();
     const kill = setTimeout(() => ctl.abort(), 8000);   // a hung fetch surfaces as the error state, not eternal "loading…"
@@ -989,7 +1023,7 @@ async function boot() {
   }
   const asof = state.data.as_of || '—';
   const nav = $('#navAsof');
-  if (nav) nav.innerHTML = '● snapshot ' + asof + '<span class="nav__asof-extra"> · pricing verified</span>';
+  if (nav) nav.innerHTML = '● snapshot ' + esc(asof) + '<span class="nav__asof-extra"> · pricing verified</span>';
   setText('#footAsof', asof);
   setText('#allCount', `all ${state.data.models.length} models`);   // never hand-count the roster again
   renderSourcingNotes();
@@ -1002,6 +1036,9 @@ async function boot() {
   renderEffort();            // published effort ladders; guarded no-op on table.html
   renderTable();             // full table lives on table.html; guarded no-op elsewhere
   renderFeed();
+  // last, so a slow module never holds up the facts: the stamps replace the raw date above
+  state.fresh = await freshP;
+  renderFreshness();
 }
 // robust boot: fire once on whichever lifecycle signal arrives first — some embedded
 // panes/bfcache restores swallow DOMContentLoaded, so belt-and-braces with load + a timer
