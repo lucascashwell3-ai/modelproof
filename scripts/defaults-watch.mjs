@@ -29,33 +29,42 @@
 
    A change writes: the value at maps_to and every `also` path; a NEW claim for each claim in
    claim_ids (quote copied from the page — the old quote with the old value swapped, or else the
-   matched span — confirmed on the page with check-sources' quoteFoundIn; sentence from the rule's
+   matched span cut from the page's case-kept text; no case-kept text, no span: needs-review —
+   confirmed on the page with check-sources' quoteFoundIn; sentence from the rule's
    template; date today); the old claim gets superseded_by (check-sources then skips it) and every
    basis[] that named it names the new one. A plan price rewrites its plans.json row in place
    (price, quote, quote_url, as_of). A model with ref_row also gets a model_refs row for the string
    the page uses. Each change is gated alone on main + that change (only problems main does not
    already have count), then all passing changes together.
 
-   An open bot PR is rebuilt from main when main has since changed a file the PR changes; a commit
-   by anyone else on the branch stops the force-push only while it is not in main and its PR is
-   open.
+   The PR's fingerprint covers its changes and main's copy of each file it changes (the date lines
+   this job stamps left out), so an open PR is rebuilt when main has since changed one of them. The
+   branch is always built on main as it is at push time: the changes are applied again to main's
+   files (never the checkout's copies), and gated again when main moved. A commit by anyone else on
+   the branch stops the force-push only while it is not in main and its PR is open. The PR's commit
+   status is checked every run and posted again when it is missing.
 
    After the rules: the full source sweep (check-sources --blocked-ok --fresh, skipping the quotes
    a pending change replaces) and its claim-rot report, plus check-live-data --group plans on main.
    A sweep page that could not be read is a warning, red once it has been unreadable 3 runs in a
-   row (count in the receipt). A run where every rule is ok (or declined), no change PR is open,
-   nothing is red, and the sweep read and found every guidance quote re-stamps guidance.json's
-   as_of (that one line) with today. guidance.json or plans.json (kept by hand) whose as_of is
-   within 7 days of the pages' stale notice turns the run red. Every live run on main pushes its
-   receipt (data/refresh/receipt-defaults-watch.json) straight to main. One issue ("Defaults watch:
-   rules need attention") lists everything that is not ok and every red reason, and closes itself
-   only on a run with nothing to list and nothing red; a run that throws writes the error to it.
+   row (count in the receipt). Each tool is dated on its own: tool_plans[].as_of gets today when
+   every rule that feeds that tool is ok (or declined), none of its values waits in the bot PR, and
+   the sweep read and found every guidance quote that tool rests on (a fact no single tool rests on,
+   such as a lab page, feeds every tool). The top-level as_of is the oldest tool date. guidance.json
+   or plans.json whose as_of is within 7 days of the pages' stale notice turns the run red; every
+   other hand-kept file (cadence "by hand" in assets/freshness.mjs) is listed in the issue within 7
+   days of its limit and turns the run red once past it. Every live run on main pushes its receipt
+   (data/refresh/receipt-defaults-watch.json) straight to main, rebuilt on a fresh main up to 5
+   times with a growing wait. One issue ("Defaults watch: rules need attention") lists everything
+   that is not ok and every red reason (no run date, so a week with nothing new edits nothing), and
+   closes itself only on a run with nothing to list and nothing red; a run that throws writes the
+   error to it.
 
    Remote writes — branch push, pull request, commit status, issue, main push — happen only in a
    live run: not DRY_RUN, on refs/heads/main, not a pull_request event, with a token. PR, status,
    issue and branch delete go through scripts/lib/gh-issue.mjs's guarded ghWrite; the two git
    pushes check the same guard plus an allowed-path list (bot branch: guidance.json + plans.json;
-   main: the receipt + guidance.json, whose diff must be the as_of line only). Nothing here creates
+   main: the receipt + guidance.json, whose diff must be its as_of lines only). Nothing here creates
    or changes a workflow, a schedule or a dispatch.
 
    Usage:
@@ -72,10 +81,10 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { fetchNormalizedPage, quoteFoundIn, normalizeText, classifyFailure } from './check-sources.mjs';
+import { quoteFoundIn, normalizeText, classifyFailure } from './check-sources.mjs';
 import { matchAlias } from './auto-refresh.mjs';
 import { ghRead, ghWrite, upsertIssue, closeIssue, writeBlockReason } from './lib/gh-issue.mjs';
-import { validateGuidance, wordCount, getPath, setPath, planRow, PLACEHOLDER_RE } from './validate-data.mjs';
+import { validateGuidance, wordCount, getPath, setPath, planRow, PLACEHOLDER_RE, FEEDS } from './validate-data.mjs';
 import { runChecks } from './check-live-data.mjs';
 import { FEED_FRESHNESS, ageDays } from '../assets/freshness.mjs';
 
@@ -88,6 +97,7 @@ export const ISSUE_TITLE = 'Defaults watch: rules need attention';
 export const LABEL = 'defaults-watch';
 export const STATUS_CONTEXT = 'defaults-watch/gates';
 export const BLOCKED_RED_RUNS = 3;
+export const MAIN_PUSH_TRIES = 5;
 export const BOT_NAME = 'modelproof-defaults-watch';
 export const BOT_EMAIL = 'actions@users.noreply.github.com';
 const MARK = 'defaults-watch';
@@ -270,12 +280,18 @@ export function swapForms(text, pairs) {
   });
 }
 
+/** True when `cased` is the page text in its own case: same length, and lowercased it is `page`
+ * (so a match's offsets on the lowercased page are the same offsets in it). */
+export const casedFits = (cased, page) => typeof cased === 'string' && cased.length === page.length && cased.toLowerCase() === page;
+
 /** A new quote: the old quote with the old value swapped (when the result is on the page), else
- * the matched span. Null when neither is on the page within 25 words. */
-export function rewriteQuote(oldQuote, pairs, page, cap) {
+ * the matched span, cut from the page's case-kept text (never from the lowercased one, which would
+ * print a lower-case "verbatim" quote). Null when neither is on the page within 25 words, or the
+ * span is needed and no case-kept text fits the page. */
+export function rewriteQuote(oldQuote, pairs, page, cap, cased = null) {
   const cand = swapForms(oldQuote || '', pairs);
   if (cand && wordCount(cand) <= MAX_QUOTE_WORDS && quoteFoundIn(cand, page)) return cand;
-  const span = cap.match ? spanQuote(page, cap.match, cap.cap) : null;
+  const span = cap.match && casedFits(cased, page) ? spanQuote(cased, cap.match, cap.cap) : null;
   if (span && wordCount(span) <= MAX_QUOTE_WORDS && quoteFoundIn(span, page)) return span;
   return null;
 }
@@ -344,7 +360,7 @@ const clone = (o) => JSON.parse(JSON.stringify(o));
  * change reads the changed data: placeholders follow the new lead), then flags against the final
  * copy. `onlyWrite`: rule ids allowed to write (gate one change alone); `skipWrite`: ids never to
  * write (failed their gate); `declined`: Set of "rule\tvalue" keys. Pure — no I/O. */
-export function evaluate({ watch, data, models, aliases = {}, pages, today, declined = new Set(), onlyWrite = null, skipWrite = new Set() }) {
+export function evaluate({ watch, data, models, aliases = {}, pages, cased = {}, today, declined = new Set(), onlyWrite = null, skipWrite = new Set() }) {
   const work = clone(data);
   const modelList = Array.isArray(models) ? models : models.models;
   const ctx = { data: work, byId: catalog(modelList), modelList, aliases };
@@ -366,7 +382,7 @@ export function evaluate({ watch, data, models, aliases = {}, pages, today, decl
     if (cap.status !== 'ok') { o.outcome = cap.status === 'ambiguous' ? 'broken:ambiguous' : 'broken:missing'; o.reason = cap.reason; continue; }
     const now = comparable(rule, cap.raw, ctx);
     o.captured = cleanRaw(cap.raw);
-    if (rule.write === 'field') evaluateField(rule, o, now, cap, page, { ctx, work, created, today, declined, onlyWrite, skipWrite });
+    if (rule.write === 'field') evaluateField(rule, o, now, cap, page, { ctx, work, created, today, declined, onlyWrite, skipWrite, cased: cased[rule.url] });
     else evaluateFlag(rule, o, now, ctx);
   }
   // report in file order
@@ -403,7 +419,7 @@ function evaluateFlag(rule, o, now, ctx) {
 }
 
 function evaluateField(rule, o, now, cap, page, env) {
-  const { ctx, work, created, today, declined, onlyWrite, skipWrite } = env;
+  const { ctx, work, created, today, declined, onlyWrite, skipWrite, cased } = env;
   const claimOnly = !rule.maps_to;
   let held;
   let same;
@@ -433,7 +449,7 @@ function evaluateField(rule, o, now, cap, page, env) {
   // write on a scratch copy; keep it only if every piece could be written honestly
   const trial = clone(work);
   const tctx = { ...ctx, data: trial };
-  const res = applyChange(rule, now, held, cap, page, { ctx: tctx, created: new Set(created), today });
+  const res = applyChange(rule, now, held, cap, page, { ctx: tctx, created: new Set(created), today, cased });
   if (res.error) { o.outcome = 'needs-review'; o.reason = `page says "${now.raw}" but the change cannot be written: ${res.error}`; o.pending = pendingKeys(rule, ctx); return; }
   work.guidance = trial.guidance;
   work.plans = trial.plans;
@@ -453,7 +469,7 @@ function pendingKeys(rule, ctx) {
   return keys;
 }
 
-function applyChange(rule, now, held, cap, page, { ctx, created, today }) {
+function applyChange(rule, now, held, cap, page, { ctx, created, today, cased }) {
   const g = ctx.data.guidance;
   const writes = [];
   const claims = [];
@@ -503,8 +519,8 @@ function applyChange(rule, now, held, cap, page, { ctx, created, today }) {
     const old = latestClaim(g, cid);
     if (!old) return { error: `claim ${cid} is not in guidance.json` };
     if (urlKey(old.source_url) !== urlKey(rule.url)) return { error: `claim ${old.id} cites ${old.source_url}, not this rule's page` };
-    const quote = rewriteQuote(old.quote, pairs, page, cap);
-    if (!quote) return { error: `no quote of ≤${MAX_QUOTE_WORDS} words for claim ${old.id} is on the page` };
+    const quote = rewriteQuote(old.quote, pairs, page, cap, cased);
+    if (!quote) return { error: `no quote of ≤${MAX_QUOTE_WORDS} words for claim ${old.id} is on the page${noCase(cased, page)}` };
     const sent = fillPlaceholders(rule.sentence || '', ctx, 'text', rule.value === 'list' ? now.key : cleanRaw(now.raw));
     if (sent.error || !rule.sentence) return { error: `sentence for ${old.id}: ${sent.error || 'the rule has no sentence template'}` };
     if (created.has(old.id)) {
@@ -529,8 +545,8 @@ function applyChange(rule, now, held, cap, page, { ctx, created, today }) {
   if (rule.maps_to && rule.maps_to.startsWith('plans.')) {
     const row = planRow(ctx.data, rule.maps_to);
     if (!row) return { error: `${rule.maps_to}: no single plans row` };
-    const quote = rewriteQuote(row.quote, pairs, page, cap);
-    if (!quote) return { error: `no quote of ≤${MAX_QUOTE_WORDS} words for ${row.vendor} / ${row.plan} is on the page` };
+    const quote = rewriteQuote(row.quote, pairs, page, cap, cased);
+    if (!quote) return { error: `no quote of ≤${MAX_QUOTE_WORDS} words for ${row.vendor} / ${row.plan} is on the page${noCase(cased, page)}` };
     const oldKey = `plan/${row.vendor}/${row.plan}`;
     row.quote = quote;
     if (urlKey(rule.url) === urlKey(row.source_url)) delete row.quote_url;
@@ -541,6 +557,8 @@ function applyChange(rule, now, held, cap, page, { ctx, created, today }) {
   }
   return { writes, claims, rows, pending, created: newCreated };
 }
+
+const noCase = (cased, page) => (casedFits(cased, page) ? '' : ' (the old quote does not fit, and there is no case-kept copy of the page to cut one from)');
 
 /* ------------------------------------------------------------------ gates ------------------ */
 
@@ -610,11 +628,29 @@ export function evaluateGated(input, gate) {
 
 const show = (v) => (Array.isArray(v) ? v.join(', ') : v === null ? 'null' : String(v));
 
-/** Fingerprint of a change set: rule ids and new values. */
-export function fingerprint(outcomes) {
+/** Fingerprint of a change set: rule ids and new values, plus `base` ({path: mainKey}) — main's
+ * copy of each file the PR changes when its branch was built. Main moving under an open PR changes
+ * the fingerprint, so the PR is rebuilt instead of going stale or conflicted. */
+export function fingerprint(outcomes, base = {}) {
   const ch = outcomes.filter((o) => o.outcome === 'change').map((o) => `${o.rule}=${valueKey(o.new)}`).sort();
-  return createHash('sha1').update(ch.join('\n')).digest('hex').slice(0, 16);
+  const b = Object.keys(base).sort().map((p) => `${p}@${base[p]}`);
+  return createHash('sha1').update([...ch, ...b].join('\n')).digest('hex').slice(0, 16);
 }
+
+/** A file on main as the fingerprint sees it: a hash of its text, with guidance.json's date lines
+ * (the top-level as_of and tool_plans[].as_of, which this job stamps on main every week and which
+ * never touch a PR's lines) left out. Any other edit on main changes it. */
+export function mainKey(path, text) {
+  if (typeof text !== 'string') return 'none';
+  let t = text;
+  if (path === 'data/guidance.json') {
+    try { t = json(withoutStamps(JSON.parse(text))); } catch { t = text; }
+  }
+  return createHash('sha1').update(t).digest('hex').slice(0, 12);
+}
+
+/** {path: mainKey} for the given {path: text}. */
+export const mainKeys = (texts) => Object.fromEntries(Object.entries(texts).map(([p, t]) => [p, mainKey(p, t)]));
 
 export function prTitle(outcomes) {
   const ch = outcomes.filter((o) => o.outcome === 'change');
@@ -622,7 +658,7 @@ export function prTitle(outcomes) {
 }
 
 /** The PR body. Deterministic: same outcomes -> same text. */
-export function prBody(outcomes, { today }) {
+export function prBody(outcomes, { today, base = {} }) {
   const ch = outcomes.filter((o) => o.outcome === 'change');
   const L = [];
   L.push(`The weekly defaults watch (\`scripts/defaults-watch.mjs\`, no model calls) read the vendor pages on ${today}: ${ch.length} value${ch.length === 1 ? ' differs' : 's differ'} from \`data/\`.`);
@@ -649,8 +685,8 @@ export function prBody(outcomes, { today }) {
     L.push('', '### Seen but not written', '');
     for (const o of other) L.push(`- \`${o.rule}\` — ${o.outcome}: ${o.reason || ''}`);
   }
-  L.push('', 'Closing this pull request without merging declines these values: the watch skips them until the page says something else.', '');
-  L.push(`<!-- ${MARK}:fingerprint=${fingerprint(outcomes)} -->`);
+  L.push('', 'Closing this pull request without merging declines every value in it: the watch skips them until the page says something else.', '');
+  L.push(`<!-- ${MARK}:fingerprint=${fingerprint(outcomes, base)} -->`);
   for (const o of ch) L.push(`<!-- ${MARK}:declined rule=${o.rule} value=${encodeURIComponent(valueKey(o.new))} -->`);
   return L.join('\n');
 }
@@ -687,25 +723,50 @@ export function assertAllowedPaths(paths, allowed) {
   if (bad.length) throw new Error(`refusing to push ${bad.join(', ')}: only ${allowed.join(', ')} may be written here`);
 }
 
-/** Throws unless the only line that differs between two guidance.json texts is the top-level as_of. */
+const STAMP_LINE = /^ *"as_of": "\d{4}-\d{2}-\d{2}",?$/;
+const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** A copy of guidance without the dates this job stamps (top-level as_of, tool_plans[].as_of). */
+function withoutStamps(g) {
+  const c = clone(g);
+  delete c.as_of;
+  for (const tp of c.tool_plans || []) if (tp && typeof tp === 'object') delete tp.as_of;
+  return c;
+}
+
+/** Throws unless two guidance.json texts differ only in date lines: the top-level as_of and the
+ * tool_plans[].as_of lines (same lines, and the same data once those dates are left out). */
 export function assertAsOfOnly(before, after) {
   const a = String(before).split('\n');
   const b = String(after).split('\n');
-  if (a.length !== b.length) throw new Error('guidance.json re-stamp changed more than the as_of line');
-  const diff = a.map((l, i) => (l === b[i] ? null : i)).filter((i) => i !== null);
-  if (diff.length > 1 || (diff.length === 1 && !/^ {2}"as_of": "\d{4}-\d{2}-\d{2}",?$/.test(b[diff[0]]))) {
-    throw new Error('guidance.json re-stamp changed more than the as_of line');
-  }
+  const bad = () => new Error('guidance.json re-stamp changed more than the as_of lines');
+  if (a.length !== b.length) throw bad();
+  for (let i = 0; i < a.length; i += 1) if (a[i] !== b[i] && !(STAMP_LINE.test(a[i]) && STAMP_LINE.test(b[i]))) throw bad();
+  let same = false;
+  try { same = json(withoutStamps(JSON.parse(before))) === json(withoutStamps(JSON.parse(after))); } catch { same = false; }
+  if (!same) throw bad();
 }
 
-/** guidance.json text with the top-level as_of set to `today` (that line only). */
-export function restampText(text, today) {
-  return String(text).replace(/^( {2}"as_of": ")\d{4}-\d{2}-\d{2}(",?)$/m, `$1${today}$2`);
+/** guidance.json text with tool_plans[].as_of set to `date` for each tool in `tools` (a date is
+ * never moved back, and a plan with no as_of gets none), and the top-level as_of set to the oldest
+ * tool date. Throws when the result would change anything but those lines. */
+export function stampToolsText(text, tools, date) {
+  const g = JSON.parse(text);
+  const want = new Set(tools);
+  for (const tp of g.tool_plans || []) {
+    if (tp && want.has(tp.tool) && Object.prototype.hasOwnProperty.call(tp, 'as_of') && !(typeof tp.as_of === 'string' && tp.as_of >= date)) tp.as_of = date;
+  }
+  const dates = (g.tool_plans || []).map((tp) => tp && tp.as_of).filter((d) => typeof d === 'string' && DAY_RE.test(d)).sort();
+  if (dates.length && Object.prototype.hasOwnProperty.call(g, 'as_of')) g.as_of = dates[0];
+  const out = json(g);
+  if (out !== text) assertAsOfOnly(text, out);
+  return out;
 }
 
 /* ------------------------------------------------------------------ remotes ---------------- */
 
-/** In-memory GitHub + git, for drills and tests. `state` is mutated; `actions` records writes. */
+/** In-memory GitHub + git, for drills and tests. `state` is mutated; `actions` records writes.
+ * `state.main` is {path: text}; the bot branch is built on it and the receipt and stamps land on it. */
 export function memoryRemote(state = {}) {
   state.pulls = state.pulls || [];
   state.issues = state.issues || [];
@@ -718,33 +779,39 @@ export function memoryRemote(state = {}) {
     actions, state,
     async openPr() { return state.pulls.find((p) => p.state === 'open') || null; },
     async closedPrs() { return state.pulls.filter((p) => p.state === 'closed'); },
-    // `inMain`: the tip is already in main (a merged branch). `drift`: main changed a file the
-    // branch changes since the branch was built (the branch would conflict or undo it).
+    // `inMain`: the tip is already in main (a merged branch).
     async branchHead() {
       if (!state.branch) return null;
       const b = state.branch;
-      const drift = Object.entries(b.base || {}).some(([p, c]) => state.main[p] !== c);
-      return { sha: b.sha, author: b.author || BOT_NAME, inMain: !!b.inMain, drift };
+      return { sha: b.sha, author: b.author || BOT_NAME, inMain: !!b.inMain };
     },
-    async pushBranch({ files, message }) {
+    async mainTexts(paths) { return Object.fromEntries(paths.map((p) => [p, state.main[p] == null ? null : state.main[p]])); },
+    async pushBranch({ build, message }) {
+      const texts = Object.fromEntries(BRANCH_PATHS.map((p) => [p, state.main[p] == null ? null : state.main[p]]));
+      const files = build(texts);
+      assertAllowedPaths(Object.keys(files), BRANCH_PATHS);
       const sha = createHash('sha1').update(JSON.stringify(files) + message).digest('hex');
-      state.branch = { sha, files, author: BOT_NAME, base: Object.fromEntries(Object.keys(files).map((p) => [p, state.main[p]])) };
+      state.branch = { sha, files, author: BOT_NAME };
       actions.push({ kind: 'push-branch', branch: BOT_BRANCH, files: Object.keys(files), message });
-      return sha;
+      return { sha, texts };
     },
     async createPr({ title, body }) { const pr = { number: n++, state: 'open', title, body, merged_at: null }; state.pulls.push(pr); actions.push({ kind: 'create-pr', number: pr.number, title, body }); return pr.number; },
     async editPr(num, { title, body }) { const pr = state.pulls.find((p) => p.number === num); Object.assign(pr, { title, body }); actions.push({ kind: 'edit-pr', number: num, title, body }); },
     async closePr(num, { body }) { const pr = state.pulls.find((p) => p.number === num); Object.assign(pr, { state: 'closed', body }); actions.push({ kind: 'close-pr', number: num }); },
     async deleteBranch() { state.branch = null; actions.push({ kind: 'delete-branch', branch: BOT_BRANCH }); },
+    async statusOf(sha) { const l = state.statuses.filter((x) => x.sha === sha); return l.length ? l[l.length - 1] : null; },
     async postStatus(sha, s) { state.statuses.push({ sha, ...s }); actions.push({ kind: 'status', sha, ...s }); },
-    async pushMain({ files, message }) {
-      const changed = Object.keys(files).filter((p) => state.main[p] !== files[p]);
+    async pushMain({ files, stamp = null, message }) {
+      const out = { ...files };
+      const cur = state.main['data/guidance.json'];
+      if (stamp && typeof cur === 'string') { const t = stampToolsText(cur, stamp.tools, stamp.date); if (t !== cur) out['data/guidance.json'] = t; }
+      assertAllowedPaths(Object.keys(out), MAIN_PATHS);
+      const changed = Object.keys(out).filter((p) => state.main[p] !== out[p]);
       if (!changed.length) return null;
-      for (const p of changed) state.main[p] = files[p];
+      for (const p of changed) state.main[p] = out[p];
       actions.push({ kind: 'push-main', files: changed, message });
       return 'main';
     },
-    async mainFile(p) { return state.main[p]; },
     async upsertIssue({ title, body }) {
       const open = state.issues.find((i) => i.title === title && i.state === 'open');
       if (open && open.body === body) return { action: 'unchanged', number: open.number };
@@ -769,19 +836,30 @@ export function dryRemote({ env = process.env, log = console.log } = {}) {
   const live = liveReads(env);
   const actions = [];
   const say = (a, line) => { actions.push(a); log(`[dry run] would ${line}`); };
+  const checkout = (p) => (existsSync(join(ROOT, p)) ? readFileSync(join(ROOT, p), 'utf8') : null);
   return {
     actions,
     openPr: live.openPr, closedPrs: live.closedPrs,
     // a dry run never reads the bot branch: it is taken as the job's own, built on main as it is
-    branchHead: async () => ({ sha: null, author: BOT_NAME, inMain: false, drift: false }),
-    async pushBranch({ files, message }) { say({ kind: 'push-branch', files: Object.keys(files), message }, `force-push ${BOT_BRANCH} (from main) with ${Object.keys(files).join(', ')}: "${message}"`); return '0'.repeat(40); },
+    branchHead: async () => ({ sha: null, author: BOT_NAME, inMain: false }),
+    async mainTexts(paths) { return Object.fromEntries(paths.map((p) => [p, checkout(p)])); },
+    async pushBranch({ build, message }) {
+      const texts = Object.fromEntries(BRANCH_PATHS.map((p) => [p, checkout(p)]));
+      const files = build(texts);
+      say({ kind: 'push-branch', files: Object.keys(files), message }, `force-push ${BOT_BRANCH} (from main) with ${Object.keys(files).join(', ')}: "${message}"`);
+      return { sha: '0'.repeat(40), texts };
+    },
     async createPr({ title, body }) { say({ kind: 'create-pr', title, body }, `open a pull request\n  branch: ${BOT_BRANCH} -> main\n  title:  ${title}\n  body:\n${body.split('\n').map((l) => `    ${l}`).join('\n')}`); return 0; },
     async editPr(num, { title, body }) { say({ kind: 'edit-pr', number: num, title, body }, `update pull request #${num}: ${title}`); },
     async closePr(num) { say({ kind: 'close-pr', number: num }, `close pull request #${num} (no change left)`); },
     async deleteBranch() { say({ kind: 'delete-branch' }, `delete branch ${BOT_BRANCH}`); },
+    async statusOf() { return null; },
     async postStatus(sha, s) { say({ kind: 'status', ...s }, `post commit status ${STATUS_CONTEXT}=${s.state} (${s.description})`); },
-    async pushMain({ files, message }) { say({ kind: 'push-main', files: Object.keys(files), message }, `push to main: ${Object.keys(files).join(', ')} ("${message}")`); return null; },
-    async mainFile(p) { return readFileSync(join(ROOT, p), 'utf8'); },
+    async pushMain({ files, stamp = null, message }) {
+      const t = stamp ? ` + the tool dates of ${stamp.tools.length ? stamp.tools.join(', ') : 'no tool'} (top-level as_of = the oldest)` : '';
+      say({ kind: 'push-main', files: Object.keys(files), stamp, message }, `push to main: ${Object.keys(files).join(', ')}${t} ("${message}")`);
+      return null;
+    },
     async upsertIssue({ title, body }) { say({ kind: 'upsert-issue', title }, `open/update issue "${title}":\n${body.split('\n').map((l) => `    ${l}`).join('\n')}`); return { action: 'skipped' }; },
     async closeIssue({ title }) { say({ kind: 'close-issue', title }, `close issue "${title}" if open`); return { action: 'skipped' }; },
   };
@@ -800,15 +878,26 @@ function liveReads(env) {
       const l = await ghRead(`/pulls?state=closed&head=${head}&per_page=100`, opts);
       return Array.isArray(l) ? l : [];
     },
+    // the newest status this job posted on `sha` (the list comes newest first), or null
+    async statusOf(sha) {
+      if (!/^[0-9a-f]{40}$/.test(String(sha || ''))) return null;
+      const l = await ghRead(`/commits/${sha}/statuses?per_page=100`, opts);
+      const s = Array.isArray(l) ? l.find((x) => x && x.context === STATUS_CONTEXT) : null;
+      return s ? { state: s.state, description: s.description } : null;
+    },
   };
 }
 
-function git(args, { input = null, env = {} } = {}) {
-  return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', input, env: { ...process.env, ...env }, stdio: ['pipe', 'pipe', 'pipe'] }).trim();
+/** git in `cwd`. Output is trimmed unless `raw` (file contents keep their last newline). */
+function gitAt(cwd) {
+  return (args, { input = null, env = {}, raw = false } = {}) => {
+    const out = execFileSync('git', args, { cwd, encoding: 'utf8', input, env: { ...process.env, ...env }, stdio: ['pipe', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 });
+    return raw ? out : out.trim();
+  };
 }
 
 /** A commit of `files` on top of `parent`, built with git plumbing (the working tree is never touched). */
-function commitFiles(parent, files, message) {
+function commitFiles(git, parent, files, message) {
   const index = join(mkdtempSync(join(tmpdir(), 'defaults-watch-index-')), 'index');
   const env = { GIT_INDEX_FILE: index, GIT_AUTHOR_NAME: BOT_NAME, GIT_AUTHOR_EMAIL: BOT_EMAIL, GIT_COMMITTER_NAME: BOT_NAME, GIT_COMMITTER_EMAIL: BOT_EMAIL };
   git(['read-tree', parent], { env });
@@ -821,41 +910,46 @@ function commitFiles(parent, files, message) {
   return git(['commit-tree', tree, '-p', parent, '-m', message], { env });
 }
 
-/** The real thing: git pushes (guarded here) + GitHub writes through gh-issue.mjs's ghWrite. */
-export function liveRemote({ env = process.env, log = console.log } = {}) {
+const MAIN_REF = 'refs/remotes/origin/main';
+const sleepMs = (ms) => new Promise((r) => { setTimeout(r, ms); });
+
+/** The real thing: git pushes (guarded here) + GitHub writes through gh-issue.mjs's ghWrite.
+ * `cwd` (the checkout), `sleep` and `tries` are there for tests. */
+export function liveRemote({ env = process.env, log = console.log, cwd = ROOT, sleep = sleepMs, tries = MAIN_PUSH_TRIES } = {}) {
   const opts = { env, log };
   const reads = liveReads(env);
+  const git = gitAt(cwd);
   const guard = () => { const why = writeBlockReason(env); if (why) throw new Error(`remote write refused: ${why}`); };
+  const fetchMain = () => { git(['fetch', '--quiet', 'origin', `+refs/heads/main:${MAIN_REF}`]); return git(['rev-parse', MAIN_REF]); };
+  const show = (rev, p) => { try { return git(['show', `${rev}:${p}`], { raw: true }); } catch { return null; } };
   return {
     actions: [],
     ...reads,
     async branchHead() {
       const B = `refs/remotes/origin/${BOT_BRANCH}`;
-      const M = 'refs/remotes/origin/main';
       try { git(['fetch', '--quiet', 'origin', `+refs/heads/${BOT_BRANCH}:${B}`]); } catch { return null; }
-      git(['fetch', '--quiet', 'origin', `+refs/heads/main:${M}`]);
+      fetchMain();
       const ok = (args) => { try { git(args); return true; } catch { return false; } };
-      // drift: main changed a file the branch changes since the branch was built. Any git failure
-      // counts as drift — rebuilding the branch from main is always safe.
-      let drift = true;
-      try {
-        const base = git(['merge-base', M, B]);
-        const touched = git(['diff', '--name-only', base, B]).split('\n').filter(Boolean);
-        drift = touched.length > 0 && git(['diff', '--name-only', base, M, '--', ...touched]).length > 0;
-      } catch { drift = true; }
-      return { sha: git(['rev-parse', B]), author: git(['log', '-1', '--format=%an', B]), inMain: ok(['merge-base', '--is-ancestor', B, M]), drift };
+      return { sha: git(['rev-parse', B]), author: git(['log', '-1', '--format=%an', B]), inMain: ok(['merge-base', '--is-ancestor', B, MAIN_REF]) };
     },
-    async pushBranch({ files, message }) {
+    async mainTexts(paths) {
+      const parent = fetchMain();
+      return Object.fromEntries(paths.map((p) => [p, show(parent, p)]));
+    },
+    // the branch is built on main as it is now: build() gets main's files and re-applies the changes
+    async pushBranch({ build, message }) {
       guard();
+      const parent = fetchMain();
+      const texts = Object.fromEntries(BRANCH_PATHS.map((p) => [p, show(parent, p)]));
+      const files = build(texts);
       assertAllowedPaths(Object.keys(files), BRANCH_PATHS);
-      git(['fetch', '--quiet', 'origin', 'main']);
-      const sha = commitFiles('FETCH_HEAD', files, message);
+      const sha = commitFiles(git, parent, files, message);
       if (!sha) throw new Error('bot branch commit would be empty');
       let lease = '';
       try { lease = git(['rev-parse', `refs/remotes/origin/${BOT_BRANCH}`]); } catch { lease = ''; }
       git(['push', `--force-with-lease=refs/heads/${BOT_BRANCH}:${lease}`, 'origin', `${sha}:refs/heads/${BOT_BRANCH}`]);
       log(`pushed ${BOT_BRANCH} ${sha.slice(0, 7)}`);
-      return sha;
+      return { sha, texts };
     },
     async createPr({ title, body }) {
       const pr = await ghWrite({ method: 'POST', path: '/pulls', body: { title, body, head: BOT_BRANCH, base: 'main' } }, opts);
@@ -869,29 +963,32 @@ export function liveRemote({ env = process.env, log = console.log } = {}) {
     async closePr(num, { body }) { await ghWrite({ method: 'PATCH', path: `/pulls/${num}`, body: { state: 'closed', body } }, opts); log(`closed pull request #${num}`); },
     async deleteBranch() { try { await ghWrite({ method: 'DELETE', path: `/git/refs/heads/${BOT_BRANCH}` }, opts); } catch (e) { if (e.status !== 422 && e.status !== 404) throw e; } },
     async postStatus(sha, s) { await ghWrite({ method: 'POST', path: `/statuses/${sha}`, body: { state: s.state, context: STATUS_CONTEXT, description: s.description.slice(0, 140) } }, opts); },
-    async pushMain({ files, message }) {
+    // Each try fetches main and builds the commit again on top of it (a rebase: the receipt as it
+    // is, the tool dates stamped again on main's guidance.json as it is now), then pushes. A
+    // rejected push (another job pushed main first) waits 1, 2, 4, 8 s before the next try.
+    async pushMain({ files, stamp = null, message }) {
       guard();
       assertAllowedPaths(Object.keys(files), MAIN_PATHS);
-      for (let attempt = 1; attempt <= 3; attempt += 1) {
-        git(['fetch', '--quiet', 'origin', 'main']);
-        const parent = git(['rev-parse', 'FETCH_HEAD']);
-        const out = {};
-        for (const [p, content] of Object.entries(files)) {
-          if (p === 'data/guidance.json') {
-            // re-apply the one-line stamp to main as it is now
-            const cur = git(['show', `${parent}:${p}`]) + '\n';
-            const stamped = restampText(cur, JSON.parse(content).as_of);
-            assertAsOfOnly(cur, stamped);
-            out[p] = stamped;
-          } else out[p] = content;
-        }
-        const sha = commitFiles(parent, out, message);
+      let wait = 1000;
+      for (let attempt = 1; attempt <= tries; attempt += 1) {
+        const parent = fetchMain();
+        const out = { ...files };
+        const cur = stamp ? show(parent, 'data/guidance.json') : null;
+        if (typeof cur === 'string') { const t = stampToolsText(cur, stamp.tools, stamp.date); if (t !== cur) out['data/guidance.json'] = t; }
+        assertAllowedPaths(Object.keys(out), MAIN_PATHS);
+        const sha = commitFiles(git, parent, out, message);
         if (!sha) { log('main already has these files — nothing to push'); return null; }
-        try { git(['push', 'origin', `${sha}:refs/heads/main`]); log(`pushed main ${sha.slice(0, 7)}`); return sha; } catch (e) { log(`main push attempt ${attempt} rejected: ${e.message.split('\n')[0]}`); }
+        try {
+          git(['push', 'origin', `${sha}:refs/heads/main`]);
+          log(`pushed main ${sha.slice(0, 7)}`);
+          return sha;
+        } catch (e) {
+          log(`main push try ${attempt} of ${tries} rejected: ${String(e.message).split('\n')[0]}`);
+          if (attempt < tries) { await sleep(wait); wait *= 2; }
+        }
       }
-      throw new Error('main push rejected 3 times');
+      throw new Error(`main push rejected ${tries} times`);
     },
-    async mainFile(p) { return readFileSync(join(ROOT, p), 'utf8'); },
     async upsertIssue({ title, body }) { return upsertIssue({ title, body, labels: [LABEL] }, opts); },
     async closeIssue({ title }) { return closeIssue({ title, comment: 'The defaults watch ran green: every rule matched, nothing is waiting.' }, opts); },
   };
@@ -899,17 +996,76 @@ export function liveRemote({ env = process.env, log = console.log } = {}) {
 
 /* ------------------------------------------------------------------ the run ---------------- */
 
-/** Fetch every rule page once (fresh: never a cached copy). {url: text | {error, kind}}. */
-export async function fetchPages(urls, { fetchImpl = (u) => fetchNormalizedPage(u, { fresh: true }), limit = 6 } = {}) {
-  const out = {};
+/** check-sources' normalizeText without its last step (the lowercasing): the page's text in its
+ * own case, so a quote cut from it reads as the page wrote it. Lowercased, it is the text every
+ * rule and quote check runs on; a copy that is not (casedFits) is never cut from. */
+export function normalizeCased(raw) {
+  const noScripts = String(raw || '')
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ');
+  return noScripts.replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ').replace(/&amp;/gi, '&').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"').replace(/&#39;|&apos;/gi, "'")
+    .replace(/&mdash;/gi, '-').replace(/&ndash;/gi, '-')
+    .replace(/&rsquo;|&lsquo;/gi, "'").replace(/&rdquo;|&ldquo;/gi, '"')
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)))
+    .replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/[–—]/g, '-')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+const FETCH_TIMEOUT_MS = 20000;
+
+/** One rule page, fetched fresh (never a cached copy), the way check-sources fetches it (same
+ * browser user agent and language, same short-body rule). {text: check-sources' normalized text,
+ * cased: the same text in the page's own case, or null when it does not line up}. */
+export async function fetchRulePage(url, { fetchImpl = globalThis.fetch } = {}) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
+  const fail = (message, status = null) => { const e = new Error(message); if (status != null) e.status = status; return e; };
+  try {
+    let res;
+    try {
+      res = await fetchImpl(url, {
+        signal: ctrl.signal,
+        redirect: 'follow',
+        headers: {
+          'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+          'accept-language': 'en-US,en;q=0.9',
+        },
+      });
+    } catch (e) {
+      throw fail(e && e.name === 'AbortError' ? `timed out after ${FETCH_TIMEOUT_MS / 1000}s` : `network error (${e && e.message})`);
+    }
+    if (!res.ok) throw fail(`HTTP ${res.status}`, res.status);
+    const raw = await res.text();
+    const text = normalizeText(raw);
+    if (text.length < 200) throw fail(`page body too short after fetch (${text.length} chars) — likely a blocked/failed fetch, not real content`);
+    const cased = normalizeCased(raw);
+    return { text, cased: casedFits(cased, text) ? cased : null };
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+/** Fetch every rule page once. {pages: {url: text | {error, kind}}, cased: {url: text}}. A fetchImpl
+ * may return the text alone (no case-kept copy) or {text, cased}. */
+export async function fetchPages(urls, { fetchImpl = (u) => fetchRulePage(u), limit = 6 } = {}) {
+  const pages = {};
+  const cased = {};
   const queue = [...new Set(urls)];
   await Promise.all(Array.from({ length: Math.min(limit, queue.length) }, async () => {
     while (queue.length) {
       const u = queue.shift();
-      try { out[u] = await fetchImpl(u); } catch (e) { out[u] = { error: e.message, kind: classifyFailure(e) }; }
+      try {
+        const r = await fetchImpl(u);
+        if (typeof r === 'string') pages[u] = r;
+        else { pages[u] = r.text; if (r.cased) cased[u] = r.cased; }
+      } catch (e) { pages[u] = { error: e.message, kind: classifyFailure(e) }; }
     }
   }));
-  return out;
+  return { pages, cased };
 }
 
 /** Every outcome that is neither ok nor a change in the open PR gets a section in the issue. */
@@ -917,8 +1073,10 @@ export const ISSUE_KINDS = ['broken:missing', 'broken:ambiguous', 'gate-failed',
 
 /** The issue body, or null when nothing needs attention. `pr`: the open bot PR ({number, changes})
  * or null. `runProblems`: red reasons that are not a rule outcome (a foreign commit on the bot
- * branch, a sweep error, a stale stamp, sources blocked too long). */
-export function issueBody({ outcomes, blockedRuns = {}, sweep = null, sweepBlockedRuns = {}, plansProblems = [], pr = null, runProblems = [], today }) {
+ * branch, a sweep error, a stale stamp, sources blocked too long). `near`: hand-kept files close to
+ * their stale notice. No run date: the same findings give the same text, so a week with nothing
+ * new edits nothing (the receipt has the run time). */
+export function issueBody({ outcomes, blockedRuns = {}, sweep = null, sweepBlockedRuns = {}, plansProblems = [], pr = null, runProblems = [], near = [] }) {
   const pick = (k) => outcomes.filter((o) => o.outcome === k);
   const L = [];
   const section = (title, list, fmt) => { if (list.length) { L.push(`### ${title}`, '', ...list.map(fmt), ''); } };
@@ -931,7 +1089,7 @@ export function issueBody({ outcomes, blockedRuns = {}, sweep = null, sweepBlock
   section('Waiting: the page names a model the catalog cannot take yet', [...pick('waiting:catalog'), ...pick('waiting:not-ga')], (o) => `- \`${o.rule}\` — ${o.outcome}: ${o.reason}`);
   section('Declined: the data disagrees with the page (a bot pull request with this value was closed without merging)', pick('declined'),
     (o) => `- \`${o.rule}\` (${o.url}): page says ${show(o.new)}, data says ${show(o.old)}. Correct the data or the claim by hand; the old quote stays in the source sweep until then.`);
-  if (pr) section('Waiting for review: the bot pull request', [pr], (x) => `- #${x.number} carries ${x.changes} change(s). Until it is merged or closed, guidance.json's as_of is not re-stamped.`);
+  if (pr) section('Waiting for review: the bot pull request', [pr], (x) => `- #${x.number} carries ${x.changes} change(s). Until it is merged or closed, the tools it changes keep their old date in guidance.json.`);
   const blocked = [...new Set(pick('blocked').map((o) => o.url))];
   section(`Could not read the rule page (warning; red after ${BLOCKED_RED_RUNS} runs in a row)`, blocked, (u) => `- ${u} — ${blockedRuns[u] || 1} run(s) in a row`);
   if (sweep && sweep.failed.length) section('Source sweep: quotes gone from their pages (red)', sweep.failed, (r) => `- \`${r.key}\` ${r.source_url} — ${r.kind}`);
@@ -939,8 +1097,9 @@ export function issueBody({ outcomes, blockedRuns = {}, sweep = null, sweepBlock
   section(`Source sweep: pages that could not be read (warning; red after ${BLOCKED_RED_RUNS} runs in a row)`, sweepBlocked,
     (u) => `- ${u} — ${sweepBlockedRuns[u]} run(s) in a row${sweep && sweep.blocked ? `: ${sweep.blocked.filter((r) => r.source_url === u).map((r) => `\`${r.key}\``).join(', ')}` : ''}`);
   section('Plan lines (check-live-data --group plans) on main (red)', plansProblems, (p) => `- ${p}`);
+  section(`Hand-kept data close to its stale notice (warning; red once past it)`, near, (p) => `- ${p}`);
   if (!L.length) return null;
-  return [`The weekly defaults watch (${today}) found things that need a person or the Judge. Nothing below was written to data/.`, '', ...L].join('\n').trim();
+  return ['The weekly defaults watch found things that need a person or the Judge. Nothing below was written to data/.', '', ...L].join('\n').trim();
 }
 
 function summarize(outcomes) {
@@ -949,24 +1108,44 @@ function summarize(outcomes) {
   return counts;
 }
 
-/** Days before a feed's freshness limit at which the watch turns red: one weekly run ahead of the
- * board's "not updated" notice. */
+/** Days before a feed's freshness limit at which the watch speaks up: one weekly run ahead of the
+ * pages' "not updated" notice. */
 export const STAMP_RED_MARGIN_DAYS = 7;
 
-/** Red lines for a data file whose as_of is about to show as stale on the board. */
-export function stampProblems({ guidanceAsOf, plansAsOf, today, why = [] }) {
+/** The feeds kept by hand (cadence "by hand" in assets/freshness.mjs — the one list of limits). */
+export const HAND_FEEDS = Object.keys(FEED_FRESHNESS).filter((id) => FEED_FRESHNESS[id].cadence === 'by hand');
+
+/** The data file of a feed id (FEEDS in validate-data.mjs). */
+export const feedFile = (id) => `data/${(FEEDS.find((f) => f.id === id) || { file: `${id}.json` }).file}`;
+
+/** Red lines and warnings for files whose as_of is close to (or past) the pages' stale notice.
+ * guidance.json (stamped by this job) and plans.json: red within 7 days of the limit. Every other
+ * hand-kept feed in `feeds` ({id: as_of}; an absent file is left out): listed within 7 days of its
+ * limit, red once past it. Returns {red, near}. */
+export function stampProblems({ guidanceAsOf, plansAsOf, feeds = {}, today, why = [] }) {
   const now = Date.parse(`${today}T00:00:00Z`);
-  const out = [];
-  const check = (feed, file, asOf, tail) => {
-    const lim = FEED_FRESHNESS[feed];
+  const red = [];
+  const near = [];
+  const line = (file, asOf, lim) => {
     const age = ageDays(asOf, now);
-    if (age === null || age >= lim.maxDays - STAMP_RED_MARGIN_DAYS) {
-      out.push(`${file} as_of is ${age === null ? 'missing' : `${age} days old (${asOf})`}; the pages call it stale after ${lim.maxDays} days. ${tail}`);
-    }
+    return { age, text: `${file} as_of is ${age === null ? 'missing' : `${age} days old (${asOf})`}; the pages call it stale after ${lim.maxDays} days.` };
   };
-  check('tool-defaults', 'data/guidance.json', guidanceAsOf, `This run did not re-stamp it: ${why.length ? why.join('; ') : 'see the sections below'}.`);
-  check('plans', 'data/plans.json', plansAsOf, 'It is kept by hand: re-check the prices and its as_of (scripts/refresh-plans.md).');
-  return out;
+  const early = (feed, file, asOf, tail) => {
+    const lim = FEED_FRESHNESS[feed];
+    const { age, text } = line(file, asOf, lim);
+    if (age === null || age >= lim.maxDays - STAMP_RED_MARGIN_DAYS) red.push(`${text} ${tail}`);
+  };
+  early('tool-defaults', 'data/guidance.json', guidanceAsOf, `This run did not re-stamp every tool: ${why.length ? why.join('; ') : 'see the sections below'}.`);
+  early('plans', 'data/plans.json', plansAsOf, 'It is kept by hand: re-check the prices and its as_of (scripts/refresh-plans.md).');
+  for (const id of HAND_FEEDS) {
+    if (id === 'plans' || !Object.prototype.hasOwnProperty.call(feeds, id)) continue;
+    const lim = FEED_FRESHNESS[id];
+    const file = feedFile(id);
+    const { age, text } = line(file, feeds[id], lim);
+    if (age === null || age > lim.maxDays) red.push(`${text} It is kept by hand and the pages now show it as not updated: re-check it and its as_of.`);
+    else if (age >= lim.maxDays - STAMP_RED_MARGIN_DAYS) near.push(`${text} It is kept by hand: re-check it and its as_of before then.`);
+  }
+  return { red, near };
 }
 
 /** Count runs in a row per url: urls seen this run get prev + 1, the rest drop out. */
@@ -976,6 +1155,55 @@ function runsInARow(urls, prev = {}) {
   return out;
 }
 
+/* ------------------------------------------------------------------ tool dates ------------- */
+
+/** Claim subject names of the tools in tool_plans. */
+const TOOL_SUBJECTS = { 'Claude Code': 'claude-code', 'Codex CLI': 'codex', Cursor: 'cursor', 'GitHub Copilot': 'copilot', Antigravity: 'antigravity', OpenRouter: 'openrouter' };
+
+/** Which tools each claim feeds: a tool whose plan, role_defaults or model_refs basis names it, or
+ * the tool the claim is about. {tools: the tool_plans tools, byClaim: Map id -> Set(tool)}. */
+export function claimToolMap(guidance) {
+  const tools = (guidance.tool_plans || []).map((t) => t && t.tool).filter((t) => typeof t === 'string');
+  const byClaim = new Map();
+  const add = (id, t) => { if (!tools.includes(t)) return; if (!byClaim.has(id)) byClaim.set(id, new Set()); byClaim.get(id).add(t); };
+  const walk = (node, t) => {
+    if (Array.isArray(node)) { node.forEach((x) => walk(x, t)); return; }
+    if (!node || typeof node !== 'object') return;
+    for (const [k, v] of Object.entries(node)) {
+      if (k === 'basis' && Array.isArray(v)) v.forEach((id) => add(id, t));
+      else walk(v, t);
+    }
+  };
+  for (const tp of guidance.tool_plans || []) if (tp) walk(tp, tp.tool);
+  for (const r of [...(guidance.role_defaults || []), ...(guidance.model_refs || [])]) if (r) walk(r, r.tool);
+  for (const c of guidance.claims || []) if (c && c.subject && c.subject.kind === 'tool' && TOOL_SUBJECTS[c.subject.name]) add(c.id, TOOL_SUBJECTS[c.subject.name]);
+  return { tools, byClaim };
+}
+
+/** The tools a guidance claim feeds; every tool when it feeds none in particular (a shared fact). */
+export function toolsOfClaim(id, cm) {
+  const s = cm.byClaim.get(id);
+  return s && s.size ? [...s] : [...cm.tools];
+}
+
+/** The tools a rule feeds: its own tool, a [tool=...] in its paths, the tools its claims feed. A
+ * rule about plan prices only feeds none; any other rule that names no tool feeds every tool. */
+export function toolsOfRule(rule, guidance, cm) {
+  const out = new Set();
+  if (cm.tools.includes(rule.tool)) out.add(rule.tool);
+  for (const p of [rule.maps_to, ...(rule.also || [])].filter((x) => typeof x === 'string')) {
+    for (const m of p.matchAll(/\[tool=([^\]]+)\]/g)) if (cm.tools.includes(m[1])) out.add(m[1]);
+  }
+  const ids = [...(rule.claim_ids || []), ...(rule.baseline && rule.baseline.claim ? [rule.baseline.claim] : [])];
+  for (const id of ids) {
+    const c = latestClaim(guidance, id);
+    for (const t of cm.byClaim.get(c ? c.id : id) || []) out.add(t);
+  }
+  if (out.size) return [...out].sort();
+  if (rule.tool === 'plans' || (typeof rule.maps_to === 'string' && rule.maps_to.startsWith('plans.'))) return [];
+  return [...cm.tools];
+}
+
 /** One full run. All I/O is injected so tests and drills use frozen pages and an in-memory remote.
  * A run that throws still writes the issue (with the error) before the error goes on. */
 export async function runJob(args) {
@@ -983,20 +1211,24 @@ export async function runJob(args) {
     return await runJobInner(args);
   } catch (e) {
     const msg = String((e && e.message) || e).split('\n').slice(0, 6).join('\n');
-    const body = [`The weekly defaults watch (${args.today}) stopped with an error before it finished. Nothing after the error was written.`, '',
+    const body = ['The weekly defaults watch stopped with an error before it finished. Nothing after the error was written.', '',
       '### Run problems (red)', '', '```', msg, '```'].join('\n');
     try { await args.remote.upsertIssue({ title: ISSUE_TITLE, body }); } catch (e2) { (args.log || console.log)(`could not write the issue either: ${e2.message}`); }
     throw e;
   }
 }
 
+const MAIN_MOVED = 'MAIN_MOVED';
+const mainMoved = (msg) => Object.assign(new Error(msg), { code: MAIN_MOVED });
+
 async function runJobInner({
-  watch, data, models, aliases, pages, today, nowIso = new Date().toISOString(), remote, gate,
+  watch, data, models, aliases, pages, cased = {}, feeds = {}, today, nowIso = new Date().toISOString(), remote, gate,
   receipt = null, sweepFn = null, plansGateFn = null, log = console.log, dryRun = false,
 }) {
   const closed = await remote.closedPrs();
   const declined = declinedFrom(closed);
-  const res = evaluateGated({ watch, data, models, aliases, pages, today, declined }, gate);
+  const input = { watch, data, models, aliases, pages, cased, today, declined };
+  const res = evaluateGated(input, gate);
   const { outcomes } = res;
   for (const o of outcomes) log(`  ${o.outcome.padEnd(17)} ${o.rule}${o.captured !== undefined ? ` = "${o.captured}"` : ''}${o.reason ? ` — ${o.reason}` : ''}`);
 
@@ -1011,24 +1243,58 @@ async function runJobInner({
   const runProblems = [];
   let prNumber = open ? open.number : null;
   let prAction = 'none';
+  let foreign = false;
   if (changes.length) {
-    const body = prBody(outcomes, { today });
     const title = prTitle(outcomes);
+    const files = changedFiles(outcomes);
     const head = await remote.branchHead();
-    if (open && fpOf(open.body) === fingerprint(outcomes) && head && !head.drift) {
+    const base = mainKeys(await remote.mainTexts(files));
+    let headSha = null;
+    if (open && head && fpOf(open.body) === fingerprint(outcomes, base)) {
       prAction = 'unchanged';
-      log(`pull request #${open.number} already carries these ${changes.length} change(s) — nothing new`);
+      headSha = head.sha;
+      log(`pull request #${open.number} already carries these ${changes.length} change(s) on main as it is — nothing new`);
     } else if (open && head && head.author !== BOT_NAME && !head.inMain) {
       // someone's own work on the open PR: never force-push over it
+      foreign = true;
       runProblems.push(`${BOT_BRANCH} has a commit by ${head.author} that is not in main, on open pull request #${open.number}; not force-pushing over it. Merge or close #${open.number}.`);
     } else {
-      if (head && head.drift) log(`main changed a file ${BOT_BRANCH} changes — rebuilding the branch from main`);
-      const files = {};
-      for (const f of changedFiles(outcomes)) files[f] = json(f === 'data/guidance.json' ? res.data.guidance : res.data.plans);
-      assertAllowedPaths(Object.keys(files), BRANCH_PATHS);
-      const sha = await remote.pushBranch({ files, message: `defaults watch ${today}: ${changes.length} data change${changes.length === 1 ? '' : 's'}` });
-      if (open) { await remote.editPr(open.number, { title, body }); prAction = 'updated'; } else { prNumber = await remote.createPr({ title, body }); prAction = 'created'; }
-      if (sha) await remote.postStatus(sha, { state: 'success', description: `validate-data + check-live-data --group plans passed for ${changes.length} change(s)` });
+      const changeIds = new Set(changes.map((o) => o.rule));
+      // The branch files: main's files as they are at push time with the changes applied again —
+      // never the checkout's copies, which would undo anything main got during the run.
+      const build = (texts) => {
+        for (const p of BRANCH_PATHS) if (typeof texts[p] !== 'string') throw new Error(`main has no ${p}`);
+        let out = res.data;
+        if (texts['data/guidance.json'] !== json(data.guidance) || texts['data/plans.json'] !== json(data.plans)) {
+          const onMain = { guidance: JSON.parse(texts['data/guidance.json']), plans: JSON.parse(texts['data/plans.json']) };
+          const again = evaluate({ ...input, data: onMain, onlyWrite: changeIds });
+          for (const o of changes) {
+            const r = again.outcomes.find((x) => x.rule === o.rule);
+            if (!r || r.outcome !== 'change' || r.unwritten || valueKey(r.new) !== valueKey(o.new)) {
+              throw mainMoved(`main changed under this run: ${o.rule} is ${r ? r.outcome : 'missing'} on main as it is now, so ${BOT_BRANCH} was not rebuilt; the next run rebuilds it.`);
+            }
+          }
+          const probs = diffProblems(gate(again.data), gate(onMain));
+          if (probs.length) throw mainMoved(`main changed under this run: the changes fail their gate on main as it is now (${probs.join('; ')}), so ${BOT_BRANCH} was not rebuilt; the next run tries again.`);
+          out = again.data;
+        }
+        return Object.fromEntries(files.map((f) => [f, json(f === 'data/guidance.json' ? out.guidance : out.plans)]));
+      };
+      try {
+        const pushed = await remote.pushBranch({ build, message: `defaults watch ${today}: ${changes.length} data change${changes.length === 1 ? '' : 's'}` });
+        const body = prBody(outcomes, { today, base: mainKeys(Object.fromEntries(files.map((f) => [f, pushed.texts[f]]))) });
+        if (open) { await remote.editPr(open.number, { title, body }); prAction = 'updated'; } else { prNumber = await remote.createPr({ title, body }); prAction = 'created'; }
+        headSha = pushed.sha;
+      } catch (e) {
+        if (e.code !== MAIN_MOVED) throw e;
+        runProblems.push(e.message);
+      }
+    }
+    // the commit status: checked every run, posted again when it is missing (a failed post is retried)
+    if (prNumber && headSha) {
+      const want = { state: 'success', description: `validate-data + check-live-data --group plans passed for ${changes.length} change(s)` };
+      const have = await remote.statusOf(headSha);
+      if (!have || have.state !== want.state || have.description !== want.description) await remote.postStatus(headSha, want);
     }
   } else if (open) {
     await remote.closePr(open.number, { body: `${open.body || ''}\n\n<!-- ${MARK}:closed-by-bot -->\nClosed by the defaults watch: the pages no longer differ from data/.` });
@@ -1036,7 +1302,6 @@ async function runJobInner({
     prAction = 'closed';
     prNumber = null;
   }
-  const prOpen = changes.length > 0 && !runProblems.length;
 
   // the source sweep (skipping quotes a pending change replaces) + the plans gate on main
   const pending = [...new Set(outcomes.flatMap((o) => o.pending || []))].sort();
@@ -1047,54 +1312,67 @@ async function runJobInner({
   if (sweep && sweep.error) runProblems.push(`source sweep: ${sweep.error}`);
   for (const [u, n] of Object.entries(sweepBlockedRuns)) if (n >= BLOCKED_RED_RUNS) runProblems.push(`source sweep: ${u} could not be read ${n} runs in a row, so its quotes are unverified`);
 
-  // re-stamp guidance.json's as_of: every rule ok (a declined value is the data the owner kept),
-  // no change PR open, nothing red, and every guidance quote read and found by the sweep
+  // the tool dates: a tool is stamped when every rule that feeds it is ok (a declined value is the
+  // data kept on purpose), none of its values waits in the bot PR, and the sweep read and found
+  // every guidance quote it rests on
+  const cm = claimToolMap(data.guidance);
+  const ruleById = new Map((watch.rules || []).map((r) => [r.id, r]));
+  const blockers = new Map(cm.tools.map((t) => [t, []]));
+  const block = (tools, why) => { for (const t of tools) if (blockers.has(t) && !blockers.get(t).includes(why)) blockers.get(t).push(why); };
   const okish = (o) => o.outcome === 'ok' || o.outcome === 'declined';
-  const sweepGuidanceBlocked = sweepBlocked.some((r) => String(r.key || '').startsWith('guidance/'));
-  const why = [];
-  const notOk = summarize(outcomes.filter((o) => !okish(o)));
-  if (Object.keys(notOk).length) why.push(`rules not ok (${Object.entries(notOk).map(([k, v]) => `${k} ${v}`).join(', ')})`);
-  if (prOpen) why.push(`bot pull request${prNumber ? ` #${prNumber}` : ''} is open`);
-  if (!sweep) why.push('no source sweep ran');
-  else if (sweep.failed.length || sweep.error) why.push('the source sweep failed');
-  else if (sweepGuidanceBlocked) why.push('the source sweep could not read every guidance page');
-  if (plansProblems.length) why.push('the plans gate failed');
+  for (const t of cm.tools) if (!(watch.rules || []).some((r) => r.tool === t)) block([t], 'no rule reads its pages');
+  for (const o of outcomes) {
+    if (okish(o)) continue;
+    const why = o.outcome === 'change' ? `${o.rule} waits in ${prNumber ? `bot pull request #${prNumber}` : 'a bot pull request'}` : `${o.rule} ${o.outcome}`;
+    block(toolsOfRule(ruleById.get(o.rule) || {}, data.guidance, cm), why);
+  }
+  const claimOf = (key) => (String(key || '').startsWith('guidance/') ? String(key).slice('guidance/'.length) : null);
+  if (!sweep) block(cm.tools, 'no source sweep ran');
+  else if (sweep.error) block(cm.tools, 'the source sweep failed');
+  else {
+    for (const r of sweep.failed) if (claimOf(r.key)) block(toolsOfClaim(claimOf(r.key), cm), `quote gone: ${r.key}`);
+    for (const r of sweepBlocked) if (claimOf(r.key)) block(toolsOfClaim(claimOf(r.key), cm), `source page not read: ${r.source_url}`);
+  }
+  if (foreign) block(cm.tools, `${BOT_BRANCH} has a commit by someone else`);
+  const stamped = cm.tools.filter((t) => !blockers.get(t).length);
+  const why = cm.tools.filter((t) => blockers.get(t).length).map((t) => {
+    const b = blockers.get(t);
+    return `${t}: ${b.slice(0, 3).join(', ')}${b.length > 3 ? ` and ${b.length - 3} more` : ''}`;
+  });
+  const toolDates = (data.guidance.tool_plans || []).map((tp) => (stamped.includes(tp.tool) && !(tp.as_of >= today) ? today : tp.as_of)).filter((d) => typeof d === 'string' && DAY_RE.test(d)).sort();
+  const topAsOf = toolDates.length ? toolDates[0] : data.guidance.as_of;
 
   // red?
   for (const o of outcomes) if (o.outcome.startsWith('broken:') || o.outcome === 'gate-failed') red.push(`${o.rule}: ${o.outcome}`);
   for (const u of blockedRed) red.push(`${u}: blocked ${blockedRuns[u]} runs in a row`);
   if (sweep && sweep.failed.length) red.push(`source sweep: ${sweep.failed.length} quote(s) gone`);
   for (const p of plansProblems) red.push(`plans gate: ${p}`);
-  const clean = !why.length && !red.length && !runProblems.length;
-  if (!clean && !why.length) why.push('the run is red');
-  runProblems.push(...stampProblems({ guidanceAsOf: clean ? today : data.guidance.as_of, plansAsOf: data.plans.as_of, today, why }));
+  const fresh = stampProblems({ guidanceAsOf: topAsOf, plansAsOf: data.plans.as_of, feeds, today, why });
+  runProblems.push(...fresh.red);
   red.push(...runProblems);
+  const clean = stamped.length === cm.tools.length && !red.length;
 
-  // receipt (+ the re-stamp) -> main
-  const files = {};
+  // receipt (+ the tool dates, stamped again on main as it is at push time) -> main
+  const prOpen = !!prNumber;
   const newReceipt = {
     job: 'defaults-watch', ran_at: nowIso, ok: !red.length, rules: outcomes.length, outcomes: summarize(outcomes),
     changes: changes.map((o) => ({ rule: o.rule, old: o.old, new: o.new })), pr: prOpen ? prNumber : null,
-    restamped: clean, blocked_runs: blockedRuns, sweep_blocked_runs: sweepBlockedRuns,
+    restamped: clean, stamped_tools: stamped, blocked_runs: blockedRuns, sweep_blocked_runs: sweepBlockedRuns,
   };
-  files[RECEIPT_PATH] = json(newReceipt);
-  if (clean) {
-    const cur = await remote.mainFile('data/guidance.json');
-    const stamped = cur == null ? cur : restampText(cur, today);
-    if (stamped !== cur) { assertAsOfOnly(cur, stamped); files['data/guidance.json'] = stamped; }
-  }
+  const files = { [RECEIPT_PATH]: json(newReceipt) };
   assertAllowedPaths(Object.keys(files), MAIN_PATHS);
-  await remote.pushMain({ files, message: `defaults watch ${today}${clean ? ' (re-stamp)' : ''}` });
+  await remote.pushMain({ files, stamp: { tools: stamped, date: today }, message: `defaults watch ${today}${stamped.length ? ` (dates: ${stamped.join(', ')})` : ''}` });
 
   // the issue: open (or updated) while anything needs attention; never closed while red
-  let body = issueBody({ outcomes, blockedRuns, sweep, sweepBlockedRuns, plansProblems, pr: prOpen && prNumber ? { number: prNumber, changes: changes.length } : null, runProblems, today });
-  if (!body && red.length) body = issueBody({ outcomes: [], runProblems: red, today });
+  let body = issueBody({ outcomes, blockedRuns, sweep, sweepBlockedRuns, plansProblems, pr: prOpen ? { number: prNumber, changes: changes.length } : null, runProblems, near: fresh.near });
+  if (!body && red.length) body = issueBody({ outcomes: [], runProblems: red });
   if (body) await remote.upsertIssue({ title: ISSUE_TITLE, body });
   else await remote.closeIssue({ title: ISSUE_TITLE });
 
-  log(`\ndefaults watch: ${Object.entries(summarize(outcomes)).map(([k, v]) => `${k} ${v}`).join(', ')}; pull request: ${prAction}${prNumber ? ` #${prNumber}` : ''}; ${clean ? 're-stamped guidance as_of' : 'no re-stamp'}${dryRun ? ' (dry run)' : ''}`);
+  log(`\ndefaults watch: ${Object.entries(summarize(outcomes)).map(([k, v]) => `${k} ${v}`).join(', ')}; pull request: ${prAction}${prNumber ? ` #${prNumber}` : ''}; tool dates stamped: ${stamped.length ? stamped.join(', ') : 'none'}${dryRun ? ' (dry run)' : ''}`);
+  if (why.length) log(`not stamped:\n${why.map((w) => `  - ${w}`).join('\n')}`);
   if (red.length) log(`RED:\n${red.map((r) => `  - ${r}`).join('\n')}`);
-  return { outcomes, red, clean, prAction, prNumber, receipt: newReceipt, data: res.data, issue: body };
+  return { outcomes, red, clean, stamped, prAction, prNumber, receipt: newReceipt, data: res.data, issue: body };
 }
 
 /* ------------------------------------------------------------------ CLI -------------------- */
@@ -1126,7 +1404,7 @@ export function drillPages(fx) {
 /** Drill passes 2 + 3 on the frozen fixtures. Returns {ok, pass2, pass3} (the writes each pass made). */
 export async function runDrill(log = console.log) {
   const fx = loadFixtures();
-  const remote = memoryRemote({ main: { 'data/guidance.json': json(fx.data.guidance) } });
+  const remote = memoryRemote({ main: { 'data/guidance.json': json(fx.data.guidance), 'data/plans.json': json(fx.data.plans) } });
   const common = { watch: fx.watch, data: fx.data, models: fx.models, aliases: fx.aliases, pages: drillPages(fx), today: fx.drill.today, nowIso: `${fx.drill.today}T01:23:00.000Z`, remote, gate: inProcessGate(fx.models), log: () => {} };
   log(`DRILL pass 2 — frozen pages with "${fx.drill.from}" -> "${fx.drill.to}" on ${fx.drill.url}`);
   await runJob(common);
@@ -1213,10 +1491,16 @@ async function main() {
   const aliases = readJson(join(ROOT, 'scripts/model-aliases.json'));
   const receipt = existsSync(join(ROOT, RECEIPT_PATH)) ? readJson(join(ROOT, RECEIPT_PATH)) : null;
   log(`defaults watch ${today}${dryRun ? ' (dry run — nothing is written)' : ''}: ${watch.rules.length} rules, fetching ${new Set(watch.rules.map((r) => r.url)).size} pages fresh`);
-  const pages = await fetchPages(watch.rules.map((r) => r.url));
+  const { pages, cased } = await fetchPages(watch.rules.map((r) => r.url));
+  // the other hand-kept files: only their as_of (an absent optional file is left out)
+  const feeds = {};
+  for (const id of HAND_FEEDS) {
+    const f = join(ROOT, feedFile(id));
+    if (id !== 'plans' && existsSync(f)) feeds[id] = readJson(f).as_of ?? null;
+  }
   const sweepOn = args.sweep == null ? !dryRun : args.sweep;
   const result = await runJob({
-    watch, data, models, aliases, pages, today, nowIso: now.toISOString(), receipt, log, dryRun,
+    watch, data, models, aliases, pages, cased, feeds, today, nowIso: now.toISOString(), receipt, log, dryRun,
     remote: dryRun ? dryRemote({ env, log }) : liveRemote({ env, log }),
     gate: subprocessGate(),
     sweepFn: sweepOn ? realSweep(log) : null,
