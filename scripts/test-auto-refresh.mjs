@@ -6,7 +6,7 @@ import {
   newerWins, admitNewModel, isKnownVendor, trackDeprecation, canonicalKey, evaluateFact,
   buildWorklist, bestForLine, needsGuidance, pickGuidance, guidanceItem, parseCsv, refreshCursorBench,
   releaseTitle, isKnownCandidate, findKnownModel, admissionFailReasons, formatDropLine,
-  normalizeDisplayName, findNewCandidateIds, decideRefreshRun, DAILY_FULL_RUN_HOUR_UTC,
+  normalizeDisplayName, findNewCandidateIds, decideRefreshRun, FULL_PASS_MIN_HOURS, lastFullPassAt, hoursSinceFullPass, stampFullPass, collectReceipt,
   needsJudgedFit, pickJudgedFit, judgedFitItem, reJudgeWorklistItems, stripProviderPrefix,
 } from './auto-refresh.mjs';
 import { modelId, canonicalVendor, bareModelName, isCommunityListing, namingProblems, VENDORS, isCanonicalVendor, effortDateSuffixCandidates, stripEffortDateSuffix } from './naming.mjs';
@@ -125,20 +125,54 @@ test('normalizeDisplayName is a no-op on a name with no vendor prefix', () => {
 
 // --- cheap early exit: release watching every 2h without a second job -------------------------
 
-test('decideRefreshRun: skips when there are no new ids and it is not the daily hour', () => {
-  assert.equal(decideRefreshRun([], 8), 'skip');
-  assert.equal(decideRefreshRun([], 0), 'skip');
+// Frozen clock throughout: `now` is passed in, never read from the machine.
+const NOW = new Date('2026-10-04T11:30:00Z');
+const hoursAgo = (h) => new Date(NOW.getTime() - h * 36e5).toISOString();
+
+test('decideRefreshRun: a full pass runs when the last one is 20 h or more ago, new ids or not', () => {
+  assert.equal(FULL_PASS_MIN_HOURS, 20);
+  assert.equal(decideRefreshRun([], { now: NOW, lastFullRunAt: hoursAgo(20) }), 'run');
+  assert.equal(decideRefreshRun([], { now: NOW, lastFullRunAt: hoursAgo(26.5) }), 'run');
+  assert.equal(decideRefreshRun([{ id: 'x', key: 'x' }], { now: NOW, lastFullRunAt: hoursAgo(30) }), 'run');
 });
 
-test('decideRefreshRun: runs when there is at least one new id, any hour', () => {
-  assert.equal(decideRefreshRun([{ id: 'acme/new-1', key: 'new1' }], 8), 'run');
-  assert.equal(decideRefreshRun(['anything'], 23), 'run');
+test('decideRefreshRun: skips inside 20 h with no new ids, whatever the clock hour', () => {
+  assert.equal(decideRefreshRun([], { now: NOW, lastFullRunAt: hoursAgo(19.9) }), 'skip');
+  assert.equal(decideRefreshRun([], { now: new Date('2026-10-04T06:00:00Z'), lastFullRunAt: '2026-10-03T23:00:00Z' }), 'skip', 'hour 06 is no longer special');
 });
 
-test('decideRefreshRun: always runs at the daily full-run hour (06:00 UTC), new ids or not', () => {
-  assert.equal(DAILY_FULL_RUN_HOUR_UTC, 6);
-  assert.equal(decideRefreshRun([], DAILY_FULL_RUN_HOUR_UTC), 'run');
-  assert.equal(decideRefreshRun([{ id: 'x', key: 'x' }], DAILY_FULL_RUN_HOUR_UTC), 'run');
+test('decideRefreshRun: a new id always runs, even right after a full pass', () => {
+  assert.equal(decideRefreshRun([{ id: 'acme/new-1', key: 'new1' }], { now: NOW, lastFullRunAt: hoursAgo(1) }), 'run');
+  assert.equal(decideRefreshRun(['anything'], { now: NOW, lastFullRunAt: hoursAgo(0) }), 'run');
+});
+
+test('decideRefreshRun: no receipt, a broken ran_at, or a future ran_at all count as "no full pass" -> run', () => {
+  assert.equal(decideRefreshRun([], { now: NOW, lastFullRunAt: null }), 'run');
+  assert.equal(decideRefreshRun([], { now: NOW, lastFullRunAt: 'not a date' }), 'run');
+  assert.equal(decideRefreshRun([], { now: NOW, lastFullRunAt: '2026-10-05T00:00:00Z' }), 'run');
+});
+
+test('the real schedule (starts drift 10:12-12:55 and 19:57-00:05 UTC) gets exactly one full pass a day', () => {
+  // Two late starts a day for a week, no new ids: count full passes per day.
+  const starts = [];
+  for (let d = 1; d <= 7; d += 1) {
+    const day = `2026-10-${String(d).padStart(2, '0')}`;
+    starts.push(`${day}T${d % 2 ? '10:12' : '12:55'}:00Z`, `${day}T${d % 2 ? '23:58' : '19:57'}:00Z`);
+  }
+  let last = null;
+  const fullDays = [];
+  for (const iso of starts) {
+    if (decideRefreshRun([], { now: new Date(iso), lastFullRunAt: last }) === 'run') { last = iso; fullDays.push(iso.slice(0, 10)); }
+  }
+  assert.deepEqual(fullDays, ['2026-10-01', '2026-10-02', '2026-10-03', '2026-10-04', '2026-10-05', '2026-10-06', '2026-10-07']);
+});
+
+test('lastFullPassAt: reads ran_at from a passing receipt; a failed or missing receipt is none', () => {
+  assert.equal(lastFullPassAt({ job: 'collect', ran_at: '2026-10-02T21:45:46.071Z', ok: true }), '2026-10-02T21:45:46.071Z');
+  assert.equal(lastFullPassAt({ job: 'collect', ran_at: '2026-10-02T21:45:46.071Z', ok: false }), null);
+  assert.equal(lastFullPassAt(null), null);
+  assert.equal(lastFullPassAt({ ok: true }), null);
+  assert.equal(hoursSinceFullPass('2026-10-04T01:30:00Z', NOW), 10);
 });
 
 test('findNewCandidateIds: a candidate matching a known model is not new', () => {
@@ -487,6 +521,34 @@ test('bestForLine falls back to vendor + specs when no ranking applies (single v
 });
 
 // --- receipt shape (documented, not filesystem-dependent) -----------------------------------------
+
+test('a quiet full pass stamps as_of with the receipt date, so refresh-verify accepts it instead of reverting', async () => {
+  const { verifyLive, EXIT } = await import('./verify-live.mjs');
+  // Frozen clock: the same instant gives today (as_of) and the receipt's ran_at, as main() does.
+  const now = new Date('2026-10-04T23:58:30Z');
+  const today = now.toISOString().slice(0, 10);
+  const data = { as_of: '2026-10-02', models: [] }; // nothing changed on this pass
+  assert.equal(stampFullPass(data, today), true);
+  assert.equal(data.as_of, '2026-10-04');
+  const receipt = collectReceipt({ ranAt: now.toISOString(), ok: true });
+  assert.equal(receipt.ran_at.slice(0, 10), data.as_of, "receipt date == as_of");
+  // refresh-verify.yml: want = receipt ran_at[:10], --at-least, live = what Collect published.
+  const run = (liveAsOf) => verifyLive({
+    want: receipt.ran_at.slice(0, 10), atLeast: true, sha: 'abc', repo: 'acme/site', url: 'https://example.invalid/models.json',
+    fetchLive: async () => ({ as_of: liveAsOf }), fetchPagesRun: async () => ({ status: 'completed', conclusion: 'success' }),
+    now: (() => { let t = 0; return () => (t += 60_000); })(), sleep: async () => {}, log: () => {}, timeoutSec: 600, graceSec: 60,
+  });
+  assert.equal(await run(data.as_of), EXIT.VERIFIED, "stamped as_of passes verify");
+  assert.equal(await run("2026-10-02"), EXIT.DEPLOY_WRONG, 'the old behavior (as_of left behind) fails verify: the revert case');
+  assert.equal(stampFullPass(data, today), false, 'a second stamp the same day is a no-op');
+});
+
+test('collectReceipt: the documented shape; a failed gate carries ok:false + error', () => {
+  const r = collectReceipt({ ranAt: '2026-10-04T11:30:00.000Z', applied: 2, ok: true });
+  assert.deepEqual(Object.keys(r), ['job', 'ran_at', 'applied', 'held', 'confirmed', 'new_models', 'dropped', 'worklist_items', 'availability_changed', 'usage_changed', 'ok']);
+  assert.deepEqual(collectReceipt({ ranAt: 'x', ok: false }).error, 'honesty gate failed');
+  assert.equal(lastFullPassAt(collectReceipt({ ranAt: 'x', ok: false })), null, 'a failed pass never counts as the last full pass');
+});
 
 test('collect receipt has the documented shape', () => {
   const receipt = { job: 'collect', ran_at: new Date().toISOString(), applied: 0, held: 0, confirmed: 0, new_models: 0, dropped: 0, worklist_items: 0, ok: true };
@@ -899,4 +961,31 @@ test('the admission shape: a feed candidate becomes a clean id + bare name + can
   assert.equal(name, 'Gemini 3.8 Flash');
   assert.equal(modelId(name), 'gemini-3-8-flash');
   assert.deepEqual(namingProblems({ id: modelId(name), name, vendor }), []);
+});
+
+// --- held-items issue: through the guarded helper (scripts/lib/gh-issue.mjs) --------------------
+import { reportIssue } from './auto-refresh.mjs';
+
+test('reportIssue: opens the held-items issue on main; a branch run (or DRY_RUN) only reads', async () => {
+  const requests = [];
+  const issues = [];
+  const fetchImpl = async (url, init = {}) => {
+    const method = init.method || 'GET';
+    requests.push(method);
+    const ok = (v) => ({ ok: true, status: 200, json: async () => v, text: async () => '' });
+    if (method === 'GET') return ok(new URL(url).searchParams.get('page') === '1' ? issues.filter((i) => i.state === 'open') : []);
+    const created = { number: 13, state: 'open', ...JSON.parse(init.body) };
+    issues.push(created);
+    return ok(created);
+  };
+  const held = [{ model: 'M', field: 'price_input', reason: 'single source' }];
+  const base = { GH_TOKEN: 't', GITHUB_REPOSITORY: 'acme/site', GITHUB_EVENT_NAME: 'workflow_dispatch' };
+  for (const env of [{ ...base, GITHUB_REF: 'refs/heads/c2/feature' }, { ...base, GITHUB_REF: 'refs/heads/main', DRY_RUN: 'true' }]) {
+    assert.equal((await reportIssue(held, { env, fetchImpl, log: () => {} })).action, 'skipped');
+  }
+  assert.ok(requests.every((m) => m === 'GET'), 'no write from a branch or a dry run');
+  const r = await reportIssue(held, { env: { ...base, GITHUB_REF: 'refs/heads/main' }, fetchImpl, log: () => {} });
+  assert.equal(r.action, 'created');
+  assert.equal(issues[0].title, 'Held for review — modelproof data refresh');
+  assert.deepEqual(issues[0].labels, ['data-refresh']);
 });
