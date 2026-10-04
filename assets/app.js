@@ -18,7 +18,16 @@ const state = {
   ladder: 0,             // which published effort ladder is on screen
   ladderOff: new Set(),  // model ids toggled off in the effort chart
   feedExpanded: false,   // timeline defaults to the latest FEED_CAP; "Show all" reveals the rest
+  fresh: null,           // assets/freshness.mjs once loaded: the date stamps and stale notices
+  now: null,             // the clock the stamps read; null = the viewer's clock (tests set it)
 };
+// freshness.mjs sits next to this file. app.js is a classic script, so it loads the module with a
+// dynamic import() from its own URL (document.currentScript is only set while this file first runs),
+// carrying the same ?v= cache key. Null where there is no script URL (tests set state.fresh).
+const FRESH_URL = (() => {
+  try { const src = document.currentScript.src; return new URL('freshness.mjs' + new URL(src).search, src).href; }
+  catch { return null; }
+})();
 const FEED_CAP = 6;
 const CMP_MAX = 5;
 
@@ -91,7 +100,7 @@ function sourcedClaims(m) {
   const seen = new Map();
   for (const entry of Object.values(m.task_fit_judged || {})) {
     for (const c of entry?.claims || []) {
-      if (!c?.quote || !c?.source_url) continue;
+      if (!c?.quote || !c?.source_url || c.superseded_by) continue; // a replaced claim stays as history, never shown
       const k = c.quote + '\u0000' + c.source_url;
       if (!seen.has(k)) seen.set(k, c);
     }
@@ -99,7 +108,7 @@ function sourcedClaims(m) {
   return [...seen.values()].sort((a, b) => (a.tier === 'lab' ? 0 : 1) - (b.tier === 'lab' ? 0 : 1));
 }
 function claimHTML(c) {
-  return `<q class="claim__q">${esc(c.quote)}</q> <a class="claim__src" href="${esc(c.source_url)}" target="_blank" rel="noopener">${shortUrl(c.source_url)}</a>${c.date ? ` <span class="claim__date">${esc(c.date)}</span>` : ''}`;
+  return `<q class="claim__q">${esc(c.quote)}</q> <a class="claim__src" href="${esc(c.source_url)}" target="_blank" rel="noopener">${shortUrl(c.source_url)}</a>${c.date ? ` <span class="claim__date">${esc(dayText(c.date))}</span>` : ''}`;
 }
 
 // normalize an array of {v} ignoring nulls → returns fn(v)->0..1
@@ -381,7 +390,7 @@ function renderEffort() {
   // so a ladder can't end up on screen without its harness, method and caveat attached
   if (src) {
     src.innerHTML = L
-      ? `<b>Where this comes from.</b> ${L.publisher}, ${L.suite} (${L.source_kind}, ${L.as_of}) —
+      ? `<b>Where this comes from.</b> ${L.publisher}, ${L.suite} (${L.source_kind}, ${esc(dayText(L.as_of))}) —
          <a href="${L.source}" target="_blank" rel="noopener">source</a>.
          <details class="lad-source__details">
            <summary>Read the method notes</summary>
@@ -538,7 +547,7 @@ function wireEffortChips() {
     };
   });
   document.querySelectorAll('.lad-suite[data-lad]').forEach((b) => {
-    b.onclick = () => { state.ladder = +b.getAttribute('data-lad'); state.ladderOff.clear(); renderEffort(); };
+    b.onclick = () => { state.ladder = +b.getAttribute('data-lad'); state.ladderOff.clear(); renderEffort(); renderFreshness(); };
   });
 }
 
@@ -937,6 +946,47 @@ function initReveal() {
   setTimeout(() => els.forEach((el2) => el2.classList.add('is-in')), 2500);
 }
 
+// ---------- freshness: the data's own date on every section, and a notice once it is old ----------
+// Every section that shows model facts carries an empty [data-fresh="<feed id>"] slot in the page;
+// this fills each one with the shared stamp. Once a file is past its limit, the first slot for it
+// (in page order) carries the full notice and every later slot for the same file carries the stamp
+// alone, which then says "N days old" in words: one notice per file per page, never a wall of them.
+// Every feed on index and table lives in models.json and reads its as_of, except the effort
+// ladders: each ladder carries its own date (its publisher's runs), so that slot shows the date of
+// the ladder on screen and is filled again when the reader switches ladders.
+// The demo terminal is scripted, not data, so it carries no stamp.
+function renderFreshness() {
+  const F = state.fresh;
+  if (!F || !state.data) return;
+  const asOf = state.data.as_of, now = state.now ?? Date.now();
+  const told = new Set();   // files whose notice is already on the page
+  document.querySelectorAll('[data-fresh]').forEach((slot) => {
+    const feed = slot.dataset.fresh || 'models';
+    const L = feed === 'effort-ladders' ? activeLadder() : null;
+    if (feed === 'effort-ladders' && !L) { slot.innerHTML = ''; return; }
+    const date = L ? L.as_of : asOf;
+    const file = feed === 'effort-ladders' ? 'effort-ladders' : 'models';
+    const notice = !told.has(file);
+    if (notice && F.isStale(feed, date, now)) told.add(file);
+    slot.innerHTML = F.freshHtml(feed, date, { now, notice });
+  });
+  // the nav badge keeps the date in view and says it is old in words ("200 days old"; on a phone,
+  // where the extras drop, "18 Mar 2026 · old"); the full notice is on the page itself
+  const f = F.freshness('models', asOf, now);
+  const nav = $('#navAsof');
+  if (nav) {
+    nav.classList.toggle('nav__asof--stale', f.stale);
+    nav.title = f.notice || f.stamp;
+    const extra = (t) => `<span class="nav__asof-extra">${esc(t)}</span>`;
+    nav.innerHTML = !f.stale ? '● ' + esc(f.stamp) + extra(' · pricing verified')
+      : !f.day ? '● ' + esc(f.stamp)
+      : '● ' + extra('As of ') + esc(f.day) + ' · ' + extra(String(f.age) + (f.age === 1 ? ' day ' : ' days ')) + 'old';
+  }
+  setText('#footAsof', f.day || '—');
+}
+// a "YYYY-MM-DD" date as the stamps print it once the stamps module is in; the raw date until then
+function dayText(iso) { return state.fresh && iso ? (state.fresh.dayLabel(iso) || iso) : (iso || ''); }
+
 // ---------- boot ----------
 // set text on an element only if it exists (app.js runs on both index.html and table.html)
 function setText(sel, txt) { const e = $(sel); if (e) e.textContent = txt; }
@@ -976,6 +1026,8 @@ async function boot() {
   // the standalone full-table page (table.html) marks itself so we always show all 22
   const isTablePage = document.body.dataset.page === 'table';
   if (isTablePage) state.showAll = true;
+  // the stamps module loads alongside the data; a page whose module fails still shows every fact
+  const freshP = (!state.fresh && FRESH_URL) ? import(FRESH_URL).catch(() => null) : Promise.resolve(state.fresh);
   try {
     const ctl = new AbortController();
     const kill = setTimeout(() => ctl.abort(), 8000);   // a hung fetch surfaces as the error state, not eternal "loading…"
@@ -989,7 +1041,7 @@ async function boot() {
   }
   const asof = state.data.as_of || '—';
   const nav = $('#navAsof');
-  if (nav) nav.innerHTML = '● snapshot ' + asof + '<span class="nav__asof-extra"> · pricing verified</span>';
+  if (nav) nav.innerHTML = '● snapshot ' + esc(asof) + '<span class="nav__asof-extra"> · pricing verified</span>';
   setText('#footAsof', asof);
   setText('#allCount', `all ${state.data.models.length} models`);   // never hand-count the roster again
   renderSourcingNotes();
@@ -1002,6 +1054,13 @@ async function boot() {
   renderEffort();            // published effort ladders; guarded no-op on table.html
   renderTable();             // full table lives on table.html; guarded no-op elsewhere
   renderFeed();
+  // last, so a slow module never holds up the facts: the stamps replace the raw date above
+  state.fresh = await freshP;
+  if (state.fresh) {        // the dates in the effort source line and the quotes, in the stamps' format
+    renderEffort();
+    if ($('#cmpBoard')) renderCompare();
+  }
+  renderFreshness();
 }
 // robust boot: fire once on whichever lifecycle signal arrives first — some embedded
 // panes/bfcache restores swallow DOMContentLoaded, so belt-and-braces with load + a timer

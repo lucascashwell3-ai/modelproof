@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { validateJudgment, applyOne, normalizeJudgment } from './apply-judgment.mjs';
+import { BLOCKED_HOSTS, blockedHostFor } from './lib/blocked-hosts.mjs';
 
 const SOURCES = [{ url: 'https://vendor.example.com/pricing', date: '2026-08-16' }];
 const REASON = 'confirmed on vendor pricing page';
@@ -115,6 +116,8 @@ function mktempRepo() {
   for (const f of ['apply-judgment.mjs', 'validate-data.mjs', 'check-sources.mjs', 'sources.json', 'timeline.mjs', 'naming.mjs', 'derive-task-fit.mjs', 'derive-status-adoption.mjs']) {
     writeFileSync(join(dir, 'scripts', f), readFileSync(join(SCRIPTS_DIR, f)));
   }
+  mkdirSync(join(dir, 'scripts', 'lib'), { recursive: true });
+  writeFileSync(join(dir, 'scripts', 'lib', 'blocked-hosts.mjs'), readFileSync(join(SCRIPTS_DIR, 'lib', 'blocked-hosts.mjs')));
   const models = JSON.parse(readFileSync(REAL_DATA));
   writeFileSync(join(dir, 'data', 'models.json'), JSON.stringify(models, null, 2));
   // validate-data.mjs (copied above) also gates data/plans.json, data/vendors.json,
@@ -570,5 +573,63 @@ test('CLI: a judged-fit write whose own quote is not on its page is still rolled
     try { execFileSync('node', [join(dir, 'scripts', 'apply-judgment.mjs'), jFile], { cwd: dir, stdio: 'pipe', env: { ...process.env, MODELPROOF_TODAY: FIXTURE_AS_OF, CHECK_SOURCES_PAGES: pages } }); } catch (e) { status = e.status; }
     assert.equal(status, 1);
     assert.equal(readFileSync(join(dir, 'data', 'models.json'), 'utf8'), before);
+  });
+});
+
+// --- hosts that refuse scripted reads are held, not written (scripts/lib/blocked-hosts.mjs) -------
+// A claim citing one would fail the write-time quote check (rolling back the batch) or pass once
+// and then fail the strict full check at random. normalizeJudgment holds that judgment instead.
+test('blockedHostFor matches a listed host and its subdomains, nothing else', () => {
+  assert.ok(BLOCKED_HOSTS.length > 0 && BLOCKED_HOSTS.every((e) => e.host && e.reason && e.reason.length >= 12), 'every entry names its reason');
+  assert.equal(blockedHostFor('https://www.marktechpost.com/2026/07/26/some-post/').host, 'marktechpost.com');
+  assert.equal(blockedHostFor('https://felloai.com/some-review/').host, 'felloai.com');
+  assert.equal(blockedHostFor('https://notmarktechpost.com/x'), null, 'a look-alike host is not blocked');
+  assert.equal(blockedHostFor('https://arxiv.org/html/2607.05471'), null);
+  assert.equal(blockedHostFor('not a url'), null);
+  assert.equal(blockedHostFor(undefined), null);
+});
+
+const BLOCKED_CLAIM = { sentence: 'A blocked outlet reports the model scores 70.0 on a coding benchmark.', source_url: 'https://www.marktechpost.com/2026/09/03/some-post/', tier: 'reported', date: '2026-10-04', quote: 'scores 70.0 on a coding benchmark' };
+
+test('normalizeJudgment: a judged-fit claim citing a blocked host becomes a hold with its reason', () => {
+  const j = { ...JUDGED_FIT, value: { ...JUDGED_FIT.value, claims: [GOOD_CLAIM, BLOCKED_CLAIM] } };
+  const before = JSON.stringify(j);
+  const { judgment, notes } = normalizeJudgment(j);
+  assert.equal(JSON.stringify(j), before, 'the input is not mutated');
+  assert.equal(judgment.hold, true);
+  assert.equal(judgment.id, JUDGED_FIT.id);
+  assert.match(judgment.reason, /marktechpost\.com/);
+  assert.match(judgment.reason, /refuses scripted reads/);
+  assert.match(notes.at(-1), /marktechpost\.com/);
+  assert.deepEqual(validateJudgment(judgment), [], 'a hold is valid, so the batch is not rejected');
+  // a judged-fit with no blocked claim, and a non-judged-fit kind, pass through untouched
+  assert.equal(normalizeJudgment(JUDGED_FIT).judgment.hold, undefined);
+  const price = { id: 'm1:price_input', kind: 'conflict', field: 'price_input', value: 5, sources: [{ url: 'https://felloai.com/x', date: '2026-10-04' }], reason: REASON };
+  assert.equal(normalizeJudgment(price).judgment.hold, undefined);
+});
+
+test('CLI: a judged-fit citing a blocked host is held and the rest of the batch still applies', () => {
+  withSandbox((dir) => {
+    const models = JSON.parse(readFileSync(join(dir, 'data', 'models.json')));
+    const target = models.models.find((m) => m.benchmarks && 'gpqa' in m.benchmarks);
+    const judgments = [
+      { id: `${target.id}:gpqa`, kind: 'benchmark', field: 'gpqa', value: 77.7, sources: SOURCES, reason: REASON },
+      { id: `${target.id}:coding:judged-fit`, kind: 'judged-fit', reason: 'outlet write-up quotes a coding benchmark score', sources: [{ url: BLOCKED_CLAIM.source_url, date: BLOCKED_CLAIM.date }], value: { taskId: 'coding', claims: [BLOCKED_CLAIM], reconciliation: null } },
+    ];
+    const jFile = join(dir, 'judgments.json');
+    writeFileSync(jFile, JSON.stringify(judgments));
+    // no page map entry for the blocked url: if the judgment were applied, the scoped quote check
+    // would fail and roll the batch back — the hold is what lets the batch through
+    const pages = join(dir, 'pages.json');
+    writeFileSync(pages, JSON.stringify({ [BLOCKED_CLAIM.source_url]: 403 }));
+    const out = execFileSync('node', [join(dir, 'scripts', 'apply-judgment.mjs'), jFile], { cwd: dir, stdio: 'pipe', env: { ...process.env, MODELPROOF_TODAY: FIXTURE_AS_OF, CHECK_SOURCES_PAGES: pages } }).toString();
+    assert.match(out, /applied: 1 {2}held: 1/);
+    assert.match(out, /normalized .*:coding:judged-fit: judged-fit claim cites a host that refuses scripted reads: marktechpost\.com/);
+    assert.match(out, /HELD .*:coding:judged-fit: .*marktechpost\.com/);
+    const after = JSON.parse(readFileSync(join(dir, 'data', 'models.json'), 'utf8'));
+    const m = after.models.find((x) => x.id === target.id);
+    assert.equal(m.benchmarks.gpqa, 77.7);
+    const written = Object.values(m.task_fit_judged || {}).flatMap((r) => (r && r.claims) || []);
+    assert.ok(!written.some((c) => c.source_url === BLOCKED_CLAIM.source_url), 'the held claim is not written');
   });
 });

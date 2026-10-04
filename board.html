@@ -510,6 +510,19 @@
   .node .flagRow .ftxt{ font-size:11.5px; color: rgba(var(--ink),.6); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .bp-flag{ display:flex; align-items:flex-start; gap:7px; margin: 12px 0 2px; font-size:11.5px; color: rgba(var(--ink),.62); line-height:1.5; }
   .bp-flag .ico{ color: var(--accent); flex:0 0 auto; margin-top:1px; }
+  /* Freshness (assets/freshness.mjs): each date the board's numbers rest on, and a notice in the
+     .bp-flag look once a file is past its limit. The summary carries it so phones, which hide the
+     footer, still see the dates. */
+  .mp-fresh{ display:inline-flex; flex-wrap:wrap; align-items:baseline; gap:2px 10px; }
+  .mp-asof{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:10.5px; letter-spacing:.01em; color: rgba(var(--ink),.62); }
+  .mp-asof--stale{ color: var(--accent); }
+  .mp-stale{ display:flex; align-items:flex-start; gap:7px; font-size:11.5px; color: rgba(var(--ink),.72); line-height:1.5; }
+  .mp-stale .ico{ color: var(--accent); flex:0 0 auto; margin-top:2px; }
+  .bp-fresh{ display:flex; flex-wrap:wrap; gap:2px 14px; margin: -12px 0 16px; }
+  .bp-fresh-notes{ display:flex; flex-direction:column; gap:6px; margin: -6px 0 16px; }
+  /* in a picker menu the stamp alone (it turns rust when old); the summary carries the notice in words */
+  .mpFresh{ flex:0 0 auto; padding: 7px 10px 8px; border-top: 1px solid rgba(var(--ink),.08); }
+  .pkgFresh{ display:flex; flex-direction:column; gap:6px; margin: -6px 0 14px; }
 
   /* the one link to how the facts are sourced */
   a.howLink{ font-size:11px; font-weight:500; color: var(--accent); text-decoration:none; white-space:nowrap; }
@@ -1123,6 +1136,8 @@ import { buildPackage, renderPreview, profileFromBoard, roleDefaults, packageTex
    default "me" block): pure functions over the fetched files, in their own module so a test can
    run them on any copy of data/. */
 import * as BD from "./assets/board-data.mjs";
+/* The date stamp + stale notice every page shows for a data file (assets/freshness.mjs). */
+import * as FR from "./assets/freshness.mjs";
 
 (function(){
   "use strict";
@@ -1192,10 +1207,11 @@ import * as BD from "./assets/board-data.mjs";
       guidance: guidanceFile,
       samples: samples,
       perRequest: perRequestFile,
-      as_of: modelsFile.as_of
+      as_of: modelsFile.as_of,
+      plans_as_of: plansFile.as_of
     };
     var asOfEl = document.getElementById("footAsof");
-    if (asOfEl && DATA.as_of) asOfEl.textContent = DATA.as_of;
+    if (asOfEl && DATA.as_of) asOfEl.textContent = FR.dayLabel(DATA.as_of);
     var perReqAsOfEl = document.getElementById("footPerReqAsof");
     if (perReqAsOfEl) perReqAsOfEl.textContent = BD.perRequestDate(DATA.perRequest) || "date not loaded";
     initState();
@@ -1366,11 +1382,11 @@ import * as BD from "./assets/board-data.mjs";
     }
     var tfj = m.task_fit_judged || {};
     (taskId ? [taskId] : Object.keys(tfj)).forEach(function(k){
-      ((tfj[k] || {}).claims || []).forEach(function(c){ if (c.tier === "lab") add(c); });
+      ((tfj[k] || {}).claims || []).forEach(function(c){ if (BD.isLiveClaim(c) && c.tier === "lab") add(c); });
     });
     ((DATA.guidance && DATA.guidance.claims) || []).forEach(function(c){
       // Only what the lab says a model is FOR; alias tables and effort defaults stay in the package.
-      if (c.tier !== "lab" || c.topic !== "model-per-job" || !c.subject || c.subject.name !== m.vendor) return;
+      if (!BD.isLiveClaim(c) || c.tier !== "lab" || c.topic !== "model-per-job" || !c.subject || c.subject.name !== m.vendor) return;
       if (namesModel(c.sentence + " " + c.quote, m)) add(c);
     });
     return out;
@@ -1380,11 +1396,25 @@ import * as BD from "./assets/board-data.mjs";
     return '<div class="labSays">' + claims.slice(0, max || 3).map(function(c){
       return '<div class="labSay"><q>' + escapeHtml(c.quote) + '</q><span class="labSrc">' +
         '<a href="' + escapeAttr(c.url) + '" target="_blank" rel="noopener">' + escapeHtml(hostOf(c.url)) + '</a>' +
-        (c.date ? ' &middot; read ' + escapeHtml(c.date) : '') + '</span></div>';
+        (c.date ? ' &middot; read ' + escapeHtml(FR.dayLabel(c.date)) : '') + '</span></div>';
     }).join("") + '</div>';
   }
   function fmtTokens(n){ return n >= 1e6 ? (Math.round(n / 1e5) / 10) + "M" : Math.round(n / 1000) + "K"; }
   /* List price, context, release date and OpenRouter share, each straight from data/models.json. */
+  /* Freshness. Each stamp reads its own file's as_of; a notice shows only past the file's limit.
+     freshStamp sits beside its notice (freshNote), so it leaves the age to the notice; menuStamp
+     stands alone (the picker menus) and says "N days old" in words once the file is stale. */
+  function freshStamp(feed, asOf, label){ return FR.stampHtml(feed, asOf, { label: label, flag: false }); }
+  function menuStamp(feed, asOf, label){ return FR.stampHtml(feed, asOf, { label: label }); }
+  function freshNote(feed, asOf, label){ return FR.staleHtml(feed, asOf, { label: label, icon: icon("routine", 13) }); }
+  // The board summary: the dates its totals rest on (token prices, seat prices), then a notice for
+  // any file past its limit, including the measured request sizes automated routines are billed at.
+  function bpFreshHtml(){
+    var notes = freshNote("models", DATA.as_of, "Model prices") + freshNote("plans", DATA.plans_as_of, "Plan prices") +
+      (DATA.perRequest ? freshNote("per-request", DATA.perRequest.as_of, "Request sizes") : "");
+    return '<div class="bp-fresh">' + freshStamp("models", DATA.as_of, "Model prices") + freshStamp("plans", DATA.plans_as_of, "Plan prices") + '</div>' +
+      (notes ? '<div class="bp-fresh-notes">' + notes + '</div>' : '');
+  }
   function modelFactsHtml(m){
     if (!m) return "";
     var f = [];
@@ -1392,9 +1422,10 @@ import * as BD from "./assets/board-data.mjs";
       ? 'List price <b>' + fmtPrice(m.price_input) + '</b> in &middot; <b>' + fmtPrice(m.price_output) + '</b> out per 1M tokens'
       : 'List price not on file');
     if (typeof m.context_window === "number") f.push('Context <b>' + fmtTokens(m.context_window) + '</b> tokens');
-    if (m.released) f.push('Released ' + escapeHtml(m.released));
+    if (m.released) f.push('Released ' + escapeHtml(FR.dayLabel(m.released)));
     var u = m.usage && m.usage.openrouter;
-    if (u && typeof u.share === "number") f.push('<b>' + u.share + '%</b> of OpenRouter tokens' + (u.as_of ? ' (' + escapeHtml(u.as_of) + ')' : ''));
+    if (u && typeof u.share === "number") f.push('<b>' + u.share + '%</b> of OpenRouter tokens' + (u.as_of ? ' (' + escapeHtml(FR.dayLabel(u.as_of)) + ')' : ''));
+    f.push('<span class="mp-fresh">' + freshStamp("models", DATA.as_of, "Facts") + freshNote("models", DATA.as_of, "Model facts") + '</span>');
     return '<div class="bp-facts">' + f.map(function(x){ return '<div class="bp-fact">' + x + '</div>'; }).join("") + '</div>';
   }
   /* The "What the labs say" body for one model: the lab's own words (or a plain line when none
@@ -3604,6 +3635,7 @@ import * as BD from "./assets/board-data.mjs";
       '<div class="bp-org">' + escapeHtml(state.boardName) + '</div>' +
       '<div class="bp-total" id="bpTotalNum" data-key="summary" data-amt="' + total + '"><span class="amt">' + fmtUsd(total) + '</span></div>' +
       '<div class="bp-total-sub">' + escapeHtml(subBits.join(" · ")) + (state.org.blocks.length ? "" : " &middot; nothing on the board yet") + '</div>' +
+      bpFreshHtml() +
       dataRuleChipsHtml() +
       buildCostBar();
 
@@ -3693,6 +3725,7 @@ import * as BD from "./assets/board-data.mjs";
       '<div class="bp-org">' + escapeHtml(planListLabel(plans) || "Not set") + '</div>' +
       '<div class="bp-total" data-key="summary" data-amt="' + meTotal + '" title="' + escapeAttr(formulaPlain(meB)) + '"><span class="amt">' + fmtUsd(meTotal) + '</span></div>' +
       '<div class="bp-total-sub">' + escapeHtml(subBits.join(" · ")) + '</div>' +
+      bpFreshHtml() +
       dataRuleChipsHtml() +
       '<button class="linklike" id="editFiltersPersonal" style="margin:8px 0 4px;">Edit filters</button>';
 
@@ -3704,7 +3737,7 @@ import * as BD from "./assets/board-data.mjs";
       var breach = row.model ? dataRuleBreach(row.model) : null;
       var labLine = row.claim
         ? '<div class="labSay tt-lab"><q>' + escapeHtml(row.claim.quote) + '</q><span class="labSrc"><a href="' + escapeAttr(row.claim.url) + '" target="_blank" rel="noopener">' +
-          escapeHtml(hostOf(row.claim.url)) + '</a>' + (row.claim.date ? ' &middot; read ' + escapeHtml(row.claim.date) : '') + '</span></div>'
+          escapeHtml(hostOf(row.claim.url)) + '</a>' + (row.claim.date ? ' &middot; read ' + escapeHtml(FR.dayLabel(row.claim.date)) : '') + '</span></div>'
         : '';
       tableBody += '<tr><td><div class="tt-task">' + escapeHtml(row.label) + '</div><div class="tt-reason">' + escapeHtml(row.reason) + '</div>' + labLine + '</td>' +
         '<td class="tt-model">' + (row.model ? (escapeHtml(shortModelName(modelById(row.model))) + (breach ? ' ' + icon("shieldSlash", 11) : '')) : '<span class="notMeasured">Not set</span>') + '</td>' +
@@ -3818,6 +3851,7 @@ import * as BD from "./assets/board-data.mjs";
         '<input type="text" class="modelPickerFilter" placeholder="Search models…" aria-label="Search models" />' +
         (showToggle ? '<label class="mpPlanToggle"><input type="checkbox" id="mpBeyondPlan" /> Show models beyond my plan</label>' : '') +
         '<div class="modelPickerList" role="listbox"></div>' +
+        '<div class="mpFresh">' + menuStamp("models", DATA.as_of, "Prices") + '</div>' +
       '</div>';
     var btn = root.querySelector(".modelPickerBtn");
     var menu = root.querySelector(".modelPickerMenu");
@@ -3904,6 +3938,7 @@ import * as BD from "./assets/board-data.mjs";
       '<div class="modelPickerMenu" hidden>' +
         '<input type="text" class="modelPickerFilter" placeholder="Search plans…" aria-label="Search plans" />' +
         '<div class="modelPickerList" role="listbox" aria-multiselectable="true"></div>' +
+        '<div class="mpFresh">' + menuStamp("plans", DATA.plans_as_of, "Plan prices") + '</div>' +
       '</div>';
     var btn = root.querySelector(".modelPickerBtn");
     var menu = root.querySelector(".modelPickerMenu");
@@ -5440,6 +5475,8 @@ import * as BD from "./assets/board-data.mjs";
     installPane.innerHTML =
       '<div class="pkgHead"><div class="pkgTitle">Install package</div><button class="linklike" id="pkgBack" type="button">Back to the board</button></div>' +
       '<div class="pkgLede">For a fresh setup &mdash; the installer adapts it to yours. It shows its plan first and adds nothing without your yes.</div>' +
+      '<div class="pkgFresh">' + freshStamp("tool-defaults", DATA.guidance && DATA.guidance.as_of, "Tool defaults") +
+        freshNote("tool-defaults", DATA.guidance && DATA.guidance.as_of, "Tool defaults") + '</div>' +
       '<div class="pkgActions">' +
         '<button class="primary btn-sm" id="pkgCopyPrompt" type="button">Copy install prompt</button>' +
         '<button class="ghost btn-sm" id="pkgDownload" type="button">Download profile.json</button>' +

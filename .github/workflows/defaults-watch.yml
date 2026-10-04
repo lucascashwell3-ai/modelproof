@@ -1,0 +1,111 @@
+name: Defaults watch
+# Weekly: reads the vendor pages behind data/guidance.json and data/plans.json (rules in
+# data/defaults-watch.json), and turns a changed value into ONE bot pull request on the fixed branch
+# auto/defaults-watch (never a push of data changes to main). Then the full source sweep
+# (check-sources --blocked-ok --fresh) and its claim-rot report, and the plan-line invariants
+# (check-live-data --group plans). Deterministic: no model calls. Job notes:
+# automation/jobs/defaults-watch/README.md.
+#
+# Remote writes, all inside scripts/defaults-watch.mjs --live, and the guards on each:
+#   step "Run the watch"  if: env.DRY_RUN != 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+#   pull request / issue / commit status / branch delete   scripts/lib/gh-issue.mjs ghWrite (allowlist;
+#                         refuses on DRY_RUN=true, a pull_request event or a ref other than main)
+#   git push of auto/defaults-watch   same guard + allowed paths data/guidance.json, data/plans.json
+#   git push to main      same guard + allowed paths: the receipt, and guidance.json's date lines only
+# The pull_request job below is a dry run on a read-only token: it prints what the job would do and
+# runs the drill (pass 2: one value swapped on frozen pages -> exactly one PR; pass 3: same input
+# again -> nothing new). Nothing in this workflow or the script creates a trigger or re-arms itself.
+on:
+  schedule:
+    - cron: "23 1 * * 0"   # Sunday 01:23 UTC — clear of Collect (06/18 daily) and Judge/Verify (Tue/Fri)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Print what the watch would do; write nothing"
+        type: boolean
+        default: false
+  pull_request:
+    paths:
+      - scripts/defaults-watch.mjs
+      - scripts/test-defaults-watch.mjs
+      - scripts/fixtures/watch/**
+      - data/defaults-watch.json
+      - .github/workflows/defaults-watch.yml
+      - automation/jobs/defaults-watch/**
+
+# One group per ref: every run on main (schedule or dispatch) queues behind the one before it, so two
+# runs never write the issue or open the pull request at the same time. Pull request runs have
+# their own refs (refs/pull/N/merge) and so their own groups.
+concurrency:
+  group: defaults-watch-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30   # a stuck page fetch or git call fails the run instead of holding a runner for hours
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      statuses: write
+    # A dispatch from any branch other than main is always a dry run.
+    env:
+      DRY_RUN: ${{ inputs.dry_run == true || github.ref != 'refs/heads/main' }}
+    steps:
+      # The live run pushes the bot branch and the receipt through this checkout's token; a dry run
+      # pushes nothing, so it keeps no token on disk.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: ${{ env.DRY_RUN != 'true' }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Unit tests (frozen fixtures)
+        run: node --test scripts/test-defaults-watch.mjs
+
+      - name: Run the watch
+        if: env.DRY_RUN != 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/defaults-watch.mjs --live
+
+      - name: Dry run (prints, writes nothing)
+        if: env.DRY_RUN == 'true'
+        run: node scripts/defaults-watch.mjs --dry-run
+
+  dry-run:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30   # a stuck page fetch or git call fails the run instead of holding a runner for hours
+    permissions:
+      contents: read
+    env:
+      DRY_RUN: "true"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Unit tests (frozen fixtures)
+        run: node --test scripts/test-defaults-watch.mjs
+
+      - name: Pass 1 — live pages, real data, prints every rule's outcome
+        run: node scripts/defaults-watch.mjs --dry-run
+
+      - name: Pass 2 + 3 — drill on frozen pages, one value swapped
+        run: |
+          set +e
+          node scripts/defaults-watch.mjs --drill > drill.out 2>&1
+          code=$?
+          cat drill.out
+          { echo '### Drill: pass 2 (one value swapped) and pass 3 (same input again)'; echo; echo '```'; cat drill.out; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          exit $code

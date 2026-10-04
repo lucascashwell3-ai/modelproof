@@ -1,0 +1,7 @@
+{
+  "_readme": "The dry-run drill (scripts/defaults-watch.mjs --drill): the frozen page excerpts in pages.json with this one value swapped, run against the frozen data copies in this folder. Pass 2 must open exactly one pull request; pass 3 (same input again) must write nothing.",
+  "today": "2026-10-04",
+  "url": "https://code.claude.com/docs/en/model-config",
+  "from": "anthropic api : defaults to opus 5.5",
+  "to": "anthropic api : defaults to sonnet 5.5"
+}

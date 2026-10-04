@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- Fraunces cut shared with the sibling sites so the wordmarks match -->
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=mk29" />
+  <link rel="stylesheet" href="assets/styles.css?v=mk30" />
 </head>
 <body>
 
@@ -94,6 +94,7 @@
         <div>
           <h2 class="panel__title"><span class="panel__no">01</span>Compare, side by side</h2>
           <p class="panel__desc">Choose up to <em>three</em> models. Coding score is 0–100 — SWE-bench Verified where published, otherwise a sourced estimate (marked <em>est</em>). <span class="dim">"—" means not publicly sourced. We don't guess.</span></p>
+          <p class="panel__fresh" data-fresh="models"></p>
         </div>
       </div>
       <div class="cmp-picker" id="cmpPicker" aria-label="Choose models to compare"></div>
@@ -111,6 +112,7 @@
             Gold dots: no other model scores higher for less. Grey dots: another model does.
             <span class="dim">Coding score on the up axis; hover any dot for the numbers.</span>
           </p>
+          <p class="panel__fresh" data-fresh="models"></p>
         </div>
         <div class="legend" id="mapLegend"></div>
       </div>
@@ -128,6 +130,7 @@
             <em>low</em> to <em>max</em>. A flat line means more cost, same score.
             <span class="dim">Click a name to isolate it; hover any dot for the step-by-step cost.</span>
           </p>
+          <p class="panel__fresh" data-fresh="effort-ladders"></p>
         </div>
         <div class="lad-suites" id="effortMeta"></div>
       </div>
@@ -143,6 +146,7 @@
         <div>
           <h2 class="panel__title"><span class="panel__no">04</span>What changed lately</h2>
           <p class="panel__desc">New models, newest first. Add price changes and retirements if you want the whole picture.</p>
+          <p class="panel__fresh" data-fresh="releases"></p>
         </div>
         <div class="feed-kinds" id="feedKinds" aria-label="What to show"></div>
       </div>
@@ -197,7 +201,7 @@
 
   <div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
 
-  <script src="assets/app.js?v=mk37"></script>
+  <script src="assets/app.js?v=mk39"></script>
   <script src="assets/demo.js?v=mk36"></script>
 </body>
 </html>

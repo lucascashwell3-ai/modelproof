@@ -31,6 +31,7 @@ import { deriveSignalsForCatalog, fetchTaskSpend, fetchRankingsModels } from './
 import { refreshStandingsForCatalog } from './derive-standings.mjs';
 import { fileURLToPath } from 'node:url';
 import { canonicalVendor, bareModelName, modelId, isCommunityListing, AUTO_ADMIT_VENDORS } from './naming.mjs';
+import { upsertIssue, closeIssue } from './lib/gh-issue.mjs';
 
 const ROOT = new URL('../', import.meta.url);
 const dataUrl = new URL('data/models.json', ROOT);
@@ -179,13 +180,20 @@ export function isKnownCandidate(name, models, aliases) {
 }
 
 // --- cheap early exit (release watching without a second job) ---------------------------------
-// Purpose: catch a launch-day model within ~2h instead of waiting for the Tue/Fri full run,
+// Purpose: catch a launch-day model within one cycle instead of waiting for the next full pass,
 // without a second workflow/job (automation rule: one workflow, one schedule; no job triggers
-// another). The workflow's cron runs every 2h; this decides, using only the already-fetched
+// another). The workflow's cron fires twice a day; this decides, using only the already-fetched
 // OpenRouter id list (no Epoch download, no price/worklist processing), whether there's anything
 // worth a full Collect pass this cycle. See findNewCandidateIds() for why LiteLLM — also fetched
 // on every cycle for the full run's price checks — isn't used for this comparison.
-export const DAILY_FULL_RUN_HOUR_UTC = 6; // matches the "Tue/Fri 06:00 UTC" full-run cron hour
+//
+// The daily full pass (prices, availability, usage, the receipt) used to run only when the clock
+// hour was exactly 06 UTC. Scheduled runs start hours late, so that hour almost never came up and
+// the full pass ran only on days a new id appeared. It is now decided by elapsed time: a full
+// pass runs whenever the last successful one (receipt-collect.json's ran_at) is FULL_PASS_MIN_HOURS
+// or more ago. 20 h, not 24: the two daily runs drift by a few hours, and 20 h keeps "once a day"
+// true without letting both runs of one day do a full pass.
+export const FULL_PASS_MIN_HOURS = 20;
 
 /**
  * Which OpenRouter candidates are worth a full Collect pass this cycle: not a variant tag, not
@@ -226,15 +234,50 @@ export function findNewCandidateIds({ orList, models, aliases, pending, today = 
   return out;
 }
 
+/** When the last successful full pass ran, from the collect receipt: its `ran_at` (ISO), or
+ * null when there is no receipt, it has no valid ran_at, or that pass failed its gate (ok:false
+ * — a failed pass is never published, so it does not count). */
+export function lastFullPassAt(receipt) {
+  if (!receipt || receipt.ok === false || typeof receipt.ran_at !== 'string') return null;
+  return Number.isNaN(Date.parse(receipt.ran_at)) ? null : receipt.ran_at;
+}
+
+/** Hours since `lastFullRunAt` (ISO) at `now` (Date), or null when unknown or in the future. */
+export function hoursSinceFullPass(lastFullRunAt, now) {
+  if (!lastFullRunAt) return null;
+  const h = (now.getTime() - Date.parse(lastFullRunAt)) / 36e5;
+  return Number.isFinite(h) && h >= 0 ? h : null;
+}
+
 /**
- * The decision itself, isolated as a pure function so it's trivial to test: given the candidate
- * ids a cheap check couldn't already explain, and the current UTC hour, run the full Collect
- * pipeline or skip it. The 06:00 UTC hour always runs — that's the guaranteed daily full pass
- * (automation/jobs/auto-refresh/README.md); every other hour only runs when there's something new.
+ * The decision itself, isolated as a pure function so it's trivial to test with a frozen clock:
+ * run the full Collect pipeline when there is a new candidate id, or when no successful full pass
+ * has run in the last `minHours` (unknown / missing / future-dated counts as "none"); else skip.
  */
-export function decideRefreshRun(newIds, hourUTC) {
-  if (hourUTC === DAILY_FULL_RUN_HOUR_UTC) return 'run';
-  return (newIds && newIds.length > 0) ? 'run' : 'skip';
+export function decideRefreshRun(newIds, { now = new Date(), lastFullRunAt = null, minHours = FULL_PASS_MIN_HOURS } = {}) {
+  if (newIds && newIds.length > 0) return 'run';
+  const h = hoursSinceFullPass(lastFullRunAt, now);
+  return h === null || h >= minHours ? 'run' : 'skip';
+}
+
+/** Every full pass that reaches publish stamps the catalog's as_of with today, changed or not.
+ * Why: refresh-verify waits for the live as_of to reach the collect receipt's date and reverts
+ * when it doesn't. A quiet full pass writes a fresh receipt; if it left as_of behind, verify would
+ * revert good commits. The receipt's ran_at and as_of come from the same clock (see main). */
+export function stampFullPass(data, today) {
+  const before = data.as_of;
+  data.as_of = today;
+  return before !== today;
+}
+
+/** The collect receipt (data/refresh/receipt-collect.json). `ranAt` is the run's start time —
+ * the same instant `today` (and so as_of) is taken from. */
+export function collectReceipt({ ranAt, applied = 0, held = 0, confirmed = 0, newModels = 0, dropped = 0, worklistItems = 0, availabilityChanged = 0, usageChanged = 0, ok = true }) {
+  return {
+    job: 'collect', ran_at: ranAt, applied, held, confirmed, new_models: newModels, dropped,
+    worklist_items: worklistItems, availability_changed: availabilityChanged, usage_changed: usageChanged,
+    ok, ...(ok ? {} : { error: 'honesty gate failed' }),
+  };
 }
 
 /** Match a candidate name/id against our models via the alias map. Returns our model id or null. */
@@ -701,7 +744,10 @@ async function main() {
   // MODELPROOF_TODAY: test-only override so a date-boundary case (e.g. a model aging out of the
   // 60-day "new" adoption window) can be pinned instead of depending on the real clock. Unset in
   // every real run — falls straight through to the real date.
-  const today = process.env.MODELPROOF_TODAY || new Date().toISOString().slice(0, 10);
+  // MODELPROOF_NOW: test/proof-only frozen clock (ISO). One instant drives the full-pass
+  // decision, today's date (as_of) and the receipt's ran_at, so ran_at's date == as_of.
+  const now = process.env.MODELPROOF_NOW ? new Date(process.env.MODELPROOF_NOW) : new Date();
+  const today = process.env.MODELPROOF_TODAY || now.toISOString().slice(0, 10);
 
   console.log('feed: fetching OpenRouter + LiteLLM...');
   const [orList, llmList] = await Promise.all([feedOpenRouter(), feedLiteLLM()]);
@@ -710,13 +756,18 @@ async function main() {
   // --- cheap early exit (release watching without a second job) -------------------------------
   // The workflow now runs every 2h; everything above this line is the only network cost paid on
   // a cycle with nothing new. REFRESH_FORCE_FULL / REFRESH_FORCE_SKIP are local/CI testing
-  // overrides only — the real decision is always decideRefreshRun(newIds, hourUTC).
-  const hourUTC = new Date().getUTCHours();
+  // overrides only — the real decision is always decideRefreshRun(newIds, {now, lastFullRunAt}).
+  const priorReceipt = existsSync(receiptUrl) ? (() => { try { return JSON.parse(readFileSync(receiptUrl)); } catch { return null; } })() : null;
+  const lastFullRunAt = lastFullPassAt(priorReceipt);
+  const sinceFull = hoursSinceFullPass(lastFullRunAt, now);
   const newCandidates = findNewCandidateIds({ orList, models: data.models, aliases, pending: state.seenCandidateIds, today });
   const forceFull = process.env.REFRESH_FORCE_FULL === '1';
   const forceSkip = process.env.REFRESH_FORCE_SKIP === '1';
-  const decision = forceFull ? 'run' : forceSkip ? 'skip' : decideRefreshRun(newCandidates, hourUTC);
-  console.log(`early-exit: ${newCandidates.length} new candidate id(s), hour=${hourUTC} UTC -> ${decision}` +
+  const decision = forceFull ? 'run' : forceSkip ? 'skip' : decideRefreshRun(newCandidates, { now, lastFullRunAt });
+  const natural = decideRefreshRun(newCandidates, { now, lastFullRunAt });
+  console.log(`full-pass rule: last successful full pass ${lastFullRunAt || 'none on record'}` +
+    `${sinceFull === null ? '' : ` (${sinceFull.toFixed(1)} h ago)`}; a full pass runs at >= ${FULL_PASS_MIN_HOURS} h or on a new id -> ${natural}`);
+  console.log(`early-exit: ${newCandidates.length} new candidate id(s) -> ${decision}` +
     (forceFull ? ' (forced via REFRESH_FORCE_FULL=1)' : forceSkip ? ' (forced via REFRESH_FORCE_SKIP=1)' : '') +
     (newCandidates.length ? ` [${newCandidates.slice(0, 5).map((c) => c.id).join(', ')}${newCandidates.length > 5 ? ', ...' : ''}]` : ''));
   if (decision === 'skip') {
@@ -1046,7 +1097,7 @@ async function main() {
     // layer's judged-ranking gate reads directly, so they're kept fresh every run, not just when
     // `changed` — a model's usage.openrouter.share can cross an adoption bucket boundary on a run
     // that touched nothing else about that model. Derived against `today`, not the stale
-    // `data.as_of` still on file — a few lines below, `if (changed) data.as_of = today`, so the
+    // `data.as_of` still on file — a few lines below, stampFullPass sets as_of = today, so the
     // gate (which reads the just-written as_of) will judge these fields against `today` too.
     // Deriving here against the old as_of let a model's recency window (60 days,
     // scripts/derive-status-adoption.mjs) expire on the calendar day the run happens without this
@@ -1077,16 +1128,18 @@ async function main() {
       changelog.push({ date: today, model: 'CursorBench ladder', field: 'effort_ladders', old: null, new: ladder.notes.join('; '), sources: [EPOCH_ZIP_URL] });
     }
 
-    if (changed) data.as_of = today;
+    // Every full pass stamps as_of (see stampFullPass) — not only one that changed something.
+    if (stampFullPass(data, today)) changed = true;
     writeFileSync(stateUrl, JSON.stringify(nextState, null, 2) + '\n');
 
     mkdirSync(new URL('data/refresh/', ROOT), { recursive: true });
     writeFileSync(worklistUrl, JSON.stringify(worklist, null, 2) + '\n');
 
+    // Always written on a full pass (as_of moved at least) and always gated.
     let gateOk = true;
-    if (changed) {
+    {
       writeFileSync(dataUrl, JSON.stringify(data, null, 2) + '\n');
-      writeFileSync(changelogUrl, JSON.stringify(changelog, null, 2) + '\n');
+      if (changed) writeFileSync(changelogUrl, JSON.stringify(changelog, null, 2) + '\n');
 
       // honesty gate — must pass or nothing publishes
       const { execFileSync } = await import('node:child_process');
@@ -1099,12 +1152,12 @@ async function main() {
       }
     }
 
-    writeFileSync(receiptUrl, JSON.stringify({
-      job: 'collect', ran_at: new Date().toISOString(), applied: applied.length, held: held.length,
-      confirmed: confirmed.length, new_models: newModels.length, dropped: dropped.length,
-      worklist_items: worklist.items.length, availability_changed: availabilityUpdates.length, usage_changed: usageUpdates.length,
-      ok: gateOk, ...(gateOk ? {} : { error: 'honesty gate failed' }),
-    }, null, 2) + '\n');
+    writeFileSync(receiptUrl, JSON.stringify(collectReceipt({
+      ranAt: now.toISOString(), applied: applied.length, held: held.length,
+      confirmed: confirmed.length, newModels: newModels.length, dropped: dropped.length,
+      worklistItems: worklist.items.length, availabilityChanged: availabilityUpdates.length, usageChanged: usageUpdates.length,
+      ok: gateOk,
+    }), null, 2) + '\n');
 
     if (!gateOk) return;
   }
@@ -1126,34 +1179,21 @@ async function main() {
   if (!dryRun) await reportIssue(held);
 }
 
-/** File/update ONE GitHub issue for held items; close it when the list is empty. Idempotent by title. */
-async function reportIssue(held) {
-  const token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
-  const repo = process.env.GITHUB_REPOSITORY; // "owner/repo", set by Actions
-  if (!token || !repo) { console.log('report: no GH_TOKEN/GITHUB_REPOSITORY — skipping issue (local run).'); return; }
+/** File/update ONE GitHub issue for held items; close it when the list is empty. Idempotent by
+ * title. Every write goes through scripts/lib/gh-issue.mjs, which skips it on a dry run, a
+ * non-main ref, or a run without a token. */
+export async function reportIssue(held, opts = {}) {
   const title = 'Held for review — modelproof data refresh';
-  const api = (path, opts = {}) => fetch(`https://api.github.com/repos/${repo}${path}`, {
-    ...opts,
-    headers: { authorization: `Bearer ${token}`, accept: 'application/vnd.github+json', ...(opts.headers || {}) },
-  });
-  const list = await api('/issues?state=open&labels=data-refresh').then((r) => r.json());
-  const existing = Array.isArray(list) ? list.find((i) => i.title === title) : null;
-
+  const log = (line) => console.log(`report: ${line}`);
   if (!held.length) {
-    if (existing) await api(`/issues/${existing.number}`, { method: 'PATCH', body: JSON.stringify({ state: 'closed' }) });
-    console.log('report: no held items — issue closed/absent.');
-    return;
+    const r = await closeIssue({ title }, { log, ...opts });
+    console.log(`report: no held items — issue ${r.action}.`);
+    return r;
   }
   const body = ['Auto-refresh held these facts for human review — single-source or out-of-bounds, ' +
     'not fabricated, not published.', '',
     ...held.slice(0, 50).map((h) => `- **${h.model}** / \`${h.field}\`: ${h.reason}`)].join('\n');
-  if (existing) {
-    await api(`/issues/${existing.number}`, { method: 'PATCH', body: JSON.stringify({ body }) });
-    console.log(`report: updated issue #${existing.number}`);
-  } else {
-    const created = await api('/issues', { method: 'POST', body: JSON.stringify({ title, body, labels: ['data-refresh'] }) }).then((r) => r.json());
-    console.log(`report: opened issue #${created.number}`);
-  }
+  return upsertIssue({ title, body, labels: ['data-refresh'] }, { log, ...opts });
 }
 
 import { realpathSync } from 'node:fs';

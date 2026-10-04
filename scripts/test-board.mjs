@@ -204,6 +204,27 @@ test('board-data: the picker lists every model by usage share, then newest; plan
   assert.equal(view.perRequest.label, '14 Sep 2026');
 });
 
+test('board-data: a claim a newer one replaced is never shown', () => {
+  const claims = [
+    { id: 'old', tier: 'lab', quote: 'old words', superseded_by: 'new' },
+    { id: 'new', tier: 'lab', quote: 'new words' },
+    null,
+  ];
+  assert.deepEqual(claims.filter(BD.isLiveClaim).map((c) => c.id), ['new']);
+});
+
+test('board.html skips replaced claims in every claim list it reads', () => {
+  const body = BOARD.slice(BOARD.indexOf('function labClaimsFor('), BOARD.indexOf('function hostOf('));
+  assert.ok(body.length > 0, 'labClaimsFor not found');
+  const loops = body.split(/claims\)?\s*\|\|\s*\[\]\)\.forEach\(function\(c\)\{/).slice(1);
+  assert.equal(loops.length, 2, 'expected the task-fit and guidance claim loops');
+  for (const l of loops) {
+    const first = l.split('\n').map((x) => x.trim()).filter((x) => x && !x.startsWith('//'))[0];
+    assert.match(first, /BD\.isLiveClaim\(c\)/, `claim loop does not skip replaced claims first: ${first}`);
+  }
+  assert.match(read('assets/app.js'), /c\.superseded_by\) continue/, 'app.js shows replaced claims');
+});
+
 test('board.html reads plan reach, the default "me" and the measured request from data, not typed tables', () => {
   assert.match(BOARD, /import \* as BD from "\.\/assets\/board-data\.mjs"/);
   assert.doesNotMatch(BOARD, /PLAN_REACH|PER_REQUEST\b/, 'typed plan-reach or per-request table is back');

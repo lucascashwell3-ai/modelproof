@@ -29,7 +29,9 @@
    `source` -> the judgment's first source url; a ladder's missing as_of/source -> the judgment's
    first source date/url; a release (or a new model's timeline entry) dated after today + 1 day
    (UTC) -> a hold with its reason, since the gate rejects a future date and one such item must not
-   roll back the batch. What still fails validation rejects the run, as before.
+   roll back the batch; a judged-fit judgment with a claim citing a host that refuses scripted reads
+   (scripts/lib/blocked-hosts.mjs) -> a hold with its reason, since its quote can't stay verified.
+   What still fails validation rejects the run, as before.
    On success: writes data/models.json, appends data/changelog.json (with sources), removes the
    applied ids from data/refresh/worklist.json, runs the honesty gate, THEN (only when this run
    wrote at least one judged-fit claim) runs scripts/check-sources.mjs on the judged-fit records
@@ -48,6 +50,7 @@ import { canonicalVendor, bareModelName, modelId as idFromName } from './naming.
 import { TASK_IDS } from './derive-task-fit.mjs';
 import { bannedPhraseIn, wordCount, CLAIM_TIERS, CLAIM_POLARITY_VALUES, citesLiveFeed, utcToday } from './validate-data.mjs';
 import { deriveStatus, deriveAdoption, deriveStatusAdoptionForCatalog } from './derive-status-adoption.mjs';
+import { blockedHostFor } from './lib/blocked-hosts.mjs';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -92,6 +95,19 @@ export function normalizeJudgment(j, { today = utcToday() } = {}) {
         v.date = d.date;
         if (d.date_precision) v.date_precision = d.date_precision;
       }
+    }
+  }
+  // A judged-fit claim citing a host that refuses scripted reads (scripts/lib/blocked-hosts.mjs)
+  // would fail the write-time quote check (check-sources.mjs --only) and roll back the whole
+  // batch, or pass once and then fail the strict full check at random. Hold that judgment with
+  // its reason instead; the rest of the batch still applies.
+  if (out.kind === 'judged-fit' && v && typeof v === 'object' && Array.isArray(v.claims)) {
+    const hits = v.claims.map((c) => blockedHostFor(c && c.source_url)).filter(Boolean);
+    if (hits.length) {
+      const names = [...new Set(hits.map((h) => `${h.host} (${h.reason})`))].join('; ');
+      const reason = `judged-fit claim cites a host that refuses scripted reads: ${names}; held — cite the vendor's own page or another outlet the quote check can read`;
+      notes.push(`${out.id}: ${reason}`);
+      return { judgment: { id: out.id, hold: true, reason }, notes };
     }
   }
   const latest = addDays(today, 1);

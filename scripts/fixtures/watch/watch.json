@@ -1,0 +1,1396 @@
+{
+  "_readme": "The weekly defaults watch (scripts/defaults-watch.mjs) reads each rule's page, finds `anchor`, runs `pattern` (a JS regex on the normalized page text; capture group 1 is the value) and compares the value with the data. No rule stores the value it expects: a \"field\" rule compares with the value at `maps_to` (and writes it there, plus every `also` path, through one bot pull request when the page changes); a \"flag\" rule only lists a change for review, comparing with `maps_to`, a claim's quote or sentence (`baseline.claim`), or a `baseline.sentinel` for a value the data does not hold. `{name|short|slug|ref|id:<tool>.<slot>}` in anchor, pattern or sentence is filled from the data at run time. Schema: scripts/validate-data.mjs validateWatchList.",
+  "rules": [
+    {
+      "id": "cc-default-model",
+      "tool": "claude-code",
+      "field": "default_model",
+      "url": "https://code.claude.com/docs/en/model-config",
+      "anchor": "the behavior of default depends on your account type",
+      "pattern": "pro, max, team, enterprise, and anthropic api : defaults to ([a-z]+ \\d+(?:\\.\\d+)?)\\b",
+      "value": "model",
+      "value_to_id": "claude",
+      "write": "field",
+      "maps_to": "guidance.tool_plans[tool=claude-code].lead.model_id",
+      "claim_ids": [
+        "cc-default-model-opus-5-5"
+      ],
+      "sentence": "Claude Code's model-config docs state the default model setting resolves to {short:claude-code.lead} on Pro, Max, Team, Enterprise and Anthropic API accounts."
+    },
+    {
+      "id": "cc-alias-opus",
+      "tool": "claude-code",
+      "field": "alias:opus",
+      "url": "https://code.claude.com/docs/en/model-config",
+      "anchor": "the version that the opus and sonnet aliases resolve to depends on the provider",
+      "pattern": "provider opus sonnet anthropic api (opus \\d+(?:\\.\\d+)?) sonnet",
+      "value": "model",
+      "value_to_id": "claude",
+      "write": "field",
+      "maps_to": "guidance.model_refs[tool=claude-code][ref=opus].model_id",
+      "claim_ids": [
+        "cc-alias-provider-versions"
+      ],
+      "sentence": "Claude Code's model-config table shows the opus alias resolving to {short:claude-code.ref.opus} and the sonnet alias to {short:claude-code.ref.sonnet} on the Anthropic API; other providers resolve to other versions."
+    },
+    {
+      "id": "cc-alias-sonnet",
+      "tool": "claude-code",
+      "field": "alias:sonnet",
+      "url": "https://code.claude.com/docs/en/model-config",
+      "anchor": "the version that the opus and sonnet aliases resolve to depends on the provider",
+      "pattern": "provider opus sonnet anthropic api opus \\d+(?:\\.\\d+)? (sonnet \\d+(?:\\.\\d+)?)\\b",
+      "value": "model",
+      "value_to_id": "claude",
+      "write": "field",
+      "maps_to": "guidance.model_refs[tool=claude-code][ref=sonnet].model_id",
+      "also": [
+        "guidance.tool_plans[tool=claude-code].helpers.push_down.model_id",
+        "guidance.role_defaults[tool=claude-code][role=builder].model_id"
+      ],
+      "claim_ids": [
+        "cc-alias-provider-versions"
+      ],
+      "sentence": "Claude Code's model-config table shows the opus alias resolving to {short:claude-code.ref.opus} and the sonnet alias to {short:claude-code.ref.sonnet} on the Anthropic API; other providers resolve to other versions."
+    },
+    {
+      "id": "cc-alias-fable",
+      "tool": "claude-code",
+      "field": "alias:fable",
+      "url": "https://code.claude.com/docs/en/model-config",
+      "anchor": "unless you set anthropic_default_fable_model",
+      "pattern": "unless you set anthropic_default_fable_model , the fable alias resolves to (fable \\d+(?:\\.\\d+)?)\\b",
+      "value": "model",
+      "value_to_id": "claude",
+      "write": "field",
+      "maps_to": "guidance.model_refs[tool=claude-code][ref=fable].model_id",
+      "claim_ids": [
+        "cc-alias-fable-resolves"
+      ],
+      "sentence": "Unless ANTHROPIC_DEFAULT_FABLE_MODEL is set, Claude Code's fable alias resolves to {short:claude-code.ref.fable} outside Claude apps gateway sessions."
+    },
+    {
+      "id": "cc-alias-haiku",
+      "tool": "claude-code",
+      "field": "alias:haiku",
+      "url": "https://platform.claude.com/docs/en/about-claude/models/overview",
+      "anchor": "model ids claude api alias",
+      "pattern": "model ids claude api alias (?:claude-[a-z]+-[\\d-]+ )*?(claude-haiku-[\\d-]+)\\b",
+      "value": "model",
+      "value_to_id": "direct",
+      "write": "field",
+      "maps_to": "guidance.model_refs[tool=claude-code][ref=haiku].model_id",
+      "also": [
+        "guidance.tool_plans[tool=claude-code].bulk.model_id",
+        "guidance.role_defaults[tool=claude-code][role=scout].model_id"
+      ]
+    },
+    {
+      "id": "anthropic-api-alias-list",
+      "tool": "claude-code",
+      "field": "lab_alias_list",
+      "url": "https://platform.claude.com/docs/en/about-claude/models/overview",
+      "anchor": "model ids claude api alias",
+      "pattern": "model ids claude api alias ((?:claude-[a-z]+-[\\d-]+ ?)+?) amazon bedrock id",
+      "value": "text",
+      "write": "field",
+      "claim_ids": [
+        "anthropic-model-ids"
+      ],
+      "sentence": "Anthropic's models overview lists {value:list} as its Claude API aliases."
+    },
+    {
+      "id": "cc-effort-opus-5-5",
+      "tool": "claude-code",
+      "field": "default_effort:opus-5-5",
+      "url": "https://code.claude.com/docs/en/model-config",
+      "anchor": "the model's default effort:",
+      "pattern": "the model's default effort: \\w+ on every model that supports effort, except that [^,]{0,80}?\\b{short:claude-code.lead}\\b[^,]{0,40}?\\bdefaults? to (\\w+)",
+      "value": "word",
+      "write": "field",
+      "maps_to": "guidance.tool_plans[tool=claude-code].lead.effort",
+      "claim_ids": [
+        "cc-effort-5-5-default-medium"
+      ],
+      "sentence": "Claude Code's model-config docs list {value} as the default effort for {short:claude-code.lead}."
+    },
+    {
+      "id": "anthropic-effort-high-row",
+      "tool": "claude-code",
+      "field": "raise_to",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
+      "anchor": "complex reasoning, difficult coding problems, agentic tasks",
+      "pattern": "\\| `(\\w+)` \\| [^|]*\\| complex reasoning, difficult coding problems, agentic tasks \\|",
+      "value": "word",
+      "write": "field",
+      "maps_to": "guidance.tool_plans[tool=claude-code].lead.raise_to",
+      "claim_ids": [
+        "anthropic-effort-high-use"
+      ],
+      "sentence": "Anthropic's effort docs list complex reasoning, difficult coding problems and agentic tasks as the typical use for {value} effort."
+    },
+    {
+      "id": "cc-effort-levels",
+      "tool": "claude-code",
+      "field": "effort_levels",
+      "url": "https://code.claude.com/docs/en/settings-reference",
+      "anchor": "a \"max\" value sets no cap",
+      "pattern": "type : string, one of ((?:\"\\w+\" , )+or \"\\w+\") \\. a \"max\" value sets no cap",
+      "value": "list",
+      "write": "field",
+      "maps_to": "guidance.tool_plans[tool=claude-code].effort_levels.values",
+      "claim_ids": [
+        "cc-effort-levels"
+      ],
+      "sentence": "Claude Code's settings reference lists {value:list} as the effort values maxEffortLevel takes."
+    },
+    {
+      "id": "codex-changelog-default",
+      "tool": "codex",
+      "field": "changelog:default_model",
+      "url": "https://developers.openai.com/codex/changelog",
+      "anchor": "as the default model in the bundled catalog",
+      "pattern": "added (gpt-[\\d.]+ [a-z]+) as the default model in the bundled catalog",
+      "value": "model",
+      "value_to_id": "direct",
+      "first_match": true,
+      "write": "field",
+      "maps_to": "guidance.tool_plans[tool=codex].lead.model_id",
+      "claim_ids": [
+        "codex-6-1-sol-default-catalog"
+      ],
+      "sentence": "Codex CLI's changelog records {name:codex.lead} as the default model in its bundled model catalog."
+    },
+    {
+      "id": "codex-catalog-effort-lead",
+      "tool": "codex",
+      "field": "default_effort:gpt-6.1-sol",
+      "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/models-manager/models.json",
+      "anchor": "\"slug\": \"{slug:codex.lead}\"",
+      "pattern": "\"slug\": \"{slug:codex.lead}\",(?:(?!\"slug\": )[\\s\\S]){0,20000}?\"default_reasoning_level\": \"(\\w+)\"",
+      "value": "word",
+      "write": "field",
+      "maps_to": "guidance.tool_plans[tool=codex].lead.effort",
+      "claim_ids": [
+        "codex-catalog-6-1-sol-effort-low"
+      ],
+      "sentence": "Codex's bundled model catalog sets {value} as the default reasoning level for {slug:codex.lead}."
+    },
+    {
+      "id": "codex-subagent-lighter",
+      "tool": "codex",
+      "field": "push_down_model",
+      "url": "https://developers.openai.com/codex/subagents",
+      "anchor": "for lighter subagent work",
+      "pattern": "use `?(gpt-[a-z0-9.-]+)`? when you want a faster, lower-cost option for lighter subagent work",
+      "value": "model",
+      "value_to_id": "direct",
+      "write": "field",
+      "maps_to": "guidance.tool_plans[tool=codex].helpers.push_down.model_id",
+      "also": [
+        "guidance.tool_plans[tool=codex].bulk.model_id"
+      ],
+      "ref_row": true,
+      "claim_ids": [
+        "codex-luna-lighter-subagent-work"
+      ],
+      "sentence": "Codex's subagent docs name {ref:codex.bulk} as a faster, lower-cost option for lighter subagent work."
+    },
+    {
+      "id": "codex-bp-bulk-effort",
+      "tool": "codex",
+      "field": "bulk_effort",
+      "url": "https://developers.openai.com/codex/learn/best-practices",
+      "anchor": "adjust based on the task and the result",
+      "pattern": "start with (\\w+) for gpt-[\\d.]+ luna\\b",
+      "value": "word",
+      "write": "field",
+      "maps_to": "guidance.tool_plans[tool=codex].bulk.effort",
+      "claim_ids": [
+        "codex-luna-start-high"
+      ],
+      "sentence": "Codex's working guide gives {value} as the starting effort for {name:codex.bulk}."
+    },
+    {
+      "id": "codex-bp-lead-effort-by-task",
+      "tool": "codex",
+      "field": "raise_to",
+      "url": "https://developers.openai.com/codex/learn/best-practices",
+      "anchor": "for more complex changes or debugging",
+      "pattern": "low for faster, well-scoped tasks (\\w+ or \\w+) for more complex changes or debugging",
+      "value": "last-word",
+      "write": "field",
+      "maps_to": "guidance.tool_plans[tool=codex].lead.raise_to",
+      "claim_ids": [
+        "codex-effort-by-task"
+      ],
+      "sentence": "Codex's working guide maps low effort to well-scoped tasks and {value} to complex changes and debugging."
+    },
+    {
+      "id": "codex-effort-levels",
+      "tool": "codex",
+      "field": "effort_levels",
+      "url": "https://developers.openai.com/codex/config-reference",
+      "anchor": "reasoning effort advertised by the selected model",
+      "pattern": "reasoning effort advertised by the selected model, such as ([a-z ,]+?) \\. available levels",
+      "value": "list",
+      "write": "field",
+      "maps_to": "guidance.tool_plans[tool=codex].effort_levels.values",
+      "claim_ids": [
+        "codex-effort-levels"
+      ],
+      "sentence": "Codex's config reference lists {value:list} as reasoning effort values the selected model may advertise."
+    },
+    {
+      "id": "plan.anthropic.team_standard",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://www.anthropic.com/pricing",
+      "anchor": "standard seat all claude features",
+      "pattern": "standard seat [^$]{0,80}\\$([0-9]+(?:\\.[0-9]+)?) per seat / month if billed annually",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=Anthropic][plan=Team (Standard seat)].price_usd_month"
+    },
+    {
+      "id": "plan.anthropic.team_standard_monthly",
+      "tool": "plans",
+      "field": "price_usd_month_billed_monthly",
+      "url": "https://www.anthropic.com/pricing",
+      "anchor": "standard seat all claude features",
+      "pattern": "standard seat [^$]{0,80}\\$[0-9.]+ per seat / month if billed annually\\. \\$([0-9]+(?:\\.[0-9]+)?) if billed monthly",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=Anthropic][plan=Team (Standard seat)].price_usd_month_billed_monthly"
+    },
+    {
+      "id": "plan.anthropic.team_premium",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://www.anthropic.com/pricing",
+      "anchor": "premium seat",
+      "pattern": "premium seat [^$]{0,80}\\$([0-9]+(?:\\.[0-9]+)?) per seat / month if billed annually",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=Anthropic][plan=Team (Premium seat)].price_usd_month"
+    },
+    {
+      "id": "plan.anthropic.team_premium_monthly",
+      "tool": "plans",
+      "field": "price_usd_month_billed_monthly",
+      "url": "https://www.anthropic.com/pricing",
+      "anchor": "premium seat",
+      "pattern": "premium seat [^$]{0,80}\\$[0-9.]+ per seat / month if billed annually\\. \\$([0-9]+(?:\\.[0-9]+)?) if billed monthly",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=Anthropic][plan=Team (Premium seat)].price_usd_month_billed_monthly"
+    },
+    {
+      "id": "plan.openai.pro_100",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers",
+      "anchor": "plan monthly price (usd) ultrafast",
+      "pattern": "pro 100 \\$([0-9]+(?:\\.[0-9]+)?) (?:not included|included)",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=OpenAI][plan=Pro 100].price_usd_month"
+    },
+    {
+      "id": "plan.openai.pro_200",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers",
+      "anchor": "plan monthly price (usd) ultrafast",
+      "pattern": "pro 200 \\$([0-9]+(?:\\.[0-9]+)?) (?:not included|included)",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=OpenAI][plan=Pro 200].price_usd_month"
+    },
+    {
+      "id": "plan.openai.pro_500",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers",
+      "anchor": "plan monthly price (usd) ultrafast",
+      "pattern": "pro 500 \\$([0-9]+(?:\\.[0-9]+)?) (?:not included|included)",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=OpenAI][plan=Pro 500].price_usd_month"
+    },
+    {
+      "id": "plan.copilot.free",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://github.com/features/copilot/plans",
+      "anchor": "pricing plans free",
+      "pattern": "pricing plans free \\$([0-9]+(?:\\.[0-9]+)?) get started",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=GitHub Copilot][plan=Free].price_usd_month"
+    },
+    {
+      "id": "plan.copilot.pro",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://github.com/features/copilot/plans",
+      "anchor": "pricing plans free",
+      "pattern": "get started pro \\$([0-9]+(?:\\.[0-9]+)?) per month get started pro\\+",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=GitHub Copilot][plan=Pro].price_usd_month"
+    },
+    {
+      "id": "plan.copilot.pro_plus",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://github.com/features/copilot/plans",
+      "anchor": "pricing plans free",
+      "pattern": "get started pro\\+ \\$([0-9]+(?:\\.[0-9]+)?) per month get started max",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=GitHub Copilot][plan=Pro+].price_usd_month"
+    },
+    {
+      "id": "plan.copilot.max",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://github.com/features/copilot/plans",
+      "anchor": "pricing plans free",
+      "pattern": "get started max \\$([0-9]+(?:\\.[0-9]+)?) per month get started",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=GitHub Copilot][plan=Max].price_usd_month"
+    },
+    {
+      "id": "plan.copilot.business",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://docs.github.com/en/copilot/get-started/plans",
+      "anchor": "copilot business",
+      "pattern": "copilot business \\$([0-9]+(?:\\.[0-9]+)?) usd per granted seat per month",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=GitHub Copilot][plan=Business].price_usd_month"
+    },
+    {
+      "id": "plan.copilot.enterprise",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://docs.github.com/en/copilot/get-started/plans",
+      "anchor": "copilot enterprise",
+      "pattern": "copilot enterprise \\$([0-9]+(?:\\.[0-9]+)?) usd per granted seat per month",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=GitHub Copilot][plan=Enterprise].price_usd_month"
+    },
+    {
+      "id": "plan.devin.free",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://devin.ai/pricing",
+      "anchor": "compare plans",
+      "pattern": "compare plans free \\$([0-9]+(?:\\.[0-9]+)?)/month",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=Devin][plan=Free].price_usd_month"
+    },
+    {
+      "id": "plan.devin.pro",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://devin.ai/pricing",
+      "anchor": "compare plans",
+      "pattern": "compare plans free \\$[0-9.]+/month pro \\$([0-9]+(?:\\.[0-9]+)?)/month",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=Devin][plan=Pro].price_usd_month"
+    },
+    {
+      "id": "plan.devin.max",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://devin.ai/pricing",
+      "anchor": "compare plans",
+      "pattern": "/month max \\$([0-9]+(?:\\.[0-9]+)?)/month team",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=Devin][plan=Max].price_usd_month"
+    },
+    {
+      "id": "plan.devin.teams_seat",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://devin.ai/pricing",
+      "anchor": "teams $80 /month for team plan",
+      "pattern": "for team plan \\+ \\$([0-9]+(?:\\.[0-9]+)?)/mo per full dev seat",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=Devin][plan=Teams].price_usd_month"
+    },
+    {
+      "id": "plan.devin.teams_base",
+      "tool": "plans",
+      "field": "base_usd_month",
+      "url": "https://devin.ai/pricing",
+      "anchor": "teams $80 /month for team plan",
+      "pattern": "teams \\$([0-9]+(?:\\.[0-9]+)?) /month for team plan",
+      "value": "price",
+      "write": "field",
+      "maps_to": "plans.plans[vendor=Devin][plan=Teams].base_usd_month"
+    },
+    {
+      "id": "cc-changelog-default-sonnet",
+      "tool": "claude-code",
+      "field": "changelog:default_sonnet",
+      "url": "https://code.claude.com/docs/en/changelog",
+      "anchor": "now the default sonnet model on the anthropic api",
+      "pattern": "added claude (sonnet \\d+(?:\\.\\d+)?) \\( claude-[a-z0-9-]+ \\), now the default sonnet model on the anthropic api",
+      "value": "model",
+      "value_to_id": "claude",
+      "first_match": true,
+      "write": "flag",
+      "maps_to": "guidance.model_refs[tool=claude-code][ref=sonnet].model_id"
+    },
+    {
+      "id": "cc-effort-general-default",
+      "tool": "claude-code",
+      "field": "default_effort:general",
+      "url": "https://code.claude.com/docs/en/model-config",
+      "anchor": "the model's default effort:",
+      "pattern": "the model's default effort: (\\w+) on every model that supports effort",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "sentinel": "high"
+      }
+    },
+    {
+      "id": "cc-effort-sonnet-5-5",
+      "tool": "claude-code",
+      "field": "default_effort:sonnet-5-5",
+      "url": "https://code.claude.com/docs/en/model-config",
+      "anchor": "the model's default effort:",
+      "pattern": "the model's default effort: \\w+ on every model that supports effort, except that [^,]{0,80}?\\bsonnet 5\\.5\\b[^,]{0,40}?\\bdefaults? to (\\w+)",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "cc-effort-5-5-default-medium",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "anthropic-effort-opus-5-5-api",
+      "tool": "claude-code",
+      "field": "lab_default_effort:opus-5-5",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
+      "anchor": "recommended effort levels for claude opus 5.5",
+      "pattern": "claude opus 5\\.5 supports all five effort levels, and `(\\w+)` is the default",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "anthropic-effort-defaults",
+        "in": "sentence"
+      }
+    },
+    {
+      "id": "cc-explore-model",
+      "tool": "claude-code",
+      "field": "subagent_default:explore",
+      "url": "https://code.claude.com/docs/en/sub-agents",
+      "anchor": "a fast, read-only agent optimized for searching and analyzing codebases",
+      "pattern": "a fast, read-only agent optimized for searching and analyzing codebases\\. model : ([^.]+?)\\. when the main conversation runs",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "cc-explore-model",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "cc-subagent-order-last",
+      "tool": "claude-code",
+      "field": "subagent_default",
+      "url": "https://code.claude.com/docs/en/sub-agents",
+      "anchor": "claude code resolves the subagent's model in this order",
+      "pattern": "resolves the subagent's model in this order: the per-invocation model parameter the subagent definition's model frontmatter, where inherit selects the main conversation's model the claude_code_subagent_model environment variable, when you set it to a model alias or model id ([^.:]{1,80}?) in two cases",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "sentinel": "the main conversation's model"
+      }
+    },
+    {
+      "id": "cc-explore-override",
+      "tool": "claude-code",
+      "field": "explore_override_alias",
+      "url": "https://code.claude.com/docs/en/sub-agents",
+      "anchor": "to run exploration on a lower-cost model",
+      "pattern": "define one with model: (\\w+) to run exploration on a lower-cost model",
+      "value": "model",
+      "value_to_id": "ref:claude-code",
+      "write": "flag",
+      "maps_to": "guidance.role_defaults[tool=claude-code][role=scout].model_id"
+    },
+    {
+      "id": "cc-costs-subagent-haiku",
+      "tool": "claude-code",
+      "field": "bulk_alias",
+      "url": "https://code.claude.com/docs/en/costs",
+      "anchor": "for simple subagent tasks",
+      "pattern": "for simple subagent tasks, specify model: (\\w+) in your subagent configuration",
+      "value": "model",
+      "value_to_id": "ref:claude-code",
+      "write": "flag",
+      "maps_to": "guidance.tool_plans[tool=claude-code].bulk.model_id"
+    },
+    {
+      "id": "cc-costs-teammates",
+      "tool": "claude-code",
+      "field": "builder_alias",
+      "url": "https://code.claude.com/docs/en/costs",
+      "anchor": "to keep agent team costs manageable",
+      "pattern": "to keep agent team costs manageable: use (\\w+) for teammates\\.",
+      "value": "model",
+      "value_to_id": "ref:claude-code",
+      "write": "flag",
+      "maps_to": "guidance.role_defaults[tool=claude-code][role=builder].model_id"
+    },
+    {
+      "id": "cc-costs-most-coding",
+      "tool": "claude-code",
+      "field": "everyday_alias",
+      "url": "https://code.claude.com/docs/en/costs",
+      "anchor": "choose the right model",
+      "pattern": "choose the right model (\\w+) handles most coding tasks well and costs less than \\w+\\.",
+      "value": "model",
+      "value_to_id": "ref:claude-code",
+      "write": "flag",
+      "maps_to": "guidance.role_defaults[tool=claude-code][role=builder].model_id"
+    },
+    {
+      "id": "cc-support-routine",
+      "tool": "claude-code",
+      "field": "push_down_alias",
+      "url": "https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code",
+      "anchor": "it uses meaningfully more of your quota",
+      "pattern": "it uses meaningfully more of your quota, so consider switching to (\\w+) for routine work",
+      "value": "model",
+      "value_to_id": "ref:claude-code",
+      "write": "flag",
+      "maps_to": "guidance.tool_plans[tool=claude-code].helpers.push_down.model_id"
+    },
+    {
+      "id": "cc-support-mechanical",
+      "tool": "claude-code",
+      "field": "bulk_alias",
+      "url": "https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code",
+      "anchor": "reasonable defaults:",
+      "pattern": "\\(hard debugging, cross-cutting refactors, architecture calls\\); (\\w+) for quick mechanical work \\(",
+      "value": "model",
+      "value_to_id": "ref:claude-code",
+      "write": "flag",
+      "maps_to": "guidance.tool_plans[tool=claude-code].bulk.model_id"
+    },
+    {
+      "id": "anthropic-checkable-outputs",
+      "tool": "claude-code",
+      "field": "bulk_model",
+      "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+      "anchor": "it fits high-volume work with checkable outputs",
+      "pattern": "at the other end, claude ([a-z]+ \\d+(?:\\.\\d+)?) answered .{0,400}?it fits high-volume work with checkable outputs",
+      "value": "model",
+      "value_to_id": "claude",
+      "write": "flag",
+      "maps_to": "guidance.tool_plans[tool=claude-code].bulk.model_id"
+    },
+    {
+      "id": "codex-config-default-model",
+      "tool": "codex",
+      "field": "default_model",
+      "url": "https://developers.openai.com/codex/config-basic",
+      "anchor": "choose the model codex uses by default in the cli and ide",
+      "pattern": "choose the model codex uses by default in the cli and ide\\. model = \"([^\"]+)\"",
+      "value": "model",
+      "value_to_id": "direct",
+      "write": "flag",
+      "maps_to": "guidance.tool_plans[tool=codex].lead.model_id"
+    },
+    {
+      "id": "codex-catalog-default-model",
+      "tool": "codex",
+      "field": "catalog_default_model",
+      "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/models-manager/models.json",
+      "anchor": "\"models\": [",
+      "pattern": "\"slug\": \"([^\"]+)\",(?:(?!\"slug\": )[\\s\\S]){0,20000}?\"priority\": 1,",
+      "value": "model",
+      "value_to_id": "direct",
+      "write": "flag",
+      "maps_to": "guidance.tool_plans[tool=codex].lead.model_id"
+    },
+    {
+      "id": "codex-catalog-effort-luna",
+      "tool": "codex",
+      "field": "default_effort:gpt-6-luna",
+      "url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/models-manager/models.json",
+      "anchor": "\"slug\": \"{slug:codex.bulk}\"",
+      "pattern": "\"slug\": \"{slug:codex.bulk}\",(?:(?!\"slug\": )[\\s\\S]){0,20000}?\"default_reasoning_level\": \"(\\w+)\"",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "sentinel": "medium"
+      }
+    },
+    {
+      "id": "codex-subagent-inherits",
+      "tool": "codex",
+      "field": "subagent_default",
+      "url": "https://developers.openai.com/codex/subagents",
+      "anchor": "if you don't configure a subagent model",
+      "pattern": "if you don't configure a subagent model or `?model_reasoning_effort`? , ?the subagent ([^.]+)\\.",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "codex-subagent-inherits",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "codex-subagent-start-with",
+      "tool": "codex",
+      "field": "recommended_lead",
+      "url": "https://developers.openai.com/codex/subagents",
+      "anchor": "for most tasks in codex, start with",
+      "pattern": "for most tasks in codex, start with `?(gpt-[a-z0-9.-]+)`? when",
+      "value": "model",
+      "value_to_id": "direct",
+      "write": "flag",
+      "maps_to": "guidance.tool_plans[tool=codex].lead.model_id"
+    },
+    {
+      "id": "codex-subagent-fast-scans",
+      "tool": "codex",
+      "field": "model_ref:fast_scans",
+      "url": "https://developers.openai.com/codex/subagents",
+      "anchor": "for fast scans",
+      "pattern": "for example, use `?(gpt-[a-z0-9.-]+)`? for fast scans",
+      "value": "model",
+      "value_to_id": "direct",
+      "write": "flag",
+      "maps_to": "guidance.tool_plans[tool=codex].bulk.model_id"
+    },
+    {
+      "id": "codex-subagent-demanding",
+      "tool": "codex",
+      "field": "model_ref:demanding",
+      "url": "https://developers.openai.com/codex/subagents",
+      "anchor": "for more demanding reasoning",
+      "pattern": "for fast scans or a higher-effort `?(gpt-[a-z0-9.-]+)`? configuration for more demanding reasoning",
+      "value": "model",
+      "value_to_id": "direct",
+      "write": "flag",
+      "maps_to": "guidance.tool_plans[tool=codex].lead.model_id"
+    },
+    {
+      "id": "codex-bp-bulk-model",
+      "tool": "codex",
+      "field": "bulk_model",
+      "url": "https://developers.openai.com/codex/learn/best-practices",
+      "anchor": "adjust based on the task and the result",
+      "pattern": "start with \\w+ for (gpt-[\\d.]+ [a-z]+) or \\w+ for gpt-",
+      "value": "model",
+      "value_to_id": "direct",
+      "write": "flag",
+      "maps_to": "guidance.tool_plans[tool=codex].bulk.model_id"
+    },
+    {
+      "id": "codex-learn-complex",
+      "tool": "codex",
+      "field": "recommended_lead",
+      "url": "https://learn.chatgpt.com/docs/models",
+      "anchor": "recommended models",
+      "pattern": "for complex coding and agentic workflows, use (gpt-[\\d.]+ [a-z]+) when available",
+      "value": "model",
+      "value_to_id": "direct",
+      "write": "flag",
+      "maps_to": "guidance.tool_plans[tool=codex].lead.model_id"
+    },
+    {
+      "id": "codex-learn-repeatable",
+      "tool": "codex",
+      "field": "bulk_family",
+      "url": "https://learn.chatgpt.com/docs/models",
+      "anchor": "focused, repeatable tasks",
+      "pattern": "use (\\w+) for focused, repeatable tasks",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "codex-luna-repeatable",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "openai-api-effort-default",
+      "tool": "codex",
+      "field": "lab_default_effort:gpt-6.1-sol",
+      "url": "https://developers.openai.com/api/docs/guides/reasoning",
+      "anchor": "also default to",
+      "pattern": "gpt-6\\.1 sol, gpt-6 sol, and gpt-6 luna also default to (\\w+) reasoning effort",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "openai-sol-luna-default-medium",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "cursor-subagent-default",
+      "tool": "cursor",
+      "field": "subagent_default",
+      "url": "https://cursor.com/docs/context/subagents",
+      "anchor": "the model field controls which model a subagent uses",
+      "pattern": "value behavior (\\w+) uses the same model as the parent agent\\. this is the default\\.",
+      "value": "text",
+      "write": "flag",
+      "maps_to": "guidance.tool_plans[tool=cursor].helpers.model"
+    },
+    {
+      "id": "cursor-inherit-when",
+      "tool": "cursor",
+      "field": "inherit_when",
+      "url": "https://cursor.com/docs/context/subagents",
+      "anchor": "the same reasoning power as the parent",
+      "pattern": "choose (\\w+) when the subagent needs the same reasoning power as the parent",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "cursor-inherit-same-reasoning",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "cursor-everyday",
+      "tool": "cursor",
+      "field": "lead_choice",
+      "url": "https://cursor.com/help/models-and-usage/available-models.md",
+      "anchor": "which model should i use?",
+      "pattern": "which model should i use\\? - \\*\\*(\\w+)\\*\\* selects models that balance intelligence, cost, and reliability\\. good for everyday tasks",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "cursor-auto-everyday",
+        "in": "sentence"
+      }
+    },
+    {
+      "id": "cursor-composer-version",
+      "tool": "cursor",
+      "field": "bulk_named_model",
+      "url": "https://cursor.com/help/models-and-usage/available-models.md",
+      "anchor": "cursor offers its own models",
+      "pattern": "\\[composer\\]\\(https:\\/\\/cursor\\.com\\/docs\\/models\\/(cursor-composer-[\\d-]+)\\.md\\)",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "sentinel": "cursor-composer-2-5"
+      },
+      "judge": "Cursor lists a new Composer version. Should the catalog admit it so the Cursor bulk line can name a model?"
+    },
+    {
+      "id": "cursor-flagship",
+      "tool": "cursor",
+      "field": "flagship_sentinel",
+      "url": "https://cursor.com/help/models-and-usage/available-models.md",
+      "anchor": "is cursor's flagship model",
+      "pattern": "\\*\\*\\[([^\\]]+)\\]\\([^)]*\\)\\*\\* is cursor's flagship model",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "sentinel": "grok 4.7"
+      },
+      "judge": "Cursor names a different flagship model. Does any Cursor line in the install package depend on it?"
+    },
+    {
+      "id": "copilot.lead.picker",
+      "tool": "copilot",
+      "field": "lead.choice",
+      "url": "https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model",
+      "anchor": "select the current-model dropdown menu",
+      "pattern": "select the current-model dropdown menu, then click the ai model of ([a-z0-9 .\\-]+?)\\. note",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "copilot-model-picker",
+        "in": "quote"
+      },
+      "judge": "Does GitHub Copilot now name the model a user gets before opening the picker? If yes, quote it and give the catalog id; if no, the lead line stays a free choice."
+    },
+    {
+      "id": "copilot.lead.effort",
+      "tool": "copilot",
+      "field": "lead.effort",
+      "url": "https://code.visualstudio.com/docs/copilot/customization/language-models",
+      "anchor": "by default, vs code sets",
+      "pattern": "by default, vs code sets ([a-z]+) effort levels",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "copilot-thinking-effort-default",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "copilot.enforced.agent_model_unset",
+      "tool": "copilot",
+      "field": "enforced[0] (agent-file model, unset)",
+      "url": "https://docs.github.com/en/copilot/reference/custom-agents-configuration",
+      "anchor": "model to use when this custom agent executes",
+      "pattern": "model to use when this custom agent executes\\. if unset, inherits the ([a-z0-9 .\\-]+?)\\.",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "copilot-agent-model-property",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "copilot.enforced.agent_folder",
+      "tool": "copilot",
+      "field": "enforced[0] (agent-file folder)",
+      "url": "https://code.visualstudio.com/docs/copilot/customization/custom-agents",
+      "anchor": "workspace .github/agents folder",
+      "pattern": "workspace (\\.[a-z]+/agents) folder workspace \\(claude format\\)",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "copilot-custom-agent-locations",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "copilot.helpers.default_to_auto",
+      "tool": "copilot",
+      "field": "helpers.model",
+      "url": "https://code.visualstudio.com/docs/copilot/agents/subagents",
+      "anchor": "chat.subagents.defaulttoauto",
+      "pattern": "when neither the tool call nor the agent specifies a model\\. the setting defaults to ([a-z]+)",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "sentinel": "false"
+      },
+      "judge": "VS Code changed the default of its subagent Auto setting. Does a Copilot helper still run on the main model by default?"
+    },
+    {
+      "id": "copilot.helpers.cost_tier_cap",
+      "tool": "copilot",
+      "field": "helpers.push_down",
+      "url": "https://code.visualstudio.com/docs/copilot/agents/subagents",
+      "anchor": "explicit and agent-configured model selections",
+      "pattern": "explicit and agent-configured model selections are checked against the main model's ([a-z ]+?)\\.",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "copilot-subagent-cost-tier-cap",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "copilot.helpers.push_down",
+      "tool": "copilot",
+      "field": "helpers.push_down.choice",
+      "url": "https://docs.github.com/en/copilot/tutorials/optimize-ai-usage",
+      "anchor": "use cheaper models for subagents",
+      "pattern": "run subagents on ([a-z]+) models\\.",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "copilot-subagents-cheaper-models",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "copilot.bulk.tier",
+      "tool": "copilot",
+      "field": "bulk.choice",
+      "url": "https://docs.github.com/en/copilot/tutorials/optimize-ai-usage",
+      "anchor": "best for refactoring, formatting, documentation updates",
+      "pattern": "([a-z\\-]+) models : best for refactoring, formatting, documentation updates",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "copilot-lighter-models-routine",
+        "in": "sentence"
+      }
+    },
+    {
+      "id": "copilot.instructions.agents_md",
+      "tool": "copilot",
+      "field": "instruction_files[0]",
+      "url": "https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions",
+      "anchor": "agents.md file in the directory tree",
+      "pattern": "the ([a-z]+) agents\\.md file in the directory tree will take precedence",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "copilot-reads-agents-md",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "copilot.instructions.file",
+      "tool": "copilot",
+      "field": "instruction_files[1]",
+      "url": "https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions",
+      "anchor": "file in the .github directory",
+      "pattern": "specified in a ([a-z\\-.]+) file in the \\.github directory",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "copilot-instructions-file",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "antigravity.core.pro",
+      "tool": "antigravity",
+      "field": "lead basis: core agent Pro model",
+      "url": "https://antigravity.google/docs/plans",
+      "anchor": "use of gemini models, including",
+      "pattern": "use of gemini models, including (gemini [0-9.]+ pro), ",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "antigravity-core-agent-models",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "antigravity.core.flash",
+      "tool": "antigravity",
+      "field": "lead basis: core agent Flash model",
+      "url": "https://antigravity.google/docs/plans",
+      "anchor": "use of gemini models, including",
+      "pattern": "use of gemini models, including gemini [0-9.]+ pro, (gemini [0-9.]+ flash), and other",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "antigravity-core-agent-models",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "antigravity.models.top_row",
+      "tool": "antigravity",
+      "field": "model tiers: newest row in the reasoning-model table",
+      "url": "https://antigravity.google/docs/models",
+      "anchor": "availability depends on your plan: model free & google ai plus",
+      "pattern": "availability depends on your plan: model free & google ai plus google ai pro google ai ultra enterprise (gemini [0-9.]+ [a-z\\-]+) ",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "sentinel": "gemini 3.8 flash"
+      },
+      "judge": "Antigravity's model table has a new top row. Does the Antigravity plan need a new line or a catalog admission?"
+    },
+    {
+      "id": "antigravity.helpers.model_default",
+      "tool": "antigravity",
+      "field": "helpers.model",
+      "url": "https://antigravity.google/docs/subagents",
+      "anchor": "model tier used when invoked",
+      "pattern": "model string ([a-z]+) model tier used when invoked",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "antigravity-subagent-model-tier",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "antigravity.enforced.tiers",
+      "tool": "antigravity",
+      "field": "enforced[0] tier list",
+      "url": "https://antigravity.google/docs/subagents",
+      "anchor": "model tier used when invoked",
+      "pattern": "model tier used when invoked \\( ([a-z ,]+?) \\)",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "antigravity-subagent-model-tier",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "antigravity.instructions.rule_files",
+      "tool": "antigravity",
+      "field": "instruction_files[0]",
+      "url": "https://antigravity.google/docs/rules",
+      "anchor": "file-or a .agents/rules/ directory",
+      "pattern": "you can place an? ([a-z.]+(?: or [a-z.]+)?) file-or a \\.agents/rules/ directory",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "antigravity-rule-files",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "openrouter.lead.auto_slug",
+      "tool": "openrouter",
+      "field": "lead (auto router slug)",
+      "url": "https://openrouter.ai/docs/guides/routing/routers/auto-router",
+      "anchor": "works like any other model slug",
+      "pattern": "auto \\( (openrouter/[a-z\\-]+) \\) - works like any other model slug",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "openrouter-auto-slug",
+        "in": "sentence"
+      }
+    },
+    {
+      "id": "openrouter.lead.default_band",
+      "tool": "openrouter",
+      "field": "lead (auto router default cost band)",
+      "url": "https://openrouter.ai/docs/guides/routing/routers/auto-router",
+      "anchor": "requests that set no cost setting",
+      "pattern": "requests that set no cost setting route as if you had asked for roughly the ([a-z]+) band",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "openrouter-auto-default-low",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "openrouter.bulk.cost_tiers",
+      "tool": "openrouter",
+      "field": "bulk (cost bands)",
+      "url": "https://openrouter.ai/docs/guides/routing/routers/auto-router",
+      "anchor": "the tiers, from cheapest to most capable",
+      "pattern": "the tiers, from cheapest to most capable, are ([a-z ,]+?) \\. low favors",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "sentinel": "low , medium , high , xhigh , and max"
+      }
+    },
+    {
+      "id": "openrouter.bulk.floor",
+      "tool": "openrouter",
+      "field": "bulk (price-floor variant)",
+      "url": "https://openrouter.ai/docs/guides/routing/model-variants/floor",
+      "anchor": "variant optimizes for cost",
+      "pattern": "the (:[a-z]+) variant optimizes for cost",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "openrouter-floor-variant",
+        "in": "sentence"
+      }
+    },
+    {
+      "id": "openrouter.enforced.models_param",
+      "tool": "openrouter",
+      "field": "enforced[0] (fallback list param)",
+      "url": "https://openrouter.ai/docs/guides/routing/model-fallbacks",
+      "anchor": "parameter lets you automatically try other models",
+      "pattern": "the ([a-z_]+) parameter lets you automatically try other models",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "openrouter-models-fallback",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "openrouter.enforced.fallback_pricing",
+      "tool": "openrouter",
+      "field": "enforced[0] (fallback billing)",
+      "url": "https://openrouter.ai/docs/guides/routing/model-fallbacks",
+      "anchor": "requests are priced using the model",
+      "pattern": "requests are priced using the model that was ([a-z ]+?), which will be returned",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "openrouter-fallback-pricing",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "openrouter.enforced.reasoning_param",
+      "tool": "openrouter",
+      "field": "enforced[1] (effort param)",
+      "url": "https://openrouter.ai/docs/guides/best-practices/reasoning-tokens",
+      "anchor": "control reasoning tokens in your requests",
+      "pattern": "you can control reasoning tokens in your requests using the ([a-z_]+) parameter",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "openrouter-reasoning-parameter",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "openrouter.enforced.effort_values",
+      "tool": "openrouter",
+      "field": "enforced[1] (effort values)",
+      "url": "https://openrouter.ai/docs/guides/best-practices/reasoning-tokens",
+      "anchor": "(openai-style)",
+      "pattern": "// can be (\"[a-z]+\"(?:, \"[a-z]+\")* or \"[a-z]+\") \\(openai-style\\)",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "sentinel": "\"max\", \"xhigh\", \"high\", \"medium\", \"low\", \"minimal\" or \"none\""
+      }
+    },
+    {
+      "id": "effort.anthropic.general_default",
+      "tool": "lab:Anthropic",
+      "field": "effort default (most models)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
+      "anchor": "## how effort works",
+      "pattern": "most claude models default to ([a-z]+) effort",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "anthropic-effort-defaults",
+        "in": "sentence"
+      }
+    },
+    {
+      "id": "effort.anthropic.exception_model",
+      "tool": "lab:Anthropic",
+      "field": "effort default exception",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
+      "anchor": "the default on every model that supports effort except",
+      "pattern": "the default on every model that supports effort except (claude [a-z]+ [0-9]+(?:\\.[0-9]+)?)\\.",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "anthropic-effort-defaults",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "effort.anthropic.opus_5_5_default",
+      "tool": "lab:Anthropic",
+      "field": "effort default, Claude Opus 5.5 (API)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
+      "anchor": "claude opus 5.5 defaults to",
+      "pattern": "claude opus 5\\.5 defaults to ([a-z]+)\\.",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "anthropic-effort-defaults",
+        "in": "sentence"
+      }
+    },
+    {
+      "id": "effort.anthropic.sonnet_5_5_default",
+      "tool": "lab:Anthropic",
+      "field": "effort default, Claude Sonnet 5.5 (API)",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/effort",
+      "anchor": "recommended effort levels for claude sonnet 5.5",
+      "pattern": "claude sonnet 5\\.5 supports all five effort levels, and ([a-z]+) is the default on the claude api",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "anthropic-sonnet-5-5-effort-api-default",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "effort.openai.sol_luna_models",
+      "tool": "lab:OpenAI",
+      "field": "models covered by the medium default",
+      "url": "https://developers.openai.com/api/docs/guides/reasoning",
+      "anchor": "defaults to medium in both modes",
+      "pattern": "defaults to medium in both modes\\. (gpt-[^,]+, gpt-[^,]+, and gpt-[0-9.]+ [a-z]+) also default to",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "openai-sol-luna-default-medium",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "effort.google.gemini3_param",
+      "tool": "lab:Google",
+      "field": "Gemini 3 thinking parameter",
+      "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/thinking",
+      "anchor": "gemini 3 models use the",
+      "pattern": "gemini 3 models use the ([a-z_]+) parameter",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "google-gemini-3-thinking-level",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "effort.google.gemini25_param",
+      "tool": "lab:Google",
+      "field": "Gemini 2.5 thinking parameter",
+      "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/thinking",
+      "anchor": "for gemini 2.5 and earlier models, configure thinking",
+      "pattern": "for gemini 2\\.5 and earlier models, configure thinking using the ([a-z_]+) parameter",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "google-gemini-2-5-thinking-budget",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "effort.google.gemini_3_8_flash_default",
+      "tool": "lab:Google",
+      "field": "thinking_level default, Gemini 3.8 Flash (DATA GAP: not stored)",
+      "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/thinking",
+      "anchor": "supported thinking_level values and default configurations by model",
+      "pattern": "gemini 3\\.8 flash (?:(?:minimal|low|medium|high) , )*(?:minimal|low|medium|high) ((?:minimal|low|medium|high)) gemini",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "sentinel": "medium"
+      }
+    },
+    {
+      "id": "effort.google.gemini_3_1_pro_default",
+      "tool": "lab:Google",
+      "field": "thinking_level default, Gemini 3.1 Pro preview (DATA GAP: not stored)",
+      "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/thinking",
+      "anchor": "supported thinking_level values and default configurations by model",
+      "pattern": "gemini 3\\.1 pro preview (?:(?:minimal|low|medium|high) , )*(?:minimal|low|medium|high) ((?:minimal|low|medium|high)) gemini",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "sentinel": "high"
+      }
+    },
+    {
+      "id": "effort.xai.default",
+      "tool": "lab:xAI",
+      "field": "reasoning_effort default",
+      "url": "https://docs.x.ai/docs/guides/reasoning",
+      "anchor": "if not specified, reasoning_effort defaults to",
+      "pattern": "if not specified, reasoning_effort defaults to \"([a-z]+)\"",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "xai-grok-effort-default-high",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "effort.xai.models",
+      "tool": "lab:xAI",
+      "field": "models that take reasoning_effort (DATA GAP: not stored)",
+      "url": "https://docs.x.ai/docs/guides/reasoning",
+      "anchor": "the reasoning_effort parameter grok-",
+      "pattern": "the reasoning_effort parameter (grok-[0-9.]+ (?:, grok-[0-9.]+ )*, and grok-[0-9.]+) support",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "sentinel": "grok-4.7 , grok-4.6 , and grok-4.5"
+      }
+    },
+    {
+      "id": "effort.deepseek.default",
+      "tool": "lab:DeepSeek",
+      "field": "thinking effort default",
+      "url": "https://api-docs.deepseek.com/guides/thinking_mode",
+      "anchor": "thinking mode is enabled by default",
+      "pattern": "thinking mode is enabled by default, with the default effort being ([a-z]+)",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "deepseek-thinking-default-high",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "effort.deepseek.mapping",
+      "tool": "lab:DeepSeek",
+      "field": "effort mapping table (DATA GAP: not stored)",
+      "url": "https://api-docs.deepseek.com/guides/thinking_mode",
+      "anchor": "requested effort actual mapped effort",
+      "pattern": "requested effort actual mapped effort ([a-z ]+?) when using",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "sentinel": "minimal low low low medium high high high xhigh high max max ultra max"
+      }
+    },
+    {
+      "id": "effort.meta.omitted",
+      "tool": "lab:Meta",
+      "field": "behaviour when effort omitted",
+      "url": "https://dev.meta.ai/docs/reasoning.md",
+      "anchor": "when you omit the parameter",
+      "pattern": "when you omit the parameter, the model still reasons at a ([a-z\\-]+) level",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "meta-effort-omitted",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "effort.mistral.agentic_recommended",
+      "tool": "lab:Mistral AI",
+      "field": "recommended effort for agentic/code",
+      "url": "https://docs.mistral.ai/capabilities/reasoning/",
+      "anchor": "for agentic and code use cases",
+      "pattern": "for agentic and code use cases, reasoning_effort=\"([a-z]+)\" is recommended",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "mistral-high-effort-agentic-code",
+        "in": "quote"
+      }
+    },
+    {
+      "id": "effort.mistral.agentic_model",
+      "tool": "lab:Mistral AI",
+      "field": "model the agentic recommendation is about",
+      "url": "https://docs.mistral.ai/capabilities/reasoning/",
+      "anchor": "supports adjustable reasoning via the reasoning_effort parameter. for agentic",
+      "pattern": "([a-z0-9\\-]+) : supports adjustable reasoning via the reasoning_effort parameter\\. for agentic and code use cases",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "claim": "mistral-high-effort-agentic-code",
+        "in": "sentence"
+      }
+    },
+    {
+      "id": "effort.mistral.none_behavior",
+      "tool": "lab:Mistral AI",
+      "field": "reasoning_effort value that turns thinking down",
+      "url": "https://docs.mistral.ai/capabilities/reasoning/",
+      "anchor": "the model thinks minimally",
+      "pattern": "reasoning_effort = \"([a-z]+)\" : the model thinks minimally",
+      "value": "word",
+      "write": "flag",
+      "baseline": {
+        "claim": "mistral-none-effort-behavior",
+        "in": "sentence"
+      }
+    },
+    {
+      "id": "plan.devin.enterprise",
+      "tool": "plans",
+      "field": "price_usd_month",
+      "url": "https://devin.ai/pricing",
+      "anchor": "compare plans",
+      "pattern": "/month enterprise ([^ ]+ talk|\\$[0-9]+(?:\\.[0-9]+)?)",
+      "value": "text",
+      "write": "flag",
+      "baseline": {
+        "sentinel": "let's talk"
+      }
+    }
+  ]
+}
