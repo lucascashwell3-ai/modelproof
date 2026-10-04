@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeText, quoteFoundIn, collectClaims, collectGuidanceClaims, collectPlanClaims, collectAllClaims, selectClaims, checkClaims, parseArgs } from './check-sources.mjs';
+import { normalizeText, quoteFoundIn, collectClaims, collectGuidanceClaims, collectPlanClaims, collectAllClaims, selectClaims, skipClaims, checkClaims, parseArgs, classifyFailure, runFailed, fetchNormalizedPage, CACHE_MAX_AGE_MS } from './check-sources.mjs';
 
 test('normalizeText strips tags/scripts/styles, decodes entities, collapses whitespace, lowercases', () => {
   const html = '<html><head><style>.x{color:red}</style></head><body><script>evil()</script>' +
@@ -233,8 +233,17 @@ test('selectClaims: keys pick judged-fit records, guidance ids and plan rows; un
 });
 
 test('parseArgs: --data and --only (comma list, repeatable); unknown flags throw', () => {
-  assert.deepEqual(parseArgs(['--data', '/tmp/d', '--only', 'a/b,c', '--only=d']), { dataDir: '/tmp/d', only: ['a/b', 'c', 'd'] });
+  assert.deepEqual(parseArgs(['--data', '/tmp/d', '--only', 'a/b,c', '--only=d']), { dataDir: '/tmp/d', only: ['a/b', 'c', 'd'], fresh: false, blockedOk: false, skipIds: [], jsonOut: null });
   assert.throws(() => parseArgs(['--ids', 'x']), /unknown argument/);
+});
+
+test('parseArgs: --fresh, --blocked-ok, --skip-ids (comma list, repeatable), --json-out', () => {
+  assert.deepEqual(parseArgs(['--fresh', '--blocked-ok', '--skip-ids', 'guidance/a,b', '--skip-ids=c', '--json-out', '/tmp/r.json']),
+    { dataDir: null, only: [], fresh: true, blockedOk: true, skipIds: ['guidance/a', 'b', 'c'], jsonOut: '/tmp/r.json' });
+});
+
+test('parseArgs: --blocked-ok is refused with --only (a write-time gate must read its page)', () => {
+  assert.throws(() => parseArgs(['--only', 'm/coding', '--blocked-ok']), /cannot be combined with --only/);
 });
 
 // --- CLI: a scoped run checks only what it names (pages served from a fixture map, no network) --
@@ -297,4 +306,130 @@ test('report-claim-rot names the file of a rotten guidance quote and a rotten pl
   assert.match(r.stdout, /`data\/guidance\.json` \*\*Cursor\*\*/);
   assert.match(r.stdout, /`data\/plans\.json` \*\*V \/ Pro\*\*/);
   assert.doesNotMatch(r.stdout, /`data\/models\.json`/, 'the verified judged-fit quote is not listed');
+});
+
+// --- failure kinds: a vanished quote / a dead page are errors, a page we could not read is not ---
+import { createHash } from 'node:crypto';
+import { mkdirSync, utimesSync, readFileSync } from 'node:fs';
+
+test('classifyFailure: 404/410 are gone; 403/429/5xx, timeouts, network errors, short bodies are blocked', () => {
+  assert.equal(classifyFailure(Object.assign(new Error('HTTP 404'), { status: 404 })), 'gone');
+  assert.equal(classifyFailure('HTTP 410'), 'gone');
+  assert.equal(classifyFailure(new Error('HTTP 404 (not in pages.json)')), 'gone', 'status parsed from the message when not set');
+  for (const s of [403, 429, 500, 502, 503]) assert.equal(classifyFailure(Object.assign(new Error(`HTTP ${s}`), { status: s })), 'blocked', `HTTP ${s}`);
+  assert.equal(classifyFailure(new Error('timed out after 20s')), 'blocked');
+  assert.equal(classifyFailure(new Error('network error (getaddrinfo ENOTFOUND)')), 'blocked');
+  assert.equal(classifyFailure(new Error('page body too short after fetch (12 chars)')), 'blocked');
+});
+
+test('checkClaims: every result carries kind ok | not_found | gone | blocked', async () => {
+  const pages = { 'https://p.example/ok': normalizeText('<p>loads the file at start</p>') };
+  const fetchImpl = async (u) => {
+    if (u === 'https://p.example/gone') throw Object.assign(new Error('HTTP 410'), { status: 410 });
+    if (u === 'https://p.example/blocked') throw Object.assign(new Error('HTTP 403'), { status: 403 });
+    return pages[u];
+  };
+  const claims = [
+    { key: 'a', source_url: 'https://p.example/ok', quote: 'loads the file at start' },
+    { key: 'b', source_url: 'https://p.example/ok', quote: 'this left the page' },
+    { key: 'c', source_url: 'https://p.example/gone', quote: 'x' },
+    { key: 'd', source_url: 'https://p.example/blocked', quote: 'x' },
+    { key: 'e', source_url: null, quote: 'x' },
+  ];
+  const results = await checkClaims(claims, { fetchImpl });
+  assert.deepEqual(results.map((r) => r.kind), ['ok', 'not_found', 'gone', 'blocked', 'not_found']);
+  assert.deepEqual(results.map((r) => r.ok), [true, false, false, false, false]);
+});
+
+test('checkClaims: a blocked page is fetched once for every claim that cites it', async () => {
+  let calls = 0;
+  const fetchImpl = async () => { calls++; throw Object.assign(new Error('HTTP 429'), { status: 429 }); };
+  const results = await checkClaims([{ source_url: 'https://p.example/x', quote: 'a' }, { source_url: 'https://p.example/x', quote: 'b' }], { fetchImpl });
+  assert.equal(calls, 1);
+  assert.ok(results.every((r) => r.kind === 'blocked'));
+});
+
+test('runFailed: default mode fails on any failure; --blocked-ok fails only on not_found / gone', () => {
+  const r = (kind) => ({ ok: kind === 'ok', kind });
+  assert.equal(runFailed([r('ok'), r('blocked')]), true, 'default stays strict (apply-judgment relies on it)');
+  assert.equal(runFailed([r('ok'), r('blocked')], { blockedOk: true }), false);
+  assert.equal(runFailed([r('blocked'), r('not_found')], { blockedOk: true }), true);
+  assert.equal(runFailed([r('gone')], { blockedOk: true }), true);
+  assert.equal(runFailed([r('ok')]), false);
+});
+
+test('superseded claims are never collected (guidance and judged fit)', () => {
+  const g = { claims: [{ ...GUIDANCE.claims[0], superseded_by: 'tool-a-2' }, { ...GUIDANCE.claims[0], id: 'tool-a-2', quote: 'new words' }] };
+  assert.deepEqual(collectGuidanceClaims(g).map((c) => c.claimId), ['tool-a-2']);
+  const models = { models: [{ id: 'm', name: 'M', task_fit_judged: { coding: { claims: [
+    { source_url: 'https://a.example', quote: 'old', tier: 'lab', superseded_by: 'x' },
+    { source_url: 'https://a.example', quote: 'new', tier: 'lab' },
+  ] } } }] };
+  assert.deepEqual(collectClaims(models).map((c) => c.quote), ['new']);
+});
+
+test('skipClaims: by key, by key prefix, by bare guidance claim id; the rest stay', () => {
+  const all = collectAllClaims({ guidance: GUIDANCE, plans: PLANS });
+  const { claims, skipped } = skipClaims(all, ['lab-b', 'plan/Devin']);
+  assert.deepEqual(skipped.map((c) => c.key), ['guidance/lab-b', 'plan/Devin/Teams']);
+  assert.deepEqual(claims.map((c) => c.key), ['guidance/tool-a', 'plan/GitHub Copilot/Pro']);
+  assert.equal(skipClaims(all, []).claims.length, all.length);
+});
+
+test('fetchNormalizedPage: a cached page is reused for at most 12 h; --fresh always refetches', async () => {
+  const url = `https://cache-test.example/${process.pid}-${Date.now()}`;
+  const dir = join(tmpdir(), 'modelproof-check-sources-cache');
+  mkdirSync(dir, { recursive: true });
+  const file = join(dir, `${createHash('sha1').update(url).digest('hex')}.txt`);
+  writeFileSync(file, 'cached copy');
+  const realFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async () => { calls++; return { ok: true, status: 200, text: async () => `<p>${'fresh page text '.repeat(20)}</p>` }; };
+  try {
+    assert.equal(await fetchNormalizedPage(url, { fresh: false }), 'cached copy');
+    assert.equal(calls, 0, 'a young cache entry is reused');
+    assert.match(await fetchNormalizedPage(url, { fresh: true }), /fresh page text/);
+    assert.equal(calls, 1, '--fresh skips the cache');
+    writeFileSync(file, 'cached copy');
+    const old = (Date.now() - CACHE_MAX_AGE_MS - 60_000) / 1000;
+    utimesSync(file, old, old);
+    assert.match(await fetchNormalizedPage(url, { fresh: false }), /fresh page text/);
+    assert.equal(calls, 2, 'an entry older than 12 h is fetched again');
+    assert.equal(CACHE_MAX_AGE_MS, 12 * 60 * 60 * 1000);
+    globalThis.fetch = async () => ({ ok: false, status: 403, text: async () => '' });
+    await assert.rejects(fetchNormalizedPage(`${url}/403`, { fresh: true }), (e) => e.status === 403 && classifyFailure(e) === 'blocked');
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});
+
+test('CLI modes: default fails on a blocked page; --blocked-ok passes it as a warning but still fails a vanished quote; --only stays strict', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'check-sources-modes-'));
+  const models = { models: [{ id: 'm', name: 'M', task_fit_judged: { coding: { claims: [{ source_url: 'https://a.example/m', quote: 'writes code well', tier: 'lab' }] } } }] };
+  const guidance = { claims: [
+    { id: 'walled', subject: { kind: 'tool', name: 'Cursor' }, topic: 'context', sentence: 's', source_url: 'https://a.example/403', tier: 'tool', date: '2026-10-03', quote: 'anything' },
+    { id: 'old', subject: { kind: 'tool', name: 'Cursor' }, topic: 'context', sentence: 's', source_url: 'https://a.example/m', tier: 'tool', date: '2026-10-03', quote: 'left the page', superseded_by: 'new' },
+  ] };
+  writeFileSync(join(dir, 'models.json'), JSON.stringify(models));
+  writeFileSync(join(dir, 'guidance.json'), JSON.stringify(guidance));
+  const pagesFile = join(dir, 'pages.json');
+  writeFileSync(pagesFile, JSON.stringify({ 'https://a.example/m': '<p>It writes code well.</p>', 'https://a.example/403': 403 }));
+  const script = fileURLToPath(new URL('./check-sources.mjs', import.meta.url));
+  const run = (...args) => spawnSync('node', [script, '--data', dir, ...args], { encoding: 'utf8', env: { ...process.env, CHECK_SOURCES_PAGES: pagesFile } });
+  assert.equal(run().status, 1, 'default mode: a blocked page fails (unchanged behavior)');
+  const ok = run('--blocked-ok');
+  assert.equal(ok.status, 0, ok.stderr);
+  assert.match(ok.stdout, /⚠ Cursor \/ context \(walled\)/);
+  assert.match(ok.stdout, /verifying 2 claim\(s\)/, 'the superseded claim is not checked');
+  assert.equal(run('--only', 'guidance/walled').status, 1, '--only: a blocked page is an error');
+  assert.equal(run('--only', 'guidance/walled', '--blocked-ok').status, 1, '--only with --blocked-ok is refused');
+  assert.equal(run('--skip-ids', 'walled').status, 0, 'a skipped claim is not checked');
+  const out = join(dir, 'results.json');
+  run('--blocked-ok', '--json-out', out);
+  const json = JSON.parse(readFileSync(out, 'utf8'));
+  assert.deepEqual(json.results.map((r) => r.kind).sort(), ['blocked', 'ok']);
+  writeFileSync(pagesFile, JSON.stringify({ 'https://a.example/m': '<p>The page moved on.</p>', 'https://a.example/403': 403 }));
+  assert.equal(run('--blocked-ok').status, 1, '--blocked-ok: a vanished quote still fails');
+  writeFileSync(pagesFile, JSON.stringify({ 'https://a.example/403': 403 }));
+  assert.equal(run('--blocked-ok').status, 1, '--blocked-ok: a 404 page (gone) still fails');
 });
