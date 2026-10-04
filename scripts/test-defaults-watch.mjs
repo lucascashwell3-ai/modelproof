@@ -179,6 +179,13 @@ test('a new value while the PR is open updates that PR; no change left closes it
   assert.equal(remote.state.pulls.length, 1, 'one PR number for the whole story');
 });
 
+test('a commit by anyone else on the bot branch stops the force-push and turns the run red', async () => {
+  const remote = freshRemote({ branch: { sha: 'abc', author: 'someone-else' }, pulls: [{ number: 3, state: 'open', title: 't', body: 'no fingerprint', merged_at: null }] });
+  const run = await job({ pages: LEAD_SWAP(), remote });
+  assert.ok(run.red.some((r) => r.includes('not force-pushing')));
+  assert.ok(!remote.actions.some((a) => a.kind === 'push-branch' || a.kind === 'edit-pr'));
+});
+
 test('declined: a bot PR closed without merging is not reopened until the page value changes again', async () => {
   const pages = LEAD_SWAP();
   const shown = evaluateGated(input({ pages }), gate);
