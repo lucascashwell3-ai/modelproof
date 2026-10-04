@@ -4104,5 +4104,91 @@
     "sources": [
       "https://developers.openai.com/api/docs/models/gpt-6-astra"
     ]
+  },
+  {
+    "date": "2026-10-04",
+    "model": "KAT-Coder-Pro V2.5",
+    "field": "task_fit_judged.coding",
+    "old": "2 claim(s) as of 2026-09-27",
+    "new": "2 claim(s)",
+    "sources": [
+      "https://arxiv.org/abs/2607.05471",
+      "https://arxiv.org/html/2607.05471"
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "model": "KAT-Coder-Pro V2.5",
+    "field": "task_fit_judged.agents",
+    "old": "2 claim(s) as of 2026-09-27",
+    "new": "2 claim(s)",
+    "sources": [
+      "https://arxiv.org/abs/2607.05471",
+      "https://arxiv.org/html/2607.05471"
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "model": "LongCat 2.0",
+    "field": "task_fit_judged.coding",
+    "old": "2 claim(s) as of 2026-09-07",
+    "new": "2 claim(s)",
+    "sources": [
+      "https://github.com/meituan-longcat/LongCat-2.0"
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "model": "LongCat 2.0",
+    "field": "task_fit_judged.agents",
+    "old": "2 claim(s) as of 2026-09-07",
+    "new": "2 claim(s)",
+    "sources": [
+      "https://github.com/meituan-longcat/LongCat-2.0",
+      "https://www.opensourceforu.com/2026/06/meituan-open-sources-longcat-2-0-under-mit-license/"
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "model": "Qwen3.8 2.4T A95B",
+    "field": "task_fit_judged.coding",
+    "old": "2 claim(s) as of 2026-09-07",
+    "new": "2 claim(s)",
+    "sources": [
+      "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b",
+      "https://www.siliconrepublic.com/machines/alibaba-unveils-qwen3-8-max-preview"
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "model": "Muse Spark 1.3",
+    "field": "task_fit_judged.coding",
+    "old": "2 claim(s) as of 2026-09-07",
+    "new": "2 claim(s)",
+    "sources": [
+      "https://openrouter.ai/meta/muse-spark-1.3",
+      "https://officechai.com/ai/muse-spark-1-3-benchmarks/"
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "model": "Muse Spark 1.3",
+    "field": "task_fit_judged.agents",
+    "old": "2 claim(s) as of 2026-09-07",
+    "new": "2 claim(s)",
+    "sources": [
+      "https://research.meta.ai/blog/introducing-muse-spark-1-3"
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "model": "Muse Spark 1.3",
+    "field": "task_fit_judged.bulk",
+    "old": "2 claim(s) as of 2026-09-07",
+    "new": "2 claim(s)",
+    "sources": [
+      "https://officechai.com/ai/muse-spark-1-3-benchmarks/",
+      "https://openrouter.ai/meta/muse-spark-1.3"
+    ]
   }
 ]

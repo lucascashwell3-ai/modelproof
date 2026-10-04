@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-03",
+  "as_of": "2026-10-04",
   "models": [
     {
       "id": "claude-opus-5",
@@ -14964,7 +14964,8 @@
         "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
         "https://vercel.com/ai-gateway/models/kat-coder-pro-v2.5",
         "https://arxiv.org/abs/2607.05471",
-        "https://openrouter.ai/api/frontend/v1/rankings/models"
+        "https://openrouter.ai/api/frontend/v1/rankings/models",
+        "https://arxiv.org/html/2607.05471"
       ],
       "best_for_line": "Kwaipilot model",
       "availability": {
@@ -15042,15 +15043,15 @@
               "quote": "ranks second only to the frontier Opus 4.8 on repository-level software engineering"
             },
             {
-              "sentence": "MarkTechPost's write-up of the KAT-Coder-V2.5 technical report (checked 2026-09-27) says it places second on SWE-Bench Pro (65.2 vs 69.2) and on the internal KAT Code Bench (53.1 vs 57.3).",
-              "source_url": "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
-              "tier": "reported",
-              "date": "2026-09-27",
-              "quote": "It places second on SWE-Bench Pro (65.2 vs 69.2) and the internal KAT Code Bench (53.1 vs 57.3)."
+              "sentence": "The results table in the KAT-Coder-V2.5 technical report on arXiv (checked 2026-10-04) lists the model second on SWE-Bench Pro (65.2 vs 69.2 for Opus 4.8) and on KAT Code Bench (53.1 vs 57.3).",
+              "source_url": "https://arxiv.org/html/2607.05471",
+              "tier": "lab",
+              "date": "2026-10-04",
+              "quote": "Opus 4.8 Coding SWE-Bench Pro 65.2 58.4 62.1 58.6 69.2 KAT Code Bench 53.1 49.6 50.3 48.9 57.3"
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-27"
+          "as_of": "2026-10-04"
         },
         "agents": {
           "claims": [
@@ -15062,15 +15063,15 @@
               "quote": "delivers the best agentic tool-use result on PinchBench"
             },
             {
-              "sentence": "MarkTechPost's write-up of the KAT-Coder-V2.5 technical report (checked 2026-09-27) reports a PinchBench score of 94.9 against 93.5 for Opus 4.8.",
-              "source_url": "https://www.marktechpost.com/2026/07/26/kwaikat-team-releases-kat-coder-v2-5-an-agentic-coding-model-trained-on-100000-verifiable-repository-environments/",
-              "tier": "reported",
-              "date": "2026-09-27",
-              "quote": "KAT-Coder-V2.5 leads its panel on PinchBench with 94.9, beating Opus 4.8 at 93.5."
+              "sentence": "The KAT-Coder-V2.5 technical report on arXiv (checked 2026-10-04) says the model's PinchBench result edges out Opus 4.8 and surpasses the GLM-5 series by a wide margin.",
+              "source_url": "https://arxiv.org/html/2607.05471",
+              "tier": "lab",
+              "date": "2026-10-04",
+              "quote": "On the Claw category, KAT-Coder-V2.5 attains the best overall result on PinchBench, edging out Opus 4.8 and surpassing the GLM-5 series by a wide margin."
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-27"
+          "as_of": "2026-10-04"
         }
       },
       "usage": {
@@ -15508,7 +15509,8 @@
         "https://venturebeat.com/technology/meituan-open-sources-longcat-2-0-the-1-6t-near-frontier-agentic-coding-model-thats-been-leading-openrouter-trained-entirely-on-chinese-chips",
         "https://www.scmp.com/tech/tech-trends/article/3358854/china-debuts-biggest-ai-model-trained-local-chips-meituan-releases-longcat-20",
         "https://felloai.com/longcat-2-0/",
-        "https://openrouter.ai/api/frontend/v1/rankings/models"
+        "https://openrouter.ai/api/frontend/v1/rankings/models",
+        "https://www.opensourceforu.com/2026/06/meituan-open-sources-longcat-2-0-under-mit-license/"
       ],
       "best_for_line": "Meituan model · 1M ctx",
       "availability": {
@@ -15586,15 +15588,15 @@
               "quote": "this gives LongCat-2.0 strong performance on coding and agentic tasks"
             },
             {
-              "sentence": "A felloai.com review (checked 2026-09-07) reports Meituan's own SWE-bench Pro score of 59.5 for LongCat-2.0 versus 58.6 for GPT-5.5.",
-              "source_url": "https://felloai.com/longcat-2-0/",
-              "tier": "reported",
-              "date": "2026-09-07",
-              "quote": "Meituan says LongCat-2.0 scores 59.5 on SWE-bench Pro versus GPT-5.5"
+              "sentence": "Meituan's LongCat-2.0 GitHub README (checked 2026-10-04) lists its own SWE-bench Pro score of 59.5 for LongCat-2.0 beside 58.6 for GPT-5.5 and 69.2 for Claude Opus 4.8.",
+              "source_url": "https://github.com/meituan-longcat/LongCat-2.0",
+              "tier": "lab",
+              "date": "2026-10-04",
+              "quote": "SWE-bench Pro 59.5 54.2* 58.6* 57.3* 64.3* 69.2*"
             }
           ],
-          "reconciliation": "Meituan's own benchmark places LongCat-2.0 slightly ahead of GPT-5.5 on SWE-bench Pro (59.5 vs 58.6) as of its 2026-06-30 release, but felloai.com's review (checked 2026-09-07) notes the score is self-reported and not independently verified.",
-          "as_of": "2026-09-07"
+          "reconciliation": "Meituan's README reports these SWE-bench Pro scores itself (59.5 for LongCat-2.0, 58.6 for GPT-5.5, 69.2 for Claude Opus 4.8); no independent SWE-bench Pro run of LongCat-2.0 is on file as of 2026-10-04.",
+          "as_of": "2026-10-04"
         },
         "agents": {
           "claims": [
@@ -15606,15 +15608,15 @@
               "quote": "delivering strong performance across code understanding, repository-level edits, automated task execution, and agentic workflows"
             },
             {
-              "sentence": "A felloai.com review (checked 2026-09-07) says LongCat-2.0 ran anonymously on OpenRouter as \"Owl Alpha\" and handled roughly 10.1 trillion tokens a month before Meituan revealed its identity.",
-              "source_url": "https://felloai.com/longcat-2-0/",
+              "sentence": "Open Source For You reported (checked 2026-10-04) that Owl Alpha, the anonymous model later revealed as LongCat-2.0, processed around 10.1 trillion tokens a month before its public unveiling.",
+              "source_url": "https://www.opensourceforu.com/2026/06/meituan-open-sources-longcat-2-0-under-mit-license/",
               "tier": "reported",
-              "date": "2026-09-07",
-              "quote": "handling roughly 10.1 trillion tokens a month before Meituan revealed it as LongCat-2.0."
+              "date": "2026-10-04",
+              "quote": "Before its public unveiling, Owl Alpha processed around 10.1 trillion monthly tokens, averaging 559 billion tokens daily"
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-07"
+          "as_of": "2026-10-04"
         }
       },
       "usage": {
@@ -18311,7 +18313,8 @@
       "sources": [
         "https://x.com/Alibaba_Qwen/status/2084100707423289643",
         "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b",
-        "https://www.marktechpost.com/2026/07/19/alibaba-previews-qwen3-8-max-a-2-4-trillion-parameter-multimodal-model-days-after-moonshots-kimi-k3-open-weight-launch/"
+        "https://www.marktechpost.com/2026/07/19/alibaba-previews-qwen3-8-max-a-2-4-trillion-parameter-multimodal-model-days-after-moonshots-kimi-k3-open-weight-launch/",
+        "https://www.siliconrepublic.com/machines/alibaba-unveils-qwen3-8-max-preview"
       ],
       "best_for_line": "Alibaba (Qwen) model · 984K ctx · $2/$6",
       "availability": {
@@ -18383,22 +18386,22 @@
         "coding": {
           "claims": [
             {
-              "sentence": "MarkTechPost reported on July 19, 2026 that Alibaba's Qwen team described its newly previewed 2.4-trillion-parameter Qwen3.8 model as ranking second only to Claude Fable 5 among the systems it benchmarked.",
-              "source_url": "https://www.marktechpost.com/2026/07/19/alibaba-previews-qwen3-8-max-a-2-4-trillion-parameter-multimodal-model-days-after-moonshots-kimi-k3-open-weight-launch/",
-              "tier": "reported",
-              "date": "2026-07-19",
-              "quote": "second only to Fable 5"
-            },
-            {
               "sentence": "Alibaba's own QwenCloud platform page for Qwen3.8-2.4T-A95B lists it as ranked 4th on CodeArena, alongside a GPQA Diamond score of 92.6, as of the page retrieved September 6, 2026.",
               "source_url": "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b",
               "tier": "lab",
               "date": "2026-09-06",
               "quote": "Ranked 4th on CodeArena."
+            },
+            {
+              "sentence": "Silicon Republic reported on 20 July 2026 that Alibaba unveiled Qwen3.8-Max in preview, describing it as \"second only to\" Anthropic's Fable 5.",
+              "source_url": "https://www.siliconrepublic.com/machines/alibaba-unveils-qwen3-8-max-preview",
+              "tier": "reported",
+              "date": "2026-10-04",
+              "quote": "unveiled Qwen3.8-Max in preview - supposedly \"second only to [Anthropic's] Fable 5\""
             }
           ],
           "reconciliation": "Alibaba's July 2026 preview announcement described the model informally as ranking second only to Claude Fable 5 overall; its own later QwenCloud listing gives a narrower, specific claim of 4th place on the CodeArena coding leaderboard, not a general capability ranking.",
-          "as_of": "2026-09-07"
+          "as_of": "2026-10-04"
         }
       },
       "usage": {
@@ -23779,7 +23782,9 @@
         "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
         "https://openrouter.ai/api/frontend/v1/rankings/models",
         "https://cursor.com/docs/models/muse-spark-1-3",
-        "https://dev.meta.ai/docs/pricing-rate-limits"
+        "https://dev.meta.ai/docs/pricing-rate-limits",
+        "https://officechai.com/ai/muse-spark-1-3-benchmarks/",
+        "https://research.meta.ai/blog/introducing-muse-spark-1-3"
       ],
       "coding_score": null,
       "coding_basis": null,
@@ -23860,62 +23865,62 @@
         "coding": {
           "claims": [
             {
-              "sentence": "MarkTechPost reported Meta's benchmark numbers showing Muse Spark 1.3 beating Claude Opus 5 and GPT-5.6 Sol on the DeepSWE v1.1 coding benchmark.",
-              "source_url": "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
-              "tier": "reported",
-              "date": "2026-09-07",
-              "quote": "Muse Spark 1.3 posts 75.4 on DeepSWE v1.1, ahead of Claude Opus 5 at 74.0 and GPT-5.6 Sol at 72.7."
-            },
-            {
               "sentence": "OpenRouter describes Muse Spark 1.3 as built specifically for long-running coding and agentic workflows.",
               "source_url": "https://openrouter.ai/meta/muse-spark-1.3",
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Muse Spark 1.3 is a multimodal reasoning model from Meta for long-running agentic, multi-agent, and coding workflows."
+            },
+            {
+              "sentence": "OfficeChai's write-up of Meta's benchmark table (checked 2026-10-04) reports Muse Spark 1.3 at 75.4 on DeepSWE v1.1, ahead of Claude Opus 5 at 74.0.",
+              "source_url": "https://officechai.com/ai/muse-spark-1-3-benchmarks/",
+              "tier": "reported",
+              "date": "2026-10-04",
+              "quote": "On DeepSWE v1.1 (long-horizon agentic coding), Muse Spark 1.3 jumps to 75.4 from 1.2's 55.0, edging past Opus 5's 74.0."
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-07"
+          "as_of": "2026-10-04"
         },
         "agents": {
           "claims": [
             {
-              "sentence": "MarkTechPost reported Muse Spark 1.3 is designed to ask clarifying questions and pull users in when it stalls during agentic tasks.",
-              "source_url": "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
-              "tier": "reported",
-              "date": "2026-09-07",
-              "quote": "Muse Spark 1.3 asks clarifying questions on ambiguous prompts, pulls the user in when it stalls"
+              "sentence": "Meta's Muse Spark 1.3 announcement (checked 2026-10-04) says the model asks clarifying questions when prompts are ambiguous and invokes help from the user when stuck.",
+              "source_url": "https://research.meta.ai/blog/introducing-muse-spark-1-3",
+              "tier": "lab",
+              "date": "2026-10-04",
+              "quote": "Muse Spark 1.3 asks clarifying questions when prompts are ambiguous, invokes help from the user when stuck, and confirms before taking consequential actions."
             },
             {
-              "sentence": "MarkTechPost reported Meta's own measurement that Muse Spark 1.3 uses about 20% fewer tool calls and 25% fewer tokens than its predecessor.",
-              "source_url": "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
-              "tier": "reported",
-              "date": "2026-09-07",
-              "quote": "Meta engineers measured ~20% fewer tool calls and ~25% fewer tokens versus Muse Spark 1.2"
+              "sentence": "Meta's Muse Spark 1.3 announcement (checked 2026-10-04) says that, in comparisons by Meta engineers against Muse Spark 1.2, it used about 20% fewer tool calls and 25% fewer tokens.",
+              "source_url": "https://research.meta.ai/blog/introducing-muse-spark-1-3",
+              "tier": "lab",
+              "date": "2026-10-04",
+              "quote": "In comparisons by Meta engineers, it proved to be significantly faster and more efficient, using ~20% fewer tool calls and ~25% fewer tokens."
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-07"
+          "as_of": "2026-10-04"
         },
         "bulk": {
           "claims": [
             {
-              "sentence": "MarkTechPost reported Muse Spark 1.3 scoring far above GPT-5.6 Sol on the MRCR v2 long-context retrieval benchmark at both 512K and 1M token ranges.",
-              "source_url": "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
+              "sentence": "OfficeChai's write-up of Meta's benchmark table (checked 2026-10-04) reports MRCR scores of 98.5 (256K-512K) and 98.1 (512K-1M) for Muse Spark 1.3, against 91.5 and 73.8 for GPT 5.6 Sol.",
+              "source_url": "https://officechai.com/ai/muse-spark-1-3-benchmarks/",
               "tier": "reported",
-              "date": "2026-09-07",
-              "quote": "Long-context retrieval is the widest gap: MRCR v2 scores of 98.5 (256K–512K) and 98.1 (512K–1M), against 91.5 and 73.8 for GPT-5.6 Sol."
+              "date": "2026-10-04",
+              "quote": "On MRCR 256K-512K and MRCR 512K-1M, it scores 98.5 and 98.1, well clear of GPT 5.6 Sol's 91.5 and 73.8"
             },
             {
-              "sentence": "MarkTechPost confirmed Muse Spark 1.3 ships with a 1 million token context window.",
-              "source_url": "https://www.marktechpost.com/2026/09/03/meta-ai-released-muse-spark-1-3-an-agentic-coding-model-that-uses-20-fewer-tool-calls-and-25-fewer-tokens-than-muse-spark-1-2/",
+              "sentence": "OpenRouter's Muse Spark 1.3 page (checked 2026-10-04) lists a 1,048,576-token context window.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.3",
               "tier": "reported",
-              "date": "2026-09-07",
-              "quote": "a 1M-token context window"
+              "date": "2026-10-04",
+              "quote": "Muse Spark 1.3 has a 1,048,576 token context window."
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-07"
+          "as_of": "2026-10-04"
         }
       },
       "usage": {
