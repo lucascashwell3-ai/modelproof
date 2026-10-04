@@ -91,6 +91,12 @@ routine, claude.ai, pinned to Sonnet, capped at 10 minutes wall-clock and 15 ite
        (`scripts/check-sources.mjs` fetches the page and confirms the quote is really there) —
        paraphrasing, combining two sentences, or fixing a typo in the source's own wording will
        fail the gate and your whole submission is discarded.** Never write a claim you can't quote.
+     - **Never cite a host that refuses scripted reads** — the list, with a reason for each, is
+       `scripts/lib/blocked-hosts.mjs` (today: marktechpost.com, felloai.com). Those pages answer the
+       quote check with HTTP 403, so the quote can never stay verified. The apply turns a
+       `judged-fit` judgment with any claim citing one into a hold, with that reason logged (the
+       rest of the batch still applies), so it costs you the slot. Cite the vendor's own page, its
+       model card (Hugging Face, GitHub, arXiv) or another outlet that states the same fact.
      - **A good negative claim (`polarity: "negative"`) is a sourced, practical drawback** — a rate
        limit, added latency, a documented tool-call failure mode, or a pricing trap (e.g. a cheap
        per-token rate that hides an expensive minimum-batch or overage tier) — never a vague
