@@ -5,20 +5,23 @@
 
    Each file's `as_of` is the date its writer last confirmed it. The page shows that date as a
    stamp ("As of" plus the day) and, once the date is older than the file's limit, a notice that
-   says how old it is and how often it usually moves. A stale file is a display state only: it
-   never blocks a data refresh and never hides a number.
+   says how old it is and how often it usually moves. A page shows each file's notice once; every
+   other stamp for that file then says "N days old" in words (never by colour alone). A stale file
+   is a display state only: it never blocks a data refresh and never hides a number.
 
    The limits are how many whole days a file may sit before the notice shows. Each sits well above
    the longest gap its writer leaves while healthy, so the notice means "the writer stopped", not
-   "a quiet week". No date, price or model name is written in this file: every date shown comes
-   from the data. Keys are the FEEDS ids in scripts/validate-data.mjs (a test holds them to it). */
+   "a quiet week". `cadence` finishes the notice's "Usually updated ..." sentence in plain words,
+   including how often a file kept by hand moves. No date, price or model name is written in this
+   file: every date shown comes from the data. Keys are the FEEDS ids in scripts/validate-data.mjs
+   (a test holds them to it). */
 
 export const FEED_FRESHNESS = {
   models: { maxDays: 7, cadence: 'daily' },
   'tool-defaults': { maxDays: 21, cadence: 'weekly' },
-  plans: { maxDays: 30, cadence: 'by hand' },
-  'per-request': { maxDays: 60, cadence: 'by hand' },
-  vendors: { maxDays: 90, cadence: 'by hand' },
+  plans: { maxDays: 30, cadence: 'by hand, about every two weeks' },
+  'per-request': { maxDays: 60, cadence: 'by hand, about monthly' },
+  vendors: { maxDays: 90, cadence: 'by hand, about every two months' },
   // each ladder in models.json carries its own as_of: the date its publisher's runs are from
   'effort-ladders': { maxDays: 120, cadence: 'when the publisher posts new runs' },
 };
@@ -90,6 +93,14 @@ export function staleText(feed, asOf, now = Date.now(), { label } = {}) {
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+// The short stale word a stamp carries when its notice is shown elsewhere on the page:
+// "N days old" while stale, '' while fresh or when there is no date (the stamp already says so).
+export function staleFlag(feed, asOf, now = Date.now()) {
+  if (!isStale(feed, asOf, now)) return '';
+  const age = ageDays(asOf, now);
+  return age === null ? '' : `${age} ${age === 1 ? 'day' : 'days'} old`;
+}
+
 // Everything a page needs for one feed, in one object.
 export function freshness(feed, asOf, now = Date.now(), { label } = {}) {
   const lim = feedLimits(feed);
@@ -97,20 +108,23 @@ export function freshness(feed, asOf, now = Date.now(), { label } = {}) {
   return {
     feed, asOf: asOf ?? null, day: age === null ? null : dayLabel(asOf), age,
     stale: isStale(feed, asOf, now), maxDays: lim ? lim.maxDays : null, cadence: lim ? lim.cadence : null,
-    stamp: stampText(asOf, { label }), notice: staleText(feed, asOf, now, { label }),
+    stamp: stampText(asOf, { label }), flag: staleFlag(feed, asOf, now), notice: staleText(feed, asOf, now, { label }),
   };
 }
 
 /* The shared markup. Every page styles these classes in its own theme:
      .mp-fresh         the wrapper: the stamp, then the notice when stale
      .mp-asof          the stamp, a <time> carrying the data's own date
-     .mp-asof--stale   the stamp while the notice shows
-     .mp-stale         the notice (role="note"; it says it in words, never by colour alone) */
-export function stampHtml(feed, asOf, { now = Date.now(), label } = {}) {
+     .mp-asof--stale   the stamp while the file is past its limit
+     .mp-asof__flag    inside a stale stamp: " · N days old" (left out when the notice sits beside it)
+     .mp-stale         the notice (role="note"; it says it in words, never by colour alone)
+   A stamp with no notice beside it (`flag`, the default) says it is old in words. */
+export function stampHtml(feed, asOf, { now = Date.now(), label, flag = true } = {}) {
   const f = freshness(feed, asOf, now, { label });
   const cls = 'mp-asof' + (f.stale ? ' mp-asof--stale' : '');
+  const old = flag && f.flag ? `<span class="mp-asof__flag"> · ${esc(f.flag)}</span>` : '';
   return f.day
-    ? `<time class="${cls}" datetime="${esc(asOf)}">${esc(f.stamp)}</time>`
+    ? `<time class="${cls}" datetime="${esc(asOf)}">${esc(f.stamp)}${old}</time>`
     : `<span class="${cls}">${esc(f.stamp)}</span>`;
 }
 
@@ -120,6 +134,10 @@ export function staleHtml(feed, asOf, { now = Date.now(), label, icon = '' } = {
   return text ? `<span class="mp-stale" role="note">${icon}<span>${esc(text)}</span></span>` : '';
 }
 
-export function freshHtml(feed, asOf, opts = {}) {
-  return `<span class="mp-fresh">${stampHtml(feed, asOf, opts)}${staleHtml(feed, asOf, opts)}</span>`;
+// The stamp, then the notice when stale. `notice: false` (the file's notice is already on the
+// page) gives the stamp alone, saying "N days old" instead.
+export function freshHtml(feed, asOf, { notice = true, ...opts } = {}) {
+  return notice
+    ? `<span class="mp-fresh">${stampHtml(feed, asOf, { ...opts, flag: false })}${staleHtml(feed, asOf, opts)}</span>`
+    : `<span class="mp-fresh">${stampHtml(feed, asOf, { ...opts, flag: true })}</span>`;
 }

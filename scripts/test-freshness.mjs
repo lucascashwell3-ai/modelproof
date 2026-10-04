@@ -29,6 +29,9 @@ test('every limit and alias names a FEEDS id; aliases point at a feed with a lim
   for (const [id, lim] of Object.entries(FR.FEED_FRESHNESS)) {
     assert.ok(Number.isInteger(lim.maxDays) && lim.maxDays > 0, `${id} maxDays`);
     assert.ok(typeof lim.cadence === 'string' && lim.cadence.length > 0, `${id} cadence`);
+    // a file kept by hand still says how often, in words ("by hand" alone tells the reader nothing)
+    if (/by hand/.test(lim.cadence)) assert.match(lim.cadence, /^by hand, about (every|monthly|weekly)/, `${id} cadence says how often`);
+    assert.doesNotMatch(lim.cadence, /\d{4}|\$/, `${id} cadence carries no date or price`);
   }
 });
 
@@ -62,7 +65,7 @@ test('a missing or broken date is stale and says so; a feed with no limit never 
     assert.equal(FR.isStale('models', asOf, NOW), true, JSON.stringify(asOf));
     assert.equal(FR.stampText(asOf), 'Date not on file');
     assert.equal(FR.stampText(asOf, { label: 'Plan prices' }), 'Plan prices: date not on file');
-    assert.match(FR.staleText('plans', asOf, NOW), /^No date on file\. Usually updated by hand\. Check the source/);
+    assert.match(FR.staleText('plans', asOf, NOW), /^No date on file\. Usually updated by hand, about every two weeks\. Check the source/);
     assert.match(FR.staleText('plans', asOf, NOW, { label: 'Plan prices' }), /^Plan prices: no date on file\./);
   }
   for (const feed of ['tasks', 'usage-presets', 'board-samples', 'no-such-feed']) {
@@ -75,7 +78,7 @@ test('stampText formats the data\'s own date; a label leads it', () => {
   assert.equal(FR.stampText('2026-10-03'), 'As of 3 Oct 2026');
   assert.equal(FR.stampText('2026-01-09', { label: 'Model prices' }), 'Model prices as of 9 Jan 2026');
   assert.equal(FR.staleText('vendors', back(91), NOW, { label: 'Vendor countries' }),
-    'Vendor countries not updated in 91 days. Usually updated by hand. Check the source before relying on it.');
+    'Vendor countries not updated in 91 days. Usually updated by hand, about every two months. Check the source before relying on it.');
   assert.match(FR.staleText('models', back(1), NOW + 7 * 86_400_000), /^Not updated in 8 days/);
 });
 
@@ -92,10 +95,27 @@ test('the shared markup: a <time> with the data date, the notice only when stale
   assert.doesNotMatch(FR.stampHtml('models', '2026-10-03"><script>', { now: NOW }), /<script>/, 'a junk date is never markup');
 });
 
+test('a stamp with no notice beside it says it is old in words, never by colour alone', () => {
+  // alone (a picker menu, a second section for the same file): the stamp carries "N days old"
+  assert.equal(FR.stampHtml('plans', back(31), { now: NOW, label: 'Plan prices' }),
+    `<time class="mp-asof mp-asof--stale" datetime="${back(31)}">Plan prices as of ${FR.dayLabel(back(31))}<span class="mp-asof__flag"> · 31 days old</span></time>`);
+  assert.equal(FR.freshHtml('models', back(9), { now: NOW, notice: false }),
+    `<span class="mp-fresh"><time class="mp-asof mp-asof--stale" datetime="${back(9)}">As of ${FR.dayLabel(back(9))}<span class="mp-asof__flag"> · 9 days old</span></time></span>`);
+  // beside its notice the age is said once, by the notice
+  const both = FR.freshHtml('models', back(9), { now: NOW });
+  assert.doesNotMatch(both, /mp-asof__flag/);
+  assert.match(both, /Not updated in 9 days\./);
+  assert.doesNotMatch(FR.stampHtml('models', back(9), { now: NOW, flag: false }), /days old/);
+  // fresh: no word, no notice, in either form
+  assert.equal(FR.stampHtml('models', back(7), { now: NOW }), `<time class="mp-asof" datetime="${back(7)}">As of ${FR.dayLabel(back(7))}</time>`);
+  assert.equal(FR.staleFlag('models', back(7), NOW), '');
+  assert.equal(FR.staleFlag('models', undefined, NOW), '', 'no date: the stamp already says "Date not on file"');
+});
+
 test('freshness() returns the whole picture in one object', () => {
   assert.deepEqual(FR.freshness('releases', back(8), NOW), {
     feed: 'releases', asOf: back(8), day: FR.dayLabel(back(8)), age: 8, stale: true, maxDays: 7, cadence: 'daily',
-    stamp: `As of ${FR.dayLabel(back(8))}`, notice: 'Not updated in 8 days. Usually updated daily. Check the source before relying on it.',
+    stamp: `As of ${FR.dayLabel(back(8))}`, flag: '8 days old', notice: 'Not updated in 8 days. Usually updated daily. Check the source before relying on it.',
   });
 });
 
@@ -110,7 +130,7 @@ test('dayLabel moved here; board-data re-exports the same function', () => {
 
 const slots = (html) => [...html.matchAll(/data-fresh="([^"]+)"/g)].map((m) => m[1]);
 
-test('index and table: every panel section and the demo carry a stamp slot for a feed with a limit', () => {
+test('index and table: every panel section carries a stamp slot for a feed with a limit; the demo carries none', () => {
   for (const page of ['index.html', 'table.html']) {
     const html = read(page);
     const sections = html.split(/<section class="panel"/).slice(1).map((s) => s.split('</section>')[0]);
@@ -123,8 +143,45 @@ test('index and table: every panel section and the demo carry a stamp slot for a
     assert.match(html, /<script src="assets\/app\.js\?v=[^"]+"><\/script>/, `${page} loads app.js with a cache key`);
   }
   const index = read('index.html');
-  assert.match(index, /<div class="term-col">[\s\S]*?data-fresh="models"[\s\S]*?<\/div>\s*<\/div>\s*<\/section>/, 'the demo terminal has a slot');
-  assert.ok(slots(index).length >= 5, 'compare, map, effort, releases and the demo');
+  // the hero terminal plays a scripted demo, not dated data: a stamp there would date the script
+  const term = index.slice(index.indexOf('<div class="term-col">'), index.indexOf('</section>', index.indexOf('<div class="term-col">')));
+  assert.ok(term.length > 0, 'index has the demo terminal');
+  assert.equal(slots(term).length, 0, 'the demo terminal carries no stamp');
+  assert.ok(slots(index).length >= 4, 'compare, map, effort and releases');
+});
+
+test('app.js: one notice per file per page; every later slot for that file says "N days old"', async () => {
+  const vm = await import('node:vm');
+  const html = read('index.html');
+  const slots = [...html.matchAll(/data-fresh="([^"]+)"/g)].map((m) => ({ dataset: { fresh: m[1] }, innerHTML: '' }));
+  const nav = { innerHTML: '', title: '', classList: { on: false, toggle(c, v) { this.on = v; } } };
+  const noop = () => {};
+  const document = {
+    readyState: 'loading', addEventListener: noop,
+    querySelector: (q) => ({ '#navAsof': nav }[q] || null),
+    querySelectorAll: (q) => (q === '[data-fresh]' ? slots : []),
+    documentElement: { classList: { contains: () => false } },
+  };
+  const ctx = vm.createContext({ document, addEventListener: noop, setTimeout: noop, setInterval: noop, clearInterval: noop, console });
+  const app = vm.runInContext(`${read('assets/app.js')}\n;({ state, renderFreshness })`, ctx);
+  const old = back(40);
+  app.state.data = { as_of: old, models: [], effort_ladders: [{ as_of: back(200) }] };
+  app.state.fresh = FR;
+  app.state.now = NOW;
+  app.renderFreshness();
+  const byFile = {};
+  for (const s of slots) (byFile[s.dataset.fresh === 'effort-ladders' ? 'ladders' : 'models'] ||= []).push(s.innerHTML);
+  for (const [file, list] of Object.entries(byFile)) {
+    assert.equal(list.filter((h) => /class="mp-stale"/.test(h)).length, 1, `${file}: the notice shows once`);
+    assert.match(list[0], /class="mp-stale" role="note"/, `${file}: the first slot has the notice`);
+    for (const h of list.slice(1)) assert.match(h, /mp-asof--stale[^>]*>[^<]*<span class="mp-asof__flag"> · \d+ days old<\/span>/, `${file}: later slots say how old in words`);
+  }
+  // the nav badge keeps the date in view and says it is old in words, also on a phone (where the
+  // .nav__asof-extra spans drop: "● <day> · old"); the full notice is on the page, not only a tooltip
+  assert.ok(nav.classList.on);
+  assert.equal(nav.innerHTML, `● <span class="nav__asof-extra">As of </span>${FR.dayLabel(old)} · <span class="nav__asof-extra">40 days </span>old`);
+  assert.equal(nav.innerHTML.replace(/<span class="nav__asof-extra">[^<]*<\/span>/g, ''), `● ${FR.dayLabel(old)} · old`);
+  assert.equal(nav.title, FR.staleText('models', old, NOW));
 });
 
 test('app.js loads the module from its own URL and fills every slot, the nav badge and the footer', () => {
@@ -142,8 +199,11 @@ test('board: summary (both modes), pickers, selected-model facts and install pan
   assert.equal((board.match(/bpFreshHtml\(\) \+/g) || []).length, 2, 'org and personal summaries');
   assert.match(board, /freshStamp\("models", DATA\.as_of, "Model prices"\) \+ freshStamp\("plans", DATA\.plans_as_of, "Plan prices"\)/);
   assert.match(board, /freshNote\("per-request", DATA\.perRequest\.as_of/);
-  assert.match(board, /<div class="mpFresh">' \+ freshStamp\("models"/, 'model picker');
-  assert.match(board, /<div class="mpFresh">' \+ freshStamp\("plans"/, 'plan picker');
+  // the picker menus stand alone, so their stamps say "N days old" in words once stale
+  assert.match(board, /<div class="mpFresh">' \+ menuStamp\("models"/, 'model picker');
+  assert.match(board, /<div class="mpFresh">' \+ menuStamp\("plans"/, 'plan picker');
+  assert.match(board, /function menuStamp\(feed, asOf, label\)\{ return FR\.stampHtml\(feed, asOf, \{ label: label \}\); \}/);
+  assert.match(board, /function freshStamp\(feed, asOf, label\)\{ return FR\.stampHtml\(feed, asOf, \{ label: label, flag: false \}\); \}/);
   assert.match(board, /<div class="pkgFresh">' \+ freshStamp\("tool-defaults", DATA\.guidance && DATA\.guidance\.as_of/, 'install pane');
   assert.match(board, /f\.push\('<span class="mp-fresh">' \+ freshStamp\("models"/, 'selected model facts');
   for (const cls of ['.mp-asof{', '.mp-asof--stale{', '.mp-stale{']) assert.ok(board.includes(cls), `board styles ${cls}`);
@@ -152,7 +212,21 @@ test('board: summary (both modes), pickers, selected-model facts and install pan
 test('how-we-pick: the vendor list carries its stamp', () => {
   const how = read('how-we-pick.html');
   assert.match(how, /import\("\.\/assets\/freshness\.mjs"\)/);
-  assert.match(how, /F\.freshHtml\("vendors", d\.as_of/);
+  assert.match(how, /F\.stampHtml\("vendors", d\.as_of/);
+  assert.match(how, /F\.staleHtml\("vendors", d\.as_of, \{ label: "Vendor countries", icon: clock \}\)/, 'the board\'s notice, with its clock');
+  // one warning at a time: the spot-check caveat gives way to the notice once the list is stale
+  assert.match(how, /\(stale \? fact : caveat\)/);
+});
+
+test('shown dates near the stamps use the stamps\' format (board facts and quotes, index quotes and effort source)', () => {
+  const board = read('board.html');
+  assert.match(board, /'Released ' \+ escapeHtml\(FR\.dayLabel\(m\.released\)\)/);
+  assert.match(board, /escapeHtml\(FR\.dayLabel\(u\.as_of\)\)/, 'OpenRouter share date');
+  assert.equal((board.match(/' &middot; read ' \+ escapeHtml\(FR\.dayLabel\(/g) || []).length, 2, 'quote dates');
+  assert.doesNotMatch(board, /escapeHtml\((m\.released|u\.as_of|c\.date|row\.claim\.date)\)/, 'a raw date is back');
+  const app = read('assets/app.js');
+  assert.match(app, /esc\(dayText\(c\.date\)\)/);
+  assert.match(app, /\$\{esc\(dayText\(L\.as_of\)\)\}/);
 });
 
 test('the dark stylesheet styles the shared classes, and the board footer stays hidden on phones', () => {

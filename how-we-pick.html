@@ -70,7 +70,10 @@
   /* Freshness (assets/freshness.mjs): the file's own date, and a notice once it is past its limit */
   .mp-fresh{ display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 10px; margin-bottom:2px; }
   .mp-asof{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:11px; color: rgba(var(--ink),.62); }
-  .mp-asof--stale, .mp-stale{ color: var(--accent); }
+  /* the same notice as the board: ink words, the rust clock carries the accent */
+  .mp-asof--stale{ color: var(--accent); }
+  .mp-stale{ display:flex; align-items:flex-start; gap:7px; flex-basis:100%; color: rgba(var(--ink),.72); line-height:1.5; }
+  .mp-stale .ico{ color: var(--accent); flex:0 0 auto; margin-top:3px; }
 
   footer{ margin-top: 56px; padding-top: 20px; border-top: 1px solid rgba(var(--ink),.08); font-size:12.5px; }
 
@@ -141,10 +144,20 @@
       html += '<div class="srcRow"><span class="srcName">' + row.vendor + '</span><span class="srcWhere">' + where + '</span></div>';
     });
     list.innerHTML = html;
+    // one warning, never two: while the list is fresh the caveat asks for a spot-check; once it is
+    // past its limit the notice (with the board's clock) asks to check the source, and the caveat
+    // keeps only its fact.
     var caveat = "An editorial pass, not a feed \u2014 spot-check one before leaning on it.";
+    var fact = "An editorial pass, not a feed.";
+    var clock = '<svg class="ico" width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="8" cy="8" r="6.5"/><rect x="7.3" y="3.8" width="1.4" height="4.6" rx=".7" fill-opacity=".55"/><rect x="8" y="7.3" width="3.4" height="1.4" rx=".7" fill-opacity=".55"/></svg>';
     freshP.then(function(F){
       var el = document.getElementById("srcAsOf");
-      if (F) el.innerHTML = F.freshHtml("vendors", d.as_of, { label: "Vendor countries" }) + "<span>" + caveat + "</span>";
+      if (F) {
+        var stale = F.isStale("vendors", d.as_of);
+        el.innerHTML = '<span class="mp-fresh">' + F.stampHtml("vendors", d.as_of, { label: "Vendor countries", flag: false }) +
+          "<span>" + (stale ? fact : caveat) + "</span>" +
+          F.staleHtml("vendors", d.as_of, { label: "Vendor countries", icon: clock }) + "</span>";
+      }
       else if (d.as_of) el.textContent = "Vendor countries as of " + d.as_of + ". " + caveat;
     });
   }).catch(function(){

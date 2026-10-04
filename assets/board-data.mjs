@@ -21,6 +21,11 @@ export function modelById(models, id) { return (models || []).find((m) => m.id =
 import { dayLabel } from './freshness.mjs';
 export { dayLabel };
 
+/* ---------- claims ---------- */
+// A claim a newer one replaced (`superseded_by`, written when its page changed) keeps its quote in
+// the data as history, but the board never shows it: only the claim at the end of the chain speaks.
+export function isLiveClaim(c) { return !!c && !c.superseded_by; }
+
 /* ---------- plans ---------- */
 // "Anthropic" + "Pro" -> "Anthropic Pro", but a plan whose own name already opens with the
 // vendor's first word ("Microsoft 365 Business Standard with Copilot") is left alone.
