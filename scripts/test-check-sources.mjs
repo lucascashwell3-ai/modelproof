@@ -433,3 +433,63 @@ test('CLI modes: default fails on a blocked page; --blocked-ok passes it as a wa
   writeFileSync(pagesFile, JSON.stringify({ 'https://a.example/403': 403 }));
   assert.equal(run('--blocked-ok').status, 1, '--blocked-ok: a 404 page (gone) still fails');
 });
+
+// --- report-claim-rot.mjs: rot and blocked are listed apart; blocked alone never keeps the issue open
+import { splitResults, reportLines, reportIssue, ISSUE_TITLE } from './report-claim-rot.mjs';
+
+const RES = (kind, extra = {}) => ({ ok: kind === 'ok', kind, file: 'guidance', modelName: 'Cursor', taskId: 'context', tier: 'tool', source_url: `https://a.example/${kind}`, reason: kind === 'ok' ? null : `${kind} reason`, ...extra });
+
+test('splitResults: not_found and gone are rot, blocked is apart; a failed result without a kind is rot', () => {
+  const s = splitResults([RES('ok'), RES('not_found'), RES('gone'), RES('blocked'), { ok: false, reason: 'old file' }]);
+  assert.equal(s.verified.length, 1);
+  assert.equal(s.rot.length, 3);
+  assert.equal(s.blocked.length, 1);
+});
+
+test('reportLines: separate sections for rot, could-not-read and skipped', () => {
+  const text = reportLines({ results: [RES('ok'), RES('not_found'), RES('blocked')], skipped: ['guidance/x'] }).join('\n');
+  assert.match(text, /1\/3 claim\(s\) verified/);
+  assert.match(text, /Rotted: 1\. Could not read: 1\. Skipped \(pending\): 1\./);
+  assert.match(text, /## Rotted[\s\S]*not_found reason[\s\S]*## Could not read[\s\S]*blocked reason[\s\S]*## Skipped[\s\S]*guidance\/x/);
+});
+
+function fakeIssues(open) {
+  const state = { issues: open, writes: [] };
+  state.fetchImpl = async (url, init = {}) => {
+    const method = init.method || 'GET';
+    const body = init.body ? JSON.parse(init.body) : null;
+    const ok = (v) => ({ ok: true, status: 200, json: async () => v, text: async () => '' });
+    if (method === 'GET') return ok(new URL(url).searchParams.get('page') === '1' ? state.issues.filter((i) => i.state === 'open') : []);
+    state.writes.push({ method, path: new URL(url).pathname, body });
+    const m = new URL(url).pathname.match(/\/issues\/(\d+)$/);
+    if (m) { Object.assign(state.issues.find((i) => i.number === Number(m[1])), body); return ok({}); }
+    const created = { number: 50, state: 'open', ...body };
+    state.issues.push(created);
+    return ok(created);
+  };
+  return state;
+}
+const LIVE_ENV = { GH_TOKEN: 't', GITHUB_REPOSITORY: 'acme/site', GITHUB_REF: 'refs/heads/main' };
+
+test('reportIssue: blocked pages alone close the issue (legacy title included); rot opens it', async () => {
+  const gh = fakeIssues([{ number: 35, state: 'open', title: 'Judged claims no longer verifiable', body: 'x' }]);
+  const o = { env: LIVE_ENV, fetchImpl: gh.fetchImpl, log: () => {} };
+  assert.equal((await reportIssue(splitResults([RES('blocked')]), o)).action, 'closed');
+  assert.equal(gh.issues[0].state, 'closed');
+  const r = await reportIssue(splitResults([RES('gone'), RES('blocked')]), o);
+  assert.equal(r.action, 'created');
+  const made = gh.issues.find((i) => i.number === 50);
+  assert.equal(made.title, ISSUE_TITLE);
+  assert.match(made.body, /## Rotted \(1\)[\s\S]*## Could not read from the runner \(1\)/);
+});
+
+test('report-claim-rot --results reads a check-sources --json-out file instead of fetching', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'claim-rot-results-'));
+  const file = join(dir, 'results.json');
+  writeFileSync(file, JSON.stringify({ results: [RES('ok'), RES('blocked')], skipped: [] }));
+  const script = fileURLToPath(new URL('./report-claim-rot.mjs', import.meta.url));
+  const r = spawnSync('node', [script, '--results', file], { encoding: 'utf8', env: { ...process.env, DRY_RUN: 'true', CHECK_SOURCES_PAGES: join(dir, 'missing.json') } });
+  assert.equal(r.status, 0);
+  assert.match(r.stdout, /1\/2 claim\(s\) verified/);
+  assert.match(r.stdout, /Rotted: 0\. Could not read: 1\./);
+});
