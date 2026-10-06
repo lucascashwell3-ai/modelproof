@@ -4137,5 +4137,15 @@
       "https://developer.nvidia.com/blog/serve-qwen3-8-2-4t-a95b-a-2-4t-parameter-model-with-configurable-reasoning-on-nvidia-gb300-nvl72/",
       "https://huggingface.co/nvidia/Qwen3.8-2.4T-A95B-NVFP4"
     ]
+  },
+  {
+    "date": "2026-10-06",
+    "model": "Mistral Large 4",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/mistralai/mistral-large-4-0"
+    ]
   }
 ]
