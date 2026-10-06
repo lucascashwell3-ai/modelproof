@@ -4104,5 +4104,38 @@
     "sources": [
       "https://developers.openai.com/api/docs/models/gpt-6-astra"
     ]
+  },
+  {
+    "date": "2026-10-06",
+    "model": "Muse Spark 1.2 Contributor",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://gingerlabs.ai/blog/muse-spark-1-2-contributor-api-performance-limits-and-risks",
+      "https://openrouter.ai/meta/muse-spark-1.2-contributor"
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "model": "Nemotron 3.5 Lightning",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://build.nvidia.com/nvidia/nemotron-3.5-lightning-30b-a3b/modelcard",
+      "https://openrouter.ai/nvidia/nemotron-3.5-lightning"
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "model": "Qwen3.8 2.4T A95B",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://developer.nvidia.com/blog/serve-qwen3-8-2-4t-a95b-a-2-4t-parameter-model-with-configurable-reasoning-on-nvidia-gb300-nvl72/",
+      "https://huggingface.co/nvidia/Qwen3.8-2.4T-A95B-NVFP4"
+    ]
   }
 ]

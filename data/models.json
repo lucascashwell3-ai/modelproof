@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-03",
+  "as_of": "2026-10-06",
   "models": [
     {
       "id": "claude-opus-5",
@@ -13830,7 +13830,7 @@
         }
       },
       "status": "ga",
-      "adoption": "new",
+      "adoption": "low",
       "signals": {
         "coding": {
           "usage_rank": null,
@@ -16051,7 +16051,11 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "agentic",
+        "speed",
+        "cheap-bulk"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -16059,7 +16063,11 @@
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Nemotron 3.5 Lightning is NVIDIA's open 30B-parameter MoE (3B active) tuned for long-running autonomous agents — treat it as a workhorse sub-agent rather than a single high-stakes reasoning call.",
+        "It is sized to run on a single H100 or DGX Spark, so self-hosting it is a realistic way to cut cost for latency-sensitive agent loops instead of paying per-token for a hosted frontier model on every sub-task.",
+        "Context extends up to 1M tokens but completion output is capped at 32,768 tokens per turn — plan multi-turn continuation for long agent trajectories rather than expecting one giant response."
+      ],
       "task_copy": {},
       "id": "nemotron-3-5-lightning",
       "name": "Nemotron 3.5 Lightning",
@@ -16067,7 +16075,9 @@
       "sources": [
         "https://developer.nvidia.com/blog/nvidia-nemotron-3-5-lightning-delivers-fast-accurate-specialized-task-execution-for-long-running-agents/",
         "https://blogs.nvidia.com/blog/nemotron-lightning-switchyard-rtx-dgx/",
-        "https://www.cnbc.com/2026/08/11/nvidia-releases-nemotron-3point5-lightning-open-source-ai-model-.html"
+        "https://www.cnbc.com/2026/08/11/nvidia-releases-nemotron-3point5-lightning-open-source-ai-model-.html",
+        "https://build.nvidia.com/nvidia/nemotron-3.5-lightning-30b-a3b/modelcard",
+        "https://openrouter.ai/nvidia/nemotron-3.5-lightning"
       ],
       "best_for_line": "NVIDIA model",
       "availability": {
@@ -18291,7 +18301,12 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "reasoning",
+        "coding",
+        "agentic",
+        "research"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -18299,7 +18314,11 @@
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Qwen3.8-2.4T-A95B exposes a reasoning_effort parameter — turn it down for routine requests and reserve high effort for genuinely hard coding or research problems, since every call runs a 2.4T-parameter, 95B-active MoE.",
+        "Use the preserve_thinking option to retain reasoning context across turns in multi-step agentic sessions instead of re-deriving it from scratch each turn.",
+        "Native context is 262K, extensible to roughly 1M, which suits long-horizon agentic and research workflows, but self-hosting needs GB300/B300-class hardware — check hosted API pricing before committing to that scale."
+      ],
       "task_copy": {},
       "id": "qwen3-8-2-4t-a95b",
       "name": "Qwen3.8 2.4T A95B",
@@ -18311,7 +18330,9 @@
       "sources": [
         "https://x.com/Alibaba_Qwen/status/2084100707423289643",
         "https://www.qwencloud.com/models/qwen3.8-2.4t-a95b",
-        "https://www.marktechpost.com/2026/07/19/alibaba-previews-qwen3-8-max-a-2-4-trillion-parameter-multimodal-model-days-after-moonshots-kimi-k3-open-weight-launch/"
+        "https://www.marktechpost.com/2026/07/19/alibaba-previews-qwen3-8-max-a-2-4-trillion-parameter-multimodal-model-days-after-moonshots-kimi-k3-open-weight-launch/",
+        "https://developer.nvidia.com/blog/serve-qwen3-8-2-4t-a95b-a-2-4t-parameter-model-with-configurable-reasoning-on-nvidia-gb300-nvl72/",
+        "https://huggingface.co/nvidia/Qwen3.8-2.4T-A95B-NVFP4"
       ],
       "best_for_line": "Alibaba (Qwen) model · 984K ctx · $2/$6",
       "availability": {
@@ -26244,19 +26265,28 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "agentic",
+        "coding",
+        "cheap-bulk"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
         "https://openrouter.ai/meta/muse-spark-1.2-contributor",
-        "https://openrouter.ai/api/frontend/v1/rankings/models"
+        "https://openrouter.ai/api/frontend/v1/rankings/models",
+        "https://gingerlabs.ai/blog/muse-spark-1-2-contributor-api-performance-limits-and-risks"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Muse Spark 1.2 Contributor serves the same weights as Muse Spark 1.2 at roughly 1/12th the price ($0.10/$0.20 per M), but Meta trains on your prompts and outputs — avoid it for proprietary or sensitive code.",
+        "Reserve it for low-cost prototyping, large-scale experiments, and agentic coding or tool-heavy workflows where sharing data with Meta for training is acceptable.",
+        "It keeps Muse Spark 1.2's 1M-token context window and configurable reasoning effort — turn reasoning effort down for routine tasks to cut cost further on top of the already-discounted rate."
+      ],
       "task_copy": {},
       "auto_added": "2026-09-06",
       "best_for_line": "Meta model · 1M ctx · $0.1/$0.2",
