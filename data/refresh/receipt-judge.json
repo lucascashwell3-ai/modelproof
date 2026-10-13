@@ -1,8 +1,7 @@
 {
   "job": "judge",
-  "ran_at": "2026-10-09T06:40:21.039Z",
-  "applied": 0,
-  "held": 7,
-  "ok": false,
-  "error": "honesty gate failed"
+  "ran_at": "2026-10-13T06:44:11.686Z",
+  "applied": 2,
+  "held": 13,
+  "ok": true
 }

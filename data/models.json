@@ -27252,7 +27252,11 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "agentic",
+        "coding",
+        "reasoning"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -27264,7 +27268,12 @@
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Use the reasoning_effort parameter (low, high, or max) to control deliberation — max effort needs up to a 384K-token output budget, so size requests accordingly.",
+        "DeepSeek's own agentic evals used temperature 1.0 with top_p 0.95 for agentic runs (top_p 1.0 otherwise) — a reasonable starting point when tuning sampling for tool-using tasks.",
+        "There's no Jinja chat template; use DeepSeek's own `encoding` folder to convert OpenAI-style messages into model input and to parse outputs.",
+        "DeepSeek's serving recipes enable speculative decoding (DSpark) by default (e.g. vLLM's --speculative-config with method dspark) — keep it on for throughput if self-hosting."
+      ],
       "task_copy": {},
       "auto_added": "2026-09-06",
       "best_for_line": "Cheapest DeepSeek model · 1M ctx · $0.05/$0.1",
@@ -30731,18 +30740,27 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "agentic",
+        "vision",
+        "speed"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/cohere/command-a-plus"
+        "https://openrouter.ai/cohere/command-a-plus",
+        "https://docs.cohere.com/v1/docs/command-a-plus"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Command A+ is built for multimodal agentic tasks, so reach for it when a workflow needs the model to take multi-step actions over text and image inputs, not just answer a question.",
+        "It covers 48 languages, including every official EU language, making it a solid default for multilingual agent deployments without swapping models per locale.",
+        "Cohere designed it to run on one B200 or two H100s at W4A4, so it needs fewer GPUs per instance than larger agentic models — worth factoring in if you're self-hosting."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
