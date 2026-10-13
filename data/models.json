@@ -434,8 +434,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 13,
-              "n_models": 290,
+              "rank": 14,
+              "n_models": 292,
               "score": 0.9388,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -444,8 +444,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 16,
-              "n_models": 84,
+              "rank": 17,
+              "n_models": 86,
               "score": 0.599,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -1065,8 +1065,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 18,
-              "n_models": 290,
+              "rank": 19,
+              "n_models": 292,
               "score": 0.9312,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -1075,8 +1075,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 24,
-              "n_models": 84,
+              "rank": 25,
+              "n_models": 86,
               "score": 0.506,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -1753,8 +1753,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 73,
-              "n_models": 290,
+              "rank": 75,
+              "n_models": 292,
               "score": 0.8586,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -1763,8 +1763,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 6,
-              "n_models": 84,
+              "rank": 7,
+              "n_models": 86,
               "score": 0.707,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -2359,8 +2359,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 28,
-              "n_models": 290,
+              "rank": 29,
+              "n_models": 292,
               "score": 0.9104,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -2369,8 +2369,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 20,
-              "n_models": 84,
+              "rank": 21,
+              "n_models": 86,
               "score": 0.53,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -2968,8 +2968,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 2 rows)",
-              "rank": 37,
-              "n_models": 290,
+              "rank": 38,
+              "n_models": 292,
               "score": 0.9053,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -2978,8 +2978,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified (best of 2 rows)",
-              "rank": 55,
-              "n_models": 84,
+              "rank": 57,
+              "n_models": 86,
               "score": 0.337,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -3550,8 +3550,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 35,
-              "n_models": 290,
+              "rank": 36,
+              "n_models": 292,
               "score": 0.9066,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -3560,8 +3560,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 13,
-              "n_models": 84,
+              "rank": 14,
+              "n_models": 86,
               "score": 0.63,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -4121,8 +4121,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 2 rows)",
-              "rank": 7,
-              "n_models": 290,
+              "rank": 8,
+              "n_models": 292,
               "score": 0.9444,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -4131,8 +4131,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 3,
-              "n_models": 84,
+              "rank": 4,
+              "n_models": 86,
               "score": 0.735,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -4702,8 +4702,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 33,
-              "n_models": 290,
+              "rank": 34,
+              "n_models": 292,
               "score": 0.9091,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -4712,8 +4712,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 33,
-              "n_models": 84,
+              "rank": 34,
+              "n_models": 86,
               "score": 0.4699,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -5239,8 +5239,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 34,
-              "n_models": 290,
+              "rank": 35,
+              "n_models": 292,
               "score": 0.9078,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -5249,8 +5249,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 50,
-              "n_models": 84,
+              "rank": 52,
+              "n_models": 86,
               "score": 0.349,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -6098,8 +6098,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 110,
-              "n_models": 290,
+              "rank": 112,
+              "n_models": 292,
               "score": 0.7961,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -6108,8 +6108,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified (best of 2 rows)",
-              "rank": 73,
-              "n_models": 84,
+              "rank": 75,
+              "n_models": 86,
               "score": 0.196,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -6570,8 +6570,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 2 rows)",
-              "rank": 152,
-              "n_models": 290,
+              "rank": 154,
+              "n_models": 292,
               "score": 0.7121,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -6580,8 +6580,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified (best of 2 rows)",
-              "rank": 77,
-              "n_models": 84,
+              "rank": 79,
+              "n_models": 86,
               "score": 0.132,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -7103,8 +7103,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 14,
-              "n_models": 290,
+              "rank": 15,
+              "n_models": 292,
               "score": 0.935,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -7113,8 +7113,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 8,
-              "n_models": 84,
+              "rank": 9,
+              "n_models": 86,
               "score": 0.697,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -7703,8 +7703,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 16,
-              "n_models": 290,
+              "rank": 17,
+              "n_models": 292,
               "score": 0.9331,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -7713,8 +7713,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 40,
-              "n_models": 84,
+              "rank": 41,
+              "n_models": 86,
               "score": 0.432,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -8290,8 +8290,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 26,
-              "n_models": 290,
+              "rank": 27,
+              "n_models": 292,
               "score": 0.916,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -8300,8 +8300,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 44,
-              "n_models": 84,
+              "rank": 46,
+              "n_models": 86,
               "score": 0.41,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -8868,8 +8868,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 19,
-              "n_models": 290,
+              "rank": 20,
+              "n_models": 292,
               "score": 0.928,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -8878,8 +8878,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 11,
-              "n_models": 84,
+              "rank": 12,
+              "n_models": 86,
               "score": 0.662,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -9653,8 +9653,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 15,
-              "n_models": 290,
+              "rank": 16,
+              "n_models": 292,
               "score": 0.9343,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -9663,8 +9663,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 29,
-              "n_models": 84,
+              "rank": 30,
+              "n_models": 86,
               "score": 0.483,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -10557,8 +10557,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 145,
-              "n_models": 290,
+              "rank": 147,
+              "n_models": 292,
               "score": 0.726,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -10567,8 +10567,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 28,
-              "n_models": 84,
+              "rank": 29,
+              "n_models": 86,
               "score": 0.4875,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -11186,8 +11186,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 239,
-              "n_models": 290,
+              "rank": 241,
+              "n_models": 292,
               "score": 0.4179,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -11858,8 +11858,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 9,
-              "n_models": 290,
+              "rank": 10,
+              "n_models": 292,
               "score": 0.9413,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -11868,8 +11868,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 12,
-              "n_models": 84,
+              "rank": 13,
+              "n_models": 86,
               "score": 0.662,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -12386,8 +12386,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 24,
-              "n_models": 290,
+              "rank": 25,
+              "n_models": 292,
               "score": 0.9186,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -12396,8 +12396,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 53,
-              "n_models": 84,
+              "rank": 55,
+              "n_models": 86,
               "score": 0.342,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -12891,8 +12891,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 5,
-              "n_models": 290,
+              "rank": 6,
+              "n_models": 292,
               "score": 0.9482,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -12901,8 +12901,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 9,
-              "n_models": 84,
+              "rank": 10,
+              "n_models": 86,
               "score": 0.692,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -13410,8 +13410,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 2 rows)",
-              "rank": 10,
-              "n_models": 290,
+              "rank": 11,
+              "n_models": 292,
               "score": 0.94,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -13420,8 +13420,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified (best of 2 rows)",
-              "rank": 27,
-              "n_models": 84,
+              "rank": 28,
+              "n_models": 86,
               "score": 0.493,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -13879,8 +13879,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 15,
-              "n_models": 84,
+              "rank": 16,
+              "n_models": 86,
               "score": 0.603,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -14360,8 +14360,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 17,
-              "n_models": 84,
+              "rank": 18,
+              "n_models": 86,
               "score": 0.5779,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -16701,8 +16701,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 2 rows)",
-              "rank": 97,
-              "n_models": 290,
+              "rank": 99,
+              "n_models": 292,
               "score": 0.8232,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -19810,8 +19810,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 55,
-              "n_models": 290,
+              "rank": 56,
+              "n_models": 292,
               "score": 0.8826,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -19820,8 +19820,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 46,
-              "n_models": 84,
+              "rank": 48,
+              "n_models": 86,
               "score": 0.403,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -20277,8 +20277,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 52,
-              "n_models": 290,
+              "rank": 53,
+              "n_models": 292,
               "score": 0.8851,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -20287,8 +20287,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 74,
-              "n_models": 84,
+              "rank": 76,
+              "n_models": 86,
               "score": 0.191,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -21636,8 +21636,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 30,
-              "n_models": 290,
+              "rank": 31,
+              "n_models": 292,
               "score": 0.9091,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -21646,8 +21646,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 43,
-              "n_models": 84,
+              "rank": 45,
+              "n_models": 86,
               "score": 0.41,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -22088,8 +22088,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 21,
-              "n_models": 290,
+              "rank": 22,
+              "n_models": 292,
               "score": 0.9268,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -22098,8 +22098,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 36,
-              "n_models": 84,
+              "rank": 37,
+              "n_models": 86,
               "score": 0.458,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -24496,8 +24496,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 4,
-              "n_models": 290,
+              "rank": 5,
+              "n_models": 292,
               "score": 0.9539,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -24506,8 +24506,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 7,
-              "n_models": 84,
+              "rank": 8,
+              "n_models": 86,
               "score": 0.697,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -25070,8 +25070,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 1,
-              "n_models": 290,
+              "rank": 2,
+              "n_models": 292,
               "score": 0.9577,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -25080,8 +25080,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 1,
-              "n_models": 84,
+              "rank": 2,
+              "n_models": 86,
               "score": 0.756,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -25980,8 +25980,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 5,
-              "n_models": 84,
+              "rank": 6,
+              "n_models": 86,
               "score": 0.708,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -27089,8 +27089,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 25,
-              "n_models": 290,
+              "rank": 26,
+              "n_models": 292,
               "score": 0.9167,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -27099,8 +27099,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 21,
-              "n_models": 84,
+              "rank": 22,
+              "n_models": 86,
               "score": 0.5291,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -27512,8 +27512,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 29,
-              "n_models": 290,
+              "rank": 30,
+              "n_models": 292,
               "score": 0.9104,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -27522,8 +27522,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 56,
-              "n_models": 84,
+              "rank": 58,
+              "n_models": 86,
               "score": 0.3363,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -27908,11 +27908,21 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 44,
-              "n_models": 290,
+              "rank": 45,
+              "n_models": 292,
               "score": 0.8984,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "SimpleQA Verified",
+              "rank": 42,
+              "n_models": 86,
+              "score": 0.429,
+              "as_of": "2026-10-13",
+              "url": "https://epoch.ai/benchmarks/simpleqa-verified",
               "licence": "display-ok"
             },
             {
@@ -28394,8 +28404,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 20,
-              "n_models": 290,
+              "rank": 21,
+              "n_models": 292,
               "score": 0.9274,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -28404,8 +28414,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 18,
-              "n_models": 84,
+              "rank": 19,
+              "n_models": 86,
               "score": 0.56,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -29056,8 +29066,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 39,
-              "n_models": 290,
+              "rank": 40,
+              "n_models": 292,
               "score": 0.9047,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -29066,8 +29076,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 41,
-              "n_models": 84,
+              "rank": 43,
+              "n_models": 86,
               "score": 0.414,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -29741,8 +29751,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 8,
-              "n_models": 290,
+              "rank": 9,
+              "n_models": 292,
               "score": 0.9432,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -29751,8 +29761,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 14,
-              "n_models": 84,
+              "rank": 15,
+              "n_models": 86,
               "score": 0.607,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -30222,8 +30232,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 36,
-              "n_models": 290,
+              "rank": 37,
+              "n_models": 292,
               "score": 0.9059,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -30232,8 +30242,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 4,
-              "n_models": 84,
+              "rank": 5,
+              "n_models": 86,
               "score": 0.722,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -31445,8 +31455,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 2,
-              "n_models": 290,
+              "rank": 3,
+              "n_models": 292,
               "score": 0.9558,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -31455,8 +31465,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 34,
-              "n_models": 84,
+              "rank": 35,
+              "n_models": 86,
               "score": 0.465,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -32077,8 +32087,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 3,
-              "n_models": 290,
+              "rank": 4,
+              "n_models": 292,
               "score": 0.9539,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -32087,8 +32097,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 2,
-              "n_models": 84,
+              "rank": 3,
+              "n_models": 86,
               "score": 0.739,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -32740,8 +32750,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 46,
-              "n_models": 290,
+              "rank": 47,
+              "n_models": 292,
               "score": 0.8965,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -32750,8 +32760,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 68,
-              "n_models": 84,
+              "rank": 70,
+              "n_models": 86,
               "score": 0.238,
               "as_of": "2026-10-13",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -32904,6 +32914,313 @@
       "status": "ga",
       "adoption": "moderate",
       "best_for_line": "Cheapest Anthropic model · 1M ctx · $0.1/$0.5"
+    },
+    {
+      "id": "gemini-4-argon",
+      "name": "Gemini 4 Argon",
+      "vendor": "Google",
+      "released": "2026-10-13",
+      "context_window": 1048576,
+      "price_input": 2,
+      "price_output": 10,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/google/gemini-4-argon"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "task_fit_judged": null,
+      "usage": {
+        "openrouter": null
+      },
+      "auto_added": "2026-10-13",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      },
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      },
+      "standings": {
+        "as_of": "2026-10-13",
+        "coding": {
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "SciCode (Epoch mirror)",
+              "rank": 3,
+              "n_models": 132,
+              "score": 0.6181,
+              "as_of": "2026-10-13",
+              "url": "https://epoch.ai/benchmarks/scicode-external",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        },
+        "agents": {
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "Vending-Bench 2 (Epoch mirror)",
+              "rank": 3,
+              "n_models": 61,
+              "score": 13718.1583,
+              "as_of": "2026-10-13",
+              "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "APEX-Agents (Epoch mirror)",
+              "rank": 1,
+              "n_models": 49,
+              "score": 0.822,
+              "as_of": "2026-10-13",
+              "url": "https://epoch.ai/benchmarks/apex-agents-external",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        },
+        "bulk": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "writing": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "research": {
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GPQA Diamond",
+              "rank": 1,
+              "n_models": 292,
+              "score": 0.964,
+              "as_of": "2026-10-13",
+              "url": "https://epoch.ai/benchmarks/gpqa-diamond",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "SimpleQA Verified",
+              "rank": 1,
+              "n_models": 86,
+              "score": 0.76,
+              "as_of": "2026-10-13",
+              "url": "https://epoch.ai/benchmarks/simpleqa-verified",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "ProofBench (Epoch mirror)",
+              "rank": 7,
+              "n_models": 78,
+              "score": 0.99,
+              "as_of": "2026-10-13",
+              "url": "https://epoch.ai/benchmarks/proofbench-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CritPt (Epoch mirror)",
+              "rank": 14,
+              "n_models": 144,
+              "score": 0.2714,
+              "as_of": "2026-10-13",
+              "url": "https://epoch.ai/benchmarks/critpt-external",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        },
+        "extraction": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "chat": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "vision": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "frontend": {
+          "measured": [],
+          "chosen": null,
+          "preferred": {
+            "board": "WebDev Arena (Epoch mirror) (mirrors arena.ai's blind human votes)",
+            "rank": 8,
+            "n_models": 120,
+            "as_of": "2026-10-13",
+            "url": "https://epoch.ai/benchmarks/webdev-arena-external",
+            "licence": "signal-only",
+            "score": null
+          }
+        },
+        "exec-summaries": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "status": "ga",
+      "adoption": "new",
+      "best_for_line": "Priciest Google model · 1M ctx · $2/$10"
     }
   ],
   "releases": [
@@ -33535,6 +33852,15 @@
       "title": "Anthropic releases Claude Haiku 5.5",
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/anthropic/claude-haiku-5.5",
+      "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-10-13",
+      "vendor": "Google",
+      "title": "Google releases Gemini 4 Argon",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/google/gemini-4-argon",
       "why": "Priced and available now; treat capability as unproven until scores land."
     }
   ],

@@ -4177,5 +4177,15 @@
     "sources": [
       "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731/raw/main/README.md"
     ]
+  },
+  {
+    "date": "2026-10-13",
+    "model": "Gemini 4 Argon",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/google/gemini-4-argon"
+    ]
   }
 ]

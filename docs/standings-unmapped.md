@@ -5,7 +5,7 @@ live tester feed and could not be matched to a catalog model id — never guesse
 appears in any model's `standings`. A future run re-checks all of these; add an alias to
 `scripts/model-aliases.json` only after confirming the feed name really is that model.
 
-## epoch-ai / gpqa_diamond.csv (251)
+## epoch-ai / gpqa_diamond.csv (252)
 
 - `DeepSeek-R1`
 - `DeepSeek-R1-0528`
@@ -191,6 +191,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `mistral-large-2402`
 - `mistral-large-2407`
 - `mistral-large-2411`
+- `mistral-large-4-0_high`
 - `mistral-medium-2505`
 - `mistral-small-2501`
 - `mistral-small-2503`
@@ -387,7 +388,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `grok-4-0709`
 - `o3-2025-04-16_medium`
 
-## epoch-ai / webdev_arena_external.csv (80)
+## epoch-ai / webdev_arena_external.csv (79)
 
 - `DeepSeek-V3.2-Exp`
 - `DeepSeek-V3.2-Exp_thinking`
@@ -416,7 +417,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gemini-3-pro-preview`
 - `gemini-3.1-flash-lite`
 - `gemini-3.5-flash-lite`
-- `gemini-4-argon_high`
 - `gemma-4-26b-a4b`
 - `gemma-4-31b-it`
 - `glm-4.6`
@@ -509,7 +509,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.6-plus`
 - `qwen3.7-max`
 
-## epoch-ai / scicode_external.csv (91)
+## epoch-ai / scicode_external.csv (90)
 
 - `DeepSeek-R1`
 - `DeepSeek-V3`
@@ -535,7 +535,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gemini-2.5-pro`
 - `gemini-3.1-flash-lite`
 - `gemini-3.5-flash-lite`
-- `gemini-4-argon_high`
 - `gemma-3-12b-it`
 - `gemma-3-27b-it`
 - `gemma-4-26b-a4b`
@@ -880,7 +879,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.5-9B`
 - `qwen3.6-35b-a3b`
 
-## epoch-ai / vending_bench_2_external.csv (35)
+## epoch-ai / vending_bench_2_external.csv (34)
 
 - `DeepSeek-V3.2-Exp_unknown`
 - `MiniMax-M2`
@@ -897,7 +896,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gemini-3-flash-preview`
 - `gemini-3-pro-preview`
 - `gemini-3.1-pro-preview-customtools`
-- `gemini-4-argon_unknown`
 - `glm-4.7`
 - `glm-5`
 - `glm-5.1`
@@ -965,7 +963,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen2-72b-instruct`
 - `qwen2.5-72b-instruct`
 
-## epoch-ai / apex_agents_external.csv (15)
+## epoch-ai / apex_agents_external.csv (14)
 
 - `MiniMax-M3`
 - `claude-opus-4-6_max`
@@ -973,7 +971,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `claude-sonnet-4-6_high`
 - `deepseek/deepseek-v3.2`
 - `gemini-3.5-flash-lite`
-- `gemini-4-argon_unknown`
 - `glm-5.1`
 - `glm-5.3-flash_unknown`
 - `gpt-5.4-2026-03-05_unknown`
@@ -1142,7 +1139,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.7-max`
 - `qwen3.8-max-0902_xhigh`
 
-## epoch-ai / proofbench_external.csv (39)
+## epoch-ai / proofbench_external.csv (38)
 
 - `MiniMax-M2.5`
 - `MiniMax-M2.7`
@@ -1156,7 +1153,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gemini-3-flash-preview`
 - `gemini-3-pro-preview`
 - `gemini-3.5-flash-lite`
-- `gemini-4-argon_unknown`
 - `glm-4.7`
 - `glm-5.1`
 - `glm-5.3-flash_max`
@@ -1414,7 +1410,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.8-max-0902_xhigh`
 - `seed-oss-36b-instruct`
 
-## epoch-ai / critpt_external.csv (102)
+## epoch-ai / critpt_external.csv (101)
 
 - `DeepSeek-R1`
 - `DeepSeek-V3`
@@ -1444,7 +1440,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `gemini-3-pro-preview`
 - `gemini-3.1-flash-lite`
 - `gemini-3.5-flash-lite`
-- `gemini-4-argon_high`
 - `gemma-3-12b-it`
 - `gemma-3-27b-it`
 - `gemma-4-26b-a4b`
