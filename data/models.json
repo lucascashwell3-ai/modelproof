@@ -161,14 +161,14 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.5,
-          "rank": 32,
-          "as_of": "2026-10-11",
+          "share": 0.48,
+          "rank": 31,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
       "status": "ga",
-      "adoption": "moderate",
+      "adoption": "low",
       "signals": {
         "coding": {
           "usage_rank": 3,
@@ -812,9 +812,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.25,
-          "rank": 17,
-          "as_of": "2026-10-11",
+          "share": 1.33,
+          "rank": 16,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -1539,8 +1539,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.02,
-          "rank": 133,
-          "as_of": "2026-10-11",
+          "rank": 134,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -2134,9 +2134,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.13,
-          "rank": 67,
-          "as_of": "2026-10-11",
+          "share": 0.14,
+          "rank": 61,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -2705,9 +2705,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.46,
-          "rank": 34,
-          "as_of": "2026-10-11",
+          "share": 0.44,
+          "rank": 33,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -3316,8 +3316,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.04,
-          "rank": 100,
-          "as_of": "2026-10-11",
+          "rank": 101,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -3877,8 +3877,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.12,
-          "rank": 69,
-          "as_of": "2026-10-11",
+          "rank": 68,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -4497,9 +4497,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.76,
-          "rank": 23,
-          "as_of": "2026-10-11",
+          "share": 0.74,
+          "rank": 25,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -5026,7 +5026,7 @@
           "category": "overall",
           "share": 0.08,
           "rank": 78,
-          "as_of": "2026-10-11",
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -5560,8 +5560,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.01,
-          "rank": 158,
-          "as_of": "2026-10-11",
+          "rank": 155,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -5930,8 +5930,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 238,
-          "as_of": "2026-10-11",
+          "rank": 241,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -6392,9 +6392,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.14,
-          "rank": 63,
-          "as_of": "2026-10-11",
+          "share": 0.13,
+          "rank": 64,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -6830,9 +6830,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.91,
+          "share": 0.84,
           "rank": 21,
-          "as_of": "2026-10-11",
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -7465,9 +7465,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.14,
-          "rank": 66,
-          "as_of": "2026-10-11",
+          "share": 0.13,
+          "rank": 65,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -8040,9 +8040,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.08,
-          "rank": 20,
-          "as_of": "2026-10-11",
+          "share": 1.05,
+          "rank": 19,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -8645,7 +8645,7 @@
           "category": "overall",
           "share": 0.05,
           "rank": 93,
-          "as_of": "2026-10-11",
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -9163,8 +9163,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.35,
-          "rank": 41,
-          "as_of": "2026-10-11",
+          "rank": 39,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -9439,8 +9439,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.03,
-          "rank": 113,
-          "as_of": "2026-10-11",
+          "rank": 114,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -9982,9 +9982,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.79,
-          "rank": 13,
-          "as_of": "2026-10-11",
+          "share": 1.8,
+          "rank": 12,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -10410,8 +10410,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 290,
-          "as_of": "2026-10-11",
+          "rank": 300,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -10791,8 +10791,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 266,
-          "as_of": "2026-10-11",
+          "rank": 283,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -11400,8 +11400,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 213,
-          "as_of": "2026-10-11",
+          "rank": 217,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -11654,8 +11654,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.05,
-          "rank": 94,
-          "as_of": "2026-10-11",
+          "rank": 95,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -12146,9 +12146,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.91,
-          "rank": 22,
-          "as_of": "2026-10-11",
+          "share": 0.88,
+          "rank": 20,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -12687,8 +12687,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.24,
-          "rank": 50,
-          "as_of": "2026-10-11",
+          "rank": 49,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -13186,8 +13186,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.07,
-          "rank": 84,
-          "as_of": "2026-10-11",
+          "rank": 83,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -13684,9 +13684,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.01,
-          "rank": 185,
-          "as_of": "2026-10-11",
+          "share": 0,
+          "rank": 194,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -14166,8 +14166,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 272,
-          "as_of": "2026-10-11",
+          "rank": 269,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -14670,9 +14670,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.07,
-          "rank": 83,
-          "as_of": "2026-10-11",
+          "share": 0.08,
+          "rank": 81,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -15492,8 +15492,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.01,
-          "rank": 186,
-          "as_of": "2026-10-11",
+          "rank": 184,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -15773,8 +15773,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.02,
-          "rank": 123,
-          "as_of": "2026-10-11",
+          "rank": 137,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -16033,9 +16033,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.55,
-          "rank": 29,
-          "as_of": "2026-10-11",
+          "share": 0.61,
+          "rank": 28,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -16316,9 +16316,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.61,
-          "rank": 27,
-          "as_of": "2026-10-11",
+          "share": 0.62,
+          "rank": 26,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -16588,8 +16588,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.21,
-          "rank": 53,
-          "as_of": "2026-10-11",
+          "rank": 51,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -16902,8 +16902,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 254,
-          "as_of": "2026-10-11",
+          "rank": 229,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -17182,8 +17182,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 270,
-          "as_of": "2026-10-11",
+          "rank": 267,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -17459,8 +17459,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 315,
-          "as_of": "2026-10-11",
+          "rank": 319,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -17732,8 +17732,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 370,
-          "as_of": "2026-10-11",
+          "rank": 356,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -18026,7 +18026,7 @@
           "category": "overall",
           "share": 0.05,
           "rank": 96,
-          "as_of": "2026-10-11",
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -18296,9 +18296,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.04,
-          "rank": 102,
-          "as_of": "2026-10-11",
+          "share": 0.03,
+          "rank": 108,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -18576,9 +18576,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.29,
-          "rank": 43,
-          "as_of": "2026-10-11",
+          "share": 0.25,
+          "rank": 47,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -19017,8 +19017,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 416,
-          "as_of": "2026-10-11",
+          "rank": 418,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -19338,9 +19338,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.46,
-          "rank": 14,
-          "as_of": "2026-10-11",
+          "share": 1.61,
+          "rank": 13,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -19616,8 +19616,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.17,
-          "rank": 57,
-          "as_of": "2026-10-11",
+          "rank": 56,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -20135,8 +20135,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.08,
-          "rank": 79,
-          "as_of": "2026-10-11",
+          "rank": 77,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -20577,9 +20577,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.55,
+          "share": 0.57,
           "rank": 30,
-          "as_of": "2026-10-11",
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -20863,8 +20863,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 417,
-          "as_of": "2026-10-11",
+          "rank": 415,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -21130,8 +21130,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 296,
-          "as_of": "2026-10-11",
+          "rank": 298,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -21383,9 +21383,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 2.2,
-          "rank": 11,
-          "as_of": "2026-10-11",
+          "share": 2.29,
+          "rank": 10,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -21904,8 +21904,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.16,
-          "rank": 60,
-          "as_of": "2026-10-11",
+          "rank": 58,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -22361,9 +22361,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.26,
-          "rank": 48,
-          "as_of": "2026-10-11",
+          "share": 0.27,
+          "rank": 45,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -22632,9 +22632,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 4.82,
+          "share": 4.81,
           "rank": 5,
-          "as_of": "2026-10-11",
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -22889,8 +22889,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 428,
-          "as_of": "2026-10-11",
+          "rank": 436,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -23206,8 +23206,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.01,
-          "rank": 162,
-          "as_of": "2026-10-11",
+          "rank": 167,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -23513,9 +23513,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.32,
-          "rank": 16,
-          "as_of": "2026-10-11",
+          "share": 1.46,
+          "rank": 15,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -23825,9 +23825,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.28,
-          "rank": 44,
-          "as_of": "2026-10-11",
+          "share": 0.31,
+          "rank": 42,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -24248,9 +24248,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.19,
-          "rank": 19,
-          "as_of": "2026-10-11",
+          "share": 1.18,
+          "rank": 18,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -24835,9 +24835,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.34,
-          "rank": 42,
-          "as_of": "2026-10-11",
+          "share": 0.33,
+          "rank": 41,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -25444,9 +25444,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.03,
-          "rank": 109,
-          "as_of": "2026-10-11",
+          "share": 0.04,
+          "rank": 98,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -25738,8 +25738,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.2,
-          "rank": 54,
-          "as_of": "2026-10-11",
+          "rank": 53,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -26342,8 +26342,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.01,
-          "rank": 154,
-          "as_of": "2026-10-11",
+          "rank": 151,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -26608,7 +26608,7 @@
           "category": "overall",
           "share": 0.05,
           "rank": 92,
-          "as_of": "2026-10-11",
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -27692,9 +27692,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 23.84,
+          "share": 23.44,
           "rank": 1,
-          "as_of": "2026-10-11",
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -28204,9 +28204,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.38,
-          "rank": 37,
-          "as_of": "2026-10-11",
+          "share": 0.37,
+          "rank": 38,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -28641,7 +28641,7 @@
           "category": "overall",
           "share": 0.21,
           "rank": 52,
-          "as_of": "2026-10-11",
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -28878,9 +28878,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 4.14,
-          "rank": 6,
-          "as_of": "2026-10-11",
+          "share": 4.12,
+          "rank": 7,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -28914,7 +28914,7 @@
         },
         "bulk": {
           "usage_rank": 2,
-          "usage_share": 5.11,
+          "usage_share": 5.12,
           "arena_rank": null,
           "expert_default": null,
           "families": 1
@@ -29027,7 +29027,7 @@
           "measured": [],
           "chosen": {
             "rank": 4,
-            "share": 5.11,
+            "share": 5.12,
             "tags": [],
             "n_models": 563,
             "as_of": "2026-10-09",
@@ -29302,8 +29302,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 194,
-          "as_of": "2026-10-11",
+          "rank": 193,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -29540,9 +29540,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.49,
-          "rank": 33,
-          "as_of": "2026-10-11",
+          "share": 0.44,
+          "rank": 34,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -29986,9 +29986,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 2.92,
+          "share": 3.1,
           "rank": 8,
-          "as_of": "2026-10-11",
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -30519,8 +30519,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.02,
-          "rank": 132,
-          "as_of": "2026-10-11",
+          "rank": 126,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -30941,9 +30941,10 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         },
         "vision": {
-          "score": null,
-          "basis": [],
-          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+          "score": 100,
+          "basis": [
+            "best_for:vision"
+          ]
         },
         "frontend": {
           "score": null,
@@ -30993,8 +30994,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.02,
-          "rank": 136,
-          "as_of": "2026-10-11",
+          "rank": 131,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -31231,9 +31232,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.41,
-          "rank": 15,
-          "as_of": "2026-10-11",
+          "share": 1.53,
+          "rank": 14,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -31670,8 +31671,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.02,
-          "rank": 125,
-          "as_of": "2026-10-11",
+          "rank": 123,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -31908,9 +31909,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.24,
-          "rank": 18,
-          "as_of": "2026-10-11",
+          "share": 1.29,
+          "rank": 17,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -32592,9 +32593,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.65,
-          "rank": 26,
-          "as_of": "2026-10-11",
+          "share": 0.79,
+          "rank": 22,
+          "as_of": "2026-10-12",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
