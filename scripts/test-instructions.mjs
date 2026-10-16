@@ -1110,3 +1110,33 @@ test('a plan bulk slot with no model_refs row for its model writes no model into
   assert.match(bulk.content, /^model: inherit$/m, 'no source gives a string for it, so the file inherits');
   assert.ok(!bulk.content.includes(other.id), 'the catalog id is never written as a guess');
 });
+
+test('a superseded claim (the defaults watch replaced it) is never shown; the claim that replaces it is', () => {
+  const pkg0 = build('power-user-max5x');
+  const text0 = shownText(pkg0);
+  const old = FACTS.guidance.claims.find((c) => c.topic === 'model-per-job' && c.subject.kind === 'tool' && pkg0.facts_used.includes(c.id) && text0.includes(c.quote));
+  assert.ok(old, 'the fixture package shows a model-per-job tool claim');
+  // what the watch writes: a new claim right after the old one, the old one marked superseded_by,
+  // and every basis that named the old one now names the new one
+  const guidance = clone(FACTS.guidance);
+  const fresh = { ...clone(old), id: `${old.id}-new`, sentence: `${old.sentence.replace(/\.$/, '')} (re-read).`, quote: `${old.quote.replace(/\.$/, '')} again` };
+  const i = guidance.claims.findIndex((c) => c.id === old.id);
+  guidance.claims[i].superseded_by = fresh.id;
+  guidance.claims.splice(i + 1, 0, fresh);
+  const swap = (node) => {
+    if (Array.isArray(node)) { node.forEach(swap); return; }
+    if (!node || typeof node !== 'object') return;
+    for (const [k, v] of Object.entries(node)) {
+      if (k === 'basis' && Array.isArray(v)) node[k] = v.map((id) => (id === old.id ? fresh.id : id));
+      else if (k !== 'claims') swap(v);
+    }
+  };
+  swap(guidance);
+  const pkg = buildPackage(PROFILES['power-user-max5x'], { ...FACTS, guidance }, setupFor('power-user-max5x'));
+  const text = shownText(pkg);
+  assert.ok(!pkg.facts_used.includes(old.id), 'the old claim is not used');
+  assert.ok(!text.split(fresh.quote).join('').includes(old.quote), 'the old quote is not shown on its own');
+  assert.ok(!text.includes(old.sentence), 'nor the old sentence');
+  assert.ok(pkg.facts_used.includes(fresh.id), 'the new claim is used');
+  assert.ok(text.includes(fresh.quote), 'the new quote is shown');
+});

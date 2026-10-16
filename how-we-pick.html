@@ -67,6 +67,13 @@
   .srcWhere a{ color: rgba(var(--ink),.5); border-bottom:1px solid rgba(var(--ink),.16); }
   .srcWhere a:hover{ color: var(--accent); border-bottom-color: currentColor; text-decoration:none; }
   .srcNote{ font-size:12px; color: rgba(var(--ink),.45); line-height:1.6; margin-top:12px; }
+  /* Freshness (assets/freshness.mjs): the file's own date, and a notice once it is past its limit */
+  .mp-fresh{ display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 10px; margin-bottom:2px; }
+  .mp-asof{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:11px; color: rgba(var(--ink),.62); }
+  /* the same notice as the board: ink words, the rust clock carries the accent */
+  .mp-asof--stale{ color: var(--accent); }
+  .mp-stale{ display:flex; align-items:flex-start; gap:7px; flex-basis:100%; color: rgba(var(--ink),.72); line-height:1.5; }
+  .mp-stale .ico{ color: var(--accent); flex:0 0 auto; margin-top:3px; }
 
   footer{ margin-top: 56px; padding-top: 20px; border-top: 1px solid rgba(var(--ink),.08); font-size:12.5px; }
 
@@ -122,6 +129,8 @@
 <script>
 (function(){
   var list = document.getElementById("srcList");
+  // the shared date stamp + stale notice; without it the raw date still shows
+  var freshP = import("./assets/freshness.mjs").catch(function(){ return null; });
   fetch("./data/vendors.json").then(function(r){ return r.json(); }).then(function(d){
     var rows = (d && d.vendors) || [];
     if (!rows.length){ list.innerHTML = '<div class="srcNote">No vendor list in the data file.</div>'; return; }
@@ -135,8 +144,22 @@
       html += '<div class="srcRow"><span class="srcName">' + row.vendor + '</span><span class="srcWhere">' + where + '</span></div>';
     });
     list.innerHTML = html;
-    if (d.as_of) document.getElementById("srcAsOf").textContent =
-      "Vendor countries as of " + d.as_of + ". An editorial pass, not a feed \u2014 spot-check one before leaning on it.";
+    // one warning, never two: while the list is fresh the caveat asks for a spot-check; once it is
+    // past its limit the notice (with the board's clock) asks to check the source, and the caveat
+    // keeps only its fact.
+    var caveat = "An editorial pass, not a feed \u2014 spot-check one before leaning on it.";
+    var fact = "An editorial pass, not a feed.";
+    var clock = '<svg class="ico" width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="8" cy="8" r="6.5"/><rect x="7.3" y="3.8" width="1.4" height="4.6" rx=".7" fill-opacity=".55"/><rect x="8" y="7.3" width="3.4" height="1.4" rx=".7" fill-opacity=".55"/></svg>';
+    freshP.then(function(F){
+      var el = document.getElementById("srcAsOf");
+      if (F) {
+        var stale = F.isStale("vendors", d.as_of);
+        el.innerHTML = '<span class="mp-fresh">' + F.stampHtml("vendors", d.as_of, { label: "Vendor countries", flag: false }) +
+          "<span>" + (stale ? fact : caveat) + "</span>" +
+          F.staleHtml("vendors", d.as_of, { label: "Vendor countries", icon: clock }) + "</span>";
+      }
+      else if (d.as_of) el.textContent = "Vendor countries as of " + d.as_of + ". " + caveat;
+    });
   }).catch(function(){
     list.innerHTML = '<div class="srcNote">Couldn\u2019t load data/vendors.json from here, so the per-vendor citations aren\u2019t listed. Open the file directly: <a href="./data/vendors.json">data/vendors.json</a>.</div>';
   });

@@ -2761,7 +2761,7 @@
     },
     {
       "lab": "OpenAI",
-      "url": "https://developers.openai.com/api/docs/models",
+      "url": "https://developers.openai.com/api/docs/guides/reasoning",
       "basis": [
         "openai-effort-speed-vs-depth",
         "openai-sol-luna-default-medium"

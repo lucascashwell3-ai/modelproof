@@ -16,13 +16,15 @@ export function normalizeKey(s) { return String(s || '').toLowerCase().replace(/
 export function isPriced(m) { return !!m && m.price_input != null && m.price_output != null; }
 export function modelById(models, id) { return (models || []).find((m) => m.id === id) || null; }
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-// "YYYY-MM-DD" -> "D Mon YYYY". Anything else comes back as given (or null), never guessed.
-export function dayLabel(iso) {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ''));
-  if (!m || +m[2] < 1 || +m[2] > 12) return iso ? String(iso) : null;
-  return `${+m[3]} ${MONTHS[+m[2] - 1]} ${m[1]}`;
-}
+// The day formatter lives with the freshness stamps (assets/freshness.mjs); it is re-exported here
+// so the board and its tests keep reading it as BD.dayLabel.
+import { dayLabel } from './freshness.mjs';
+export { dayLabel };
+
+/* ---------- claims ---------- */
+// A claim a newer one replaced (`superseded_by`, written when its page changed) keeps its quote in
+// the data as history, but the board never shows it: only the claim at the end of the chain speaks.
+export function isLiveClaim(c) { return !!c && !c.superseded_by; }
 
 /* ---------- plans ---------- */
 // "Anthropic" + "Pro" -> "Anthropic Pro", but a plan whose own name already opens with the

@@ -1,0 +1,802 @@
+// scripts/defaults-watch.mjs — the weekly defaults watch. Every test runs on the frozen copies in
+// scripts/fixtures/watch/ (data, catalog slice, watch list, page excerpts), never on data/ or the
+// network, and on an in-memory GitHub + git (memoryRemote).
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import {
+  loadFixtures, evaluate, evaluateGated, inProcessGate, runJob, memoryRemote, prBody, prTitle, fingerprint,
+  declinedFrom, assertAllowedPaths, assertAsOfOnly, stampToolsText, BRANCH_PATHS, MAIN_PATHS, ISSUE_TITLE,
+  RECEIPT_PATH, json, runDrill, drillPages, getPath, latestClaim, fillPlaceholders, spanQuote, swapForms, nextClaimId,
+  BOT_BRANCH, ISSUE_KINDS, issueBody, mainKey, toolsOfRule, claimToolMap, stampProblems, HAND_FEEDS, liveRemote,
+  normalizeCased, fetchPages, STATUS_CONTEXT,
+} from './defaults-watch.mjs';
+import { FEED_FRESHNESS } from '../assets/freshness.mjs';
+import { quoteFoundIn, normalizeText, collectGuidanceClaims } from './check-sources.mjs';
+import { validateGuidance, validateWatchList } from './validate-data.mjs';
+
+const fx = loadFixtures();
+const TODAY = '2026-10-04';
+const MC = 'https://code.claude.com/docs/en/model-config';
+const gate = inProcessGate(fx.models);
+const input = (over = {}) => ({ watch: fx.watch, data: fx.data, models: fx.models, aliases: fx.aliases, pages: fx.pages, today: TODAY, ...over });
+function swap(url, from, to, pages = fx.pages) {
+  assert.ok(pages[url].includes(from), `fixture page ${url} lacks "${from}"`);
+  return { ...pages, [url]: pages[url].replace(from, to) };
+}
+const by = (res, id) => res.outcomes.find((o) => o.rule === id);
+const kinds = (res) => res.outcomes.filter((o) => o.outcome !== 'ok').map((o) => `${o.rule}:${o.outcome}`);
+const job = (over = {}) => runJob({ ...input(), gate, nowIso: `${TODAY}T01:23:00.000Z`, log: () => {}, ...over });
+const freshRemote = (state = {}) => memoryRemote({ main: { 'data/guidance.json': json(fx.data.guidance), 'data/plans.json': json(fx.data.plans) }, ...state });
+const LEAD_SWAP = () => swap(MC, 'anthropic api : defaults to opus 5.5', 'anthropic api : defaults to sonnet 5.5');
+// The frozen excerpts are lowercased; a case-kept copy for a test is the same text with some words
+// capitalized (lowercased again, it is the page).
+const casedOf = (text) => text.replace(/\b(the|opus|sonnet|type|string|max)\b/g, (w) => w[0].toUpperCase() + w.slice(1));
+const casedFor = (pages, ...urls) => Object.fromEntries(urls.map((u) => [u, casedOf(pages[u])]));
+
+test('frozen pages, frozen data: every rule ok and nothing written', () => {
+  const res = evaluate(input());
+  assert.deepEqual(kinds(res), []);
+  assert.equal(res.outcomes.length, fx.watch.rules.length);
+  assert.deepEqual(res.data, fx.data);
+});
+
+test('a swapped lead model: exactly one change, the data write, a new claim on the page, old claim superseded', () => {
+  const pages = LEAD_SWAP();
+  const res = evaluateGated(input({ pages }), gate);
+  const changes = res.outcomes.filter((o) => o.outcome === 'change');
+  assert.deepEqual(changes.map((o) => o.rule), ['cc-default-model']);
+  assert.deepEqual(kinds(res), ['cc-default-model:change']);
+  const g = res.data.guidance;
+  assert.equal(getPath(res.data, 'guidance.tool_plans[tool=claude-code].lead.model_id'), 'claude-sonnet-5-5');
+  const fresh = g.claims.find((c) => c.id === 'cc-default-model-sonnet-5-5');
+  assert.ok(fresh, 'new claim id carries the new version');
+  assert.equal(fresh.date, TODAY);
+  assert.ok(quoteFoundIn(fresh.quote, normalizeText(pages[MC])), 'new quote is on the swapped page');
+  assert.ok(!quoteFoundIn(fresh.quote, normalizeText(fx.pages[MC])), 'and not on the old page');
+  assert.match(fresh.sentence, /Sonnet 5\.5/);
+  const old = g.claims.find((c) => c.id === 'cc-default-model-opus-5-5');
+  assert.equal(old.superseded_by, 'cc-default-model-sonnet-5-5');
+  assert.equal(old.quote, fx.data.guidance.claims.find((c) => c.id === old.id).quote, 'old quote never edited');
+  assert.ok(g.tool_plans[0].lead.basis.includes('cc-default-model-sonnet-5-5'));
+  assert.ok(!JSON.stringify(g.tool_plans).includes('"cc-default-model-opus-5-5"'), 'no basis names the old claim');
+  assert.ok(!collectGuidanceClaims(g).some((c) => c.claimId === old.id), 'check-sources skips the superseded claim');
+  assert.deepEqual(validateGuidance(g, fx.models).errors, []);
+  assert.deepEqual(res.data.plans, fx.data.plans, 'plans untouched');
+});
+
+test('after the lead model changes, a rule keyed to the lead reads the new lead\'s row (placeholders follow the data)', () => {
+  let pages = LEAD_SWAP();
+  pages = swap(MC, 'except that opus 5.5 and sonnet 5.5 default to medium', 'except that opus 5.5 defaults to medium and sonnet 5.5 defaults to low', pages);
+  const res = evaluateGated(input({ pages, cased: casedFor(pages, MC) }), gate);
+  assert.deepEqual(kinds(res), ['cc-default-model:change', 'cc-effort-opus-5-5:change']);
+  assert.equal(by(res, 'cc-effort-opus-5-5').captured, 'low');
+  assert.equal(getPath(res.data, 'guidance.tool_plans[tool=claude-code].lead.effort'), 'low');
+  const effortClaim = latestClaim(res.data.guidance, 'cc-effort-5-5-default-medium');
+  assert.equal(effortClaim.id, 'cc-effort-5-5-default-low');
+  assert.ok(quoteFoundIn(effortClaim.quote, normalizeText(pages[MC])));
+  assert.match(effortClaim.quote, /^The model's default effort: .*Opus 5\.5 defaults to medium and Sonnet 5\.5 defaults to low$/, 'the quote keeps the page\'s case');
+  assert.match(effortClaim.sentence, /low as the default effort for Sonnet 5\.5/);
+  // the same rule on the old data still reads Opus's row
+  const filled = fillPlaceholders('{short:claude-code.lead}', { data: fx.data, byId: new Map(fx.models.map((m) => [m.id, m])) }, 'anchor');
+  assert.equal(filled.text, 'opus 5.5');
+});
+
+test('a plan price change rewrites its plans.json row in place (price, quote, as_of)', () => {
+  const pages = swap('https://devin.ai/pricing', 'pro $20/month', 'pro $25/month');
+  const res = evaluateGated(input({ pages }), gate);
+  assert.deepEqual(kinds(res), ['plan.devin.pro:change']);
+  const row = res.data.plans.plans.find((p) => p.vendor === 'Devin' && p.plan === 'Pro');
+  assert.equal(row.price_usd_month, 25);
+  assert.equal(row.as_of, TODAY);
+  assert.equal(row.quote, 'Pro $25/month');
+  assert.ok(quoteFoundIn(row.quote, pages['https://devin.ai/pricing']));
+  assert.equal(row.quote_url, undefined);
+  const others = (plans) => plans.plans.filter((p) => !(p.vendor === 'Devin' && p.plan === 'Pro'));
+  assert.deepEqual(others(res.data.plans), others(fx.data.plans));
+  assert.deepEqual(res.data.guidance, fx.data.guidance);
+  assert.deepEqual(by(res, 'plan.devin.pro').pending, ['plan/Devin/Pro']);
+});
+
+test('a model the catalog does not have: waiting:catalog, no write', () => {
+  const res = evaluateGated(input({ pages: swap(MC, 'anthropic api : defaults to opus 5.5', 'anthropic api : defaults to opus 9.9') }), gate);
+  assert.deepEqual(kinds(res), ['cc-default-model:waiting:catalog']);
+  assert.deepEqual(res.data, fx.data);
+  assert.deepEqual(by(res, 'cc-default-model').pending, ['cc-default-model-opus-5-5']);
+});
+
+test('a model the catalog lists as preview: waiting:not-ga, no write', () => {
+  const models = fx.models.map((m) => (m.id === 'claude-sonnet-5-5' ? { ...m, status: 'preview' } : m));
+  const res = evaluate(input({ pages: LEAD_SWAP(), models }));
+  assert.equal(by(res, 'cc-default-model').outcome, 'waiting:not-ga');
+  assert.deepEqual(res.data, fx.data);
+});
+
+test('anchor removed: broken:missing and the run is red', async () => {
+  const pages = swap(MC, 'the behavior of default depends on your account type', 'something else entirely');
+  const res = evaluate(input({ pages }));
+  assert.equal(by(res, 'cc-default-model').outcome, 'broken:missing');
+  const run = await job({ pages, remote: freshRemote() });
+  assert.ok(run.red.some((r) => r.startsWith('cc-default-model: broken:missing')));
+  assert.match(run.issue, /cc-default-model/);
+});
+
+test('a pattern that finds two different values: broken:ambiguous, never "first one wins"', () => {
+  const url = 'https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model';
+  const res = evaluate(input({ pages: swap(url, 'of your choice. note', 'of gpt-6.1 sol. note') }));
+  assert.equal(by(res, 'copilot.lead.picker').outcome, 'broken:ambiguous');
+});
+
+test('a page that answers 404: broken:missing; 403: blocked (warning), red after 3 runs in a row', async () => {
+  const url = 'https://devin.ai/pricing';
+  const gone = evaluate(input({ pages: { ...fx.pages, [url]: { error: 'HTTP 404', kind: 'gone' } } }));
+  assert.equal(by(gone, 'plan.devin.pro').outcome, 'broken:missing');
+  const pages = { ...fx.pages, [url]: { error: 'HTTP 403', kind: 'blocked' } };
+  const first = await job({ pages, remote: freshRemote() });
+  assert.equal(by(first, 'plan.devin.pro').outcome, 'blocked');
+  assert.deepEqual(first.red, []);
+  assert.equal(first.receipt.blocked_runs[url], 1);
+  assert.match(first.issue, /devin\.ai\/pricing — 1 run/);
+  const third = await job({ pages, remote: freshRemote(), receipt: { blocked_runs: { [url]: 2 } } });
+  assert.ok(third.red.some((r) => r.includes('blocked 3 runs')));
+  const back = await job({ remote: freshRemote(), receipt: { blocked_runs: { [url]: 2 } } });
+  assert.deepEqual(back.receipt.blocked_runs, {}, 'a page read again resets its count');
+});
+
+test('a flag rule whose page changed: needs-review in the issue with its question, not red, nothing written', async () => {
+  const pages = swap('https://cursor.com/help/models-and-usage/available-models.md', '**[grok 4.7]', '**[grok 4.9]');
+  const remote = freshRemote();
+  const run = await job({ pages, remote });
+  assert.equal(by(run, 'cursor-flagship').outcome, 'needs-review');
+  assert.deepEqual(run.red, []);
+  assert.match(run.issue, /cursor-flagship/);
+  assert.match(run.issue, /Question: Cursor names a different flagship model/);
+  assert.equal(run.prAction, 'none');
+  assert.deepEqual(remote.actions.map((a) => a.kind), ['push-main', 'open-issue']);
+  assert.deepEqual(remote.actions[0].files, [RECEIPT_PATH], 'not clean: receipt only, no re-stamp');
+});
+
+test('a second run on the same input does nothing new', async () => {
+  const remote = freshRemote();
+  const pages = LEAD_SWAP();
+  const one = await job({ pages, remote });
+  assert.equal(one.prAction, 'created');
+  const first = remote.actions.splice(0);
+  assert.deepEqual(first.map((a) => a.kind), ['push-branch', 'create-pr', 'status', 'push-main', 'open-issue']);
+  assert.deepEqual(first[0].files, ['data/guidance.json']);
+  assert.match(remote.state.issues[0].body, /#1 carries 1 change\(s\)/, 'the open PR is listed in the issue');
+  const two = await job({ pages, remote });
+  assert.equal(two.prAction, 'unchanged');
+  assert.deepEqual(remote.actions, []);
+});
+
+test('a new value while the PR is open updates that PR; no change left closes it and deletes the branch', async () => {
+  const remote = freshRemote();
+  await job({ pages: LEAD_SWAP(), remote });
+  remote.actions.splice(0);
+  const more = swap('https://devin.ai/pricing', 'pro $20/month', 'pro $25/month', LEAD_SWAP());
+  const upd = await job({ pages: more, remote });
+  assert.equal(upd.prAction, 'updated');
+  assert.deepEqual(remote.actions.map((a) => a.kind), ['push-branch', 'edit-pr', 'status', 'push-main', 'update-issue']);
+  remote.actions.splice(0);
+  const done = await job({ remote, sweepFn: async () => ({ failed: [] }) });
+  assert.equal(done.prAction, 'closed');
+  assert.deepEqual(remote.actions.map((a) => a.kind), ['close-pr', 'delete-branch', 'push-main', 'close-issue']);
+  assert.match(remote.state.pulls[0].body, /defaults-watch:closed-by-bot/);
+  assert.equal(remote.state.pulls.length, 1, 'one PR number for the whole story');
+});
+
+test('a commit by anyone else on the bot branch stops the force-push and turns the run red', async () => {
+  const remote = freshRemote({ branch: { sha: 'abc', author: 'someone-else' }, pulls: [{ number: 3, state: 'open', title: 't', body: 'no fingerprint', merged_at: null }] });
+  const run = await job({ pages: LEAD_SWAP(), remote });
+  assert.ok(run.red.some((r) => r.includes('not force-pushing')));
+  assert.ok(!remote.actions.some((a) => a.kind === 'push-branch' || a.kind === 'edit-pr'));
+});
+
+test('declined: a bot PR closed without merging is not reopened until the page value changes again', async () => {
+  const pages = LEAD_SWAP();
+  const shown = evaluateGated(input({ pages }), gate);
+  const closed = { number: 7, state: 'closed', merged_at: null, title: prTitle(shown.outcomes), body: prBody(shown.outcomes, { today: TODAY }) };
+  assert.deepEqual([...declinedFrom([closed])], ['cc-default-model\tclaude-sonnet-5-5']);
+  const remote = freshRemote({ pulls: [closed] });
+  const run = await job({ pages, remote });
+  assert.equal(by(run, 'cc-default-model').outcome, 'declined');
+  assert.equal(run.prAction, 'none');
+  assert.deepEqual(run.red, []);
+  assert.ok(!remote.actions.some((a) => a.kind === 'create-pr'));
+  const again = await job({ pages: swap(MC, 'anthropic api : defaults to opus 5.5', 'anthropic api : defaults to fable 5.1'), remote });
+  assert.equal(again.prAction, 'created', 'a different value is a new change');
+  // a PR the job closed itself is not a decline
+  const botClosed = { ...closed, body: `${closed.body}\n<!-- defaults-watch:closed-by-bot -->` };
+  assert.equal(declinedFrom([botClosed]).size, 0);
+  assert.equal(declinedFrom([{ ...closed, merged_at: '2026-10-05T00:00:00Z' }]).size, 0);
+});
+
+test('the PR text is deterministic and carries the markers', () => {
+  const a = evaluateGated(input({ pages: LEAD_SWAP() }), gate);
+  const b = evaluateGated(input({ pages: LEAD_SWAP() }), gate);
+  assert.equal(prBody(a.outcomes, { today: TODAY }), prBody(b.outcomes, { today: TODAY }));
+  assert.equal(prTitle(a.outcomes), 'Defaults watch: 1 data change from vendor pages');
+  const body = prBody(a.outcomes, { today: TODAY });
+  assert.match(body, /<!-- defaults-watch:fingerprint=[0-9a-f]{16} -->/);
+  assert.match(body, /<!-- defaults-watch:declined rule=cc-default-model value=claude-sonnet-5-5 -->/);
+  assert.match(body, /claude-opus-5-5 → \*\*claude-sonnet-5-5\*\*/);
+  const c = evaluateGated(input({ pages: swap(MC, 'anthropic api : defaults to opus 5.5', 'anthropic api : defaults to fable 5.1') }), gate);
+  assert.notEqual(fingerprint(a.outcomes), fingerprint(c.outcomes));
+});
+
+test('allowed paths: the bot branch takes data only; main takes the receipt and an as_of-only guidance stamp', () => {
+  assert.throws(() => assertAllowedPaths(['data/guidance.json', 'scripts/defaults-watch.mjs'], BRANCH_PATHS), /refusing to push scripts\/defaults-watch\.mjs/);
+  assert.throws(() => assertAllowedPaths(['.github/workflows/defaults-watch.yml'], MAIN_PATHS), /refusing/);
+  assert.throws(() => assertAllowedPaths(['data/plans.json'], MAIN_PATHS), /refusing/);
+  assert.doesNotThrow(() => assertAllowedPaths(['data/guidance.json', 'data/plans.json'], BRANCH_PATHS));
+  const text = json(fx.data.guidance);
+  const stamped = stampToolsText(text, ['codex'], '2026-12-01');
+  assert.notEqual(stamped, text);
+  assert.doesNotThrow(() => assertAsOfOnly(text, stamped));
+  assert.throws(() => assertAsOfOnly(text, stamped.replace('"tool": "codex"', '"tool": "codex2"')), /more than the as_of line/);
+  // a date line moved to another place, or a date written into a claim, is not a stamp
+  assert.throws(() => assertAsOfOnly(text, text.replace('"date": "2026-09-27"', '"date": "2026-09-28"')), /more than the as_of line/);
+});
+
+test('re-stamp only on a clean run: never with an open change PR, a waiting rule, or a failed sweep', async () => {
+  const clean = freshRemote();
+  const run = await job({ remote: clean, sweepFn: async () => ({ failed: [] }) });
+  assert.equal(run.clean, true);
+  const push = clean.actions.find((a) => a.kind === 'push-main');
+  assert.deepEqual(push.files.sort(), ['data/guidance.json', RECEIPT_PATH].sort());
+  assert.equal(JSON.parse(clean.state.main['data/guidance.json']).as_of, TODAY);
+  assertAsOfOnly(json(fx.data.guidance), clean.state.main['data/guidance.json']);
+
+  const withPr = freshRemote();
+  await job({ pages: LEAD_SWAP(), remote: withPr });
+  assert.deepEqual(withPr.actions.find((a) => a.kind === 'push-main').files, [RECEIPT_PATH]);
+
+  const waiting = freshRemote();
+  await job({ pages: swap(MC, 'anthropic api : defaults to opus 5.5', 'anthropic api : defaults to opus 9.9'), remote: waiting });
+  assert.deepEqual(waiting.actions.find((a) => a.kind === 'push-main').files, [RECEIPT_PATH]);
+
+  const rot = freshRemote();
+  let skipped = null;
+  const r = await job({ remote: rot, sweepFn: async (ids) => { skipped = ids; return { failed: [{ key: 'guidance/x', source_url: 'https://example.com', kind: 'not_found' }] }; } });
+  assert.deepEqual(skipped, []);
+  assert.equal(r.clean, false);
+  assert.ok(r.red.some((x) => x.startsWith('source sweep')));
+  assert.deepEqual(rot.actions.find((a) => a.kind === 'push-main').files, [RECEIPT_PATH]);
+});
+
+test('the sweep skips the quotes a pending change replaces', async () => {
+  let skipped = null;
+  await job({ pages: LEAD_SWAP(), remote: freshRemote(), sweepFn: async (ids) => { skipped = ids; return { failed: [] }; } });
+  assert.deepEqual(skipped, ['cc-default-model-opus-5-5']);
+});
+
+test('each change is gated alone: a change that breaks the data is reported (red), the others still ship', async () => {
+  let pages = swap('https://code.claude.com/docs/en/settings-reference', 'one of "low" , "medium" , "high"', 'one of "low" , "high"');
+  pages = swap('https://devin.ai/pricing', 'pro $20/month', 'pro $25/month', pages);
+  const cased = casedFor(pages, 'https://code.claude.com/docs/en/settings-reference');
+  const res = evaluateGated(input({ pages, cased }), gate);
+  assert.equal(by(res, 'cc-effort-levels').outcome, 'gate-failed');
+  assert.match(by(res, 'cc-effort-levels').reason, /effort/);
+  assert.equal(by(res, 'plan.devin.pro').outcome, 'change');
+  assert.deepEqual(getPath(res.data, 'guidance.tool_plans[tool=claude-code].effort_levels.values'), ['low', 'medium', 'high', 'xhigh', 'max']);
+  const run = await job({ pages, cased, remote: freshRemote() });
+  assert.ok(run.red.some((r) => r.startsWith('cc-effort-levels: gate-failed')));
+  assert.equal(run.prAction, 'created');
+});
+
+test('problems main already has never block a change', () => {
+  const stale = () => ['plans: an old problem on main'];
+  const res = evaluateGated(input({ pages: LEAD_SWAP() }), stale);
+  assert.equal(by(res, 'cc-default-model').outcome, 'change');
+});
+
+test('a new Codex helper model also gets a model_refs row for the string the page uses', () => {
+  const url = 'https://developers.openai.com/codex/subagents';
+  const pages = swap(url, 'use gpt-6-luna when you want a faster', 'use gpt-6-luna-pro when you want a faster');
+  const res = evaluateGated(input({ pages }), gate);
+  assert.equal(by(res, 'codex-subagent-lighter').outcome, 'change');
+  const g = res.data.guidance;
+  const row = g.model_refs.find((r) => r.tool === 'codex' && r.ref === 'gpt-6-luna-pro');
+  assert.ok(row);
+  assert.equal(row.model_id, 'gpt-6-luna-pro');
+  assert.equal(getPath(res.data, 'guidance.tool_plans[tool=codex].bulk.model_id'), 'gpt-6-luna-pro');
+  const fresh = latestClaim(g, 'codex-luna-lighter-subagent-work');
+  assert.deepEqual(row.basis, [fresh.id]);
+  assert.ok(quoteFoundIn(fresh.quote, pages[url]));
+  assert.deepEqual(validateGuidance(g, fx.models).errors, []);
+});
+
+test('quote helpers: a long match is cut to 25 whole words ending with the value; swaps keep case and number edges', () => {
+  const page = `${Array.from({ length: 40 }, (_, i) => `w${i}`).join(' ')} value here`;
+  const ms = 0;
+  const cs = page.indexOf('value');
+  const q = spanQuote(page, [ms, page.length], [cs, cs + 5]);
+  assert.equal(q.split(' ').length, 25);
+  assert.ok(q.endsWith('value'));
+  assert.equal(swapForms('Defaults to Opus 5.5 today', [['opus 5.5', 'sonnet 5.7']]), 'Defaults to Sonnet 5.7 today');
+  assert.equal(swapForms('$20 and $200', [['$20', '$25']]), '$25 and $200');
+  assert.equal(nextClaimId('codex-6-1-sol-default-catalog', [['gpt-6-1-sol', 'gpt-6-2-sol'], ['6-1-sol', '6-2-sol']], new Set(), TODAY), 'codex-6-2-sol-default-catalog');
+  assert.equal(nextClaimId('anthropic-model-ids', [], new Set(), TODAY), 'anthropic-model-ids-20261004');
+});
+
+test('the drill: pass 2 opens exactly one PR, pass 3 writes nothing', async () => {
+  const d = await runDrill(() => {});
+  assert.equal(d.ok, true);
+  const prs = d.pass2.filter((a) => a.kind === 'create-pr');
+  assert.equal(prs.length, 1);
+  assert.deepEqual(d.pass3, []);
+  assert.ok(drillPages(fx)[fx.drill.url].includes(fx.drill.to));
+});
+
+test('the watch list schema: the frozen list passes; stored expectations, double baselines, bad paths and bad patterns fail', () => {
+  assert.deepEqual(validateWatchList(fx.watch, fx.data), { errors: [], warnings: [] });
+  const rules = fx.watch.rules;
+  const one = (r) => validateWatchList({ ...fx.watch, rules: [r] }, fx.data).errors;
+  const warns = (r) => validateWatchList({ ...fx.watch, rules: [r] }, fx.data).warnings;
+  const field = rules.find((r) => r.id === 'cc-default-model');
+  const flag = rules.find((r) => r.id === 'cursor-flagship');
+  assert.match(one({ ...field, expected: 'opus 5.5' }).join('\n'), /never stores the value it expects/);
+  assert.match(one({ ...flag, maps_to: 'guidance.tool_plans[tool=cursor].helpers.model' }).join('\n'), /exactly one of maps_to/);
+  // data-dependent findings are warnings: the honesty gate never blocks a data write over the watch list
+  assert.match(warns({ ...field, maps_to: 'guidance.tool_plans[tool=nope].lead.model_id' }).join('\n'), /does not resolve/);
+  assert.deepEqual(one({ ...field, maps_to: 'guidance.tool_plans[tool=nope].lead.model_id' }), []);
+  assert.match(one({ ...field, maps_to: 'models.whatever' }).join('\n'), /must start with guidance\. or plans\./);
+  assert.match(one({ ...field, pattern: 'no group here' }).join('\n'), /capture group/);
+  assert.match(one({ ...field, pattern: '(unclosed' }).join('\n'), /does not compile/);
+  assert.match(warns({ ...field, also: ['guidance.tool_plans[tool=claude-code].bulk.model_id'] }).join('\n'), /different value than maps_to/);
+  assert.match(one({ ...field, sentence: undefined }).join('\n'), /sentence is required/);
+  assert.match(warns({ ...field, claim_ids: ['no-such-claim'] }).join('\n'), /not a claim id/);
+  assert.match(one({ ...flag, claim_ids: ['cc-default-model-opus-5-5'] }).join('\n'), /a flag rule writes nothing/);
+  assert.match(one({ ...field, anchor: '{short:claude-code.nowhere}' }).join('\n'), /names no slot/);
+  assert.match(validateWatchList({ ...fx.watch, rules: [field, field] }, fx.data).errors.join('\n'), /used twice/);
+});
+
+test('a superseded guidance claim: validate-data accepts it, needs a real target, and no basis may name it', () => {
+  const g = JSON.parse(JSON.stringify(fx.data.guidance));
+  const c = g.claims.find((x) => x.id === 'cc-alias-fable-resolves');
+  c.superseded_by = 'cc-default-model-opus-5-5';
+  const errs = validateGuidance(g, fx.models).errors.join('\n');
+  assert.match(errs, /names "cc-alias-fable-resolves", which is superseded/);
+  c.superseded_by = 'no-such-claim';
+  assert.match(validateGuidance(g, fx.models).errors.join('\n'), /superseded_by "no-such-claim" must be the id of another claim/);
+});
+
+test('never re-arms: the workflow and the script create no trigger, schedule or dispatch; every remote write is guarded', () => {
+  const root = fileURLToPath(new URL('..', import.meta.url));
+  const yml = readFileSync(`${root}.github/workflows/defaults-watch.yml`, 'utf8');
+  const src = readFileSync(`${root}scripts/defaults-watch.mjs`, 'utf8');
+  for (const [name, text] of [['workflow', yml], ['script', src]]) {
+    for (const bad of [/gh\s+workflow/, /\/dispatches/, /repository_dispatch/, /workflow_run/, /\/actions\/workflows/, /crontab/, /gh\s+api/, /anthropic\.com\/v1|api\.openai\.com/]) {
+      assert.ok(!bad.test(text), `${name} contains ${bad}`);
+    }
+  }
+  // the script writes to GitHub only through gh-issue.mjs's ghWrite, and pushes only the allowed paths
+  assert.ok(!/fetch\(\s*['"`]https:\/\/api\.github\.com/.test(src), 'no direct GitHub API writes');
+  assert.ok(/assertAllowedPaths\(Object\.keys\(files\), BRANCH_PATHS\)/.test(src) && /assertAllowedPaths\(Object\.keys\(files\), MAIN_PATHS\)/.test(src));
+  // one schedule entry, and the live step carries the full guard
+  assert.equal((yml.match(/- cron:/g) || []).length, 1);
+  const steps = yml.split(/\n\s+- name: /).slice(1);
+  const tokenSteps = steps.filter((s) => /GH_TOKEN|GITHUB_TOKEN|--live/.test(s));
+  assert.ok(tokenSteps.length >= 1);
+  for (const s of tokenSteps) {
+    assert.match(s, /if: env\.DRY_RUN != 'true' && github\.ref == 'refs\/heads\/main' && github\.event_name != 'pull_request'/, `unguarded step: ${s.split('\n')[0]}`);
+  }
+  // the pull_request job runs on a read-only token
+  const prJob = yml.slice(yml.indexOf('  dry-run:'));
+  assert.match(prJob, /permissions:\n\s+contents: read/);
+  assert.ok(!/: write/.test(prJob), 'the pull_request dry run has no write permission');
+  assert.ok(!/GH_TOKEN|--live/.test(prJob), 'and no token or live step');
+});
+
+test(`the bot branch and the issue title are fixed (${BOT_BRANCH}, "${ISSUE_TITLE}")`, () => {
+  assert.equal(BOT_BRANCH, 'auto/defaults-watch');
+  assert.ok(ISSUE_TITLE.length > 10);
+});
+
+/* ---------- loud on every path: declined values, red reasons, stale stamps, drift, blocked sources ---------- */
+
+const closedDecline = () => {
+  const shown = evaluateGated(input({ pages: LEAD_SWAP() }), gate);
+  return { number: 7, state: 'closed', merged_at: null, title: prTitle(shown.outcomes), body: prBody(shown.outcomes, { today: TODAY }) };
+};
+
+test('declined: the old quote stays in the sweep (no skip ids), so a gone quote turns the run red, and the issue lists the decline', async () => {
+  const remote = freshRemote({ pulls: [closedDecline()] });
+  let skipped = null;
+  const gone = (ids) => { skipped = ids; return { failed: [{ key: 'guidance/cc-default-model-opus-5-5', source_url: MC, kind: 'not_found' }] }; };
+  const run = await job({ pages: LEAD_SWAP(), remote, sweepFn: async (ids) => gone(ids) });
+  assert.equal(by(run, 'cc-default-model').outcome, 'declined');
+  assert.equal(by(run, 'cc-default-model').pending, undefined);
+  assert.deepEqual(skipped, [], 'a declined change sends no skip ids to the sweep');
+  assert.ok(!quoteFoundIn(fx.data.guidance.claims.find((c) => c.id === 'cc-default-model-opus-5-5').quote, normalizeText(LEAD_SWAP()[MC])), 'the old quote is gone from the page');
+  assert.ok(run.red.some((r) => r.startsWith('source sweep')));
+  assert.match(run.issue, /### Declined: the data disagrees with the page/);
+  assert.match(run.issue, /`cc-default-model`.*page says claude-sonnet-5-5, data says claude-opus-5-5/);
+  assert.equal(remote.state.issues[0].state, 'open');
+  assert.ok(!remote.actions.some((a) => a.kind === 'close-issue'));
+});
+
+test('declined counts as ok for the re-stamp (the data the owner kept), but still shows in the issue', async () => {
+  const remote = freshRemote({ pulls: [closedDecline()] });
+  const run = await job({ pages: LEAD_SWAP(), remote, sweepFn: async () => ({ failed: [] }) });
+  assert.equal(run.clean, true);
+  assert.deepEqual(run.red, []);
+  assert.match(run.issue, /Declined/);
+  assert.equal(JSON.parse(remote.state.main['data/guidance.json']).as_of, TODAY);
+});
+
+test('every outcome kind that is not ok gets a section in the issue', () => {
+  for (const kind of ISSUE_KINDS) {
+    const body = issueBody({ outcomes: [{ rule: 'r', url: 'https://x.example', outcome: kind, reason: 'why', old: 'a', new: 'b' }], today: TODAY });
+    assert.ok(body && body.includes('`r`') || (kind === 'blocked' && body && body.includes('https://x.example')), `${kind} is listed`);
+  }
+});
+
+test('red reasons that are not a rule outcome reach the issue, and a red run never closes it', async () => {
+  const remote = freshRemote({ issues: [{ number: 7, title: ISSUE_TITLE, body: 'old', state: 'open' }] });
+  const run = await job({ remote, sweepFn: async () => ({ failed: [], error: 'x' }) });
+  assert.deepEqual(run.red, ['source sweep: x']);
+  assert.equal(remote.state.issues[0].state, 'open');
+  assert.match(remote.state.issues[0].body, /### Run problems \(red\)\n\n- source sweep: x/);
+  assert.ok(!remote.actions.some((a) => a.kind === 'close-issue'));
+});
+
+test('a run that throws still writes the issue with the error, then fails', async () => {
+  const remote = freshRemote();
+  remote.pushMain = async () => { throw new Error('main push rejected 3 times'); };
+  await assert.rejects(job({ remote, sweepFn: async () => ({ failed: [] }) }), /main push rejected 3 times/);
+  assert.equal(remote.state.issues.length, 1);
+  assert.equal(remote.state.issues[0].state, 'open');
+  assert.match(remote.state.issues[0].body, /stopped with an error[\s\S]*main push rejected 3 times/);
+});
+
+test('a guidance as_of within 7 days of the stale notice turns the run red and names what stopped the re-stamp', async () => {
+  // every date at `d`: the top-level as_of is the oldest tool date
+  const dated = (d) => { const g = JSON.parse(JSON.stringify(fx.data.guidance)); g.as_of = d; for (const tp of g.tool_plans) tp.as_of = d; return g; };
+  const sweepFn = async () => ({ failed: [] });
+  const old = dated('2026-09-20'); // 14 days before TODAY; the pages call it stale after 21
+  const remote = freshRemote({ main: { 'data/guidance.json': json(old), 'data/plans.json': json(fx.data.plans) } });
+  const run = await job({ data: { ...fx.data, guidance: old }, pages: LEAD_SWAP(), remote, sweepFn });
+  assert.equal(run.prAction, 'created');
+  assert.ok(!run.stamped.includes('claude-code') && run.stamped.includes('codex'), 'only the tool with a value in the PR keeps its old date');
+  const line = run.red.find((r) => r.startsWith('data/guidance.json as_of is 14 days old'));
+  assert.ok(line, run.red.join('\n'));
+  assert.match(line, /claude-code: cc-default-model waits in bot pull request #1/);
+  assert.match(run.issue, /Run problems \(red\)[\s\S]*guidance\.json as_of is 14 days old/);
+  const onMain = JSON.parse(remote.state.main['data/guidance.json']);
+  assert.equal(onMain.as_of, '2026-09-20', 'the top-level date is the oldest tool date');
+  assert.equal(onMain.tool_plans.find((t) => t.tool === 'codex').as_of, TODAY);
+  // 13 days old: not yet red
+  const fine = await job({ data: { ...fx.data, guidance: dated('2026-09-21') }, pages: LEAD_SWAP(), remote: freshRemote(), sweepFn });
+  assert.deepEqual(fine.red, []);
+  // a clean run re-stamps every tool, so the same old date is no problem then
+  const clean = await job({ data: { ...fx.data, guidance: dated('2026-09-01') }, remote: freshRemote(), sweepFn });
+  assert.equal(clean.clean, true);
+  assert.deepEqual(clean.red, []);
+});
+
+test('plans.json is kept by hand: an as_of within 7 days of its stale notice turns the run red', async () => {
+  const plans = { ...fx.data.plans, as_of: '2026-09-11' }; // 23 days; stale after 30
+  const run = await job({ data: { ...fx.data, plans }, remote: freshRemote(), sweepFn: async () => ({ failed: [] }) });
+  assert.ok(run.red.some((r) => /^data\/plans\.json as_of is 23 days old .*kept by hand/.test(r)), run.red.join('\n'));
+  const ok = await job({ data: { ...fx.data, plans: { ...fx.data.plans, as_of: '2026-09-12' } }, remote: freshRemote(), sweepFn: async () => ({ failed: [] }) });
+  assert.deepEqual(ok.red, []);
+  assert.throws(() => assertAllowedPaths(['data/plans.json'], MAIN_PATHS), /refusing/, 'the watch never writes plans.json on main');
+});
+
+test('an open PR whose base moved under it (main changed a file it changes) is rebuilt from main, not left as "unchanged"', async () => {
+  const remote = freshRemote();
+  await job({ pages: LEAD_SWAP(), remote });
+  remote.actions.splice(0);
+  // someone edits guidance.json on main (a claim's date)
+  const edited = remote.state.main['data/guidance.json'].replace('"date": "2026-09-27"', '"date": "2026-09-26"');
+  assert.notEqual(edited, remote.state.main['data/guidance.json']);
+  remote.state.main['data/guidance.json'] = edited;
+  const run = await job({ pages: LEAD_SWAP(), remote });
+  assert.equal(run.prAction, 'updated');
+  assert.deepEqual(remote.actions.map((a) => a.kind).slice(0, 3), ['push-branch', 'edit-pr', 'status']);
+  assert.ok(remote.state.branch.files['data/guidance.json'].includes('"date": "2026-09-26"'), 'the rebuilt branch keeps main\'s edit');
+  remote.actions.splice(0);
+  // the tool dates this job stamps on main are not drift: the PR is left alone
+  remote.state.main['data/guidance.json'] = stampToolsText(remote.state.main['data/guidance.json'], ['codex', 'cursor'], '2026-10-05');
+  const stamped = await job({ pages: LEAD_SWAP(), remote });
+  assert.equal(stamped.prAction, 'unchanged');
+  assert.ok(!remote.actions.some((a) => a.kind === 'push-branch'));
+  remote.actions.splice(0);
+  // a receipt-only commit on main is not drift
+  remote.state.main[RECEIPT_PATH] = 'something else';
+  const again = await job({ pages: LEAD_SWAP(), remote });
+  assert.equal(again.prAction, 'unchanged');
+  assert.ok(!remote.actions.some((a) => a.kind === 'push-branch'));
+});
+
+test('a merged bot branch whose tip is a person\'s commit (already in main, no open PR) is reused, not red forever', async () => {
+  const issues = [{ number: 7, title: ISSUE_TITLE, body: 'old', state: 'open' }];
+  const merged = { number: 3, state: 'closed', merged_at: '2026-10-01T00:00:00Z', body: '' };
+  const r1 = await job({ pages: LEAD_SWAP(), remote: freshRemote({ branch: { sha: 'abc', author: 'Owner', inMain: true }, pulls: [merged], issues }) });
+  assert.deepEqual(r1.red, []);
+  assert.equal(r1.prAction, 'created');
+  // tip not in main but no open PR (its PR was merged or closed; GitHub keeps the PR's commits): reused too
+  const r2 = await job({ pages: LEAD_SWAP(), remote: freshRemote({ branch: { sha: 'abc', author: 'Owner' }, pulls: [{ ...merged }] }) });
+  assert.deepEqual(r2.red, []);
+  assert.equal(r2.prAction, 'created');
+  // tip already in main with an open PR: nothing to lose, so the branch is rebuilt
+  const r3 = await job({ pages: LEAD_SWAP(), remote: freshRemote({ branch: { sha: 'abc', author: 'Owner', inMain: true }, pulls: [{ number: 4, state: 'open', title: 't', body: 'x', merged_at: null }] }) });
+  assert.deepEqual(r3.red, []);
+  assert.equal(r3.prAction, 'updated');
+});
+
+test('a foreign commit on the open PR is red and reaches the issue', async () => {
+  const remote = freshRemote({ branch: { sha: 'abc', author: 'someone-else' }, pulls: [{ number: 3, state: 'open', title: 't', body: 'no fingerprint', merged_at: null }] });
+  const run = await job({ pages: LEAD_SWAP(), remote });
+  assert.match(run.issue, /Run problems \(red\)[\s\S]*has a commit by someone-else/);
+  assert.equal(remote.state.issues[0].state, 'open');
+});
+
+test('sweep sources that cannot be read: counted per page in the receipt, listed, red after 3 runs in a row, and no re-stamp while a guidance page is unread', async () => {
+  const u = 'https://example.com/blocked';
+  const sweep = async () => ({ failed: [], blocked: [{ key: 'guidance/cc-default-model-opus-5-5', source_url: u }] });
+  const first = await job({ remote: freshRemote(), sweepFn: sweep });
+  assert.deepEqual(first.red, []);
+  assert.equal(first.clean, false, 'a guidance quote that was not read is not re-stamped');
+  assert.deepEqual(first.receipt.sweep_blocked_runs, { [u]: 1 });
+  assert.match(first.issue, /Source sweep: pages that could not be read[\s\S]*example\.com\/blocked — 1 run\(s\) in a row: `guidance\/cc-default-model-opus-5-5`/);
+  const third = await job({ remote: freshRemote(), sweepFn: sweep, receipt: { sweep_blocked_runs: { [u]: 2 } } });
+  assert.ok(third.red.some((r) => r.includes(`${u} could not be read 3 runs in a row`)), third.red.join('\n'));
+  const back = await job({ remote: freshRemote(), sweepFn: async () => ({ failed: [] }), receipt: { sweep_blocked_runs: { [u]: 2 } } });
+  assert.deepEqual(back.receipt.sweep_blocked_runs, {}, 'a page read again resets its count');
+  assert.equal(back.clean, true);
+});
+
+/* ---------- polish: tool dates, fingerprint on main, case-kept quotes, quiet issue, retries ---------- */
+
+const sweepOk = async () => ({ failed: [] });
+const mainGuidance = (remote) => JSON.parse(remote.state.main['data/guidance.json']);
+const toolDate = (g, tool) => g.tool_plans.find((t) => t.tool === tool).as_of;
+
+test('each tool is dated on its own: a waiting rule, a blocked page or a PR value holds back only the tools it feeds', async () => {
+  const cm = claimToolMap(fx.data.guidance);
+  const rule = (id) => fx.watch.rules.find((r) => r.id === id);
+  assert.deepEqual(toolsOfRule(rule('cc-default-model'), fx.data.guidance, cm), ['claude-code']);
+  assert.deepEqual(toolsOfRule(rule('plan.devin.pro'), fx.data.guidance, cm), [], 'a plan price feeds no tool');
+  assert.deepEqual(toolsOfRule(rule('effort.google.gemini_3_1_pro_default'), fx.data.guidance, cm), cm.tools, 'a lab fact no tool rests on feeds every tool');
+
+  // a flag rule for Cursor needs review: every other tool gets today, Cursor keeps its date
+  const flag = freshRemote();
+  const r1 = await job({ pages: swap('https://cursor.com/help/models-and-usage/available-models.md', '**[grok 4.7]', '**[grok 4.9]'), remote: flag, sweepFn: sweepOk });
+  assert.deepEqual(r1.stamped, cm.tools.filter((t) => t !== 'cursor'));
+  const g1 = mainGuidance(flag);
+  assert.equal(toolDate(g1, 'cursor'), toolDate(fx.data.guidance, 'cursor'));
+  assert.equal(toolDate(g1, 'codex'), TODAY);
+  assert.equal(g1.as_of, toolDate(fx.data.guidance, 'cursor'), 'the top-level date is the oldest tool date');
+  assertAsOfOnly(json(fx.data.guidance), flag.state.main['data/guidance.json']);
+  assert.equal(r1.clean, false);
+  assert.deepEqual(r1.receipt.stamped_tools, r1.stamped);
+
+  // the Claude Code model page is blocked: only Claude Code keeps its date
+  const blocked = freshRemote();
+  const r2 = await job({ pages: { ...fx.pages, [MC]: { error: 'HTTP 403', kind: 'blocked' } }, remote: blocked, sweepFn: sweepOk });
+  assert.ok(!r2.stamped.includes('claude-code'));
+  assert.ok(r2.stamped.includes('codex') && r2.stamped.includes('cursor'));
+
+  // a value in the bot PR holds back its tool only; a plan price change holds back none
+  const pr = freshRemote();
+  const r3 = await job({ pages: swap('https://devin.ai/pricing', 'pro $20/month', 'pro $25/month', LEAD_SWAP()), remote: pr, sweepFn: sweepOk });
+  assert.equal(r3.prAction, 'created');
+  assert.deepEqual(r3.stamped, cm.tools.filter((t) => t !== 'claude-code'));
+
+  // a sweep page that could not be read holds back the tools its quotes feed
+  const r4 = await job({ remote: freshRemote(), sweepFn: async () => ({ failed: [], blocked: [{ key: 'guidance/cc-default-model-opus-5-5', source_url: MC }] }) });
+  assert.deepEqual(r4.stamped, cm.tools.filter((t) => t !== 'claude-code'));
+  // no sweep, or a sweep that failed: no tool is dated
+  assert.deepEqual((await job({ remote: freshRemote() })).stamped, []);
+  assert.deepEqual((await job({ remote: freshRemote(), sweepFn: async () => ({ failed: [], error: 'x' }) })).stamped, []);
+});
+
+test('the stamp is date lines only, and lands on main as it is at push time', () => {
+  const text = json(fx.data.guidance);
+  const all = stampToolsText(text, claimToolMap(fx.data.guidance).tools, TODAY);
+  assert.equal(JSON.parse(all).as_of, TODAY);
+  const some = stampToolsText(text, ['codex'], TODAY);
+  const changed = text.split('\n').filter((l, i) => l !== some.split('\n')[i]);
+  assert.deepEqual(changed, ['      "as_of": "2026-10-03",'], 'one tool line; the top stays at the oldest date');
+  assert.equal(stampToolsText(some, ['codex'], '2026-10-01'), some, 'a date is never moved back');
+  // someone else's change on main survives the stamp
+  const other = text.replace('"date": "2026-09-27"', '"date": "2026-09-26"');
+  assert.ok(stampToolsText(other, ['codex'], TODAY).includes('"date": "2026-09-26"'));
+});
+
+test('the PR fingerprint covers main\'s copy of the files it changes (the job\'s own date lines left out)', () => {
+  const res = evaluateGated(input({ pages: LEAD_SWAP() }), gate);
+  const g = json(fx.data.guidance);
+  const k = mainKey('data/guidance.json', g);
+  assert.equal(mainKey('data/guidance.json', stampToolsText(g, ['codex'], '2026-10-09')), k, 'a tool date on main is not a change');
+  assert.notEqual(mainKey('data/guidance.json', g.replace('"date": "2026-09-27"', '"date": "2026-09-26"')), k);
+  assert.notEqual(fingerprint(res.outcomes, { 'data/guidance.json': k }), fingerprint(res.outcomes, { 'data/guidance.json': 'other' }));
+  assert.match(prBody(res.outcomes, { today: TODAY, base: { 'data/guidance.json': k } }), new RegExp(`fingerprint=${fingerprint(res.outcomes, { 'data/guidance.json': k })}`));
+});
+
+test('a guidance.json change that lands on main during the run is kept on the bot branch, never undone', async () => {
+  // the run read data/ before main moved: main now has an edit the checkout does not
+  const edited = json(fx.data.guidance).replace('"date": "2026-09-27"', '"date": "2026-09-26"');
+  const remote = freshRemote({ main: { 'data/guidance.json': edited, 'data/plans.json': json(fx.data.plans) } });
+  const run = await job({ pages: LEAD_SWAP(), remote });
+  assert.equal(run.prAction, 'created');
+  const branch = JSON.parse(remote.state.branch.files['data/guidance.json']);
+  assert.ok(remote.state.branch.files['data/guidance.json'].includes('"date": "2026-09-26"'), 'main\'s edit is on the branch');
+  assert.equal(getPath({ guidance: branch }, 'guidance.tool_plans[tool=claude-code].lead.model_id'), 'claude-sonnet-5-5', 'and so is the change');
+  // the same on a plan row: only the changed row is rewritten on main's plans.json
+  const plans = JSON.parse(JSON.stringify(fx.data.plans));
+  const untouched = plans.plans.find((p) => p.vendor !== 'Devin');
+  untouched.note_for_test = 'kept';
+  const r2 = freshRemote({ main: { 'data/guidance.json': json(fx.data.guidance), 'data/plans.json': json(plans) } });
+  await job({ pages: swap('https://devin.ai/pricing', 'pro $20/month', 'pro $25/month'), remote: r2 });
+  const bp = JSON.parse(r2.state.branch.files['data/plans.json']);
+  assert.equal(bp.plans.find((p) => p.vendor === untouched.vendor && p.plan === untouched.plan).note_for_test, 'kept');
+  assert.equal(bp.plans.find((p) => p.vendor === 'Devin' && p.plan === 'Pro').price_usd_month, 25);
+  // main moved so far that the change no longer applies: red, nothing pushed, the next run tries again
+  const gone = freshRemote({ main: { 'data/guidance.json': json(fx.data.guidance).replaceAll('"cc-default-model-opus-5-5"', '"cc-default-model-opus-5-5-x"'), 'data/plans.json': json(fx.data.plans) } });
+  const r3 = await job({ pages: LEAD_SWAP(), remote: gone });
+  assert.ok(r3.red.some((r) => r.startsWith('main changed under this run')), r3.red.join('\n'));
+  assert.ok(!gone.actions.some((a) => a.kind === 'push-branch' || a.kind === 'create-pr'));
+});
+
+test('a span quote is cut from the page\'s case-kept text; with none, the change goes to needs-review', () => {
+  const url = 'https://code.claude.com/docs/en/settings-reference';
+  const pages = swap(url, 'one of "low" , "medium" , "high"', 'one of "low" , "high"');
+  const without = evaluate(input({ pages }));
+  assert.equal(by(without, 'cc-effort-levels').outcome, 'needs-review');
+  assert.match(by(without, 'cc-effort-levels').reason, /no case-kept copy of the page/);
+  assert.deepEqual(without.data, fx.data, 'nothing written');
+  const wrong = evaluate(input({ pages, cased: { [url]: `${casedOf(pages[url])} extra` } }));
+  assert.equal(by(wrong, 'cc-effort-levels').outcome, 'needs-review', 'a copy that does not line up with the page is never cut from');
+  const withCase = evaluate(input({ pages, cased: casedFor(pages, url) }));
+  const o = by(withCase, 'cc-effort-levels');
+  assert.equal(o.outcome, 'change');
+  assert.match(o.claims[0].quote, /^Type : String, one of "low" , "high"/);
+  assert.ok(quoteFoundIn(o.claims[0].quote, pages[url]));
+  // the case-kept normalizer is check-sources' normalizer minus the lowercasing
+  const raw = '<p>Opus&nbsp;5.5 &mdash; <b>Default</b> &#8217;Effort&#x2019; “Max”</p><script>x</script>';
+  assert.equal(normalizeCased(raw).toLowerCase(), normalizeText(raw));
+  assert.match(normalizeCased(raw), /Opus 5\.5 - Default 'Effort' "Max"/);
+});
+
+test('fetchPages keeps the case-kept copy beside the page text', async () => {
+  const { pages, cased } = await fetchPages(['https://a.example', 'https://b.example', 'https://c.example'], {
+    fetchImpl: async (u) => {
+      if (u.includes('a.')) return { text: 'hello world', cased: 'Hello World' };
+      if (u.includes('b.')) return 'plain text';
+      throw Object.assign(new Error('HTTP 404'), { status: 404 });
+    },
+  });
+  assert.deepEqual(pages['https://a.example'], 'hello world');
+  assert.deepEqual(cased, { 'https://a.example': 'Hello World' });
+  assert.equal(pages['https://b.example'], 'plain text');
+  assert.equal(pages['https://c.example'].kind, 'gone');
+});
+
+test('the issue carries no run date: a later run with the same findings edits nothing', async () => {
+  const pages = swap('https://cursor.com/help/models-and-usage/available-models.md', '**[grok 4.7]', '**[grok 4.9]');
+  const remote = freshRemote();
+  await job({ pages, remote, sweepFn: sweepOk });
+  assert.ok(!remote.state.issues[0].body.includes(TODAY));
+  remote.actions.splice(0);
+  await job({ pages, remote, sweepFn: sweepOk, today: '2026-10-11', nowIso: '2026-10-11T01:23:00.000Z' });
+  assert.ok(!remote.actions.some((a) => a.kind === 'update-issue' || a.kind === 'open-issue'), remote.actions.map((a) => a.kind).join(', '));
+});
+
+test('the commit status is checked every run and posted again when it is missing; the receipt names an open PR on a red run', async () => {
+  const remote = freshRemote();
+  await job({ pages: LEAD_SWAP(), remote });
+  assert.equal(remote.state.statuses.length, 1);
+  remote.state.statuses = []; // the post failed after the PR was made
+  remote.actions.splice(0);
+  const again = await job({ pages: LEAD_SWAP(), remote });
+  assert.equal(again.prAction, 'unchanged');
+  assert.deepEqual(remote.actions.filter((a) => a.kind === 'status').map((a) => a.sha), [remote.state.branch.sha]);
+  remote.actions.splice(0);
+  await job({ pages: LEAD_SWAP(), remote });
+  assert.ok(!remote.actions.some((a) => a.kind === 'status'), 'there now: not posted again');
+  // a red run with the PR open (a foreign commit on it) still records the PR
+  const foreign = freshRemote({ branch: { sha: 'abc', author: 'someone-else' }, pulls: [{ number: 3, state: 'open', title: 't', body: 'x', merged_at: null }] });
+  const red = await job({ pages: LEAD_SWAP(), remote: foreign });
+  assert.ok(red.red.length);
+  assert.equal(red.receipt.pr, 3);
+  assert.ok(!foreign.actions.some((a) => a.kind === 'status'), 'no status on someone else\'s commit');
+});
+
+test('hand-kept files: listed within 7 days of their limit, red once past it, limits read from assets/freshness.mjs', () => {
+  assert.deepEqual(HAND_FEEDS.slice().sort(), Object.keys(FEED_FRESHNESS).filter((k) => FEED_FRESHNESS[k].byHand === true).sort());
+  for (const id of HAND_FEEDS) assert.match(FEED_FRESHNESS[id].cadence, /^by hand, about /, `${id}: a hand-kept file says how often`);
+  assert.ok(HAND_FEEDS.includes('per-request') && HAND_FEEDS.includes('vendors') && HAND_FEEDS.includes('plans'));
+  const at = (days) => new Date(Date.parse(`${TODAY}T00:00:00Z`) - days * 86_400_000).toISOString().slice(0, 10);
+  const base = { guidanceAsOf: TODAY, plansAsOf: TODAY, today: TODAY };
+  for (const id of ['per-request', 'vendors']) {
+    const max = FEED_FRESHNESS[id].maxDays;
+    const quiet = stampProblems({ ...base, feeds: { [id]: at(max - 8) } });
+    assert.deepEqual([quiet.red, quiet.near], [[], []], `${id}: quiet 8 days before`);
+    const near = stampProblems({ ...base, feeds: { [id]: at(max - 7) } });
+    assert.deepEqual(near.red, []);
+    assert.equal(near.near.length, 1);
+    assert.match(near.near[0], new RegExp(`data/${id}\\.json as_of is ${max - 7} days old`));
+    const atLimit = stampProblems({ ...base, feeds: { [id]: at(max) } });
+    assert.deepEqual([atLimit.red.length, atLimit.near.length], [0, 1], `${id}: at the limit, still only listed`);
+    const past = stampProblems({ ...base, feeds: { [id]: at(max + 1) } });
+    assert.equal(past.red.length, 1, `${id}: red once past`);
+    assert.match(past.red[0], /kept by hand/);
+  }
+  assert.deepEqual(stampProblems({ ...base, feeds: {} }), { red: [], near: [] }, 'an absent optional file is left out');
+});
+
+test('a hand-kept file near its limit is listed in the issue (the run stays green); past it the run is red', async () => {
+  const near = await job({ remote: freshRemote(), sweepFn: sweepOk, feeds: { 'per-request': '2026-08-05' } }); // 60 days; limit 60
+  assert.deepEqual(near.red, []);
+  assert.match(near.issue, /Hand-kept data close to its stale notice[\s\S]*data\/per-request\.json as_of is 60 days old/);
+  const past = await job({ remote: freshRemote(), sweepFn: sweepOk, feeds: { vendors: '2026-07-01' } });
+  assert.ok(past.red.some((r) => r.startsWith('data/vendors.json as_of is 95 days old')), past.red.join('\n'));
+});
+
+test('the workflow: one concurrency group per ref, and no checkout keeps a token it does not push with', () => {
+  const root = fileURLToPath(new URL('..', import.meta.url));
+  const yml = readFileSync(`${root}.github/workflows/defaults-watch.yml`, 'utf8');
+  const group = (yml.match(/\nconcurrency:\n\s+group: (.+)\n/) || [])[1];
+  assert.equal(group, 'defaults-watch-${{ github.ref }}', 'a dispatch on main queues behind the schedule (no event name in the group)');
+  const jobs = { watch: yml.slice(yml.indexOf('\n  watch:'), yml.indexOf('\n  dry-run:')), 'dry-run': yml.slice(yml.indexOf('\n  dry-run:')) };
+  for (const [name, text] of Object.entries(jobs)) {
+    const checkouts = text.split('- uses: actions/checkout@').slice(1);
+    assert.ok(checkouts.length >= 1, name);
+    for (const c of checkouts) {
+      const keep = (c.match(/persist-credentials: (.+)\n/) || [])[1];
+      assert.ok(keep, `${name}: every checkout says persist-credentials`);
+      if (name === 'dry-run') assert.equal(keep, 'false');
+      else assert.equal(keep, "${{ env.DRY_RUN != 'true' }}", 'the watch keeps its token only on a live run, which pushes');
+    }
+  }
+  assert.ok(!/Owner file/.test(yml));
+});
+
+test('main push: a rejected push (another job pushed main first) fetches, rebuilds on the new main and tries again with a growing wait', async () => {
+  const { mkdtempSync, writeFileSync, mkdirSync, chmodSync } = await import('node:fs');
+  const { execFileSync } = await import('node:child_process');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const dir = mkdtempSync(join(tmpdir(), 'dw-push-test-'));
+  const git = (cwd, ...args) => execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@example.com', '-c', 'init.defaultBranch=main', ...args], { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+  const origin = join(dir, 'origin.git');
+  git(dir, 'init', '--quiet', '--bare', origin);
+  const seed = join(dir, 'seed');
+  git(dir, 'clone', '--quiet', origin, seed);
+  mkdirSync(join(seed, 'data/refresh'), { recursive: true });
+  writeFileSync(join(seed, 'data/guidance.json'), json(fx.data.guidance));
+  writeFileSync(join(seed, RECEIPT_PATH), '{}\n');
+  git(seed, 'add', '-A');
+  git(seed, 'commit', '--quiet', '-m', 'seed');
+  git(seed, 'push', '--quiet', 'origin', 'HEAD:main');
+  const work = join(dir, 'work');
+  git(dir, 'clone', '--quiet', origin, work);
+  // the first push from `work` is beaten by another job's push to main (a non-fast-forward)
+  const other = join(dir, 'other');
+  git(dir, 'clone', '--quiet', origin, other);
+  const hook = join(work, '.git/hooks/pre-push');
+  writeFileSync(hook, `#!/bin/sh\nif [ ! -f "${dir}/raced" ]; then touch "${dir}/raced"; cd "${other}" && echo x > collect.txt && git add collect.txt && git -c user.name=c -c user.email=c@example.com commit --quiet -m collect && git push --quiet origin HEAD:main; fi\nexit 0\n`);
+  chmodSync(hook, 0o755);
+  const waits = [];
+  const env = { GH_TOKEN: 'test', GITHUB_REPOSITORY: 'o/r', GITHUB_REF: 'refs/heads/main', GITHUB_EVENT_NAME: 'schedule' };
+  const remote = liveRemote({ env, log: () => {}, cwd: work, sleep: async (ms) => { waits.push(ms); } });
+  const sha = await remote.pushMain({ files: { [RECEIPT_PATH]: '{"ok":true}\n' }, stamp: { tools: ['codex'], date: TODAY }, message: 'receipt' });
+  assert.ok(sha);
+  assert.deepEqual(waits, [1000], 'one rejected try, then a wait, then the push lands');
+  const log = git(origin, 'log', '--format=%s', 'main');
+  assert.deepEqual(log.split('\n'), ['receipt', 'collect', 'seed'], 'built on top of the other job\'s commit, never over it');
+  assert.equal(git(origin, 'show', `main:${RECEIPT_PATH}`), '{"ok":true}');
+  const g = JSON.parse(git(origin, 'show', 'main:data/guidance.json'));
+  assert.equal(g.tool_plans.find((t) => t.tool === 'codex').as_of, TODAY);
+  // always rejected: 5 tries, waits 1, 2, 4, 8 s, then a loud error
+  const waits2 = [];
+  const stuck = liveRemote({ env, log: () => {}, cwd: work, sleep: async (ms) => { waits2.push(ms); } });
+  writeFileSync(hook, '#!/bin/sh\nexit 1\n');
+  await assert.rejects(stuck.pushMain({ files: { [RECEIPT_PATH]: '{"ok":false}\n' }, message: 'receipt 2' }), /main push rejected 5 times/);
+  assert.deepEqual(waits2, [1000, 2000, 4000, 8000]);
+});

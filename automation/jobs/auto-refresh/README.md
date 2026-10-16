@@ -5,34 +5,44 @@ day (see "Release watching" below), Judge + Verify stay Tue/Fri, 45 min end to e
 
 | UTC | Piece | Runs on | Does |
 |---|---|---|---|
-| 06:00 (full pass) + 18:00 (id check) | **Collect** | GitHub Actions (`.github/workflows/auto-refresh.yml`) | Cheap id check at 18:00 (see below); at 06:00, pulls OpenRouter + LiteLLM + Epoch's benchmark export, applies 2-source-agreement facts, writes `data/refresh/worklist.json` for anything it can't settle (new models, conflicts, benchmarks, ladders, releases) |
+| 06:00 + 18:00 (cron; starts hours late) | **Collect** | GitHub Actions (`.github/workflows/auto-refresh.yml`) | Cheap id check every run (see below); a full pass when the last one is ≥20 h old or a new id appeared: pulls OpenRouter + LiteLLM + Epoch's benchmark export, applies 2-source-agreement facts, writes `data/refresh/worklist.json` for anything it can't settle (new models, conflicts, benchmarks, ladders, releases) |
 | 06:30 Tue/Fri | **Judge** | claude.ai cloud routine, Sonnet | Reads only `worklist.json`, researches the open web, writes `judgments.json`, applies via `scripts/apply-judgment.mjs`, pushes to main. Instructions: `scripts/refresh-judge.md`. |
 | 07:15 Tue/Fri | **Verify** | GitHub Actions (`.github/workflows/refresh-verify.yml`) | Confirms live `as_of` ≥ collect's receipt date and the gate passes on the live file; reverts + fails loud on mismatch |
 
 **Gate (fixed 2026-09-12 — see `scripts/fixtures/README.md`):** the unit suite
 (`scripts/test-*.mjs`) runs on a frozen fixture (`scripts/fixtures/`), never on live `data/`, so a
 legitimate data change can never turn CI red. After Collect writes real data, `scripts/validate-data.mjs`
-+ `scripts/check-live-data.mjs` check the live file — schema/honesty rules plus a small set of
-invariants (model count within 15% of the committed version, `as_of` looks sane, and feed
-health: no key field's non-null count dropped more than 15% since the committed version —
-catches a feed silently starting to return empty instead of erroring loud). The ranking checks
-retired with the engine, which now lives in archive/engine/.
++ `scripts/check-live-data.mjs --group feed` check the live file — schema/honesty rules plus a
+small set of invariants (model count within 15% of the committed version, `as_of` looks sane, feed
+health: no key field's non-null count dropped more than 15% since the committed version — catches
+a feed silently starting to return empty instead of erroring loud — every timeline entry has a
+source, every ladder point has a publisher and a method). The `plans` group (recommendation lines
+are GA, nothing points at a deprecated model) is not a Collect gate: Collect never writes those
+lines or a deprecation; `tests.yml` runs `--group all`. The full source-quote sweep
+(`check-sources.mjs`) and the claim-rot issue are not run by Collect either: a vendor page that
+changed wording is not something Collect caused or can fix (the weekly defaults watch runs it).
+The ranking checks retired with the engine, which now lives in archive/engine/.
 
 **Dry run / UAT:** every change to `.github/workflows/auto-refresh.yml` is proven on a real GitHub
 Actions run before merge — `gh workflow run auto-refresh.yml --ref <branch> -f dry_run=true`. It
 runs the real feeds and both gates exactly as a live pass would, but skips the GitHub issue write
-(no token), the commit, the push, and the live-site verify — a branch dispatch is always a dry run
-regardless of the flag, since a bot must never push code to main from anywhere but main. Ends with
+(no token, and `scripts/lib/gh-issue.mjs` refuses writes on `DRY_RUN=true` or a non-main ref), the
+commit, the push, and the live-site verify (both steps: `if: env.DRY_RUN != 'true' && github.ref
+== 'refs/heads/main'`) — a branch dispatch is always a dry run regardless of the flag, since a bot
+must never push code to main from anywhere but main. Ends with
 a `$GITHUB_STEP_SUMMARY` showing gate result, changed data files, and `as_of` before/after.
 
 **Release watching (added 2026-09-06, cadence fixed 2026-09-12):** Collect's workflow schedule is
-06:00 + 18:00 UTC — one workflow, two cron entries a day, no second job. The 18:00 cycle only
+06:00 + 18:00 UTC — one workflow, two cron entries a day, no second job. Every run first
 fetches the OpenRouter + LiteLLM id lists and compares them against `data/models.json` +
 `data/_auto_refresh_state.json`'s already-flagged candidates (`findNewCandidateIds` /
 `decideRefreshRun` in `scripts/auto-refresh.mjs`); with no genuinely new id, it logs `no new
 models — skipping full run` and exits without touching the network further or writing anything. A
-new candidate id, or the 06:00 UTC hour itself, runs the full Collect pass exactly as before —
-this is what catches a launch-day model within about 12h instead of waiting for the next scheduled
+new candidate id, or no successful full pass in the last 20 h (the collect receipt's `ran_at`),
+runs the full Collect pass. (Until 2026-10 the second trigger was "the clock hour is 06 UTC";
+scheduled runs start hours late, so that hour almost never came up and the daily full pass did not
+run.) Every full pass stamps `as_of` with the run date — the same date as the receipt's `ran_at` —
+changed or not, so Verify (which waits for live `as_of` ≥ the receipt date) never reverts a quiet
 pass.
 
 **Sources:** OpenRouter models API + LiteLLM price table (Tier A, public, no key) + Epoch AI's
@@ -120,6 +130,8 @@ reporter reads these for the board and missed-tick detection.
   the early-exit check (testing only). `REFRESH_FORCE_SKIP=1` forces the skip path the same way.
 - `node scripts/apply-judgment.mjs judgments.json --dry-run` — judge apply, prints only.
 - `node --test scripts/test-*.mjs` — unit tests (frozen fixture).
-- `node scripts/validate-data.mjs && node scripts/check-live-data.mjs` — live-data gate.
+- `node scripts/validate-data.mjs && node scripts/check-live-data.mjs --group feed` — Collect's live-data gate
+  (`--group plans` / default `all` for the plan lines).
+- `MODELPROOF_NOW=<iso>` — frozen clock for the full-pass decision, `as_of` and the receipt (testing only).
 
 **Last known good:** 2026-08-16 — Collect 31966006991 (15 queued) → Judge cse_01UTBzYskvNx5YYeHgimPGzS (Sonnet; +9 models cited, 6 held → issue #13) → Verify 31966363872 green. 38 models live.

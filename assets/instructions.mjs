@@ -245,6 +245,9 @@ function indexFacts(facts) {
   const claimById = new Map();
   for (const c of arr(g.claims)) {
     if (!isObj(c) || typeof c.id !== 'string' || !/^[a-z0-9][a-z0-9-]{0,79}$/.test(c.id) || claimById.has(c.id)) continue;
+    // A superseded claim is history: the claim named in superseded_by replaces it (check-sources
+    // skips it too), so the package never shows the old sentence.
+    if (c.superseded_by != null) continue;
     if (!isObj(c.subject) || !['tool', 'lab'].includes(c.subject.kind)) continue;
     const url = safeUrl(c.source_url);
     const date = safeDate(c.date);

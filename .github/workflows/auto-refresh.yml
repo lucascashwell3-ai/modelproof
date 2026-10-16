@@ -6,10 +6,21 @@ name: Modelproof collect (v1.1)
 # issue. Publish is followed by a live verify against GitHub Pages; a mismatch reverts and fails
 # loud. Standalone Verify piece: .github/workflows/refresh-verify.yml.
 #
-# Runs twice a day: 06:00 UTC (the full pass — scripts/auto-refresh.mjs's DAILY_FULL_RUN_HOUR_UTC)
-# and 18:00 UTC (a cheap id-only check that exits before touching the network for anything beyond
-# the OpenRouter/LiteLLM lists, unless it finds a genuinely new candidate, in which case it runs
-# the full collect early).
+# Runs twice a day (cron 06:00 + 18:00 UTC; GitHub starts scheduled runs hours late). Each run
+# first does a cheap id-only check. It runs the full pass (prices, availability, usage, receipt,
+# as_of stamp) when the last successful full pass is 20 h or more ago or a genuinely new candidate
+# id appeared (scripts/auto-refresh.mjs FULL_PASS_MIN_HOURS / decideRefreshRun); otherwise it
+# exits before touching the network for anything beyond the OpenRouter/LiteLLM lists.
+#
+# Remote writes, and the guard that stops each one off main:
+#   held-items issue  (inside "Run collect")  live branch of the shell if only, and
+#                     scripts/lib/gh-issue.mjs refuses on DRY_RUN=true or a non-main ref
+#   commit + push     if: env.DRY_RUN != 'true' && github.ref == 'refs/heads/main'
+#   verify / revert   if: env.DRY_RUN != 'true' && github.ref == 'refs/heads/main' && env.PUBLISHED == '1'
+# The full source-quote sweep (check-sources) and the claim-rot issue are not run here: a page
+# that changed wording is not something Collect caused or can fix. The weekly defaults watch runs
+# them. Plan lines (check-live-data --group plans) are checked by tests.yml, not here — Collect
+# never writes a deprecation.
 on:
   schedule:
     - cron: "0 6,18 * * *"   # 06:00 + 18:00 UTC — see scripts/auto-refresh.mjs's early-exit for what actually runs
@@ -71,33 +82,15 @@ jobs:
       - name: Check the refreshed live data (invariants only, never expected values)
         # scripts/auto-refresh.mjs's own internal honesty gate (validate-data.mjs) already blocks
         # a schema-invalid refresh from writing at all; validate-data.mjs here is a second,
-        # standalone run of that same gate against what's now on disk. check-live-data.mjs adds
-        # the checks a schema gate can't make: the model count didn't jump or collapse, no key
-        # feed silently went empty, and as_of is a sane date. It never asserts expected values —
-        # a refresh that legitimately changes prices or availability must not fail CI for it.
+        # standalone run of that same gate against what's now on disk. check-live-data.mjs
+        # --group feed adds the checks a schema gate can't make: the model count didn't jump or
+        # collapse, no key feed silently went empty, as_of is a sane date, every timeline entry
+        # has a source, every ladder point has a publisher and a method. It never asserts expected
+        # values — a refresh that legitimately changes prices or availability must not fail CI.
+        # Only the feed group: the plans group judges guidance lines Collect never writes.
         # Runs BEFORE "Commit and push" so a red run here blocks publish, not just notifies after
         # the fact.
-        run: node scripts/validate-data.mjs && node scripts/check-live-data.mjs
-
-      - name: Anti-fabrication gate (claims freshness)
-        id: claim_gate
-        # scripts/check-sources.mjs confirms every task_fit_judged claim's quote still appears on
-        # its cited page. Fabrication itself is blocked at WRITE time — scripts/apply-judgment.mjs
-        # runs this same script synchronously right after any judged-fit write, unchanged and
-        # still a hard, blocking gate there. Here, running against the whole catalog on every
-        # refresh, a failure means an already-published claim's page changed wording since it was
-        # written (link rot), not a new fabrication — this repo's live-data rule is gates are
-        # invariants only (see scripts/check-live-data.mjs's own header), so rot discovered after
-        # the fact is flagged, never a publish blocker. continue-on-error keeps this step's own
-        # failure from blocking "Commit and push" below; the next step still reports it loudly.
-        continue-on-error: true
-        run: node scripts/check-sources.mjs
-
-      - name: Report claim rot (writes summary + opens/updates an issue on live runs)
-        if: always()
-        env:
-          GH_TOKEN: ${{ secrets.MODELPROOF_AUTOREFRESH_TOKEN || github.token }}
-        run: node scripts/report-claim-rot.mjs >> "$GITHUB_STEP_SUMMARY"
+        run: node scripts/validate-data.mjs && node scripts/check-live-data.mjs --group feed
 
       - name: Dry-run summary (no push, no live verify)
         if: env.DRY_RUN == 'true'
@@ -151,7 +144,7 @@ jobs:
         # revert as before. 4 (still pending at 30 min) means Pages just hasn't caught up yet —
         # fail loud so it's visible, but do NOT revert; the data on main is good and the next run
         # re-verifies it. Any other exit is treated the same as 4: fail loud, never revert.
-        if: env.DRY_RUN != 'true' && env.PUBLISHED == '1'
+        if: env.DRY_RUN != 'true' && github.ref == 'refs/heads/main' && env.PUBLISHED == '1'
         run: |
           after=$(python3 -c "import json;print(json.load(open('data/models.json'))['as_of'])")
           set +e

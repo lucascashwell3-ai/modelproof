@@ -181,6 +181,22 @@ export function validateGuidance(guidance, models) {
     }
   });
 
+  // superseded_by (written by scripts/defaults-watch.mjs when a page changes): the old claim stays
+  // as history and names the claim that replaced it; check-sources skips it; no basis may name it.
+  for (const c of claims.values()) {
+    if (c.superseded_by == null) continue;
+    if (typeof c.superseded_by !== 'string' || !claims.has(c.superseded_by) || c.superseded_by === c.id) E(`${G} claim ${c.id}: superseded_by "${c.superseded_by}" must be the id of another claim in this file`);
+  }
+  const supersededIn = (node, label) => {
+    if (Array.isArray(node)) { node.forEach((x, i) => supersededIn(x, `${label}[${i}]`)); return; }
+    if (!node || typeof node !== 'object') return;
+    for (const [k, v] of Object.entries(node)) {
+      if (k === 'basis' && Array.isArray(v)) for (const id of v) { if (claims.get(id)?.superseded_by != null) E(`${label}.basis names "${id}", which is superseded by "${claims.get(id).superseded_by}" — name the newer claim`); }
+      else if (k !== 'claims' && v && typeof v === 'object') supersededIn(v, `${label}.${k}`);
+    }
+  };
+  supersededIn(guidance, G);
+
   const basisProblems = (basis, label) => {
     if (!Array.isArray(basis) || !basis.length) return [`${label}.basis must be a non-empty array of claim ids`];
     return basis.filter((id) => !claims.has(id)).map((id) => `${label}.basis names "${id}", which is not a claim id in this file`);
@@ -251,6 +267,179 @@ export function validateGuidance(guidance, models) {
   });
   toolPlanProblems(guidance, claims, byId).forEach(E);
   return { errors, warnings };
+}
+
+// --- paths into the data for the defaults watch (data/defaults-watch.json maps_to / also) ------
+// Shared by scripts/defaults-watch.mjs (reads and writes) and validateWatchList below. A path starts
+// with the file — guidance. or plans. — then keys; a bracket step [key=value] picks the one array row
+// whose key equals value (several brackets: several keys):
+//   guidance.tool_plans[tool=codex].lead.model_id
+//   guidance.model_refs[tool=claude-code][ref=opus].model_id
+//   plans.plans[vendor=Devin][plan=Teams].base_usd_month
+/** "guidance.tool_plans[tool=codex].lead.model_id" -> {file:'guidance', steps:[...]}. A bracket
+ * step filters an array by key=value; several brackets filter on several keys. */
+export function parsePath(path) {
+  const m = /^(guidance|plans)\.(.+)$/.exec(String(path || ''));
+  if (!m) throw new Error(`bad path "${path}": must start with guidance. or plans.`);
+  const steps = [];
+  const re = /([A-Za-z_][A-Za-z0-9_]*)((?:\[[^\]=]+=[^\]]*\])*)\.?/y;
+  let rest = m[2];
+  let pos = 0;
+  while (pos < rest.length) {
+    re.lastIndex = pos;
+    const s = re.exec(rest);
+    if (!s || s[0] === '') throw new Error(`bad path "${path}" near "${rest.slice(pos)}"`);
+    steps.push({ key: s[1] });
+    if (s[2]) {
+      const where = [...s[2].matchAll(/\[([^\]=]+)=([^\]]*)\]/g)].map((x) => [x[1], x[2]]);
+      steps.push({ where });
+    }
+    pos = re.lastIndex;
+  }
+  return { file: m[1], steps };
+}
+
+function walkPath(data, path, { parent = false } = {}) {
+  const { file, steps } = parsePath(path);
+  let node = data[file];
+  const upto = parent ? steps.length - 1 : steps.length;
+  for (let i = 0; i < upto; i += 1) {
+    const st = steps[i];
+    if (node == null) return { found: false };
+    if (st.where) {
+      if (!Array.isArray(node)) return { found: false };
+      const hits = node.filter((el) => el && st.where.every(([k, v]) => String(el[k]) === v));
+      if (hits.length !== 1) return { found: false, reason: `${hits.length} rows match [${st.where.map((w) => w.join('=')).join('][')}]` };
+      node = hits[0];
+    } else {
+      if (typeof node !== 'object' || !(st.key in node)) return { found: false };
+      node = node[st.key];
+    }
+  }
+  return parent ? { found: true, node, key: steps[steps.length - 1].key } : { found: true, value: node };
+}
+
+/** The value at `path` in {guidance, plans}; undefined when the path does not resolve. */
+export function getPath(data, path) {
+  const r = walkPath(data, path);
+  return r.found ? r.value : undefined;
+}
+
+/** Set the value at `path` (its parent must exist). */
+export function setPath(data, path, value) {
+  const r = walkPath(data, path, { parent: true });
+  if (!r.found || r.node == null || typeof r.node !== 'object' || r.key == null) throw new Error(`cannot set ${path}`);
+  r.node[r.key] = value;
+}
+
+/** The plans.json row a plans.plans[...] path points into. */
+export function planRow(data, path) {
+  const { steps } = parsePath(path);
+  const where = steps.find((s) => s.where);
+  if (!where) return null;
+  const hits = (data.plans.plans || []).filter((el) => el && where.where.every(([k, v]) => String(el[k]) === v));
+  return hits.length === 1 ? hits[0] : null;
+}
+
+/** `{form:tool.slot}` in a rule's anchor, pattern or sentence: filled from the data at run time.
+ * form = name | short | slug | ref | id; slot = lead | push_down | bulk | ref.<r> | role.<role>. */
+export const PLACEHOLDER_RE = /\{(name|short|slug|ref|id):([a-z0-9-]+(?:\.[a-z0-9_-]+)+)\}/g;
+
+// --- data/defaults-watch.json — the weekly defaults watch's rules (config, not a site feed) ----
+// scripts/defaults-watch.mjs reads each rule's page and compares the captured value with the data.
+// No rule stores the value it expects: a "field" rule compares with (and on a change writes) the
+// value at `maps_to`; a "flag" rule only lists a change, comparing with `maps_to`, a claim's quote
+// or sentence (`baseline.claim`), or a `baseline.sentinel` (a value the data does not hold).
+export const WATCH_VALUES = ['model', 'word', 'last-word', 'list', 'price', 'text'];
+export const WATCH_WRITES = ['field', 'flag'];
+const WATCH_KEYS = new Set(['id', 'tool', 'field', 'url', 'anchor', 'pattern', 'value', 'value_to_id', 'first_match', 'write', 'maps_to', 'also', 'ref_row', 'claim_ids', 'baseline', 'sentence', 'judge']);
+const WATCH_SLOT_RE = /^[a-z0-9-]+\.(lead|push_down|bulk|ref\.[a-z0-9._-]+|role\.[a-z]+)$/;
+
+/** Problems in data/defaults-watch.json. errors = the file's own shape (a rule that can never run
+ * right); warnings = a path or claim id that does not resolve in today's data ({guidance, plans}).
+ * Those are warnings on purpose: the Judge or a person may change guidance.json, and the honesty
+ * gate must never block a data write over the watch list — the weekly run reports such a rule as
+ * broken (red) instead. Returns {errors, warnings}. */
+export function validateWatchList(watch, { guidance = null, plans = null } = {}) {
+  const W = 'data/defaults-watch.json';
+  const out = [];
+  const warn = [];
+  if (!watch || typeof watch !== 'object' || Array.isArray(watch)) return { errors: [`${W}: must be an object`], warnings: warn };
+  if (!watch._readme || typeof watch._readme !== 'string') out.push(`${W}: _readme must say what the file is`);
+  if (!Array.isArray(watch.rules) || !watch.rules.length) return { errors: [...out, `${W}: rules must be a non-empty array`], warnings: warn };
+  const data = { guidance: guidance || {}, plans: plans || {} };
+  const claimIds = new Set(((guidance && guidance.claims) || []).map((c) => c && c.id));
+  const ids = new Set();
+  const isStr = (v) => typeof v === 'string' && v.trim() !== '';
+  const resolves = (path, label) => {
+    try { parsePath(path); } catch (e) { out.push(`${label}: ${e.message}`); return false; }
+    if (getPath(data, path) === undefined) { warn.push(`${label} "${path}" does not resolve in the data — the weekly run will report this rule broken`); return false; }
+    return true;
+  };
+  watch.rules.forEach((r, i) => {
+    const label = `${W} rules[${i}]${r && r.id ? ` (${r.id})` : ''}`;
+    if (!r || typeof r !== 'object' || Array.isArray(r)) { out.push(`${label} must be an object`); return; }
+    for (const k of Object.keys(r)) if (!WATCH_KEYS.has(k)) out.push(`${label}: unknown key "${k}"${k === 'expected' ? ' — a rule never stores the value it expects; the data holds it' : ''}`);
+    if (!isStr(r.id) || !/^[a-z0-9][a-z0-9._-]*$/.test(r.id)) out.push(`${label}.id must be a lowercase id`);
+    else if (ids.has(r.id)) out.push(`${label}.id "${r.id}" is used twice`);
+    else ids.add(r.id);
+    for (const k of ['tool', 'field', 'anchor', 'pattern']) if (!isStr(r[k])) out.push(`${label}.${k} is required`);
+    if (!isStr(r.url) || !/^https?:\/\//.test(r.url)) out.push(`${label}.url must be an http(s) URL`);
+    for (const k of ['anchor', 'pattern', 'sentence']) {
+      if (!isStr(r[k])) continue;
+      for (const m of r[k].matchAll(PLACEHOLDER_RE)) if (!WATCH_SLOT_RE.test(m[2])) out.push(`${label}.${k}: placeholder ${m[0]} names no slot (tool.lead|push_down|bulk|ref.<r>|role.<role>)`);
+    }
+    if (isStr(r.pattern)) {
+      try {
+        const re = new RegExp(r.pattern.replace(PLACEHOLDER_RE, 'x'));
+        if (!/\((?!\?)/.test(re.source.replace(/\\\\|\\\(/g, ''))) out.push(`${label}.pattern needs a capture group (group 1 is the value)`);
+      } catch (e) { out.push(`${label}.pattern does not compile: ${e.message}`); }
+    }
+    if (!WATCH_VALUES.includes(r.value)) out.push(`${label}.value "${r.value}" must be one of ${WATCH_VALUES.join(', ')}`);
+    if (r.value_to_id != null && (r.value !== 'model' || !/^(claude|direct|ref:[a-z0-9-]+)$/.test(r.value_to_id))) out.push(`${label}.value_to_id is for model values only: claude | direct | ref:<tool>`);
+    if (r.first_match != null && typeof r.first_match !== 'boolean') out.push(`${label}.first_match must be true or false`);
+    if (r.judge != null && !isStr(r.judge)) out.push(`${label}.judge must be a question`);
+    if (!WATCH_WRITES.includes(r.write)) { out.push(`${label}.write "${r.write}" must be field or flag`); return; }
+    const claimsOk = (list, what) => {
+      if (!Array.isArray(list)) { out.push(`${label}.${what} must be a list of claim ids`); return; }
+      for (const id of list) if (!claimIds.has(id)) warn.push(`${label}.${what} names "${id}", which is not a claim id in data/guidance.json — the weekly run will list this rule for review`);
+    };
+    if (r.write === 'field') {
+      if (r.baseline !== undefined) out.push(`${label}: a field rule compares with maps_to, never a baseline`);
+      if (!r.maps_to && !(Array.isArray(r.claim_ids) && r.claim_ids.length)) out.push(`${label}: a field rule needs maps_to or claim_ids`);
+      if (r.maps_to !== undefined) {
+        if (!isStr(r.maps_to)) out.push(`${label}.maps_to must be one path`);
+        else if (resolves(r.maps_to, `${label}.maps_to`)) {
+          if (r.maps_to.startsWith('plans.') && r.value !== 'price') out.push(`${label}: a plans.json path takes a price value`);
+          const held = JSON.stringify(getPath(data, r.maps_to));
+          for (const [j, p] of (r.also || []).entries()) {
+            if (resolves(p, `${label}.also[${j}]`) && JSON.stringify(getPath(data, p)) !== held) warn.push(`${label}.also[${j}] "${p}" holds a different value than maps_to — a change would overwrite it with the maps_to value`);
+          }
+        }
+      }
+      if (r.also !== undefined && !Array.isArray(r.also)) out.push(`${label}.also must be a list of paths`);
+      if (r.ref_row != null && (r.ref_row !== true || r.value !== 'model')) out.push(`${label}.ref_row is true or absent, and only on a model value`);
+      if (r.claim_ids !== undefined) {
+        claimsOk(r.claim_ids, 'claim_ids');
+        if (r.claim_ids.length) {
+          if (!isStr(r.sentence)) out.push(`${label}.sentence is required: the template for each new claim's sentence`);
+          else { const hit = guidanceBannedIn(r.sentence.replace(PLACEHOLDER_RE, 'x')); if (hit) out.push(`${label}.sentence uses a ranking word (/${hit}/)`); }
+        }
+      }
+    } else {
+      for (const k of ['also', 'ref_row', 'claim_ids', 'sentence']) if (r[k] !== undefined) out.push(`${label}.${k}: a flag rule writes nothing`);
+      const b = r.baseline;
+      const kinds = [r.maps_to !== undefined, !!(b && b.claim !== undefined), !!(b && b.sentinel !== undefined)].filter(Boolean).length;
+      if (kinds !== 1) out.push(`${label}: a flag rule compares with exactly one of maps_to, baseline.claim, baseline.sentinel`);
+      if (r.maps_to !== undefined) { if (isStr(r.maps_to)) resolves(r.maps_to, `${label}.maps_to`); else out.push(`${label}.maps_to must be one path`); }
+      if (b && b.claim !== undefined) {
+        claimsOk([b.claim], 'baseline.claim');
+        if (b.in != null && !['quote', 'sentence'].includes(b.in)) out.push(`${label}.baseline.in must be quote or sentence`);
+      }
+      if (b && b.sentinel !== undefined && !isStr(b.sentinel)) out.push(`${label}.baseline.sentinel must be text`);
+    }
+  });
+  return { errors: out, warnings: warn };
 }
 
 // --- guidance.json tool_plans: one Lead / Helpers / Bulk plan per tool -----------------------
@@ -1173,6 +1362,20 @@ function main() {
     }
   } else {
     W('data/guidance.json: not found — skipped the guidance checks');
+  }
+
+  // 13b. data/defaults-watch.json (the weekly defaults watch's rules): config, not a site feed —
+  // shape only, plus every path and claim id it names must exist in the data.
+  const watchUrl = new URL('defaults-watch.json', DIR);
+  if (existsSync(watchUrl)) {
+    try {
+      const watch = JSON.parse(readFileSync(watchUrl));
+      const w = validateWatchList(watch, { guidance, plans });
+      w.errors.forEach(E);
+      w.warnings.forEach(W);
+    } catch (e) {
+      E(`data/defaults-watch.json: couldn't read/parse (${e.message})`);
+    }
   }
 
   // 14. the data contract (FEEDS): file as_of + a source and a date for every shown line.

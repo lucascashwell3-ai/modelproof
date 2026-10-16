@@ -22,20 +22,42 @@
    pass on "Sonnet 5.5", "20 per month" does not pass on "120 per month". Trailing zero cents are
    the same number ("$40" passes on "$40.00").
 
+   Every result carries a `kind` (see classifyFailure):
+     ok         the quote is on the page.
+     not_found  the page was fetched and the quote is not on it (or the claim has no source_url).
+     gone       the page answered HTTP 404 or 410 — it no longer exists.
+     blocked    the page could not be read from here: any other HTTP error (403/429/5xx...), a
+                timeout, a network error, or a near-empty body. Says nothing about the quote.
+   A claim that carries `superseded_by` (a newer claim replaced it) is never collected or checked.
+
    Usage:
-     node scripts/check-sources.mjs [--data <dir>] [--only <key>[,<key>...]]
-       --data  read models.json / guidance.json / plans.json from <dir> (default: data/)
-       --only  check only these claims. Keys: "<modelId>/<taskId>" (judged-fit claims),
-               "guidance/<claimId>", "plan/<vendor>/<plan>"; a key also selects everything under
-               it ("<modelId>" = all of that model's claims). A key that selects nothing is an
-               error, so a scoped run can never pass by checking zero claims.
+     node scripts/check-sources.mjs [--data <dir>] [--only <key>[,<key>...]] [--fresh]
+                                    [--blocked-ok] [--skip-ids <key>[,<key>...]] [--json-out <file>]
+       --data        read models.json / guidance.json / plans.json from <dir> (default: data/)
+       --only        check only these claims. Keys: "<modelId>/<taskId>" (judged-fit claims),
+                     "guidance/<claimId>", "plan/<vendor>/<plan>"; a key also selects everything
+                     under it ("<modelId>" = all of that model's claims). A key that selects nothing
+                     is an error, so a scoped run can never pass by checking zero claims.
+       --fresh       ignore the page cache and fetch every page again (env CHECK_SOURCES_FRESH=1
+                     does the same). Without it a cached page is reused for at most 12 hours.
+       --blocked-ok  full sweeps only: a `blocked` claim is printed as a warning and does not fail
+                     the run; `not_found` and `gone` still do. Refused together with --only: a
+                     write-time gate (apply-judgment.mjs, a new claim) must have read the page.
+       --skip-ids    leave these claims out (same key forms as --only, or a bare guidance claim
+                     id), e.g. quotes an open data PR is about to replace. Listed as skipped.
+       --json-out    also write {results, skipped} to <file> as JSON (each result with its kind),
+                     for scripts/report-claim-rot.mjs --results.
+     Exit: 0 when every checked claim passed (with --blocked-ok: when none is not_found/gone);
+           1 otherwise. Default mode is unchanged: ANY failure, blocked included, exits 1.
      CHECK_SOURCES_PAGES=<file.json>  (tests only) a {url: page html} map used instead of the
-               network; a url missing from the map is a failed fetch.
+               network; a url missing from the map is an HTTP 404, a number value is that HTTP
+               status (e.g. 403).
    As a module: collectClaims(data), collectGuidanceClaims(guidance), collectPlanClaims(plans),
-   collectAllClaims({models, guidance, plans}), selectClaims(claims, keys),
-   checkClaims(claims, {fetchImpl}) — unit-tested with a fake fetchImpl in
+   collectAllClaims({models, guidance, plans}), selectClaims(claims, keys), skipClaims(claims, ids),
+   checkClaims(claims, {fetchImpl}), classifyFailure(error), runFailed(results, {blockedOk}),
+   fetchNormalizedPage(url, {fresh}) — unit-tested with a fake fetchImpl in
    scripts/test-check-sources.mjs (no real network calls in the unit tests). */
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -124,7 +146,7 @@ export function collectClaims(data) {
       const rec = tfj[taskId];
       if (!rec || !Array.isArray(rec.claims)) continue;
       rec.claims.forEach((c, index) => {
-        if (!c) return;
+        if (!c || c.superseded_by) return; // replaced by a newer claim — never checked again
         out.push({
           modelId: m.id, modelName: m.name, taskId, index,
           source_url: c.source_url, quote: c.quote, tier: c.tier,
@@ -137,14 +159,15 @@ export function collectClaims(data) {
 }
 
 /** Every claim in data/guidance.json, in the same record shape as collectClaims (so checkClaims
- * and the report treat both files alike). modelId is null — a guidance claim is about a tool or a
+ * and the report treat both files alike). A claim with `superseded_by` is left out: its page
+ * changed, a newer claim carries the new quote, and the old one stays only as history. modelId is null — a guidance claim is about a tool or a
  * lab, not one model; modelName carries the subject name, taskId the topic, claimId the claim's
  * own id. Pure — no I/O. */
 export function collectGuidanceClaims(g) {
   const out = [];
   if (!g || !Array.isArray(g.claims)) return out;
   g.claims.forEach((c, index) => {
-    if (!c) return;
+    if (!c || c.superseded_by) return; // replaced by a newer claim — never checked again
     out.push({
       modelId: null, modelName: c.subject && c.subject.name, taskId: c.topic, index,
       source_url: c.source_url, quote: c.quote, tier: c.tier, claimId: c.id, file: 'guidance',
@@ -195,41 +218,84 @@ export function selectClaims(claims, keys) {
   return { claims: picked, unmatched: keys.filter((k) => !hit.has(k)) };
 }
 
+/** Leave out the claims named in `ids` (same key forms as selectClaims, plus a bare guidance claim
+ * id). Returns {claims, skipped}. Used for quotes an open data PR is about to replace, so the
+ * weekly sweep reports them as pending instead of red. */
+export function skipClaims(claims, ids) {
+  if (!ids || !ids.length) return { claims, skipped: [] };
+  const hits = (c) => ids.some((id) => c.key === id || (c.key || '').startsWith(`${id}/`) || (c.claimId != null && c.claimId === id));
+  return { claims: claims.filter((c) => !hits(c)), skipped: claims.filter(hits) };
+}
+
 const cacheKey = (url) => createHash('sha1').update(url).digest('hex');
 
-/** Fetch a URL and return its normalized text, caching to a temp dir keyed by URL so a re-run
- * (or many claims sharing one page) doesn't re-fetch. Read-only: GET only, no state changed on
- * the far end. Follows redirects (fetch's default). */
-export async function fetchNormalizedPage(url) {
+/** How long a cached page may be reused. A local run must never trust week-old pages: the cache
+ * lives in the OS temp dir and used to have no expiry at all. */
+export const CACHE_MAX_AGE_MS = 12 * 60 * 60 * 1000;
+
+/** An Error for a failed fetch that carries the HTTP status (when there is one), so
+ * classifyFailure never has to parse prose. */
+function fetchError(message, status = null) {
+  const e = new Error(message);
+  if (status != null) e.status = status;
+  return e;
+}
+
+/** Which kind of failure a fetch error is: 'gone' (HTTP 404/410 — the page no longer exists) or
+ * 'blocked' (anything else: 403/429/5xx, timeout, network error, near-empty body — the page could
+ * not be read from here, which says nothing about the quote). Accepts an Error (uses `.status`
+ * when set), or a message string ("HTTP 404 ..."). A quote missing from a page that WAS fetched
+ * is 'not_found' — checkClaims sets that itself; it never reaches this function. */
+export function classifyFailure(error) {
+  let status = error && typeof error === 'object' ? error.status : null;
+  if (status == null) {
+    const msg = typeof error === 'string' ? error : String((error && error.message) || '');
+    const m = msg.match(/\bHTTP (\d{3})\b/);
+    status = m ? Number(m[1]) : null;
+  }
+  if (status === 404 || status === 410) return 'gone';
+  return 'blocked';
+}
+
+/** Fetch a URL and return its normalized text. Pages are cached in a temp dir keyed by URL so
+ * many claims sharing one page (or a re-run) cost one request; a cached copy older than
+ * CACHE_MAX_AGE_MS is fetched again, and `fresh: true` (or CHECK_SOURCES_FRESH=1) skips the
+ * cache entirely. Read-only: GET only, no state changed on the far end. Follows redirects. */
+export async function fetchNormalizedPage(url, { fresh = process.env.CHECK_SOURCES_FRESH === '1', now = Date.now() } = {}) {
   if (!existsSync(CACHE_DIR)) mkdirSync(CACHE_DIR, { recursive: true });
   const file = join(CACHE_DIR, `${cacheKey(url)}.txt`);
-  if (existsSync(file)) return readFileSync(file, 'utf8');
+  if (!fresh && existsSync(file) && now - statSync(file).mtimeMs <= CACHE_MAX_AGE_MS) return readFileSync(file, 'utf8');
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
   try {
-    const res = await fetch(url, {
-      signal: ctrl.signal,
-      redirect: 'follow',
-      // A plain "ModelproofCheckSources/1.0" bot UA gets a flat 403 from at least one real
-      // source (MarkTechPost, confirmed 2026-09-06) that otherwise serves the page to any
-      // browser. This is a read-only GET on a page already public — the same thing a link
-      // preview or an RSS reader does — so a standard browser UA is the honest way to reach the
-      // same content everyone else sees, not a way around anything. Accept-Language pins the
-      // page to English: at least one source (ai.google.dev) content-negotiates by locale and
-      // served Portuguese by default during testing, which would make an honest English quote
-      // fail to match through no fault of the citation.
-      headers: {
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
-        'accept-language': 'en-US,en;q=0.9',
-      },
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    let res;
+    try {
+      res = await fetch(url, {
+        signal: ctrl.signal,
+        redirect: 'follow',
+        // A plain "ModelproofCheckSources/1.0" bot UA gets a flat 403 from at least one real
+        // source (MarkTechPost, confirmed 2026-09-06) that otherwise serves the page to any
+        // browser. This is a read-only GET on a page already public — the same thing a link
+        // preview or an RSS reader does — so a standard browser UA is the honest way to reach the
+        // same content everyone else sees, not a way around anything. Accept-Language pins the
+        // page to English: at least one source (ai.google.dev) content-negotiates by locale and
+        // served Portuguese by default during testing, which would make an honest English quote
+        // fail to match through no fault of the citation.
+        headers: {
+          'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+          'accept-language': 'en-US,en;q=0.9',
+        },
+      });
+    } catch (e) {
+      throw fetchError(e && e.name === 'AbortError' ? `timed out after ${FETCH_TIMEOUT_MS / 1000}s` : `network error (${e && e.message})`);
+    }
+    if (!res.ok) throw fetchError(`HTTP ${res.status}`, res.status);
     const text = await res.text();
     const norm = normalizeText(text);
     // A 200 with a near-empty body is almost always a transient block/CDN glitch, not real
     // content (confirmed against a live source, 2026-09-06) — never cache it, or one flaky
     // response would fail every future run against a source that's actually fine.
-    if (norm.length < 200) throw new Error(`page body too short after fetch (${norm.length} chars) — likely a blocked/failed fetch, not real content`);
+    if (norm.length < 200) throw fetchError(`page body too short after fetch (${norm.length} chars) — likely a blocked/failed fetch, not real content`);
     writeFileSync(file, norm);
     return norm;
   } finally {
@@ -239,50 +305,79 @@ export async function fetchNormalizedPage(url) {
 
 /** Check every claim, sharing one fetch per distinct source_url. `fetchImpl` is injectable so
  * unit tests never touch the network. A fetch failure is a FAILED claim, not a skip — "couldn't
- * verify" and "verified false" are both reasons not to publish. */
+ * verify" and "verified false" are both reasons not to publish. Each result carries `ok`,
+ * `kind` ('ok' | 'not_found' | 'gone' | 'blocked') and `reason` (null when ok). */
 export async function checkClaims(claims, { fetchImpl = fetchNormalizedPage } = {}) {
   const pageCache = new Map();
   const results = [];
   for (const c of claims) {
-    if (!c.source_url) { results.push({ ...c, ok: false, reason: 'no source_url on this claim' }); continue; }
+    if (!c.source_url) { results.push({ ...c, ok: false, kind: 'not_found', reason: 'no source_url on this claim' }); continue; }
     let pageText;
     try {
-      if (!pageCache.has(c.source_url)) pageCache.set(c.source_url, await fetchImpl(c.source_url));
-      pageText = pageCache.get(c.source_url);
+      if (!pageCache.has(c.source_url)) {
+        // Remember a failed fetch too, so N claims on one blocked page cost one request.
+        try { pageCache.set(c.source_url, { text: await fetchImpl(c.source_url) }); } catch (e) { pageCache.set(c.source_url, { error: e }); }
+      }
+      const hit = pageCache.get(c.source_url);
+      if (hit.error) throw hit.error;
+      pageText = hit.text;
     } catch (e) {
-      results.push({ ...c, ok: false, reason: `could not fetch source_url (${e.message}) — cannot verify, so it cannot publish` });
+      results.push({ ...c, ok: false, kind: classifyFailure(e), reason: `could not fetch source_url (${e.message}) — cannot verify, so it cannot publish` });
       continue;
     }
     const ok = quoteFoundIn(c.quote, pageText);
-    results.push({ ...c, ok, reason: ok ? null : 'quote text was not found on the cited page' });
+    results.push({ ...c, ok, kind: ok ? 'ok' : 'not_found', reason: ok ? null : 'quote text was not found on the cited page' });
   }
   return results;
 }
 
-/** A fetchImpl that serves pages from a {url: html} JSON file instead of the network (tests). */
+/** True when these results must fail the run. Default: any failure. `blockedOk`: only
+ * `not_found` and `gone` fail — a page this machine could not read is a warning. */
+export function runFailed(results, { blockedOk = false } = {}) {
+  return results.some((r) => !r.ok && !(blockedOk && r.kind === 'blocked'));
+}
+
+/** A fetchImpl that serves pages from a {url: html} JSON file instead of the network (tests).
+ * A url missing from the map is an HTTP 404; a number value is that HTTP status. */
 export function fixturePageFetcher(file) {
   const pages = JSON.parse(readFileSync(file, 'utf8'));
   return async (url) => {
-    if (!Object.prototype.hasOwnProperty.call(pages, url)) throw new Error(`HTTP 404 (not in ${file})`);
+    if (!Object.prototype.hasOwnProperty.call(pages, url)) throw fetchError(`HTTP 404 (not in ${file})`, 404);
+    if (typeof pages[url] === 'number') throw fetchError(`HTTP ${pages[url]} (from ${file})`, pages[url]);
     return normalizeText(pages[url]);
   };
 }
 
+const USAGE = 'usage: check-sources.mjs [--data <dir>] [--only <key>[,<key>...]] [--fresh] [--blocked-ok] [--skip-ids <key>[,<key>...]] [--json-out <file>]';
+
 export function parseArgs(argv) {
-  const out = { dataDir: null, only: [] };
+  const out = { dataDir: null, only: [], fresh: false, blockedOk: false, skipIds: [], jsonOut: null };
+  const list = (v) => String(v || '').split(',').map((s) => s.trim()).filter(Boolean);
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--data') out.dataDir = argv[++i];
     else if (a.startsWith('--data=')) out.dataDir = a.slice(7);
-    else if (a === '--only') out.only.push(...String(argv[++i] || '').split(',').filter(Boolean));
-    else if (a.startsWith('--only=')) out.only.push(...a.slice(7).split(',').filter(Boolean));
-    else throw new Error(`unknown argument "${a}" (usage: check-sources.mjs [--data <dir>] [--only <key>[,<key>...]])`);
+    else if (a === '--only') out.only.push(...list(argv[++i]));
+    else if (a.startsWith('--only=')) out.only.push(...list(a.slice(7)));
+    else if (a === '--fresh') out.fresh = true;
+    else if (a === '--blocked-ok') out.blockedOk = true;
+    else if (a === '--skip-ids') out.skipIds.push(...list(argv[++i]));
+    else if (a.startsWith('--skip-ids=')) out.skipIds.push(...list(a.slice(11)));
+    else if (a === '--json-out') out.jsonOut = argv[++i];
+    else if (a.startsWith('--json-out=')) out.jsonOut = a.slice(11);
+    else throw new Error(`unknown argument "${a}" (${USAGE})`);
+  }
+  if (out.blockedOk && out.only.length) {
+    throw new Error('--blocked-ok cannot be combined with --only: a scoped (write-time) check must read every page it cites');
   }
   return out;
 }
 
+const SYMBOL = { ok: '✓', not_found: '✗', gone: '✗', blocked: '✗' };
+
 async function main() {
-  const args = parseArgs(process.argv.slice(2));
+  let args;
+  try { args = parseArgs(process.argv.slice(2)); } catch (e) { console.error(`✗ ${e.message}`); process.exitCode = 1; return; }
   const dir = args.dataDir ? pathToFileURL(resolve(args.dataDir) + '/') : new URL('data/', ROOT);
   const readOptional = (name) => {
     const u = new URL(name, dir);
@@ -294,29 +389,42 @@ async function main() {
   const guidance = readOptional('guidance.json');
   const plans = readOptional('plans.json');
   const all = collectAllClaims({ models: data, guidance, plans });
-  const { claims, unmatched } = selectClaims(all, args.only);
+  const { claims: selected, unmatched } = selectClaims(all, args.only);
   if (unmatched.length) {
     console.error(`✗ --only selected no claims for: ${unmatched.join(', ')} — a scoped check that checks nothing cannot pass.`);
     process.exitCode = 1;
     return;
   }
+  const { claims, skipped } = skipClaims(selected, args.skipIds);
   if (!claims.length) {
-    console.log('check-sources: no claims in models.json, guidance.json or plans.json to verify.');
+    console.log(`check-sources: no claims in models.json, guidance.json or plans.json to verify${skipped.length ? ` (${skipped.length} skipped by --skip-ids)` : ''}.`);
+    if (args.jsonOut) writeFileSync(args.jsonOut, JSON.stringify({ results: [], skipped: skipped.map((c) => c.key) }, null, 2) + '\n');
     return;
   }
   const count = (f) => claims.filter(f).length;
-  console.log(`check-sources: verifying ${claims.length} claim(s) (${count((c) => !c.file)} in models.json, ${count((c) => c.file === 'guidance')} in guidance.json, ${count((c) => c.file === 'plans')} in plans.json)${args.only.length ? ` scoped to ${args.only.join(', ')}` : ''} against their cited source_url...`);
-  const fetchImpl = process.env.CHECK_SOURCES_PAGES ? fixturePageFetcher(process.env.CHECK_SOURCES_PAGES) : fetchNormalizedPage;
+  console.log(`check-sources: verifying ${claims.length} claim(s) (${count((c) => !c.file)} in models.json, ${count((c) => c.file === 'guidance')} in guidance.json, ${count((c) => c.file === 'plans')} in plans.json)${args.only.length ? ` scoped to ${args.only.join(', ')}` : ''} against their cited source_url${args.fresh ? ' (fresh fetch, cache ignored)' : ''}...`);
+  const fetchImpl = process.env.CHECK_SOURCES_PAGES
+    ? fixturePageFetcher(process.env.CHECK_SOURCES_PAGES)
+    : (url) => fetchNormalizedPage(url, { fresh: args.fresh || process.env.CHECK_SOURCES_FRESH === '1' });
   const results = await checkClaims(claims, { fetchImpl });
   for (const r of results) {
     const what = r.claimId ? `${r.modelName} / ${r.taskId} (${r.claimId})` : `${r.modelName} / ${r.taskId}`;
-    console.log(`  ${r.ok ? '✓' : '✗'} ${what} [${r.tier}] ${r.source_url}${r.ok ? '' : ` — ${r.reason}`}`);
+    const mark = args.blockedOk && r.kind === 'blocked' ? '⚠' : SYMBOL[r.kind];
+    console.log(`  ${mark} ${what} [${r.tier}] ${r.source_url}${r.ok ? '' : ` — ${r.kind}: ${r.reason}`}`);
   }
-  const failed = results.filter((r) => !r.ok);
-  console.log(`\ncheck-sources: ${results.length - failed.length}/${results.length} claim(s) verified.`);
-  if (failed.length) {
-    console.error(`✗ ${failed.length} claim(s) FAILED — the anti-fabrication gate blocks publish until every quote is confirmed on its cited page.`);
+  for (const c of skipped) console.log(`  - ${c.key} skipped (--skip-ids)`);
+  if (args.jsonOut) {
+    writeFileSync(args.jsonOut, JSON.stringify({ results, skipped: skipped.map((c) => c.key) }, null, 2) + '\n');
+  }
+  const by = (k) => results.filter((r) => r.kind === k).length;
+  const failedCount = results.filter((r) => !r.ok).length;
+  console.log(`\ncheck-sources: ${results.length - failedCount}/${results.length} claim(s) verified (not_found ${by('not_found')}, gone ${by('gone')}, blocked ${by('blocked')}${skipped.length ? `, skipped ${skipped.length}` : ''}).`);
+  if (runFailed(results, { blockedOk: args.blockedOk })) {
+    const n = args.blockedOk ? by('not_found') + by('gone') : failedCount;
+    console.error(`✗ ${n} claim(s) FAILED — the anti-fabrication gate blocks publish until every quote is confirmed on its cited page.`);
     process.exitCode = 1;
+  } else if (by('blocked')) {
+    console.log(`⚠ ${by('blocked')} claim(s) could not be read from here (blocked) — listed as warnings, not failures (--blocked-ok). Every page that could be read still carries its quote.`);
   } else {
     console.log('✓ all claims verified — every quote appears on its cited source page.');
   }

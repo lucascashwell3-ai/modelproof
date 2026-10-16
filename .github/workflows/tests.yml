@@ -30,4 +30,4 @@ jobs:
         run: node scripts/validate-data.mjs
 
       - name: Live-data invariants
-        run: node scripts/check-live-data.mjs
+        run: node scripts/check-live-data.mjs --group all
