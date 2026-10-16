@@ -1834,7 +1834,21 @@
       "source_url": "https://platform.claude.com/docs/en/about-claude/models/overview",
       "tier": "lab",
       "date": "2026-10-03",
-      "quote": "Claude API alias claude-fable-5-1 claude-opus-5-5 claude-sonnet-5-5 claude-haiku-4-5"
+      "quote": "Claude API alias claude-fable-5-1 claude-opus-5-5 claude-sonnet-5-5 claude-haiku-4-5",
+      "superseded_by": "anthropic-model-ids-20261016"
+    },
+    {
+      "id": "anthropic-model-ids-20261016",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "enforced-model",
+      "sentence": "Anthropic's models overview lists claude-fable-5-1, claude-opus-5-5, claude-sonnet-5-5 and claude-haiku-5-5 as its Claude API aliases.",
+      "source_url": "https://platform.claude.com/docs/en/about-claude/models/overview",
+      "tier": "lab",
+      "date": "2026-10-16",
+      "quote": "Model IDs Claude API alias claude-fable-5-1 claude-opus-5-5 claude-sonnet-5-5 claude-haiku-5-5 Amazon Bedrock ID"
     },
     {
       "id": "cc-default-model-opus-5-5",
@@ -1992,7 +2006,21 @@
       "source_url": "https://developers.openai.com/codex/changelog",
       "tier": "tool",
       "date": "2026-10-03",
-      "quote": "Added GPT-6.1 Sol as the default model in the bundled catalog"
+      "quote": "Added GPT-6.1 Sol as the default model in the bundled catalog",
+      "superseded_by": "codex-6-1-sol-default-catalog-20261016"
+    },
+    {
+      "id": "codex-6-1-sol-default-catalog-20261016",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "enforced-model",
+      "sentence": "Codex's config docs show model = \"gpt-6.1-sol\" in the example for choosing the model Codex uses by default in the CLI and IDE.",
+      "source_url": "https://developers.openai.com/codex/config-basic",
+      "tier": "tool",
+      "date": "2026-10-16",
+      "quote": "Choose the model Codex uses by default in the CLI and IDE. model = \"gpt-6.1-sol\""
     },
     {
       "id": "codex-catalog-6-1-sol-effort-low",
@@ -2730,7 +2758,7 @@
       "role": "scout",
       "lab": "Anthropic",
       "model_ref": "haiku",
-      "model_id": "claude-haiku-4-5",
+      "model_id": "claude-haiku-5-5",
       "basis": [
         "cc-costs-haiku-subagent",
         "cc-explore-override-haiku",
@@ -2754,10 +2782,10 @@
     {
       "tool": "claude-code",
       "ref": "haiku",
-      "model_id": "claude-haiku-4-5",
+      "model_id": "claude-haiku-5-5",
       "basis": [
         "cc-alias-haiku",
-        "anthropic-model-ids"
+        "anthropic-model-ids-20261016"
       ]
     },
     {
@@ -2954,7 +2982,7 @@
         }
       },
       "bulk": {
-        "model_id": "claude-haiku-4-5",
+        "model_id": "claude-haiku-5-5",
         "effort": null,
         "when": "quick mechanical work whose output a script or test can check",
         "basis": [
@@ -3029,7 +3057,7 @@
         "raise_to": "high",
         "when": "complex changes or debugging",
         "basis": [
-          "codex-6-1-sol-default-catalog",
+          "codex-6-1-sol-default-catalog-20261016",
           "codex-catalog-6-1-sol-effort-low",
           "codex-effort-by-task"
         ]

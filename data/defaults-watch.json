@@ -145,23 +145,6 @@
       "sentence": "Claude Code's settings reference lists {value:list} as the effort values maxEffortLevel takes."
     },
     {
-      "id": "codex-changelog-default",
-      "tool": "codex",
-      "field": "changelog:default_model",
-      "url": "https://developers.openai.com/codex/changelog",
-      "anchor": "as the default model in the bundled catalog",
-      "pattern": "added (gpt-[\\d.]+ [a-z]+) as the default model in the bundled catalog",
-      "value": "model",
-      "value_to_id": "direct",
-      "first_match": true,
-      "write": "field",
-      "maps_to": "guidance.tool_plans[tool=codex].lead.model_id",
-      "claim_ids": [
-        "codex-6-1-sol-default-catalog"
-      ],
-      "sentence": "Codex CLI's changelog records {name:codex.lead} as the default model in its bundled model catalog."
-    },
-    {
       "id": "codex-catalog-effort-lead",
       "tool": "codex",
       "field": "default_effort:gpt-6.1-sol",
@@ -988,7 +971,7 @@
       "value": "text",
       "write": "flag",
       "baseline": {
-        "sentinel": "gemini 3.8 flash"
+        "sentinel": "gemini 4 argon"
       },
       "judge": "Antigravity's model table has a new top row. Does the Antigravity plan need a new line or a catalog admission?"
     },
