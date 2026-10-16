@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-15",
+  "as_of": "2026-10-16",
   "models": [
     {
       "id": "claude-opus-5",
@@ -15632,7 +15632,8 @@
         "https://venturebeat.com/technology/meta-returns-to-open-source-with-muse-glimmer-an-apache-2-0-licensed-30b-parameter-ai-model-optimized-for-agents-available-now",
         "https://kingy.ai/blog/muse-glimmer-30b-benchmarks-hardware-run/",
         "https://openrouter.ai/api/frontend/v1/rankings/models",
-        "https://research.meta.ai/blog/introducing-muse-glimmer-open-agentic-model"
+        "https://research.meta.ai/blog/introducing-muse-glimmer-open-agentic-model",
+        "https://dev.meta.ai/models/muse-glimmer/"
       ],
       "best_for_line": "Meta model",
       "availability": {
@@ -15733,6 +15734,19 @@
           ],
           "reconciliation": null,
           "as_of": "2026-09-07"
+        },
+        "agents": {
+          "claims": [
+            {
+              "sentence": "Meta's own developer page for Muse Glimmer 30B (checked 2026-10-16) bills it as an open model built for always-on local agents, with reliable tool-calling and persistent state across restarts.",
+              "source_url": "https://dev.meta.ai/models/muse-glimmer/",
+              "tier": "lab",
+              "date": "2026-10-16",
+              "quote": "An open model built for always-on local agents."
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-10-16"
         }
       },
       "usage": {
@@ -18845,7 +18859,8 @@
       "sources": [
         "https://sakana.ai/namazu-api/",
         "https://aiweekly.co/alerts/sakana-ai-ships-namazu-a-japanese-tuned-kimi-k26-llm",
-        "https://openrouter.ai/api/frontend/v1/rankings/models"
+        "https://openrouter.ai/api/frontend/v1/rankings/models",
+        "https://sakana.ai/namazu-api"
       ],
       "best_for_line": "Sakana AI model · $0.95/$4",
       "availability": {
@@ -18978,6 +18993,19 @@
           ],
           "reconciliation": null,
           "as_of": "2026-09-07"
+        },
+        "vision": {
+          "claims": [
+            {
+              "sentence": "Sakana's own Namazu API page (checked 2026-10-16) says the product's demo combines OpenAI-compatible function calling with image recognition, indicating basic vision input support.",
+              "source_url": "https://sakana.ai/namazu-api",
+              "tier": "lab",
+              "date": "2026-10-16",
+              "quote": "Behind the demo are OpenAI-compatible function calling and image recognition."
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-10-16"
         }
       },
       "usage": {
@@ -19477,7 +19505,11 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "coding",
+        "vision",
+        "writing"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -19485,7 +19517,12 @@
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Thinking Machines' own card calls Inkling \"materially below frontier capabilities\" — save it for lighter conversational and multimodal work, not your hardest reasoning or coding tasks.",
+        "It runs locally through the open-source libraries Thinking Machines lists on the model card, or via third-party inference providers — it isn't locked to one API.",
+        "Resize images to between 40px and 4096px per dimension before sending them; the model card gives that range for optimal performance.",
+        "Keep conversations short — the card documents degraded performance in long multi-turn chats, and warns against medical, legal, or safety-critical use."
+      ],
       "task_copy": {},
       "id": "inkling",
       "name": "Inkling",
@@ -19497,7 +19534,8 @@
       "sources": [
         "https://thinkingmachines.ai/model-card/inkling/",
         "https://techcrunch.com/2026/07/15/thinking-machines-amps-up-its-bet-against-one-size-fits-all-ai-with-its-first-open-model-inkling/",
-        "https://openrouter.ai/api/frontend/v1/rankings/models"
+        "https://openrouter.ai/api/frontend/v1/rankings/models",
+        "https://huggingface.co/thinkingmachines/Inkling"
       ],
       "best_for_line": "Thinking Machines Lab model · 1M ctx",
       "availability": {
@@ -22487,7 +22525,12 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "coding",
+        "agentic",
+        "reasoning",
+        "research"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -22495,7 +22538,12 @@
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Thinking defaults to \"high\" effort out of the box, so it already reasons deeply through math, coding, and planning tasks without you turning anything on.",
+        "For quick, low-latency answers, pass reasoning_effort: \"no_think\" via chat_template_kwargs to skip the deep chain-of-thought and get a direct response.",
+        "Tencent's own model card flags a tendency to over-verify its own work, spending longer than necessary on simple tasks — watch for this inflating cost.",
+        "For production serving, Tencent recommends deploying with vLLM or SGLang rather than a generic inference stack."
+      ],
       "task_copy": {},
       "id": "hy4-preview",
       "name": "Hy4 preview",
@@ -22507,7 +22555,8 @@
       "sources": [
         "https://www.tencent.com/tencent-releases-and-open-sources-tencent-hy4-preview/",
         "https://technode.com/2026/08/28/tencent-open-sources-hy4-preview-with-770b-parameters-and-a-1m-token-context/",
-        "https://openrouter.ai/tencent/hy4-preview"
+        "https://openrouter.ai/tencent/hy4-preview",
+        "https://huggingface.co/tencent/Hy4-Preview"
       ],
       "best_for_line": "Priciest Tencent model · 1M ctx · $0.834/$2.501",
       "availability": {
