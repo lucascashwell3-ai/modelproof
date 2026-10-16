@@ -4273,5 +4273,45 @@
     "sources": [
       "https://openrouter.ai/google/gemini-4-argon"
     ]
+  },
+  {
+    "date": "2026-10-16",
+    "model": "Hy4 preview",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://huggingface.co/tencent/Hy4-Preview"
+    ]
+  },
+  {
+    "date": "2026-10-16",
+    "model": "Inkling",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://huggingface.co/thinkingmachines/Inkling"
+    ]
+  },
+  {
+    "date": "2026-10-16",
+    "model": "Muse Glimmer 30B",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "1 claim(s)",
+    "sources": [
+      "https://dev.meta.ai/models/muse-glimmer/"
+    ]
+  },
+  {
+    "date": "2026-10-16",
+    "model": "Sakana Namazu",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "1 claim(s)",
+    "sources": [
+      "https://sakana.ai/namazu-api"
+    ]
   }
 ]
