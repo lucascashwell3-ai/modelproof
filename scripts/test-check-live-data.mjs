@@ -98,10 +98,12 @@ const deprecate = (models, id) => {
   return out;
 };
 
-test('planLines: 33 lines on the fixture pair; choice slots name no model; basis is never walked', () => {
+test('planLines: 37 lines on the fixture pair; choice slots name no model; basis is never walked', () => {
   const lines = planLines(FX.guidance, FX.samples);
   const kinds = lines.reduce((a, l) => ((a[l.kind] = (a[l.kind] || 0) + 1), a), {});
-  assert.deepEqual(kinds, { plan: 6, role_default: 2, model_ref: 6, personal_default: 2, sample: 17 });
+  assert.deepEqual(kinds, { plan: 6, role_default: 2, model_ref: 6, personal_default: 2, sample: 21 });
+  // The example setup's roles and hard-build model are illustrative lines (one person's choice).
+  assert.deepEqual(lines.filter((l) => l.where.startsWith('guidance examples ')).map((l) => l.where.split('/')[1]), ['lead', 'scout', 'builder', 'hard_build']);
   assert.ok(lines.some((l) => l.where === 'guidance tool_plans claude-code.bulk' && l.model_id === 'claude-haiku-4-5'));
   assert.ok(lines.some((l) => l.where === 'guidance tool_plans claude-code.helpers.push_down' && l.model_id === 'claude-sonnet-5-5'));
   assert.ok(!lines.some((l) => /cursor|copilot|antigravity|openrouter/.test(l.where)), 'a "your pick" slot names no model');

@@ -1,6 +1,6 @@
 {
   "version": "modelproof.package/1",
-  "generator_version": "1.1.0",
+  "generator_version": "1.2.0",
   "as_of": "2026-10-03",
   "profile": {
     "schema": "modelproof.profile/1",
@@ -22,6 +22,8 @@
     "effort_cap": null,
     "set_default_model": false,
     "explore_override": false,
+    "big_job": false,
+    "example": null,
     "org": null
   },
   "parts": [],
@@ -113,9 +115,20 @@
         "price": null,
         "usage": null,
         "choice": true
+      },
+      "checker": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [],
+        "price": null,
+        "usage": null
       }
     }
   },
+  "big_job": false,
+  "example": null,
   "preview_facts": {
     "models_you_use": [],
     "tools_and_labs_say": []

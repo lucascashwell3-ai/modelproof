@@ -272,3 +272,19 @@ test('effort_pages: lab canonical, url http(s), basis claims from that same lab'
   const l = good(); l.effort_pages[0].lab = 'Mistral'; expectError(l, /lab "Mistral" is not a canonical vendor/);
   const b = good(); b.effort_pages[0].basis = ['cc-haiku']; expectError(b, /"cc-haiku" is not a claim from OpenAI/);
 });
+
+test('examples: one person\'s dated choice with a plain title, catalog models from the tool\'s own lab, known keys only', () => {
+  const models = JSON.parse(readFileSync(new URL('./fixtures/instructions-models.json', import.meta.url)));
+  assert.deepEqual(validateGuidance(FROZEN(), models).errors, []);
+  assert.ok(FROZEN().examples.length >= 1, 'the frozen copy carries an example');
+  const bad = (mut) => { const g = FROZEN(); mut(g.examples[0], g); return validateGuidance(g, models).errors.join('\n'); };
+  assert.match(bad((e) => { e.title = 'The best setup'; }), /examples\[0\]\.title uses a ranking word/);
+  assert.match(bad((e) => { e.roles.builder = 'no-such-model'; }), /examples\[0\]\.roles\.builder "no-such-model" is not a model id/);
+  assert.match(bad((e) => { e.roles.scout = 'gpt-6-sol'; }), /examples\[0\]\.roles\.scout "gpt-6-sol" is a OpenAI model — claude-code runs Anthropic models only/);
+  assert.match(bad((e) => { e.roles.admin = 'claude-opus-5-5'; }), /examples\[0\]\.roles\.admin is not a role/);
+  assert.match(bad((e) => { e.as_of = 'Oct 2026'; }), /examples\[0\]\.as_of "Oct 2026" must be a YYYY-MM-DD date/);
+  assert.match(bad((e) => { e.note = 'a recommendation'; }), /examples\[0\]: unknown key "note"/);
+  assert.match(bad((e) => { e.tools = ['cursor']; }), /examples\[0\]\.tools must list only tools whose files take a model string/);
+  assert.match(bad((e) => { e.rarely = ['lead']; }), /examples\[0\]\.rarely must list helper roles/);
+  assert.match(bad((e, g) => { g.examples.push({ ...e }); }), /examples\[1\]\.id "power-user-2026-10" is used twice/);
+});

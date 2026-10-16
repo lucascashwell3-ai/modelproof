@@ -1,4 +1,4 @@
-Modelproof package · facts as of 2026-10-03 · generator 1.1.0
+Modelproof package · facts as of 2026-10-03 · generator 1.2.0
 Your answers: person · user scope · tools: OpenRouter / API · plans: API · limits: api-budget · work: bulk, extraction
 
 Lead and bulk per tool

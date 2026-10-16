@@ -211,7 +211,7 @@ test('Claude Code and GitHub Copilot at different scopes: one set where Copilot 
   const pb = plan(b, coProfile(b, 'user'));
   ok(pb);
   const items = pb.plan.items.filter((x) => /modelproof-\w+\.agent\.md$/.test(x.path)).map((x) => x.n);
-  assert.equal(items.length, 4, pb.out);
+  assert.equal(items.length, 5, pb.out);
   const checks = pb.out.slice(pb.out.indexOf('Check these before you say Go'));
   assert.match(checks, new RegExp(`GitHub Copilot loads helpers from \\.claude/agents and ~/\\.copilot/agents together in a project .*so Copilot lists each one twice\\. Keep both, or skip #${items.join(', #')}\\.`));
   ok(apply(b, pb, { skip: items.join(',') }), 'leaving them out');
@@ -256,7 +256,7 @@ test('a helper file left out at apply (--skip, or their own same-named file) lea
   ok(apply(g, q, { skip: String(n) }));
   const block = read(path.join(g.project, 'AGENTS.md'));
   assert.doesNotMatch(block, /modelproof-bulk/, block);
-  assert.match(block, /GitHub Copilot uses the Claude Code helper files in \.claude\/agents: modelproof-scout, modelproof-builder and modelproof-reviewer say model: inherit\./);
+  assert.match(block, /GitHub Copilot uses the Claude Code helper files in \.claude\/agents: modelproof-scout, modelproof-builder, modelproof-reviewer and modelproof-checker say model: inherit\./);
   ok(verify(g));
 });
 
@@ -270,9 +270,9 @@ test('power-user-max5x: their CLAUDE.md, import target, helpers, output style, s
   assert.deepEqual(p.plan.items.map((x) => [x.path, x.action]), [
     ['~/.claude/agents/modelproof-scout.md', 'create'], ['~/.claude/agents/modelproof-builder.md', 'create'],
     ['~/.claude/agents/modelproof-reviewer.md', 'create'], ['~/.claude/agents/modelproof-bulk.md', 'create'],
-    ['~/.claude/rules/modelproof.md', 'create'],
+    ['~/.claude/agents/modelproof-checker.md', 'create'], ['~/.claude/rules/modelproof.md', 'create'],
   ]);
-  assert.match(p.out, /Your helper checker \(~\/\.claude\/agents\/checker\.md\) does the same job as #3 modelproof-reviewer/);
+  assert.match(p.out, /Your helper checker \(~\/\.claude\/agents\/checker\.md\) does the same job as #5 modelproof-checker/);
   assert.doesNotMatch(p.out + JSON.stringify(p.plan), /not-for-output/);
   ok(apply(f, p));
   assert.deepEqual(keep.map((x) => crypto.createHash('sha256').update(fs.readFileSync(x)).digest('hex')), sums);
@@ -449,11 +449,12 @@ test('plan preview: real conflicts first; rules-file lines shown; memory mention
   ok(p);
   const out = p.out;
   const reviewer = p.plan.items.find((x) => x.part_id === 'claude-code:agent:reviewer').n;
+  const checker = p.plan.items.find((x) => x.part_id === 'claude-code:agent:checker').n;
   const check = out.indexOf('Check these before you say Go');
   assert.ok(check > 0 && check < out.indexOf('Lead, helpers and bulk per tool'), out);
   assert.ok(out.includes(`  - ~/.claude/rules/models.md:2 says "- Keep token use low: use sonnet for reviews."; #${reviewer} modelproof-reviewer runs on the lead's model. Make them match, or skip #${reviewer}.`), out);
   assert.ok(out.includes(`  - Your helper code-reviewer (~/.claude/agents/code-reviewer.md) does the same job as #${reviewer} modelproof-reviewer. Keep both, or skip #${reviewer}.`), out);
-  assert.ok(out.includes(`  - Your helper test-runner (~/.claude/agents/test-runner.md) does the same job as #${reviewer} modelproof-reviewer. Keep both, or skip #${reviewer}.`), out);
+  assert.ok(out.includes(`  - Your helper test-runner (~/.claude/agents/test-runner.md) does the same job as #${checker} modelproof-checker. Keep both, or skip #${checker}.`), out);
   // The heads-up list keeps the other lines, without repeating a checked one; memory is one line.
   const heads = out.slice(out.indexOf('Heads-up:'));
   assert.match(heads, /~\/\.claude\/CLAUDE\.md:39 +- Use opus for builds/);

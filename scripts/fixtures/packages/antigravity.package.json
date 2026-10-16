@@ -1,6 +1,6 @@
 {
   "version": "modelproof.package/1",
-  "generator_version": "1.1.0",
+  "generator_version": "1.2.0",
   "as_of": "2026-10-03",
   "profile": {
     "schema": "modelproof.profile/1",
@@ -27,6 +27,8 @@
     "effort_cap": null,
     "set_default_model": false,
     "explore_override": false,
+    "big_job": false,
+    "example": null,
     "org": null
   },
   "parts": [
@@ -83,6 +85,19 @@
       "lines": 16
     },
     {
+      "id": "antigravity:agent:checker",
+      "tool": "antigravity",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "user",
+        "path": "~/.gemini/config/agents/modelproof-checker.md"
+      },
+      "content": "---\nname: modelproof-checker\ndescription: Re-checks finished work in a fresh context with real evidence (tests, a real run, a live check) and returns pass or fail with the output. It does not edit files.\ntools:\n  - view_file\n  - grep_search\n  - run_command\nmodel: inherit\n---\n<!-- modelproof:owned v1 -->\nYou are the checker. You re-check finished work in a fresh context; you do not edit files.\n- Take the claim and its check from the brief, not the author's summary.\n- Run the real evidence yourself: the tests, a real run, or a live check.\n- Never change a file or a test to make a check pass.\n- Return PASS or FAIL first, then the command you ran and the last lines of its output.\n- A check you could not run is a FAIL; say what stopped it.\n",
+      "why": "Antigravity runs this helper on the lead's model (model: inherit, its default tier).",
+      "lines": 16
+    },
+    {
       "id": "antigravity:text",
       "tool": "antigravity",
       "readers": [
@@ -94,13 +109,36 @@
         "scope": "user",
         "path": "~/.gemini/AGENTS.md"
       },
-      "content": "## Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n### Lead, helpers and bulk\n- Lead: the model you choose in Antigravity. In Antigravity the reasoning model is chosen in the model selector and stays set for the rest of the conversation.\n  Source: Antigravity docs, https://antigravity.google/docs/models (2026-10-03)\n- Helpers: modelproof-scout, modelproof-builder and modelproof-reviewer run on the lead's model (inherit).\n  Source: Antigravity docs, https://antigravity.google/docs/subagents (2026-10-03)\n- Bulk: modelproof-bulk runs on the lead's model until you set its model, for repeatable helper work. An Antigravity custom subagent file sets a model tier of inherit, flash or pro, and inherit is the default.\n  Source: Antigravity docs, https://antigravity.google/docs/subagents (2026-10-03)\n\n### How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n### Context\n- Search before reading; read line ranges, not whole big files.\n- Hand long reading to modelproof-scout and take back a short summary.\n\n### Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- Google's Gemini docs state Gemini 3 models use a thinking_level parameter with discrete reasoning tiers. Source: Google docs, https://cloud.google.com/vertex-ai/generative-ai/docs/thinking (2026-10-03)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "content": "## Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n### Lead, helpers and bulk\n- Lead: the model you choose in Antigravity. In Antigravity the reasoning model is chosen in the model selector and stays set for the rest of the conversation.\n  Source: Antigravity docs, https://antigravity.google/docs/models (2026-10-03)\n- Helpers: modelproof-scout, modelproof-builder, modelproof-reviewer and modelproof-checker run on the lead's model (inherit).\n  Source: Antigravity docs, https://antigravity.google/docs/subagents (2026-10-03)\n- Bulk: modelproof-bulk runs on the lead's model until you set its model, for repeatable helper work. An Antigravity custom subagent file sets a model tier of inherit, flash or pro, and inherit is the default.\n  Source: Antigravity docs, https://antigravity.google/docs/subagents (2026-10-03)\n\n### How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n- Have modelproof-checker re-check finished work in a fresh context; it returns pass or fail with the output.\n\n### Context\n- Search before reading; read line ranges, not whole big files.\n- Hand long reading to modelproof-scout and take back a short summary.\n\n### Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- Google's Gemini docs state Gemini 3 models use a thinking_level parameter with discrete reasoning tiers. Source: Google docs, https://cloud.google.com/vertex-ai/generative-ai/docs/thinking (2026-10-03)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
       "why": "Antigravity reads ~/.gemini/AGENTS.md as global rules for every project.",
-      "lines": 24
+      "lines": 25
     }
   ],
   "copy": [],
-  "available": [],
+  "available": [
+    {
+      "id": "big-job",
+      "name": "big-job mode",
+      "what": "you plan and review; modelproof-scout, modelproof-builder and modelproof-bulk do every piece, and modelproof-checker re-checks each one in a fresh context",
+      "add": "\"big_job\": true",
+      "basis": [
+        {
+          "id": "anthropic-multi-agent-fit",
+          "sentence": "Anthropic's engineering post on its research system says multi-agent systems fit valuable tasks with heavy parallel work, more information than one context window holds, or many complex tools.",
+          "quote": "multi-agent systems excel at valuable tasks that involve heavy parallelization, information that exceeds single context windows, and interfacing with numerous complex tools",
+          "source_url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+          "date": "2026-10-16"
+        },
+        {
+          "id": "anthropic-multi-agent-token-use",
+          "sentence": "Anthropic reports that in its data agents used about 4 times the tokens of chat, and multi-agent systems about 15 times.",
+          "quote": "agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats",
+          "source_url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+          "date": "2026-09-27"
+        }
+      ]
+    }
+  ],
   "checks": [],
   "roles": {
     "antigravity": {
@@ -196,9 +234,28 @@
         "price": null,
         "usage": null,
         "choice": true
+      },
+      "checker": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "antigravity-subagent-model-tier",
+            "sentence": "An Antigravity custom subagent file sets a model tier of inherit, flash or pro, and inherit is the default.",
+            "quote": "model tier used when invoked ( inherit , flash , or pro )",
+            "source_url": "https://antigravity.google/docs/subagents",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
       }
     }
   },
+  "big_job": false,
+  "example": null,
   "preview_facts": {
     "models_you_use": [],
     "tools_and_labs_say": [
@@ -217,6 +274,8 @@
     ]
   },
   "facts_used": [
+    "anthropic-multi-agent-fit",
+    "anthropic-multi-agent-token-use",
     "antigravity-core-agent-models",
     "antigravity-model-choice-persists",
     "antigravity-subagent-model-tier",

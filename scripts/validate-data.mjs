@@ -266,6 +266,7 @@ export function validateGuidance(guidance, models) {
     }
   });
   toolPlanProblems(guidance, claims, byId).forEach(E);
+  exampleProblems(guidance, byId).forEach(E);
   return { errors, warnings };
 }
 
@@ -440,6 +441,51 @@ export function validateWatchList(watch, { guidance = null, plans = null } = {})
     }
   });
   return { errors: out, warnings: warn };
+}
+
+// --- guidance.json examples: setups people shared as starting points ----------------------------
+// { id, title, as_of, tools[], roles{role: model_id}, hard_build?, big_job?, rarely?[] }. One person's
+// own choice with its date, never a tool's or lab's words: the title carries no ranking word, every
+// model is in the catalog and runs in each tool named (its own lab for a one-lab tool), and only a
+// tool whose files take a model string can carry one. The package applies one only on a profile's yes.
+export const EXAMPLE_KEYS = ['id', 'title', 'as_of', 'tools', 'roles', 'hard_build', 'big_job', 'rarely'];
+export const EXAMPLE_ROLES = ['lead', 'scout', 'builder', 'reviewer', 'bulk', 'checker'];
+export function exampleProblems(guidance, byId) {
+  const out = [];
+  const G = 'data/guidance.json';
+  const list = guidance && guidance.examples;
+  if (list === undefined) return out;
+  if (!Array.isArray(list)) return [`${G}: examples must be an array`];
+  const seen = new Set();
+  list.forEach((x, i) => {
+    const who = `${G} examples[${i}]`;
+    if (!x || typeof x !== 'object' || Array.isArray(x)) { out.push(`${who} must be an object`); return; }
+    for (const k of Object.keys(x)) if (!EXAMPLE_KEYS.includes(k)) out.push(`${who}: unknown key "${k}"`);
+    if (typeof x.id !== 'string' || !/^[a-z0-9][a-z0-9-]*$/.test(x.id)) out.push(`${who}.id must be a lowercase-hyphen id`);
+    else if (seen.has(x.id)) out.push(`${who}.id "${x.id}" is used twice`);
+    else seen.add(x.id);
+    if (typeof x.title !== 'string' || !x.title.trim() || x.title.length > 80) out.push(`${who}.title must be plain text of at most 80 characters`);
+    else if (guidanceBannedIn(x.title)) out.push(`${who}.title uses a ranking word (/${guidanceBannedIn(x.title)}/) — an example is one person's choice, never a ranking`);
+    if (typeof x.as_of !== 'string' || !DATE_RE.test(x.as_of)) out.push(`${who}.as_of "${x.as_of}" must be a YYYY-MM-DD date`);
+    const tools = Array.isArray(x.tools) ? x.tools : [];
+    if (!tools.length || tools.some((t) => !TOOL_PLAN_FILE_SLOT_TOOLS.includes(t))) out.push(`${who}.tools must list only tools whose files take a model string (${TOOL_PLAN_FILE_SLOT_TOOLS.join(', ')})`);
+    const model = (id, label) => {
+      if (typeof id !== 'string' || !byId.has(id)) { out.push(`${label} "${id}" is not a model id in data/models.json`); return; }
+      for (const t of tools) {
+        const lab = TOOL_OWN_LAB[t];
+        if (lab && byId.get(id).vendor !== lab) out.push(`${label} "${id}" is a ${byId.get(id).vendor} model — ${t} runs ${lab} models only`);
+      }
+    };
+    if (!x.roles || typeof x.roles !== 'object' || Array.isArray(x.roles) || !Object.keys(x.roles).length) out.push(`${who}.roles must map at least one role to a model id`);
+    else for (const [role, id] of Object.entries(x.roles)) {
+      if (!EXAMPLE_ROLES.includes(role)) out.push(`${who}.roles.${role} is not a role (${EXAMPLE_ROLES.join(', ')})`);
+      else model(id, `${who}.roles.${role}`);
+    }
+    if (x.hard_build !== undefined) model(x.hard_build, `${who}.hard_build`);
+    if (x.big_job !== undefined && typeof x.big_job !== 'boolean') out.push(`${who}.big_job must be true or false`);
+    if (x.rarely !== undefined && (!Array.isArray(x.rarely) || x.rarely.some((r) => r === 'lead' || !EXAMPLE_ROLES.includes(r)))) out.push(`${who}.rarely must list helper roles`);
+  });
+  return out;
 }
 
 // --- guidance.json tool_plans: one Lead / Helpers / Bulk plan per tool -----------------------

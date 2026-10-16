@@ -11,8 +11,12 @@ straight and puts them where you work:
 - **The instruction package** — a short setup for Claude Code, Codex, Cursor, or any tool that
   reads `AGENTS.md`. It sets which model each helper agent runs on — your choice first, then the
   tool's or lab's own published default for that job, otherwise the same model as your main one —
-  plus a few lines on using them well. It adds files next to yours instead of overwriting them,
-  shows you the full plan before it writes anything, and undoes byte for byte.
+  plus a few lines on using them well. Every package includes a checker helper that re-checks
+  finished work in a fresh context with real evidence and never edits files. Two opt-ins stay off
+  unless you ask: big-job mode (your main model plans and reviews, the helpers do every piece) and
+  an example setup someone shared, labeled as one person's own choice. It adds files next to yours
+  instead of overwriting them, shows you the full plan before it writes anything, and undoes byte
+  for byte.
 
 Live at **[lucascashwell3-ai.github.io/modelproof](https://lucascashwell3-ai.github.io/modelproof/)**.
 

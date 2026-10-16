@@ -8,20 +8,27 @@
 // data/guidance.json tool_plans (each slot quoted with url + date):
 // - Lead: the user's own choice, else the model the tool's docs name as its default, else the
 //   model they choose in the tool. Effort is shown as information with its source, never set.
-// - Helpers (scout, builder, reviewer): inherit the lead's model unless the user chose one. When
-//   the user hits limits often or sometimes, a sourced text line names the tool's own push-down
-//   for a well-scoped thread (a habit, not a setting).
+// - Helpers (scout, builder, reviewer, checker): inherit the lead's model unless the user chose
+//   one; no tool or lab names a model for these jobs. The checker re-checks finished work in a
+//   fresh context with real evidence and never edits files. When the user hits limits often or
+//   sometimes, a sourced text line names the tool's own push-down for a well-scoped thread (a
+//   habit, not a setting).
 // - Bulk: the only helper pushed down by default, to the model the tool's docs name for
 //   mechanical, checkable work, written only when the docs give the string its file takes.
+// Two opt-ins, both off by default. Big-job mode (profile big_job): the lead plans and reviews,
+// helpers do every piece, and the checker re-checks each one; it changes the text, never a model.
+// An example setup someone shared (guidance.json examples[], profile example: <id>): one person's
+// own choice, dated, offered only in the installer's plan, and filling only the roles the user
+// left open.
 // A tool with no instruction file of its own (OpenRouter / a raw API) gets copy-only text: the
 // installer writes nothing for it. Nothing here ranks models.
 //
 // It also holds the one definition of the marker lines the installer writes around a block and
 // the owned-file stamp (end of file), so the board's Copy text prints the same bytes.
 
-export const GENERATOR_VERSION = '1.1.0';
+export const GENERATOR_VERSION = '1.2.0';
 export const TOOLS = ['claude-code', 'codex', 'cursor', 'copilot', 'antigravity', 'openrouter', 'agents-md'];
-export const ROLES = ['scout', 'builder', 'reviewer', 'bulk'];
+export const ROLES = ['scout', 'builder', 'reviewer', 'bulk', 'checker'];
 
 /* ------------------------------------------------------------------ constants */
 
@@ -34,7 +41,13 @@ const LIMITS = ['often', 'sometimes', 'rarely', 'api-budget'];
 const WORK_IDS = ['coding', 'agents', 'bulk', 'writing', 'research', 'extraction', 'chat', 'vision', 'frontend', 'exec-summaries'];
 const ALL_ROLE_KEYS = ['lead', ...ROLES];
 // The helpers that run on the lead's model unless the user chose one; bulk is the one pushed down.
-const HELPER_ROLES = ['scout', 'builder', 'reviewer'];
+const HELPER_ROLES = ['scout', 'builder', 'reviewer', 'checker'];
+// The helpers that do the pieces in big-job mode (the checker re-checks them).
+const WORKER_ROLES = ['scout', 'builder', 'bulk'];
+// Claude Code's frontmatter that keeps a helper from writing files (the checker, the Explore helper).
+const READ_ONLY_CC = 'disallowedTools: Write, Edit, NotebookEdit';
+// How an example setup is labeled wherever it shows: never as advice.
+const EXAMPLE_LABEL = 'one person\'s own choice, not advice from Modelproof or any tool or lab';
 const PUSH_DOWN_LIMITS = ['often', 'sometimes'];
 const TEXT_CAP = { person: 40, org: 60 };
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -97,12 +110,14 @@ const JOB = {
   builder: 'makes the planned change',
   reviewer: 'reviews the diff cold',
   bulk: 'does mechanical work a check can verify',
+  checker: 're-checks finished work with real evidence',
 };
 const AGENT_DESCRIPTION = {
   scout: 'Reads, searches and sums up code or docs for the lead. Use it for long reading and lookups. It does not edit files.',
   builder: 'Makes one planned change from a brief (exact files, goal, done check) and reports the check result.',
   reviewer: 'Reviews a change cold from the diff, runs the checks itself, and reports problems with file:line.',
   bulk: 'Does mechanical, repetitive work (renames, boilerplate, many small edits) whose result a script or test can check.',
+  checker: 'Re-checks finished work in a fresh context with real evidence (tests, a real run, a live check) and returns pass or fail with the output. It does not edit files.',
 };
 const AGENT_BODY = {
   scout: [
@@ -134,6 +149,14 @@ const AGENT_BODY = {
     '- Stop and report back when a step needs judgment the brief does not give.',
     '- Return in a few lines: what changed, the last lines of the check.',
   ],
+  checker: [
+    'You are the checker. You re-check finished work in a fresh context; you do not edit files.',
+    '- Take the claim and its check from the brief, not the author\'s summary.',
+    '- Run the real evidence yourself: the tests, a real run, or a live check.',
+    '- Never change a file or a test to make a check pass.',
+    '- Return PASS or FAIL first, then the command you ran and the last lines of its output.',
+    '- A check you could not run is a FAIL; say what stopped it.',
+  ],
 };
 // Antigravity helper files list the tools a helper may use (names from Antigravity's own docs).
 const ANTIGRAVITY_TOOLS = {
@@ -141,6 +164,7 @@ const ANTIGRAVITY_TOOLS = {
   builder: ['view_file', 'grep_search', 'replace_file_content', 'run_command'],
   reviewer: ['view_file', 'grep_search', 'run_command'],
   bulk: ['view_file', 'grep_search', 'replace_file_content', 'run_command'],
+  checker: ['view_file', 'grep_search', 'run_command'],
 };
 const EXPLORE_BODY = [
   'You explore the codebase and report back; you do not edit files.',
@@ -259,6 +283,16 @@ function indexFacts(facts) {
     claims.push(rec);
     claimById.set(rec.id, rec);
   }
+  // A replaced claim still answers to its old id: the newest claim in its superseded_by chain
+  // stands in, so a line this file names by id survives the weekly watch re-sourcing that claim.
+  const rawClaim = new Map(arr(g.claims).filter((c) => isObj(c) && typeof c.id === 'string').map((c) => [c.id, c]));
+  for (const c of rawClaim.values()) {
+    if (c.superseded_by == null || claimById.has(c.id)) continue;
+    let cur = c;
+    const seen = new Set();
+    while (cur && cur.superseded_by != null && !seen.has(cur.id)) { seen.add(cur.id); cur = rawClaim.get(cur.superseded_by); }
+    if (cur && claimById.has(cur.id)) claimById.set(c.id, claimById.get(cur.id));
+  }
   const refs = [];
   for (const r of arr(g.model_refs)) {
     if (!isObj(r) || !TOOLS.includes(r.tool) || typeof r.ref !== 'string' || !REF_RE.test(r.ref)) continue;
@@ -290,6 +324,25 @@ function indexFacts(facts) {
       bulk,
     });
   }
+  // examples: setups people shared (one person's own choice, dated), never a tool's or lab's words.
+  // Kept only with an id, a plain title, a date, a tool whose files take model strings, and roles
+  // that are catalog models.
+  const examples = new Map();
+  for (const x of arr(g.examples)) {
+    if (!isObj(x) || typeof x.id !== 'string' || !ID_RE.test(x.id) || examples.has(x.id)) continue;
+    const title = safeLine(x.title, 80);
+    const asOf = safeDate(x.as_of);
+    if (!title || !asOf || RANKING_WORDS.test(title) || hasSuperlative(title)) continue;
+    const roles = {};
+    if (isObj(x.roles)) for (const k of ALL_ROLE_KEYS) if (typeof x.roles[k] === 'string' && byId.has(x.roles[k])) roles[k] = x.roles[k];
+    const tools = arr(x.tools).filter((t) => t === 'claude-code' || t === 'codex');
+    if (!tools.length || !Object.keys(roles).length) continue;
+    examples.set(x.id, {
+      id: x.id, title, as_of: asOf, tools, roles,
+      hard_build: typeof x.hard_build === 'string' && byId.has(x.hard_build) ? x.hard_build : null,
+      big_job: x.big_job === true, rarely: uniq(arr(x.rarely).filter((r) => ROLES.includes(r))),
+    });
+  }
   const plans = [];
   const prow = Array.isArray(f.plans) ? f.plans : arr(isObj(f.plans) ? f.plans.plans : null);
   for (const p of prow) {
@@ -304,7 +357,7 @@ function indexFacts(facts) {
   const labNames = new Map();
   for (const m of models) if (m.lab && !labNames.has(m.lab)) labNames.set(m.lab, m.vendor);
   const modelsAsOf = safeDate(isObj(mfile) ? mfile.as_of : null);
-  return { models, byId, terms, shortNames, claims, claimById, refs, toolPlans, effortValues, plans, asOf, modelsAsOf, labNames, namedCache: new Map() };
+  return { models, byId, terms, shortNames, claims, claimById, refs, toolPlans, effortValues, examples, plans, asOf, modelsAsOf, labNames, namedCache: new Map() };
 }
 
 // Model ids a piece of text names (ids or display names), longest match first.
@@ -523,10 +576,18 @@ export function normalizeProfile(input, facts) {
   const effortCap = F && F.effortValues.length ? pickEnum('effort_cap', F.effortValues)
     : (src.effort_cap === undefined || src.effort_cap === null ? null : (/^[a-z]{1,12}$/.test(cleanText(src.effort_cap, 12).toLowerCase()) ? cleanText(src.effort_cap, 12).toLowerCase() : pickEnum('effort_cap', [])));
 
+  // An example setup from the data, by id: used only when the profile names it (their yes).
+  let example = null;
+  if (src.example !== undefined && src.example !== null && src.example !== '') {
+    const id = cleanText(src.example, 80).toLowerCase();
+    if (F ? F.examples.has(id) : ID_RE.test(id)) example = id;
+    else problems.push(`example: "${cleanText(src.example, 80)}" is not an example in the data; left out`);
+  }
+
   const profile = {
     schema: PROFILE_SCHEMA, who, tools, scope, plans, api, limits, work, like, never, roles,
     effort_cap: effortCap, set_default_model: src.set_default_model === true,
-    explore_override: src.explore_override === true, org,
+    explore_override: src.explore_override === true, big_job: src.big_job === true, example, org,
   };
   return { profile, problems };
 }
@@ -592,11 +653,15 @@ function roleFor(F, p, ctx, tool, role) {
     const basis = showable(F, ctx, L.basis, tool, 'quote');
     return basis.length ? { effort: L.effort, raise_to: L.raise_to, when: L.when, basis } : null;
   };
-  const chosenId = p.roles[role];
+  // Their own answer first; an example they said yes to fills only the roles they left open.
+  const ex = exampleFor(F, p, tool);
+  const fromExample = !p.roles[role] && !!(ex && ex.roles[role]);
+  const chosenId = p.roles[role] || (fromExample ? ex.roles[role] : null);
   if (chosenId) {
     const m = F.byId.get(chosenId);
     if (m && canUse(ctx, m) && toolRuns(tool, m)) {
       const rec = modelRec(m, 'you', []);
+      if (fromExample) rec.example = ex.id;
       // A helper the user put on one model stays on that model: Claude Code's helper files take a
       // full model id (cc-subagent-model-values), so a floating alias never moves it to a later
       // release. Aliases stay only for the tool's own documented defaults (from: 'tool').
@@ -604,7 +669,9 @@ function roleFor(F, p, ctx, tool, role) {
       if (role === 'lead') { const e = effortInfo(m); if (e) rec.effort_info = e; }
       return rec;
     }
-    if (m && !toolRuns(tool, m)) ctx.notes.push(`${TOOL_LABEL[tool]} runs only ${labName(F, TOOL_LAB[tool])} models, so your ${role} choice (${m.name}) applies to your other tools; in ${TOOL_LABEL[tool]} the ${role} follows the lead.`);
+    // Said without naming the model: it may be one they ruled out.
+    if (fromExample) ctx.notes.push(`The example's ${role} model is not one you can run in ${TOOL_LABEL[tool]} (your plans, tools or never list), so the ${role} keeps the usual rule.`);
+    else if (m && !toolRuns(tool, m)) ctx.notes.push(`${TOOL_LABEL[tool]} runs only ${labName(F, TOOL_LAB[tool])} models, so your ${role} choice (${m.name}) applies to your other tools; in ${TOOL_LABEL[tool]} the ${role} follows the lead.`);
   }
   // A slot of the tool's plan that names a model the user can run: from the tool's (or its lab's)
   // own docs. `needRef`: the model is written into a file, so the tool's own string for it must be
@@ -657,6 +724,30 @@ function nearLimitFor(F, p, ctx, tool) {
   const c = slotSentence(F, ctx, pd.basis, tool);
   return c ? { model_ref: null, model_id: null, model_name: null, when: pd.when, basis: [basisRec(c)], choice: true } : null;
 }
+// The example setup a profile names, when it covers this tool.
+function exampleFor(F, p, tool) {
+  const ex = p.example ? F.examples.get(p.example) : null;
+  return ex && ex.tools.includes(tool) ? ex : null;
+}
+// Big-job mode: the profile asks for it, or the example it names turns it on for one of its tools.
+function bigJobOn(F, p) {
+  return p.big_job || p.tools.some((t) => { const ex = exampleFor(F, p, t); return !!(ex && ex.big_job); });
+}
+// Every model an example names is one they can run in each of its tools here, and none is ruled out.
+function exampleUsable(F, p, ctx, ex) {
+  const tools = p.tools.filter((t) => ex.tools.includes(t));
+  const ids = [...Object.values(ex.roles), ...(ex.hard_build ? [ex.hard_build] : [])];
+  return tools.length > 0 && ids.every((id) => { const m = F.byId.get(id); return !!m && canUse(ctx, m) && tools.every((t) => toolRuns(t, m)); });
+}
+// The example's hard-build habit: a TEXT line (name the model in the call), never a model setting.
+// Their own builder choice wins over it.
+function hardBuildFor(F, p, ctx, tool) {
+  const ex = exampleFor(F, p, tool);
+  if (!ex || !ex.hard_build || p.roles.builder) return null;
+  const m = F.byId.get(ex.hard_build);
+  if (!m || !canUse(ctx, m) || !toolRuns(tool, m)) return null;
+  return { model_ref: refFor(F, tool, m), model_id: m.id, model_name: m.name, example: ex.id, price: m.price, usage: m.usage };
+}
 function rolesFor(F, p, ctx) {
   const out = {};
   for (const tool of p.tools) {
@@ -668,6 +759,8 @@ function rolesFor(F, p, ctx) {
     }
     const nl = nearLimitFor(F, p, ctx, tool);
     if (nl) { t.near_limit = nl; for (const b of nl.basis) ctx.used.add(b.id); }
+    const hb = hardBuildFor(F, p, ctx, tool);
+    if (hb) t.hard_build = hb;
     out[tool] = t;
   }
   return out;
@@ -747,6 +840,13 @@ function agentsReadBy(F, readers) {
   return list.length ? `${list.join(', ')} and other tools that read AGENTS.md` : 'any tool that reads AGENTS.md';
 }
 function youSource(m, asOf) { return `Source: your choice (${priceText(m.price)}${asOf ? ', as of ' + asOf : ''})`; }
+// A model the user took from an example: the example's title stands as the source, with the price.
+function choiceSource(F, x) {
+  const m = F.byId.get(x.model_id);
+  const ex = x.example ? F.examples.get(x.example) : null;
+  return ex ? `Source: the example you chose, ${ex.title}; ${priceText(m.price)}${F.modelsAsOf ? ', as of ' + F.modelsAsOf : ''}` : youSource(m, F.modelsAsOf);
+}
+function joinList(names) { return names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0]; }
 
 // Source lines for a slot: one per distinct page, at most `max`.
 function srcLines(F, basis, max) {
@@ -786,10 +886,11 @@ function planLines(F, p, ctx, roles, tool, multi) {
   if (lead.from !== 'inherit') {
     const m = F.byId.get(lead.model_id);
     const e = lead.effort_info;
-    let main = `${pre('lead')}${m.name}${lead.from === 'you' ? ' (your choice)' : `, ${L}'s default model`}`;
+    let main = `${pre('lead')}${m.name}${lead.from === 'you' ? (lead.example ? '' : ' (your choice)') : `, ${L}'s default model`}`;
     if (e) main += `; effort ${e.effort} by default${e.raise_to && e.when ? `, ${e.raise_to} for ${e.when}` : ''}`;
-    const srcs = lead.from === 'you' ? [youSource(m, F.modelsAsOf), ...srcLines(F, e ? e.basis : [], 1)] : srcLines(F, e ? e.basis : lead.basis, 2);
-    lines.push(planItem(main + '.', srcs, multi));
+    // A model from an example carries that source on the same line, to keep the text short.
+    if (lead.example) lines.push(planItem(`${main}. ${choiceSource(F, lead)}`, srcLines(F, e ? e.basis : [], 1), multi));
+    else lines.push(planItem(main + '.', lead.from === 'you' ? [choiceSource(F, lead), ...srcLines(F, e ? e.basis : [], 1)] : srcLines(F, e ? e.basis : lead.basis, 2), multi));
   } else {
     const where = COPY_ONLY_TOOLS.includes(tool) ? 'the model you name in each request' : `the model you choose in ${L}`;
     const said = multi ? '' : sentenceOf(lead.basis);
@@ -810,7 +911,7 @@ function planLines(F, p, ctx, roles, tool, multi) {
       }
       const cc = roles['claude-code'];
       const named = ROLES.filter((role) => sh.refs[role] !== 'inherit');
-      const more = named.flatMap((role) => srcLines(F, cc[role].from === 'you' ? [] : cc[role].basis, 1).concat(cc[role].from === 'you' ? [youSource(F.byId.get(cc[role].model_id), F.modelsAsOf)] : []));
+      const more = named.flatMap((role) => srcLines(F, cc[role].from === 'you' ? [] : cc[role].basis, 1).concat(cc[role].from === 'you' ? [choiceSource(F, cc[role])] : []));
       lines.push(planItem(`${pre('helpers')}${L} uses the Claude Code helper files in ${sh.dir}: ${groups.join('; ')}. Its docs do not say how it reads those model lines.`, [...src, ...uniq(more)], multi));
     } else {
       lines.push(planItem(`${pre('helpers')}${L} uses the Modelproof Claude Code helper files in ${sh.dir}, with the model lines written there. Its docs do not say how it reads them.`, src, multi));
@@ -819,11 +920,25 @@ function planLines(F, p, ctx, roles, tool, multi) {
   // Helpers: inherit unless the user chose a model for one.
   if (HELPER_TOOLS.includes(tool) && !sh) {
     const inherit = HELPER_ROLES.filter((role) => r[role].from === 'inherit');
+    // Chosen helpers: one line per model (and where the choice came from), its source under it.
+    const chosen = new Map();
     for (const role of HELPER_ROLES) {
       const x = r[role];
       if (x.from === 'inherit') continue;
-      lines.push(planItem(`${pre(role)}modelproof-${role} (${JOB[role]}) runs ${shownModel(F, x)} (your choice).`, [youSource(F.byId.get(x.model_id), F.modelsAsOf)], multi));
+      const key = `${x.model_ref}|${x.model_id}|${x.example || ''}`;
+      if (!chosen.has(key)) chosen.set(key, []);
+      chosen.get(key).push(role);
     }
+    for (const group of chosen.values()) {
+      const x = r[group[0]];
+      const main = group.length === 1
+        ? `${pre(group[0])}modelproof-${group[0]} (${JOB[group[0]]}) runs ${shownModel(F, x)}`
+        : `${pre('helpers')}${joinList(group.map((role) => `modelproof-${role}`))} run ${shownModel(F, x)}`;
+      lines.push(x.example ? planItem(`${main}. ${choiceSource(F, x)}`, [], multi) : planItem(`${main} (your choice).`, [choiceSource(F, x)], multi));
+    }
+    // The example's hard-build habit: name the model in the call.
+    const hb = r.hard_build;
+    if (hb) lines.push(planItem(`${pre('hard builds')}name ${shownModel(F, hb)} in the call to modelproof-builder (no file sets it). ${choiceSource(F, hb)}`, [], multi));
     if (inherit.length) {
       const names = inherit.map((role) => `modelproof-${role}`);
       const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0];
@@ -868,7 +983,7 @@ function claimLine(F, ctx, id, tool, prio, text) {
   if (!c) return null;
   if (!text && !claimShowable(F, ctx, c, 'sentence', tool)) return null;
   if (text && !claimShowable(F, ctx, c, null, tool)) return null;
-  return { t: `- ${text || c.sentence} ${sourceOf(c)}`, prio, claim: id };
+  return { t: `- ${text || c.sentence} ${sourceOf(c)}`, prio, claim: c.id };
 }
 
 function effortClaimFor(F, ctx, labKeyWanted) {
@@ -893,6 +1008,10 @@ function renderText(F, p, ctx, roles, readers, opts) {
 
   const head = [{ t: `${h1} Modelproof ${copyOnly ? 'lead and bulk' : 'lead, helpers and bulk'} (facts as of ${F.asOf || 'the data date'})` }];
   if (p.who === 'org') head.push({ t: `Shared by ${p.org && p.org.name ? p.org.name : 'the team'}; each person keeps their own rules in their own files.` });
+  for (const ex of uniq(readers.map((t) => (roles[t] ? exampleFor(F, p, t) : null)).filter(Boolean))) {
+    const rare = ex.rarely.length ? ` It uses the ${joinList(ex.rarely)} ${ex.rarely.length > 1 ? 'helpers' : 'helper'} rarely.` : '';
+    head.push({ t: `Started from the example ${ex.title}: ${EXAMPLE_LABEL}, as of ${ex.as_of}. Your own answers come first.${rare}` });
+  }
 
   const sections = [];
   // Lead, helpers, bulk: one set of lines per tool that reads this text.
@@ -914,7 +1033,7 @@ function renderText(F, p, ctx, roles, readers, opts) {
   if (helpers.length) sections.push({ title: copyOnly ? 'Lead and bulk' : 'Lead, helpers and bulk', lines: helpers });
 
   // When to hand off: the sourced cost facts, framed as when a helper is worth it (Claude Code).
-  if (has('claude-code')) {
+  const handOffFacts = () => {
     const wh = [];
     const v = claimLine(F, ctx, 'cc-delegate-verbose', 'claude-code', 3, 'Hand helpers verbose work (test runs, logs): only a summary comes back.');
     if (v) wh.push(v);
@@ -924,6 +1043,25 @@ function renderText(F, p, ctx, roles, readers, opts) {
     if (c) wh.push(c);
     const a = claimLine(F, ctx, 'cc-subagent-usage-limits', 'claude-code', 2, 'Helpers share your usage limits.');
     if (a) wh.push(a);
+    return wh;
+  };
+  // Big-job mode (opt-in): the lead plans and reviews, helpers do every piece, the checker
+  // re-checks each one. Anthropic's words on when a split pays off are about splitting work, not
+  // about its models, so every tool's text shows them; Claude Code keeps the cost facts above too.
+  const bigJob = bigJobOn(F, p) && helperReaders.length > 0;
+  if (bigJob) {
+    const bj = [{ t: `- ${joinList(WORKER_ROLES.map((r) => `modelproof-${r}`))} run every piece of the work; you plan it, split it and review what comes back.` }];
+    const chk = 'Before a piece counts as done, modelproof-checker re-checks it in a fresh context and returns pass or fail with the output.';
+    bj.push((has('claude-code') && claimLine(F, ctx, 'cc-independent-check-unattended', 'claude-code', null, chk)) || { t: `- ${chk}` });
+    const fit = claimLine(F, ctx, 'anthropic-multi-agent-fit', null, 1, 'Split work when the pieces can run in parallel, need more than one context window, or use many tools.');
+    if (fit) bj.push(fit);
+    // What a split costs, in the lab's own sentence.
+    const cost = claimLine(F, ctx, 'anthropic-multi-agent-token-use', null, 2);
+    if (cost) bj.push(cost);
+    if (has('claude-code')) bj.push(...handOffFacts().filter((l) => !cost || l.claim !== cost.claim));
+    sections.push({ title: 'Big-job mode (you turned it on)', lines: bj });
+  } else if (has('claude-code')) {
+    const wh = handOffFacts();
     if (wh.length) sections.push({ title: 'When to hand off', lines: wh });
   }
 
@@ -934,6 +1072,11 @@ function renderText(F, p, ctx, roles, readers, opts) {
   ];
   if (wants('coding', 'frontend', 'agents', 'extraction')) hand.push({ t: '- Let scripts and tests decide pass or fail, not a summary.' });
   hand.push({ t: '- A cold review gets the diff, not the author\'s summary.' });
+  // The checker (big-job mode says it above), with Claude Code's own docs as its source there.
+  if (helperReaders.length && !bigJob) {
+    const text = 'Have modelproof-checker re-check finished work in a fresh context; it returns pass or fail with the output.';
+    hand.push((has('claude-code') && claimLine(F, ctx, 'cc-verify-fresh-model', 'claude-code', 2, text)) || { t: `- ${text}`, prio: 2 });
+  }
   sections.push({ title: 'How to hand off', lines: hand });
 
   // Context.
@@ -1105,6 +1248,30 @@ function antigravityAgent(role) {
     'model: inherit', '---', OWNED_TAG, ...AGENT_BODY[role]].join('\n') + '\n';
 }
 
+// What an example sets, in plain words, for the plan's offer. It is offered only when every model
+// it names is one they can run, so naming them here is safe.
+function exampleSummary(F, ex, t, tool) {
+  const name = (id) => F.byId.get(id).name;
+  const bits = [];
+  if (ex.roles.lead) bits.push(`lead ${name(ex.roles.lead)}${ex.big_job ? ', which plans and reviews' : ''}`);
+  const groups = new Map();
+  for (const role of ROLES) {
+    if (!ex.roles[role]) continue;
+    if (!groups.has(ex.roles[role])) groups.set(ex.roles[role], []);
+    groups.get(ex.roles[role]).push(`modelproof-${role}`);
+  }
+  for (const [id, names] of groups) bits.push(`${joinList(names)} on ${name(id)}`);
+  if (ex.hard_build) bits.push(`${name(ex.hard_build)} named in the call for a hard build`);
+  if (ex.big_job) bits.push('big-job mode, so modelproof-checker re-checks each piece in a fresh context');
+  for (const role of ex.rarely) {
+    const x = t && t[role];
+    const docs = x && x.from === 'tool' ? `${TOOL_LABEL[tool]}'s docs` : 'the lab\'s docs';
+    const on = x && x.model_id && (x.from === 'tool' || x.from === 'lab') ? ` (${x.model_ref && x.model_ref !== x.model_id ? `${x.model_ref} = ` : ''}${x.model_name}, from ${docs})` : '';
+    bits.push(`modelproof-${role}${on} used rarely`);
+  }
+  return bits.join('; ');
+}
+
 /* ------------------------------------------------------------------ preview facts */
 
 function workTags(text) {
@@ -1155,12 +1322,14 @@ function previewFacts(F, p, ctx) {
 const LINE_JOB = {
   scout: /\b(scout\w*|search\w*|explor\w*|research\w*|look-?ups?)\b/i,
   builder: /\b(build|builds|builder|building|implement\w*)\b/i,
-  reviewer: /\b(review\w*|verif\w*|audit\w*)\b/i,
+  reviewer: /\b(review\w*|audit\w*)\b/i,
   bulk: /\b(bulk|batch\w*|mechanical|boilerplate|renames?)\b/i,
+  checker: /\b(checker\w*|verif\w*|re-?check\w*)\b/i,
 };
 const HELPER_JOB = {
   scout: /\b(scout\w*|explor\w*|research\w*)\b/i,
-  reviewer: /\b(review\w*|verif\w*|test-?runner\w*|runs? (the )?tests?)\b/i,
+  reviewer: /\b(review\w*|audit\w*)\b/i,
+  checker: /\b(checker\w*|verif\w*|test-?runner\w*|runs? (the )?tests?)\b/i,
 };
 const NEGATION = /\b(never|avoid|don'?t|do not|not)\b/i;
 // A line that sets the main model or its effort, not a helper's: "always use", "default model".
@@ -1237,7 +1406,7 @@ function setupChecks(F, p, S, parts, roles) {
   for (const a of S.agents) {
     if (a.modelproof || !a.tool || !helperTools.includes(a.tool)) continue;
     const name = safeLine(a.name, 60);
-    for (const role of ['scout', 'reviewer']) {
+    for (const role of Object.keys(HELPER_JOB)) {
       if (!name || !(HELPER_JOB[role].test(name) || (a.description && HELPER_JOB[role].test(a.description)))) continue;
       const item = itemOf(`${a.tool}:agent:${role}`);
       if (item) checks.push({ kind: 'helper', name, path: a.path, tool: a.tool, role, item });
@@ -1283,8 +1452,10 @@ export function buildPackage(profile, facts, setup) {
       const dir = user ? S.dirs.claude : '.claude';
       for (const role of ROLES) {
         const ref = r[role].model_ref || 'inherit';
+        const checker = role === 'checker';
         parts.push(ownedPart(tool, role, `${dir}/agents/modelproof-${role}.md`,
-          ccAgent(`modelproof-${role}`, AGENT_DESCRIPTION[role], ref, helperEffort(F, p, tool, r[role]), AGENT_BODY[role]), ccWhy(ref)));
+          ccAgent(`modelproof-${role}`, AGENT_DESCRIPTION[role], ref, helperEffort(F, p, tool, r[role]), AGENT_BODY[role], checker ? [READ_ONLY_CC] : null),
+          checker ? `${ccWhy(ref)} It cannot write or edit files (disallowedTools).` : ccWhy(ref)));
       }
       // The Explore override is opt-in: it is in the package only when the profile says
       // explore_override: true. It runs Claude Code's built-in Explore helper on the bulk model the
@@ -1302,7 +1473,7 @@ export function buildPackage(profile, facts, setup) {
         parts.push({
           id: 'claude-code:agent:explore', tool, kind: 'owned-file', enforced: true, optional: true,
           target: { scope, path: explorePath },
-          content: ccAgent('Explore', 'Fast read-only search of the codebase for files, symbols and answers.', bulkRef, null, EXPLORE_BODY, ['disallowedTools: Write, Edit, NotebookEdit']),
+          content: ccAgent('Explore', 'Fast read-only search of the codebase for files, symbols and answers.', bulkRef, null, EXPLORE_BODY, [READ_ONLY_CC]),
           why: `Optional, added because you asked: an Explore helper of your own replaces the built-in one, here on ${bulkRef}; the built-in runs on the lead's model.`,
           basis: [basisRec(exploreClaim)],
         });
@@ -1440,6 +1611,32 @@ export function buildPackage(profile, facts, setup) {
     return { id: c.id, tool: c.tool, content, lines: countLines(content), where: 'your system prompt or an OpenRouter preset' };
   });
 
+  // Opt-ins the plan offers. Big-job mode wherever helper files are written, with the lab's own
+  // words on when a split pays off and what it costs. An example setup only in the installer's plan
+  // (a setup was read), only for a tool it covers, only when every model it names is one they can
+  // run and have not ruled out, and always labeled as one person's choice.
+  const bigJob = bigJobOn(F, p);
+  const helperTools = p.tools.filter((t) => HELPER_TOOLS.includes(t));
+  if (bigJob && !helperTools.length) notes.push('Big-job mode needs a tool with helper files, so it changes nothing here.');
+  if (!bigJob && helperTools.length) {
+    const basis = [];
+    for (const id of ['anthropic-multi-agent-fit', 'anthropic-multi-agent-token-use']) {
+      const c = F.claimById.get(id);
+      if (c && claimShowable(F, ctx, c, 'quote')) { basis.push(basisRec(c)); ctx.used.add(c.id); }
+    }
+    available.push({ id: 'big-job', name: 'big-job mode', what: `you plan and review; ${joinList(WORKER_ROLES.map((r) => `modelproof-${r}`))} do every piece, and modelproof-checker re-checks each one in a fresh context`, add: '"big_job": true', basis });
+  }
+  const exUsed = p.example ? F.examples.get(p.example) || null : null;
+  const exApplies = !!exUsed && p.tools.some((t) => exUsed.tools.includes(t));
+  if (exUsed && !exApplies) notes.push(`The example ${exUsed.title} covers ${exUsed.tools.map((t) => TOOL_LABEL[t]).join(' and ')} only, so it changes nothing here.`);
+  if (S.given && !exUsed) {
+    for (const ex of F.examples.values()) {
+      if (!exampleUsable(F, p, ctx, ex)) continue;
+      const tool = p.tools.find((t) => ex.tools.includes(t));
+      available.push({ id: `example:${ex.id}`, kind: 'example', name: ex.title, as_of: ex.as_of, what: exampleSummary(F, ex, roles[tool], tool), add: `"example": "${ex.id}"` });
+    }
+  }
+
   if (S.present) for (const t of p.tools) if (S.present[t] === false) notes.push(`${TOOL_LABEL[t]} was not found on this machine; its files are still listed.`);
   if (parts.some((x) => x.kind === 'owned-file')) notes.push('Start a new session so each tool loads the new helper and rule files.');
   notes.push(`Undo removes every file, block and key this adds; ${S.stateDir ? S.stateDir + '/' : 'the Modelproof state folder'} keeps the install history.`);
@@ -1469,6 +1666,8 @@ export function buildPackage(profile, facts, setup) {
     available,
     checks,
     roles,
+    big_job: bigJob && helperTools.length > 0,
+    example: exApplies ? { id: exUsed.id, title: exUsed.title, as_of: exUsed.as_of } : null,
     preview_facts: preview,
     facts_used: [...ctx.used].sort(),
     notes: allNotes,
@@ -1501,7 +1700,7 @@ function answersLine(pkg) {
 function roleSummary(x, role) {
   if (x.from === 'inherit') return role === 'bulk' && x.choice ? 'inherit until you set its model (the tool\'s docs name no model string)' : 'inherit (runs on the lead\'s model)';
   const name = x.model_ref && x.model_ref !== x.model_id ? `${x.model_ref} = ${x.model_name}` : x.model_name;
-  return `${name} · ${x.from === 'you' ? 'your choice' : role === 'lead' ? 'the tool\'s default, from its own docs' : x.from === 'lab' ? 'from the lab\'s own docs' : 'from the tool\'s own docs'}`;
+  return `${name} · ${x.from === 'you' ? (x.example ? 'your choice, from the example' : 'your choice') : role === 'lead' ? 'the tool\'s default, from its own docs' : x.from === 'lab' ? 'from the lab\'s own docs' : 'from the tool\'s own docs'}`;
 }
 function usageText(u) {
   return u && num(u.openrouter_share) ? `${u.openrouter_share}% of OpenRouter tokens${u.as_of ? ' (' + u.as_of + ')' : ''}` : null;
@@ -1543,6 +1742,8 @@ export function renderPreview(pkg) {
   if (arr(p.never).length) extra.push('never: ' + p.never.map(nm).join(', '));
   if (p.effort_cap) extra.push('effort cap: ' + p.effort_cap);
   if (p.set_default_model) extra.push('set the default model: yes');
+  if (p.big_job) extra.push('big-job mode: on');
+  if (p.example) extra.push('example: ' + (isObj(P.example) ? P.example.title : p.example));
   const chosen = ALL_ROLE_KEYS.filter((k) => p.roles && p.roles[k]).map((k) => `${k} ${nm(p.roles[k])}`);
   if (chosen.length) extra.push('your helper choices: ' + chosen.join(', '));
   if (extra.length) out.push('  ' + extra.join(' · '));
@@ -1603,7 +1804,16 @@ export function renderPreview(pkg) {
         out.push(`    near a full usage limit (a text line, not a setting): ${nl.model_id ? `${nl.when} can run on ${nl.model_ref && nl.model_ref !== nl.model_id ? `${nl.model_ref} = ${nl.model_name}` : nl.model_name}` : 'the tool\'s own words below'}`);
         quotes(nl.basis);
       }
+      const hb = t.hard_build;
+      if (isObj(hb) && hb.model_id) {
+        out.push(`    hard builds (a text line, not a setting): name ${hb.model_ref && hb.model_ref !== hb.model_id ? `${hb.model_ref} = ${hb.model_name}` : hb.model_name} in the call · your choice, from the example`);
+        out.push(`             ${priceText(hb.price)}`);
+      }
     }
+  }
+  if (isObj(P.example)) {
+    out.push('', `Example you chose: ${P.example.title}, as of ${P.example.as_of}`);
+    out.push(`  ${EXAMPLE_LABEL[0].toUpperCase()}${EXAMPLE_LABEL.slice(1)}. It fills only the roles you left open${P.big_job ? ' and turns on big-job mode' : ''}.`);
   }
   const pf = isObj(P.preview_facts) ? P.preview_facts : {};
   if (arr(pf.models_you_use).length) {
@@ -1648,8 +1858,17 @@ export function renderPreview(pkg) {
     out.push('', arr(P.copy).length ? 'Files: none (the installer writes nothing for a copy-only tool).' : 'Files: none (no tool with a file this package can write).');
   }
   for (const a of arr(P.available)) {
-    if (!isObj(a) || !a.path) continue;
-    out.push(`  Also available, not included: ${String(a.path).split('/').pop()}, ${a.what}. Say "add it" to include it (profile ${a.add}).`);
+    if (!isObj(a)) continue;
+    if (a.path) {
+      out.push(`  Also available, not included: ${String(a.path).split('/').pop()}, ${a.what}. Say "add it" to include it (profile ${a.add}).`);
+    } else if (a.kind === 'example') {
+      out.push(`  Example setup, not included: ${a.name}, as of ${a.as_of}: ${EXAMPLE_LABEL}.`);
+      out.push(`    It sets: ${a.what}.`);
+      out.push(`    Say "use the example" to start from it (profile ${a.add}); your own answers still come first.`);
+    } else if (a.name) {
+      out.push(`  Also available, not included: ${a.name}: ${a.what}. Say "add ${a.name}" to include it (profile ${a.add}).`);
+      for (const b of arr(a.basis)) out.push(`    "${b.quote}"`, `    ${b.source_url} (${b.date})`);
+    }
   }
   if (arr(P.notes).length) {
     out.push('', 'Notes');
@@ -1818,6 +2037,9 @@ export function textWithoutHelpers(pkg, part, leftOutIds) {
   if (!helperReaders.some((t) => out.has(t))) return content;
   const multi = plan.length > 1;
   const toolOf = (line) => (multi ? plan.find((t) => line.startsWith(`- ${TOOL_LABEL[t]} `)) : plan[0]) || null;
+  // A line no one tool owns in shared text (big-job mode, the checker) loses a helper only when
+  // every tool reading it left that helper out.
+  const goneAll = new Set(ROLES.filter((r) => helperReaders.every((t) => out.has(t) && out.get(t).has(r))));
   const roleOf = (name) => name.replace(/^modelproof-/, '');
   const joinNames = (names) => (names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0]);
   const LIST = /(modelproof-[a-z]+(?:, modelproof-[a-z]+)*(?: and modelproof-[a-z]+)?) (runs|run|says|say)\b/g;
@@ -1846,7 +2068,7 @@ export function textWithoutHelpers(pkg, part, leftOutIds) {
         if (helperReaders.every((t) => out.has(t) && out.get(t).has('scout'))) line = line.replace('to modelproof-scout', 'to a helper');
       } else {
         const tool = toolOf(line);
-        const gone = tool && out.get(tool);
+        const gone = tool ? out.get(tool) : (goneAll.size ? goneAll : null);
         if (gone) {
           // A line of groups ("... helper files in X: A say model: m; B says model: n. Its docs ...").
           const g = /^(.*?: )(modelproof-.*?)(\. Its docs do not say how it reads those model lines\..*)$/.exec(line);

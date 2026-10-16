@@ -1,4 +1,4 @@
-Modelproof package · facts as of 2026-10-03 · generator 1.1.0
+Modelproof package · facts as of 2026-10-03 · generator 1.2.0
 Your answers: person · user scope · tools: Claude Code, Codex · plans: Anthropic Max 5x, OpenAI Plus · limits: sometimes · work: coding
 
 Lead, helpers and bulk per tool
@@ -23,6 +23,7 @@ Lead, helpers and bulk per tool
              "For simple subagent tasks, specify model: haiku in your subagent configuration"
              https://code.claude.com/docs/en/costs (2026-09-27)
              list price $1 in / $5 out per 1M tokens · 0.15% of OpenRouter tokens (2026-10-01)
+    checker  inherit (runs on the lead's model)
     near a full usage limit (a text line, not a setting): a routine, well-scoped thread can run on sonnet = Claude Sonnet 5.5
              "It uses meaningfully more of your quota, so consider switching to Sonnet for routine work."
              https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)
@@ -47,6 +48,7 @@ Lead, helpers and bulk per tool
              "use gpt-6-luna when you want a faster, lower-cost option for lighter subagent work."
              https://developers.openai.com/codex/subagents (2026-10-03)
              list price $0.1 in / $0.5 out per 1M tokens · 3.6% of OpenRouter tokens (2026-10-01)
+    checker  inherit (runs on the lead's model)
     near a full usage limit (a text line, not a setting): lighter helper work can run on GPT-6 Luna
              "use gpt-6-luna when you want a faster, lower-cost option for lighter subagent work."
              https://developers.openai.com/codex/subagents (2026-10-03)
@@ -76,18 +78,27 @@ Files (numbered; answer "no to 3" to leave one out)
       Claude Code runs this helper on the lead's model (model: inherit).
    4. file   ~/.claude/agents/modelproof-bulk.md · 11 lines · the tool obeys it
       Claude Code runs this helper on haiku, the model named in the file.
-   5. file   ~/.codex/agents/modelproof-scout.toml · 11 lines · the tool obeys it
+   5. file   ~/.claude/agents/modelproof-checker.md · 13 lines · the tool obeys it
+      Claude Code runs this helper on the lead's model (model: inherit). It cannot write or edit files (disallowedTools).
+   6. file   ~/.codex/agents/modelproof-scout.toml · 11 lines · the tool obeys it
       No model set, so Codex runs this helper on the lead's model and effort.
-   6. file   ~/.codex/agents/modelproof-builder.toml · 10 lines · the tool obeys it
+   7. file   ~/.codex/agents/modelproof-builder.toml · 10 lines · the tool obeys it
       No model set, so Codex runs this helper on the lead's model and effort.
-   7. file   ~/.codex/agents/modelproof-reviewer.toml · 10 lines · the tool obeys it
+   8. file   ~/.codex/agents/modelproof-reviewer.toml · 10 lines · the tool obeys it
       No model set, so Codex runs this helper on the lead's model and effort.
-   8. file   ~/.codex/agents/modelproof-bulk.toml · 11 lines · the tool obeys it
+   9. file   ~/.codex/agents/modelproof-bulk.toml · 11 lines · the tool obeys it
       Codex runs this helper on gpt-6-luna; a model in a custom agent file wins for that agent.
-   9. file   ~/.claude/rules/modelproof.md · 38 lines · text
+  10. file   ~/.codex/agents/modelproof-checker.toml · 11 lines · the tool obeys it
+      No model set, so Codex runs this helper on the lead's model and effort.
+  11. file   ~/.claude/rules/modelproof.md · 39 lines · text
       Claude Code loads every file in rules/ each session; your CLAUDE.md is not touched.
-  10. block  ~/.codex/AGENTS.md (added at the end) · 28 lines · text
+  12. block  ~/.codex/AGENTS.md (added at the end) · 29 lines · text
       Codex reads this AGENTS.md before any task.
+  Also available, not included: big-job mode: you plan and review; modelproof-scout, modelproof-builder and modelproof-bulk do every piece, and modelproof-checker re-checks each one in a fresh context. Say "add big-job mode" to include it (profile "big_job": true).
+    "multi-agent systems excel at valuable tasks that involve heavy parallelization, information that exceeds single context windows, and interfacing with numerous complex tools"
+    https://www.anthropic.com/engineering/multi-agent-research-system (2026-10-16)
+    "agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats"
+    https://www.anthropic.com/engineering/multi-agent-research-system (2026-09-27)
 
 Notes
   - Start a new session so each tool loads the new helper and rule files.
