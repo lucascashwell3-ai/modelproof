@@ -420,6 +420,7 @@ if (process.argv.includes('--scan')) {
     const files = scannedFiles(ROOT);
     assert.ok(files.includes('board.html') && files.includes('index.html'));
     assert.ok(files.includes('assets/app.js') && files.includes('assets/board-data.mjs'));
+    assert.ok(files.includes('models.html') && files.includes('teams.html') && files.includes('assets/models.js') && files.includes('assets/timeline.mjs') && files.includes('assets/taps.mjs'), 'the new pages and their scripts are scanned');
     assert.ok(files.some((f) => f.startsWith('mcp/')) && files.some((f) => f.startsWith('skills/')));
     assert.ok(!files.some((f) => f.startsWith('data/') || f.startsWith('scripts/') || f.startsWith('archive/') || f.includes('node_modules/')));
   });

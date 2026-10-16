@@ -12,6 +12,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as FR from '../assets/freshness.mjs';
 import * as BD from '../assets/board-data.mjs';
+import { renderStamps } from '../assets/stamps.mjs';
 import { FEEDS } from './validate-data.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -130,29 +131,34 @@ test('dayLabel moved here; board-data re-exports the same function', () => {
 
 const slots = (html) => [...html.matchAll(/data-fresh="([^"]+)"/g)].map((m) => m[1]);
 
-test('index and table: every panel section carries a stamp slot for a feed with a limit; the demo carries none', () => {
-  for (const page of ['index.html', 'table.html']) {
+test('models and table: every section carries a stamp slot for a feed with a limit; Build and Teams carry only the footer stamp', () => {
+  const pages = [['models.html', /<section\b/], ['table.html', /<section class="panel"/]];
+  for (const [page, splitter] of pages) {
     const html = read(page);
-    const sections = html.split(/<section class="panel"/).slice(1).map((s) => s.split('</section>')[0]);
-    assert.ok(sections.length >= 1, `${page} has panel sections`);
+    const sections = html.split(splitter).slice(1).map((s) => s.split('</section>')[0]);
+    assert.ok(sections.length >= 1, `${page} has sections`);
     for (const s of sections) {
       const id = (/id="([^"]+)"/.exec(s) || [])[1];
       assert.equal(slots(s).length, 1, `${page} #${id} has one freshness slot`);
     }
     for (const f of slots(html)) assert.ok(FR.feedLimits(f), `${page}: slot feed ${f} has a limit`);
-    assert.match(html, /<script src="assets\/app\.js\?v=[^"]+"><\/script>/, `${page} loads app.js with a cache key`);
   }
-  const index = read('index.html');
-  // the hero terminal plays a scripted demo, not dated data: a stamp there would date the script
-  const term = index.slice(index.indexOf('<div class="term-col">'), index.indexOf('</section>', index.indexOf('<div class="term-col">')));
-  assert.ok(term.length > 0, 'index has the demo terminal');
-  assert.equal(slots(term).length, 0, 'the demo terminal carries no stamp');
-  assert.ok(slots(index).length >= 4, 'compare, map, effort and releases');
+  assert.match(read('table.html'), /<script src="assets\/app\.js\?v=[^"]+"><\/script>/, 'table.html loads app.js with a cache key');
+  const models = read('models.html');
+  assert.match(models, /<script type="module" src="assets\/models\.js"><\/script>/, 'models.html loads its module');
+  assert.deepEqual(slots(models).sort(), ['effort-ladders', 'models', 'models', 'releases'], 'ladder, compare, releases and the footer');
+  // the board and the Teams page show no dated section; the footer stamp keeps the data's date and age in view
+  for (const page of ['index.html', 'teams.html']) {
+    const html = read(page);
+    assert.deepEqual(slots(html), ['models'], `${page}: the footer stamp and nothing else`);
+    assert.match(html.slice(html.indexOf('<footer')), /data-fresh="models"/, `${page}: the stamp sits in the footer`);
+  }
+  assert.match(models.slice(models.indexOf('<footer')), /data-fresh="models"/, 'models.html: a stamp in the footer');
 });
 
 test('app.js: one notice per file per page; every later slot for that file says "N days old"', async () => {
   const vm = await import('node:vm');
-  const html = read('index.html');
+  const html = read('table.html');
   const slots = [...html.matchAll(/data-fresh="([^"]+)"/g)].map((m) => ({ dataset: { fresh: m[1] }, innerHTML: '' }));
   const nav = { innerHTML: '', title: '', classList: { on: false, toggle(c, v) { this.on = v; } } };
   const noop = () => {};
@@ -182,6 +188,40 @@ test('app.js: one notice per file per page; every later slot for that file says 
   assert.equal(nav.innerHTML, `● <span class="nav__asof-extra">As of </span>${FR.dayLabel(old)} · <span class="nav__asof-extra">40 days </span>old`);
   assert.equal(nav.innerHTML.replace(/<span class="nav__asof-extra">[^<]*<\/span>/g, ''), `● ${FR.dayLabel(old)} · old`);
   assert.equal(nav.title, FR.staleText('models', old, NOW));
+});
+
+test('stamps.mjs on the Models page: one notice per file; every later slot for that file says "N days old"', () => {
+  const html = read('models.html');
+  const slotEls = [...html.matchAll(/data-fresh="([^"]+)"/g)].map((m) => ({ dataset: { fresh: m[1] }, innerHTML: '' }));
+  const old = back(40), oldLad = back(200);
+  const models = { as_of: old, models: [], effort_ladders: [{ as_of: oldLad }] };
+  renderStamps(slotEls, { F: FR, models, ladder: models.effort_ladders[0], now: NOW });
+  const byFile = {};
+  for (const s of slotEls) (byFile[s.dataset.fresh === 'effort-ladders' ? 'ladders' : 'models'] ||= []).push(s.innerHTML);
+  assert.ok(byFile.models.length >= 3 && byFile.ladders.length === 1, 'compare, releases and the footer share the catalog date; the ladder has its own');
+  for (const [file, list] of Object.entries(byFile)) {
+    assert.equal(list.filter((h) => /class="mp-stale"/.test(h)).length, 1, `${file}: the notice shows once`);
+    assert.match(list[0], /class="mp-stale" role="note"/, `${file}: the first slot has the notice`);
+    for (const h of list.slice(1)) assert.match(h, /mp-asof--stale[^>]*>[^<]*<span class="mp-asof__flag"> · \d+ days old<\/span>/, `${file}: later slots say how old in words`);
+  }
+  assert.ok(byFile.ladders[0].includes(`datetime="${oldLad}"`), 'the ladder slot carries the ladder\'s own date, not the catalog\'s');
+  // fresh data: a stamp, no notice, no word about age
+  const fresh = slotEls.map((s) => ({ dataset: s.dataset, innerHTML: '' }));
+  renderStamps(fresh, { F: FR, models: { as_of: back(1) }, ladder: { as_of: back(1) }, now: NOW });
+  for (const s of fresh) assert.doesNotMatch(s.innerHTML, /mp-stale|days old/, s.dataset.fresh);
+  // no module, or no data: slots are left as they were
+  const untouched = [{ dataset: { fresh: 'models' }, innerHTML: 'kept' }];
+  renderStamps(untouched, { F: null, models });
+  renderStamps(untouched, { F: FR, models: null });
+  assert.equal(untouched[0].innerHTML, 'kept');
+});
+
+test('the Models page loads the stamps module from its own URL and refills the slots on a ladder switch', () => {
+  const core = read('assets/site-core.js');
+  assert.match(core, /import\('\.\/freshness\.mjs'\)/, 'a dynamic import, so a failed module leaves the facts');
+  assert.match(core, /import\('\.\/stamps\.mjs'\)/);
+  assert.match(core, /\$\$\('\[data-fresh\]'\)/);
+  assert.match(read('assets/models.js'), /fillStamps\(facts, \{ ladder: ladder\(\) \}\)/);
 });
 
 test('app.js loads the module from its own URL and fills every slot, the nav badge and the footer', () => {
@@ -232,6 +272,8 @@ test('shown dates near the stamps use the stamps\' format (board facts and quote
 test('the dark stylesheet styles the shared classes, and the board footer stays hidden on phones', () => {
   const css = read('assets/styles.css');
   for (const cls of ['.mp-asof {', '.mp-asof--stale {', '.mp-stale {', '.panel__fresh {']) assert.ok(css.includes(cls), cls);
+  const site = read('assets/site.css');
+  for (const cls of ['.mp-fresh {', '.mp-asof {', '.mp-asof--stale {', '.mp-asof__flag {', '.mp-stale {']) assert.ok(site.includes(cls), `site.css styles ${cls}`);
   // the reason the summary carries the stamps: phones never see the board footer
   assert.match(read('board.html'), /@media \(max-width: 768px\)\{[\s\S]*?footer\.foot\{ display:none; \}/);
 });
