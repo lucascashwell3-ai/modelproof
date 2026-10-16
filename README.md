@@ -35,16 +35,16 @@ Live at **[lucascashwell3-ai.github.io/modelproof](https://lucascashwell3-ai.git
 
 ## What the site shows
 
-- **Compare** — any two or three models side by side: price, context, sourced scores, and what
-  the lab says about each.
-- **The model map** — every model plotted, price (→) vs. coding score (↑).
-- **Effort ladders** — what turning up a model's reasoning-effort dial actually buys, as
-  published cost-accuracy curves; only ladders with a named publisher, harness, and method are
-  plotted.
-- **Usage lenses** — different measures of who uses what, shown separately because they disagree.
-- **Timeline** — dated releases, price changes, and retirements, each with a one-line "should
-  you care?"
-- **Full table** — every tracked model with its sources and sourced quotes, filterable by lab.
+- **Build** (the home page) — three taps (your tool, your plan, how you work) draw the setup as a
+  board of jobs and the model behind each one. Click a box to change its model, then Install copies
+  the prompt.
+- **Models** — what turning up a model's reasoning-effort dial buys (published cost-accuracy
+  curves, only for ladders with a named publisher, harness and method), a side-by-side compare of
+  up to three models, and a track of dated releases by lab. Every section carries the date of its
+  data and says so when that data is old.
+- **Teams** — what comes after launch.
+- **Full table** ([`table.html`](table.html)) — every tracked model with its sources and sourced
+  quotes, filterable by lab.
 - **Board** ([`board.html`](board.html)) — lay out the teams and routines in a company, or your
   own set of models, and see the monthly bill and the cost per person and per year.
 - **How we source facts** ([`how-we-pick.html`](how-we-pick.html)) — where every number and quote

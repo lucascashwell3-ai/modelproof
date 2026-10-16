@@ -6,7 +6,7 @@
 // quotes the model string, and Claude Code's bulk default moved onto it. Then, with the shipped code untouched:
 //   (a) the board's data module lists it in the pickers, and the board's install package (the
 //       same buildPackage call board.html makes) names it as the bulk default with its source;
-//   (b) the index timeline (assets/app.js in a vm) renders its release title and date;
+//   (b) the Models page timeline (assets/timeline.mjs) renders its release title and date;
 //   (c) `install.mjs plan --data <copy>` names it;
 //   (d) `validate-data.mjs --data <copy>` passes;
 //   (e) the no-typed-facts test still passes with the drill model's name and id added to its
@@ -14,7 +14,7 @@
 //       suite gates the scheduled Collect run, and a real model whose name happens to match some
 //       shipped text must not stop Collect. The live-name scan runs on pull requests (tests.yml).
 // The stale drill (f) dates a copy of every dated file one day past its limit (today minus the
-// limit plus one, computed): every section on index and table, the board's stamps and the vendor
+// limit plus one, computed): every section on models and table, the board's stamps and the vendor
 // list show the stale notice, and validate-data still passes (stale is shown, never a gate).
 // Nothing here counts models or releases or fixes a date: the drill reads whatever data/ holds
 // today and must pass on any valid future data. Temp dirs are removed at the end.
@@ -37,6 +37,9 @@ import * as FR from '../assets/freshness.mjs';
 import * as BD from '../assets/board-data.mjs';
 import { scannedFiles, scanText } from './test-no-typed-facts.mjs';
 import { buildPackage, profileFromBoard, packageText, renderPreview } from '../assets/instructions.mjs';
+import { timelineHtml, timelineData } from '../assets/timeline.mjs';
+import { renderStamps } from '../assets/stamps.mjs';
+import { esc } from '../assets/site-core.js';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const DRILL_NAME = 'Claude Drill 9.1';
@@ -171,48 +174,36 @@ test('drill (a): the board install package shows the new bulk default with its s
   assert.match(bulkFile, new RegExp(`^model: ${drill.id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'm'), 'the bulk helper file sets the drill model');
 });
 
-// assets/app.js in a vm, with just enough of a document for renderFeed to write #feed.
-function loadTimeline() {
-  const feed = { innerHTML: '' };
-  const noop = () => {};
-  const document = {
-    readyState: 'loading', addEventListener: noop,
-    querySelector: (s) => (s === '#feed' ? feed : null), querySelectorAll: () => [],
-    documentElement: { classList: { contains: () => false } },
-  };
-  const ctx = vm.createContext({ document, addEventListener: noop, setTimeout: noop, setInterval: noop, clearInterval: noop, console });
-  const src = fs.readFileSync(path.join(ROOT, 'assets', 'app.js'), 'utf8');
-  return { feed, app: vm.runInContext(`${src}\n;({ state, renderFeed, relWhen })`, ctx) };
-}
-
-test('drill (b): the index timeline renders the new release', () => {
-  const { feed, app } = loadTimeline();
-  app.state.data = files.models;
-  app.renderFeed();
-  assert.ok(feed.innerHTML.includes(release.title), 'the release title is on the timeline');
-  const items = feed.innerHTML.split('<li class="rel"').slice(1);
-  const mine = items.findIndex((x) => x.includes(release.title));
-  const when = app.relWhen(release.date, release.date_precision);
-  // Newest first: nothing on file is dated later, and only entries of the same day come before it.
+// The Models page timeline is built by assets/timeline.mjs from the catalog alone: markup in, no page.
+test('drill (b): the Models page timeline renders the new release', () => {
+  const html = timelineHtml(files.models);
+  const when = BD.dayLabel(release.date);
+  assert.ok(html.includes(esc(release.title)), 'the release title is on the timeline');
+  // Newest on file: nothing is dated later, and it is the one the detail line opens on.
   assert.ok(!files.models.releases.some((r) => r.date > release.date), 'the drill release is on the newest day');
-  assert.ok(mine >= 0 && mine < files.models.releases.filter((r) => r.date === release.date).length, 'the newest release is listed first');
-  assert.ok(items[mine].includes(`<span class="rel__mon">${when.mon}</span><span class="rel__day">${when.day}</span>`), `dated ${release.date}`);
+  const detail = html.slice(html.indexOf('<div class="tl-detail"'));
+  assert.ok(detail.includes(`<b>${esc(release.title)}</b><span>${esc(release.vendor)} · ${when}</span>`), `the newest release is selected, dated ${release.date}`);
+  // Its dot sits on the track, dated, and no dot sits to its right.
+  const dots = [...html.matchAll(/<button type="button" class="dot" data-i="(\d+)" style="left:([\d.]+)%"[^>]*aria-label="([^"]*)"/g)];
+  const mine = dots.find((d) => d[3] === `${esc(release.title)}, ${when}`);
+  assert.ok(mine, 'the release has a dot on the track, labelled with its title and date');
+  assert.ok(dots.every((d) => +d[2] <= +mine[2]), 'no release is later on the track');
+  const { lanes } = timelineData(files.models);
+  assert.ok(lanes.includes(release.vendor) || lanes.includes('Others'), 'its lab has a lane');
 });
 
 test('drill (b): a month, quarter or year release shows no day the source never gave', () => {
-  const { feed, app } = loadTimeline();
   const at = (date, date_precision) => ({ kind: 'model', date, date_precision, vendor: 'X', title: `t-${date_precision}`, summary: 's', source: 'https://x.example' });
   const cases = [
-    [at('2026-07-01', 'month'), 'JUL', "'26"],
-    [at('2026-07-01', 'quarter'), 'Q3', "'26"],
-    [at('2026-01-01', 'year'), '', '2026'],
-    [at('2026-07-01'), 'JUL', '01'],
+    [at('2026-07-01', 'month'), 'Jul 2026'],
+    [at('2026-07-01', 'quarter'), 'Q3 2026'],
+    [at('2026-01-01', 'year'), '2026'],
+    [at('2026-07-01'), '1 Jul 2026'],
   ];
-  for (const [entry, mon, day] of cases) {
-    app.state.data = { releases: [entry] };
-    app.renderFeed();
-    const when = (feed.innerHTML.match(/<div class="rel__when">.*?<\/div>/) || [''])[0];
-    assert.equal(when, `<div class="rel__when"><span class="rel__mon">${mon}</span><span class="rel__day">${day}</span></div>`, `${entry.date} at ${entry.date_precision || 'day'} precision`);
+  for (const [entry, shown] of cases) {
+    const html = timelineHtml({ as_of: entry.date, releases: [entry] });
+    assert.ok(html.includes(`<span>X · ${shown}</span>`), `${entry.date} at ${entry.date_precision || 'day'} precision: detail line`);
+    assert.ok(html.includes(`aria-label="${entry.title}, ${shown}"`), `${entry.date} at ${entry.date_precision || 'day'} precision: dot label`);
   }
 });
 
@@ -312,11 +303,22 @@ function datedCopy(name, daysPast) {
   return { dir, asOf };
 }
 
-// assets/app.js in a vm with one stub element per [data-fresh] slot the real page carries, plus the
-// nav badge and the footer date.
+// One stub element per [data-fresh] slot the real page carries. The Models page fills its slots with
+// assets/stamps.mjs; table.html runs assets/app.js in a vm, which also has the nav badge and the
+// footer date. Either way `app` has the same three handles: state, renderFreshness.
 function loadSlots(page) {
   const html = fs.readFileSync(path.join(ROOT, page), 'utf8');
   const slots = [...html.matchAll(/data-fresh="([^"]+)"/g)].map((m) => ({ dataset: { fresh: m[1] }, innerHTML: '' }));
+  if (page === 'models.html') {
+    const app = {
+      state: { data: null, fresh: null, now: undefined, ladder: 0 },
+      renderFreshness() {
+        const st = app.state;
+        renderStamps(slots, { F: st.fresh, models: st.data, ladder: ((st.data && st.data.effort_ladders) || [])[st.ladder] || null, now: st.now });
+      },
+    };
+    return { slots, nav: null, foot: null, app };
+  }
   const nav = { innerHTML: '', title: '', classList: { on: false, toggle(c, v) { this.on = v; } } };
   const foot = { textContent: '' };
   const noop = () => {};
@@ -335,7 +337,7 @@ test('drill (f): one day past every limit, every section says it is stale; each 
   const { dir, asOf } = datedCopy('stale', (max) => max + 1);
   const models = readJson(path.join(dir, 'models.json'));
   const age = FR.FEED_FRESHNESS.models.maxDays + 1;
-  for (const page of ['index.html', 'table.html']) {
+  for (const page of ['models.html', 'table.html']) {
     const { slots, nav, foot, app } = loadSlots(page);
     assert.ok(slots.length >= 1, `${page} has freshness slots`);
     app.state.data = models;
@@ -358,8 +360,12 @@ test('drill (f): one day past every limit, every section says it is stale; each 
       }
       assert.ok(s.innerHTML.includes(`datetime="${asOf[feed]}"`), `${page} stamp carries the data date`);
     }
-    assert.ok(nav.classList.on && nav.innerHTML.replace(/<[^>]+>/g, '').includes(`As of ${FR.dayLabel(asOf.models)} · ${age} days old`), `${page} nav badge keeps the date and says how old`);
-    assert.equal(foot.textContent, FR.dayLabel(asOf.models));
+    if (nav) {   // table.html keeps the nav badge and the footer date; the Models page puts the stamp in its footer slot
+      assert.ok(nav.classList.on && nav.innerHTML.replace(/<[^>]+>/g, '').includes(`As of ${FR.dayLabel(asOf.models)} · ${age} days old`), `${page} nav badge keeps the date and says how old`);
+      assert.equal(foot.textContent, FR.dayLabel(asOf.models));
+    } else {
+      assert.ok(slots.some((s) => s.dataset.fresh === 'models' && s.innerHTML.includes(` · ${age} days old</span>`)), `${page} says how old in words in a slot that is not the first`);
+    }
   }
   // The board and how-we-pick build theirs from the same module with the file's own date.
   const files = { models: 'Model prices', plans: 'Plan prices', 'tool-defaults': 'Tool defaults', 'per-request': 'Request sizes', vendors: 'Vendor countries' };
@@ -377,7 +383,7 @@ test('drill (f): one day past every limit, every section says it is stale; each 
 test('drill (f): at exactly every limit, no section shows the notice', () => {
   const { dir, asOf } = datedCopy('at-limit', (max) => max);
   const models = readJson(path.join(dir, 'models.json'));
-  for (const page of ['index.html', 'table.html']) {
+  for (const page of ['models.html', 'table.html']) {
     const { slots, nav, app } = loadSlots(page);
     app.state.data = models;
     app.state.fresh = FR;
@@ -387,13 +393,13 @@ test('drill (f): at exactly every limit, no section shows the notice', () => {
       assert.doesNotMatch(s.innerHTML, /mp-stale/, `${page} [data-fresh=${s.dataset.fresh}]`);
       assert.ok(s.innerHTML.includes(`As of ${FR.dayLabel(asOf[feed])}`), `${page} stamp`);
     }
-    assert.ok(!nav.classList.on && nav.innerHTML.includes(`As of ${FR.dayLabel(asOf.models)}`), `${page} nav badge`);
+    if (nav) assert.ok(!nav.classList.on && nav.innerHTML.includes(`As of ${FR.dayLabel(asOf.models)}`), `${page} nav badge`);
   }
   for (const feed of Object.keys(asOf)) assert.equal(FR.staleHtml(feed, asOf[feed]), '', feed);
 });
 
 test('drill (f): with no module loaded, the sections keep the facts and show no broken stamp', () => {
-  const { slots, app } = loadSlots('index.html');
+  const { slots, app } = loadSlots('models.html');
   app.state.data = readJson(path.join(ROOT, 'data', 'models.json'));
   app.state.fresh = null;
   app.renderFreshness();
@@ -401,7 +407,7 @@ test('drill (f): with no module loaded, the sections keep the facts and show no 
 });
 
 test('section 03 stamps the date of the effort ladder on screen, not models.json\'s, and follows a switch', () => {
-  const { slots, app } = loadSlots('index.html');
+  const { slots, app } = loadSlots('models.html');
   const models = readJson(path.join(ROOT, 'data', 'models.json'));
   models.as_of = '2026-10-04';
   models.effort_ladders = [{ ...models.effort_ladders[0], as_of: '2026-07-24' }, { ...models.effort_ladders[0], as_of: '2026-09-22' }];
@@ -410,7 +416,7 @@ test('section 03 stamps the date of the effort ladder on screen, not models.json
   const now = Date.parse('2026-10-04T12:00:00Z');
   app.state.now = now;
   const slot = slots.find((s) => s.dataset.fresh === 'effort-ladders');
-  assert.ok(slot, 'index.html has the effort-ladders slot');
+  assert.ok(slot, 'models.html has the effort-ladders slot');
   app.state.ladder = 0;
   app.renderFreshness();
   assert.ok(slot.innerHTML.includes('datetime="2026-07-24"') && slot.innerHTML.includes('As of 24 Jul 2026'), slot.innerHTML);
@@ -423,6 +429,6 @@ test('section 03 stamps the date of the effort ladder on screen, not models.json
   app.renderFreshness();
   assert.match(slot.innerHTML, /Not updated in 156 days\. Usually updated when the publisher posts new runs\./);
   // the ladder switch fills the stamp again
-  const src = fs.readFileSync(path.join(ROOT, 'assets', 'app.js'), 'utf8');
-  assert.match(src, /state\.ladder = \+b\.getAttribute\('data-lad'\);[^\n]*renderEffort\(\); renderFreshness\(\);/);
+  const src = fs.readFileSync(path.join(ROOT, 'assets', 'models.js'), 'utf8');
+  assert.match(src, /L\.id = t\.dataset\.lad;[^\n]*renderLadder\(\{ animate: true \}\); fillStamps\(facts, \{ ladder: ladder\(\) \}\);/);
 });
