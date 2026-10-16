@@ -32737,7 +32737,7 @@
         },
         "bulk": {
           "usage_rank": 4,
-          "usage_share": 2.47,
+          "usage_share": 2.48,
           "arena_rank": null,
           "expert_default": null,
           "families": 1
@@ -32860,7 +32860,7 @@
           "measured": [],
           "chosen": {
             "rank": 8,
-            "share": 2.47,
+            "share": 2.48,
             "tags": [],
             "n_models": 577,
             "as_of": "2026-10-09",
