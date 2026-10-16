@@ -22,8 +22,8 @@
       "tool": "claude-code",
       "field": "alias:opus",
       "url": "https://code.claude.com/docs/en/model-config",
-      "anchor": "the version that the opus and sonnet aliases resolve to depends on the provider",
-      "pattern": "provider opus sonnet anthropic api (opus \\d+(?:\\.\\d+)?) sonnet",
+      "anchor": "aliases resolve to the newest version on the anthropic api",
+      "pattern": "provider opus sonnet haiku anthropic api (opus \\d+(?:\\.\\d+)?) sonnet",
       "value": "model",
       "value_to_id": "claude",
       "write": "field",
@@ -38,8 +38,8 @@
       "tool": "claude-code",
       "field": "alias:sonnet",
       "url": "https://code.claude.com/docs/en/model-config",
-      "anchor": "the version that the opus and sonnet aliases resolve to depends on the provider",
-      "pattern": "provider opus sonnet anthropic api opus \\d+(?:\\.\\d+)? (sonnet \\d+(?:\\.\\d+)?)\\b",
+      "anchor": "aliases resolve to the newest version on the anthropic api",
+      "pattern": "provider opus sonnet haiku anthropic api opus \\d+(?:\\.\\d+)? (sonnet \\d+(?:\\.\\d+)?)\\b",
       "value": "model",
       "value_to_id": "claude",
       "write": "field",
@@ -105,7 +105,7 @@
       "field": "default_effort:opus-5-5",
       "url": "https://code.claude.com/docs/en/model-config",
       "anchor": "the model's default effort:",
-      "pattern": "the model's default effort: \\w+ on every model that supports effort, except that [^,]{0,80}?\\b{short:claude-code.lead}\\b[^,]{0,40}?\\bdefaults? to (\\w+)",
+      "pattern": "the model's default effort: \\w+ on every model that supports effort, except that (?:[^,]|,(?= (?:and )?[a-z]+ \\d)){0,80}?\\b{short:claude-code.lead}\\b(?:,? (?:and )?[a-z]+ \\d+(?:\\.\\d+)?)*[^,]{0,40}?\\bdefaults? to (\\w+)",
       "value": "word",
       "write": "field",
       "maps_to": "guidance.tool_plans[tool=claude-code].lead.effort",
@@ -143,23 +143,6 @@
         "cc-effort-levels"
       ],
       "sentence": "Claude Code's settings reference lists {value:list} as the effort values maxEffortLevel takes."
-    },
-    {
-      "id": "codex-changelog-default",
-      "tool": "codex",
-      "field": "changelog:default_model",
-      "url": "https://developers.openai.com/codex/changelog",
-      "anchor": "as the default model in the bundled catalog",
-      "pattern": "added (gpt-[\\d.]+ [a-z]+) as the default model in the bundled catalog",
-      "value": "model",
-      "value_to_id": "direct",
-      "first_match": true,
-      "write": "field",
-      "maps_to": "guidance.tool_plans[tool=codex].lead.model_id",
-      "claim_ids": [
-        "codex-6-1-sol-default-catalog"
-      ],
-      "sentence": "Codex CLI's changelog records {name:codex.lead} as the default model in its bundled model catalog."
     },
     {
       "id": "codex-catalog-effort-lead",
@@ -471,7 +454,7 @@
       "field": "default_effort:sonnet-5-5",
       "url": "https://code.claude.com/docs/en/model-config",
       "anchor": "the model's default effort:",
-      "pattern": "the model's default effort: \\w+ on every model that supports effort, except that [^,]{0,80}?\\bsonnet 5\\.5\\b[^,]{0,40}?\\bdefaults? to (\\w+)",
+      "pattern": "the model's default effort: \\w+ on every model that supports effort, except that (?:[^,]|,(?= (?:and )?[a-z]+ \\d)){0,80}?\\bsonnet 5\\.5\\b(?:,? (?:and )?[a-z]+ \\d+(?:\\.\\d+)?)*[^,]{0,40}?\\bdefaults? to (\\w+)",
       "value": "word",
       "write": "flag",
       "baseline": {
@@ -513,7 +496,7 @@
       "field": "subagent_default",
       "url": "https://code.claude.com/docs/en/sub-agents",
       "anchor": "claude code resolves the subagent's model in this order",
-      "pattern": "resolves the subagent's model in this order: the per-invocation model parameter the subagent definition's model frontmatter, where inherit selects the main conversation's model the claude_code_subagent_model environment variable, when you set it to a model alias or model id ([^.:]{1,80}?) in two cases",
+      "pattern": "resolves the subagent's model in this order: the per-invocation model parameter the subagent definition's model frontmatter, where inherit selects the main conversation's model the claude_code_subagent_model environment variable, when you set it to a model alias or model id ([^.:]{1,80}?) if an installed mod",
       "value": "text",
       "write": "flag",
       "baseline": {
@@ -597,8 +580,8 @@
       "tool": "claude-code",
       "field": "bulk_model",
       "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
-      "anchor": "it fits high-volume work with checkable outputs",
-      "pattern": "at the other end, claude ([a-z]+ \\d+(?:\\.\\d+)?) answered .{0,400}?it fits high-volume work with checkable outputs",
+      "anchor": "work with checkable outputs",
+      "pattern": "at the other end, claude ([a-z]+ \\d+(?:\\.\\d+)?) suits [^.]{0,80}?\\bwork with checkable outputs",
       "value": "model",
       "value_to_id": "claude",
       "write": "flag",
@@ -954,15 +937,14 @@
     {
       "id": "antigravity.core.pro",
       "tool": "antigravity",
-      "field": "lead basis: core agent Pro model",
-      "url": "https://antigravity.google/docs/plans",
-      "anchor": "use of gemini models, including",
-      "pattern": "use of gemini models, including (gemini [0-9.]+ pro), ",
+      "field": "core reasoning model: first Pro row in the models table",
+      "url": "https://antigravity.google/docs/models",
+      "anchor": "availability depends on your plan: model free & google ai plus",
+      "pattern": "availability depends on your plan: model .{0,2000}?\\b(gemini [0-9.]+ pro)\\b",
       "value": "text",
       "write": "flag",
       "baseline": {
-        "claim": "antigravity-core-agent-models",
-        "in": "quote"
+        "sentinel": "gemini 3.1 pro"
       }
     },
     {
@@ -971,7 +953,7 @@
       "field": "lead basis: core agent Flash model",
       "url": "https://antigravity.google/docs/plans",
       "anchor": "use of gemini models, including",
-      "pattern": "use of gemini models, including gemini [0-9.]+ pro, (gemini [0-9.]+ flash), and other",
+      "pattern": "use of gemini models, including (?:gemini [0-9.]+ [a-z]+, )*(gemini [0-9.]+ flash),? and other",
       "value": "text",
       "write": "flag",
       "baseline": {
@@ -989,7 +971,7 @@
       "value": "text",
       "write": "flag",
       "baseline": {
-        "sentinel": "gemini 3.8 flash"
+        "sentinel": "gemini 4 argon"
       },
       "judge": "Antigravity's model table has a new top row. Does the Antigravity plan need a new line or a catalog admission?"
     },
@@ -1178,8 +1160,8 @@
       "tool": "lab:Anthropic",
       "field": "effort default, Claude Opus 5.5 (API)",
       "url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
-      "anchor": "claude opus 5.5 defaults to",
-      "pattern": "claude opus 5\\.5 defaults to ([a-z]+)\\.",
+      "anchor": "## how effort works",
+      "pattern": "claude opus 5\\.5(?:,? (?:and )?claude [a-z]+ \\d+(?:\\.\\d+)?)* defaults? to ([a-z]+)\\.",
       "value": "word",
       "write": "flag",
       "baseline": {

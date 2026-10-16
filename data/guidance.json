@@ -572,7 +572,8 @@
       "source_url": "https://code.claude.com/docs/en/model-config",
       "tier": "tool",
       "date": "2026-10-03",
-      "quote": "high on every model that supports effort, except that Opus 5.5 and Sonnet 5.5 default to medium"
+      "quote": "high on every model that supports effort, except that Opus 5.5 and Sonnet 5.5 default to medium",
+      "superseded_by": "cc-effort-5-5-default-medium-20261016"
     },
     {
       "id": "cc-effort-by-model",
@@ -620,11 +621,11 @@
         "name": "Claude Code"
       },
       "topic": "effort",
-      "sentence": "An effort field in a subagent file overrides the session effort level while that subagent runs.",
+      "sentence": "An effort field in a subagent file overrides the session effort level while that subagent runs, but not the CLAUDE_CODE_EFFORT_LEVEL environment variable.",
       "source_url": "https://code.claude.com/docs/en/sub-agents",
       "tier": "tool",
-      "date": "2026-09-27",
-      "quote": "Effort level when this subagent is active. Overrides the session effort level."
+      "date": "2026-10-16",
+      "quote": "Effort level when this subagent is active. Overrides the session effort level, but not the CLAUDE_CODE_EFFORT_LEVEL environment variable."
     },
     {
       "id": "cc-skill-effort",
@@ -701,8 +702,8 @@
       "sentence": "The built-in Explore and Plan subagents do not load CLAUDE.md files.",
       "source_url": "https://code.claude.com/docs/en/sub-agents",
       "tier": "tool",
-      "date": "2026-09-27",
-      "quote": "Explore and Plan skip your CLAUDE.md files and the git status snapshot to keep research fast and inexpensive."
+      "date": "2026-10-16",
+      "quote": "Explore and Plan start without your CLAUDE.md files and the git status snapshot to keep research fast and inexpensive."
     },
     {
       "id": "cc-subagent-costs-haiku",
@@ -714,8 +715,8 @@
       "sentence": "Claude Code subagent docs list routing tasks to Haiku as one way to control costs.",
       "source_url": "https://code.claude.com/docs/en/sub-agents",
       "tier": "tool",
-      "date": "2026-09-27",
-      "quote": "Control costs by routing tasks to faster, cheaper models like Haiku"
+      "date": "2026-10-16",
+      "quote": "Control costs by routing tasks to faster, lower-cost models like Haiku"
     },
     {
       "id": "cc-costs-haiku-subagent",
@@ -1335,11 +1336,11 @@
         "name": "Anthropic"
       },
       "topic": "lead-helper",
-      "sentence": "Anthropic's cost guide reports that, on work one model could handle alone, the same model at lower effort cost less than an orchestrator setup in every measured case.",
+      "sentence": "Anthropic's cost guide reports that, when work is one dependent chain or fits in one context without a long cost tail, the orchestrator's model alone at lower effort came out ahead of an orchestrator setup in every measured case.",
       "source_url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence.md",
       "tier": "lab",
-      "date": "2026-09-27",
-      "quote": "on work a single model could handle alone, the same model at lower effort was cheaper every time."
+      "date": "2026-10-16",
+      "quote": "fits in a single context without a long cost tail, the orchestrator's model alone at lower effort came out ahead in every case measured"
     },
     {
       "id": "anthropic-workloads-start-opus-5-5",
@@ -1365,7 +1366,21 @@
       "source_url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
       "tier": "lab",
       "date": "2026-10-03",
-      "quote": "the default on every model that supports effort except Claude Opus 5.5."
+      "quote": "the default on every model that supports effort except Claude Opus 5.5.",
+      "superseded_by": "anthropic-effort-defaults-20261016"
+    },
+    {
+      "id": "anthropic-effort-defaults-20261016",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "effort",
+      "sentence": "On the Claude API, Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5 and Claude Haiku 5.5, whose default is medium.",
+      "source_url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
+      "tier": "lab",
+      "date": "2026-10-16",
+      "quote": "The default on every model that supports effort except Claude Opus 5.5 and Claude Haiku 5.5."
     },
     {
       "id": "anthropic-sonnet-5-5-effort-api-default",
@@ -1650,8 +1665,8 @@
       "sentence": "Mistral's models page describes Mistral Medium 3.5 as a multimodal model optimized for agentic and coding use cases.",
       "source_url": "https://docs.mistral.ai/getting-started/models/models_overview/",
       "tier": "lab",
-      "date": "2026-09-27",
-      "quote": "mistral medium 3.5 our frontier-class multimodal model optimized for agentic and coding use cases."
+      "date": "2026-10-16",
+      "quote": "Mistral Medium 3.5 Modified MIT Our frontier-class multimodal model optimized for agentic and coding use cases."
     },
     {
       "id": "mistral-small-4-role",
@@ -1806,8 +1821,8 @@
       "sentence": "Meta's reasoning docs state that reasoning_effort none disables reasoning, which Muse Spark does not support.",
       "source_url": "https://dev.meta.ai/docs/reasoning.md",
       "tier": "lab",
-      "date": "2026-10-03",
-      "quote": "disables reasoning entirely, which muse spark does not support."
+      "date": "2026-10-16",
+      "quote": "disables reasoning entirely, which Muse Wonder and Muse Spark do not support."
     },
     {
       "id": "anthropic-model-ids",
@@ -1820,7 +1835,21 @@
       "source_url": "https://platform.claude.com/docs/en/about-claude/models/overview",
       "tier": "lab",
       "date": "2026-10-03",
-      "quote": "Claude API alias claude-fable-5-1 claude-opus-5-5 claude-sonnet-5-5 claude-haiku-4-5"
+      "quote": "Claude API alias claude-fable-5-1 claude-opus-5-5 claude-sonnet-5-5 claude-haiku-4-5",
+      "superseded_by": "anthropic-model-ids-20261016"
+    },
+    {
+      "id": "anthropic-model-ids-20261016",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "enforced-model",
+      "sentence": "Anthropic's models overview lists claude-fable-5-1, claude-opus-5-5, claude-sonnet-5-5 and claude-haiku-5-5 as its Claude API aliases.",
+      "source_url": "https://platform.claude.com/docs/en/about-claude/models/overview",
+      "tier": "lab",
+      "date": "2026-10-16",
+      "quote": "Model IDs Claude API alias claude-fable-5-1 claude-opus-5-5 claude-sonnet-5-5 claude-haiku-5-5 Amazon Bedrock ID"
     },
     {
       "id": "cc-default-model-opus-5-5",
@@ -1846,7 +1875,21 @@
       "source_url": "https://code.claude.com/docs/en/model-config",
       "tier": "tool",
       "date": "2026-10-03",
-      "quote": "except that Opus 5.5 and Sonnet 5.5 default to medium"
+      "quote": "except that Opus 5.5 and Sonnet 5.5 default to medium",
+      "superseded_by": "cc-effort-5-5-default-medium-20261016"
+    },
+    {
+      "id": "cc-effort-5-5-default-medium-20261016",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "effort",
+      "sentence": "Claude Code's model-config docs list medium as the default effort for Opus 5.5, Sonnet 5.5 and Haiku 5.5, xhigh for Opus 4.7, and high for other models that support effort.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-10-16",
+      "quote": "except that Opus 5.5, Sonnet 5.5, and Haiku 5.5 default to medium"
     },
     {
       "id": "cc-opus-quota-sonnet-routine",
@@ -1885,7 +1928,21 @@
       "source_url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
       "tier": "lab",
       "date": "2026-10-03",
-      "quote": "It fits high-volume work with checkable outputs, not long agentic loops."
+      "quote": "It fits high-volume work with checkable outputs, not long agentic loops.",
+      "superseded_by": "anthropic-haiku-checkable-outputs-20261016"
+    },
+    {
+      "id": "anthropic-haiku-checkable-outputs-20261016",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "model-per-job",
+      "sentence": "Anthropic's cost guide describes Claude Haiku 5.5 as suited to high-volume and latency-sensitive work with checkable outputs.",
+      "source_url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+      "tier": "lab",
+      "date": "2026-10-16",
+      "quote": "At the other end, Claude Haiku 5.5 suits high-volume and latency-sensitive work with checkable outputs."
     },
     {
       "id": "anthropic-low-effort-subagents",
@@ -1950,7 +2007,21 @@
       "source_url": "https://developers.openai.com/codex/changelog",
       "tier": "tool",
       "date": "2026-10-03",
-      "quote": "Added GPT-6.1 Sol as the default model in the bundled catalog"
+      "quote": "Added GPT-6.1 Sol as the default model in the bundled catalog",
+      "superseded_by": "codex-6-1-sol-default-catalog-20261016"
+    },
+    {
+      "id": "codex-6-1-sol-default-catalog-20261016",
+      "subject": {
+        "kind": "tool",
+        "name": "Codex CLI"
+      },
+      "topic": "enforced-model",
+      "sentence": "Codex's config docs show model = \"gpt-6.1-sol\" in the example for choosing the model Codex uses by default in the CLI and IDE.",
+      "source_url": "https://developers.openai.com/codex/config-basic",
+      "tier": "tool",
+      "date": "2026-10-16",
+      "quote": "Choose the model Codex uses by default in the CLI and IDE. model = \"gpt-6.1-sol\""
     },
     {
       "id": "codex-catalog-6-1-sol-effort-low",
@@ -2248,8 +2319,8 @@
       "sentence": "VS Code reads Copilot custom agents from .github/agents and .claude/agents in the workspace, and from ~/.copilot/agents or ~/.claude/agents for the user.",
       "source_url": "https://code.visualstudio.com/docs/copilot/customization/custom-agents",
       "tier": "tool",
-      "date": "2026-10-03",
-      "quote": "workspace .github/agents folder workspace (claude format) .claude/agents folder user ~/.copilot/agents or ~/.claude/agents"
+      "date": "2026-10-16",
+      "quote": "Workspace .github/agents folder Workspace (Claude format) .claude/agents folder User (Copilot) ~/.copilot/agents folder User (Anthropic Claude) ~/.claude/agents folder"
     },
     {
       "id": "copilot-agent-model-property",
@@ -2457,7 +2528,21 @@
       "source_url": "https://antigravity.google/docs/plans",
       "tier": "tool",
       "date": "2026-10-03",
-      "quote": "use of Gemini models, including Gemini 3.1 Pro, Gemini 3.8 Flash, and other offered Gemini Enterprise models as the core agent model"
+      "quote": "use of Gemini models, including Gemini 3.1 Pro, Gemini 3.8 Flash, and other offered Gemini Enterprise models as the core agent model",
+      "superseded_by": "antigravity-core-agent-models-20261016"
+    },
+    {
+      "id": "antigravity-core-agent-models-20261016",
+      "subject": {
+        "kind": "tool",
+        "name": "Antigravity"
+      },
+      "topic": "model-per-job",
+      "sentence": "Antigravity's plans page lists Gemini 3.8 Flash among the Gemini models offered as the core agent model on every plan.",
+      "source_url": "https://antigravity.google/docs/plans",
+      "tier": "tool",
+      "date": "2026-10-16",
+      "quote": "Use of Gemini models, including Gemini 3.8 Flash and other offered Gemini Enterprise models as the core agent model"
     },
     {
       "id": "antigravity-model-choice-persists",
@@ -2674,7 +2759,7 @@
       "role": "scout",
       "lab": "Anthropic",
       "model_ref": "haiku",
-      "model_id": "claude-haiku-4-5",
+      "model_id": "claude-haiku-5-5",
       "basis": [
         "cc-costs-haiku-subagent",
         "cc-explore-override-haiku",
@@ -2698,10 +2783,10 @@
     {
       "tool": "claude-code",
       "ref": "haiku",
-      "model_id": "claude-haiku-4-5",
+      "model_id": "claude-haiku-5-5",
       "basis": [
         "cc-alias-haiku",
-        "anthropic-model-ids"
+        "anthropic-model-ids-20261016"
       ]
     },
     {
@@ -2755,7 +2840,7 @@
       "lab": "Anthropic",
       "url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
       "basis": [
-        "anthropic-effort-defaults",
+        "anthropic-effort-defaults-20261016",
         "anthropic-sonnet-5-5-effort-api-default"
       ]
     },
@@ -2878,7 +2963,7 @@
         "when": "complex reasoning or difficult coding problems",
         "basis": [
           "cc-default-model-opus-5-5",
-          "cc-effort-5-5-default-medium",
+          "cc-effort-5-5-default-medium-20261016",
           "anthropic-effort-high-use"
         ]
       },
@@ -2898,12 +2983,12 @@
         }
       },
       "bulk": {
-        "model_id": "claude-haiku-4-5",
+        "model_id": "claude-haiku-5-5",
         "effort": null,
         "when": "quick mechanical work whose output a script or test can check",
         "basis": [
           "cc-haiku-mechanical-work",
-          "anthropic-haiku-checkable-outputs",
+          "anthropic-haiku-checkable-outputs-20261016",
           "cc-costs-haiku-subagent"
         ],
         "explore": {
@@ -2973,7 +3058,7 @@
         "raise_to": "high",
         "when": "complex changes or debugging",
         "basis": [
-          "codex-6-1-sol-default-catalog",
+          "codex-6-1-sol-default-catalog-20261016",
           "codex-catalog-6-1-sol-effort-low",
           "codex-effort-by-task"
         ]
@@ -3161,7 +3246,7 @@
         "effort": null,
         "basis": [
           "antigravity-model-choice-persists",
-          "antigravity-core-agent-models"
+          "antigravity-core-agent-models-20261016"
         ]
       },
       "helpers": {

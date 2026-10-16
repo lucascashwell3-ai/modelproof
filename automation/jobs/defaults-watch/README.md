@@ -9,7 +9,7 @@ only).
 |---|---|
 | Runs | Sunday 01:23 UTC (`.github/workflows/defaults-watch.yml`, cron `23 1 * * 0`) — clear of Collect (06:00 + 18:00 daily) and Judge/Verify (Tue/Fri). Also `workflow_dispatch` (dry run off main), and a dry run on every pull request that touches the job's own files. |
 | Code | `scripts/defaults-watch.mjs` (tests: `scripts/test-defaults-watch.mjs`, frozen fixtures in `scripts/fixtures/watch/`) |
-| Rules | `data/defaults-watch.json` — 104 rules over 45 pages; schema in `scripts/validate-data.mjs` `validateWatchList` |
+| Rules | `data/defaults-watch.json` — 103 rules over 44 pages; schema in `scripts/validate-data.mjs` `validateWatchList` |
 | Reads | the rule pages (fetched fresh, never from a cache), `data/guidance.json`, `data/plans.json`, `data/models.json`, `scripts/model-aliases.json` |
 | Writes | ONE bot pull request on the fixed branch `auto/defaults-watch` (guidance.json / plans.json only), its commit status `defaults-watch/gates`, the receipt `data/refresh/receipt-defaults-watch.json` (straight to main, every live run), the date lines of `guidance.json` — each tool's `tool_plans[].as_of` and the top-level `as_of` (straight to main, nothing else in that file) |
 | Fails loud | exit 1 + one issue, "Defaults watch: rules need attention" (label `defaults-watch`), updated in place, closed by the next run with nothing to list. The issue has no run date, so a week with the same findings edits nothing and sends no notice. The claim-rot issue ("Sourced claims no longer verifiable") comes from the source sweep at the end of the run. |

@@ -61,8 +61,9 @@ test('the live data/guidance.json passes against the live catalog', () => {
   assert.deepEqual(validateGuidance(g, models).errors, []);
   assert.ok(g.claims.length >= 100, 'keeps the verified research set');
   // Lab balance: every lab with claims has at least 3, and no lab has more than 3x the smallest.
+  // Counts current claims only: a superseded claim is kept as history and is no longer a fact in use.
   const perLab = {};
-  for (const c of g.claims) if (c.subject.kind === 'lab') perLab[c.subject.name] = (perLab[c.subject.name] || 0) + 1;
+  for (const c of g.claims) if (!c.superseded_by && c.subject.kind === 'lab') perLab[c.subject.name] = (perLab[c.subject.name] || 0) + 1;
   const counts = Object.values(perLab);
   assert.ok(Object.keys(perLab).length >= 6, 'facts from at least 6 labs');
   assert.ok(Math.min(...counts) >= 3 && Math.max(...counts) <= 3 * Math.min(...counts), `labs stay balanced: ${JSON.stringify(perLab)}`);
