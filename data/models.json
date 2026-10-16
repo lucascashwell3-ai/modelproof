@@ -4483,15 +4483,15 @@
         "coding": {
           "claims": [
             {
-              "sentence": "llm-stats.com's SWE-Bench Verified leaderboard (checked 2026-09-07) lists DeepSeek's max-reasoning-effort configuration of V4-Pro at a 0.806 score, rank 8 of the 113 models it tracks.",
+              "sentence": "llm-stats.com's SWE-Bench Verified leaderboard (checked 2026-10-16) lists DeepSeek's max-reasoning-effort configuration of V4-Pro at a 0.806 score, rank 9 of the 117 models it tracks.",
               "source_url": "https://llm-stats.com/benchmarks/swe-bench-verified",
               "tier": "reported",
-              "date": "2026-09-07",
-              "quote": "DeepSeek-V4-Pro-Max by DeepSeek is the top-ranked open-source model on SWE-Bench Verified, with a score of 0.806 (rank #8)."
+              "date": "2026-10-16",
+              "quote": "DeepSeek-V4-Pro-Max by DeepSeek is the top-ranked open-source model on SWE-Bench Verified, with a score of 0.806 (rank #9)."
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-07"
+          "as_of": "2026-10-16"
         }
       },
       "usage": {
@@ -6349,31 +6349,18 @@
         }
       },
       "task_fit_judged": {
-        "extraction": {
-          "claims": [
-            {
-              "sentence": "Anthropic's own model-selection guide names Claude Haiku 4.5 for real-time, high-volume intelligent processing and cost-sensitive deployments, checked 2026-09-06.",
-              "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
-              "tier": "lab",
-              "date": "2026-09-06",
-              "quote": "Claude Haiku 4.5 Real-time applications, high-volume intelligent processing, cost-sensitive deployments needing strong reasoning, sub-agent tasks"
-            }
-          ],
-          "reconciliation": null,
-          "as_of": "2026-09-07"
-        },
         "chat": {
           "claims": [
             {
-              "sentence": "Anthropic's own model-selection guide names Claude Haiku 4.5 for real-time, high-volume intelligent processing and cost-sensitive deployments, checked 2026-09-06.",
-              "source_url": "https://docs.claude.com/en/docs/about-claude/models/choosing-a-model",
+              "sentence": "Anthropic's Claude Haiku 4.5 launch post (Oct 15, 2025) names real-time, low-latency tasks such as chat assistants, customer service agents and pair programming as uses for Haiku 4.5, checked 2026-10-16.",
+              "source_url": "https://www.anthropic.com/news/claude-haiku-4-5",
               "tier": "lab",
-              "date": "2026-09-06",
-              "quote": "Claude Haiku 4.5 Real-time applications, high-volume intelligent processing, cost-sensitive deployments needing strong reasoning, sub-agent tasks"
+              "date": "2026-10-16",
+              "quote": "real-time, low-latency tasks like chat assistants, customer service agents, or pair programming will appreciate Haiku 4.5's combination of high intelligence and remarkable speed"
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-07"
+          "as_of": "2026-10-16"
         },
         "bulk": {
           "claims": [
@@ -10735,17 +10722,10 @@
               "tier": "reported",
               "date": "2026-09-07",
               "quote": "Qwen3-Coder-Plus is Alibaba's dedicated coding model — separate from general Qwen3-Max, fine-tuned on 18 trillion code tokens across 300+ programming languages."
-            },
-            {
-              "sentence": "Alibaba Cloud's Model Studio pricing page (checked 2026-09-07) confirms qwen3-coder-plus is currently pinned to the qwen3-coder-plus-2025-09-23 snapshot, sold on tiered per-token pricing.",
-              "source_url": "https://www.alibabacloud.com/help/en/model-studio/model-pricing",
-              "tier": "lab",
-              "date": "2026-09-07",
-              "quote": "Currently equivalent to qwen3-coder-plus-2025-09-23"
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-07"
+          "as_of": "2026-10-16"
         },
         "agents": {
           "claims": [
