@@ -1365,7 +1365,21 @@
       "source_url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
       "tier": "lab",
       "date": "2026-10-03",
-      "quote": "the default on every model that supports effort except Claude Opus 5.5."
+      "quote": "the default on every model that supports effort except Claude Opus 5.5.",
+      "superseded_by": "anthropic-effort-defaults-20261016"
+    },
+    {
+      "id": "anthropic-effort-defaults-20261016",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "effort",
+      "sentence": "On the Claude API, Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5 and Claude Haiku 5.5, whose default is medium.",
+      "source_url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
+      "tier": "lab",
+      "date": "2026-10-16",
+      "quote": "The default on every model that supports effort except Claude Opus 5.5 and Claude Haiku 5.5."
     },
     {
       "id": "anthropic-sonnet-5-5-effort-api-default",
@@ -1846,7 +1860,21 @@
       "source_url": "https://code.claude.com/docs/en/model-config",
       "tier": "tool",
       "date": "2026-10-03",
-      "quote": "except that Opus 5.5 and Sonnet 5.5 default to medium"
+      "quote": "except that Opus 5.5 and Sonnet 5.5 default to medium",
+      "superseded_by": "cc-effort-5-5-default-medium-20261016"
+    },
+    {
+      "id": "cc-effort-5-5-default-medium-20261016",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "effort",
+      "sentence": "Claude Code's model-config docs list medium as the default effort for Opus 5.5, Sonnet 5.5 and Haiku 5.5, xhigh for Opus 4.7, and high for other models that support effort.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-10-16",
+      "quote": "except that Opus 5.5, Sonnet 5.5, and Haiku 5.5 default to medium"
     },
     {
       "id": "cc-opus-quota-sonnet-routine",
@@ -1885,7 +1913,21 @@
       "source_url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
       "tier": "lab",
       "date": "2026-10-03",
-      "quote": "It fits high-volume work with checkable outputs, not long agentic loops."
+      "quote": "It fits high-volume work with checkable outputs, not long agentic loops.",
+      "superseded_by": "anthropic-haiku-checkable-outputs-20261016"
+    },
+    {
+      "id": "anthropic-haiku-checkable-outputs-20261016",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "model-per-job",
+      "sentence": "Anthropic's cost guide describes Claude Haiku 5.5 as suited to high-volume and latency-sensitive work with checkable outputs.",
+      "source_url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+      "tier": "lab",
+      "date": "2026-10-16",
+      "quote": "At the other end, Claude Haiku 5.5 suits high-volume and latency-sensitive work with checkable outputs."
     },
     {
       "id": "anthropic-low-effort-subagents",
@@ -2457,7 +2499,21 @@
       "source_url": "https://antigravity.google/docs/plans",
       "tier": "tool",
       "date": "2026-10-03",
-      "quote": "use of Gemini models, including Gemini 3.1 Pro, Gemini 3.8 Flash, and other offered Gemini Enterprise models as the core agent model"
+      "quote": "use of Gemini models, including Gemini 3.1 Pro, Gemini 3.8 Flash, and other offered Gemini Enterprise models as the core agent model",
+      "superseded_by": "antigravity-core-agent-models-20261016"
+    },
+    {
+      "id": "antigravity-core-agent-models-20261016",
+      "subject": {
+        "kind": "tool",
+        "name": "Antigravity"
+      },
+      "topic": "model-per-job",
+      "sentence": "Antigravity's plans page lists Gemini 3.8 Flash among the Gemini models offered as the core agent model on every plan.",
+      "source_url": "https://antigravity.google/docs/plans",
+      "tier": "tool",
+      "date": "2026-10-16",
+      "quote": "Use of Gemini models, including Gemini 3.8 Flash and other offered Gemini Enterprise models as the core agent model"
     },
     {
       "id": "antigravity-model-choice-persists",
@@ -2755,7 +2811,7 @@
       "lab": "Anthropic",
       "url": "https://platform.claude.com/docs/en/build-with-claude/effort.md",
       "basis": [
-        "anthropic-effort-defaults",
+        "anthropic-effort-defaults-20261016",
         "anthropic-sonnet-5-5-effort-api-default"
       ]
     },
@@ -2878,7 +2934,7 @@
         "when": "complex reasoning or difficult coding problems",
         "basis": [
           "cc-default-model-opus-5-5",
-          "cc-effort-5-5-default-medium",
+          "cc-effort-5-5-default-medium-20261016",
           "anthropic-effort-high-use"
         ]
       },
@@ -2903,7 +2959,7 @@
         "when": "quick mechanical work whose output a script or test can check",
         "basis": [
           "cc-haiku-mechanical-work",
-          "anthropic-haiku-checkable-outputs",
+          "anthropic-haiku-checkable-outputs-20261016",
           "cc-costs-haiku-subagent"
         ],
         "explore": {
@@ -3161,7 +3217,7 @@
         "effort": null,
         "basis": [
           "antigravity-model-choice-persists",
-          "antigravity-core-agent-models"
+          "antigravity-core-agent-models-20261016"
         ]
       },
       "helpers": {
