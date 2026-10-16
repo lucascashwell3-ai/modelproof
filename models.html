@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Modelproof, model facts</title>
+<meta name="description" content="Prices, context windows and effort curves for AI models, each with its source and date. Nothing is ranked.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b0d10">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%230b0d10'/%3E%3Crect x='8.6' y='3.6' width='6.8' height='6' rx='2' fill='%23f3f5f7'/%3E%3Crect x='3.2' y='14.4' width='6.4' height='6' rx='2' fill='%23f3f5f7'/%3E%3Crect x='14.4' y='14.4' width='6.4' height='6' rx='2' fill='%23f3f5f7'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600&family=Chivo+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body class="page-models">
+<a class="skip" href="#main">Skip to the facts</a>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="index.html" data-carry="index.html"><span data-mark></span>Modelproof</a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="index.html" data-carry="index.html">Build</a>
+      <a href="models.html" data-carry="models.html" aria-current="page">Models</a>
+      <a href="teams.html">Teams</a>
+    </nav>
+    <div class="nav-right">
+      <a class="nav-quiet" href="https://github.com/lucascashwell3-ai/modelproof" target="_blank" rel="noopener" aria-label="Modelproof on GitHub"><i class="ph-fill ph-github-logo" aria-hidden="true"></i><span>GitHub</span></a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="wrap sec first" id="ladder" aria-labelledby="lad-h">
+    <div class="sec-top"><h2 id="lad-h">Effort</h2><span data-fresh="effort-ladders"></span></div>
+    <div id="lad-root"><p class="muted">Loading…</p></div>
+  </section>
+
+  <section class="wrap sec" id="compare" aria-labelledby="cmp-h">
+    <div class="sec-top"><h2 id="cmp-h">Compare</h2><span data-fresh="models"></span><a class="sec-link" href="table.html">Full table</a></div>
+    <div id="cmp-root" aria-live="polite"><p class="muted">Loading…</p></div>
+  </section>
+
+  <section class="wrap sec" id="timeline" aria-labelledby="tl-h">
+    <div class="sec-top"><h2 id="tl-h">Releases</h2><span data-fresh="releases"></span></div>
+    <div id="tl-root"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <span>Independent. Not affiliated with any lab or tool.</span>
+    <span><span data-fresh="models"></span> Every fact links to its source. Nothing is ranked.</span>
+    <nav class="foot-links" aria-label="More"><a href="table.html">Full table</a><a href="how-we-pick.html">How we source facts</a></nav>
+  </div>
+</footer>
+
+<script type="module" src="assets/models.js"></script>
+</body>
+</html>
