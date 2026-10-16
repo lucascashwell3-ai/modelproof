@@ -1,4 +1,4 @@
-Modelproof package · facts as of 2026-10-03 · generator 1.1.0
+Modelproof package · facts as of 2026-10-03 · generator 1.2.0
 Your answers: person · project scope · tools: GitHub Copilot · plans: GitHub Copilot Pro+ · limits: sometimes · work: coding
 
 Lead, helpers and bulk per tool
@@ -8,6 +8,7 @@ Lead, helpers and bulk per tool
     builder  inherit (runs on the lead's model)
     reviewer inherit (runs on the lead's model)
     bulk     inherit until you set its model (the tool's docs name no model string)
+    checker  inherit (runs on the lead's model)
     near a full usage limit (a text line, not a setting): the tool's own words below
              "Run subagents on cheaper models."
              https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)
@@ -21,8 +22,15 @@ Files (numbered; answer "no to 3" to leave one out)
       No model line, so GitHub Copilot runs this helper on the default model; set one in the file's model field to change it.
    4. file   .github/agents/modelproof-bulk.agent.md · 10 lines · the tool obeys it
       No model line, so GitHub Copilot runs this helper on the default model; set one in the file's model field to change it.
-   5. block  AGENTS.md (added at the end) · 24 lines · text
+   5. file   .github/agents/modelproof-checker.agent.md · 11 lines · the tool obeys it
+      No model line, so GitHub Copilot runs this helper on the default model; set one in the file's model field to change it.
+   6. block  AGENTS.md (added at the end) · 25 lines · text
       One block at the end of AGENTS.md, read by GitHub Copilot; your own text is untouched.
+  Also available, not included: big-job mode: you plan and review; modelproof-scout, modelproof-builder and modelproof-bulk do every piece, and modelproof-checker re-checks each one in a fresh context. Say "add big-job mode" to include it (profile "big_job": true).
+    "multi-agent systems excel at valuable tasks that involve heavy parallelization, information that exceeds single context windows, and interfacing with numerous complex tools"
+    https://www.anthropic.com/engineering/multi-agent-research-system (2026-10-16)
+    "agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats"
+    https://www.anthropic.com/engineering/multi-agent-research-system (2026-09-27)
 
 Notes
   - Start a new session so each tool loads the new helper and rule files.

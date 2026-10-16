@@ -1,5 +1,5 @@
 {
-  "_readme": "What AI coding tools and model labs publish about instruction files, which model runs each job, effort settings and context. Every claim is one plain sentence plus a quote of at most 25 words copied verbatim from source_url, with the date it was checked. tier \"tool\" = the coding tool's own docs; tier \"lab\" = the model maker's own docs about its own models. scripts/check-sources.mjs re-fetches every source_url and fails if a quote is no longer on the page; scripts/validate-data.mjs checks the shape. tool_plans holds one plan per tool: where its instructions live, which settings it obeys, the lead (its documented default model and effort, or left to you), helpers (inherit the lead's model; a sourced push-down line for a near-full usage limit) and bulk (mechanical, checkable work) — every slot cites claim ids from the tool or its own lab. role_defaults records the helper jobs a tool's docs tie to a model; the install package does not apply them (helpers inherit). model_refs maps the strings a tool's config accepts (for example \"sonnet\") to catalog ids in data/models.json. effort_pages links each lab's own page on effort or reasoning settings. Nothing in this file ranks models against each other.",
+  "_readme": "What AI coding tools and model labs publish about instruction files, which model runs each job, effort settings and context. Every claim is one plain sentence plus a quote of at most 25 words copied verbatim from source_url, with the date it was checked. tier \"tool\" = the coding tool's own docs; tier \"lab\" = the model maker's own docs about its own models. scripts/check-sources.mjs re-fetches every source_url and fails if a quote is no longer on the page; scripts/validate-data.mjs checks the shape. tool_plans holds one plan per tool: where its instructions live, which settings it obeys, the lead (its documented default model and effort, or left to you), helpers (inherit the lead's model; a sourced push-down line for a near-full usage limit) and bulk (mechanical, checkable work) — every slot cites claim ids from the tool or its own lab. role_defaults records the helper jobs a tool's docs tie to a model; the install package does not apply them (helpers inherit). model_refs maps the strings a tool's config accepts (for example \"sonnet\") to catalog ids in data/models.json. effort_pages links each lab's own page on effort or reasoning settings. Nothing in this file ranks models against each other. examples holds setups people shared as starting points: each is one person's own choice with its date, never a tool's or lab's words, and the package uses one only when a profile names its id.",
   "as_of": "2026-10-03",
   "claims": [
     {
@@ -1340,6 +1340,45 @@
       "tier": "lab",
       "date": "2026-09-27",
       "quote": "on work a single model could handle alone, the same model at lower effort was cheaper every time."
+    },
+    {
+      "id": "cc-verify-fresh-model",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "lead-helper",
+      "sentence": "Claude Code's docs describe a verification subagent as a fresh model that tries to refute the result, so the agent that did the work does not grade it.",
+      "source_url": "https://code.claude.com/docs/en/best-practices",
+      "tier": "tool",
+      "date": "2026-10-16",
+      "quote": "has a fresh model try to refute the result, so the agent doing the work isn't the one grading it"
+    },
+    {
+      "id": "cc-independent-check-unattended",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "lead-helper",
+      "sentence": "Claude Code's docs say an independent check matters more the longer Claude works unattended, before the work counts as done.",
+      "source_url": "https://code.claude.com/docs/en/best-practices",
+      "tier": "tool",
+      "date": "2026-10-16",
+      "quote": "The longer Claude works unattended, the more an independent check matters before you count the work as done."
+    },
+    {
+      "id": "anthropic-multi-agent-fit",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "lead-helper",
+      "sentence": "Anthropic's engineering post on its research system says multi-agent systems fit valuable tasks with heavy parallel work, more information than one context window holds, or many complex tools.",
+      "source_url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+      "tier": "lab",
+      "date": "2026-10-16",
+      "quote": "multi-agent systems excel at valuable tasks that involve heavy parallelization, information that exceeds single context windows, and interfacing with numerous complex tools"
     },
     {
       "id": "anthropic-workloads-start-opus-5-5",
@@ -3225,6 +3264,26 @@
           "openrouter-auto-cost-tiers"
         ]
       }
+    }
+  ],
+  "examples": [
+    {
+      "id": "power-user-2026-10",
+      "title": "One power user's setup (Oct 2026)",
+      "as_of": "2026-10-16",
+      "tools": [
+        "claude-code"
+      ],
+      "big_job": true,
+      "roles": {
+        "lead": "claude-opus-5-5",
+        "scout": "claude-sonnet-5-5",
+        "builder": "claude-sonnet-5-5"
+      },
+      "hard_build": "claude-opus-5-5",
+      "rarely": [
+        "bulk"
+      ]
     }
   ]
 }

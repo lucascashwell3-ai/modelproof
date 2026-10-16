@@ -32,7 +32,7 @@ import {
   BLOCK_BEGIN_RE as BEGIN_RE, BLOCK_END_RE as END_RE, blockBodyHash as bodyHash, blockText, blockBodyLines as contentLines, stampOwnedText,
 } from './instructions.mjs';
 
-export const INSTALLER_VERSION = '1.1.0';
+export const INSTALLER_VERSION = '1.2.0';
 export const EXIT = Object.freeze({ OK: 0, USAGE: 1, CONFLICT: 2, DRIFT: 3, CORRUPT: 4 });
 const PLAN_SCHEMA = 'modelproof.plan/1';
 const MANIFEST_SCHEMA = 'modelproof.manifest/1';
@@ -364,7 +364,7 @@ function targetAbs(p, ctx) {
 }
 
 // The helper names a package writes (one file per role), as a regex alternation.
-const HELPER_ROLES = ['scout', 'builder', 'reviewer', 'bulk'];
+const HELPER_ROLES = ['scout', 'builder', 'reviewer', 'bulk', 'checker'];
 const HELPER_NAMES = HELPER_ROLES.join('|');
 // Tools with helper files the installer reads and writes, and the tools that read instruction text.
 const AGENT_TOOLS = ['claude-code', 'codex', 'cursor', 'copilot', 'antigravity'];

@@ -1,4 +1,4 @@
-Modelproof package · facts as of 2026-10-03 · generator 1.1.0
+Modelproof package · facts as of 2026-10-03 · generator 1.2.0
 Your answers: person · project scope · tools: Claude Code · plans: Anthropic Pro · limits: rarely · work: writing, research
 
 Lead, helpers and bulk per tool
@@ -23,6 +23,7 @@ Lead, helpers and bulk per tool
              "For simple subagent tasks, specify model: haiku in your subagent configuration"
              https://code.claude.com/docs/en/costs (2026-09-27)
              list price $1 in / $5 out per 1M tokens · 0.15% of OpenRouter tokens (2026-10-01)
+    checker  inherit (runs on the lead's model)
 
 What the tools and labs say (their own words)
   Claude Code: "Sonnet handles most coding tasks well and costs less than Opus. Reserve Opus for complex architectural decisions or multi-step reasoning."
@@ -45,8 +46,15 @@ Files (numbered; answer "no to 3" to leave one out)
       Claude Code runs this helper on the lead's model (model: inherit).
    4. file   .claude/agents/modelproof-bulk.md · 11 lines · the tool obeys it
       Claude Code runs this helper on haiku, the model named in the file.
-   5. file   .claude/rules/modelproof.md · 35 lines · text
+   5. file   .claude/agents/modelproof-checker.md · 13 lines · the tool obeys it
+      Claude Code runs this helper on the lead's model (model: inherit). It cannot write or edit files (disallowedTools).
+   6. file   .claude/rules/modelproof.md · 36 lines · text
       Claude Code loads every file in rules/ each session; your CLAUDE.md is not touched.
+  Also available, not included: big-job mode: you plan and review; modelproof-scout, modelproof-builder and modelproof-bulk do every piece, and modelproof-checker re-checks each one in a fresh context. Say "add big-job mode" to include it (profile "big_job": true).
+    "multi-agent systems excel at valuable tasks that involve heavy parallelization, information that exceeds single context windows, and interfacing with numerous complex tools"
+    https://www.anthropic.com/engineering/multi-agent-research-system (2026-10-16)
+    "agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats"
+    https://www.anthropic.com/engineering/multi-agent-research-system (2026-09-27)
 
 Notes
   - Start a new session so each tool loads the new helper and rule files.

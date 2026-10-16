@@ -24,8 +24,8 @@
      (i) every recommendation line — guidance.json tool_plans slots that name a model_id,
          role_defaults, and board-samples.json personal_default.models — resolves to a catalog
          model whose status is "ga".
-     (j) no line anywhere — the above plus guidance.json model_refs and the example boards in
-         board-samples.json (org people, modelMode have/roles) — points at a deprecated model.
+     (j) no line anywhere — the above plus guidance.json model_refs and examples, and the example
+         boards in board-samples.json (org people, modelMode have/roles) — points at a deprecated model.
 
    Exit: 0 nothing found; 1 one plain line per problem on stderr; 2 bad arguments.
    Usage: node scripts/check-live-data.mjs [--group feed|plans|all] [--data <dir>]
@@ -137,6 +137,12 @@ export function planLines(guidance, samples) {
   }
   for (const r of (guidance && guidance.model_refs) || []) {
     if (typeof r.model_id === 'string') out.push({ where: `guidance model_refs ${r.tool}/${r.ref}`, kind: 'model_ref', model_id: r.model_id });
+  }
+  // An example setup is one person's dated choice, so it is illustrative: it may not point at a
+  // deprecated model, but it is not held to GA like a recommendation line.
+  for (const x of (guidance && guidance.examples) || []) {
+    for (const [role, id] of Object.entries((x && x.roles) || {})) if (typeof id === 'string') out.push({ where: `guidance examples ${x.id}/${role}`, kind: 'sample', model_id: id });
+    if (x && typeof x.hard_build === 'string') out.push({ where: `guidance examples ${x.id}/hard_build`, kind: 'sample', model_id: x.hard_build });
   }
   const pd = (samples && samples.personal_default) || {};
   for (const id of pd.models || []) out.push({ where: 'board-samples personal_default.models', kind: 'personal_default', model_id: id });

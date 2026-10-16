@@ -1,6 +1,6 @@
 {
   "version": "modelproof.package/1",
-  "generator_version": "1.1.0",
+  "generator_version": "1.2.0",
   "as_of": "2026-10-03",
   "profile": {
     "schema": "modelproof.profile/1",
@@ -26,6 +26,8 @@
     "effort_cap": null,
     "set_default_model": false,
     "explore_override": false,
+    "big_job": false,
+    "example": null,
     "org": null
   },
   "parts": [
@@ -82,6 +84,19 @@
       "lines": 10
     },
     {
+      "id": "copilot:agent:checker",
+      "tool": "copilot",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "project",
+        "path": ".github/agents/modelproof-checker.agent.md"
+      },
+      "content": "---\nname: modelproof-checker\ndescription: Re-checks finished work in a fresh context with real evidence (tests, a real run, a live check) and returns pass or fail with the output. It does not edit files.\n---\n<!-- modelproof:owned v1 -->\nYou are the checker. You re-check finished work in a fresh context; you do not edit files.\n- Take the claim and its check from the brief, not the author's summary.\n- Run the real evidence yourself: the tests, a real run, or a live check.\n- Never change a file or a test to make a check pass.\n- Return PASS or FAIL first, then the command you ran and the last lines of its output.\n- A check you could not run is a FAIL; say what stopped it.\n",
+      "why": "No model line, so GitHub Copilot runs this helper on the default model; set one in the file's model field to change it.",
+      "lines": 11
+    },
+    {
       "id": "agents-md:text",
       "tool": "copilot",
       "readers": [
@@ -93,13 +108,36 @@
         "scope": "project",
         "path": "AGENTS.md"
       },
-      "content": "## Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n### Lead, helpers and bulk\n- Lead: the model you choose in GitHub Copilot. In VS Code, the Copilot Chat model is chosen from a dropdown at the bottom of the chat view.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model (2026-09-27)\n- Helpers: modelproof-scout, modelproof-builder and modelproof-reviewer run on the lead's model (inherit).\n  Source: GitHub Copilot docs, https://code.visualstudio.com/docs/copilot/agents/subagents (2026-10-03)\n- Near a full usage limit: GitHub's usage guide tells users to run subagents on cheaper models.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)\n- Bulk: modelproof-bulk runs on the lead's model until you set its model, for routine, well-scoped changes. GitHub's usage guide names lighter models for refactoring, formatting, documentation updates and other routine, well-scoped changes.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)\n\n### How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n### Context\n- Search before reading; read line ranges, not whole big files.\n\n### Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "content": "## Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n### Lead, helpers and bulk\n- Lead: the model you choose in GitHub Copilot. In VS Code, the Copilot Chat model is chosen from a dropdown at the bottom of the chat view.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model (2026-09-27)\n- Helpers: modelproof-scout, modelproof-builder, modelproof-reviewer and modelproof-checker run on the lead's model (inherit).\n  Source: GitHub Copilot docs, https://code.visualstudio.com/docs/copilot/agents/subagents (2026-10-03)\n- Near a full usage limit: GitHub's usage guide tells users to run subagents on cheaper models.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)\n- Bulk: modelproof-bulk runs on the lead's model until you set its model, for routine, well-scoped changes. GitHub's usage guide names lighter models for refactoring, formatting, documentation updates and other routine, well-scoped changes.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)\n\n### How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n- Have modelproof-checker re-check finished work in a fresh context; it returns pass or fail with the output.\n\n### Context\n- Search before reading; read line ranges, not whole big files.\n\n### Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
       "why": "One block at the end of AGENTS.md, read by GitHub Copilot; your own text is untouched.",
-      "lines": 24
+      "lines": 25
     }
   ],
   "copy": [],
-  "available": [],
+  "available": [
+    {
+      "id": "big-job",
+      "name": "big-job mode",
+      "what": "you plan and review; modelproof-scout, modelproof-builder and modelproof-bulk do every piece, and modelproof-checker re-checks each one in a fresh context",
+      "add": "\"big_job\": true",
+      "basis": [
+        {
+          "id": "anthropic-multi-agent-fit",
+          "sentence": "Anthropic's engineering post on its research system says multi-agent systems fit valuable tasks with heavy parallel work, more information than one context window holds, or many complex tools.",
+          "quote": "multi-agent systems excel at valuable tasks that involve heavy parallelization, information that exceeds single context windows, and interfacing with numerous complex tools",
+          "source_url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+          "date": "2026-10-16"
+        },
+        {
+          "id": "anthropic-multi-agent-token-use",
+          "sentence": "Anthropic reports that in its data agents used about 4 times the tokens of chat, and multi-agent systems about 15 times.",
+          "quote": "agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats",
+          "source_url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+          "date": "2026-09-27"
+        }
+      ]
+    }
+  ],
   "checks": [],
   "roles": {
     "copilot": {
@@ -196,6 +234,23 @@
         "usage": null,
         "choice": true
       },
+      "checker": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "copilot-subagent-main-model-default",
+            "sentence": "In VS Code, a Copilot subagent runs on the main conversation model when neither the tool call nor the agent names a model, unless the experimental Auto setting is on.",
+            "quote": "to use Auto instead of the main model when neither the tool call nor the agent specifies a model",
+            "source_url": "https://code.visualstudio.com/docs/copilot/agents/subagents",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
       "near_limit": {
         "model_ref": null,
         "model_id": null,
@@ -214,11 +269,15 @@
       }
     }
   },
+  "big_job": false,
+  "example": null,
   "preview_facts": {
     "models_you_use": [],
     "tools_and_labs_say": []
   },
   "facts_used": [
+    "anthropic-multi-agent-fit",
+    "anthropic-multi-agent-token-use",
     "copilot-lighter-models-routine",
     "copilot-model-picker",
     "copilot-subagent-main-model-default",

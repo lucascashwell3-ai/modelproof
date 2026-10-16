@@ -1,6 +1,6 @@
 {
   "version": "modelproof.package/1",
-  "generator_version": "1.1.0",
+  "generator_version": "1.2.0",
   "as_of": "2026-10-03",
   "profile": {
     "schema": "modelproof.profile/1",
@@ -31,6 +31,8 @@
     "effort_cap": null,
     "set_default_model": false,
     "explore_override": false,
+    "big_job": false,
+    "example": null,
     "org": null
   },
   "parts": [
@@ -87,6 +89,19 @@
       "lines": 11
     },
     {
+      "id": "claude-code:agent:checker",
+      "tool": "claude-code",
+      "kind": "owned-file",
+      "enforced": true,
+      "target": {
+        "scope": "project",
+        "path": ".claude/agents/modelproof-checker.md"
+      },
+      "content": "---\nname: modelproof-checker\ndescription: Re-checks finished work in a fresh context with real evidence (tests, a real run, a live check) and returns pass or fail with the output. It does not edit files.\nmodel: inherit\ndisallowedTools: Write, Edit, NotebookEdit\n---\n<!-- modelproof:owned v1 -->\nYou are the checker. You re-check finished work in a fresh context; you do not edit files.\n- Take the claim and its check from the brief, not the author's summary.\n- Run the real evidence yourself: the tests, a real run, or a live check.\n- Never change a file or a test to make a check pass.\n- Return PASS or FAIL first, then the command you ran and the last lines of its output.\n- A check you could not run is a FAIL; say what stopped it.\n",
+      "why": "Claude Code runs this helper on the lead's model (model: inherit). It cannot write or edit files (disallowedTools).",
+      "lines": 13
+    },
+    {
       "id": "claude-code:rules",
       "tool": "claude-code",
       "readers": [
@@ -98,9 +113,9 @@
         "scope": "project",
         "path": ".claude/rules/modelproof.md"
       },
-      "content": "<!-- modelproof:owned v1 -->\n# Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n## Lead, helpers and bulk\n- Lead: Claude Opus 5.5, Claude Code's default model; effort medium by default, high for complex reasoning or difficult coding problems.\n  Source: Claude Code docs, https://code.claude.com/docs/en/model-config (2026-10-03)\n  Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Helpers: modelproof-scout, modelproof-builder and modelproof-reviewer run on the lead's model (inherit). Call them by name and pass no model.\n  Source: Claude Code docs, https://code.claude.com/docs/en/model-config (2026-09-27)\n  Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- Near a full usage limit: a routine, well-scoped thread can run on sonnet (Claude Sonnet 5.5); name that model in the call (no file sets it).\n  Source: Claude Code docs, https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)\n  Source: Anthropic docs, https://www.anthropic.com/claude-sonnet-5-5 (2026-10-03)\n- Bulk: modelproof-bulk runs haiku (Claude Haiku 4.5), for quick mechanical work whose output a script or test can check.\n  Source: Claude Code docs, https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)\n  Source: Anthropic docs, https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence (2026-10-03)\n\n## When to hand off\n- Hand helpers verbose work (test runs, logs): only a summary comes back. Source: Claude Code docs, https://code.claude.com/docs/en/costs (2026-09-27)\n- Hand helpers parallel or separable work; each one adds tokens. Source: Anthropic docs, https://www.anthropic.com/engineering/multi-agent-research-system (2026-09-27)\n- For a job one model can do alone, lower effort on that model cost less than an orchestrator. Source: Anthropic docs, https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence.md (2026-09-27)\n- Helpers share your usage limits. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n\n## How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n## Context\n- Search before reading; read line ranges, not whole big files.\n- Each Claude Code subagent runs in its own context window with its own system prompt, tools and permissions. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n\n## Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- An effort field in a subagent file overrides the session effort level while that subagent runs. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- On the Claude API, Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "content": "<!-- modelproof:owned v1 -->\n# Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n## Lead, helpers and bulk\n- Lead: Claude Opus 5.5, Claude Code's default model; effort medium by default, high for complex reasoning or difficult coding problems.\n  Source: Claude Code docs, https://code.claude.com/docs/en/model-config (2026-10-03)\n  Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Helpers: modelproof-scout, modelproof-builder, modelproof-reviewer and modelproof-checker run on the lead's model (inherit). Call them by name and pass no model.\n  Source: Claude Code docs, https://code.claude.com/docs/en/model-config (2026-09-27)\n  Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- Near a full usage limit: a routine, well-scoped thread can run on sonnet (Claude Sonnet 5.5); name that model in the call (no file sets it).\n  Source: Claude Code docs, https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)\n  Source: Anthropic docs, https://www.anthropic.com/claude-sonnet-5-5 (2026-10-03)\n- Bulk: modelproof-bulk runs haiku (Claude Haiku 4.5), for quick mechanical work whose output a script or test can check.\n  Source: Claude Code docs, https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)\n  Source: Anthropic docs, https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence (2026-10-03)\n\n## When to hand off\n- Hand helpers verbose work (test runs, logs): only a summary comes back. Source: Claude Code docs, https://code.claude.com/docs/en/costs (2026-09-27)\n- Hand helpers parallel or separable work; each one adds tokens. Source: Anthropic docs, https://www.anthropic.com/engineering/multi-agent-research-system (2026-09-27)\n- For a job one model can do alone, lower effort on that model cost less than an orchestrator. Source: Anthropic docs, https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence.md (2026-09-27)\n- Helpers share your usage limits. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n\n## How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n- Have modelproof-checker re-check finished work in a fresh context; it returns pass or fail with the output. Source: Claude Code docs, https://code.claude.com/docs/en/best-practices (2026-10-16)\n\n## Context\n- Search before reading; read line ranges, not whole big files.\n- Each Claude Code subagent runs in its own context window with its own system prompt, tools and permissions. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n\n## Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- An effort field in a subagent file overrides the session effort level while that subagent runs. Source: Claude Code docs, https://code.claude.com/docs/en/sub-agents (2026-09-27)\n- On the Claude API, Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
       "why": "Claude Code loads every file in rules/ each session; your CLAUDE.md is not touched.",
-      "lines": 38
+      "lines": 39
     },
     {
       "id": "agents-md:text",
@@ -114,13 +129,44 @@
         "scope": "project",
         "path": "AGENTS.md"
       },
-      "content": "## Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n### Lead, helpers and bulk\n- Lead: the model you choose in GitHub Copilot. In VS Code, the Copilot Chat model is chosen from a dropdown at the bottom of the chat view.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model (2026-09-27)\n- Helpers: GitHub Copilot uses the Claude Code helper files in .claude/agents: modelproof-scout, modelproof-builder and modelproof-reviewer say model: inherit; modelproof-bulk says model: haiku. Its docs do not say how it reads those model lines.\n  Source: GitHub Copilot docs, https://code.visualstudio.com/docs/copilot/customization/custom-agents (2026-10-03)\n  Source: Claude Code docs, https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)\n- Near a full usage limit: GitHub's usage guide tells users to run subagents on cheaper models.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)\n\n### How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n\n### Context\n- Search before reading; read line ranges, not whole big files.\n\n### Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- On the Claude API, Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
+      "content": "## Modelproof lead, helpers and bulk (facts as of 2026-10-03)\n\n### Lead, helpers and bulk\n- Lead: the model you choose in GitHub Copilot. In VS Code, the Copilot Chat model is chosen from a dropdown at the bottom of the chat view.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model (2026-09-27)\n- Helpers: GitHub Copilot uses the Claude Code helper files in .claude/agents: modelproof-scout, modelproof-builder, modelproof-reviewer and modelproof-checker say model: inherit; modelproof-bulk says model: haiku. Its docs do not say how it reads those model lines.\n  Source: GitHub Copilot docs, https://code.visualstudio.com/docs/copilot/customization/custom-agents (2026-10-03)\n  Source: Claude Code docs, https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)\n- Near a full usage limit: GitHub's usage guide tells users to run subagents on cheaper models.\n  Source: GitHub Copilot docs, https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)\n\n### How to hand off\n- Brief each helper with the exact files, the goal, and a check that proves it is done.\n- Ask for a short return; details go in a file on disk.\n- Let scripts and tests decide pass or fail, not a summary.\n- A cold review gets the diff, not the author's summary.\n- Have modelproof-checker re-check finished work in a fresh context; it returns pass or fail with the output.\n\n### Context\n- Search before reading; read line ranges, not whole big files.\n\n### Effort\n- Raise effort for a hard step and lower it for routine ones; don't leave it at max.\n- On the Claude API, Anthropic's effort docs list high as the default effort on every supporting Claude model except Claude Opus 5.5, whose default is medium. Source: Anthropic docs, https://platform.claude.com/docs/en/build-with-claude/effort.md (2026-10-03)\n- Effort levels per model, for you: https://lucascashwell3-ai.github.io/modelproof/#effort\n",
       "why": "One block at the end of AGENTS.md, read by GitHub Copilot; your own text is untouched.",
-      "lines": 24
+      "lines": 25
     }
   ],
   "copy": [],
-  "available": [],
+  "available": [
+    {
+      "id": "big-job",
+      "name": "big-job mode",
+      "what": "you plan and review; modelproof-scout, modelproof-builder and modelproof-bulk do every piece, and modelproof-checker re-checks each one in a fresh context",
+      "add": "\"big_job\": true",
+      "basis": [
+        {
+          "id": "anthropic-multi-agent-fit",
+          "sentence": "Anthropic's engineering post on its research system says multi-agent systems fit valuable tasks with heavy parallel work, more information than one context window holds, or many complex tools.",
+          "quote": "multi-agent systems excel at valuable tasks that involve heavy parallelization, information that exceeds single context windows, and interfacing with numerous complex tools",
+          "source_url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+          "date": "2026-10-16"
+        },
+        {
+          "id": "anthropic-multi-agent-token-use",
+          "sentence": "Anthropic reports that in its data agents used about 4 times the tokens of chat, and multi-agent systems about 15 times.",
+          "quote": "agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats",
+          "source_url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+          "date": "2026-09-27"
+        }
+      ]
+    },
+    {
+      "id": "example:power-user-2026-10",
+      "kind": "example",
+      "name": "One power user's setup (Oct 2026)",
+      "as_of": "2026-10-16",
+      "what": "lead Claude Opus 5.5, which plans and reviews; modelproof-scout and modelproof-builder on Claude Sonnet 5.5; Claude Opus 5.5 named in the call for a hard build; big-job mode, so modelproof-checker re-checks each piece in a fresh context; modelproof-bulk (haiku = Claude Haiku 4.5, from Claude Code's docs) used rarely",
+      "add": "\"example\": \"power-user-2026-10\""
+    }
+  ],
   "checks": [],
   "roles": {
     "claude-code": {
@@ -300,6 +346,30 @@
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
+      "checker": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "cc-inherit-follows-switch",
+            "sentence": "A subagent that inherits the session model follows a /model switch; a model field in its file keeps it fixed.",
+            "quote": "To keep a custom subagent on a smaller model, set model in its definition.",
+            "source_url": "https://code.claude.com/docs/en/model-config",
+            "date": "2026-09-27"
+          },
+          {
+            "id": "cc-subagent-model-order",
+            "sentence": "Claude Code resolves a subagent's model from the per-call model parameter, then the file model field, then CLAUDE_CODE_SUBAGENT_MODEL, then the main conversation model.",
+            "quote": "Claude Code resolves the subagent's model in this order:",
+            "source_url": "https://code.claude.com/docs/en/sub-agents",
+            "date": "2026-09-27"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
       "near_limit": {
         "model_ref": "sonnet",
         "model_id": "claude-sonnet-5-5",
@@ -426,6 +496,23 @@
         "usage": null,
         "choice": true
       },
+      "checker": {
+        "model_ref": null,
+        "model_id": null,
+        "model_name": null,
+        "from": "inherit",
+        "basis": [
+          {
+            "id": "copilot-subagent-main-model-default",
+            "sentence": "In VS Code, a Copilot subagent runs on the main conversation model when neither the tool call nor the agent names a model, unless the experimental Auto setting is on.",
+            "quote": "to use Auto instead of the main model when neither the tool call nor the agent specifies a model",
+            "source_url": "https://code.visualstudio.com/docs/copilot/agents/subagents",
+            "date": "2026-10-03"
+          }
+        ],
+        "price": null,
+        "usage": null
+      },
       "near_limit": {
         "model_ref": null,
         "model_id": null,
@@ -448,7 +535,8 @@
           "scout": "inherit",
           "builder": "inherit",
           "reviewer": "inherit",
-          "bulk": "haiku"
+          "bulk": "haiku",
+          "checker": "inherit"
         },
         "basis": [
           {
@@ -462,6 +550,8 @@
       }
     }
   },
+  "big_job": false,
+  "example": null,
   "preview_facts": {
     "models_you_use": [],
     "tools_and_labs_say": [
@@ -517,6 +607,7 @@
     "anthropic-effort-defaults",
     "anthropic-effort-high-use",
     "anthropic-haiku-checkable-outputs",
+    "anthropic-multi-agent-fit",
     "anthropic-multi-agent-token-use",
     "anthropic-orchestrator-vs-lower-effort",
     "anthropic-sonnet-5-5-complement",
@@ -534,6 +625,7 @@
     "cc-subagent-model-order",
     "cc-subagent-own-context",
     "cc-subagent-usage-limits",
+    "cc-verify-fresh-model",
     "copilot-custom-agent-locations",
     "copilot-lighter-models-routine",
     "copilot-model-picker",

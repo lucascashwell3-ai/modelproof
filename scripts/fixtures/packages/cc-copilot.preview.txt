@@ -1,4 +1,4 @@
-Modelproof package · facts as of 2026-10-03 · generator 1.1.0
+Modelproof package · facts as of 2026-10-03 · generator 1.2.0
 Your answers: person · project scope · tools: Claude Code, GitHub Copilot · plans: Anthropic Max 5x, GitHub Copilot Pro · limits: sometimes · work: coding
 
 Lead, helpers and bulk per tool
@@ -23,6 +23,7 @@ Lead, helpers and bulk per tool
              "For simple subagent tasks, specify model: haiku in your subagent configuration"
              https://code.claude.com/docs/en/costs (2026-09-27)
              list price $1 in / $5 out per 1M tokens · 0.15% of OpenRouter tokens (2026-10-01)
+    checker  inherit (runs on the lead's model)
     near a full usage limit (a text line, not a setting): a routine, well-scoped thread can run on sonnet = Claude Sonnet 5.5
              "It uses meaningfully more of your quota, so consider switching to Sonnet for routine work."
              https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code (2026-10-03)
@@ -34,6 +35,7 @@ Lead, helpers and bulk per tool
     builder  the Claude Code file .claude/agents/modelproof-builder.md (model: inherit); its docs do not say how it reads that line
     reviewer the Claude Code file .claude/agents/modelproof-reviewer.md (model: inherit); its docs do not say how it reads that line
     bulk     the Claude Code file .claude/agents/modelproof-bulk.md (model: haiku); its docs do not say how it reads that line
+    checker  the Claude Code file .claude/agents/modelproof-checker.md (model: inherit); its docs do not say how it reads that line
     near a full usage limit (a text line, not a setting): the tool's own words below
              "Run subagents on cheaper models."
              https://docs.github.com/en/copilot/tutorials/optimize-ai-usage (2026-10-03)
@@ -59,10 +61,20 @@ Files (numbered; answer "no to 3" to leave one out)
       Claude Code runs this helper on the lead's model (model: inherit).
    4. file   .claude/agents/modelproof-bulk.md · 11 lines · the tool obeys it
       Claude Code runs this helper on haiku, the model named in the file.
-   5. file   .claude/rules/modelproof.md · 38 lines · text
+   5. file   .claude/agents/modelproof-checker.md · 13 lines · the tool obeys it
+      Claude Code runs this helper on the lead's model (model: inherit). It cannot write or edit files (disallowedTools).
+   6. file   .claude/rules/modelproof.md · 39 lines · text
       Claude Code loads every file in rules/ each session; your CLAUDE.md is not touched.
-   6. block  AGENTS.md (added at the end) · 24 lines · text
+   7. block  AGENTS.md (added at the end) · 25 lines · text
       One block at the end of AGENTS.md, read by GitHub Copilot; your own text is untouched.
+  Also available, not included: big-job mode: you plan and review; modelproof-scout, modelproof-builder and modelproof-bulk do every piece, and modelproof-checker re-checks each one in a fresh context. Say "add big-job mode" to include it (profile "big_job": true).
+    "multi-agent systems excel at valuable tasks that involve heavy parallelization, information that exceeds single context windows, and interfacing with numerous complex tools"
+    https://www.anthropic.com/engineering/multi-agent-research-system (2026-10-16)
+    "agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats"
+    https://www.anthropic.com/engineering/multi-agent-research-system (2026-09-27)
+  Example setup, not included: One power user's setup (Oct 2026), as of 2026-10-16: one person's own choice, not advice from Modelproof or any tool or lab.
+    It sets: lead Claude Opus 5.5, which plans and reviews; modelproof-scout and modelproof-builder on Claude Sonnet 5.5; Claude Opus 5.5 named in the call for a hard build; big-job mode, so modelproof-checker re-checks each piece in a fresh context; modelproof-bulk (haiku = Claude Haiku 4.5, from Claude Code's docs) used rarely.
+    Say "use the example" to start from it (profile "example": "power-user-2026-10"); your own answers still come first.
 
 Notes
   - GitHub Copilot also loads the Claude Code helper files (.claude/agents) (https://code.visualstudio.com/docs/copilot/customization/custom-agents), so no second copy is added. Its docs do not say how it reads their model lines (such as haiku); check modelproof-bulk in Copilot's agent list.

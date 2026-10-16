@@ -1,4 +1,4 @@
-Modelproof package · facts as of 2026-10-03 · generator 1.1.0
+Modelproof package · facts as of 2026-10-03 · generator 1.2.0
 Your answers: person · project scope · tools: Cursor · plans: Cursor Pro · limits: rarely · work: coding, frontend
   you use: Claude Sonnet 5, GPT-6 Sol
 
@@ -9,6 +9,7 @@ Lead, helpers and bulk per tool
     builder  inherit (runs on the lead's model)
     reviewer inherit (runs on the lead's model)
     bulk     inherit until you set its model (the tool's docs name no model string)
+    checker  inherit (runs on the lead's model)
 
 Models you use
   Claude Sonnet 5: list price $2 in / $10 out per 1M tokens · 0.79% of OpenRouter tokens (2026-10-01)
@@ -33,8 +34,15 @@ Files (numbered; answer "no to 3" to leave one out)
       Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
    4. file   .cursor/agents/modelproof-bulk.md · 11 lines · the tool obeys it
       Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
-   5. file   .cursor/rules/modelproof.mdc · 30 lines · text
+   5. file   .cursor/agents/modelproof-checker.md · 12 lines · the tool obeys it
+      Cursor loads helpers from .cursor/agents; this copy wins over same-named .claude or .codex ones.
+   6. file   .cursor/rules/modelproof.mdc · 31 lines · text
       Cursor applies a rule with alwaysApply: true in every chat.
+  Also available, not included: big-job mode: you plan and review; modelproof-scout, modelproof-builder and modelproof-bulk do every piece, and modelproof-checker re-checks each one in a fresh context. Say "add big-job mode" to include it (profile "big_job": true).
+    "multi-agent systems excel at valuable tasks that involve heavy parallelization, information that exceeds single context windows, and interfacing with numerous complex tools"
+    https://www.anthropic.com/engineering/multi-agent-research-system (2026-10-16)
+    "agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats"
+    https://www.anthropic.com/engineering/multi-agent-research-system (2026-09-27)
 
 Notes
   - Start a new session so each tool loads the new helper and rule files.
