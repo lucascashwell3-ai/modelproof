@@ -88,6 +88,10 @@ profile). A pasted profile skips the questions. Write the answers to `$MP/profil
   fights this."
 - Offer once: "Say 'show 5' to see a file's full text first." (Item N's text is
   `package.parts[N-1].content` in `$MP/plan.json`.)
+- The plan may end with opt-ins it did not include: big-job mode, and an example setup that
+  someone shared (labeled as one person's own choice). Point to them in one line, in the
+  plan's own words, never as advice. A yes to one = its profile key (`references/questions.md`,
+  "Only when they bring it up") → plan again → show it again → "Go?" again.
 - End with "Go?"
 
 Exit 2 = items marked `conflict`; say each in one line — apply will leave them out with

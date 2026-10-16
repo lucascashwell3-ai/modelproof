@@ -1144,6 +1144,31 @@ test('a superseded claim (the defaults watch replaced it) is never shown; the cl
   assert.ok(text.includes(fresh.quote), 'the new quote is shown');
 });
 
+test('a line the generator names by claim id survives that claim being superseded: the newest claim in the chain stands in', () => {
+  const ids = ['cc-subagent-effort', 'anthropic-orchestrator-vs-lower-effort'];
+  const pkg0 = build('power-user-max5x');
+  for (const id of ids) assert.ok(pkg0.facts_used.includes(id), `the fixture package uses ${id}`);
+  const guidance = clone(FACTS.guidance);
+  const fresh = {};
+  for (const id of ids) {
+    // two hops: old -> mid -> new, as two weekly runs would leave it
+    const i = guidance.claims.findIndex((c) => c.id === id);
+    const mid = { ...clone(guidance.claims[i]), id: `${id}-mid`, sentence: `${guidance.claims[i].sentence.replace(/\.$/, '')} (mid).`, superseded_by: `${id}-new` };
+    fresh[id] = { ...clone(guidance.claims[i]), id: `${id}-new`, sentence: `${guidance.claims[i].sentence.replace(/\.$/, '')} (re-read).`, date: '2026-10-16' };
+    guidance.claims[i].superseded_by = mid.id;
+    guidance.claims.splice(i + 1, 0, mid, fresh[id]);
+  }
+  const pkg = buildPackage(PROFILES['power-user-max5x'], { ...FACTS, guidance }, setupFor('power-user-max5x'));
+  const text = shownText(pkg);
+  for (const id of ids) {
+    assert.ok(pkg.facts_used.includes(fresh[id].id), `${id}: the newest claim is used`);
+    assert.ok(!pkg.facts_used.includes(id) && !pkg.facts_used.includes(`${id}-mid`), `${id}: no replaced claim is used`);
+  }
+  assert.ok(text.includes(fresh['cc-subagent-effort'].sentence), 'the named-by-id effort line shows the newest sentence');
+  assert.match(text, /lower effort on that model cost less than an orchestrator\. Source: Anthropic docs, .+ \(2026-10-16\)/);
+  assert.equal(text.split('\n').length, shownText(pkg0).split('\n').length, 'no line dropped');
+});
+
 /* ======================================================================== checker, big-job mode, example setup */
 
 const CHECKER_SRC = /Source: Claude Code docs, https:\/\/code\.claude\.com\/docs\/en\/best-practices \(\d{4}-\d{2}-\d{2}\)$/;
@@ -1176,7 +1201,7 @@ test('checker: a fifth helper in every helper tool, on the lead\'s model, never 
     const text = textParts(cx)[0];
     assert.equal(text.target.path, scope === 'user' ? '~/.codex/AGENTS.md' : 'AGENTS.md');
     assert.match(text.content, /^- Have modelproof-checker re-check finished work in a fresh context; it returns pass or fail with the output\.$/m);
-    assert.match(text.content, /modelproof-builder and modelproof-checker run on the lead's model \(inherit\)\./);
+    assert.match(text.content, /modelproof-scout, modelproof-builder, modelproof-reviewer and modelproof-checker run on the lead's model \(inherit\)\./);
   }
   for (const n of ['cursor', 'copilot', 'antigravity']) assert.ok(build(n).parts.some((p) => p.id === `${n}:agent:checker`), n);
   assert.match(build('antigravity').parts.find((p) => p.id === 'antigravity:agent:checker').content, /^tools:\n {2}- view_file\n {2}- grep_search\n {2}- run_command\nmodel: inherit$/m);

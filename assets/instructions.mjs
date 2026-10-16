@@ -283,6 +283,16 @@ function indexFacts(facts) {
     claims.push(rec);
     claimById.set(rec.id, rec);
   }
+  // A replaced claim still answers to its old id: the newest claim in its superseded_by chain
+  // stands in, so a line this file names by id survives the weekly watch re-sourcing that claim.
+  const rawClaim = new Map(arr(g.claims).filter((c) => isObj(c) && typeof c.id === 'string').map((c) => [c.id, c]));
+  for (const c of rawClaim.values()) {
+    if (c.superseded_by == null || claimById.has(c.id)) continue;
+    let cur = c;
+    const seen = new Set();
+    while (cur && cur.superseded_by != null && !seen.has(cur.id)) { seen.add(cur.id); cur = rawClaim.get(cur.superseded_by); }
+    if (cur && claimById.has(cur.id)) claimById.set(c.id, claimById.get(cur.id));
+  }
   const refs = [];
   for (const r of arr(g.model_refs)) {
     if (!isObj(r) || !TOOLS.includes(r.tool) || typeof r.ref !== 'string' || !REF_RE.test(r.ref)) continue;
@@ -973,7 +983,7 @@ function claimLine(F, ctx, id, tool, prio, text) {
   if (!c) return null;
   if (!text && !claimShowable(F, ctx, c, 'sentence', tool)) return null;
   if (text && !claimShowable(F, ctx, c, null, tool)) return null;
-  return { t: `- ${text || c.sentence} ${sourceOf(c)}`, prio, claim: id };
+  return { t: `- ${text || c.sentence} ${sourceOf(c)}`, prio, claim: c.id };
 }
 
 function effortClaimFor(F, ctx, labKeyWanted) {
@@ -1048,7 +1058,7 @@ function renderText(F, p, ctx, roles, readers, opts) {
     // What a split costs, in the lab's own sentence.
     const cost = claimLine(F, ctx, 'anthropic-multi-agent-token-use', null, 2);
     if (cost) bj.push(cost);
-    if (has('claude-code')) bj.push(...handOffFacts().filter((l) => l.claim !== 'anthropic-multi-agent-token-use'));
+    if (has('claude-code')) bj.push(...handOffFacts().filter((l) => !cost || l.claim !== cost.claim));
     sections.push({ title: 'Big-job mode (you turned it on)', lines: bj });
   } else if (has('claude-code')) {
     const wh = handOffFacts();

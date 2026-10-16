@@ -1,3 +1,25 @@
+# Instruction package 1.2.0: a checker helper, big-job mode, an example setup — 2026-10-16
+
+- **Checker helper** (`modelproof-checker`) in every tool that takes helper files: it re-checks
+  finished work in a fresh context with real evidence (tests, a real run, a live check), returns
+  pass or fail with the output, and never edits files (Claude Code's file sets
+  `disallowedTools: Write, Edit, NotebookEdit`). It runs on the lead's model unless you choose
+  one: no tool or lab names a model for this job. Claude Code's text cites its own docs on a
+  fresh model refuting the result.
+- **Big-job mode**, opt-in (`"big_job": true`): the lead plans, splits and reviews; scout,
+  builder and bulk do every piece; the checker re-checks each one. It changes the text, never a
+  model. Off by default, because Anthropic's cost guide found the same model at lower effort
+  cheaper on work one model can finish alone; the plan quotes Anthropic on when a split pays off
+  and what it costs.
+- **Example setup**, opt-in (`data/guidance.json` `examples[]`, profile `"example": "<id>"`):
+  "One power user's setup (Oct 2026)" for Claude Code. Labeled everywhere as one person's own
+  choice, never as advice; offered only in the installer's plan and only when every model it
+  names is one you can run; it fills only the roles you left open.
+- A line the generator names by claim id now follows that claim's `superseded_by` chain, so a
+  weekly re-source by the defaults watch no longer drops the line from the package.
+
+---
+
 # OpenAI GPT-5.6 Terra/Luna price cuts — 2026-07-30
 
 OpenAI announced price cuts today (Sam Altman, @sama). Verified directly against OpenAI's own

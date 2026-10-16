@@ -45,7 +45,7 @@ places, never env values, never tokens. You read no more than it points to.
 
 | Tool | Helper files (the tool obeys the model line) | Text |
 |---|---|---|
-| Claude Code | `agents/modelproof-scout.md`, `-builder.md`, `-reviewer.md`, `-bulk.md` (+ `-explore.md` only with `"explore_override": true`) under `~/.claude/` or `<project>/.claude/` | `rules/modelproof.md`, or one marked block in the project AGENTS.md when Claude Code reads it. Never a CLAUDE.md. |
+| Claude Code | `agents/modelproof-scout.md`, `-builder.md`, `-reviewer.md`, `-checker.md`, `-bulk.md` (+ `-explore.md` only with `"explore_override": true`) under `~/.claude/` or `<project>/.claude/` | `rules/modelproof.md`, or one marked block in the project AGENTS.md when Claude Code reads it. Never a CLAUDE.md. |
 | Codex | `agents/modelproof-<role>.toml` under `~/.codex/` or `<project>/.codex/` | one marked block in AGENTS.md (or AGENTS.override.md when that exists) |
 | Cursor | `.cursor/agents/modelproof-<role>.md` | `.cursor/rules/modelproof.mdc`, left out when a project AGENTS.md block is installed |
 | GitHub Copilot | `.github/agents/modelproof-<role>.agent.md` (user: `~/.copilot/agents/`), no model line. Copilot also loads `.claude/agents`, so with Claude Code there it adds no second copy | one marked block in the project AGENTS.md |

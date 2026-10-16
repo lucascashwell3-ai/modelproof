@@ -22,7 +22,8 @@ as a `Left out of your answers:` note — tell them, don't guess a fix.
 ## Roles come only from them
 
 `roles` = `lead` (the main model), the helpers `scout` (searching and reading), `builder`
-(writing code), `reviewer` (checking a change), and `bulk` (mechanical work a script or test
+(writing code), `reviewer` (checking a change), `checker` (re-checking finished work in a fresh
+context with real evidence; it never edits files), and `bulk` (mechanical work a script or test
 can check). Set one only when they chose it: a confirmed existing rule ("keep opus for
 builds?" → yes → `"builder": "opus"`) or a direct answer. Never fill a role yourself. An
 empty role means: the lead is the tool's documented default model (or the one they choose in
@@ -41,6 +42,15 @@ full limit: a habit, never a setting.
   Code's built-in Explore helper on the bulk model (haiku)? It adds one more helper file." Yes →
   `"explore_override": true`. Never ask it otherwise, never set it without their yes: without
   it the plan leaves that file out and lists it under "Also available, not included".
+- "The lead should only plan", "hand everything off", a long or very large job → `"big_job":
+  true` (big-job mode: the lead plans and reviews, the helpers do every piece, the checker
+  re-checks each one). Off by default, because for work one model can finish alone the same
+  model at lower effort costs less; the plan quotes the lab on when a split pays off. It
+  changes the text only, never a model. Without it the plan lists it under "Also available".
+- "Use the example" (the plan lists an example setup, labeled as one person's own choice) →
+  `"example": "<its id>"`, the id in the plan's `profile "example": …` line. It fills only the
+  roles they left open; their own answers come first. Never offer it in your own words or
+  praise it: the plan's lines are the whole offer.
 - A whole team or company → `"who": "org"` with `org.divisions`; the board at `BASE` +
   `board.html` builds that profile faster than questions. Offer it once.
 
