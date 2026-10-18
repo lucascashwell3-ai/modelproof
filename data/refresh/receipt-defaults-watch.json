@@ -1,0 +1,15 @@
+{
+  "job": "defaults-watch",
+  "ran_at": "2026-10-18T06:03:05.755Z",
+  "ok": false,
+  "rules": 103,
+  "outcomes": {
+    "ok": 103
+  },
+  "changes": [],
+  "pr": null,
+  "restamped": false,
+  "stamped_tools": [],
+  "blocked_runs": {},
+  "sweep_blocked_runs": {}
+}
