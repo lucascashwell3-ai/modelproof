@@ -427,7 +427,7 @@ test('section 03 stamps the date of the effort ladder on screen, not models.json
   // an old ladder shows its own notice
   models.effort_ladders[1].as_of = '2026-05-01';
   app.renderFreshness();
-  assert.match(slot.innerHTML, /Not updated in 156 days\. Usually updated when the publisher posts new runs\./);
+  assert.match(slot.innerHTML, /Not updated in 156 days\. Usually updated twice a day, from the testers' published data\./);
   // the ladder switch fills the stamp again
   const src = fs.readFileSync(path.join(ROOT, 'assets', 'models.js'), 'utf8');
   assert.match(src, /L\.id = t\.dataset\.lad;[^\n]*renderLadder\(\{ animate: true \}\); fillStamps\(facts, \{ ladder: ladder\(\) \}\);/);

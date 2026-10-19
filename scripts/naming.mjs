@@ -69,9 +69,10 @@ export const VENDOR_ALIASES = {
 };
 
 /**
- * Vendors the collect run may admit on its own (>=2 sources + pricing). Everything else goes to
- * the Judge with a citation. This is the admission policy that predates the naming rule, now
- * expressed in canonical names; widening it is a policy change, not a naming one.
+ * Vendors the collect run may admit on two sources (>=2 sources + pricing) before the catalog
+ * carries any model of theirs. A vendor already in the catalog is admitted on its priced
+ * OpenRouter listing alone (scripts/auto-refresh.mjs admitNewModel). Everything else goes to the
+ * Judge with a citation. Widening either path is a policy change, not a naming one.
  */
 export const AUTO_ADMIT_VENDORS = new Set([
   'Anthropic', 'OpenAI', 'Google', 'Meta', 'Mistral AI', 'xAI', 'DeepSeek', 'Alibaba (Qwen)',

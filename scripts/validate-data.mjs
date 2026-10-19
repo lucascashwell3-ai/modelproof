@@ -1166,9 +1166,25 @@ function checkPlans(f, { plans }, ctx) {
   return E;
 }
 
-function checkVendors(f, { vendors }, ctx) {
+function checkVendors(f, { vendors, models }, ctx) {
   const E = [...asOfProblems(vendors.as_of, 'data/vendors.json:', ctx)];
   for (const v of vendors.vendors || []) if (!isUrl(v.source)) E.push(`data/vendors.json "${v.vendor}": source is required (http(s) URL)`);
+  // Every model's vendor needs a row with a country: the pages show where each lab is based, and
+  // a model whose vendor has none would show a blank there. A row no model uses may stay null.
+  const country = new Map((vendors.vendors || []).map((v) => [v.vendor, v.country]));
+  const idsByVendor = new Map();
+  for (const m of (models && models.models) || []) {
+    if (!idsByVendor.has(m.vendor)) idsByVendor.set(m.vendor, []);
+    idsByVendor.get(m.vendor).push(m.id);
+  }
+  for (const [vendor, ids] of idsByVendor) {
+    const c = country.get(vendor);
+    if (typeof c === 'string' && c.trim()) continue;
+    const used = `${ids.slice(0, 3).join(', ')}${ids.length > 3 ? ', …' : ''}`;
+    E.push(country.has(vendor)
+      ? `data/vendors.json "${vendor}": country is empty, but it is the vendor of ${used} — every model's vendor needs a sourced country`
+      : `data/vendors.json: no row for "${vendor}", the vendor of ${used} — every model's vendor needs a row with a sourced country`);
+  }
   return E;
 }
 

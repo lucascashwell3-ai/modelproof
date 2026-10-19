@@ -10,10 +10,11 @@
          is unavailable or HEAD has no data/models.json).
      (e) as_of is a valid YYYY-MM-DD string and not in the future.
      (f) feed health: for each key field (price_input, price_output, availability.openrouter,
-         availability.direct_api, the BENCHES benchmarks, and effort-ladder points), the count of
-         non-null values hasn't dropped more than 15% from the version committed at HEAD — catches
-         a feed silently starting to return empty instead of erroring loud (skipped if git is
-         unavailable or HEAD has no data/models.json).
+         availability.direct_api, the BENCHES benchmarks, and the points of hand-built effort
+         ladders), the count of non-null values hasn't dropped more than 15% from the version
+         committed at HEAD — catches a feed silently starting to return empty instead of erroring
+         loud (skipped if git is unavailable or HEAD has no data/models.json). A ladder rebuilt
+         by rule each run (series carry source_key) is not counted: its size changes by design.
      (g) every timeline entry (models.json releases[]) has an http(s) source.
      (h) every effort-ladder point resolves a publisher and a method (point -> series -> ladder,
          the same inheritance the data contract uses for its source).
@@ -66,7 +67,13 @@ const FEED_HEALTH_MODEL_FIELDS = [
 ];
 const nonNull = (v) => v !== null && v !== undefined;
 const countNonNull = (models, getter) => models.reduce((n, m) => n + (nonNull(getter(m)) ? 1 : 0), 0);
-const ladderPointCount = (data) => (data.effort_ladders || [])
+// A ladder whose series carry source_key is rebuilt by rule on every Collect run (the CursorBench
+// one: scripts/auto-refresh.mjs rebuildCursorBench). It gains and loses whole models by design —
+// a model ages out, or a newer one in its line replaces it — so a smaller count there is not a
+// feed going quiet. Those ladders are left out of this count: the rebuild never empties a ladder,
+// and validate-data.mjs blocks one with no series.
+const isRuleBuilt = (L) => (L.series || []).some((s) => s && s.source_key);
+const ladderPointCount = (data) => (data.effort_ladders || []).filter((L) => !isRuleBuilt(L))
   .reduce((n, L) => n + (L.series || []).reduce((k, s) => k + (s.points || []).length, 0), 0);
 
 export function checkFeedHealth(before, after, tolerance = 0.15) {

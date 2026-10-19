@@ -79,6 +79,20 @@ test('checkFeedHealth fails when effort-ladder points collapse', () => {
   assert.match(problems[0], /10 to 2/);
 });
 
+test('checkFeedHealth: a ladder rebuilt by rule (series carry source_key) may lose models; a hand-built one still trips', () => {
+  const series = (n, key) => Array.from({ length: n }, (_, i) => ({ model_id: `m${i}`, ...(key ? { source_key: `m${i}` } : {}), points: [{ effort: 'low' }, { effort: 'medium' }, { effort: 'high' }] }));
+  const handBuilt = { id: 'hand', series: series(4) };
+  const before = { models: feedHealthBefore.models, effort_ladders: [{ id: 'rule', series: series(10, true) }, handBuilt] };
+  // three models age out of the rule-built ladder at once: 30 -> 21 points, a 30% drop by design
+  const aged = { models: feedHealthBefore.models, effort_ladders: [{ id: 'rule', series: series(7, true) }, handBuilt] };
+  assert.deepEqual(checkFeedHealth(before, aged), []);
+  // the hand-built ladder losing half its points is still a feed going quiet
+  const quiet = { models: feedHealthBefore.models, effort_ladders: [{ id: 'rule', series: series(10, true) }, { id: 'hand', series: series(2) }] };
+  const problems = checkFeedHealth(before, quiet);
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /effort_ladders points" non-null count dropped from 12 to 6/);
+});
+
 test('checkFeedHealth skips a field with nothing committed to compare against', () => {
   const before = { models: [feedHealthModel({ price_input: null })], effort_ladders: [] };
   const after = { models: [feedHealthModel({ price_input: 5 })], effort_ladders: [] };

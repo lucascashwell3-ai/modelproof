@@ -37,7 +37,12 @@ const labsByScored = [...new Set(scored.map((m) => m.vendor))].map((v) => [v, sc
 const scoredNewest = labsByScored.slice(0, 3).map(([v]) => newest(scored.filter((m) => m.vendor === v))).filter(Boolean).map((m) => m.id);
 const q = new URLSearchParams(location.search).get('compare');
 let cmp = (q ? q.split(',').filter((id) => byId.has(id)) : []).slice(0, 3);
-if (!cmp.length) cmp = scoredNewest.slice();
+// Open on the three most-used models on OpenRouter that outside testers have measured, one per lab: the same rule as
+// the effort chart. Usage is a published fact; nothing is ranked.
+const rankOf = (m) => (m.usage && m.usage.openrouter && m.usage.openrouter.rank) || 1e9;
+const cbOf = (m) => (((m.standings || {}).coding || {}).measured || []).find((x) => /^CursorBench/.test(x.benchmark || ''));
+const mostUsed = []; for (const m of live.filter(cbOf).sort((a, b) => rankOf(a) - rankOf(b))) { if (rankOf(m) < 1e9 && !mostUsed.some((x) => x.vendor === m.vendor)) mostUsed.push(m); if (mostUsed.length === 3) break; }
+if (!cmp.length) cmp = mostUsed.length === 3 ? mostUsed.map((m) => m.id) : scoredNewest.slice();
 while (cmp.length < 3) cmp.push('');
 
 const vendors = [...new Set(M.models.map((m) => m.vendor))].sort((a, b) => a.localeCompare(b));
@@ -47,7 +52,10 @@ const ROWS = [
   ['Price in', (m) => (m.price_input != null ? `<span class="big">${esc(fmtPrice(m.price_input))}</span><small>per 1M</small>` : na())],
   ['Price out', (m) => (m.price_output != null ? `<span class="big">${esc(fmtPrice(m.price_output))}</span><small>per 1M</small>` : na())],
   ['Context', (m) => (m.context_window ? `<span class="big" title="${m.context_window.toLocaleString('en-US')} tokens">${esc(fmtContext(m.context_window))}</span>` : na())],
-  ['Coding score', (m) => (m.coding_score == null ? na() : `<span class="big">${m.coding_score}</span><small>/ 100</small>`)],
+  ['Coding test', (m) => {
+    const cb = (((m.standings || {}).coding || {}).measured || []).find((x) => /^CursorBench/.test(x.benchmark || ''));
+    return cb ? `<span class="big">${(cb.score * 100).toFixed(1)}%</span><small>CursorBench, best effort</small>` : na();
+  }],
   ['Released', (m) => (m.released ? `<span class="big" style="font-size:var(--fs-17)">${esc(fmtDate(m.released))}</span>` : na())],
   ['Source', (m) => {
     const pc = m.price_checked, first = pc ? pc.url : (m.sources || [])[0];
@@ -77,9 +85,17 @@ renderCompare();
 const LAD = M.effort_ladders;
 const TONES = ['var(--s1)', 'var(--s2)', 'var(--s3)', 'var(--s4)', 'var(--s5)'];
 const SHAPES = ['circle', 'square', 'diamond', 'triangle', 'ring'];
-const L = { id: new URLSearchParams(location.search).get('ladder'), sel: 0, view: 'chart', hover: null, cursor: null };
+const L = { id: new URLSearchParams(location.search).get('ladder'), sel: 0, view: 'chart', hover: null, cursor: null, extra: [] };
 if (!LAD.some((l) => l.id === L.id)) L.id = LAD[0].id;
-const ladder = () => LAD.find((l) => l.id === L.id);
+// A ladder with default_count opens on that many models (most used first); the rest wait under "More models".
+const ladder = () => {
+  const lad = LAD.find((l) => l.id === L.id);
+  if (!lad.default_count) return lad;
+  const first = lad.series.slice(0, lad.default_count);
+  const added = L.extra.map((id) => lad.series.find((x) => x.model_id === id)).filter((x) => x && !first.includes(x));
+  const shown = [...first, ...added];
+  return { ...lad, series: shown, hidden: lad.series.filter((x) => !shown.includes(x)) };
+};
 const money = (n) => `$${n.toFixed(2)}`;
 const pct = (n) => `${Math.round(n)}%`;
 
@@ -138,7 +154,9 @@ function renderLadder({ animate = false } = {}) {
   }
   for (const b of $$('[data-lad]', root)) b.setAttribute('aria-selected', String(b.dataset.lad === L.id));
   for (const b of $$('[data-view]', root)) b.setAttribute('aria-pressed', String(b.dataset.view === L.view));
-  $('#legend', root).innerHTML = `` + lad.series.map((s, i) => `<button type="button" class="lg" data-s="${i}" aria-pressed="${i === L.sel}">${legendKey(i)}${esc(s.label)}</button>`).join('');
+  const hid = lad.hidden || [];
+  $('#legend', root).innerHTML = lad.series.map((s, i) => `<button type="button" class="lg" data-s="${i}" aria-pressed="${i === L.sel}">${legendKey(i)}${esc(s.label)}</button>`).join('')
+    + (hid.length ? `<label class="lg-more"><span class="sr-only">Add a model to the chart</span><select data-more><option value="">${hid.length} more models</option>${hid.map((s) => `<option value="${esc(s.model_id)}">${esc(s.label)}</option>`).join('')}</select></label>` : '');
   $('#chart', root).hidden = L.view !== 'chart';
   $('#table-view', root).hidden = L.view !== 'table';
   $('#legend', root).hidden = false;
@@ -235,9 +253,14 @@ function drawFoot(lad) {
 
 function bindLadder() {
   const root = $('#lad-root');
+  root.addEventListener('change', (e) => {
+    const m = e.target.closest('[data-more]'); if (!m || !m.value) return;
+    L.extra.push(m.value); L.sel = ladder().series.findIndex((x) => x.model_id === m.value); L.hover = null;
+    renderLadder({ animate: true });
+  });
   root.addEventListener('click', (e) => {
     const t = e.target.closest('[data-lad]');
-    if (t) { L.id = t.dataset.lad; L.sel = 0; L.hover = null; setParam('ladder', L.id === LAD[0].id ? null : L.id); renderLadder({ animate: true }); fillStamps(facts, { ladder: ladder() }); return; }
+    if (t) { L.id = t.dataset.lad; L.sel = 0; L.hover = null; L.extra = []; setParam('ladder', L.id === LAD[0].id ? null : L.id); renderLadder({ animate: true }); fillStamps(facts, { ladder: ladder() }); return; }
     const v = e.target.closest('[data-view]'); if (v) { L.view = v.dataset.view; renderLadder(); return; }
     const lg = e.target.closest('.lg'); if (lg) { L.sel = +lg.dataset.s; L.hover = null; paintSelection(); drawReadout(ladder()); for (const b of $$('.lg', root)) b.setAttribute('aria-pressed', String(+b.dataset.s === L.sel)); }
   });

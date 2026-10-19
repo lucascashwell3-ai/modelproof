@@ -716,3 +716,160 @@ button.chip { background: transparent; cursor: pointer; transition: background-c
 @media (hover: hover) and (pointer: fine) { .sec-link:hover { color: var(--ink); } }
 .foot .foot-links { flex-direction: row; flex-wrap: wrap; gap: 6px 18px; }
 .foot-in [data-fresh] { margin-right: 10px; }
+
+/* =====================================================================================================
+   Three kinds of visitor on one board. Same vocabulary as the taps and boxes above:
+   pills for choices, hairline containers, marble for "on", one dashed edge for a box still waiting on you.
+   ===================================================================================================== */
+
+/* Limit models: a quiet control on the board's top edge, opening inline */
+/* six tools in one row at desktop widths: pills 2px slimmer, columns weighted by what they hold */
+.tap .opt { padding: 0 14px; }
+@media (min-width: 1001px) { .taps { grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr) minmax(0, 1.02fr); } }
+
+.lim { margin-top: -4px; margin-bottom: 8px; }
+.lim-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; min-height: 32px; }
+.lim-toggle { display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 12px; border: 1px solid transparent; border-radius: 99px; background: transparent; color: var(--ink-2); font-size: var(--fs-13); font-weight: 500; transition: background-color 150ms, color 150ms, border-color 150ms, transform 110ms var(--ease-out); }
+.lim-toggle i.ph-fill { font-size: 14px; }
+.lim-toggle .lim-c { font-size: 12px !important; color: var(--ink-3); transition: transform 180ms var(--ease-out); }
+.lim-toggle[aria-expanded="true"] { background: var(--r2); border-color: var(--line); color: var(--ink); }
+.lim-toggle[aria-expanded="true"] .lim-c { transform: rotate(180deg); color: var(--ink); }
+.lim-toggle:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) { .lim-toggle:hover { background: var(--r1); color: var(--ink); } .lim-toggle[aria-expanded="true"]:hover { background: var(--r3); } }
+.lim-chip { display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 4px 0 12px; border-radius: 99px; border: 1px solid var(--line-2); background: var(--r1); font-size: var(--fs-13); color: var(--ink); white-space: nowrap; }
+.lim-chip > i.ph-fill { font-size: 14px; color: var(--ink-2); }
+.lim-clear { display: inline-grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 99px; background: transparent; color: var(--ink-2); transition: background-color 150ms, color 150ms; }
+.lim-clear i.ph-fill { font-size: 15px; }
+@media (hover: hover) and (pointer: fine) { .lim-clear:hover { background: var(--r3); color: var(--ink); } }
+.lim-panel { display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr); align-items: end; gap: 14px 40px; margin-top: 8px; padding: 16px 20px 18px; border: 1px solid var(--line); border-radius: 20px; background: var(--r1); }
+.lim-g { min-width: 0; }
+.lim-panel .opt { min-height: 36px; padding: 0 14px; }
+.lim-count { justify-self: end; display: flex; align-items: baseline; gap: 6px; padding-bottom: 6px; font-size: var(--fs-13); color: var(--ink-2); white-space: nowrap; }
+.lim-count b { font-size: var(--fs-20); font-weight: 500; color: var(--ink); }
+
+/* the line under the board: what the helpers save, and why */
+.lim-bar { gap: 8px 16px; }
+.lim-right { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.spend-note { margin-top: 12px; text-align: center; font-size: var(--fs-13); color: var(--ink-2); }
+.spend-note:empty { display: none; }
+
+/* boxes: the source line under every model; route facts under it on Any model */
+.node-src { margin-top: -1px; }
+.node-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 11.5px; line-height: 1.35; color: var(--ink-2); }
+.ow { display: inline-flex; align-items: center; height: 18px; padding: 0 7px; border-radius: 99px; border: 1px solid var(--line-2); font-size: 10.5px; font-weight: 500; color: var(--ink-2); white-space: nowrap; }
+.node[data-state="pick"] .node-card, .node[data-state="outside"] .node-card { border-style: dashed; border-color: var(--edge); }
+.node[data-state="pick"] .node-model { color: var(--marble); }
+.node[data-state="outside"] .node-model { color: var(--ink-2); font-size: var(--fs-13); }
+.node[data-state="wait"] .node-model { color: var(--ink-3); }
+
+/* picker additions */
+.pick.pick-wide { width: 344px; }
+.pk-list { position: relative; }
+.pk-list > * { flex: none; }
+.pk-t small .ow { margin-left: 6px; height: 16px; padding: 0 6px; font-size: 10px; vertical-align: 1px; }
+.pk-lede { margin: -2px 12px 8px; font-size: var(--fs-13); color: var(--ink-2); }
+.pk-g { margin: 8px 12px 2px; font-size: var(--fs-12); font-weight: 600; color: var(--ink-3); }
+.pk-g:first-child { margin-top: 2px; }
+.pk-note.pk-lim { display: flex; align-items: center; gap: 6px; color: var(--ink-3); }
+.pk-other { margin: 8px 12px 4px; font-size: var(--fs-13); line-height: 1.5; color: var(--ink-2); }
+.pk-any { display: inline-flex; align-items: center; gap: 4px; padding: 0; border: 0; background: none; color: var(--ink); font: inherit; font-weight: 500; text-decoration: underline; text-decoration-color: var(--edge); text-underline-offset: 3px; border-radius: 6px; transition: text-decoration-color 150ms; }
+.pk-any i.ph-fill { font-size: 12px; }
+@media (hover: hover) and (pointer: fine) { .pk-any:hover { text-decoration-color: var(--ink); } }
+
+@media (max-width: 720px) {
+  .lim { margin-top: -2px; }
+  .lim-bar { justify-content: space-between; gap: 8px; }
+  .lim-right { margin-left: auto; }
+  .lim[data-limited="true"] .lim-toggle span { display: none; }
+  .lim[data-limited="true"] .lim-toggle { padding: 0 10px; flex: none; }
+  .lim-chip { min-width: 0; }
+  .lim-chip-t { overflow: hidden; text-overflow: ellipsis; }
+  .lim-panel { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 12px 14px 14px; }
+  .lim-count { justify-self: start; padding-bottom: 0; }
+  .lim-panel .opt { min-height: 36px; padding: 0 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lim-toggle, .lim-toggle .lim-c { transition-duration: 0.001ms; }
+}
+
+/* =====================================================================================================
+   The accent: one lightning blue. Blue means what you picked, what you can press, and the data itself.
+   oklch(0.70 0.165 247), about #30a5fe: 7.3:1 on the page, 6.5:1 on boxes, 5.8:1 on panel tops.
+   ===================================================================================================== */
+:root {
+  --bolt: oklch(0.70 0.165 247);
+  --bolt-hi: oklch(0.81 0.096 244);          /* blue text: 10.8:1 on the page, 8.6:1 on panel tops */
+  --bolt-wash: oklch(0.70 0.165 247 / 0.14);
+  --bolt-pick: oklch(0.70 0.165 247 / 0.22);  /* the fill behind anything you chose */
+  --bolt-ring: oklch(0.70 0.165 247 / 0.40);
+  --on-bolt: oklch(0.17 0.035 255);          /* text on a blue fill: 7.2:1 */
+  --signal: var(--bolt);
+  --signal-hi: var(--bolt-hi);
+  --signal-wash: var(--bolt-wash);
+  --signal-ring: var(--bolt-ring);
+  --on-signal: var(--on-bolt);
+  /* chart lines: one blue family, still told apart by shape and label */
+  --s1: oklch(0.92 0.035 240);
+  --s2: oklch(0.82 0.06 244);
+  --s3: oklch(0.72 0.075 248);
+  --s4: oklch(0.64 0.085 252);
+  --s5: oklch(0.57 0.09 256);
+}
+/* one look for everything you chose: the page you're on, options, tabs, toggles, chips */
+.nav-links a[aria-current="page"],
+.opt[aria-pressed="true"],
+.seg button[aria-selected="true"], .seg button[aria-pressed="true"],
+.lg[aria-pressed="true"] {
+  background: var(--bolt-pick); color: var(--ink); border-color: var(--bolt); box-shadow: inset 0 0 0 1px var(--bolt);
+}
+.opt[aria-pressed="true"], .lg[aria-pressed="true"] { box-shadow: none; }
+.opt[aria-pressed="true"] { font-weight: 600; }
+/* the one solid blue: Install */
+.pill-lg, .pill-fill.pill-lg { background: var(--bolt); color: var(--on-bolt); }
+.pill-lg[disabled] { opacity: 0.45; }
+/* board: the box you opened, its lines, and the hand-off lines */
+.node[aria-expanded="true"] .node-card { border-color: var(--bolt); box-shadow: 0 0 0 3px var(--bolt-ring), var(--lift); }
+.edges path.edge { stroke: color-mix(in oklab, var(--edge) 55%, var(--bolt)); }
+.edges path.edge.sel { stroke: var(--bolt); }
+.ports .port { stroke: color-mix(in oklab, var(--edge) 55%, var(--bolt)); }
+/* effort chart: the model you picked, its key, its labels and its name in the sentence below */
+.lg[aria-pressed="true"] svg > path:first-child { stroke: var(--bolt) !important; }
+.lg[aria-pressed="true"] svg .shape { fill: var(--bolt) !important; }
+.chart g.s[data-sel="true"] .s-line { filter: drop-shadow(0 0 6px var(--bolt-ring)); }
+.chart .end-label.sel { fill: var(--bolt-hi); font-weight: 600; }
+.chart .step-label { fill: var(--bolt-hi); }
+.readout b:first-child { color: var(--bolt-hi); }
+/* releases: every release dot in blue, the one you're reading filled */
+.dot::before { border-color: var(--bolt); }
+.dot[aria-pressed="true"]::before { background: var(--bolt); border-color: var(--bolt); }
+.tl-detail b { color: var(--bolt-hi); }
+/* panel tops: a faint blue tint */
+.lad-top, .cmp thead th, .mcard .mc-head { background: color-mix(in oklab, var(--r2) 92%, var(--bolt)); }
+/* links */
+.link, .sec-link, .lad-foot .src a, .cmp .sub a, .tl-detail a, .foot a, .mcard .sub a {
+  color: var(--bolt-hi); text-decoration-color: color-mix(in oklab, var(--bolt) 55%, transparent);
+}
+@media (hover: hover) and (pointer: fine) {
+  .pill-lg:hover:not([disabled]) { background: var(--bolt-hi); }
+  .dot:hover::before { background: var(--bolt); }
+  :is(.link, .sec-link, .lad-foot .src a, .cmp .sub a, .tl-detail a, .foot a):hover { text-decoration-color: var(--bolt-hi); }
+}
+
+/* effort chart: the five most-used models show; the rest wait under "N more models" */
+.lg-more { display: inline-flex; }
+.lg-more select { height: 34px; padding: 0 32px 0 13px; border-radius: 99px; border: 1px solid var(--line-2); background-color: transparent; color: var(--ink-2); font: 500 var(--fs-13)/1 var(--font); appearance: none; -webkit-appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'><path fill='%2386c8f8' d='M213.7 101.7l-80 80a8 8 0 01-11.4 0l-80-80A8 8 0 0149.7 90.3L128 168.7l78.3-78.4a8 8 0 0111.4 11.4z'/></svg>");
+  background-repeat: no-repeat; background-position: right 12px center; background-size: 12px; }
+.lg-more select:focus-visible { box-shadow: var(--ring); outline: none; }
+@media (hover: hover) and (pointer: fine) { .lg-more select:hover { background-color: var(--r2); color: var(--ink); } }
+
+/* phone: Install sits under the board instead of pinned over it; the header fits a 320px screen */
+@media (max-width: 720px) {
+  .install { position: static; padding: 16px 0 calc(16px + env(safe-area-inset-bottom)); background: none; }
+}
+@media (max-width: 400px) {
+  .nav-in { gap: 6px; }
+  .nav-links a { padding: 7px 10px; }
+  .nav-quiet span { display: none; }
+  .brand { gap: 7px; }
+}

@@ -230,6 +230,30 @@ test('deriveAvailabilityForModel: a failed OpenRouter fetch does not flip a real
   assert.equal(next.openrouter, false);
 });
 
+test('deriveAvailabilityForModel: openrouter_id is the matched entry\'s own OpenRouter id, never one built from the name', () => {
+  const model = { id: 'claude-opus-5-5', name: 'Claude Opus 5.5', vendor: 'Anthropic', sources: [] };
+  const orList = [
+    { id: 'anthropic/claude-opus-5.5:batch', name: 'Anthropic: Claude Opus 5.5 (batch)', hfId: null },
+    { id: 'anthropic/claude-opus-5.5', name: 'Anthropic: Claude Opus 5.5', hfId: null },
+  ];
+  const next = deriveAvailabilityForModel(model, { orList, aliases: {}, orFeedOk: true, bedrockKeys: null });
+  assert.equal(next.openrouter, true);
+  assert.equal(next.openrouter_id, 'anthropic/claude-opus-5.5');
+});
+
+test('deriveAvailabilityForModel: openrouter_id is null once the feed is checked and the model is gone, and holds when the feed failed', () => {
+  const listed = { direct_api: null, openrouter: true, openrouter_id: 'tencent/hy3', aws_bedrock: null, google_vertex: null, azure: null, open_weights: null, eu_hosting: null, sources: [OR_URL] };
+  const model = { id: 'hy3', name: 'Hy3', vendor: 'Tencent', sources: [], availability: listed };
+  const gone = deriveAvailabilityForModel(model, { orList: [{ id: 'tencent/hy4-preview', name: 'Tencent: Hy4 preview' }], aliases: {}, orFeedOk: true, bedrockKeys: null });
+  assert.equal(gone.openrouter, false);
+  assert.equal(gone.openrouter_id, null);
+  const unchecked = deriveAvailabilityForModel(model, { orList: [], aliases: {}, orFeedOk: false, bedrockKeys: null });
+  assert.equal(unchecked.openrouter, true);
+  assert.equal(unchecked.openrouter_id, 'tencent/hy3');
+  const fresh = deriveAvailabilityForModel({ id: 'x-1', name: 'X 1', vendor: 'Tencent', sources: [] }, { orList: [], aliases: {}, orFeedOk: false, bedrockKeys: null });
+  assert.equal(fresh.openrouter_id, null, 'a model with nothing on file starts at null');
+});
+
 // --- availabilityEquals -----------------------------------------------------------------------
 
 test('availabilityEquals: true for identical objects, order-independent on sources[]', () => {
@@ -244,6 +268,8 @@ test('availabilityEquals: false when any field or the source set differs', () =>
   assert.equal(availabilityEquals(a, b), false);
   const c = { ...a, sources: ['https://a', 'https://c'] };
   assert.equal(availabilityEquals(a, c), false);
+  assert.equal(availabilityEquals({ ...a, openrouter_id: 'anthropic/claude-opus-5' }, a), false, 'a new openrouter_id is a change to write');
+  assert.equal(availabilityEquals({ ...a, openrouter_id: 'anthropic/claude-opus-5' }, { ...a, openrouter_id: 'anthropic/claude-opus-5.5' }), false);
   assert.equal(availabilityEquals(null, a), false);
   assert.equal(availabilityEquals(null, null), true);
 });

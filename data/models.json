@@ -80,6 +80,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "anthropic/claude-opus-5",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -731,6 +732,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "moonshotai/kimi-k3",
         "aws_bedrock": true,
         "google_vertex": null,
         "azure": null,
@@ -1339,6 +1341,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "anthropic/claude-fable-5",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -2013,6 +2016,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "anthropic/claude-opus-4.8",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -2623,6 +2627,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "anthropic/claude-sonnet-5",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -2641,11 +2646,10 @@
           ]
         },
         "agents": {
-          "score": 87,
+          "score": 82,
           "basis": [
             "coding_score",
-            "context_window",
-            "effort_ladders"
+            "context_window"
           ]
         },
         "bulk": {
@@ -3225,6 +3229,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "openai/gpt-5.5",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -3786,6 +3791,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "google/gemini-3.1-pro-preview",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -4394,6 +4400,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "deepseek/deepseek-v4-pro",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -4895,6 +4902,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "moonshotai/kimi-k2.6",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -5444,6 +5452,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "meta-llama/llama-4-maverick",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -5801,6 +5810,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "openai/o4-mini",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -6272,6 +6282,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "anthropic/claude-haiku-4.5",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -6716,6 +6727,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "openai/gpt-5.6-sol",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -7351,6 +7363,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "openai/gpt-5.6-terra",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -7925,6 +7938,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "openai/gpt-5.6-luna",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -8486,6 +8500,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "google/gemini-3.5-flash",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -9043,6 +9058,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "google/gemini-2.5-flash-lite",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -9310,6 +9326,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "x-ai/grok-4.5",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -9837,6 +9854,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "deepseek/deepseek-v4-flash",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -10291,6 +10309,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": false,
+        "openrouter_id": null,
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -10631,6 +10650,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": false,
+        "openrouter_id": null,
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -10918,6 +10938,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": false,
+        "openrouter_id": null,
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -11221,6 +11242,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "mistralai/mistral-medium-3.1",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -11518,6 +11540,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "google/gemini-3.6-flash",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -12011,6 +12034,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "z-ai/glm-5.2",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -12540,6 +12564,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "google/gemini-3.7-flash",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -13013,6 +13038,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "x-ai/grok-4.6",
         "aws_bedrock": true,
         "google_vertex": null,
         "azure": null,
@@ -13529,6 +13555,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "meta/muse-spark-1.2",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -13956,6 +13983,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "meta/muse-spark-1.1",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -14441,6 +14469,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "inclusionai/ling-3.0-flash",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -14752,6 +14781,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": false,
+        "openrouter_id": null,
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -15018,6 +15048,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": false,
+        "openrouter_id": null,
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -15297,6 +15328,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "meituan/longcat-2.0",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -15585,6 +15617,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "meta/muse-glimmer-30b",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -15880,6 +15913,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "nvidia/nemotron-3.5-lightning",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -16141,6 +16175,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "poolside/laguna-s-2.1",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -16425,6 +16460,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "qwen/qwen3.7-flash",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -16715,6 +16751,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "bytedance-seed/seed-2-1-turbo",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -17015,6 +17052,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "aion-labs/aion-3.0",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -17292,6 +17330,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "aion-labs/aion-3.0-mini",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -17558,6 +17597,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "bytedance-seed/seed-2.0-code",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -17844,6 +17884,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "poolside/laguna-xs-2.1",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -18136,6 +18177,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "qwen/qwen3.8-2.4t-a95b",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -18397,6 +18439,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "qwen/qwen3.8-27b",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -18812,6 +18855,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "sakana/sakana-namazu",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -19141,6 +19185,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "tencent/hy3",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -19487,6 +19532,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "thinkingmachines/inkling",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -19959,6 +20005,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "thinkingmachines/inkling-small",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -20390,6 +20437,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "upstage/solar-pro4",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -20735,6 +20783,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "tencent/hy-mt2-1.8b",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -20995,6 +21044,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "tencent/hy-mt2-30b-a3b",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -21269,6 +21319,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "z-ai/glm-5.3",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -21790,6 +21841,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": false,
+        "openrouter_id": null,
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -22234,6 +22286,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "qwen/qwen3.8-flash",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -22509,6 +22562,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "tencent/hy4-preview",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -22786,6 +22840,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "tencent/hy-mt2-7b",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -23028,6 +23083,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "ibm-granite/granite-4.2-8b",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -23370,6 +23426,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "meta/muse-spark-1.3-contributor",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -23664,6 +23721,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "meta/muse-spark-1.3",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -24143,6 +24201,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "google/gemini-3.8-flash",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -24730,6 +24789,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "openai/gpt-6-astra",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -25300,6 +25360,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "openai/gpt-6-astra-pro",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -25634,6 +25695,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "anthropic/claude-fable-5.1",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -26199,6 +26261,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "meta/muse-spark-1.2-contributor",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -26489,6 +26552,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "deepseek/deepseek-v4-flash-vision-exp",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -26810,6 +26874,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "deepseek/deepseek-v4-pro-0813",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -27244,6 +27309,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "deepseek/deepseek-v4-flash-0731",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -27666,6 +27732,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "deepseek/deepseek-v4.1-flash",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -28188,6 +28255,7 @@
       "availability": {
         "direct_api": true,
         "openrouter": true,
+        "openrouter_id": "x-ai/grok-4.7",
         "aws_bedrock": true,
         "google_vertex": null,
         "azure": null,
@@ -28638,6 +28706,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "openai/gpt-6-luna-pro",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -28877,6 +28946,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "openai/gpt-6-luna",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -29300,6 +29370,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "openai/gpt-6-sol-pro",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -29539,6 +29610,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "openai/gpt-6-sol",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -29985,6 +30057,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "anthropic/claude-opus-5.5",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -30517,6 +30590,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "qwen/qwen3.8-omni-flash",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -30759,6 +30833,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "cohere/command-a",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -30992,6 +31067,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "qwen/qwen3.8-max-prime",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -31231,6 +31307,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "anthropic/claude-sonnet-5.5",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -31734,6 +31811,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "openai/gpt-6.1-sol-pro",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -31973,6 +32051,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "openai/gpt-6.1-sol",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -32427,6 +32506,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": false,
+        "openrouter_id": null,
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -32714,6 +32794,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "anthropic/claude-haiku-5.5",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -33139,6 +33220,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "google/gemini-4-argon",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -33514,6 +33596,7 @@
       "availability": {
         "direct_api": null,
         "openrouter": true,
+        "openrouter_id": "deepseek/deepseek-v4.1-flash-1017",
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
@@ -34366,6 +34449,380 @@
   "use_well_note": "use_well = practical, plain-English guidance on getting the most from a model you already have. Derived from the model's sourced pricing, context, cache and mode facts above (plus vendor-documented features like Claude's adaptive thinking) — guidance, not benchmarks. Same independence rule: factual, cost-first, never promotional.",
   "effort_ladders": [
     {
+      "id": "cursorbench-agentic-coding",
+      "suite": "CursorBench",
+      "task": "Agentic coding",
+      "x_label": "Cost per task (USD, log scale)",
+      "y_label": "Score (%)",
+      "as_of": "2026-10-18",
+      "publisher": "Epoch AI (mirroring Cursor's CursorBench)",
+      "source_kind": "third-party",
+      "source": "https://epoch.ai/benchmarks/use-this-data",
+      "confidence": "high",
+      "method": "Exact published values from Epoch AI's CC-BY benchmark export (cursorbench_external.csv in benchmark_data.zip), which mirrors Cursor's own CursorBench leaderboard. The model list is rebuilt on every data refresh by one rule: a model is shown when it is in this catalog and the file measures it at 3 or more effort settings, each with both a cost and a score. Only the newest model in each line is kept (a line is the model name without its version numbers, so version 5.5 of a model replaces version 5), and a model released more than 150 days ago drops off. Models are listed by how much they are used on OpenRouter, most used first. Score is the share of tasks solved, as a percentage; cost is Cursor's cost per task, from the tokens each model used at its published per-million prices. A setting missing its cost or its score is left out, never filled in.",
+      "harness": "Cursor's agent running CursorBench 3.2 (instruction-following and advanced tool-use problems added Jul 8 2026), one entry per reasoning-effort setting. Cursor notes results are subject to variance and small score differences may not be meaningful.",
+      "caveat": "Independent of Anthropic, but not of everyone: CursorBench is run and published by Cursor, which ships its own coding model (Composer), so it is a benchmark by a company with a horse in the coding race. Epoch AI mirrors those numbers under CC-BY, it does not re-run them — and Epoch has its own disclosed conflict elsewhere, having had OpenAI fund the FrontierMath benchmark with dataset access, which it disclosed only after the fact. Read this as a second opinion measured on a different task by a different party, not as a neutral referee settling the question.",
+      "levels": [
+        "minimal",
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "default_count": 5,
+      "series": [
+        {
+          "model_id": "claude-opus-5-5",
+          "label": "Claude Opus 5.5",
+          "source_key": "claude-opus-5-5",
+          "usage_rank": 7,
+          "points": [
+            {
+              "effort": "low",
+              "cost": 1.17,
+              "score": 43.7
+            },
+            {
+              "effort": "medium",
+              "cost": 2.91,
+              "score": 52.5
+            },
+            {
+              "effort": "high",
+              "cost": 3.97,
+              "score": 56
+            },
+            {
+              "effort": "xhigh",
+              "cost": 6.98,
+              "score": 56
+            },
+            {
+              "effort": "max",
+              "cost": 13.43,
+              "score": 57.8
+            }
+          ]
+        },
+        {
+          "model_id": "glm-5-3",
+          "label": "GLM-5.3",
+          "source_key": "glm-5.3",
+          "usage_rank": 9,
+          "points": [
+            {
+              "effort": "low",
+              "cost": 2.04,
+              "score": 33.3
+            },
+            {
+              "effort": "high",
+              "cost": 3.24,
+              "score": 38
+            },
+            {
+              "effort": "max",
+              "cost": 5.05,
+              "score": 42.6
+            }
+          ]
+        },
+        {
+          "model_id": "claude-sonnet-5-5",
+          "label": "Claude Sonnet 5.5",
+          "source_key": "claude-sonnet-5-5",
+          "usage_rank": 15,
+          "points": [
+            {
+              "effort": "low",
+              "cost": 0.37,
+              "score": 35.8
+            },
+            {
+              "effort": "medium",
+              "cost": 0.52,
+              "score": 39.2
+            },
+            {
+              "effort": "high",
+              "cost": 1.2,
+              "score": 47.8
+            },
+            {
+              "effort": "xhigh",
+              "cost": 2.81,
+              "score": 53.1
+            },
+            {
+              "effort": "max",
+              "cost": 7.05,
+              "score": 55.5
+            }
+          ]
+        },
+        {
+          "model_id": "claude-haiku-5-5",
+          "label": "Claude Haiku 5.5",
+          "source_key": "claude-haiku-5-5",
+          "usage_rank": 17,
+          "points": [
+            {
+              "effort": "low",
+              "cost": 0.08,
+              "score": 30.9
+            },
+            {
+              "effort": "medium",
+              "cost": 0.17,
+              "score": 36.9
+            },
+            {
+              "effort": "high",
+              "cost": 0.32,
+              "score": 42.3
+            },
+            {
+              "effort": "xhigh",
+              "cost": 0.56,
+              "score": 44.3
+            },
+            {
+              "effort": "max",
+              "cost": 1.12,
+              "score": 48.4
+            }
+          ]
+        },
+        {
+          "model_id": "gpt-5-6-luna",
+          "label": "GPT-5.6 Luna",
+          "source_key": "gpt-5.6-luna",
+          "usage_rank": 20,
+          "points": [
+            {
+              "effort": "low",
+              "cost": 0.03,
+              "score": 16
+            },
+            {
+              "effort": "medium",
+              "cost": 0.08,
+              "score": 22.2
+            },
+            {
+              "effort": "high",
+              "cost": 0.25,
+              "score": 29.4
+            },
+            {
+              "effort": "xhigh",
+              "cost": 0.44,
+              "score": 33
+            },
+            {
+              "effort": "max",
+              "cost": 1.03,
+              "score": 35.9
+            }
+          ]
+        },
+        {
+          "model_id": "gpt-5-6-sol",
+          "label": "GPT-5.6 Sol",
+          "source_key": "gpt-5.6-sol",
+          "usage_rank": 37,
+          "points": [
+            {
+              "effort": "low",
+              "cost": 0.87,
+              "score": 24.6
+            },
+            {
+              "effort": "medium",
+              "cost": 1.77,
+              "score": 31.1
+            },
+            {
+              "effort": "high",
+              "cost": 2.85,
+              "score": 35.7
+            },
+            {
+              "effort": "xhigh",
+              "cost": 4.4,
+              "score": 37.7
+            },
+            {
+              "effort": "max",
+              "cost": 8.23,
+              "score": 41.7
+            }
+          ]
+        },
+        {
+          "model_id": "gemini-4-argon",
+          "label": "Gemini 4 Argon",
+          "source_key": "gemini-4-argon",
+          "usage_rank": 38,
+          "points": [
+            {
+              "effort": "minimal",
+              "cost": 3.54,
+              "score": 48.8
+            },
+            {
+              "effort": "low",
+              "cost": 4.09,
+              "score": 50.6
+            },
+            {
+              "effort": "medium",
+              "cost": 4.39,
+              "score": 52.8
+            },
+            {
+              "effort": "high",
+              "cost": 4.57,
+              "score": 52.9
+            }
+          ]
+        },
+        {
+          "model_id": "grok-4-7",
+          "label": "Grok 4.7",
+          "source_key": "grok-4.7",
+          "usage_rank": 55,
+          "points": [
+            {
+              "effort": "low",
+              "cost": 1.58,
+              "score": 33.1
+            },
+            {
+              "effort": "medium",
+              "cost": 3.49,
+              "score": 41.6
+            },
+            {
+              "effort": "high",
+              "cost": 4.69,
+              "score": 43.9
+            },
+            {
+              "effort": "xhigh",
+              "cost": 6.01,
+              "score": 46.3
+            }
+          ]
+        },
+        {
+          "model_id": "claude-fable-5-1",
+          "label": "Claude Fable 5.1",
+          "source_key": "claude-fable-5-1",
+          "usage_rank": 57,
+          "points": [
+            {
+              "effort": "low",
+              "cost": 5.44,
+              "score": 45.1
+            },
+            {
+              "effort": "medium",
+              "cost": 7.05,
+              "score": 46.8
+            },
+            {
+              "effort": "high",
+              "cost": 9.08,
+              "score": 49.2
+            },
+            {
+              "effort": "xhigh",
+              "cost": 13.01,
+              "score": 51.6
+            },
+            {
+              "effort": "max",
+              "cost": 17.28,
+              "score": 51.8
+            }
+          ]
+        },
+        {
+          "model_id": "muse-spark-1-3",
+          "label": "Muse Spark 1.3",
+          "source_key": "muse-spark-1.3",
+          "usage_rank": 61,
+          "points": [
+            {
+              "effort": "minimal",
+              "cost": 0.56,
+              "score": 24.3
+            },
+            {
+              "effort": "low",
+              "cost": 0.93,
+              "score": 29.3
+            },
+            {
+              "effort": "medium",
+              "cost": 1.49,
+              "score": 32.6
+            },
+            {
+              "effort": "high",
+              "cost": 1.66,
+              "score": 33.4
+            },
+            {
+              "effort": "xhigh",
+              "cost": 2.1,
+              "score": 37.5
+            },
+            {
+              "effort": "max",
+              "cost": 2.64,
+              "score": 41.6
+            }
+          ]
+        },
+        {
+          "model_id": "gpt-5-6-terra",
+          "label": "GPT-5.6 Terra",
+          "source_key": "gpt-5.6-terra",
+          "usage_rank": 65,
+          "points": [
+            {
+              "effort": "low",
+              "cost": 0.52,
+              "score": 25.2
+            },
+            {
+              "effort": "medium",
+              "cost": 0.64,
+              "score": 27.6
+            },
+            {
+              "effort": "high",
+              "cost": 1.11,
+              "score": 30.7
+            },
+            {
+              "effort": "xhigh",
+              "cost": 1.81,
+              "score": 33.6
+            },
+            {
+              "effort": "max",
+              "cost": 5.14,
+              "score": 41.3
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "frontier-bench-v0-1-agentic-coding",
       "suite": "Frontier-Bench v0.1",
       "task": "Agentic coding",
@@ -34515,180 +34972,6 @@
               "score": 37.3
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "cursorbench-agentic-coding",
-      "suite": "CursorBench",
-      "task": "Agentic coding",
-      "x_label": "Cost per task (USD, log scale)",
-      "y_label": "Score (%)",
-      "as_of": "2026-09-22",
-      "publisher": "Epoch AI (mirroring Cursor's CursorBench)",
-      "source_kind": "third-party",
-      "source": "https://epoch.ai/benchmarks/use-this-data",
-      "confidence": "high",
-      "method": "Exact published values, not digitised from a picture: taken from Epoch AI's CC-BY benchmark data export (cursorbench_external.csv in benchmark_data.zip, file dated 2026-08-23), which mirrors Cursor's own CursorBench 3.2 leaderboard (Cursor's changelog: Aug 11 2026 'Updated Sonnet 5 results to account for adjusted pricing'). Score is the published fraction correct as a percentage; cost is Cursor's per-task figure from the tokens each model actually used at its published per-million pricing (input, cache read, cache write, output). Rungs are keyed on the file's 'Reasoning level' column. Five of the most-used models are plotted (Opus 5, Sonnet 5, GPT-5.6 Sol, Grok 4.6, Gemini 3.7 Flash) so the chart stays readable — Fable 5, Opus 4.8, GPT-5.6 Terra, Luna, GPT-5.5, Kimi K3 and others are in the source file; any model-and-rung missing a cost or score is dropped, never interpolated.",
-      "harness": "Cursor's agent running CursorBench 3.2 (instruction-following and advanced tool-use problems added Jul 8 2026), one entry per reasoning-effort setting. Cursor notes results are subject to variance and small score differences may not be meaningful.",
-      "caveat": "Independent of Anthropic, but not of everyone: CursorBench is run and published by Cursor, which ships its own coding model (Composer), so it is a benchmark by a company with a horse in the coding race. Epoch AI mirrors those numbers under CC-BY, it does not re-run them — and Epoch has its own disclosed conflict elsewhere, having had OpenAI fund the FrontierMath benchmark with dataset access, which it disclosed only after the fact. Read this as a second opinion measured on a different task by a different party, not as a neutral referee settling the question.",
-      "levels": [
-        "low",
-        "medium",
-        "high",
-        "xhigh",
-        "max"
-      ],
-      "series": [
-        {
-          "model_id": "claude-opus-5",
-          "label": "Opus 5",
-          "color": "#e05c3e",
-          "points": [
-            {
-              "effort": "low",
-              "cost": 4.87,
-              "score": 40.7
-            },
-            {
-              "effort": "medium",
-              "cost": 6.94,
-              "score": 43.3
-            },
-            {
-              "effort": "high",
-              "cost": 9,
-              "score": 44.7
-            },
-            {
-              "effort": "xhigh",
-              "cost": 11.43,
-              "score": 46.1
-            },
-            {
-              "effort": "max",
-              "cost": 11.95,
-              "score": 46.6
-            }
-          ],
-          "source_key": "claude-opus-5"
-        },
-        {
-          "model_id": "claude-sonnet-5",
-          "label": "Sonnet 5",
-          "color": "#f5d98b",
-          "points": [
-            {
-              "effort": "low",
-              "cost": 1.39,
-              "score": 24.1
-            },
-            {
-              "effort": "medium",
-              "cost": 2.31,
-              "score": 28
-            },
-            {
-              "effort": "high",
-              "cost": 3.48,
-              "score": 30.8
-            },
-            {
-              "effort": "xhigh",
-              "cost": 4.55,
-              "score": 32
-            },
-            {
-              "effort": "max",
-              "cost": 7.17,
-              "score": 34.1
-            }
-          ],
-          "source_key": "claude-sonnet-5"
-        },
-        {
-          "model_id": "gpt-5-6-sol",
-          "label": "GPT-5.6 Sol",
-          "color": "#9aa0ab",
-          "points": [
-            {
-              "effort": "low",
-              "cost": 0.87,
-              "score": 24.6
-            },
-            {
-              "effort": "medium",
-              "cost": 1.77,
-              "score": 31.1
-            },
-            {
-              "effort": "high",
-              "cost": 2.85,
-              "score": 35.7
-            },
-            {
-              "effort": "xhigh",
-              "cost": 4.4,
-              "score": 37.7
-            },
-            {
-              "effort": "max",
-              "cost": 8.23,
-              "score": 41.7
-            }
-          ],
-          "source_key": "gpt-5.6-sol"
-        },
-        {
-          "model_id": "grok-4-6",
-          "label": "Grok 4.6",
-          "color": "#7fd9b4",
-          "points": [
-            {
-              "effort": "low",
-              "cost": 2.25,
-              "score": 33.4
-            },
-            {
-              "effort": "medium",
-              "cost": 3.48,
-              "score": 36.1
-            },
-            {
-              "effort": "high",
-              "cost": 5.2,
-              "score": 40.4
-            },
-            {
-              "effort": "xhigh",
-              "cost": 6.1,
-              "score": 41.4
-            }
-          ],
-          "source_key": "grok-4.6"
-        },
-        {
-          "model_id": "gemini-3-7-flash",
-          "label": "Gemini 3.7 Flash",
-          "color": "#8ab4ff",
-          "points": [
-            {
-              "effort": "low",
-              "cost": 0.74,
-              "score": 53.8
-            },
-            {
-              "effort": "medium",
-              "cost": 0.95,
-              "score": 59
-            },
-            {
-              "effort": "high",
-              "cost": 1.2,
-              "score": 61.6
-            }
-          ],
-          "source_key": "gemini-3.7-flash"
         }
       ]
     },
