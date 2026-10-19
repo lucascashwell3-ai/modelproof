@@ -28,7 +28,7 @@ import { deriveUsageForCatalog, fetchOpenRouterRankings } from './derive-usage.m
 import { deriveTaskFit, TASK_IDS } from './derive-task-fit.mjs';
 import { deriveStatusAdoptionForCatalog } from './derive-status-adoption.mjs';
 import { deriveSignalsForCatalog, fetchTaskSpend, fetchRankingsModels } from './derive-signals.mjs';
-import { refreshStandingsForCatalog } from './derive-standings.mjs';
+import { refreshStandingsForCatalog, parseCsvRobust } from './derive-standings.mjs';
 import { fileURLToPath } from 'node:url';
 import { canonicalVendor, bareModelName, modelId, isCommunityListing, AUTO_ADMIT_VENDORS } from './naming.mjs';
 import { upsertIssue, closeIssue } from './lib/gh-issue.mjs';
@@ -67,9 +67,10 @@ const LITELLM_URL = 'https://raw.githubusercontent.com/BerriAI/litellm/main/mode
 const AGREEMENT_PCT = 0.02;      // sources must agree within 2%
 const SANITY_HIGH = 5;           // >5x current holds for review
 const SANITY_LOW = 0.2;          // <0.2x current holds for review
-// Vendors Collect may admit on its own live in scripts/naming.mjs (AUTO_ADMIT_VENDORS), next to
-// the canonical vendor spellings — one file decides both what a vendor is called and which
-// vendors publish without the Judge.
+// Vendors Collect may admit on two sources live in scripts/naming.mjs (AUTO_ADMIT_VENDORS), next
+// to the canonical vendor spellings — one file decides both what a vendor is called and which new
+// vendors publish without the Judge. A vendor the catalog already carries needs only its priced
+// OpenRouter listing (admitNewModel below).
 
 // ---------------------------------------------------------------------------------------------
 // pure helpers (unit tested in scripts/test-auto-refresh.mjs)
@@ -382,20 +383,52 @@ export function newerWins(asOf, candidateDate) {
   return Date.parse(candidateDate) > Date.parse(asOf);
 }
 
-/** New-model admission: >=2 sources, has pricing, name maps to a known vendor. */
-export function admitNewModel({ sourceCount, hasPricing, vendorKnown }) {
+/** New-model admission, two ways in:
+ *  - the catalog already carries a model from this vendor (`vendorInCatalog`, same canonical
+ *    vendor) and OpenRouter lists a price for the candidate (`openRouterPriced`): that one
+ *    source is enough;
+ *  - any other vendor: >=2 sources, has pricing, and the vendor is on the auto-admit list. */
+export function admitNewModel({ sourceCount, hasPricing, vendorKnown, vendorInCatalog = false, openRouterPriced = false }) {
+  if (vendorInCatalog && openRouterPriced) return true;
   return sourceCount >= 2 && !!hasPricing && !!vendorKnown;
 }
 
 /** Human-readable reasons a new-model candidate failed admission — same predicates as
  *  admitNewModel(), decomposed for the `dropped:` run-log line and the worklist ask so the two
- *  never drift out of sync. */
-export function admissionFailReasons({ sourceCount, hasPricing, vendorKnown }) {
+ *  never drift out of sync. A vendor the catalog already carries needs only an OpenRouter price,
+ *  so that is the one reason given for it. */
+export function admissionFailReasons(candidate) {
+  const { sourceCount, hasPricing, vendorKnown, vendorInCatalog = false } = candidate;
+  if (admitNewModel(candidate)) return [];
+  if (vendorInCatalog) return ['no OpenRouter price'];
   const reasons = [];
   if (sourceCount < 2) reasons.push('single source');
   if (!hasPricing) reasons.push('no pricing data');
   if (!vendorKnown) reasons.push('unknown vendor');
   return reasons;
+}
+
+/** Does the catalog already carry a model from this vendor? "Same vendor" is the canonical
+ *  spelling (scripts/naming.mjs), so "meta" and "meta-llama" both mean Meta. */
+export function isCatalogVendor(vendorName, models) {
+  const v = canonicalVendor(vendorName);
+  return !!v && (models || []).some((m) => canonicalVendor(m.vendor) === v);
+}
+
+/** Does this OpenRouter feed entry carry a real price (input or output above zero)? */
+export const hasOpenRouterPrice = (c) => [c?.priceInput, c?.priceOutput].some((v) => Number.isFinite(v) && v > 0);
+
+/** The admission inputs for one OpenRouter candidate, against the catalog as it stands.
+ *  `llmSame` is the candidate's LiteLLM entry, if any (the second source). */
+export function admissionFacts(c, models, llmSame = null) {
+  const vendorGuess = String(c?.id || '').split('/')[0];
+  return {
+    sourceCount: 1 + (llmSame ? 1 : 0),
+    hasPricing: c?.priceInput != null || c?.priceOutput != null || llmSame?.priceInput != null,
+    vendorKnown: isKnownVendor(vendorGuess),
+    vendorInCatalog: isCatalogVendor(vendorGuess, models),
+    openRouterPriced: hasOpenRouterPrice(c),
+  };
 }
 
 /** Exact wording for a `dropped:` run-log line, kept as one function so the log text and the
@@ -556,60 +589,205 @@ export function reJudgeWorklistItems(newModel, allModels, today) {
 // --- effort ladders: CursorBench from Epoch AI's CC-BY export (tier A, exact values) ----------
 const EPOCH_ZIP_URL = 'https://epoch.ai/data/benchmark_data.zip';
 const CURSORBENCH_LADDER_ID = 'cursorbench-agentic-coding';
-const EFFORT_ORDER = ['low', 'medium', 'high', 'xhigh', 'max'];
+/** Effort settings, lowest first: the order a ladder's points are stored and drawn in. */
+export const LADDER_LEVELS = ['minimal', 'low', 'medium', 'high', 'xhigh', 'max'];
+export const LADDER_MIN_SETTINGS = 3;   // a model measured at fewer settings than this is not shown
+export const LADDER_MAX_AGE_DAYS = 150; // a model released longer ago than this drops off
+export const LADDER_DEFAULT_COUNT = 5;  // the page draws this many series and lists the rest
+// How the file's "Reasoning level" column spells each setting. It is blank on some rows (the
+// "minimal" ones), so the setting itself always comes from the Model version suffix.
+const REASONING_LEVEL_NAMES = { minimal: 'minimal', low: 'low', medium: 'medium', high: 'high', 'extra high': 'xhigh', xhigh: 'xhigh', max: 'max' };
 
-/** Tiny CSV reader — quoted fields with commas are the only wrinkle in Epoch's file. */
+/** The CursorBench ladder's `method`, in plain words. Written by the code that applies the rule,
+ * so the page can never describe a different rule than the one that built the chart. */
+export const CURSORBENCH_METHOD = [
+  "Exact published values from Epoch AI's CC-BY benchmark export (cursorbench_external.csv in benchmark_data.zip), which mirrors Cursor's own CursorBench leaderboard.",
+  `The model list is rebuilt on every data refresh by one rule: a model is shown when it is in this catalog and the file measures it at ${LADDER_MIN_SETTINGS} or more effort settings, each with both a cost and a score.`,
+  'Only the newest model in each line is kept (a line is the model name without its version numbers, so version 5.5 of a model replaces version 5),',
+  `and a model released more than ${LADDER_MAX_AGE_DAYS} days ago drops off.`,
+  'Models are listed by how much they are used on OpenRouter, most used first.',
+  "Score is the share of tasks solved, as a percentage; cost is Cursor's cost per task, from the tokens each model used at its published per-million prices.",
+  'A setting missing its cost or its score is left out, never filled in.',
+].join(' ');
+
+/** CSV reader for Epoch's export: quoted cells may hold commas, quotes and line breaks. The one
+ * parser lives in scripts/derive-standings.mjs; this name stays for the callers of this file. */
 export function parseCsv(text) {
-  const rows = [];
-  for (const line of text.split(/\r?\n/)) {
-    if (!line.trim()) continue;
-    const cells = []; let cur = '', q = false;
-    for (const ch of line) {
-      if (ch === '"') q = !q;
-      else if (ch === ',' && !q) { cells.push(cur); cur = ''; }
-      else cur += ch;
-    }
-    cells.push(cur);
-    rows.push(cells);
+  return parseCsvRobust(text);
+}
+
+/** Catalog id a CursorBench model stem names: lowercase, dots to dashes ("gpt-5.6-sol" -> "gpt-5-6-sol"). */
+export const cursorBenchModelId = (stem) => String(stem || '').trim().toLowerCase().replace(/\./g, '-');
+
+const FULL_DATE = /^\d{4}-\d{2}-\d{2}$/;
+const isFullDate = (s) => typeof s === 'string' && FULL_DATE.test(s) && !Number.isNaN(Date.parse(`${s}T00:00:00Z`));
+const lastDayOfMonth = (year, month) => new Date(Date.UTC(year, month, 0)).toISOString().slice(0, 10);
+const daysBetween = (from, to) => (Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 864e5;
+
+/** The latest day a `released` value can mean: a full date is itself, "2026-07" is 2026-07-31,
+ * "2026-Q1" is 2026-03-31, "2026" is 2026-12-31; anything else is null. A model is aged out only
+ * once every day its release could have been is past the limit. */
+export function latestReleaseDay(released) {
+  const s = String(released ?? '').trim();
+  if (isFullDate(s)) return s;
+  let m;
+  if ((m = /^(\d{4})-(0[1-9]|1[0-2])$/.exec(s))) return lastDayOfMonth(+m[1], +m[2]);
+  if ((m = /^(\d{4})-Q([1-4])$/.exec(s))) return lastDayOfMonth(+m[1], +m[2] * 3);
+  if ((m = /^(\d{4})$/.exec(s))) return `${m[1]}-12-31`;
+  return null;
+}
+
+// A size tag ("27b", "a3b", "4t") tells two models apart; it is not a version number.
+const SIZE_TAG = /^a?\d+[bmt]$/;
+const nameWords = (name) => modelId(name).split('-').filter(Boolean);
+
+/** A model's line: its vendor plus its catalog name with the version numbers taken out, so
+ * "Claude Opus 5" and "Claude Opus 5.5" are one line and "GPT-5.6 Sol" and "GPT-5.6 Terra" two. */
+export function modelLine(m) {
+  const words = nameWords(m.name).map((w) => (SIZE_TAG.test(w) ? w : w.replace(/\d+/g, ''))).filter(Boolean);
+  return `${canonicalVendor(m.vendor) || m.vendor}|${words.join('-')}`;
+}
+
+/** The version numbers in a model's name, in order: "Claude Opus 5.5" -> [5, 5]. */
+export function nameVersion(name) {
+  return nameWords(name).filter((w) => !SIZE_TAG.test(w)).flatMap((w) => (w.match(/\d+/g) || []).map(Number));
+}
+
+/** > 0 when candidate a is newer than b: the later release day, then the higher version numbers
+ * in the name, then a dated model over an undated one. */
+function compareNewer(a, b) {
+  if (a.day && b.day && a.day !== b.day) return a.day > b.day ? 1 : -1;
+  for (let i = 0; i < Math.max(a.version.length, b.version.length); i++) {
+    const x = a.version[i] ?? -1, y = b.version[i] ?? -1;
+    if (x !== y) return x - y;
   }
-  const head = rows.shift() || [];
-  return rows.map((r) => Object.fromEntries(head.map((h, i) => [h, r[i] ?? ''])));
+  if (Boolean(a.day) !== Boolean(b.day)) return a.day ? 1 : -1;
+  return 0;
 }
 
 /**
- * Rebuild the CursorBench ladder's points from Epoch's cursorbench_external.csv. Pure: returns
- * { changed, notes }. Each series carries `source_key` (the CSV's model-version stem, e.g.
- * "gpt-5.6-sol"); rows are "<stem>_<level>". Rules, in the spirit of the price feed:
- *  - the series list is fixed here — this never adds or drops a model, only refreshes rungs;
- *  - a series the file no longer carries (or carries with < 2 usable rungs) keeps yesterday's
- *    points and is noted, never blanked;
- *  - a rung without both cost and score is dropped, never interpolated;
- *  - as_of moves to `today` only when at least one point actually changed.
+ * Every effort setting the file measures, per model stem: Map stem -> { points: Map level ->
+ * { effort, cost, score }, released }. Rows are "Model version" = "<stem>_<level>". A row counts
+ * only with a cost above zero and a score from 0 to 1 (the file's fraction; stored as a percent,
+ * 1 dp; cost 2 dp); anything else is dropped, never filled in. Also dropped, because the file
+ * disagrees with itself there: a row whose "Reasoning level" names a different setting than its
+ * suffix, and a setting listed twice with different values. Notes say why, into `notes`.
  */
-export function refreshCursorBench(data, rows, today) {
-  const L = (data.effort_ladders || []).find((l) => l.id === CURSORBENCH_LADDER_ID);
-  const notes = [];
-  if (!L) return { changed: false, notes: ['no cursorbench ladder in data'] };
-  let changed = false;
-  for (const s of L.series) {
-    if (!s.source_key) { notes.push(`${s.label}: no source_key — left as is`); continue; }
-    const pts = {};
-    for (const r of rows) {
-      const mv = r['Model version'] || '';
-      const i = mv.lastIndexOf('_');
-      if (i < 0) continue;
-      const stem = mv.slice(0, i), lvl = mv.slice(i + 1).toLowerCase();
-      if (stem !== s.source_key || !EFFORT_ORDER.includes(lvl)) continue;
-      const cost = Number(r['Cost per task']), score = Number(r['Score']);
-      if (!r['Cost per task'] || !r['Score'] || !Number.isFinite(cost) || !Number.isFinite(score) || cost <= 0) continue;
-      pts[lvl] = { effort: lvl, cost: Math.round(cost * 100) / 100, score: Math.round(score * 1000) / 10 };
+export function cursorBenchSettings(rows, notes = []) {
+  const out = new Map();
+  for (const r of rows || []) {
+    const mv = String(r['Model version'] || '').trim();
+    const cut = mv.lastIndexOf('_');
+    if (cut <= 0) continue; // a single-setting entry ("Composer 2.5") has no effort settings
+    const stem = mv.slice(0, cut);
+    const level = mv.slice(cut + 1).trim().toLowerCase();
+    if (!LADDER_LEVELS.includes(level)) continue;
+    const said = REASONING_LEVEL_NAMES[String(r['Reasoning level'] || '').trim().toLowerCase()];
+    if (said && said !== level) { notes.push(`${mv}: its reasoning level says "${r['Reasoning level']}" — row dropped`); continue; }
+    const costText = String(r['Cost per task'] ?? '').trim();
+    const scoreText = String(r['Score'] ?? '').trim();
+    const cost = Number(costText), score = Number(scoreText);
+    if (!costText || !scoreText || !Number.isFinite(cost) || !Number.isFinite(score) || cost <= 0 || score < 0 || score > 1) continue;
+    if (!out.has(stem)) out.set(stem, { points: new Map(), released: null, clashed: new Set() });
+    const s = out.get(stem);
+    const day = String(r['Release date'] || '').trim();
+    if (!s.released && isFullDate(day)) s.released = day;
+    if (s.clashed.has(level)) continue;
+    const point = { effort: level, cost: Math.round(cost * 100) / 100, score: Math.round(score * 1000) / 10 };
+    const had = s.points.get(level);
+    if (had && (had.cost !== point.cost || had.score !== point.score)) {
+      s.points.delete(level);
+      s.clashed.add(level);
+      notes.push(`${stem} @ ${level}: listed twice with different values — dropped`);
+      continue;
     }
-    const next = EFFORT_ORDER.filter((l) => pts[l]).map((l) => pts[l]);
-    if (next.length < 2) { notes.push(`${s.label}: ${next.length} usable rung(s) in the file — kept previous ${s.points.length}`); continue; }
-    if (JSON.stringify(next) !== JSON.stringify(s.points)) { s.points = next; changed = true; notes.push(`${s.label}: ${next.length} rungs refreshed`); }
+    s.points.set(level, point);
   }
-  if (changed) L.as_of = today;
-  return { changed, notes };
+  return out;
+}
+
+/** What a reader sees in a ladder: which models, under which names, with which points. Usage
+ * rank and order are left out, so a new usage order alone is not a change to the data. */
+const ladderContent = (series) => JSON.stringify((series || [])
+  .map((s) => ({ model_id: s.model_id, label: s.label, source_key: s.source_key ?? null, points: s.points }))
+  .sort((a, b) => String(a.model_id).localeCompare(String(b.model_id))));
+
+/**
+ * Rebuild the CursorBench ladder from Epoch's cursorbench_external.csv by one rule. Edits `data`
+ * in place; returns { changed, notes, before, after } (before/after = the series labels).
+ *  1. every catalog model the file measures at LADDER_MIN_SETTINGS or more effort settings,
+ *     each with a cost and a score (cursorBenchSettings; the stem names the catalog id by
+ *     cursorBenchModelId);
+ *  2. a model released more than LADDER_MAX_AGE_DAYS before `today` drops off (its catalog
+ *     `released` date; the file's own date when the catalog only has a month, quarter or year);
+ *  3. only the newest model of each line (modelLine) stays;
+ *  4. series are ordered by OpenRouter usage rank (`rankOf`, unknown last), then by name.
+ * The ladder keeps its provenance fields, gets this rule as its `method`, `default_count`, the
+ * full `levels` list, and goes first in effort_ladders. Never blank: no ladder, no rows, or a
+ * rule that yields no series leaves the ladder untouched. as_of moves to `today` only when the
+ * shown models or their points changed.
+ */
+export function rebuildCursorBench(data, rows, today, { rankOf = (m) => m.usage?.openrouter?.rank ?? null } = {}) {
+  const ladders = data.effort_ladders || [];
+  const L = ladders.find((l) => l.id === CURSORBENCH_LADDER_ID);
+  if (!L) return { changed: false, notes: ['no CursorBench ladder in data — nothing rebuilt'] };
+  if (!rows || !rows.length) return { changed: false, notes: ['feed empty — ladder kept as is'] };
+  const notes = [];
+  const byId = new Map((data.models || []).map((m) => [m.id, m]));
+  const candidates = [];
+  const taken = new Set();
+  const settings = [...cursorBenchSettings(rows, notes)].sort(([a], [b]) => a.localeCompare(b));
+  for (const [stem, s] of settings) {
+    const m = byId.get(cursorBenchModelId(stem));
+    if (!m) { notes.push(`${stem}: not in the catalog`); continue; }
+    if (s.points.size < LADDER_MIN_SETTINGS) { notes.push(`${m.name}: ${s.points.size} measured setting(s), needs ${LADDER_MIN_SETTINGS}`); continue; }
+    if (taken.has(m.id)) { notes.push(`${stem}: a second stem for ${m.name} — skipped`); continue; }
+    taken.add(m.id);
+    const day = isFullDate(m.released) ? m.released : (s.released || latestReleaseDay(m.released));
+    if (day && daysBetween(day, today) > LADDER_MAX_AGE_DAYS) { notes.push(`${m.name}: released ${day}, over ${LADDER_MAX_AGE_DAYS} days ago`); continue; }
+    candidates.push({ m, stem, s, day, version: nameVersion(m.name), line: modelLine(m) });
+  }
+  const newest = new Map();
+  for (const c of candidates) {
+    const cur = newest.get(c.line);
+    if (!cur || compareNewer(c, cur) > 0) newest.set(c.line, c);
+  }
+  for (const c of candidates) if (newest.get(c.line) !== c) notes.push(`${c.m.name}: ${newest.get(c.line).m.name} is the newest in its line`);
+  if (!newest.size) return { changed: false, notes: [...notes, 'the rule yields no series — ladder kept as is'] };
+
+  const rankFor = (m) => { const r = rankOf(m); return Number.isFinite(r) ? r : null; };
+  const sortKey = (m) => rankFor(m) ?? Infinity;
+  const kept = [...newest.values()].sort((a, b) => (sortKey(a.m) - sortKey(b.m)) || a.m.name.localeCompare(b.m.name));
+  const series = kept.map((c) => ({
+    model_id: c.m.id,
+    label: c.m.name,
+    source_key: c.stem,
+    usage_rank: rankFor(c.m),
+    points: LADDER_LEVELS.filter((l) => c.s.points.has(l)).map((l) => c.s.points.get(l)),
+  }));
+  const changed = ladderContent(L.series) !== ladderContent(series);
+  const before = (L.series || []).map((s) => s.label);
+  const { series: _previous, ...rest } = L;
+  const next = {
+    ...rest,
+    ...(changed ? { as_of: today } : {}),
+    method: CURSORBENCH_METHOD,
+    levels: [...LADDER_LEVELS],
+    default_count: LADDER_DEFAULT_COUNT,
+    series,
+  };
+  data.effort_ladders = [next, ...ladders.filter((l) => l !== L)];
+  return { changed, notes, before, after: series.map((s) => s.label) };
+}
+
+/** The changelog line for a rebuild that changed what the ladder shows. */
+export function ladderChangelogEntry(result, today) {
+  const was = (result.before || []).join(', ');
+  const now = (result.after || []).join(', ');
+  return {
+    date: today, model: 'CursorBench ladder', field: 'effort_ladders', old: was || null, new: now,
+    sources: [EPOCH_ZIP_URL], ...(was === now ? { note: 'same models; measured points changed' } : {}),
+  };
 }
 
 /** Download Epoch's bundle and pull the CursorBench CSV out of it. Best effort — [] on any failure. */
@@ -776,8 +954,6 @@ async function main() {
   }
 
   const epochRows = await feedEpochCursorBench();
-  const ladder = epochRows.length ? refreshCursorBench(data, epochRows, today) : { changed: false, notes: ['feed empty — untouched'] };
-  console.log(`ladder: cursorbench ${ladder.changed ? 'REFRESHED' : 'unchanged'} — ${ladder.notes.join('; ')}`);
 
   // --- availability: where each model can actually be reached (direct API, OpenRouter, AWS
   // Bedrock, open weights) — see scripts/derive-availability.mjs for the sourcing rules. Runs
@@ -815,6 +991,14 @@ async function main() {
     if (next && JSON.stringify(m.usage?.openrouter) !== JSON.stringify(next)) usageUpdates.push({ id: m.id, openrouter: next });
   }
   console.log(`usage: ${rankingRows.length} row(s) fetched, ${usageMap.size} matched, ${usageUpdates.length} updated.`);
+
+  // --- effort ladder: the CursorBench chart's model list, rebuilt by rule from Epoch's export.
+  // Ordered by this run's usage ranks (the same values the publish step writes below); a model
+  // the rankings didn't match keeps the rank already on file, as its usage field does.
+  const rankOf = (m) => (usageMap.get(m.id) || m.usage?.openrouter || {}).rank ?? null;
+  const ladder = rebuildCursorBench(data, epochRows, today, { rankOf });
+  console.log(`ladder: cursorbench ${ladder.changed ? 'REBUILT' : 'unchanged'}` +
+    `${ladder.after ? ` — ${ladder.after.length} model(s): ${ladder.after.join(', ')}` : ''} — ${ladder.notes.join('; ')}`);
 
   const applied = [];
   const held = [];
@@ -871,12 +1055,10 @@ async function main() {
     if (seen.has(n)) { logDrop(c.id, 'duplicate of another candidate this run'); continue; }
     if (c.created && (Date.parse(today) - Date.parse(c.created)) / 864e5 > 45) { logDrop(c.id, 'stale (listed on OpenRouter >45 days ago)'); continue; }
     const llmSame = llmList.find((l) => canonicalKey(l.id).includes(n) || n.includes(canonicalKey(l.id)));
-    const sourceCount = 1 + (llmSame ? 1 : 0);
     const vendorGuess = (c.id || '').split('/')[0];
-    const vendorKnown = isKnownVendor(vendorGuess);
-    const hasPricing = c.priceInput != null || c.priceOutput != null || llmSame?.priceInput != null;
+    const admission = admissionFacts(c, data.models, llmSame);
     seen.add(n);
-    if (admitNewModel({ sourceCount, hasPricing, vendorKnown })) {
+    if (admitNewModel(admission)) {
       // The naming rule (scripts/naming.mjs): canonical vendor, the model's own name with no
       // "Vendor: " label, and an id derived from that name — never from the routing path.
       const vendor = canonicalVendor(vendorGuess);
@@ -918,7 +1100,7 @@ async function main() {
       // include nm) — a brand-new model can't be its own predecessor.
       worklistItems.push(...reJudgeWorklistItems(nm, data.models, today));
     } else {
-      const reason = admissionFailReasons({ sourceCount, hasPricing, vendorKnown }).join(', ');
+      const reason = admissionFailReasons(admission).join(', ');
       logDrop(c.id, `${reason} — queued for Judge review`);
       held.push({ model: c.name, field: 'new-model', reason });
       worklistItems.push({
@@ -1125,7 +1307,7 @@ async function main() {
     if (bestForChanged) changed = true;
     if (ladder.changed) {
       changed = true;
-      changelog.push({ date: today, model: 'CursorBench ladder', field: 'effort_ladders', old: null, new: ladder.notes.join('; '), sources: [EPOCH_ZIP_URL] });
+      changelog.push(ladderChangelogEntry(ladder, today));
     }
 
     // Every full pass stamps as_of (see stampFullPass) — not only one that changed something.

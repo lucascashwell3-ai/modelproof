@@ -16,7 +16,8 @@
      - open_weights: same reasoning, doubly so — most vendors are closed by default.
    `openrouter` is the one field allowed to be a definite false: the OpenRouter models list is a
    complete live snapshot, membership is an exact id/alias match (the same one Collect already
-   uses for price facts), so absence is a real, checked fact, not a guess.
+   uses for price facts), so absence is a real, checked fact, not a guess. `openrouter_id` is the
+   matched entry's own id from that list ("anthropic/claude-opus-5.5"), or null when unmatched.
 
    A field already true from a prior run is never regressed to null/false by a run that simply
    couldn't re-derive it this time (a failed fetch, a renamed vendor field) — see
@@ -197,6 +198,10 @@ export function deriveAvailabilityForModel(model, ctx) {
   const orMatch = orFeedOk ? findOrMatch(model, orList, aliases) : null;
   if (orFeedOk) sources.add(OR_URL);
   const openrouter = orFeedOk ? deriveOpenRouterFlag(orMatch, true) : (prev.openrouter ?? null);
+  // The matched entry's own OpenRouter id ("anthropic/claude-opus-5.5"), so a page links the real
+  // listing instead of rebuilding it from the name. Follows the flag: null once the feed is
+  // checked and the model is gone, kept as is when the feed couldn't be checked this run.
+  const openrouter_id = orFeedOk ? (orMatch?.id ?? null) : (prev.openrouter_id ?? null);
 
   const direct = deriveDirectApi(model);
   if (direct.source) sources.add(direct.source);
@@ -212,6 +217,7 @@ export function deriveAvailabilityForModel(model, ctx) {
   return {
     direct_api,
     openrouter,
+    openrouter_id,
     aws_bedrock,
     // v1 = always null, no automated derivation method found within budget — see
     // scripts/data-sources.md "Availability sourcing gaps" for the candidate URLs tried.
@@ -227,7 +233,7 @@ export function deriveAvailabilityForModel(model, ctx) {
  * (arrays compared as sorted, order-independent). */
 export function availabilityEquals(a, b) {
   if (!a || !b) return a === b;
-  const keys = ['direct_api', 'openrouter', 'aws_bedrock', 'google_vertex', 'azure', 'open_weights', 'eu_hosting'];
+  const keys = ['direct_api', 'openrouter', 'openrouter_id', 'aws_bedrock', 'google_vertex', 'azure', 'open_weights', 'eu_hosting'];
   if (keys.some((k) => (a[k] ?? null) !== (b[k] ?? null))) return false;
   const as = [...(a.sources || [])].sort();
   const bs = [...(b.sources || [])].sort();
