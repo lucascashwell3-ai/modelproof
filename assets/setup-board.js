@@ -347,7 +347,7 @@ export function createBoard(root, { facts, state }) {
   const planLabels = (plans) => plans.map((p) => {
     const short = p.replace(/\s*\(.*\)/, '');
     const clash = plans.filter((x) => x.replace(/\s*\(.*\)/, '') === short).length > 1;
-    return [p, clash ? p.replace(/\s*\((.*)\)/, ' $1') : short];
+    return [p, clash ? p.replace(/\s*\((.*)\)/, (_, inner) => ` ${inner}`) : short];
   });
   const SPEND_TAP = {};
   const tapChoices = {
