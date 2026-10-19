@@ -1,14 +1,14 @@
 // The board: the setup drawn as a node graph. Three visible taps sit above it; click a box to change its model.
 // Everything on it is computed by setupFromTaps(), so the picture and the files are what the installer would write.
 import {
-  TOOLS, WORK, ROLE_INFO, ROLE_ORDER, setupFromTaps, modelsForTool, DEFAULT_PLAN,
+  TOOLS, ROLE_INFO, ROLE_ORDER, DEFAULT_PLAN, LAB_GROUPS,
   $, $$, clamp, esc, ico, fmtDate, host, reducedMotion, writeState,
 } from './site-core.js';
+import { boardSetup, pickList, optionLine, ROUTES, GROUP_LABEL, limitsText, isLimited, SPEND_LABEL } from './audiences.mjs';
 
 const NS = 'http://www.w3.org/2000/svg';
 const ICON = { lead: 'compass', scout: 'magnifying-glass', builder: 'hammer', reviewer: 'eye', checker: 'seal-check', bulk: 'stack' };
 const SHORT = { lead: 'Plans the work', scout: 'Reads and searches', builder: 'Makes the change', reviewer: 'Reviews it', checker: 'Checks the result', bulk: 'Routine edits' };
-const WORK_LABEL = { short: 'Quick tasks', long: 'One long job', parallel: 'Several jobs' };
 const HELPERS = ['scout', 'builder', 'reviewer', 'checker'];
 const WIDE_MIN = 820; // board width below which the board stacks into one column
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -131,7 +131,7 @@ function computeLayout(kind, W, hs, sz, needH, big = false) {
 /* ======================================================================================================== */
 
 export function createBoard(root, { facts, state }) {
-  const S = { ...state, big: null, example: null, sel: null };
+  const S = { ...state, big: null, example: null, sel: null, limits: state.limits || { labs: [...LAB_GROUPS] }, spend: state.spend || 'balanced' };
   const listeners = [];
   let setup = null, rejected = [], layout = null, runId = 0, lastSig = '', layoutBig = false;
   const nodes = {};
@@ -141,12 +141,32 @@ export function createBoard(root, { facts, state }) {
   const tapsEl = document.createElement('section');
   tapsEl.className = 'taps wrap';
   tapsEl.setAttribute('aria-label', 'Your three taps');
-  tapsEl.innerHTML = [['tool', 'Your tool'], ['plan', 'Your plan'], ['work', 'How you work']].map(([k, label], i) => `
+  tapsEl.innerHTML = [['tool', 'Your tool'], ['plan', 'Your plan'], ['spend', 'Your spend']].map(([k, label], i) => `
     <div class="tap" data-tap="${k}">
-      <div class="tap-h" id="tap-${k}"><span class="tap-n" aria-hidden="true">${i + 1}</span>${label}</div>
+      <div class="tap-h" id="tap-${k}"><span class="tap-n" aria-hidden="true">${i + 1}</span><span class="tap-l">${label}</span></div>
       <div class="tap-opts" role="group" aria-labelledby="tap-${k}"></div>
     </div>`).join('');
   root.before(tapsEl);
+
+  /* Limit models: one quiet control on the board's top edge. Closed by default; opens inline, never as a modal. */
+  const limEl = document.createElement('section');
+  limEl.className = 'lim wrap';
+  limEl.setAttribute('aria-label', 'Limit models');
+  limEl.innerHTML = `
+    <div class="lim-bar">
+      <span class="lim-right"><span class="lim-chip" hidden><span class="lim-chip-t"></span><button type="button" class="lim-clear" aria-label="Clear limits">${ico('x-circle')}</button></span>
+      <button type="button" class="lim-toggle" aria-expanded="false" aria-controls="lim-panel" aria-label="Limit models">${ico('funnel')}<span>Limit models</span>${ico('caret-down', 'lim-c')}</button></span>
+    </div>
+    <div class="lim-panel" id="lim-panel" hidden>
+      <div class="lim-g"><div class="tap-h" id="lim-labs">Lab based in</div>
+        <div class="tap-opts" role="group" aria-labelledby="lim-labs" data-lim="labs">${LAB_GROUPS.map((g) => `<button type="button" class="opt" data-v="${g}">${esc(GROUP_LABEL[g])}</button>`).join('')}</div></div>
+      <p class="lim-count" role="status" aria-live="polite"><b class="num"></b> <span></span></p>
+    </div>`;
+  root.before(limEl);
+  const saveEl = document.createElement('p');
+  saveEl.className = 'spend-note wrap'; saveEl.setAttribute('role', 'status'); saveEl.setAttribute('aria-live', 'polite');
+  root.after(saveEl);
+  const limToggle = $('.lim-toggle', limEl), limPanel = $('.lim-panel', limEl), limChip = $('.lim-chip', limEl);
 
   root.classList.add('board');
   root.innerHTML = `
@@ -177,30 +197,26 @@ export function createBoard(root, { facts, state }) {
 
   /* ---------- state -> setup ---------- */
   function compute() {
-    setup = setupFromTaps({ tool: S.tool, plan: S.plan, work: S.work }, facts, { roles: S.roles });
-    rejected = Object.keys(S.roles).filter((k) => { const r = setup.roles.find((x) => x.key === k); return !r || r.model_id !== S.roles[k]; });
+    setup = boardSetup(S, facts);
+    rejected = setup.rejected;
   }
   const roleOf = (k) => setup.roles.find((r) => r.key === k);
-  const modelRec = (mid) => facts.models.models.find((m) => m.id === mid);
 
-  function viewOf(r) {
-    const lead = roleOf('lead');
-    const named = !!r.model_name;
-    const model = named ? r.model_name : r.key === 'lead' ? 'Your choice' : lead.model_name || 'Your choice';
-    return { model, shared: !named && r.key !== 'lead', mine: r.from === 'you' };
-  }
   function paintNodes() {
     const changed = [];
     for (const r of setup.roles) {
       const n = nodes[r.key]; if (!n) continue;
-      const v = viewOf(r);
-      const sig = [v.model, v.shared, v.mine].join('|');
+      const v = r.view;
+      const sig = [v.model, v.src, v.meta, v.open, v.state].join('|');
       if (sig === n.sig) continue;
       n.sig = sig;
+      n.el.dataset.state = v.state;
       n.card.innerHTML = `
         <span class="node-head">${ico(ICON[r.key])}<span class="node-name">${esc(ROLE_INFO[r.key].name)}</span><span class="node-job">${esc(SHORT[r.key])}</span></span>
-        <span class="node-model${v.shared ? ' shared' : ''}"><span>${esc(v.model)}</span>${ico('caret-down', 'node-c')}</span>`;
-      n.el.setAttribute('aria-label', `${ROLE_INFO[r.key].name}, ${SHORT[r.key].toLowerCase()}. Model: ${v.model}. Choose a model.`);
+        <span class="node-model${v.state === 'shared' || v.state === 'wait' ? ' shared' : ''}"><span>${esc(v.model)}</span>${ico('caret-down', 'node-c')}</span>
+        ${v.state === 'pick' || v.state === 'outside' ? `<span class="node-src">${esc(v.src)}</span>` : ''}
+        ${v.meta ? `<span class="node-meta"><span class="num">${esc(v.meta)}</span>${v.open ? '<span class="ow">Open weights</span>' : ''}</span>` : ''}`;
+      n.el.setAttribute('aria-label', `${ROLE_INFO[r.key].name}, ${SHORT[r.key].toLowerCase()}. Model: ${v.model}. ${v.src}.${v.meta ? ' ' + v.meta + '.' : ''}${v.open ? ' Open weights.' : ''} Choose a model.`);
       changed.push(r.key);
     }
     return changed;
@@ -326,15 +342,31 @@ export function createBoard(root, { facts, state }) {
   }
 
   /* ---------- the three taps: always visible ---------- */
+  // Plan names drop their note in brackets ("Team (Premium seat)" -> "Team") unless two plans would then read the same
+  // ("Google AI Ultra (5x)" and "(20x)" stay told apart as "Google AI Ultra 5x" and "Google AI Ultra 20x").
+  const planLabels = (plans) => plans.map((p) => {
+    const short = p.replace(/\s*\(.*\)/, '');
+    const clash = plans.filter((x) => x.replace(/\s*\(.*\)/, '') === short).length > 1;
+    return [p, clash ? p.replace(/\s*\((.*)\)/, ' $1') : short];
+  });
+  const SPEND_TAP = {};
   const tapChoices = {
     tool: () => TOOLS.map((t) => [t.id, t.label, t.id === S.tool]),
-    plan: () => TOOLS.find((t) => t.id === S.tool).plans.map((p) => [p, p.replace(/\s*\(.*\)/, ''), p === S.plan]),
-    work: () => WORK.map((w) => [w.id, WORK_LABEL[w.id] || w.label, w.id === S.work]),
+    plan: () => (S.tool === 'any'
+      ? ROUTES.map((r) => [r.id, r.label, r.id === S.plan])
+      : planLabels(TOOLS.find((t) => t.id === S.tool).plans).map(([p, label]) => [p, label, p === S.plan])),
+    spend: () => Object.keys(SPEND_LABEL).map((k) => [k, SPEND_TAP[k] || SPEND_LABEL[k], k === S.spend]),
   };
   function paintTaps() {
-    for (const k of ['tool', 'plan', 'work']) {
+    for (const k of ['tool', 'plan', 'spend']) {
       $(`.tap[data-tap="${k}"] .tap-opts`, tapsEl).innerHTML = tapChoices[k]().map(([v, label, on]) => `<button type="button" class="opt" data-v="${esc(v)}" aria-pressed="${on}">${esc(label)}</button>`).join('');
     }
+    $('.tap[data-tap="plan"] .tap-l', tapsEl).textContent = S.tool === 'any' ? 'Where your models run' : 'Your plan';
+  }
+  // A lead with no documented default opens as a picker: the visitor's own choice is the next step.
+  function pickLeadIfOpen(delay = 60) {
+    if (roleOf('lead').view.state !== 'pick') return;
+    setTimeout(() => { if (roleOf('lead').view.state === 'pick' && pick.hidden) openPick('lead'); }, delay);
   }
   tapsEl.addEventListener('click', (e) => {
     const b = e.target.closest('.opt'); if (!b) return;
@@ -342,48 +374,115 @@ export function createBoard(root, { facts, state }) {
     closePick();
     if (k === 'tool') { if (v === S.tool) return; S.tool = v; S.plan = DEFAULT_PLAN[v] || TOOLS.find((t) => t.id === v).plans[0]; S.roles = {}; }
     else if (k === 'plan') { if (v === S.plan) return; S.plan = v; }
-    else { if (v === S.work) return; S.work = v; }
+    else { if (v === S.spend) return; S.spend = v; }
     update({ glide: true });
     const again = $(`.tap[data-tap="${k}"] .opt[data-v="${CSS.escape(v)}"]`, tapsEl); if (again) again.focus({ preventScroll: true });
+    if (k !== 'spend') pickLeadIfOpen(reducedMotion() ? 60 : 420);
   });
-  tapsEl.addEventListener('keydown', (e) => {
+  const arrowKeys = (scope) => (e) => {
     if (!['ArrowRight', 'ArrowLeft'].includes(e.key)) return;
-    const list = $$('.opt', e.target.closest('.tap-opts') || tapsEl); const i = list.indexOf(document.activeElement); if (i < 0) return;
+    const list = $$('.opt', e.target.closest('.tap-opts') || scope); const i = list.indexOf(document.activeElement); if (i < 0) return;
     e.preventDefault(); list[(i + (e.key === 'ArrowRight' ? 1 : -1) + list.length) % list.length].focus();
+  };
+  tapsEl.addEventListener('keydown', arrowKeys(tapsEl));
+
+  /* ---------- limits ---------- */
+  function paintLimits() {
+    for (const b of $$('[data-spend]', limEl)) b.setAttribute('aria-pressed', String(b.dataset.spend === S.spend));
+    const L = S.limits;
+    for (const b of $$('[data-lim="labs"] .opt', limEl)) b.setAttribute('aria-pressed', String(L.labs.includes(b.dataset.v)));
+    const c = setup.count;
+    $('.lim-count b', limEl).textContent = c.fit ? String(c.fit) : '';
+    $('.lim-count span', limEl).textContent = c.fit ? `of ${c.total} models${S.tool === 'any' ? ' on this route' : setup.oneLab ? ` ${setup.toolLabel} runs` : ''}` : 'No model fits. Turn a lab back on.';
+    const on = isLimited(L);
+    limChip.hidden = !on;
+    limEl.dataset.limited = String(on);
+    if (on) $('.lim-chip-t', limEl).textContent = `Limited: ${limitsText(L)}`;
+  }
+  function setLimOpen(open) {
+    limPanel.hidden = !open; limToggle.setAttribute('aria-expanded', String(open)); limEl.dataset.open = String(open);
+    if (open && !reducedMotion()) play(limPanel, [{ opacity: 0, transform: 'translateY(-4px)' }, { opacity: 1, transform: 'none' }], { duration: 180, easing: EASE_OUT });
+  }
+  limToggle.addEventListener('click', () => { closePick(); setLimOpen(limPanel.hidden); });
+  limEl.addEventListener('click', (e) => {
+    const sp = e.target.closest('[data-spend]');
+    if (sp) {
+      if (sp.dataset.spend === S.spend) return;
+      closePick(); S.spend = sp.dataset.spend; update({ glide: false }); sp.focus({ preventScroll: true }); return;
+    }
+    if (e.target.closest('.lim-clear')) {
+      S.limits = { labs: [...LAB_GROUPS] };
+      update({ glide: false }); limToggle.focus({ preventScroll: true }); return;
+    }
+    const b = e.target.closest('.lim-panel .opt'); if (!b) return;
+    const grp = b.closest('[data-lim]').dataset.lim, v = b.dataset.v;
+    closePick();
+    const has = S.limits.labs.includes(v);
+    S.limits = { ...S.limits, labs: has ? S.limits.labs.filter((g) => g !== v) : LAB_GROUPS.filter((g) => g === v || S.limits.labs.includes(g)) };
+    update({ glide: false });
+    const again = $(`[data-lim="${grp}"] .opt[data-v="${v}"]`, limEl); if (again) again.focus({ preventScroll: true });
   });
+  limEl.addEventListener('keydown', arrowKeys(limEl));
 
   /* ---------- the picker: click a box, choose its model ---------- */
   let showAll = false, srcOpen = false, pickNote = '';
-  const listFor = () => modelsForTool(facts, S.tool).slice().sort((a, b) => String(b.released || '').localeCompare(String(a.released || '')) || a.name.localeCompare(b.name));
-  function defaultNameFor(k) {
+  /** What "Default" means for a box: the same board without this box's own choice. Null when there is none. */
+  function defaultFor(k) {
     const roles = { ...S.roles }; delete roles[k];
-    const s = setupFromTaps({ tool: S.tool, plan: S.plan, work: S.work }, facts, { roles });
-    const r = s.roles.find((x) => x.key === k);
-    if (r.model_name) return r.model_name;
-    if (k === 'lead') return `set in ${setup.toolLabel}`;
-    const lead = s.roles.find((x) => x.key === 'lead');
-    return lead.model_name || "the lead's model";
+    const r = boardSetup({ ...S, roles }, facts).roles.find((x) => x.key === k);
+    const v = r.view;
+    if (v.state === 'pick') return null;
+    if (v.state === 'shared') return `${v.model}, same as the lead`;
+    if (v.state === 'wait') return "The lead's model";
+    if (v.state === 'outside') return 'Outside your limits';
+    if (r.rule === 'cost') return `${v.model} · ${r.priceWord}`;
+    return `${v.model} · ${v.src}`;
   }
   function renderPick() {
     const k = S.sel; if (!k) return;
     const r = roleOf(k), cur = S.roles[k] || '';
-    const all = listFor();
+    const any = S.tool === 'any';
+    const all = pickList(facts, S);
     const LIMIT = 6;
-    let list = all;
-    if (!showAll && all.length > LIMIT + 1) { list = all.slice(0, LIMIT); const c = all.find((m) => m.id === cur); if (c && !list.includes(c)) list = [...list, c]; }
+    // Collapsed: six per group (local first on "Both"), plus the current choice.
+    const groups = any && S.plan === 'both' ? [['On your computer', all.filter((e) => e.route === 'local')], ['On OpenRouter', all.filter((e) => e.route !== 'local')]] : [['', all]];
+    const many = groups.some(([, g]) => g.length > LIMIT + 1);
     const multi = new Set(all.map((m) => m.vendor)).size > 1;
-    const opt = (mid, name, sub) => `<button type="button" class="pk-opt" role="option" data-id="${esc(mid)}" aria-selected="${cur === mid}"><span class="pk-t">${esc(name)}${sub ? `<small>${esc(sub)}</small>` : ''}</span>${ico('check-fat')}</button>`;
+    const opt = (mid, name, sub, open = false) => `<button type="button" class="pk-opt" role="option" data-id="${esc(mid)}" aria-selected="${cur === mid}"><span class="pk-t">${esc(name)}${sub || open ? `<small>${esc(sub)}${open ? '<span class="ow">Open weights</span>' : ''}</small>` : ''}</span>${ico('check-fat')}</button>`;
+    if (any && S.plan === 'ollama') groups[0][0] = 'On your computer';
+    const body = groups.map(([title, g]) => {
+      let list = g;
+      if (!showAll && g.length > LIMIT + 1) { list = g.slice(0, LIMIT); const c = g.find((m) => m.id === cur); if (c && !list.includes(c)) list = [...list, c]; }
+      const head = title === 'On your computer' ? `${title} (Ollama), all open weights` : title;
+      return `${title && g.length ? `<p class="pk-g" role="presentation">${esc(head)}</p>` : ''}${list.map((e) => { const l = optionLine(e, { any, multi }); return opt(e.id, e.name, l.text, l.open); }).join('')}`;
+    }).join('');
+    const def = defaultFor(k);
+    const lede = r.view.state === 'pick' ? r.view.src : r.view.state === 'outside' ? 'Its usual model is outside your limits. Pick one inside them.' : '';
+    const other = setup.oneLab ? `<p class="pk-other">${esc(setup.toolLabel)} runs only ${esc(setup.oneLab)} models. For another lab's model, <button type="button" class="pk-any">use Any model ${ico('arrow-right')}</button></p>` : '';
+    const limitNote = setup.limited ? `<p class="pk-note pk-lim">${ico('funnel')}${all.length ? `Only models inside your limits (${all.length}).` : `No ${esc(any ? 'model on this route' : setup.toolLabel + ' model')} fits your limits.`}</p>` : '';
     pick.setAttribute('aria-label', `Choose a model for the ${ROLE_INFO[k].name.toLowerCase()}`);
+    pick.classList.toggle('pick-wide', any);
     pick.innerHTML = `
       <div class="pk-h"><span class="pk-title">${ico(ICON[k])}<b>${esc(ROLE_INFO[k].name)}</b><span>${esc(SHORT[k])}</span></span><button type="button" class="ibtn pk-x" aria-label="Close">${ico('x')}</button></div>
+      ${lede ? `<p class="pk-lede">${esc(lede)}</p>` : ''}
       <div class="pk-list" role="listbox" aria-label="Models">
-        ${opt('', 'Default', defaultNameFor(k))}
-        ${list.map((m) => opt(m.id, m.name, multi ? m.vendor : '')).join('')}
+        ${k === 'lead' && S.tool !== 'any' && (r.view.state === 'pick' || r.view.state === 'tooldefault') ? opt('tool-default', `Not sure, use ${setup.toolLabel}'s default`, 'Helpers run on the same model') : def ? opt('', 'Default', def) : ''}
+        ${body}
       </div>
-      ${all.length > LIMIT + 1 ? `<button type="button" class="pk-more">${showAll ? 'Fewer models' : `All ${all.length} models`}</button>` : ''}
+      ${many ? `<button type="button" class="pk-more">${showAll ? 'Fewer models' : `All ${all.length} models`}</button>` : ''}
       ${pickNote ? `<p class="pk-note">${esc(pickNote)}</p>` : ''}
+      ${limitNote}${other}
       <div class="pk-foot"><button type="button" class="pk-srcbtn" aria-expanded="${srcOpen}">Source ${ico('caret-down')}</button>
         ${srcOpen ? `<div class="pk-src">${esc(r.source)}${r.quote ? ` &middot; <a class="link" href="${esc(r.quote.url)}" target="_blank" rel="noopener">${esc(host(r.quote.url))} ${ico('arrow-up-right')}</a> &middot; ${esc(fmtDate(r.quote.date))}` : ''}</div>` : ''}</div>`;
+  }
+  /** "use Any model": same jobs, any lab. Keeps the models already on the board when the route has them. */
+  function toAnyModel(k) {
+    const keep = {};
+    for (const r of setup.roles) if (r.entry && !r.outside && (r.key === 'lead' || r.rule === 'you') && r.entry.route === 'cloud') keep[r.key] = r.entry.id;
+    closePick();
+    S.tool = 'any'; S.plan = 'openrouter'; S.roles = keep;
+    update({ glide: true });
+    setTimeout(() => openPick(k), reducedMotion() ? 60 : 420);
   }
   function placePick() {
     const n = nodes[S.sel] && nodes[S.sel].el; if (!n) return;
@@ -397,8 +496,10 @@ export function createBoard(root, { facts, state }) {
     S.sel = k; showAll = false; srcOpen = false; pickNote = '';
     for (const key of ROLE_ORDER) nodes[key].el.setAttribute('aria-expanded', String(key === k));
     renderPick(); pick.hidden = false; scrim.hidden = false; placePick(); markSelection();
+    setTimeout(() => { if (!pick.hidden && S.sel === k) placePick(); }, 420); // after any glide settles
     pick.animate && play(pick, [{ opacity: 0, transform: 'translateY(6px) scale(0.98)' }, { opacity: 1, transform: 'none' }], { duration: 170, easing: EASE_OUT });
-    const t = $('.pk-opt[aria-selected="true"]', pick) || $('.pk-opt', pick); t && t.focus({ preventScroll: true });
+    const t = $('.pk-opt[aria-selected="true"]', pick) || $('.pk-opt', pick);
+    if (t) { const lst = $('.pk-list', pick); if (t.offsetTop + t.offsetHeight > lst.clientHeight) lst.scrollTop = t.offsetTop - lst.clientHeight / 2; t.focus({ preventScroll: true }); }
   }
   function closePick(refocus = false) {
     if (pick.hidden) return;
@@ -419,6 +520,7 @@ export function createBoard(root, { facts, state }) {
   });
   pick.addEventListener('click', (e) => {
     if (e.target.closest('.pk-x')) { closePick(true); return; }
+    if (e.target.closest('.pk-any')) { toAnyModel(S.sel); return; }
     if (e.target.closest('.pk-more')) { showAll = !showAll; renderPick(); placePick(); $('.pk-more', pick).focus({ preventScroll: true }); return; }
     if (e.target.closest('.pk-srcbtn')) { srcOpen = !srcOpen; renderPick(); placePick(); $('.pk-srcbtn', pick).focus({ preventScroll: true }); return; }
     const o = e.target.closest('.pk-opt'); if (!o) return;
@@ -428,12 +530,14 @@ export function createBoard(root, { facts, state }) {
     if (S.roles[k] && rejected.includes(k)) { delete S.roles[k]; pickNote = `Not available on ${S.plan}. Kept the default.`; renderPick(); placePick(); return; }
     update({ glide: false });
     closePick(true);
+    if (matchMedia('(max-width: 720px)').matches) root.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
   });
 
   /* ---------- status, events ---------- */
   function announce() {
     const lead = roleOf('lead');
-    statusEl.textContent = `${setup.toolLabel}, ${S.plan}, ${WORK_LABEL[S.work] || S.work}. Lead: ${lead.model_name || 'you pick it in ' + setup.toolLabel}. Click a box to change its model.`;
+    const plan = S.tool === 'any' ? (ROUTES.find((r) => r.id === S.plan) || {}).label : S.plan;
+    statusEl.textContent = `${setup.toolLabel}, ${plan}, ${SPEND_LABEL[S.spend]} spend. Lead: ${lead.view.state === 'pick' ? lead.view.src : lead.view.model}.${setup.limited ? ` Limited: ${limitsText(S.limits)}.` : ''} Click a box to change its model.`;
   }
   const emit = () => listeners.forEach((fn) => fn({ state: { ...S }, setup }));
 
@@ -443,8 +547,12 @@ export function createBoard(root, { facts, state }) {
     compute();
     const sig = `${S.tool}|${S.plan}|${S.work}|${setup.big_job}`;
     const changed = paintNodes();
-    paintTaps(); announce();
-    writeState({ tool: S.tool, plan: S.plan, work: S.work, big: null, example: null, roles: S.roles });
+    paintTaps(); paintLimits(); announce();
+    const sv = setup.saving;
+    saveEl.textContent = sv
+      ? `About ${sv.pct}% cheaper than ${sv.lead} on every job, at list prices.${sv.lo != null ? ` The cheaper helpers score ${sv.lo === sv.hi ? `${sv.lo}%` : `${sv.lo} to ${sv.hi}%`} of ${sv.lead} on outside coding tests.` : ''}`
+      : setup.sameModel ? `Nothing cheaper scores close enough to ${setup.sameModel}, so every job uses it.` : '';
+    writeState({ tool: S.tool, plan: S.plan, work: S.work, big: null, example: null, roles: S.roles, limits: S.limits, spend: S.spend });
     const newKind = (root.clientWidth < WIDE_MIN ? 'chain' : setup.big_job ? 'loop' : 'compact') + (setup.big_job ? '+' : '-');
     const tapChanged = sig !== lastSig; lastSig = sig;
     if (!firstRun && !tapChanged && !changed.length) { emit(); return; }
@@ -485,5 +593,7 @@ export function createBoard(root, { facts, state }) {
     get setup() { return setup; },
     on(fn) { listeners.push(fn); if (setup) fn({ state: { ...S }, setup }); },
     resetAll() { S.roles = {}; update({ glide: true }); },
+    openPick(k) { openPick(k); },
+    openLimits() { setLimOpen(true); },
   };
 }

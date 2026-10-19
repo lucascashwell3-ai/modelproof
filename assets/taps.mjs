@@ -12,6 +12,9 @@ export const TOOLS = [
   { id: 'cursor', label: 'Cursor', maker: 'Anysphere', vendor: 'Cursor', plans: ['Pro', 'Pro+', 'Ultra', 'Teams (Standard)'] },
   { id: 'copilot', label: 'GitHub Copilot', maker: 'GitHub', vendor: 'GitHub Copilot', plans: ['Pro', 'Pro+', 'Max', 'Business'] },
   { id: 'antigravity', label: 'Antigravity', maker: 'Google', vendor: 'Google', plans: ['Google AI Pro', 'Google AI Ultra (5x)', 'Google AI Ultra (20x)'] },
+  // Any agent that can run several models (OpenRouter, Ollama on your computer, or both). Tap 2 becomes where they run.
+  // The generator has no tool of its own for this; it reads as OpenRouter (copy-only text).
+  { id: 'any', label: 'Any model', maker: null, vendor: null, gen: 'openrouter', plans: ['openrouter', 'ollama', 'both'] },
 ];
 
 // Tap 3 (how you work). Maps to the generator's own inputs; it never picks a model.
@@ -35,11 +38,11 @@ export const ROLE_ORDER = ['lead', 'scout', 'builder', 'reviewer', 'checker', 'b
 // The data files and the install prompt, found from this module's own URL, so any page can load them.
 const DATA_URL = new URL('../data/', import.meta.url);
 const PROMPT_URL = new URL('install-prompt.txt', import.meta.url);
-export async function loadFacts() {
+export async function loadFacts({ changelog: withLog = true } = {}) {
   const get = async (url, kind) => { const r = await fetch(url); if (!r.ok) throw new Error(`${String(url).split('/').pop()}: HTTP ${r.status}`); return kind === 'text' ? r.text() : r.json(); };
   const [models, guidance, plans, changelog, installPrompt] = await Promise.all([
     get(new URL('models.json', DATA_URL)), get(new URL('guidance.json', DATA_URL)), get(new URL('plans.json', DATA_URL)),
-    get(new URL('changelog.json', DATA_URL)), get(PROMPT_URL, 'text'),
+    withLog ? get(new URL('changelog.json', DATA_URL)) : null, get(PROMPT_URL, 'text'),
   ]);
   return { models, guidance, plans, changelog, installPrompt };
 }
@@ -48,8 +51,8 @@ export function profileFromTaps({ tool, plan, work }, extra = {}) {
   const t = TOOLS.find((x) => x.id === tool) || TOOLS[0];
   const w = WORK.find((x) => x.id === work) || WORK[0];
   return {
-    schema: 'modelproof.profile/1', who: 'person', tools: [t.id], scope: 'user',
-    plans: [{ vendor: t.vendor, plan: plan || t.plans[0] }],
+    schema: 'modelproof.profile/1', who: 'person', tools: [t.gen || t.id], scope: 'user',
+    plans: t.vendor ? [{ vendor: t.vendor, plan: plan || t.plans[0] }] : [],
     limits: w.limits, work: w.work, like: [], never: [],
     roles: extra.roles || {}, big_job: extra.big_job ?? w.big_job,
     ...(extra.example ? { example: extra.example } : {}),

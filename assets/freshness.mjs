@@ -23,7 +23,7 @@ export const FEED_FRESHNESS = {
   'per-request': { maxDays: 60, cadence: 'by hand, about monthly', byHand: true },
   vendors: { maxDays: 90, cadence: 'by hand, about every two months', byHand: true },
   // each ladder in models.json carries its own as_of: the date its publisher's runs are from
-  'effort-ladders': { maxDays: 120, cadence: 'when the publisher posts new runs' },
+  'effort-ladders': { maxDays: 30, cadence: 'twice a day, from the testers\' published data' },
 };
 
 // Feeds that live in another feed's file share its date and its limit.

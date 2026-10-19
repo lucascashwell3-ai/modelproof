@@ -4,10 +4,12 @@ import { TOOLS, WORK, ROLE_INFO, ROLE_ORDER, loadFacts, setupFromTaps, modelsFor
 export { TOOLS, WORK, ROLE_INFO, ROLE_ORDER, setupFromTaps, modelsForTool, GENERATOR_VERSION };
 
 export const REPO = 'https://github.com/lucascashwell3-ai/modelproof';
-export const DEFAULT_PLAN = { 'claude-code': 'Max 5x', codex: 'Plus', cursor: 'Pro', copilot: 'Pro', antigravity: 'Google AI Pro' };
+export const DEFAULT_PLAN = { 'claude-code': 'Max 5x', codex: 'Plus', cursor: 'Pro', copilot: 'Pro', antigravity: 'Google AI Pro', any: 'openrouter' };
+/* Limit models: where the lab is based, as short URL codes. */
+export const LAB_GROUPS = ['us', 'eu', 'cn', 'other'];
 export const DEFAULT_TAPS = { tool: 'claude-code', plan: 'Max 5x', work: 'parallel' };
 
-export const getFacts = () => loadFacts();
+export const getFacts = (opts) => loadFacts(opts);
 
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -34,7 +36,7 @@ export function fmtContext(n) {
 export const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return u; } };
 export const daysBetween = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
 
-/* ---------- state in the URL: ?tool=codex&plan=Plus&work=short&big=1&example=1&roles=scout:claude-haiku-5-5 ---------- */
+/* ---------- state in the URL: ?tool=codex&plan=Plus&spend=less&roles=scout:claude-haiku-5-5&labs=us,eu ---------- */
 export function readState(facts) {
   const q = new URLSearchParams(location.search);
   const tool = TOOLS.some((t) => t.id === q.get('tool')) ? q.get('tool') : DEFAULT_TAPS.tool;
@@ -47,23 +49,30 @@ export function readState(facts) {
   const roles = {};
   for (const part of (q.get('roles') || '').split(',')) {
     const [k, id] = part.split(':');
-    if (k && id && ROLE_ORDER.includes(k) && facts.models.models.some((m) => m.id === id)) roles[k] = id;
+    const local = tool === 'any' && facts.aud && facts.aud.local.some((x) => x.id === id);
+    if (k && id && ROLE_ORDER.includes(k) && (local || (k === 'lead' && id === 'tool-default') || facts.models.models.some((m) => m.id === id))) roles[k] = id;
   }
-  return { tool, plan, work, big, example, roles };
+  const labsQ = (q.get('labs') || '').split(',').filter((x) => LAB_GROUPS.includes(x));
+  const limits = { labs: q.get('labs') !== null ? LAB_GROUPS.filter((g) => labsQ.includes(g)) : [...LAB_GROUPS] };
+  const spend = ['less', 'balanced', 'more'].includes(q.get('spend')) ? q.get('spend') : 'balanced';
+  return { tool, plan, work, big, example, roles, limits, spend };
 }
 export function stateQuery(s, { withRoles = true } = {}) {
   const q = new URLSearchParams();
-  q.set('tool', s.tool); q.set('plan', s.plan); q.set('work', s.work);
+  q.set('tool', s.tool); q.set('plan', s.plan);
   if (s.big !== null && s.big !== undefined) q.set('big', s.big ? '1' : '0');
   if (s.example) q.set('example', '1');
   const r = Object.entries(s.roles || {}).map(([k, v]) => `${k}:${v}`).join(',');
   if (withRoles && r) q.set('roles', r);
+  if (s.spend) q.set('spend', s.spend);
+  const L = s.limits;
+  if (L && L.labs.length < LAB_GROUPS.length) q.set('labs', L.labs.join(','));
   return q.toString();
 }
 export function writeState(s) {
   const url = new URL(location.href);
   const keep = new URLSearchParams(url.search);
-  for (const k of ['tool', 'plan', 'work', 'big', 'example', 'roles']) keep.delete(k);
+  for (const k of ['tool', 'plan', 'work', 'big', 'example', 'roles', 'labs', 'on', 'spend']) keep.delete(k);
   const merged = new URLSearchParams(stateQuery(s));
   for (const [k, v] of keep) merged.set(k, v);
   history.replaceState(null, '', `${url.pathname}?${merged.toString()}${url.hash}`);

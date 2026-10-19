@@ -1,0 +1,90 @@
+{
+  "_readme": "Models you can run on your own computer with Ollama, read by hand from the Ollama library on the date in \"checked\": the model tag, the lab and the smallest download size the page lists. Every one is open weights. model_id links a row to data/models.json where the same model is listed there. Kept by hand; the weekly defaults watch flags changes to the library page.",
+  "source": "https://ollama.com/library",
+  "checked": "2026-10-17",
+  "models": [
+    {
+      "id": "local-qwen3-8-27b",
+      "tag": "qwen3.8:27b",
+      "name": "Qwen3.8 27B",
+      "vendor": "Alibaba (Qwen)",
+      "gb": 18,
+      "model_id": "qwen3-8-27b",
+      "page": "https://ollama.com/library/qwen3.8"
+    },
+    {
+      "id": "local-qwen3-6-27b",
+      "tag": "qwen3.6:27b",
+      "name": "Qwen3.6 27B",
+      "vendor": "Alibaba (Qwen)",
+      "gb": 18,
+      "page": "https://ollama.com/library/qwen3.6"
+    },
+    {
+      "id": "local-qwen3-coder-30b",
+      "tag": "qwen3-coder:30b",
+      "name": "Qwen3 Coder 30B",
+      "vendor": "Alibaba (Qwen)",
+      "gb": 19,
+      "page": "https://ollama.com/library/qwen3-coder"
+    },
+    {
+      "id": "local-gemma4-31b",
+      "tag": "gemma4:31b",
+      "name": "Gemma 4 31B",
+      "vendor": "Google",
+      "gb": 19,
+      "page": "https://ollama.com/library/gemma4"
+    },
+    {
+      "id": "local-gemma4-12b",
+      "tag": "gemma4:12b",
+      "name": "Gemma 4 12B",
+      "vendor": "Google",
+      "gb": 8,
+      "page": "https://ollama.com/library/gemma4"
+    },
+    {
+      "id": "local-gpt-oss-20b",
+      "tag": "gpt-oss:20b",
+      "name": "gpt-oss 20B",
+      "vendor": "OpenAI",
+      "gb": 14,
+      "page": "https://ollama.com/library/gpt-oss"
+    },
+    {
+      "id": "local-gpt-oss-120b",
+      "tag": "gpt-oss:120b",
+      "name": "gpt-oss 120B",
+      "vendor": "OpenAI",
+      "gb": 65,
+      "page": "https://ollama.com/library/gpt-oss"
+    },
+    {
+      "id": "local-muse-glimmer-30b",
+      "tag": "muse-glimmer:30b",
+      "name": "Muse Glimmer 30B",
+      "vendor": "Meta",
+      "gb": 18,
+      "model_id": "muse-glimmer-30b",
+      "page": "https://ollama.com/library/muse-glimmer"
+    },
+    {
+      "id": "local-granite4-2-8b",
+      "tag": "granite4.2:8b",
+      "name": "Granite 4.2 8B",
+      "vendor": "IBM",
+      "gb": 5.3,
+      "model_id": "granite-4-2-8b",
+      "page": "https://ollama.com/library/granite4.2"
+    },
+    {
+      "id": "local-devstral-small-2-24b",
+      "tag": "devstral-small-2:24b",
+      "name": "Devstral Small 2 24B",
+      "vendor": "Mistral AI",
+      "gb": 15,
+      "page": "https://ollama.com/library/devstral-small-2"
+    }
+  ]
+}
