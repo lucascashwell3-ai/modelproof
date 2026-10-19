@@ -58,7 +58,11 @@ function good() {
         { vendor: 'Microsoft 365 Copilot', plan: 'Business', price_usd_month: 18, source_url: U('m365'), as_of: '2026-09-20', reaches: ['OpenAI', 'Anthropic'], covers_tokens: true },
       ],
     },
-    'vendors.json': { as_of: '2026-09-06', vendors: [{ vendor: 'Anthropic', country: 'US', source: U('about') }] },
+    'vendors.json': { as_of: '2026-09-06', vendors: [
+      { vendor: 'Anthropic', country: 'US', source: U('about') },
+      { vendor: 'OpenAI', country: 'US', source: U('openai-about') },
+      { vendor: 'Google', country: 'US', source: U('google-about') },
+    ] },
     'tasks.json': { as_of: '2026-09-27', tasks: [{ id: 'coding', label: 'Coding' }] },
     'usage-presets.json': { as_of: '2026-09-06', presets: { light: {}, typical: {}, heavy: {} } },
     'board-samples.json': {
@@ -263,6 +267,22 @@ test('plans: optional reach / fee / rename fields are checked when present', () 
 test('vendors: every row needs a source URL', () => {
   const f = good(); delete f['vendors.json'].vendors[0].source;
   oneError(f, /data\/vendors\.json "Anthropic": source is required/, 'missing vendor source');
+});
+
+test('vendors: every model\'s vendor needs a row with a non-empty country', () => {
+  let f = good(); f['vendors.json'].vendors = f['vendors.json'].vendors.filter((v) => v.vendor !== 'Google');
+  oneError(f, /data\/vendors\.json: no row for "Google", the vendor of stub-one — every model's vendor needs a row with a sourced country/, 'no row');
+  for (const blank of [null, '', '  ', undefined]) {
+    f = good(); f['vendors.json'].vendors.find((v) => v.vendor === 'OpenAI').country = blank;
+    oneError(f, /data\/vendors\.json "OpenAI": country is empty, but it is the vendor of gpt-one/, `country ${JSON.stringify(blank)}`);
+  }
+  // a vendor's error names its models, a few at a time
+  f = good(); f['vendors.json'].vendors = f['vendors.json'].vendors.filter((v) => v.vendor !== 'Google');
+  for (const n of [2, 3, 4]) f['models.json'].models.push({ id: `stub-${n}`, name: `Stub ${n}`, vendor: 'Google', released: null, sources: [U(`stub-${n}`)] });
+  oneError(f, /no row for "Google", the vendor of stub-one, stub-2, stub-3, …/, 'long list cut short');
+  // a row no model uses may still say null
+  f = good(); f['vendors.json'].vendors.push({ vendor: 'IBM', country: null, source: U('ibm') });
+  assert.deepEqual(errorsOf(f), []);
 });
 
 // --- tasks / usage presets / board samples ---------------------------------------------------

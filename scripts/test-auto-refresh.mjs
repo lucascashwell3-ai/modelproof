@@ -4,7 +4,9 @@ import { readFileSync } from 'node:fs';
 import {
   normalize, matchAlias, withinTolerance, factAgreement, withinSanityBounds,
   newerWins, admitNewModel, isKnownVendor, trackDeprecation, canonicalKey, evaluateFact,
-  buildWorklist, bestForLine, needsGuidance, pickGuidance, guidanceItem, parseCsv, refreshCursorBench,
+  buildWorklist, bestForLine, needsGuidance, pickGuidance, guidanceItem, parseCsv, rebuildCursorBench,
+  cursorBenchSettings, cursorBenchModelId, latestReleaseDay, modelLine, nameVersion, ladderChangelogEntry, CURSORBENCH_METHOD, LADDER_LEVELS,
+  admissionFacts, isCatalogVendor, hasOpenRouterPrice,
   releaseTitle, isKnownCandidate, findKnownModel, admissionFailReasons, formatDropLine,
   normalizeDisplayName, findNewCandidateIds, decideRefreshRun, FULL_PASS_MIN_HOURS, lastFullPassAt, hoursSinceFullPass, stampFullPass, collectReceipt,
   needsJudgedFit, pickJudgedFit, judgedFitItem, reJudgeWorklistItems, stripProviderPrefix,
@@ -670,58 +672,276 @@ test('reJudgeWorklistItems: no items when nothing from that vendor has a judged 
   assert.deepEqual(reJudgeWorklistItems(newModel, [J('sibling', { vendor: 'Acme' }), newModel], '2026-09-06'), []);
 });
 
-// --- CursorBench ladder refresh from Epoch's CSV (2026-08-22) ----------------------------------
-const CSV = `Model version,Score,Reasoning level,Cost per task,Tokens per task,Name
-claude-opus-5_low,0.628,Low,2.55,18529,Opus 5 Low
-claude-opus-5_high,0.667,High,3.91,27932,Opus 5 High
-claude-opus-5_max,0.70,Max,8.23,61838,"Opus 5, Max"
-gpt-5.6-sol_low,0.526,Low,1.01,5104,Sol Low
-gpt-5.6-sol_max,,Max,5.69,28320,Sol Max
-grok-4.6_low,0.61,Low,0.70,1,Grok
-`;
-const ladderData = () => ({ effort_ladders: [{ id: 'cursorbench-agentic-coding', as_of: '2026-07-25', series: [
-  { model_id: 'claude-opus-5', label: 'Opus 5', source_key: 'claude-opus-5', points: [{ effort: 'high', cost: 3.91, score: 66.7 }] },
-  { model_id: 'gpt-5-6-sol', label: 'GPT-5.6 Sol', source_key: 'gpt-5.6-sol', points: [{ effort: 'low', cost: 1, score: 52 }, { effort: 'max', cost: 5.5, score: 67 }] },
-  { model_id: 'grok-4-6', label: 'Grok 4.6', source_key: 'grok-4.6', points: [{ effort: 'low', cost: 0.7, score: 61 }, { effort: 'high', cost: 2.3, score: 69.9 }] },
-  { model_id: 'claude-fable-5', label: 'Fable 5', points: [{ effort: 'low', cost: 4, score: 62 }, { effort: 'max', cost: 18, score: 72.9 }] },
-] }] });
-test('parseCsv handles quoted commas and blank cells', () => {
-  const rows = parseCsv(CSV);
-  assert.equal(rows.length, 6);
+// --- CursorBench ladder: the model list rebuilt by one rule from Epoch's CSV -------------------
+const CB_HEAD = 'Model version,Score,Reasoning level,Cost per task,Release date,Name,Notes';
+const CB_ROWS = [
+  'claude-opus-5_low,0.407,Low,4.87,2026-07-24,Opus 5 Low,',
+  'claude-opus-5_medium,0.433,Medium,6.94,2026-07-24,Opus 5 Medium,',
+  'claude-opus-5_max,0.466,Max,11.95,2026-07-24,"Opus 5, Max","a note, with a comma and a',
+  'line break inside the quotes"',
+  'claude-opus-5-5_low,0.43700000000000006,Low,1.17,2026-09-22,Opus 5.5 Low,',
+  'claude-opus-5-5_medium,0.525,Medium,2.912,2026-09-22,Opus 5.5 Medium,',
+  'claude-opus-5-5_max,0.578,Max,13.43,2026-09-22,Opus 5.5 Max,"says ""max"" twice"',
+  'gpt-5.6-sol_low,0.246,Low,0.87,2026-07-09,GPT-5.6 Sol Low,',
+  'gpt-5.6-sol_medium,0.311,Medium,1.77,2026-07-09,GPT-5.6 Sol Medium,',
+  'gpt-5.6-sol_high,0.357,High,2.85,2026-07-09,GPT-5.6 Sol High,',
+  'gpt-5.6-sol_max,,Max,8.23,2026-07-09,GPT-5.6 Sol Max,',
+  'gpt-5.6-terra_low,0.252,Low,0.52,2026-07-09,GPT-5.6 Terra Low,',
+  'gpt-5.6-terra_medium,0.276,Medium,,2026-07-09,GPT-5.6 Terra Medium,',
+  'gpt-5.6-terra_high,0.307,High,1.11,2026-07-09,GPT-5.6 Terra High,',
+  'gpt-5.6-terra_max,0.413,Max,5.14,2026-07-09,GPT-5.6 Terra Max,',
+  'grok-4.6_low,0.334,Low,2.25,2026-08-12,Grok 4.6 Low,',
+  'grok-4.6_medium,0.361,Medium,3.48,2026-08-12,Grok 4.6 Medium,',
+  'grok-4.6_high,0.404,High,5.2,2026-08-12,Grok 4.6 High,',
+  'muse-spark-1.3_minimal,0.243,,0.56,2026-09-02,Muse Spark 1.3 Minimal,',
+  'muse-spark-1.3_low,0.293,Low,0.93,2026-09-02,Muse Spark 1.3 Low,',
+  'muse-spark-1.3_max,0.416,Max,2.64,2026-09-02,Muse Spark 1.3 Max,',
+  'gemini-3.8-flash_medium,0.373,Medium,4.06,2026-09-02,Gemini 3.8 Flash Medium,',
+  'gemini-3.8-flash_high,0.396,High,4.7,2026-09-02,Gemini 3.8 Flash High,',
+  'glm-5.3-flash_low,0.269,Low,0.15,2026-08-20,GLM 5.3 Flash Low,',
+  'glm-5.3-flash_high,0.311,High,0.25,2026-08-20,GLM 5.3 Flash High,',
+  'glm-5.3-flash_max,0.368,Max,0.39,2026-08-20,GLM 5.3 Flash Max,',
+  'Composer 2.5,0.277,,0.68,2026-05-18,Composer 2.5,',
+];
+const cbCsv = (rows = CB_ROWS) => [CB_HEAD, ...rows].join('\n') + '\n';
+const cbModel = (id, name, vendor, released, rank) => ({ id, name, vendor, released, usage: { openrouter: rank == null ? null : { rank } } });
+const CB_PROVENANCE = {
+  id: 'cursorbench-agentic-coding', suite: 'CursorBench', task: 'Agentic coding', x_label: 'Cost per task (USD, log scale)', y_label: 'Score (%)',
+  as_of: '2026-09-22', publisher: 'Epoch AI (mirroring Cursor\'s CursorBench)', source_kind: 'third-party', source: 'https://epoch.ai/benchmarks/use-this-data',
+  confidence: 'high', method: 'the old fixed list', harness: 'Cursor\'s agent', caveat: 'Run by Cursor.', levels: ['low', 'medium', 'high', 'xhigh', 'max'],
+};
+const ladderData = () => ({
+  models: [
+    cbModel('claude-opus-5', 'Claude Opus 5', 'Anthropic', '2026-07-23', 33),
+    cbModel('claude-opus-5-5', 'Claude Opus 5.5', 'Anthropic', '2026-09-22', 7),
+    cbModel('gpt-5-6-sol', 'GPT-5.6 Sol', 'OpenAI', '2026-07-09', 37),
+    cbModel('gpt-5-6-terra', 'GPT-5.6 Terra', 'OpenAI', '2026-07-09', null),
+    cbModel('grok-4-6', 'Grok 4.6', 'xAI', '2026-04-01', 85),
+    cbModel('muse-spark-1-3', 'Muse Spark 1.3', 'Meta', '2026-09', 61),
+    cbModel('gemini-3-8-flash', 'Gemini 3.8 Flash', 'Google', '2026-09-02', 19),
+  ],
+  effort_ladders: [
+    { id: 'frontier-bench-v0-1-agentic-coding', suite: 'Frontier-Bench v0.1', as_of: '2026-07-24', series: [{ model_id: 'claude-opus-5', label: 'Opus 5', points: [{ effort: 'low', cost: 5.63, score: 25.8 }, { effort: 'max', cost: 16.48, score: 43.3 }] }] },
+    { ...CB_PROVENANCE, series: [
+      { model_id: 'claude-opus-5', label: 'Opus 5', color: '#e05c3e', source_key: 'claude-opus-5', points: [{ effort: 'low', cost: 4.87, score: 40.7 }, { effort: 'max', cost: 11.95, score: 46.6 }] },
+      { model_id: 'grok-4-6', label: 'Grok 4.6', color: '#7fd9b4', source_key: 'grok-4.6', points: [{ effort: 'low', cost: 2.25, score: 33.4 }, { effort: 'high', cost: 5.2, score: 40.4 }] },
+    ] },
+  ],
+});
+const cbLadder = (d) => d.effort_ladders.find((l) => l.id === 'cursorbench-agentic-coding');
+const TODAY_CB = '2026-10-18';
+
+test('parseCsv reads quoted commas, quoted line breaks, doubled quotes and blank cells', () => {
+  const rows = parseCsv(cbCsv());
+  assert.equal(rows.length, CB_ROWS.length - 1, 'the quoted line break stays inside one row');
   assert.equal(rows[2].Name, 'Opus 5, Max');
-  assert.equal(rows[4].Score, '');
+  assert.equal(rows[2].Notes, 'a note, with a comma and a\nline break inside the quotes');
+  assert.equal(rows[5].Notes, 'says "max" twice');
+  assert.equal(rows[9].Score, '');
 });
-test('refreshCursorBench rebuilds rungs in effort order, rounds, and moves as_of only on change', () => {
+
+test('rebuildCursorBench: catalog models measured at 3+ settings, newest of each line, ordered by usage rank (unknown last)', () => {
   const d = ladderData();
-  const r = refreshCursorBench(d, parseCsv(CSV), '2026-08-25');
+  const r = rebuildCursorBench(d, parseCsv(cbCsv()), TODAY_CB);
   assert.equal(r.changed, true);
-  const opus = d.effort_ladders[0].series[0];
-  assert.deepEqual(opus.points, [{ effort: 'low', cost: 2.55, score: 62.8 }, { effort: 'high', cost: 3.91, score: 66.7 }, { effort: 'max', cost: 8.23, score: 70 }]);
-  assert.equal(d.effort_ladders[0].as_of, '2026-08-25');
-  // second run with the same file: nothing changes, as_of stays
-  const r2 = refreshCursorBench(d, parseCsv(CSV), '2026-08-28');
-  assert.equal(r2.changed, false);
-  assert.equal(d.effort_ladders[0].as_of, '2026-08-25');
+  const L = cbLadder(d);
+  assert.deepEqual(L.series.map((s) => [s.label, s.usage_rank, s.points.length]), [
+    ['Claude Opus 5.5', 7, 3], ['GPT-5.6 Sol', 37, 3], ['Muse Spark 1.3', 61, 3], ['GPT-5.6 Terra', null, 3],
+  ]);
+  assert.deepEqual(L.series[0], {
+    model_id: 'claude-opus-5-5', label: 'Claude Opus 5.5', source_key: 'claude-opus-5-5', usage_rank: 7,
+    points: [{ effort: 'low', cost: 1.17, score: 43.7 }, { effort: 'medium', cost: 2.91, score: 52.5 }, { effort: 'max', cost: 13.43, score: 57.8 }],
+  });
+  assert.equal(L.series[1].model_id, 'gpt-5-6-sol', 'the stem "gpt-5.6-sol" names catalog id gpt-5-6-sol');
+  assert.equal(L.series[1].source_key, 'gpt-5.6-sol');
+  assert.deepEqual(L.series[2].points.map((p) => p.effort), ['minimal', 'low', 'max'], 'minimal sorts first; points run in effort order');
+  assert.deepEqual(r.before, ['Opus 5', 'Grok 4.6']);
+  assert.deepEqual(r.after, ['Claude Opus 5.5', 'GPT-5.6 Sol', 'Muse Spark 1.3', 'GPT-5.6 Terra']);
+  const why = r.notes.join('\n');
+  assert.match(why, /Claude Opus 5: Claude Opus 5\.5 is the newest in its line/);
+  assert.match(why, /Grok 4\.6: released 2026-04-01, over 150 days ago/);
+  assert.match(why, /Gemini 3\.8 Flash: 2 measured setting\(s\), needs 3/);
+  assert.match(why, /glm-5\.3-flash: not in the catalog/);
 });
-test('refreshCursorBench keeps yesterday\'s points when the file has fewer than 2 usable rungs for a model', () => {
+
+test('rebuildCursorBench: a row without both a cost and a score is dropped, never filled in', () => {
   const d = ladderData();
-  refreshCursorBench(d, parseCsv(CSV), '2026-08-25');
-  const sol = d.effort_ladders[0].series[1];     // Sol max has a blank score → only 1 usable rung
-  assert.equal(sol.points.length, 2);
-  assert.equal(sol.points[1].cost, 5.5);
-  const grok = d.effort_ladders[0].series[2];    // Grok has only 1 row → kept
-  assert.equal(grok.points.length, 2);
+  rebuildCursorBench(d, parseCsv(cbCsv()), TODAY_CB);
+  const byId = Object.fromEntries(cbLadder(d).series.map((s) => [s.model_id, s]));
+  assert.deepEqual(byId['gpt-5-6-sol'].points.map((p) => p.effort), ['low', 'medium', 'high'], 'Sol max has no score');
+  assert.deepEqual(byId['gpt-5-6-terra'].points.map((p) => p.effort), ['low', 'high', 'max'], 'Terra medium has no cost');
+  // one more blank leaves Sol with 2 settings, below the bar: it leaves the chart
+  const d2 = ladderData();
+  rebuildCursorBench(d2, parseCsv(cbCsv(CB_ROWS.map((l) => (l.startsWith('gpt-5.6-sol_high') ? 'gpt-5.6-sol_high,0.357,High,,2026-07-09,x,' : l)))), TODAY_CB);
+  assert.ok(!cbLadder(d2).series.some((s) => s.model_id === 'gpt-5-6-sol'));
 });
-test('refreshCursorBench never adds or drops a series, and leaves a series without source_key alone', () => {
-  const d = ladderData();
-  refreshCursorBench(d, parseCsv(CSV), '2026-08-25');
-  assert.equal(d.effort_ladders[0].series.length, 4);
-  assert.deepEqual(d.effort_ladders[0].series[3].points, [{ effort: 'low', cost: 4, score: 62 }, { effort: 'max', cost: 18, score: 72.9 }]);
+
+test('rebuildCursorBench: ages a model out after 150 days, using the file\'s full date when the catalog only has a month', () => {
+  const run = (today) => { const d = ladderData(); rebuildCursorBench(d, parseCsv(cbCsv()), today); return cbLadder(d).series.map((s) => s.model_id); };
+  assert.ok(run('2026-12-06').includes('gpt-5-6-sol'), 'released 2026-07-09: day 150 is still shown');
+  assert.ok(!run('2026-12-07').includes('gpt-5-6-sol'), 'day 151 is not');
+  assert.ok(run('2027-01-30').includes('muse-spark-1-3'), 'catalog says 2026-09, the file says 2026-09-02: day 150');
+  assert.ok(!run('2027-01-31').includes('muse-spark-1-3'));
 });
-test('refreshCursorBench is a no-op on an empty feed and on data with no cursorbench ladder', () => {
+
+test('latestReleaseDay: the last day a released value can mean', () => {
+  assert.equal(latestReleaseDay('2026-09-01'), '2026-09-01');
+  assert.equal(latestReleaseDay('2026-07'), '2026-07-31');
+  assert.equal(latestReleaseDay('2026-02'), '2026-02-28');
+  assert.equal(latestReleaseDay('2028-02'), '2028-02-29');
+  assert.equal(latestReleaseDay('2026-Q1'), '2026-03-31');
+  assert.equal(latestReleaseDay('2026-Q4'), '2026-12-31');
+  assert.equal(latestReleaseDay('2026'), '2026-12-31');
+  assert.equal(latestReleaseDay(null), null);
+  assert.equal(latestReleaseDay('unknown'), null);
+});
+
+test('modelLine: the vendor plus the name without version numbers; size tags still tell models apart', () => {
+  const line = (name, vendor = 'Anthropic') => modelLine({ name, vendor });
+  assert.equal(line('Claude Opus 5'), line('Claude Opus 5.5'));
+  assert.equal(line('Claude Opus 4.8'), line('Claude Opus 5.5'));
+  assert.notEqual(line('Claude Opus 5'), line('Claude Sonnet 5'));
+  assert.equal(line('GPT-5.6 Sol', 'OpenAI'), line('GPT-6.1 Sol', 'OpenAI'));
+  assert.notEqual(line('GPT-5.6 Sol', 'OpenAI'), line('GPT-5.6 Terra', 'OpenAI'));
+  assert.notEqual(line('GPT-6 Sol', 'OpenAI'), line('GPT-6 Sol Pro', 'OpenAI'));
+  assert.equal(line('Kimi K2.6', 'Moonshot AI'), line('Kimi K3', 'Moonshot AI'));
+  assert.notEqual(line('Qwen3.8 27B', 'Alibaba (Qwen)'), line('Qwen3.8 35B', 'Alibaba (Qwen)'));
+  assert.notEqual(line('Muse Spark 1.3', 'Meta'), line('Muse Spark 1.3 Contributor', 'Meta'));
+  assert.notEqual(line('Zeta 2', 'Meta'), line('Zeta 2', 'Google'), 'same name, other vendor: another line');
+  assert.deepEqual(nameVersion('Claude Opus 5.5'), [5, 5]);
+  assert.deepEqual(nameVersion('Qwen3.8 27B'), [3, 8]);
+  assert.deepEqual(nameVersion('DeepSeek V4 Pro 0813'), [4, 813]);
+});
+
+test('rebuildCursorBench: same release day in one line -> the higher version number is the newest', () => {
   const d = ladderData();
-  assert.equal(refreshCursorBench(d, [], '2026-08-25').changed, false);
-  assert.equal(refreshCursorBench({ effort_ladders: [] }, parseCsv(CSV), '2026-08-25').changed, false);
+  d.models.push(cbModel('muse-spark-1-2', 'Muse Spark 1.2', 'Meta', '2026-09-02', 3));
+  const rows = [...CB_ROWS, 'muse-spark-1.2_low,0.2,Low,0.5,2026-09-02,a,', 'muse-spark-1.2_high,0.3,High,0.9,2026-09-02,b,', 'muse-spark-1.2_max,0.35,Max,1.2,2026-09-02,c,'];
+  const r = rebuildCursorBench(d, parseCsv(cbCsv(rows)), TODAY_CB);
+  const ids = cbLadder(d).series.map((s) => s.model_id);
+  assert.ok(ids.includes('muse-spark-1-3') && !ids.includes('muse-spark-1-2'));
+  assert.match(r.notes.join('\n'), /Muse Spark 1\.2: Muse Spark 1\.3 is the newest in its line/);
+});
+
+test('rebuildCursorBench: keeps provenance, writes the rule as method, sets default_count and levels, and goes first', () => {
+  const d = ladderData();
+  rebuildCursorBench(d, parseCsv(cbCsv()), TODAY_CB);
+  const L = d.effort_ladders[0];
+  assert.equal(L.id, 'cursorbench-agentic-coding');
+  assert.equal(d.effort_ladders[1].id, 'frontier-bench-v0-1-agentic-coding', 'the other ladders keep their order behind it');
+  for (const k of ['suite', 'task', 'x_label', 'y_label', 'publisher', 'source_kind', 'source', 'confidence', 'harness', 'caveat']) assert.equal(L[k], CB_PROVENANCE[k], k);
+  assert.equal(L.method, CURSORBENCH_METHOD);
+  assert.match(L.method, /3 or more effort settings/);
+  assert.match(L.method, /150 days/);
+  assert.equal(L.default_count, 5);
+  assert.deepEqual(L.levels, LADDER_LEVELS);
+  assert.deepEqual(LADDER_LEVELS, ['minimal', 'low', 'medium', 'high', 'xhigh', 'max']);
+  assert.equal(L.as_of, TODAY_CB);
+  assert.ok(L.series.every((s) => !('color' in s)), 'series carry no colours; the page picks them');
+});
+
+test('rebuildCursorBench: as_of moves only when the shown models or points change, not on a new usage order', () => {
+  const d = ladderData();
+  rebuildCursorBench(d, parseCsv(cbCsv()), TODAY_CB);
+  const again = rebuildCursorBench(d, parseCsv(cbCsv()), '2026-10-20');
+  assert.equal(again.changed, false);
+  assert.equal(cbLadder(d).as_of, TODAY_CB);
+  // fresher usage ranks reorder the series but are not new benchmark data
+  const reordered = rebuildCursorBench(d, parseCsv(cbCsv()), '2026-10-21', { rankOf: (m) => (m.id === 'gpt-5-6-terra' ? 1 : m.usage?.openrouter?.rank ?? null) });
+  assert.equal(reordered.changed, false);
+  assert.equal(cbLadder(d).series[0].label, 'GPT-5.6 Terra');
+  assert.equal(cbLadder(d).series[0].usage_rank, 1);
+  assert.equal(cbLadder(d).as_of, TODAY_CB);
+  // a changed score is new data
+  const moved = rebuildCursorBench(d, parseCsv(cbCsv(CB_ROWS.map((l) => l.replace('gpt-5.6-terra_max,0.413', 'gpt-5.6-terra_max,0.42')))), '2026-10-22');
+  assert.equal(moved.changed, true);
+  assert.equal(cbLadder(d).as_of, '2026-10-22');
+});
+
+test('rebuildCursorBench never blanks: an empty feed, a rule with no series, or no ladder leaves the data untouched', () => {
+  const d = ladderData();
+  const before = JSON.stringify(d);
+  assert.equal(rebuildCursorBench(d, [], TODAY_CB).changed, false);
+  assert.equal(JSON.stringify(d), before);
+  const none = rebuildCursorBench(d, parseCsv(cbCsv(['grok-4.6_low,0.334,Low,2.25,2026-08-12,a,', 'glm-5.3-flash_low,0.2,Low,0.1,2026-08-20,b,'])), TODAY_CB);
+  assert.equal(none.changed, false);
+  assert.match(none.notes.join('\n'), /the rule yields no series — ladder kept as is/);
+  assert.equal(JSON.stringify(d), before);
+  const noLadder = { models: d.models, effort_ladders: [d.effort_ladders[0]] };
+  assert.equal(rebuildCursorBench(noLadder, parseCsv(cbCsv()), TODAY_CB).changed, false);
+  assert.equal(noLadder.effort_ladders.length, 1);
+});
+
+test('cursorBenchSettings: a row that disagrees with itself, a setting listed twice with two values, and out-of-range numbers are dropped', () => {
+  const notes = [];
+  const rows = parseCsv(cbCsv([
+    'm-1_high,0.5,Low,2,2026-09-01,a,',          // suffix says high, column says Low
+    'm-1_low,0.4,Low,1,2026-09-01,b,',
+    'm-1_low,0.41,Low,1,2026-09-01,c,',          // a second, different low
+    'm-1_max,0.6,Max,4,2026-09-01,d,',
+    'm-1_max,0.6,Max,4,2026-09-01,e,',           // an identical repeat is one setting
+    'm-1_xhigh,46.6,Extra High,3,2026-09-01,f,', // a percent, not the file's fraction
+    'm-1_medium,0.45,Medium,0,2026-09-01,g,',    // a zero cost can't sit on a log axis
+    'm-1_turbo,0.45,,1,2026-09-01,h,',           // not an effort setting
+  ]));
+  const s = cursorBenchSettings(rows, notes).get('m-1');
+  assert.deepEqual([...s.points.keys()], ['max']);
+  assert.equal(s.released, '2026-09-01');
+  assert.match(notes.join('\n'), /m-1_high: its reasoning level says "Low" — row dropped/);
+  assert.match(notes.join('\n'), /m-1 @ low: listed twice with different values — dropped/);
+  assert.equal(cursorBenchModelId('GPT-5.6-Sol'), 'gpt-5-6-sol');
+});
+
+test('ladderChangelogEntry: old and new model lists, the Epoch source, a note when only points moved', () => {
+  assert.deepEqual(ladderChangelogEntry({ before: ['Opus 5', 'Grok 4.6'], after: ['Claude Opus 5.5'] }, TODAY_CB), {
+    date: TODAY_CB, model: 'CursorBench ladder', field: 'effort_ladders', old: 'Opus 5, Grok 4.6', new: 'Claude Opus 5.5',
+    sources: ['https://epoch.ai/data/benchmark_data.zip'],
+  });
+  assert.equal(ladderChangelogEntry({ before: ['A'], after: ['A'] }, TODAY_CB).note, 'same models; measured points changed');
+});
+
+// --- new-model admission: a vendor already in the catalog gets in on OpenRouter alone ------------
+test('admission: a vendor the catalog already carries is admitted on its priced OpenRouter listing alone', () => {
+  const catalog = [{ id: 'muse-spark-1-3', name: 'Muse Spark 1.3', vendor: 'Meta' }];
+  const wonder = { id: 'meta/muse-wonder', name: 'Meta: Muse Wonder', priceInput: 4, priceOutput: 20, created: '2026-10-12' };
+  const facts = admissionFacts(wonder, catalog);
+  assert.deepEqual(facts, { sourceCount: 1, hasPricing: true, vendorKnown: true, vendorInCatalog: true, openRouterPriced: true });
+  assert.equal(admitNewModel(facts), true);
+  assert.deepEqual(admissionFailReasons(facts), []);
+  const unpriced = admissionFacts({ ...wonder, priceInput: null, priceOutput: null }, catalog);
+  assert.equal(admitNewModel(unpriced), false);
+  assert.deepEqual(admissionFailReasons(unpriced), ['no OpenRouter price']);
+  assert.equal(formatDropLine(wonder.id, admissionFailReasons(unpriced).join(', ')), 'dropped: meta/muse-wonder — no OpenRouter price');
+  // a catalog vendor that is not on the auto-admit list gets the same one-source path
+  assert.equal(admitNewModel(admissionFacts({ id: 'tencent/hy5', name: 'Tencent: Hy5', priceInput: 1, priceOutput: 2 }, [{ id: 'hy3', vendor: 'Tencent' }])), true);
+});
+
+test('admission: a vendor the catalog does not carry keeps the two-source rule', () => {
+  const catalog = [{ id: 'muse-spark-1-3', name: 'Muse Spark 1.3', vendor: 'Meta' }];
+  const nova = { id: 'amazon/nova-9', name: 'Amazon: Nova 9', priceInput: 1, priceOutput: 4 };
+  const one = admissionFacts(nova, catalog);
+  assert.equal(one.vendorInCatalog, false);
+  assert.equal(admitNewModel(one), false);
+  assert.deepEqual(admissionFailReasons(one), ['single source']);
+  assert.equal(admitNewModel(admissionFacts(nova, catalog, { id: 'amazon/nova-9', priceInput: 1 })), true, 'a second source still admits it');
+  const acme = { id: 'acme/zeta-1', name: 'Acme: Zeta 1', priceInput: 1, priceOutput: 2 };
+  assert.equal(admitNewModel(admissionFacts(acme, catalog, { id: 'zeta-1', priceInput: 1 })), false, 'an unknown vendor never auto-admits');
+  assert.deepEqual(admissionFailReasons(admissionFacts(acme, catalog)), ['single source', 'unknown vendor']);
+});
+
+test('isCatalogVendor matches by canonical vendor; hasOpenRouterPrice needs a price above zero', () => {
+  const catalog = [{ id: 'llama-4-maverick', vendor: 'Meta' }, { id: 'hy3', vendor: 'Tencent' }];
+  assert.equal(isCatalogVendor('meta', catalog), true);
+  assert.equal(isCatalogVendor('meta-llama', catalog), true);
+  assert.equal(isCatalogVendor('tencent', catalog), true);
+  assert.equal(isCatalogVendor('~meta', catalog), false);
+  assert.equal(isCatalogVendor('google', catalog), false);
+  assert.equal(isCatalogVendor('acme', catalog), false);
+  assert.equal(hasOpenRouterPrice({ priceInput: 4, priceOutput: null }), true);
+  assert.equal(hasOpenRouterPrice({ priceInput: null, priceOutput: 0.5 }), true);
+  assert.equal(hasOpenRouterPrice({ priceInput: null, priceOutput: null }), false);
+  assert.equal(hasOpenRouterPrice({ priceInput: -1e6, priceOutput: -1e6 }), false, 'OpenRouter lists -1 for a router, not a price');
+  assert.equal(hasOpenRouterPrice({ priceInput: 0, priceOutput: 0 }), false);
 });
 
 // --- timeline helpers (scripts/timeline.mjs) --------------------------------------------------
@@ -951,6 +1171,16 @@ test('honesty gate passes a clean record and the frozen fixture catalog', () => 
   const frozen = JSON.parse(readFileSync(new URL('./fixtures/models.json', import.meta.url)));
   const reg = JSON.parse(readFileSync(new URL('./sources.json', import.meta.url)));
   assert.deepEqual(validate(frozen, reg).errors, []);
+});
+
+test('honesty gate passes a rebuilt CursorBench ladder: a minimal rung, six levels, points in order', () => {
+  const d = ladderData();
+  rebuildCursorBench(d, parseCsv(cbCsv()), TODAY_CB);
+  const data = cleanData(d.models.map(({ usage, ...m }) => m));
+  data.effort_ladders = d.effort_ladders;
+  const { errors, warnings } = validate(data, REGISTRY);
+  assert.deepEqual(errors.filter((e) => /cursorbench/.test(e)), []);
+  assert.deepEqual(warnings.filter((w) => /cursorbench/.test(w) && /levels|order|rising/.test(w)), []);
 });
 
 test('the admission shape: a feed candidate becomes a clean id + bare name + canonical vendor', () => {

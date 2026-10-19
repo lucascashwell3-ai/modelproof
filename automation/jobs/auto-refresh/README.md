@@ -58,9 +58,13 @@ searches vendor pages, model cards, Epoch, papers for anything Collect can't set
   is one canonical spelling from that file's list, the name carries no "Vendor: " label. The
   honesty gate rejects anything else. OpenRouter "~vendor/…" community re-hosts are dropped with a
   logged reason and never queued.
-- A new model publishes when found on ≥2 sources with pricing and a known vendor; gets a
+- A new model publishes when its vendor already has a model in the catalog (same canonical vendor)
+  and OpenRouter lists a price for it — that one source is enough — or, for any other vendor, when
+  it is found on ≥2 sources with pricing and the vendor is on the auto-admit list. It gets a
   `releases` entry and a deterministic `best_for_line` (facts template, no prose). Otherwise it's
   a `new-model` worklist item for the Judge.
+- Every model matched to an OpenRouter listing keeps that listing's own id in
+  `availability.openrouter_id` (`anthropic/claude-opus-5.5`), so pages never rebuild it from the name.
 - Missing from every source for 2 consecutive Collect runs is NEVER auto-deprecated — it becomes
   a `deprecation` worklist item ("Is X deprecated/retired? Cite the vendor page.") for the Judge
   to decide and cite. Presence detection uses the exact same name/id alias matching as the price
@@ -79,12 +83,19 @@ vendor's docs, cited; `apply-judgment.mjs` enforces vocab tags, 2–4 tips of 20
 growth-only (never overwrites existing guidance). At 3 per run, 2 runs/week, the blank half of the
 catalog fills in about a month.
 
-**Effort ladders (added 2026-08-22):** Collect downloads Epoch AI's CC-BY `benchmark_data.zip` and
-rebuilds the CursorBench ladder's rungs from `cursorbench_external.csv` (tier A, exact values). Each
-series carries a `source_key` (the CSV's model stem); the series list is fixed in data — the feed never
-adds or drops a model, only refreshes rungs. A series with < 2 usable rungs in the file keeps
-yesterday's points; an unreachable feed leaves the ladder untouched. The other two ladders
-(Frontier-Bench, Terminal-Bench) are chart-read from vendor posts — manual, by design.
+**Effort ladders (added 2026-08-22; model list by rule since 2026-10-18):** Collect downloads Epoch
+AI's CC-BY `benchmark_data.zip` and rebuilds the CursorBench ladder from `cursorbench_external.csv`
+(tier A, exact values) on every full pass, by one rule (`rebuildCursorBench`): every catalog model
+the file measures at 3 or more effort settings (rows `<stem>_<level>`, level minimal…max; the stem
+names the catalog id, lowercased, dots to dashes), each with both a cost and a score — a row missing
+either is dropped, never interpolated; only the newest model of each line (the name without its
+version numbers, same vendor); nothing released more than 150 days ago; ordered by OpenRouter usage
+rank, unknown last. Each series carries `model_id`, `label` (catalog name), `source_key` (the CSV
+stem), `usage_rank` and its points; the ladder carries `default_count: 5` (the page draws five and
+lists the rest) and sits first in `effort_ladders`. `as_of` moves only when the shown models or
+their points change. An unreachable feed, or a rule that yields no series, leaves the ladder
+untouched. The other two ladders (Frontier-Bench, Terminal-Bench) are chart-read from vendor
+posts — manual, by design.
 
 **Timeline kinds (2026-08-22):** every entry carries `kind: model | price | retired`; the site shows
 new models by default and lets readers add the other two. Collect writes a `price` entry for any
