@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-18",
+  "as_of": "2026-10-20",
   "models": [
     {
       "id": "claude-opus-5",
@@ -30030,18 +30030,28 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "agentic",
+        "coding",
+        "research"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/anthropic/claude-opus-5.5"
+        "https://openrouter.ai/anthropic/claude-opus-5.5",
+        "https://platform.claude.com/docs/en/models/overview"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Anthropic positions Opus 5.5 for long-running agentic coding and knowledge work, not quick low-stakes queries.",
+        "Prompt cache reads cost just 5% of the base input price on Opus 5.5 (vs 10% on Haiku 5.5), so caching tool/system prompts pays off fast on long agent loops.",
+        "If Opus 5.5 at higher effort still falls short on your evals, Anthropic's own guidance is to step up to Claude Fable 5.1 rather than raising effort further.",
+        "Batch API requests get 50% off list price, worth using for large, non-interactive knowledge-work jobs."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
@@ -32767,18 +32777,26 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "cheap-bulk",
+        "speed"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/anthropic/claude-haiku-5.5"
+        "https://openrouter.ai/anthropic/claude-haiku-5.5",
+        "https://platform.claude.com/docs/en/models/overview"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Anthropic's own models page puts Haiku 5.5 to work on high-volume, latency-sensitive tasks such as classification, extraction, and routing, not deep reasoning.",
+        "Batch API requests are 50% off list price and prompt cache reads cost just 10% of the base input price, so cache repeated system prompts on bulk Haiku jobs.",
+        "Haiku 5.5 defaults to medium thinking effort; most high-volume classification and routing work does not need to raise it."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {

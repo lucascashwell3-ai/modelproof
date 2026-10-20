@@ -4334,5 +4334,25 @@
       "https://epoch.ai/data/benchmark_data.zip"
     ],
     "note": "Model list now rebuilt on every refresh by one rule: catalog models CursorBench measures at 3+ effort settings with a cost and a score, newest of each line, released within 150 days, ordered by OpenRouter usage."
+  },
+  {
+    "date": "2026-10-20",
+    "model": "Claude Haiku 5.5",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://platform.claude.com/docs/en/models/overview"
+    ]
+  },
+  {
+    "date": "2026-10-20",
+    "model": "Claude Opus 5.5",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://platform.claude.com/docs/en/models/overview"
+    ]
   }
 ]
