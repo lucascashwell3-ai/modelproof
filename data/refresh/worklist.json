@@ -137,8 +137,8 @@
       "ask": "\"Xiaomi: MiMo-V2.6-Flash\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
-      "id": "claude-sonnet-5-5:guidance",
-      "model": "Claude Sonnet 5.5",
+      "id": "gemini-4-argon:guidance",
+      "model": "Gemini 4 Argon",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -150,11 +150,11 @@
           "date": "2026-10-21"
         }
       ],
-      "ask": "Claude Sonnet 5.5 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "Gemini 4 Argon has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "deepseek-v4-1-flash-1017:guidance",
-      "model": "DeepSeek V4.1 Flash 1017",
+      "id": "glm-5-3-prime:guidance",
+      "model": "GLM 5.3 Prime",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -166,11 +166,11 @@
           "date": "2026-10-21"
         }
       ],
-      "ask": "DeepSeek V4.1 Flash 1017 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "GLM 5.3 Prime has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "deepseek-v4-1-flash:guidance",
-      "model": "DeepSeek V4.1 Flash",
+      "id": "gpt-6-1-sol:guidance",
+      "model": "GPT-6.1 Sol",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -182,14 +182,14 @@
           "date": "2026-10-21"
         }
       ],
-      "ask": "DeepSeek V4.1 Flash has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "GPT-6.1 Sol has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "command-a:judged-fit",
-      "model": "Command A+",
+      "id": "aion-3-0-mini:chat:re-judge",
+      "model": "Aion-3.0-Mini",
       "kind": "judged-fit",
       "field": "task_fit_judged",
-      "current": null,
+      "current": "1 claim(s) on file, as_of 2026-09-07",
       "observations": [
         {
           "source": "auto-refresh",
@@ -198,14 +198,14 @@
           "date": "2026-10-21"
         }
       ],
-      "ask": "Command A+ has no quantitative task fit for: coding, agents, bulk, writing, research, extraction, chat, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
+      "ask": "Aion 3.5 Mini just shipped from the same vendor as Aion-3.0-Mini, whose \"chat\" judged fit (1 claim(s) on file, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"chat\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
     },
     {
-      "id": "deepseek-v4-1-flash-1017:judged-fit",
-      "model": "DeepSeek V4.1 Flash 1017",
+      "id": "aion-3-0-mini:chat:re-judge",
+      "model": "Aion-3.0-Mini",
       "kind": "judged-fit",
       "field": "task_fit_judged",
-      "current": null,
+      "current": "1 claim(s) on file, as_of 2026-09-07",
       "observations": [
         {
           "source": "auto-refresh",
@@ -214,14 +214,14 @@
           "date": "2026-10-21"
         }
       ],
-      "ask": "DeepSeek V4.1 Flash 1017 has no quantitative task fit for: coding, agents, bulk, writing, research, extraction, chat, vision, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
+      "ask": "Aion 3.5 just shipped from the same vendor as Aion-3.0-Mini, whose \"chat\" judged fit (1 claim(s) on file, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"chat\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
     },
     {
-      "id": "ling-3-0-flash:agents:re-judge",
-      "model": "Ling-3.0-flash",
+      "id": "aion-3-0-mini:writing:re-judge",
+      "model": "Aion-3.0-Mini",
       "kind": "judged-fit",
       "field": "task_fit_judged",
-      "current": "2 claim(s) on file, as_of 2026-09-07",
+      "current": "1 claim(s) on file, as_of 2026-09-07",
       "observations": [
         {
           "source": "auto-refresh",
@@ -230,7 +230,7 @@
           "date": "2026-10-21"
         }
       ],
-      "ask": "Ling 3.1 Flash just shipped from the same vendor as Ling-3.0-flash, whose \"agents\" judged fit (2 claim(s) on file, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"agents\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
+      "ask": "Aion 3.5 Mini just shipped from the same vendor as Aion-3.0-Mini, whose \"writing\" judged fit (1 claim(s) on file, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"writing\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
     }
   ]
 }

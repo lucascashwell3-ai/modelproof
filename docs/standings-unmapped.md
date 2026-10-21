@@ -1571,7 +1571,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `grok-4-0709_high`
 - `o3-2025-04-16_medium`
 
-## arc-prize (v2_Semi_Private) (156)
+## arc-prize (v2_Semi_Private) (159)
 
 - `2025_human_panel`
 - `ARChitects`
@@ -1708,6 +1708,9 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `magistral-medium-2506-thinking`
 - `magistral-small-2506`
 - `minimax-m2.5`
+- `nvidia-nemotron-3-5-super-vl-120b-a12b-high`
+- `nvidia-nemotron-3-5-super-vl-120b-a12b-medium`
+- `nvidia-nemotron-3-5-super-vl-120b-a12b-none`
 - `o1-mini-2024-09-12`
 - `o3-2025-04-16-high`
 - `o3-2025-04-16-low`

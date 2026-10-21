@@ -4404,5 +4404,55 @@
     "sources": [
       "https://openrouter.ai/z-ai/glm-5.3-prime"
     ]
+  },
+  {
+    "date": "2026-10-21",
+    "model": "Aion 3.5 Mini",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/aion-labs/aion-3.5-mini"
+    ]
+  },
+  {
+    "date": "2026-10-21",
+    "model": "Aion 3.5",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/aion-labs/aion-3.5"
+    ]
+  },
+  {
+    "date": "2026-10-21",
+    "model": "Solar Mini 4",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/upstage/solar-mini4"
+    ]
+  },
+  {
+    "date": "2026-10-21",
+    "model": "GLM 5.3 FlashX",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/z-ai/glm-5.3-flashx"
+    ]
+  },
+  {
+    "date": "2026-10-21",
+    "model": "Fugu Ultra v2",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/sakana/fugu-ultra-v2"
+    ]
   }
 ]
