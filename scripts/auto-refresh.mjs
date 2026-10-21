@@ -388,6 +388,16 @@ export function newerWins(asOf, candidateDate) {
  *    vendor) and OpenRouter lists a price for the candidate (`openRouterPriced`): that one
  *    source is enough;
  *  - any other vendor: >=2 sources, has pricing, and the vendor is on the auto-admit list. */
+/** New models a single run may add. The live-data check fails a run whose model count moves more than 15%,
+ *  so a backlog of launches lands over several runs instead of turning the run red (5 of 84 is 6%). */
+export const MAX_NEW_PER_RUN = 5;
+
+/** Modelproof lists models that answer in text. A listing whose outputs include images or audio (an image
+ *  generator, for example) is out of scope; a listing with no output data on file is not ruled out. */
+export function isTextModel(outputs) {
+  return !Array.isArray(outputs) || outputs.length === 0 || outputs.every((x) => x === 'text');
+}
+
 export function admitNewModel({ sourceCount, hasPricing, vendorKnown, vendorInCatalog = false, openRouterPriced = false }) {
   if (vendorInCatalog && openRouterPriced) return true;
   return sourceCount >= 2 && !!hasPricing && !!vendorKnown;
@@ -877,6 +887,7 @@ async function feedOpenRouter() {
       contextWindow: o.context_length ?? null,
       hfId: o.hugging_face_id ?? null, // used by derive-availability.mjs's open_weights check
       created: o.created ? new Date(o.created * 1000).toISOString().slice(0, 10) : null,
+      outputs: Array.isArray(o.architecture?.output_modalities) ? o.architecture.output_modalities : null,
     }));
   } catch (e) {
     console.log(`feed: OpenRouter unreachable (${e.message}) — skipping.`);
@@ -1050,6 +1061,7 @@ async function main() {
     if (isCommunityListing(c.id)) { logDrop(c.id, 'community listing (~vendor), not the vendor — never admitted, never queued'); continue; }
     const knownMatch = findKnownModel(c.name, data.models, aliases) || findKnownModel(c.id, data.models, aliases);
     if (knownMatch) { logDrop(c.id, `known as ${knownMatch}`); continue; }
+    if (!isTextModel(c.outputs)) { logDrop(c.id, `makes ${c.outputs.filter((x) => x !== 'text').join('/')}, not only text — out of scope`); continue; }
     const n = canonicalKey(stripVariantSuffix(c.name));
     if (!n) { logDrop(c.id, 'empty/unresolvable name'); continue; }
     if (seen.has(n)) { logDrop(c.id, 'duplicate of another candidate this run'); continue; }
@@ -1068,6 +1080,7 @@ async function main() {
         logDrop(c.id, `id "${id}" is already in the catalog`);
         continue;
       }
+      if (newModels.length >= MAX_NEW_PER_RUN) { logDrop(c.id, `over this run's cap of ${MAX_NEW_PER_RUN} new models — added on a later run`); continue; }
       const nm = {
         id,
         name,

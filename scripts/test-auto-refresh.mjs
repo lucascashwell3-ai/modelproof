@@ -9,7 +9,7 @@ import {
   admissionFacts, isCatalogVendor, hasOpenRouterPrice,
   releaseTitle, isKnownCandidate, findKnownModel, admissionFailReasons, formatDropLine,
   normalizeDisplayName, findNewCandidateIds, decideRefreshRun, FULL_PASS_MIN_HOURS, lastFullPassAt, hoursSinceFullPass, stampFullPass, collectReceipt,
-  needsJudgedFit, pickJudgedFit, judgedFitItem, reJudgeWorklistItems, stripProviderPrefix,
+  needsJudgedFit, pickJudgedFit, judgedFitItem, reJudgeWorklistItems, stripProviderPrefix, MAX_NEW_PER_RUN, isTextModel,
 } from './auto-refresh.mjs';
 import { modelId, canonicalVendor, bareModelName, isCommunityListing, namingProblems, VENDORS, isCanonicalVendor, effortDateSuffixCandidates, stripEffortDateSuffix } from './naming.mjs';
 import { validate } from './validate-data.mjs';
@@ -1278,4 +1278,18 @@ test('auto-refresh.yml + auto-refresh.mjs: nothing creates or re-arms a trigger'
     assert.doesNotMatch(text, /gh workflow|\/dispatches|repository_dispatch|workflow_run|createWorkflowDispatch/i, name);
     assert.doesNotMatch(text, /api\.anthropic\.com|@anthropic-ai|ANTHROPIC_API_KEY|anthropics\//i, `${name}: 0 model tokens`);
   }
+});
+
+test('new models: an image generator is out of scope; text-only and unknown outputs pass', () => {
+  assert.equal(isTextModel(['image', 'text']), false);
+  assert.equal(isTextModel(['audio']), false);
+  assert.equal(isTextModel(['text']), true);
+  assert.equal(isTextModel(null), true);
+  assert.equal(isTextModel([]), true);
+});
+
+test('new models: one run adds few enough to stay inside the live-data 15% count check', () => {
+  assert.ok(MAX_NEW_PER_RUN >= 1);
+  // the catalog has held 70+ models since August; 5 new on 70 is 7%, well inside 15%
+  assert.ok(MAX_NEW_PER_RUN / 70 < 0.15);
 });
