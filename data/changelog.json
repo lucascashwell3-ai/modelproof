@@ -4454,5 +4454,25 @@
     "sources": [
       "https://openrouter.ai/sakana/fugu-ultra-v2"
     ]
+  },
+  {
+    "date": "2026-10-22",
+    "model": "Fugu Max",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/sakana/fugu-max"
+    ]
+  },
+  {
+    "date": "2026-10-22",
+    "model": "Ling 3.0 Flash VL",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/inclusionai/ling-3.0-flash-vl"
+    ]
   }
 ]
