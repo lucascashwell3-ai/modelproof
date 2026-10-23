@@ -4474,5 +4474,16 @@
     "sources": [
       "https://openrouter.ai/inclusionai/ling-3.0-flash-vl"
     ]
+  },
+  {
+    "date": "2026-10-23",
+    "model": "GPT-6 Astra",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://openai.com/index/gpt-6-astra/",
+      "https://www.foxbusiness.com/technology/openai-unveils-gpt-6-astra-major-advances-ai-capabilities"
+    ]
   }
 ]

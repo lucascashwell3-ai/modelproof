@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-22",
+  "as_of": "2026-10-23",
   "models": [
     {
       "id": "claude-opus-5",
@@ -23367,7 +23367,11 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "agentic",
+        "coding",
+        "research"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -23377,12 +23381,17 @@
         "https://platform.openai.com/docs/models/gpt-6-astra.md",
         "https://openrouter.ai/api/frontend/v1/rankings/models",
         "https://arena.ai/leaderboard/code/webdev",
-        "https://developers.openai.com/api/docs/models/gpt-6-astra"
+        "https://developers.openai.com/api/docs/models/gpt-6-astra",
+        "https://openai.com/index/gpt-6-astra/",
+        "https://www.foxbusiness.com/technology/openai-unveils-gpt-6-astra-major-advances-ai-capabilities"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "OpenAI positions Astra as state-of-the-art on computer-use/browser-use agentic work, software engineering, and science — reach for it on agentic or coding tasks, not routine chat.",
+        "Astra is OpenAI's first model rated 'Critical' for cybersecurity capability, and it rolled out first to a gated trusted-access group — expect staged access rather than full availability at launch."
+      ],
       "task_copy": {},
       "auto_added": "2026-09-06",
       "best_for_line": "OpenAI model · 1M ctx · $10/$50",
