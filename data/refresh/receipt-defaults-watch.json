@@ -1,10 +1,11 @@
 {
   "job": "defaults-watch",
-  "ran_at": "2026-10-18T06:03:05.755Z",
+  "ran_at": "2026-10-25T06:15:35.685Z",
   "ok": false,
   "rules": 103,
   "outcomes": {
-    "ok": 103
+    "ok": 102,
+    "broken:missing": 1
   },
   "changes": [],
   "pr": null,
