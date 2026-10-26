@@ -4495,5 +4495,15 @@
     "sources": [
       "https://openrouter.ai/moonshotai/kimi-k3.1-pro"
     ]
+  },
+  {
+    "date": "2026-10-26",
+    "model": "GPT-6.1 Terra",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/openai/gpt-6.1-terra"
+    ]
   }
 ]
