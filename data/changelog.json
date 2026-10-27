@@ -4516,5 +4516,15 @@
       "https://mistral.ai/news/mistral-large-4",
       "https://docs.mistral.ai/getting-started/models/models_overview/"
     ]
+  },
+  {
+    "date": "2026-10-27",
+    "model": "GPT-6.1 Terra Pro",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/openai/gpt-6.1-terra-pro"
+    ]
   }
 ]
