@@ -137,22 +137,6 @@
       "ask": "\"Xiaomi: MiMo-V2.6-Pro\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
-      "id": "mistral-large-4:guidance",
-      "model": "Mistral Large 4",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
-      "observations": [
-        {
-          "source": "auto-refresh",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": null,
-          "date": "2026-10-26"
-        }
-      ],
-      "ask": "Mistral Large 4 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
-    },
-    {
       "id": "muse-spark-open:guidance",
       "model": "Muse Spark Open",
       "kind": "guidance",

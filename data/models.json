@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-26",
+  "as_of": "2026-10-27",
   "models": [
     {
       "id": "claude-opus-5",
@@ -30508,18 +30508,35 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
-      "strengths": [],
+      "best_for": [
+        "reasoning",
+        "agentic",
+        "coding",
+        "vision",
+        "research"
+      ],
+      "strengths": [
+        "Software engineering, repository understanding, and complex terminal/agentic workflows.",
+        "Document, chart, and image understanding with visual grounding on technical and satellite imagery.",
+        "Scientific coding (simulations, data analysis) and applied math."
+      ],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/mistralai/mistral-large-4-0"
+        "https://openrouter.ai/mistralai/mistral-large-4-0",
+        "https://mistral.ai/news/mistral-large-4",
+        "https://docs.mistral.ai/getting-started/models/models_overview/"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "For cybersecurity work (vulnerability analysis, malware analysis, detection-rule writing), Mistral positions Large 4 for private-cloud or on-premise deployment rather than the public API.",
+        "It reads documents, charts, and images directly, including visual grounding on engineering drawings and satellite imagery, so skip separate OCR preprocessing for those inputs.",
+        "It's a hybrid instruct-and-reasoning model meant to unify plain instruction-following, reasoning, and agentic tool use in one model rather than needing a separate reasoning-tier model.",
+        "Self-hosted weights aren't out yet (Mistral said they're due by end of October 2026), so for now plan on the hosted Mistral Studio preview API rather than local deployment."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {

@@ -4505,5 +4505,16 @@
     "sources": [
       "https://openrouter.ai/openai/gpt-6.1-terra"
     ]
+  },
+  {
+    "date": "2026-10-27",
+    "model": "Mistral Large 4",
+    "field": "best_for+use_well+strengths",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://mistral.ai/news/mistral-large-4",
+      "https://docs.mistral.ai/getting-started/models/models_overview/"
+    ]
   }
 ]
