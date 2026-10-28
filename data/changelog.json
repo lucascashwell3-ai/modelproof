@@ -4526,5 +4526,15 @@
     "sources": [
       "https://openrouter.ai/openai/gpt-6.1-terra-pro"
     ]
+  },
+  {
+    "date": "2026-10-28",
+    "model": "CursorBench ladder",
+    "field": "effort_ladders",
+    "old": "Claude Opus 5.5, GLM-5.3, Claude Haiku 5.5, Claude Sonnet 5.5, GPT-5.6 Luna, Gemini 4 Argon, Grok 4.7, Claude Fable 5.1, GPT-5.6 Sol, GPT-5.6 Terra, Muse Spark 1.3",
+    "new": "Claude Opus 5.5, GLM-5.3, Claude Haiku 5.5, Claude Sonnet 5.5, GPT-5.6 Luna, Gemini 4 Argon, Grok 4.7, Claude Fable 5.1, GPT-5.6 Sol, GPT-5.6 Terra, Muse Spark 1.3, DeepSeek V4.1 Flash 1017",
+    "sources": [
+      "https://epoch.ai/data/benchmark_data.zip"
+    ]
   }
 ]
