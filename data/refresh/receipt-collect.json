@@ -1,9 +1,9 @@
 {
   "job": "collect",
-  "ran_at": "2026-10-29T22:23:00.186Z",
+  "ran_at": "2026-10-30T21:54:12.362Z",
   "applied": 0,
-  "held": 80,
-  "confirmed": 132,
+  "held": 79,
+  "confirmed": 133,
   "new_models": 0,
   "dropped": 456,
   "worklist_items": 15,
