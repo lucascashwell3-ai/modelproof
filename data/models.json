@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-29",
+  "as_of": "2026-10-30",
   "models": [
     {
       "id": "claude-opus-5",
@@ -2409,7 +2409,8 @@
         "https://arena.ai/leaderboard/agent",
         "https://arena.ai/leaderboard/document",
         "https://arena.ai/leaderboard/vision",
-        "https://arena.ai/leaderboard/code/webdev"
+        "https://arena.ai/leaderboard/code/webdev",
+        "https://roboflow.com/blog/claude-sonnet-5-for-vision"
       ],
       "coding_score": 85,
       "coding_basis": "SWE-bench Verified 85.2% (AA Coding Index 71.5)",
@@ -2501,7 +2502,30 @@
           ]
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "vision": {
+          "claims": [
+            {
+              "sentence": "Roboflow's independent vision evaluation (67 prompts, Jul 1, 2026) found Claude Sonnet 5 scoring 67% on document understanding, the weakest result of the four models it tested, checked 2026-10-30.",
+              "source_url": "https://roboflow.com/blog/claude-sonnet-5-for-vision",
+              "tier": "reported",
+              "date": "2026-10-30",
+              "quote": "Document understanding drops to 67%, the weakest of the four.",
+              "polarity": "negative"
+            },
+            {
+              "sentence": "The same Roboflow evaluation (Jul 1, 2026) found Claude Sonnet 5 scoring 20% (2 of 10) on object counting, the lowest score among the models tested, checked 2026-10-30.",
+              "source_url": "https://roboflow.com/blog/claude-sonnet-5-for-vision",
+              "tier": "reported",
+              "date": "2026-10-30",
+              "quote": "And object counting falls to 20% (2 of 10), the lowest score in the group.",
+              "polarity": "negative"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-10-30"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",

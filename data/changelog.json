@@ -4536,5 +4536,15 @@
     "sources": [
       "https://epoch.ai/data/benchmark_data.zip"
     ]
+  },
+  {
+    "date": "2026-10-30",
+    "model": "Claude Sonnet 5",
+    "field": "task_fit_judged.vision",
+    "old": null,
+    "new": "2 claim(s)",
+    "sources": [
+      "https://roboflow.com/blog/claude-sonnet-5-for-vision"
+    ]
   }
 ]
