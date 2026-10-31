@@ -4546,5 +4546,16 @@
     "sources": [
       "https://roboflow.com/blog/claude-sonnet-5-for-vision"
     ]
+  },
+  {
+    "date": "2026-10-31",
+    "model": "DeepSeek V4 Pro 0813",
+    "field": "price_output",
+    "old": 1.73,
+    "new": 4,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
   }
 ]
