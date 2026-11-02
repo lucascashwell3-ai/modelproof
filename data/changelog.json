@@ -4557,5 +4557,15 @@
       "openrouter",
       "litellm"
     ]
+  },
+  {
+    "date": "2026-11-02",
+    "model": "GLM 5.3 FlashX Legal",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/z-ai/glm-5.3-flashx-legal"
+    ]
   }
 ]
