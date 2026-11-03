@@ -5,7 +5,7 @@ live tester feed and could not be matched to a catalog model id — never guesse
 appears in any model's `standings`. A future run re-checks all of these; add an alias to
 `scripts/model-aliases.json` only after confirming the feed name really is that model.
 
-## epoch-ai / gpqa_diamond.csv (254)
+## epoch-ai / gpqa_diamond.csv (260)
 
 - `DeepSeek-R1`
 - `DeepSeek-R1-0528`
@@ -86,6 +86,11 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `deepseek-llm-67b-chat`
 - `deepseek-r1-0528-qwen3-8b`
 - `deepseek-reasoner`
+- `doubao-seed-2.0-lite-260428_high`
+- `doubao-seed-2.0-pro-260215_high`
+- `doubao-seed-2.1-pro-260628_high`
+- `doubao-seed-2.1-turbo-260628_high`
+- `doubao-seed-evolving_high`
 - `fireworks/kimi-k2p5`
 - `gemini-1.0-pro-001`
 - `gemini-1.5-flash-001`
@@ -260,9 +265,10 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.7-plus_none`
 - `qwen3.8-max-0902_xhigh`
 - `qwq-plus`
+- `seed-1.6`
 - `seed-oss-36b-instruct`
 
-## epoch-ai / simpleqa_verified.csv (47)
+## epoch-ai / simpleqa_verified.csv (53)
 
 - `Muse-Spark-Open-816B-A42B_xhigh`
 - `Qwen3-235B-A22B-Thinking-2507`
@@ -274,6 +280,11 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `claude-sonnet-4-5-20250929_59K`
 - `claude-sonnet-4-6_high`
 - `claude-sonnet-4-6_max`
+- `doubao-seed-2.0-lite-260428_high`
+- `doubao-seed-2.0-pro-260215_high`
+- `doubao-seed-2.1-pro-260628_high`
+- `doubao-seed-2.1-turbo-260628_high`
+- `doubao-seed-evolving_high`
 - `gemini-3-flash-preview_high`
 - `gemma-4-31b-it`
 - `glm-4.7`
@@ -311,6 +322,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.6-plus`
 - `qwen3.7-max`
 - `qwen3.8-max-0902_xhigh`
+- `seed-1.6`
 
 ## epoch-ai / hle_external.csv (42)
 
@@ -1061,7 +1073,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen2.5-max`
 - `qwen3-235b-a22b`
 
-## epoch-ai / frontiermath_tiers_1_3_v2.csv (72)
+## epoch-ai / frontiermath_tiers_1_3_v2.csv (71)
 
 - `Muse-Spark-Open-816B-A42B_xhigh`
 - `claude-opus-4-1-20250805_32K`
@@ -1108,7 +1120,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `grok-4.20-0309-reasoning`
 - `grok-4.3_high`
 - `kimi-k2.7-code`
-- `mistral-large-4-0-oss_high`
 - `mistral-large-4-0_high`
 - `muse-wonder-1.0_max`
 - `o1-2024-12-17_high`
@@ -1136,7 +1147,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.7-plus_none`
 - `qwen3.8-max-0902_xhigh`
 
-## epoch-ai / frontiermath_tier_4_v2.csv (31)
+## epoch-ai / frontiermath_tier_4_v2.csv (30)
 
 - `Muse-Spark-Open-816B-A42B_xhigh`
 - `claude-opus-4-1-20250805_32K`
@@ -1163,7 +1174,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `grok-4.20-0309-reasoning`
 - `grok-4.3_high`
 - `kimi-k2.7-code`
-- `mistral-large-4-0-oss_high`
 - `mistral-large-4-0_high`
 - `muse-wonder-1.0_max`
 - `o3-mini-2025-01-31_high`
@@ -1214,7 +1224,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.7-max`
 - `step-5-preview_unknown`
 
-## epoch-ai / otis_mock_aime_2024_2025.csv (231)
+## epoch-ai / otis_mock_aime_2024_2025.csv (237)
 
 - `DeepSeek-R1`
 - `DeepSeek-R1-0528`
@@ -1289,6 +1299,11 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `deepseek-llm-67b-chat`
 - `deepseek-r1-0528-qwen3-8b`
 - `deepseek-reasoner`
+- `doubao-seed-2.0-lite-260428_high`
+- `doubao-seed-2.0-pro-260215_high`
+- `doubao-seed-2.1-pro-260628_high`
+- `doubao-seed-2.1-turbo-260628_high`
+- `doubao-seed-evolving_high`
 - `fireworks/kimi-k2p5`
 - `gemini-1.0-pro-001`
 - `gemini-1.5-flash-001`
@@ -1446,6 +1461,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.7-plus`
 - `qwen3.7-plus_none`
 - `qwen3.8-max-0902_xhigh`
+- `seed-1.6`
 - `seed-oss-36b-instruct`
 
 ## epoch-ai / critpt_external.csv (123)
