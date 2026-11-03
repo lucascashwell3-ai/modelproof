@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-02",
+  "as_of": "2026-11-03",
   "models": [
     {
       "id": "claude-opus-5",
@@ -22055,7 +22055,8 @@
       "sources": [
         "https://openrouter.ai/meta/muse-spark-1.3-contributor",
         "https://openrouter.ai/api/frontend/v1/rankings/models",
-        "https://dev.meta.ai/docs/pricing-rate-limits"
+        "https://dev.meta.ai/docs/pricing-rate-limits",
+        "https://llmgateway.io/models/muse-spark-1.3-contributor"
       ],
       "coding_score": null,
       "coding_basis": null,
@@ -22173,6 +22174,45 @@
           ],
           "reconciliation": null,
           "as_of": "2026-09-07"
+        },
+        "bulk": {
+          "claims": [
+            {
+              "sentence": "As of its September 2026 listing, checked 2026-11-03, LLM Gateway describes Muse Spark 1.3 Contributor as built for prototyping and large-scale experimentation workloads.",
+              "source_url": "https://llmgateway.io/models/muse-spark-1.3-contributor",
+              "tier": "reported",
+              "date": "2026-11-03",
+              "quote": "A discounted, training-eligible Muse Spark 1.3 variant for prototyping and large-scale experiments."
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-03"
+        },
+        "vision": {
+          "claims": [
+            {
+              "sentence": "OpenRouter's listing for Muse Spark 1.3 Contributor, checked 2026-11-03, states that it accepts image and video input alongside text and files.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.3-contributor",
+              "tier": "reported",
+              "date": "2026-11-03",
+              "quote": "Muse Spark 1.3 Contributor accepts text, images, video, and files such as PDFs as input and returns text."
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-03"
+        },
+        "chat": {
+          "claims": [
+            {
+              "sentence": "OpenRouter's description of Muse Spark 1.3 Contributor, checked 2026-11-03, says the model asks for clarification mid-conversation when inputs conflict.",
+              "source_url": "https://openrouter.ai/meta/muse-spark-1.3-contributor",
+              "tier": "reported",
+              "date": "2026-11-03",
+              "quote": "request clarification or confirmation when needed"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-03"
         }
       },
       "usage": {
@@ -29329,14 +29369,75 @@
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/anthropic/claude-sonnet-5.5"
+        "https://openrouter.ai/anthropic/claude-sonnet-5.5",
+        "https://www.anthropic.com/news/claude-sonnet-5-5"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
       "use_well": [],
       "task_copy": {},
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "coding": {
+          "claims": [
+            {
+              "sentence": "Anthropic's September 28, 2026 launch material for Claude Sonnet 5.5 reports it scored 70.6% on the Terminal-Bench 4.0 agentic coding evaluation, up from Sonnet 5's 10.3%, checked 2026-11-03.",
+              "source_url": "https://www.anthropic.com/news/claude-sonnet-5-5",
+              "tier": "lab",
+              "date": "2026-11-03",
+              "quote": "Sonnet 5.5 scores 70.6% on Terminal-Bench 4.0, an agentic coding evaluation, compared to Sonnet 5's 10.3%."
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-03"
+        },
+        "agents": {
+          "claims": [
+            {
+              "sentence": "In its September 28, 2026 release notes, checked 2026-11-03, Anthropic states that in head-to-head runs Claude Sonnet 5.5 batched tool calls together more than Sonnet 5, producing fewer steps and lower costs.",
+              "source_url": "https://www.anthropic.com/news/claude-sonnet-5-5",
+              "tier": "lab",
+              "date": "2026-11-03",
+              "quote": "In head-to-head runs, it batched tool calls together more than Sonnet 5, leading to fewer steps and lower costs."
+            },
+            {
+              "sentence": "Atlassian's Head of Product AI, Jamil Valliani, stated on Anthropic's September 28, 2026 Claude Sonnet 5.5 launch page, checked 2026-11-03, that it lets teams run Rovo Agents up to 30% faster than with Sonnet 5.",
+              "source_url": "https://www.anthropic.com/news/claude-sonnet-5-5",
+              "tier": "reported",
+              "date": "2026-11-03",
+              "quote": "Claude Sonnet 5.5 will allow teams to run their Rovo Agents up to 30% faster than they could with Sonnet 5."
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-03"
+        },
+        "bulk": {
+          "claims": [
+            {
+              "sentence": "Balyasny Asset Management's Senior AI Engineer, Joe Poirier, reported on Anthropic's September 28, 2026 Claude Sonnet 5.5 launch page, checked 2026-11-03, that it outperformed the other six models their team tested on quality-to-cost tradeoff for high-volume workflows.",
+              "source_url": "https://www.anthropic.com/news/claude-sonnet-5-5",
+              "tier": "reported",
+              "date": "2026-11-03",
+              "quote": "For high-volume workflows, it had the best quality-to-cost tradeoff of the seven models we ran."
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-03"
+        },
+        "vision": {
+          "claims": [
+            {
+              "sentence": "Anthropic's September 28, 2026 launch material, checked 2026-11-03, states Claude Sonnet 5.5 is the first Sonnet-line model to beat the game Pokémon Red using only screenshots as input.",
+              "source_url": "https://www.anthropic.com/news/claude-sonnet-5-5",
+              "tier": "lab",
+              "date": "2026-11-03",
+              "quote": "it's the first Sonnet model to beat Pokémon Red working only from screenshots."
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-03"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -30054,18 +30155,30 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "reasoning",
+        "agentic",
+        "coding",
+        "long-context",
+        "vision"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/openai/gpt-6.1-sol"
+        "https://openrouter.ai/openai/gpt-6.1-sol",
+        "https://developers.openai.com/api/docs/models/gpt-6.1-sol"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Dial the reasoning.effort setting (low, medium, high, xhigh, or max) to trade reasoning depth against cost and latency instead of always maxing it out.",
+        "OpenAI positions it for complex coding, computer use, and professional work at a lower cost than its flagship model, so reach for it there before paying for the pricier model.",
+        "Prompt caching runs $0.10 per million cached input tokens versus $2 per million for fresh input, and Batch or Flex processing cuts Standard pricing in half — use both on repeat workloads.",
+        "Keep prompts under 272K input tokens: crossing that threshold triggers a 2x input/cache-rate and 1.5x output-rate surcharge for the whole request."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
@@ -32131,14 +32244,68 @@
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/nvidia/nemotron-3.5-super-vl"
+        "https://openrouter.ai/nvidia/nemotron-3.5-super-vl",
+        "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
       "use_well": [],
       "task_copy": {},
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "vision": {
+          "claims": [
+            {
+              "sentence": "NVIDIA's own Hugging Face model card, checked 2026-11-03, describes Nemotron 3.5 Super VL as a vision-language model built for document and video understanding, as of its October 2026 release.",
+              "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+              "tier": "lab",
+              "date": "2026-11-03",
+              "quote": "a vision-language model for reasoning, coding, tool use, document understanding, and video understanding."
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-03"
+        },
+        "coding": {
+          "claims": [
+            {
+              "sentence": "NVIDIA states on its Hugging Face model card, checked 2026-11-03, that Nemotron 3.5 Super VL's post-training included dedicated software-engineering data covering real repository and CI workflows.",
+              "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+              "tier": "lab",
+              "date": "2026-11-03",
+              "quote": "Software-engineering data includes repositories, issue–pull-request pairs, commit diffs, build and CI logs, and agent trajectories."
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-03"
+        },
+        "agents": {
+          "claims": [
+            {
+              "sentence": "NVIDIA's model card, checked 2026-11-03, lists efficient deployment of text and vision-language agents as a primary recommended use of Nemotron 3.5 Super VL.",
+              "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+              "tier": "lab",
+              "date": "2026-11-03",
+              "quote": "Efficient deployment of text and vision-language agents"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-03"
+        },
+        "extraction": {
+          "claims": [
+            {
+              "sentence": "NVIDIA's training documentation, checked 2026-11-03, says Nemotron 3.5 Super VL's vision-language training data specifically covers OCR and multi-page document extraction tasks.",
+              "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+              "tier": "lab",
+              "date": "2026-11-03",
+              "quote": "including visual question answering, charts, tables, OCR, multi-page documents, visual grounding, and video understanding."
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-03"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",
@@ -35047,18 +35214,31 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "reasoning",
+        "agentic",
+        "long-context",
+        "writing",
+        "vision",
+        "speed"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/openai/gpt-6.1-terra"
+        "https://openrouter.ai/openai/gpt-6.1-terra",
+        "https://developers.openai.com/api/docs/models/gpt-6.1-terra"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "OpenAI describes it as a fast, efficient model for visual reasoning, precise computer use, and clear, natural writing — pick it over Sol when the job is one of those rather than heavy coding or research.",
+        "reasoning.effort defaults to medium and can be tuned from none through max to balance depth against latency and cost.",
+        "It prices at roughly half of Sol ($1/$5 per million tokens versus $2/$10) with cached input at just $0.05 per million, making it the cheaper choice when Sol-level reasoning isn't needed.",
+        "The same 272K-input-token threshold applies before the 2x input/cache and 1.5x output surcharge kicks in, so keep prompts under that to avoid the pricing trap."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
