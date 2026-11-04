@@ -34959,7 +34959,7 @@
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
-        "open_weights": null,
+        "open_weights": true,
         "eu_hosting": null,
         "sources": [
           "https://openrouter.ai/api/v1/models"
