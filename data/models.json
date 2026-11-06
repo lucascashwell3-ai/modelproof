@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-05",
+  "as_of": "2026-11-06",
   "models": [
     {
       "id": "claude-opus-5",
@@ -20882,7 +20882,12 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "coding",
+        "agentic",
+        "vision",
+        "long-context"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
@@ -20890,7 +20895,12 @@
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Alibaba's own Model Studio pricing page lists cache-hit reads at a small fraction of the standard input price in every region this model serves — lean hard on context caching for repeated-context agent runs.",
+        "Batch inference is only listed as supported in the China (Beijing) region on Model Studio — plan bulk/offline jobs served from other regions around standard per-token billing instead.",
+        "It's listed as fully compatible with both the OpenAI and Anthropic API protocols, so it can often be swapped in behind existing tool integrations like Claude Code or Codex without a client rewrite.",
+        "Model Studio caps the thinking chain at 262,144 tokens even though the model's context window is 1,000,000 tokens — budget reasoning-heavy prompts against that smaller ceiling, not the full window."
+      ],
       "task_copy": {},
       "id": "qwen3-8-flash",
       "name": "Qwen3.8 Flash",
@@ -20903,7 +20913,8 @@
         "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
         "https://thenewstack.io/qwen38-flash-previews-qwen4/",
         "https://openrouter.ai/qwen/qwen3.8-flash",
-        "https://huggingface.co/Qwen/Qwen3.8-Flash-Next/raw/main/README.md"
+        "https://huggingface.co/Qwen/Qwen3.8-Flash-Next/raw/main/README.md",
+        "https://help.aliyun.com/en/model-studio/qwen3-8-flash"
       ],
       "best_for_line": "Alibaba (Qwen) model · 1M ctx · $0.15/$0.47",
       "availability": {
@@ -24284,7 +24295,60 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         }
       },
-      "task_fit_judged": null,
+      "task_fit_judged": {
+        "agents": {
+          "claims": [
+            {
+              "sentence": "Anthropic's own Claude Fable 5.1 overview page recommends the model specifically for demanding reasoning and long-horizon agentic work.",
+              "source_url": "https://platform.claude.com/docs/en/models/fable-5-1/overview",
+              "tier": "lab",
+              "date": "2026-11-06",
+              "quote": "Use Claude Fable 5.1 for demanding reasoning and long-horizon agentic work"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-06"
+        },
+        "coding": {
+          "claims": [
+            {
+              "sentence": "Anthropic's own Claude Fable 5.1 overview page, published for its September 2026 release, states the model brings stronger long-running agentic coding than its predecessor Claude Fable 5.",
+              "source_url": "https://platform.claude.com/docs/en/models/fable-5-1/overview",
+              "tier": "lab",
+              "date": "2026-11-06",
+              "quote": "brings stronger long-running agentic coding, multistep research, and document, spreadsheet, and slide work"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-06"
+        },
+        "research": {
+          "claims": [
+            {
+              "sentence": "Anthropic's own Claude Fable 5.1 overview page, published for its September 2026 release, states the model brings stronger multistep research than its predecessor Claude Fable 5.",
+              "source_url": "https://platform.claude.com/docs/en/models/fable-5-1/overview",
+              "tier": "lab",
+              "date": "2026-11-06",
+              "quote": "brings stronger long-running agentic coding, multistep research, and document, spreadsheet, and slide work"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-06"
+        },
+        "writing": {
+          "claims": [
+            {
+              "sentence": "Anthropic's own Claude Fable 5.1 overview page, published for its September 2026 release, states the model brings stronger document, spreadsheet, and slide work than its predecessor Claude Fable 5.",
+              "source_url": "https://platform.claude.com/docs/en/models/fable-5-1/overview",
+              "tier": "lab",
+              "date": "2026-11-06",
+              "quote": "brings stronger long-running agentic coding, multistep research, and document, spreadsheet, and slide work"
+            }
+          ],
+          "reconciliation": null,
+          "as_of": "2026-11-06"
+        }
+      },
       "usage": {
         "openrouter": {
           "category": "overall",

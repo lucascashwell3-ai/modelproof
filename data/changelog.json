@@ -4707,5 +4707,55 @@
     "sources": [
       "https://openrouter.ai/tencent/hy4"
     ]
+  },
+  {
+    "date": "2026-11-06",
+    "model": "Qwen3.8 Flash",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://help.aliyun.com/en/model-studio/qwen3-8-flash"
+    ]
+  },
+  {
+    "date": "2026-11-06",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.agents",
+    "old": null,
+    "new": "1 claim(s)",
+    "sources": [
+      "https://platform.claude.com/docs/en/models/fable-5-1/overview"
+    ]
+  },
+  {
+    "date": "2026-11-06",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.coding",
+    "old": null,
+    "new": "1 claim(s)",
+    "sources": [
+      "https://platform.claude.com/docs/en/models/fable-5-1/overview"
+    ]
+  },
+  {
+    "date": "2026-11-06",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.research",
+    "old": null,
+    "new": "1 claim(s)",
+    "sources": [
+      "https://platform.claude.com/docs/en/models/fable-5-1/overview"
+    ]
+  },
+  {
+    "date": "2026-11-06",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.writing",
+    "old": null,
+    "new": "1 claim(s)",
+    "sources": [
+      "https://platform.claude.com/docs/en/models/fable-5-1/overview"
+    ]
   }
 ]
