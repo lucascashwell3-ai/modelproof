@@ -1,16 +1,19 @@
 {
   "job": "defaults-watch",
-  "ran_at": "2026-11-01T07:38:46.114Z",
+  "ran_at": "2026-11-08T07:29:26.348Z",
   "ok": false,
   "rules": 103,
   "outcomes": {
-    "broken:missing": 7,
-    "ok": 96
+    "broken:missing": 9,
+    "ok": 94
   },
   "changes": [],
   "pr": null,
   "restamped": false,
   "stamped_tools": [],
   "blocked_runs": {},
-  "sweep_blocked_runs": {}
+  "sweep_blocked_runs": {
+    "https://thenewstack.io/ibm-granite-reasoning-models/": 1,
+    "https://thenewstack.io/openai-gpt6-astra-benchmarks/": 1
+  }
 }
