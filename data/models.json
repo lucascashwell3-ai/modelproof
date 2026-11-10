@@ -24092,7 +24092,8 @@
         "https://openrouter.ai/api/frontend/v1/rankings/models",
         "https://arena.ai/leaderboard/text",
         "https://arena.ai/leaderboard/agent",
-        "https://arena.ai/leaderboard/code/webdev"
+        "https://arena.ai/leaderboard/code/webdev",
+        "https://www.anthropic.com/claude-fable-and-mythos-5-1"
       ],
       "coding_score": null,
       "coding_basis": null,
@@ -24177,41 +24178,41 @@
         "agents": {
           "claims": [
             {
-              "sentence": "Anthropic's own Claude Fable 5.1 overview page recommends the model specifically for demanding reasoning and long-horizon agentic work.",
-              "source_url": "https://platform.claude.com/docs/en/models/fable-5-1/overview",
-              "tier": "lab",
-              "date": "2026-11-06",
-              "quote": "Use Claude Fable 5.1 for demanding reasoning and long-horizon agentic work"
+              "sentence": "Browserbase reported in Anthropic's September 2026 Claude Fable 5.1 launch materials that the model completed 82% of tasks on its hardest browser-agent benchmark, versus 74% for Claude Opus 5 and 57% for Claude Fable 5, in about 10 minutes per task.",
+              "source_url": "https://www.anthropic.com/claude-fable-and-mythos-5-1",
+              "tier": "reported",
+              "date": "2026-11-10",
+              "quote": "On our hardest browser-agent benchmark, Claude Fable 5.1 completed 82% of tasks in about 10 minutes each, against 74% for Opus 5 and 57%"
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-11-06"
+          "as_of": "2026-11-10"
         },
         "coding": {
           "claims": [
             {
-              "sentence": "Anthropic's own Claude Fable 5.1 overview page, published for its September 2026 release, states the model brings stronger long-running agentic coding than its predecessor Claude Fable 5.",
-              "source_url": "https://platform.claude.com/docs/en/models/fable-5-1/overview",
-              "tier": "lab",
-              "date": "2026-11-06",
-              "quote": "brings stronger long-running agentic coding, multistep research, and document, spreadsheet, and slide work"
+              "sentence": "Cognition, the maker of Devin, said in Anthropic's September 2026 Claude Fable 5.1 launch materials that it moved its Opus 5 traffic in Devin to Claude Fable 5.1 on launch day after the model matched or edged out Claude Fable 5 in its own testing at a lower cost per task.",
+              "source_url": "https://www.anthropic.com/claude-fable-and-mythos-5-1",
+              "tier": "reported",
+              "date": "2026-11-10",
+              "quote": "We’re moving our Opus 5 traffic in Devin to Claude Fable 5.1 on launch day."
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-11-06"
+          "as_of": "2026-11-10"
         },
         "research": {
           "claims": [
             {
-              "sentence": "Anthropic's own Claude Fable 5.1 overview page, published for its September 2026 release, states the model brings stronger multistep research than its predecessor Claude Fable 5.",
-              "source_url": "https://platform.claude.com/docs/en/models/fable-5-1/overview",
-              "tier": "lab",
-              "date": "2026-11-06",
-              "quote": "brings stronger long-running agentic coding, multistep research, and document, spreadsheet, and slide work"
+              "sentence": "IMC reported in Anthropic's September 2026 Claude Fable 5.1 launch materials that the model achieved new high scores on IMC's internal research suite, including a novel solution on one task that exceeded the firm's prior results from other models and human researchers.",
+              "source_url": "https://www.anthropic.com/claude-fable-and-mythos-5-1",
+              "tier": "reported",
+              "date": "2026-11-10",
+              "quote": "On our research suite, Claude Fable 5.1 set new best scores."
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-11-06"
+          "as_of": "2026-11-10"
         },
         "writing": {
           "claims": [
@@ -31195,18 +31196,32 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "reasoning",
+        "agentic",
+        "coding",
+        "research",
+        "writing",
+        "vision"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/google/gemini-4-argon"
+        "https://openrouter.ai/google/gemini-4-argon",
+        "https://deepmind.google/models/model-cards/gemini-4-argon/",
+        "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Argon's price doubles after its introductory period — Google's launch post sets it at $2/$10 per million tokens at launch, rising to $4/$20 once that period ends, so budget for the higher rate.",
+        "Cached input tokens cost 95% less than fresh ones on Argon, per Google's launch post — lean on prompt caching for repeated system prompts or long documents.",
+        "Google gave Argon an expanded 1M-token output limit specifically so it can \"generate hundreds of thousands of tokens\" reasoning through hard problems — save that headroom for genuinely long-horizon tasks rather than short replies.",
+        "Google's own launch post flags \"occasional slowness or timeout issues\" on Argon — build retry or fallback logic rather than assuming low latency."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
@@ -33938,18 +33953,27 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "speed",
+        "cheap-bulk",
+        "long-context"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/z-ai/glm-5.3-flashx"
+        "https://openrouter.ai/z-ai/glm-5.3-flashx",
+        "https://docs.z.ai/guides/llm/glm-5.3-flash"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "GLM-5.3-FlashX runs at up to 200 tokens/s, per Z.ai's own docs — reach for it over GLM-5.3-Flash when raw response speed, not price, is the bottleneck.",
+        "Z.ai's docs say the GLM-5.3 family \"uses an intelligent caching mechanism to optimize long-conversation performance\" — lean on it for long, multi-turn sessions rather than one-off prompts.",
+        "FlashX is not yet on Z.ai's GLM Coding Plan subscription, per its own docs, so coding-agent workloads billed through that plan still need GLM-5.3-Flash or another model."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
@@ -34178,18 +34202,27 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "reasoning",
+        "research",
+        "coding",
+        "vision"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/sakana/fugu-ultra-v2"
+        "https://openrouter.ai/sakana/fugu-ultra-v2",
+        "https://sakana.ai/fugu-max-release/"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Sakana's own release post positions Fugu Ultra v2 for \"complex multi-step reasoning, autonomous research, and full-stack software development\" — save it for genuinely multi-step work, not single-turn queries a cheaper model would handle.",
+        "Sakana's release post says Fugu Ultra v2 tops its SWEFish coding benchmark while \"outperforming models that cost three to five times more per token\" — worth trying before defaulting to a pricier coding model."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {

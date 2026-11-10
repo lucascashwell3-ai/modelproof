@@ -4788,5 +4788,66 @@
     "sources": [
       "https://openrouter.ai/meta/muse-ember"
     ]
+  },
+  {
+    "date": "2026-11-10",
+    "model": "Fugu Ultra v2",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://sakana.ai/fugu-max-release/"
+    ]
+  },
+  {
+    "date": "2026-11-10",
+    "model": "Gemini 4 Argon",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://deepmind.google/models/model-cards/gemini-4-argon/",
+      "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/"
+    ]
+  },
+  {
+    "date": "2026-11-10",
+    "model": "GLM 5.3 FlashX",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://docs.z.ai/guides/llm/glm-5.3-flash"
+    ]
+  },
+  {
+    "date": "2026-11-10",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.agents",
+    "old": "1 claim(s) as of 2026-11-06",
+    "new": "1 claim(s)",
+    "sources": [
+      "https://www.anthropic.com/claude-fable-and-mythos-5-1"
+    ]
+  },
+  {
+    "date": "2026-11-10",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.coding",
+    "old": "1 claim(s) as of 2026-11-06",
+    "new": "1 claim(s)",
+    "sources": [
+      "https://www.anthropic.com/claude-fable-and-mythos-5-1"
+    ]
+  },
+  {
+    "date": "2026-11-10",
+    "model": "Claude Fable 5.1",
+    "field": "task_fit_judged.research",
+    "old": "1 claim(s) as of 2026-11-06",
+    "new": "1 claim(s)",
+    "sources": [
+      "https://www.anthropic.com/claude-fable-and-mythos-5-1"
+    ]
   }
 ]
