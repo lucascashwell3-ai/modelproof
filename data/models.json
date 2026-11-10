@@ -31235,7 +31235,7 @@
       },
       "auto_added": "2026-10-13",
       "availability": {
-        "direct_api": null,
+        "direct_api": true,
         "openrouter": true,
         "openrouter_id": "google/gemini-4-argon",
         "aws_bedrock": null,
@@ -31244,6 +31244,7 @@
         "open_weights": null,
         "eu_hosting": null,
         "sources": [
+          "https://deepmind.google/models/model-cards/gemini-4-argon/",
           "https://openrouter.ai/api/v1/models"
         ]
       },
@@ -31594,9 +31595,10 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         },
         "vision": {
-          "score": null,
-          "basis": [],
-          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+          "score": 100,
+          "basis": [
+            "best_for:vision"
+          ]
         },
         "frontend": {
           "score": null,
@@ -33987,7 +33989,7 @@
       },
       "auto_added": "2026-10-21",
       "availability": {
-        "direct_api": null,
+        "direct_api": true,
         "openrouter": true,
         "openrouter_id": "z-ai/glm-5.3-flashx",
         "aws_bedrock": null,
@@ -33996,6 +33998,7 @@
         "open_weights": null,
         "eu_hosting": null,
         "sources": [
+          "https://docs.z.ai/guides/llm/glm-5.3-flash",
           "https://openrouter.ai/api/v1/models"
         ]
       },
@@ -34417,9 +34420,10 @@
           "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
         },
         "vision": {
-          "score": null,
-          "basis": [],
-          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+          "score": 100,
+          "basis": [
+            "best_for:vision"
+          ]
         },
         "frontend": {
           "score": null,
@@ -36365,7 +36369,13 @@
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
-        "openrouter": null
+        "openrouter": {
+          "category": "overall",
+          "share": 0.01,
+          "rank": 168,
+          "as_of": "2026-11-09",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
       },
       "auto_added": "2026-11-10",
       "availability": {
@@ -36670,7 +36680,13 @@
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
-        "openrouter": null
+        "openrouter": {
+          "category": "overall",
+          "share": 0.01,
+          "rank": 189,
+          "as_of": "2026-11-09",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
       },
       "auto_added": "2026-11-10",
       "availability": {
