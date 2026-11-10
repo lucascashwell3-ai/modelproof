@@ -4849,5 +4849,15 @@
     "sources": [
       "https://www.anthropic.com/claude-fable-and-mythos-5-1"
     ]
+  },
+  {
+    "date": "2026-11-10",
+    "model": "Gemini 4 Carbon",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/google/gemini-4-carbon"
+    ]
   }
 ]
