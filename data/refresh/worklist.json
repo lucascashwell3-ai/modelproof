@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-10",
+  "generated": "2026-11-11",
   "items": [
     {
       "id": "new:beam10501ba23b",
@@ -11,25 +11,10 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.3,
-          "date": "2026-11-10"
+          "date": "2026-11-11"
         }
       ],
       "ask": "\"Reflection: Beam 1.0 501B A23B\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
-    },
-    {
-      "id": "new:ernie55flashpreview",
-      "model": "Baidu: ERNIE-5.5-Flash-Preview",
-      "kind": "new-model",
-      "current": null,
-      "observations": [
-        {
-          "source": "openrouter",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.28,
-          "date": "2026-11-10"
-        }
-      ],
-      "ask": "\"Baidu: ERNIE-5.5-Flash-Preview\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
       "id": "new:ernielightdt10intl",
@@ -41,7 +26,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 1.13,
-          "date": "2026-11-10"
+          "date": "2026-11-11"
         }
       ],
       "ask": "\"Baidu: ERNIE-Light-DT-1.0\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -56,7 +41,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.04,
-          "date": "2026-11-10"
+          "date": "2026-11-11"
         }
       ],
       "ask": "\"ScaleDown: Extract\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -71,7 +56,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.6,
-          "date": "2026-11-10"
+          "date": "2026-11-11"
         }
       ],
       "ask": "\"Elorian: Glimpse\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -86,7 +71,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.049999999999999996,
-          "date": "2026-11-10"
+          "date": "2026-11-11"
         }
       ],
       "ask": "\"LiquidAI: LFM2.5-24B-A2B\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -101,10 +86,25 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.08,
-          "date": "2026-11-10"
+          "date": "2026-11-11"
         }
       ],
       "ask": "\"LiquidAI: LFM3-1.7B\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
+    },
+    {
+      "id": "new:midmk30pro",
+      "model": "KT: Mi:dm K 3.0 Pro",
+      "kind": "new-model",
+      "current": null,
+      "observations": [
+        {
+          "source": "openrouter",
+          "url": "https://openrouter.ai/api/v1/models",
+          "value": 0.19999999999999998,
+          "date": "2026-11-11"
+        }
+      ],
+      "ask": "\"KT: Mi:dm K 3.0 Pro\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
       "id": "new:minimaxm31flash",
@@ -115,8 +115,8 @@
         {
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.075,
-          "date": "2026-11-10"
+          "value": 0.15,
+          "date": "2026-11-11"
         }
       ],
       "ask": "\"MiniMax: MiniMax M3.1 Flash\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -131,14 +131,14 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.3,
-          "date": "2026-11-10"
+          "date": "2026-11-11"
         }
       ],
       "ask": "\"Moondream: Moondream 3.1\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
-      "id": "gpt-6-1-terra-pro:guidance",
-      "model": "GPT-6.1 Terra Pro",
+      "id": "gpt-6-luna-pro:guidance",
+      "model": "GPT-6 Luna Pro",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -147,14 +147,14 @@
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-11-10"
+          "date": "2026-11-11"
         }
       ],
-      "ask": "GPT-6.1 Terra Pro has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "GPT-6 Luna Pro has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "gpt-6-astra-pro:guidance",
-      "model": "GPT-6 Astra Pro",
+      "id": "gpt-6-sol-pro:guidance",
+      "model": "GPT-6 Sol Pro",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -163,14 +163,14 @@
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-11-10"
+          "date": "2026-11-11"
         }
       ],
-      "ask": "GPT-6 Astra Pro has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "GPT-6 Sol Pro has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "gpt-6-luna:guidance",
-      "model": "GPT-6 Luna",
+      "id": "gpt-6-sol:guidance",
+      "model": "GPT-6 Sol",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -179,14 +179,14 @@
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-11-10"
+          "date": "2026-11-11"
         }
       ],
-      "ask": "GPT-6 Luna has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "GPT-6 Sol has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "deepseek-v4-flash-vision-exp:judged-fit",
-      "model": "DeepSeek V4 Flash Vision Exp",
+      "id": "grok-4-5:judged-fit",
+      "model": "Grok 4.5",
       "kind": "judged-fit",
       "field": "task_fit_judged",
       "current": null,
@@ -195,42 +195,42 @@
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-11-10"
+          "date": "2026-11-11"
         }
       ],
-      "ask": "DeepSeek V4 Flash Vision Exp has no quantitative task fit for: agents, bulk, writing, research, extraction, chat, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
+      "ask": "Grok 4.5 has no quantitative task fit for: vision. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
     },
     {
-      "id": "gemini-3-5-flash:bulk:re-judge",
-      "model": "Gemini 3.5 Flash",
+      "id": "inkling-small:judged-fit",
+      "model": "Inkling Small",
       "kind": "judged-fit",
       "field": "task_fit_judged",
-      "current": "1 claim(s) on file, as_of 2026-09-07",
+      "current": null,
       "observations": [
         {
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-11-10"
+          "date": "2026-11-11"
         }
       ],
-      "ask": "Gemini 4 Carbon just shipped from the same vendor as Gemini 3.5 Flash, whose \"bulk\" judged fit (1 claim(s) on file, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"bulk\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
+      "ask": "Inkling Small has no quantitative task fit for: bulk, writing, research, extraction, chat, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
     },
     {
-      "id": "gemini-3-5-flash:coding:re-judge",
-      "model": "Gemini 3.5 Flash",
+      "id": "laguna-s-2-1:judged-fit",
+      "model": "Laguna S 2.1",
       "kind": "judged-fit",
       "field": "task_fit_judged",
-      "current": "1 claim(s) on file, as_of 2026-09-07",
+      "current": null,
       "observations": [
         {
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-11-10"
+          "date": "2026-11-11"
         }
       ],
-      "ask": "Gemini 4 Carbon just shipped from the same vendor as Gemini 3.5 Flash, whose \"coding\" judged fit (1 claim(s) on file, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"coding\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
+      "ask": "Laguna S 2.1 has no quantitative task fit for: bulk, writing, research, extraction, chat, vision, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
     }
   ]
 }
