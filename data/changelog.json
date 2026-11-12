@@ -4880,5 +4880,16 @@
     "sources": [
       "https://epoch.ai/data/benchmark_data.zip"
     ]
+  },
+  {
+    "date": "2026-11-12",
+    "model": "Hy4",
+    "field": "price_input",
+    "old": 0.42,
+    "new": 0.42,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
   }
 ]
