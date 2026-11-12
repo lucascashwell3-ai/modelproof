@@ -115,7 +115,7 @@
         {
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
-          "value": 0.15,
+          "value": 0.075,
           "date": "2026-11-12"
         }
       ],
@@ -137,8 +137,8 @@
       "ask": "\"Moondream: Moondream 3.1\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
-      "id": "hy-mt2-7b:guidance",
-      "model": "Hy-MT2-7B",
+      "id": "kimi-k3-1-pro:guidance",
+      "model": "Kimi K3.1 Pro",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -150,11 +150,11 @@
           "date": "2026-11-12"
         }
       ],
-      "ask": "Hy-MT2-7B has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "Kimi K3.1 Pro has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "hy4:guidance",
-      "model": "Hy4",
+      "id": "ling-3-0-flash-vl:guidance",
+      "model": "Ling 3.0 Flash VL",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -166,11 +166,11 @@
           "date": "2026-11-12"
         }
       ],
-      "ask": "Hy4 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "Ling 3.0 Flash VL has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "kat-coder-pro-v2-5:guidance",
-      "model": "KAT-Coder-Pro V2.5",
+      "id": "ling-3-1-flash:guidance",
+      "model": "Ling 3.1 Flash",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -182,14 +182,14 @@
           "date": "2026-11-12"
         }
       ],
-      "ask": "KAT-Coder-Pro V2.5 has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "Ling 3.1 Flash has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "gemini-4-carbon:judged-fit",
-      "model": "Gemini 4 Carbon",
+      "id": "gemini-3-5-flash:bulk:re-judge",
+      "model": "Gemini 3.5 Flash",
       "kind": "judged-fit",
       "field": "task_fit_judged",
-      "current": null,
+      "current": "1 claim(s) on file, as_of 2026-09-07",
       "observations": [
         {
           "source": "auto-refresh",
@@ -198,14 +198,14 @@
           "date": "2026-11-12"
         }
       ],
-      "ask": "Gemini 4 Carbon has no quantitative task fit for: coding, agents, bulk, writing, research, extraction, chat, vision, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
+      "ask": "Gemini 4 Hydrogen just shipped from the same vendor as Gemini 3.5 Flash, whose \"bulk\" judged fit (1 claim(s) on file, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"bulk\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
     },
     {
-      "id": "glm-5-3-flashx-legal:judged-fit",
-      "model": "GLM 5.3 FlashX Legal",
+      "id": "gemini-3-5-flash:coding:re-judge",
+      "model": "Gemini 3.5 Flash",
       "kind": "judged-fit",
       "field": "task_fit_judged",
-      "current": null,
+      "current": "1 claim(s) on file, as_of 2026-09-07",
       "observations": [
         {
           "source": "auto-refresh",
@@ -214,14 +214,14 @@
           "date": "2026-11-12"
         }
       ],
-      "ask": "GLM 5.3 FlashX Legal has no quantitative task fit for: coding, agents, bulk, writing, research, extraction, chat, vision, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
+      "ask": "Gemini 4 Hydrogen just shipped from the same vendor as Gemini 3.5 Flash, whose \"coding\" judged fit (1 claim(s) on file, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"coding\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
     },
     {
-      "id": "gpt-6-1-terra-pro:judged-fit",
-      "model": "GPT-6.1 Terra Pro",
+      "id": "gemini-3-8-flash:agents:re-judge",
+      "model": "Gemini 3.8 Flash",
       "kind": "judged-fit",
       "field": "task_fit_judged",
-      "current": null,
+      "current": "1 claim(s) on file, as_of 2026-09-07",
       "observations": [
         {
           "source": "auto-refresh",
@@ -230,7 +230,7 @@
           "date": "2026-11-12"
         }
       ],
-      "ask": "GPT-6.1 Terra Pro has no quantitative task fit for: coding, agents, bulk, writing, research, extraction, chat, vision, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
+      "ask": "Gemini 4 Hydrogen just shipped from the same vendor as Gemini 3.8 Flash, whose \"agents\" judged fit (1 claim(s) on file, as of 2026-09-07) may now be stale next to a newer sibling. Re-check the evidence and re-submit a judged-fit judgment for \"agents\" — even if the verdict is unchanged, a fresh as_of shows it was re-examined — or hold with a reason."
     }
   ]
 }

@@ -4891,5 +4891,36 @@
       "openrouter",
       "litellm"
     ]
+  },
+  {
+    "date": "2026-11-12",
+    "model": "Hy4",
+    "field": "price_input",
+    "old": 0.42,
+    "new": 0.42,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-11-12",
+    "model": "Gemini 4 Hydrogen",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/google/gemini-4-hydrogen"
+    ]
+  },
+  {
+    "date": "2026-11-12",
+    "model": "Inkling 2 Small",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/thinkingmachines/inkling-2-small"
+    ]
   }
 ]

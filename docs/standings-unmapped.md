@@ -533,7 +533,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen3.6-plus`
 - `qwen3.7-max`
 
-## epoch-ai / scicode_external.csv (95)
+## epoch-ai / scicode_external.csv (94)
 
 - `DeepSeek-R1`
 - `DeepSeek-V3`
@@ -582,7 +582,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `granite-4.1-30b`
 - `grok-4.3_high`
 - `grok-build-0.1`
-- `inkling-2-small_unknown`
 - `kimi-k2.5`
 - `kimi-k2.7-code`
 - `magistral-medium-2509`
@@ -1002,7 +1001,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `qwen2-72b-instruct`
 - `qwen2.5-72b-instruct`
 
-## epoch-ai / apex_agents_external.csv (20)
+## epoch-ai / apex_agents_external.csv (19)
 
 - `MiniMax-M3`
 - `Muse-Spark-Open-816B-A42B_unknown`
@@ -1016,7 +1015,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `glm-5.3-flash_unknown`
 - `gpt-5.4-2026-03-05_unknown`
 - `gpt-oss-120b`
-- `inkling-2-small_unknown`
 - `kimi-k2.7-code`
 - `mimo-v2.6-pro`
 - `mistral-large-4-0_high`
@@ -1632,7 +1630,7 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `grok-4-0709_high`
 - `o3-2025-04-16_medium`
 
-## arc-prize (v2_Semi_Private) (160)
+## arc-prize (v2_Semi_Private) (159)
 
 - `2025_human_panel`
 - `ARChitects`
@@ -1789,7 +1787,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `reflection-beam-1-0-low`
 - `reflection-beam-1-0-medium`
 - `reflection-beam-1-0-xhigh`
-- `thinky-inkling-2-small-xhigh`
 - `trm-2025-10-07`
 - `zai-glm-5-3-flash-high`
 - `zai-glm-5-3-flash-low`
