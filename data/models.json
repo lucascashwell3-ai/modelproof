@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-12",
+  "as_of": "2026-11-13",
   "models": [
     {
       "id": "claude-opus-5",
@@ -32751,18 +32751,27 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "reasoning",
+        "agentic",
+        "coding"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/inclusionai/ling-3.1-flash"
+        "https://openrouter.ai/inclusionai/ling-3.1-flash",
+        "https://huggingface.co/inclusionAI/Ling-3.1-flash"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Leave enable_thinking set to true — the model card says this gives better performance, so turning it off trades accuracy for speed.",
+        "It has a 1M-token context window — good for long codebases or document-heavy agent tasks without pre-summarizing.",
+        "If self-hosting, turn on the vendor's reference serving setup (speculative decoding via MTP/NEXTN, plus prefix caching) — the official vLLM/SGLang examples rely on them for throughput."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
@@ -34691,18 +34700,27 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "vision",
+        "agentic",
+        "reasoning"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/inclusionai/ling-3.0-flash-vl"
+        "https://openrouter.ai/inclusionai/ling-3.0-flash-vl",
+        "https://huggingface.co/inclusionAI/Ling-3.0-flash-VL"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Thinking is enabled by default — for a quick visual read like object counts or chart values where you don't need multi-step reasoning, set enable_thinking to false via chat_template_kwargs to cut cost and latency.",
+        "It's built for interface-driven agent tasks: the model card says it can read a web or software UI screenshot and translate what it sees into a sequence of actions.",
+        "The native context is 128K; stretching to the card's 256K recipe needs real GPU headroom (4x 141GB-class cards, or --tp 8 on 80GB cards) — budget for that before relying on the extended window."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
@@ -34931,18 +34949,27 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "coding",
+        "agentic",
+        "long-context"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/moonshotai/kimi-k3.1-pro"
+        "https://openrouter.ai/moonshotai/kimi-k3.1-pro",
+        "https://kimi.com/blog/kimi-k3-1-pro"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "For latency-sensitive agent loops, use the kimi-k3.1-pro-highspeed endpoint — Moonshot says it delivers 2-3x the speed of standard K3.1 Pro for more responsive interactions.",
+        "Its 1-million-token context window suits full-project coding, 3D/parametric-modeling, and end-to-end financial-workflow tasks — feed in the whole codebase or document set rather than chunking it.",
+        "If you're an API customer handling sensitive data, turn on Zero Data Retention — Moonshot offers it as an option for API customers."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {

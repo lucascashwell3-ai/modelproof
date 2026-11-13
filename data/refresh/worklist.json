@@ -137,54 +137,6 @@
       "ask": "\"Moondream: Moondream 3.1\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
-      "id": "kimi-k3-1-pro:guidance",
-      "model": "Kimi K3.1 Pro",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
-      "observations": [
-        {
-          "source": "auto-refresh",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": null,
-          "date": "2026-11-12"
-        }
-      ],
-      "ask": "Kimi K3.1 Pro has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
-    },
-    {
-      "id": "ling-3-0-flash-vl:guidance",
-      "model": "Ling 3.0 Flash VL",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
-      "observations": [
-        {
-          "source": "auto-refresh",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": null,
-          "date": "2026-11-12"
-        }
-      ],
-      "ask": "Ling 3.0 Flash VL has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
-    },
-    {
-      "id": "ling-3-1-flash:guidance",
-      "model": "Ling 3.1 Flash",
-      "kind": "guidance",
-      "field": "use_well",
-      "current": null,
-      "observations": [
-        {
-          "source": "auto-refresh",
-          "url": "https://openrouter.ai/api/v1/models",
-          "value": null,
-          "date": "2026-11-12"
-        }
-      ],
-      "ask": "Ling 3.1 Flash has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
-    },
-    {
       "id": "gemini-3-5-flash:bulk:re-judge",
       "model": "Gemini 3.5 Flash",
       "kind": "judged-fit",

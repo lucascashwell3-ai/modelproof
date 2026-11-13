@@ -4922,5 +4922,35 @@
     "sources": [
       "https://openrouter.ai/thinkingmachines/inkling-2-small"
     ]
+  },
+  {
+    "date": "2026-11-13",
+    "model": "Kimi K3.1 Pro",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://kimi.com/blog/kimi-k3-1-pro"
+    ]
+  },
+  {
+    "date": "2026-11-13",
+    "model": "Ling 3.0 Flash VL",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://huggingface.co/inclusionAI/Ling-3.0-flash-VL"
+    ]
+  },
+  {
+    "date": "2026-11-13",
+    "model": "Ling 3.1 Flash",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://huggingface.co/inclusionAI/Ling-3.1-flash"
+    ]
   }
 ]
