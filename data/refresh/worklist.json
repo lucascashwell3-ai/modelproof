@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-13",
+  "generated": "2026-11-14",
   "items": [
     {
       "id": "new:beam10501ba23b",
@@ -11,7 +11,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.3,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
       "ask": "\"Reflection: Beam 1.0 501B A23B\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -26,7 +26,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 1.13,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
       "ask": "\"Baidu: ERNIE-Light-DT-1.0\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -41,7 +41,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.04,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
       "ask": "\"ScaleDown: Extract\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -56,7 +56,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.6,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
       "ask": "\"Elorian: Glimpse\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -71,7 +71,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.049999999999999996,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
       "ask": "\"LiquidAI: LFM2.5-24B-A2B\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -86,7 +86,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.08,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
       "ask": "\"LiquidAI: LFM3-1.7B\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -101,7 +101,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.19999999999999998,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
       "ask": "\"KT: Mi:dm K 3.0 Pro\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -116,7 +116,7 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.075,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
       "ask": "\"MiniMax: MiniMax M3.1 Flash\" showed up on OpenRouter but unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
@@ -131,14 +131,14 @@
           "source": "openrouter",
           "url": "https://openrouter.ai/api/v1/models",
           "value": 0.3,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
       "ask": "\"Moondream: Moondream 3.1\" showed up on OpenRouter but single source, unknown vendor — is this a real, released model? If so, find vendor + a second source and add it."
     },
     {
-      "id": "muse-ember:guidance",
-      "model": "Muse Ember",
+      "id": "nemotron-3-5-super-vl:guidance",
+      "model": "Nemotron 3.5 Super VL",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -147,14 +147,14 @@
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
-      "ask": "Muse Ember has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "Nemotron 3.5 Super VL has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "muse-spark-open:guidance",
-      "model": "Muse Spark Open",
+      "id": "qwen3-8-27b:guidance",
+      "model": "Qwen3.8 27B",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -163,14 +163,14 @@
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
-      "ask": "Muse Spark Open has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "Qwen3.8 27B has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "muse-wonder:guidance",
-      "model": "Muse Wonder",
+      "id": "qwen3-8-max:guidance",
+      "model": "Qwen3.8 Max",
       "kind": "guidance",
       "field": "use_well",
       "current": null,
@@ -179,14 +179,14 @@
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
-      "ask": "Muse Wonder has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
+      "ask": "Qwen3.8 Max has no usage guidance. From the vendor's model card / docs (cite the URL): which of these tags fit — reasoning, agentic, coding, research, long-context, writing, cheap-bulk, speed, vision — and 2–4 plain one-sentence tips on using it well (when its thinking mode earns its cost, when a cheaper tier is enough, cache/batch tactics, pricing traps). Hold if the vendor publishes nothing concrete."
     },
     {
-      "id": "glm-5-3-prime:judged-fit",
-      "model": "GLM 5.3 Prime",
+      "id": "gpt-6-astra-pro:judged-fit",
+      "model": "GPT-6 Astra Pro",
       "kind": "judged-fit",
       "field": "task_fit_judged",
       "current": null,
@@ -195,14 +195,14 @@
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
-      "ask": "GLM 5.3 Prime has no quantitative task fit for: coding, agents, bulk, writing, research, extraction, chat, vision, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
+      "ask": "GPT-6 Astra Pro has no quantitative task fit for: bulk, writing, extraction, chat, vision, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
     },
     {
-      "id": "gpt-5-5:judged-fit",
-      "model": "GPT-5.5",
+      "id": "inkling-small:judged-fit",
+      "model": "Inkling Small",
       "kind": "judged-fit",
       "field": "task_fit_judged",
       "current": null,
@@ -211,14 +211,14 @@
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
-      "ask": "GPT-5.5 has no quantitative task fit for: vision. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
+      "ask": "Inkling Small has no quantitative task fit for: bulk, writing, research, extraction, chat, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
     },
     {
-      "id": "qwen3-8-max-prime:judged-fit",
-      "model": "Qwen3.8 Max Prime",
+      "id": "muse-spark-1-2-contributor:judged-fit",
+      "model": "Muse Spark 1.2 Contributor",
       "kind": "judged-fit",
       "field": "task_fit_judged",
       "current": null,
@@ -227,10 +227,10 @@
           "source": "auto-refresh",
           "url": "https://openrouter.ai/api/v1/models",
           "value": null,
-          "date": "2026-11-13"
+          "date": "2026-11-14"
         }
       ],
-      "ask": "Qwen3.8 Max Prime has no quantitative task fit for: coding, agents, bulk, writing, research, extraction, chat, vision, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
+      "ask": "Muse Spark 1.2 Contributor has no quantitative task fit for: bulk, writing, research, extraction, chat, vision, frontend, exec-summaries. Research the vendor's own model page/announcement and, where a named credible third party has scored or reviewed it, a reported source. For any task you can back with real evidence, submit a judged-fit judgment: claims[] (sentence + source_url + tier + date + quote copied verbatim, ≤25 words, optional polarity:\"negative\" for a sourced drawback) — absolute and dated, never a relative claim like \"best available\" or \"the top model\". Hold if you can't source a claim for a given task."
     }
   ]
 }
