@@ -820,7 +820,21 @@
       "source_url": "https://code.claude.com/docs/en/model-config",
       "tier": "tool",
       "date": "2026-09-27",
-      "quote": "the fable alias resolves to Fable 5.1, except in Claude apps gateway sessions"
+      "quote": "the fable alias resolves to Fable 5.1, except in Claude apps gateway sessions",
+      "superseded_by": "cc-alias-fable-resolves-20261115"
+    },
+    {
+      "id": "cc-alias-fable-resolves-20261115",
+      "subject": {
+        "kind": "tool",
+        "name": "Claude Code"
+      },
+      "topic": "enforced-model",
+      "sentence": "Unless ANTHROPIC_DEFAULT_FABLE_MODEL is set, Claude Code's fable alias resolves to Fable 5 outside Claude apps gateway sessions.",
+      "source_url": "https://code.claude.com/docs/en/model-config",
+      "tier": "tool",
+      "date": "2026-11-15",
+      "quote": "Unless you set ANTHROPIC_DEFAULT_FABLE_MODEL , the fable alias resolves to Fable 5"
     },
     {
       "id": "cc-alias-provider-versions",
@@ -1888,7 +1902,21 @@
       "source_url": "https://platform.claude.com/docs/en/about-claude/models/overview",
       "tier": "lab",
       "date": "2026-10-16",
-      "quote": "Model IDs Claude API alias claude-fable-5-1 claude-opus-5-5 claude-sonnet-5-5 claude-haiku-5-5 Amazon Bedrock ID"
+      "quote": "Model IDs Claude API alias claude-fable-5-1 claude-opus-5-5 claude-sonnet-5-5 claude-haiku-5-5 Amazon Bedrock ID",
+      "superseded_by": "anthropic-model-ids-20261016-20261115"
+    },
+    {
+      "id": "anthropic-model-ids-20261016-20261115",
+      "subject": {
+        "kind": "lab",
+        "name": "Anthropic"
+      },
+      "topic": "enforced-model",
+      "sentence": "Anthropic's models overview lists claude-fable-5-2, claude-opus-5-5, claude-sonnet-5-5 and claude-haiku-5-5 as its Claude API aliases.",
+      "source_url": "https://platform.claude.com/docs/en/about-claude/models/overview",
+      "tier": "lab",
+      "date": "2026-11-15",
+      "quote": "Model IDs Claude API alias claude-fable-5-2 claude-opus-5-5 claude-sonnet-5-5 claude-haiku-5-5 Amazon Bedrock ID"
     },
     {
       "id": "cc-default-model-opus-5-5",
@@ -2825,7 +2853,7 @@
       "model_id": "claude-haiku-5-5",
       "basis": [
         "cc-alias-haiku",
-        "anthropic-model-ids-20261016"
+        "anthropic-model-ids-20261016-20261115"
       ]
     },
     {
@@ -2850,9 +2878,9 @@
     {
       "tool": "claude-code",
       "ref": "fable",
-      "model_id": "claude-fable-5-1",
+      "model_id": "claude-fable-5",
       "basis": [
-        "cc-alias-fable-resolves"
+        "cc-alias-fable-resolves-20261115"
       ]
     },
     {
