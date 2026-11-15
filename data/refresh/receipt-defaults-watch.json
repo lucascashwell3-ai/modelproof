@@ -1,19 +1,33 @@
 {
   "job": "defaults-watch",
-  "ran_at": "2026-11-08T07:29:26.348Z",
+  "ran_at": "2026-11-15T07:55:58.486Z",
   "ok": false,
   "rules": 103,
   "outcomes": {
-    "broken:missing": 9,
-    "ok": 94
+    "broken:missing": 15,
+    "ok": 85,
+    "change": 2,
+    "needs-review": 1
   },
-  "changes": [],
-  "pr": null,
+  "changes": [
+    {
+      "rule": "cc-alias-fable",
+      "old": "claude-fable-5-1",
+      "new": "claude-fable-5"
+    },
+    {
+      "rule": "anthropic-api-alias-list",
+      "old": "anthropic-model-ids-20261016",
+      "new": "claude-fable-5-2 claude-opus-5-5 claude-sonnet-5-5 claude-haiku-5-5"
+    }
+  ],
+  "pr": 52,
   "restamped": false,
   "stamped_tools": [],
   "blocked_runs": {},
   "sweep_blocked_runs": {
-    "https://thenewstack.io/ibm-granite-reasoning-models/": 1,
-    "https://thenewstack.io/openai-gpt6-astra-benchmarks/": 1
+    "https://officechai.com/ai/muse-spark-1-3-benchmarks/": 1,
+    "https://thenewstack.io/ibm-granite-reasoning-models/": 2,
+    "https://thenewstack.io/openai-gpt6-astra-benchmarks/": 2
   }
 }
