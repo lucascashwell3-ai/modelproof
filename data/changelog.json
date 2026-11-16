@@ -4955,5 +4955,36 @@
       "openrouter",
       "litellm"
     ]
+  },
+  {
+    "date": "2026-11-16",
+    "model": "Hy4",
+    "field": "price_input",
+    "old": 0.42,
+    "new": 0.42,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-11-16",
+    "model": "Hy4 flash",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/tencent/hy4-flash"
+    ]
+  },
+  {
+    "date": "2026-11-16",
+    "model": "Qwen4 Max",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/qwen/qwen4-max"
+    ]
   }
 ]
