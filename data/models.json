@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-16",
+  "as_of": "2026-11-17",
   "models": [
     {
       "id": "claude-opus-5",
@@ -19454,15 +19454,15 @@
         "bulk": {
           "claims": [
             {
-              "sentence": "Tencent's Hy-MT2 GitHub README (checked 2026-09-06) states the 1.8B model surpasses mainstream commercial translation APIs from providers such as Microsoft and Doubao overall, aimed at low-cost, high-volume translation.",
+              "sentence": "Tencent's Hy-MT2 GitHub README (re-checked 2026-11-17, unchanged since 2026-09-06) states the 1.8B model surpasses mainstream commercial translation APIs from providers such as Microsoft and Doubao overall, aimed at low-cost, high-volume translation.",
               "source_url": "https://github.com/Tencent-Hunyuan/Hy-MT2",
               "tier": "lab",
-              "date": "2026-09-06",
+              "date": "2026-11-17",
               "quote": "the lightweight 1.8b model also surpasses mainstream commercial apis from providers such as microsoft and doubao overall."
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-07"
+          "as_of": "2026-11-17"
         }
       },
       "usage": {
@@ -19715,10 +19715,10 @@
         "bulk": {
           "claims": [
             {
-              "sentence": "Tencent's Hy-MT2 GitHub README (checked 2026-09-06) states the 30B-A3B model outperforms open-source models such as DeepSeek-V4-Pro and Kimi K2.6 in fast-thinking translation mode.",
+              "sentence": "Tencent's Hy-MT2 GitHub README (re-checked 2026-11-17, unchanged since 2026-09-06) states the 30B-A3B model outperforms open-source models such as DeepSeek-V4-Pro and Kimi K2.6 in fast-thinking translation mode.",
               "source_url": "https://github.com/Tencent-Hunyuan/Hy-MT2",
               "tier": "lab",
-              "date": "2026-09-06",
+              "date": "2026-11-17",
               "quote": "the 7b and 30b-a3b models outperform open-source models such as deepseek-v4-pro and kimi k2.6 in fast-thinking mode"
             },
             {
@@ -19730,7 +19730,7 @@
             }
           ],
           "reconciliation": null,
-          "as_of": "2026-09-07"
+          "as_of": "2026-11-17"
         }
       },
       "usage": {

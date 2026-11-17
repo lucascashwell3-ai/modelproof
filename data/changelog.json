@@ -4986,5 +4986,25 @@
     "sources": [
       "https://openrouter.ai/qwen/qwen4-max"
     ]
+  },
+  {
+    "date": "2026-11-17",
+    "model": "Hy-MT2-1.8B",
+    "field": "task_fit_judged.bulk",
+    "old": "1 claim(s) as of 2026-09-07",
+    "new": "1 claim(s)",
+    "sources": [
+      "https://github.com/Tencent-Hunyuan/Hy-MT2"
+    ]
+  },
+  {
+    "date": "2026-11-17",
+    "model": "Hy-MT2-30B-A3B",
+    "field": "task_fit_judged.bulk",
+    "old": "2 claim(s) as of 2026-09-07",
+    "new": "2 claim(s)",
+    "sources": [
+      "https://github.com/Tencent-Hunyuan/Hy-MT2"
+    ]
   }
 ]
