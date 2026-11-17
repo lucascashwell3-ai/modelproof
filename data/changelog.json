@@ -5006,5 +5006,16 @@
     "sources": [
       "https://github.com/Tencent-Hunyuan/Hy-MT2"
     ]
+  },
+  {
+    "date": "2026-11-17",
+    "model": "Hy4",
+    "field": "price_input",
+    "old": 0.42,
+    "new": 0.42,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
   }
 ]
