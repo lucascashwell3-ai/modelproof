@@ -5017,5 +5017,66 @@
       "openrouter",
       "litellm"
     ]
+  },
+  {
+    "date": "2026-11-18",
+    "model": "Hy4",
+    "field": "price_input",
+    "old": 0.42,
+    "new": 0.42,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-11-18",
+    "model": "GPT-6.2 Astra Pro",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/openai/gpt-6.2-astra-pro"
+    ]
+  },
+  {
+    "date": "2026-11-18",
+    "model": "GPT-6.2 Astra",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/openai/gpt-6.2-astra"
+    ]
+  },
+  {
+    "date": "2026-11-18",
+    "model": "GPT-6.2 Sol Pro",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/openai/gpt-6.2-sol-pro"
+    ]
+  },
+  {
+    "date": "2026-11-18",
+    "model": "GPT-6.2 Sol",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/openai/gpt-6.2-sol"
+    ]
+  },
+  {
+    "date": "2026-11-18",
+    "model": "CursorBench ladder",
+    "field": "effort_ladders",
+    "old": "Claude Opus 5.5, GLM-5.3, Claude Haiku 5.5, Claude Sonnet 5.5, GPT-5.6 Luna, Gemini 4 Carbon, Claude Fable 5.2, Gemini 4 Argon, Grok 4.7, GPT-5.6 Sol, GPT-5.6 Terra, Muse Spark 1.3, DeepSeek V4.1 Flash 1017",
+    "new": "Claude Opus 5.5, GLM-5.3, Claude Haiku 5.5, Claude Sonnet 5.5, GPT-5.6 Luna, Gemini 4 Carbon, Claude Fable 5.2, Gemini 4 Argon, Grok 4.7, Gemini 4 Hydrogen, GPT-5.6 Sol, GPT-5.6 Terra, Muse Spark 1.3, DeepSeek V4.1 Flash 1017",
+    "sources": [
+      "https://epoch.ai/data/benchmark_data.zip"
+    ]
   }
 ]
