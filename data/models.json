@@ -162,9 +162,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.09,
-          "rank": 66,
-          "as_of": "2026-11-16",
+          "share": 0.08,
+          "rank": 72,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -354,7 +354,7 @@
             "rank": 96,
             "share": 0.07,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -376,8 +376,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 21,
-              "n_models": 309,
+              "rank": 22,
+              "n_models": 310,
               "score": 0.9388,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -386,8 +386,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 21,
-              "n_models": 100,
+              "rank": 22,
+              "n_models": 101,
               "score": 0.599,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -396,8 +396,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 16,
-              "n_models": 117,
+              "rank": 17,
+              "n_models": 118,
               "score": 0.8561,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -406,8 +406,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 16,
-              "n_models": 74,
+              "rank": 17,
+              "n_models": 75,
               "score": 0.7317,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -426,8 +426,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
-              "rank": 29,
-              "n_models": 285,
+              "rank": 30,
+              "n_models": 286,
               "score": 0.9889,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -662,9 +662,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.57,
-          "rank": 30,
-          "as_of": "2026-11-16",
+          "share": 0.52,
+          "rank": 31,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -831,10 +831,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 49,
-            "share": 0.32,
+            "rank": 52,
+            "share": 0.3,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -856,8 +856,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 29,
-              "n_models": 309,
+              "rank": 30,
+              "n_models": 310,
               "score": 0.9312,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -866,8 +866,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 31,
-              "n_models": 100,
+              "rank": 32,
+              "n_models": 101,
               "score": 0.506,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -876,8 +876,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 29,
-              "n_models": 117,
+              "rank": 30,
+              "n_models": 118,
               "score": 0.7218,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -886,8 +886,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 31,
-              "n_models": 74,
+              "rank": 32,
+              "n_models": 75,
               "score": 0.3902,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -906,8 +906,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
-              "rank": 41,
-              "n_models": 285,
+              "rank": 42,
+              "n_models": 286,
               "score": 0.9722,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -1258,8 +1258,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.01,
-          "rank": 159,
-          "as_of": "2026-11-16",
+          "rank": 166,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -1426,10 +1426,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 225,
+            "rank": 228,
             "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -1451,8 +1451,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 91,
-              "n_models": 309,
+              "rank": 92,
+              "n_models": 310,
               "score": 0.8586,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -1461,8 +1461,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 10,
-              "n_models": 100,
+              "rank": 11,
+              "n_models": 101,
               "score": 0.707,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -1471,8 +1471,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 13,
-              "n_models": 117,
+              "rank": 14,
+              "n_models": 118,
               "score": 0.8702,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -1482,7 +1482,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
               "rank": 8,
-              "n_models": 74,
+              "n_models": 75,
               "score": 0.902,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -1501,8 +1501,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
-              "rank": 14,
-              "n_models": 285,
+              "rank": 15,
+              "n_models": 286,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -1791,9 +1791,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.07,
-          "rank": 79,
-          "as_of": "2026-11-16",
+          "share": 0.06,
+          "rank": 80,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -1970,10 +1970,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 99,
-            "share": 0.07,
+            "rank": 101,
+            "share": 0.06,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -1995,8 +1995,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 39,
-              "n_models": 309,
+              "rank": 40,
+              "n_models": 310,
               "score": 0.9104,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -2005,8 +2005,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 27,
-              "n_models": 100,
+              "rank": 28,
+              "n_models": 101,
               "score": 0.53,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -2025,8 +2025,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 21,
-              "n_models": 117,
+              "rank": 22,
+              "n_models": 118,
               "score": 0.8,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -2035,8 +2035,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 24,
-              "n_models": 74,
+              "rank": 25,
+              "n_models": 75,
               "score": 0.561,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -2055,8 +2055,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
-              "rank": 34,
-              "n_models": 285,
+              "rank": 35,
+              "n_models": 286,
               "score": 0.9833,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -2301,9 +2301,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.21,
-          "rank": 53,
-          "as_of": "2026-11-16",
+          "share": 0.19,
+          "rank": 54,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -2481,9 +2481,9 @@
           "measured": [],
           "chosen": {
             "rank": 70,
-            "share": 0.16,
+            "share": 0.15,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -2505,8 +2505,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 2 rows)",
-              "rank": 48,
-              "n_models": 309,
+              "rank": 49,
+              "n_models": 310,
               "score": 0.9053,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -2515,8 +2515,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified (best of 2 rows)",
-              "rank": 67,
-              "n_models": 100,
+              "rank": 68,
+              "n_models": 101,
               "score": 0.337,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -2525,8 +2525,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 41,
-              "n_models": 117,
+              "rank": 42,
+              "n_models": 118,
               "score": 0.6561,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -2535,8 +2535,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 40,
-              "n_models": 74,
+              "rank": 41,
+              "n_models": 75,
               "score": 0.2927,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -2555,8 +2555,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
-              "rank": 55,
-              "n_models": 285,
+              "rank": 56,
+              "n_models": 286,
               "score": 0.9472,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -2772,7 +2772,7 @@
           "category": "overall",
           "share": 0.02,
           "rank": 133,
-          "as_of": "2026-11-16",
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -2959,10 +2959,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 121,
+            "rank": 120,
             "share": 0.04,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -2984,8 +2984,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 46,
-              "n_models": 309,
+              "rank": 47,
+              "n_models": 310,
               "score": 0.9066,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -2994,8 +2994,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 17,
-              "n_models": 100,
+              "rank": 18,
+              "n_models": 101,
               "score": 0.63,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -3014,8 +3014,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2 (best of 2 rows)",
-              "rank": 17,
-              "n_models": 117,
+              "rank": 18,
+              "n_models": 118,
               "score": 0.8526,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -3024,8 +3024,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2 (best of 2 rows)",
-              "rank": 17,
-              "n_models": 74,
+              "rank": 18,
+              "n_models": 75,
               "score": 0.725,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -3044,8 +3044,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
-              "rank": 99,
-              "n_models": 285,
+              "rank": 100,
+              "n_models": 286,
               "score": 0.8444,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -3270,8 +3270,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.05,
-          "rank": 86,
-          "as_of": "2026-11-16",
+          "rank": 87,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -3461,7 +3461,7 @@
             "rank": 51,
             "share": 0.32,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -3483,8 +3483,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 2 rows)",
-              "rank": 11,
-              "n_models": 309,
+              "rank": 12,
+              "n_models": 310,
               "score": 0.9444,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -3494,7 +3494,7 @@
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
               "rank": 7,
-              "n_models": 100,
+              "n_models": 101,
               "score": 0.735,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -3523,8 +3523,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 45,
-              "n_models": 117,
+              "rank": 46,
+              "n_models": 118,
               "score": 0.5965,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -3533,8 +3533,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 45,
-              "n_models": 74,
+              "rank": 46,
+              "n_models": 75,
               "score": 0.2683,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -3553,8 +3553,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
-              "rank": 47,
-              "n_models": 285,
+              "rank": 48,
+              "n_models": 286,
               "score": 0.956,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -3796,9 +3796,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.26,
-          "rank": 47,
-          "as_of": "2026-11-16",
+          "share": 0.24,
+          "rank": 48,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -3955,10 +3955,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 40,
+            "rank": 43,
             "share": 0.45,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -3980,8 +3980,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 44,
-              "n_models": 309,
+              "rank": 45,
+              "n_models": 310,
               "score": 0.9091,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -3990,8 +3990,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 40,
-              "n_models": 100,
+              "rank": 41,
+              "n_models": 101,
               "score": 0.4699,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -4000,8 +4000,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 61,
-              "n_models": 117,
+              "rank": 62,
+              "n_models": 118,
               "score": 0.4526,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -4010,8 +4010,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 68,
-              "n_models": 74,
+              "rank": 69,
+              "n_models": 75,
               "score": 0.0244,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -4030,8 +4030,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
-              "rank": 42,
-              "n_models": 285,
+              "rank": 43,
+              "n_models": 286,
               "score": 0.9667,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -4271,9 +4271,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.05,
-          "rank": 88,
-          "as_of": "2026-11-16",
+          "share": 0.04,
+          "rank": 90,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -4440,10 +4440,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 77,
-            "share": 0.13,
+            "rank": 78,
+            "share": 0.12,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -4465,8 +4465,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 45,
-              "n_models": 309,
+              "rank": 46,
+              "n_models": 310,
               "score": 0.9078,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -4475,8 +4475,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 62,
-              "n_models": 100,
+              "rank": 63,
+              "n_models": 101,
               "score": 0.349,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -4485,8 +4485,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 51,
-              "n_models": 117,
+              "rank": 52,
+              "n_models": 118,
               "score": 0.5719,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -4495,8 +4495,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 48,
-              "n_models": 74,
+              "rank": 49,
+              "n_models": 75,
               "score": 0.2564,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -4515,8 +4515,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 44,
-              "n_models": 285,
+              "rank": 45,
+              "n_models": 286,
               "score": 0.9611,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -4744,9 +4744,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.01,
-          "rank": 200,
-          "as_of": "2026-11-16",
+          "share": 0,
+          "rank": 202,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -4860,10 +4860,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 175,
-            "share": 0.02,
+            "rank": 182,
+            "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -5277,8 +5277,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 128,
-              "n_models": 309,
+              "rank": 129,
+              "n_models": 310,
               "score": 0.7961,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -5287,8 +5287,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified (best of 2 rows)",
-              "rank": 88,
-              "n_models": 100,
+              "rank": 89,
+              "n_models": 101,
               "score": 0.196,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -5307,8 +5307,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2 (best of 3 rows)",
-              "rank": 68,
-              "n_models": 117,
+              "rank": 69,
+              "n_models": 118,
               "score": 0.3614,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -5317,8 +5317,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 66,
-              "n_models": 74,
+              "rank": 67,
+              "n_models": 75,
               "score": 0.0488,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -5327,8 +5327,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
-              "rank": 112,
-              "n_models": 285,
+              "rank": 113,
+              "n_models": 286,
               "score": 0.8167,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -5559,9 +5559,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.08,
-          "rank": 73,
-          "as_of": "2026-11-16",
+          "share": 0.07,
+          "rank": 75,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -5712,10 +5712,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 75,
-            "share": 0.14,
+            "rank": 76,
+            "share": 0.12,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -5737,8 +5737,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 2 rows)",
-              "rank": 171,
-              "n_models": 309,
+              "rank": 172,
+              "n_models": 310,
               "score": 0.7121,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -5747,8 +5747,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified (best of 2 rows)",
-              "rank": 93,
-              "n_models": 100,
+              "rank": 94,
+              "n_models": 101,
               "score": 0.132,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -5767,8 +5767,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
-              "rank": 147,
-              "n_models": 285,
+              "rank": 148,
+              "n_models": 286,
               "score": 0.6667,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -5987,9 +5987,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.09,
-          "rank": 67,
-          "as_of": "2026-11-16",
+          "share": 0.08,
+          "rank": 70,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -6176,10 +6176,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 83,
-            "share": 0.13,
+            "rank": 84,
+            "share": 0.11,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -6201,8 +6201,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 23,
-              "n_models": 309,
+              "rank": 24,
+              "n_models": 310,
               "score": 0.935,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -6211,8 +6211,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 12,
-              "n_models": 100,
+              "rank": 13,
+              "n_models": 101,
               "score": 0.697,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -6222,7 +6222,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
               "rank": 10,
-              "n_models": 117,
+              "n_models": 118,
               "score": 0.8912,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -6231,8 +6231,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2 (best of 2 rows)",
-              "rank": 11,
-              "n_models": 74,
+              "rank": 12,
+              "n_models": 75,
               "score": 0.8293,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -6251,8 +6251,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
-              "rank": 13,
-              "n_models": 285,
+              "rank": 14,
+              "n_models": 286,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -6492,8 +6492,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.05,
-          "rank": 87,
-          "as_of": "2026-11-16",
+          "rank": 89,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -6670,10 +6670,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 113,
+            "rank": 112,
             "share": 0.05,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -6695,8 +6695,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 25,
-              "n_models": 309,
+              "rank": 26,
+              "n_models": 310,
               "score": 0.9331,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -6705,8 +6705,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 48,
-              "n_models": 100,
+              "rank": 49,
+              "n_models": 101,
               "score": 0.432,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -6715,8 +6715,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 15,
-              "n_models": 117,
+              "rank": 16,
+              "n_models": 118,
               "score": 0.8596,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -6725,8 +6725,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 19,
-              "n_models": 74,
+              "rank": 20,
+              "n_models": 75,
               "score": 0.7073,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -6745,8 +6745,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
-              "rank": 18,
-              "n_models": 285,
+              "rank": 19,
+              "n_models": 286,
               "score": 0.9972,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -6971,9 +6971,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.84,
+          "share": 0.82,
           "rank": 24,
-          "as_of": "2026-11-16",
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -7150,10 +7150,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 24,
-            "share": 0.79,
+            "rank": 26,
+            "share": 0.77,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -7175,8 +7175,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 37,
-              "n_models": 309,
+              "rank": 38,
+              "n_models": 310,
               "score": 0.916,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -7185,8 +7185,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 55,
-              "n_models": 100,
+              "rank": 56,
+              "n_models": 101,
               "score": 0.41,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -7195,8 +7195,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2 (best of 3 rows)",
-              "rank": 20,
-              "n_models": 117,
+              "rank": 21,
+              "n_models": 118,
               "score": 0.8211,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -7205,8 +7205,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 21,
-              "n_models": 74,
+              "rank": 22,
+              "n_models": 75,
               "score": 0.6098,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -7225,8 +7225,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
-              "rank": 33,
-              "n_models": 285,
+              "rank": 34,
+              "n_models": 286,
               "score": 0.9833,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -7479,8 +7479,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.02,
-          "rank": 118,
-          "as_of": "2026-11-16",
+          "rank": 114,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -7657,10 +7657,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 80,
+            "rank": 75,
             "share": 0.13,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -7682,8 +7682,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 30,
-              "n_models": 309,
+              "rank": 31,
+              "n_models": 310,
               "score": 0.928,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -7692,8 +7692,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 15,
-              "n_models": 100,
+              "rank": 16,
+              "n_models": 101,
               "score": 0.662,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -7702,8 +7702,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 44,
-              "n_models": 117,
+              "rank": 45,
+              "n_models": 118,
               "score": 0.6281,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -7712,8 +7712,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 47,
-              "n_models": 74,
+              "rank": 48,
+              "n_models": 75,
               "score": 0.2683,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -7732,8 +7732,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
-              "rank": 51,
-              "n_models": 285,
+              "rank": 52,
+              "n_models": 286,
               "score": 0.9556,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -7935,9 +7935,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.14,
-          "rank": 60,
-          "as_of": "2026-11-16",
+          "share": 0.12,
+          "rank": 61,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -8030,10 +8030,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 28,
-            "share": 0.7,
+            "rank": 30,
+            "share": 0.65,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -8213,8 +8213,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.03,
-          "rank": 109,
-          "as_of": "2026-11-16",
+          "rank": 107,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -8381,10 +8381,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 105,
+            "rank": 102,
             "share": 0.06,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -8406,8 +8406,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 24,
-              "n_models": 309,
+              "rank": 25,
+              "n_models": 310,
               "score": 0.9343,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -8416,8 +8416,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 36,
-              "n_models": 100,
+              "rank": 37,
+              "n_models": 101,
               "score": 0.483,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -8426,8 +8426,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 50,
-              "n_models": 117,
+              "rank": 51,
+              "n_models": 118,
               "score": 0.5719,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -8436,8 +8436,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 50,
-              "n_models": 74,
+              "rank": 51,
+              "n_models": 75,
               "score": 0.2439,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -8456,8 +8456,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 39,
-              "n_models": 285,
+              "rank": 40,
+              "n_models": 286,
               "score": 0.9778,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -8694,9 +8694,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.5,
-          "rank": 15,
-          "as_of": "2026-11-16",
+          "share": 1.33,
+          "rank": 16,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -8719,7 +8719,7 @@
         },
         "bulk": {
           "usage_rank": 3,
-          "usage_share": 4.02,
+          "usage_share": 3.94,
           "arena_rank": null,
           "expert_default": null,
           "families": 1
@@ -8833,9 +8833,9 @@
           "measured": [],
           "chosen": {
             "rank": 6,
-            "share": 4.02,
+            "share": 3.94,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -9176,8 +9176,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 164,
-              "n_models": 309,
+              "rank": 165,
+              "n_models": 310,
               "score": 0.726,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -9186,8 +9186,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 35,
-              "n_models": 100,
+              "rank": 36,
+              "n_models": 101,
               "score": 0.4875,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -9196,8 +9196,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 93,
-              "n_models": 117,
+              "rank": 94,
+              "n_models": 118,
               "score": 0.1895,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -9206,8 +9206,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 128,
-              "n_models": 285,
+              "rank": 129,
+              "n_models": 286,
               "score": 0.7333,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -9793,8 +9793,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 258,
-              "n_models": 309,
+              "rank": 259,
+              "n_models": 310,
               "score": 0.4179,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -9803,8 +9803,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 250,
-              "n_models": 285,
+              "rank": 251,
+              "n_models": 286,
               "score": 0.0611,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -10008,8 +10008,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 227,
-          "as_of": "2026-11-16",
+          "rank": 232,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -10102,10 +10102,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 250,
+            "rank": 255,
             "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -10262,9 +10262,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.04,
-          "rank": 99,
-          "as_of": "2026-11-16",
+          "share": 0.03,
+          "rank": 102,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -10421,10 +10421,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 69,
-            "share": 0.16,
+            "rank": 74,
+            "share": 0.14,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -10446,8 +10446,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 15,
-              "n_models": 309,
+              "rank": 16,
+              "n_models": 310,
               "score": 0.9413,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -10456,8 +10456,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 16,
-              "n_models": 100,
+              "rank": 17,
+              "n_models": 101,
               "score": 0.662,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -10466,8 +10466,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 47,
-              "n_models": 117,
+              "rank": 48,
+              "n_models": 118,
               "score": 0.5895,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -10476,8 +10476,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 52,
-              "n_models": 74,
+              "rank": 53,
+              "n_models": 75,
               "score": 0.2195,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -10496,8 +10496,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
-              "rank": 58,
-              "n_models": 285,
+              "rank": 59,
+              "n_models": 286,
               "score": 0.9417,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -10693,9 +10693,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.46,
+          "share": 0.41,
           "rank": 34,
-          "as_of": "2026-11-16",
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -10873,9 +10873,9 @@
           "measured": [],
           "chosen": {
             "rank": 36,
-            "share": 0.58,
+            "share": 0.54,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -10897,8 +10897,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 3 rows)",
-              "rank": 35,
-              "n_models": 309,
+              "rank": 36,
+              "n_models": 310,
               "score": 0.9186,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -10907,8 +10907,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 65,
-              "n_models": 100,
+              "rank": 66,
+              "n_models": 101,
               "score": 0.342,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -10917,8 +10917,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2 (best of 3 rows)",
-              "rank": 46,
-              "n_models": 117,
+              "rank": 47,
+              "n_models": 118,
               "score": 0.5921,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -10927,8 +10927,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 41,
-              "n_models": 74,
+              "rank": 42,
+              "n_models": 75,
               "score": 0.2927,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -10947,8 +10947,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 3 rows)",
-              "rank": 95,
-              "n_models": 285,
+              "rank": 96,
+              "n_models": 286,
               "score": 0.8639,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -11135,9 +11135,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.15,
+          "share": 0.14,
           "rank": 57,
-          "as_of": "2026-11-16",
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -11284,10 +11284,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 23,
-            "share": 0.8,
+            "rank": 27,
+            "share": 0.77,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -11309,8 +11309,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 9,
-              "n_models": 309,
+              "rank": 10,
+              "n_models": 310,
               "score": 0.9482,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -11319,8 +11319,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 13,
-              "n_models": 100,
+              "rank": 14,
+              "n_models": 101,
               "score": 0.692,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -11329,8 +11329,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 30,
-              "n_models": 117,
+              "rank": 31,
+              "n_models": 118,
               "score": 0.7158,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -11339,8 +11339,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 32,
-              "n_models": 74,
+              "rank": 33,
+              "n_models": 75,
               "score": 0.3659,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -11359,8 +11359,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 40,
-              "n_models": 285,
+              "rank": 41,
+              "n_models": 286,
               "score": 0.9722,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -11564,7 +11564,7 @@
           "category": "overall",
           "share": 0.03,
           "rank": 105,
-          "as_of": "2026-11-16",
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -11741,10 +11741,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 98,
+            "rank": 94,
             "share": 0.07,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -11766,8 +11766,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 2 rows)",
-              "rank": 17,
-              "n_models": 309,
+              "rank": 18,
+              "n_models": 310,
               "score": 0.94,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -11776,8 +11776,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified (best of 2 rows)",
-              "rank": 34,
-              "n_models": 100,
+              "rank": 35,
+              "n_models": 101,
               "score": 0.493,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -11786,8 +11786,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 38,
-              "n_models": 117,
+              "rank": 39,
+              "n_models": 118,
               "score": 0.6596,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -11796,8 +11796,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 36,
-              "n_models": 74,
+              "rank": 37,
+              "n_models": 75,
               "score": 0.3171,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -11816,8 +11816,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
-              "rank": 25,
-              "n_models": 285,
+              "rank": 26,
+              "n_models": 286,
               "score": 0.9917,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -12000,8 +12000,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 253,
-          "as_of": "2026-11-16",
+          "rank": 261,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -12148,10 +12148,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 233,
+            "rank": 239,
             "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -12173,8 +12173,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 20,
-              "n_models": 100,
+              "rank": 21,
+              "n_models": 101,
               "score": 0.603,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -12419,8 +12419,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 258,
-          "as_of": "2026-11-16",
+          "rank": 263,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -12570,7 +12570,7 @@
             "rank": 276,
             "share": 0,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -12592,8 +12592,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 22,
-              "n_models": 100,
+              "rank": 23,
+              "n_models": 101,
               "score": 0.5779,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -12862,8 +12862,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.06,
-          "rank": 83,
-          "as_of": "2026-11-16",
+          "rank": 85,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -12956,10 +12956,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 84,
+            "rank": 80,
             "share": 0.12,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -13688,8 +13688,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.01,
-          "rank": 171,
-          "as_of": "2026-11-16",
+          "rank": 155,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -13782,10 +13782,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 258,
-            "share": 0,
+            "rank": 253,
+            "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -13983,9 +13983,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.01,
-          "rank": 165,
-          "as_of": "2026-11-16",
+          "share": 0.02,
+          "rank": 130,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -14078,10 +14078,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 137,
-            "share": 0.03,
+            "rank": 126,
+            "share": 0.04,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -14245,9 +14245,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.56,
-          "rank": 31,
-          "as_of": "2026-11-16",
+          "share": 0.5,
+          "rank": 32,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -14340,10 +14340,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 46,
+            "rank": 47,
             "share": 0.37,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -14794,9 +14794,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.22,
+          "share": 0.21,
           "rank": 52,
-          "as_of": "2026-11-16",
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -14889,10 +14889,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 22,
-            "share": 0.82,
+            "rank": 23,
+            "share": 0.8,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -14908,8 +14908,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond (best of 2 rows)",
-              "rank": 115,
-              "n_models": 309,
+              "rank": 116,
+              "n_models": 310,
               "score": 0.8232,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -14918,8 +14918,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2 (best of 2 rows)",
-              "rank": 91,
-              "n_models": 117,
+              "rank": 92,
+              "n_models": 118,
               "score": 0.193,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -14928,8 +14928,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
-              "rank": 91,
-              "n_models": 285,
+              "rank": 92,
+              "n_models": 286,
               "score": 0.8667,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -15110,8 +15110,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 257,
-          "as_of": "2026-11-16",
+          "rank": 262,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -15204,10 +15204,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 240,
+            "rank": 237,
             "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -15391,8 +15391,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 324,
-          "as_of": "2026-11-16",
+          "rank": 326,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -15485,10 +15485,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 288,
+            "rank": 290,
             "share": 0,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -15669,8 +15669,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 374,
-          "as_of": "2026-11-16",
+          "rank": 380,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -15763,10 +15763,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 325,
+            "rank": 320,
             "share": 0,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -15943,8 +15943,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 461,
-          "as_of": "2026-11-16",
+          "rank": 515,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -16037,10 +16037,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 385,
+            "rank": 425,
             "share": 0,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -16505,7 +16505,7 @@
           "category": "overall",
           "share": 0.01,
           "rank": 151,
-          "as_of": "2026-11-16",
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -16598,10 +16598,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 133,
+            "rank": 136,
             "share": 0.03,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -16784,9 +16784,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.39,
-          "rank": 38,
-          "as_of": "2026-11-16",
+          "share": 0.35,
+          "rank": 39,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -16913,10 +16913,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 30,
-            "share": 0.64,
+            "rank": 33,
+            "share": 0.62,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -17187,8 +17187,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 447,
-          "as_of": "2026-11-16",
+          "rank": 454,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -17281,10 +17281,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 356,
+            "rank": 361,
             "share": 0,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -17509,9 +17509,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.81,
-          "rank": 25,
-          "as_of": "2026-11-16",
+          "share": 0.6,
+          "rank": 28,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -17616,10 +17616,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 33,
-            "share": 0.59,
+            "rank": 41,
+            "share": 0.46,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -17799,8 +17799,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.01,
-          "rank": 179,
-          "as_of": "2026-11-16",
+          "rank": 185,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -17947,10 +17947,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 224,
+            "rank": 227,
             "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -17972,8 +17972,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 70,
-              "n_models": 309,
+              "rank": 71,
+              "n_models": 310,
               "score": 0.8826,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -17982,8 +17982,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 57,
-              "n_models": 100,
+              "rank": 58,
+              "n_models": 101,
               "score": 0.403,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -17992,8 +17992,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 74,
-              "n_models": 117,
+              "rank": 75,
+              "n_models": 118,
               "score": 0.3333,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -18002,8 +18002,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 65,
-              "n_models": 74,
+              "rank": 66,
+              "n_models": 75,
               "score": 0.0488,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -18022,8 +18022,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 81,
-              "n_models": 285,
+              "rank": 82,
+              "n_models": 286,
               "score": 0.8889,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -18265,9 +18265,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.01,
-          "rank": 193,
-          "as_of": "2026-11-16",
+          "share": 0,
+          "rank": 204,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -18383,10 +18383,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 176,
-            "share": 0.02,
+            "rank": 209,
+            "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -18408,8 +18408,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 67,
-              "n_models": 309,
+              "rank": 68,
+              "n_models": 310,
               "score": 0.8851,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -18418,8 +18418,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 89,
-              "n_models": 100,
+              "rank": 90,
+              "n_models": 101,
               "score": 0.191,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -18428,8 +18428,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 60,
-              "n_models": 117,
+              "rank": 61,
+              "n_models": 118,
               "score": 0.4632,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -18438,8 +18438,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 57,
-              "n_models": 74,
+              "rank": 58,
+              "n_models": 75,
               "score": 0.1707,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -18458,8 +18458,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 77,
-              "n_models": 285,
+              "rank": 78,
+              "n_models": 286,
               "score": 0.9,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -18709,9 +18709,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.16,
-          "rank": 56,
-          "as_of": "2026-11-16",
+          "share": 0.13,
+          "rank": 58,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -18816,10 +18816,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 109,
-            "share": 0.05,
+            "rank": 117,
+            "share": 0.04,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -18996,8 +18996,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 419,
-          "as_of": "2026-11-16",
+          "rank": 422,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -19090,10 +19090,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 382,
+            "rank": 378,
             "share": 0,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -19264,8 +19264,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 299,
-          "as_of": "2026-11-16",
+          "rank": 304,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -19358,10 +19358,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 235,
+            "rank": 234,
             "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -19518,9 +19518,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.75,
-          "rank": 9,
-          "as_of": "2026-11-16",
+          "share": 1.53,
+          "rank": 10,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -19542,8 +19542,8 @@
           "families": 1
         },
         "bulk": {
-          "usage_rank": 8,
-          "usage_share": 1.39,
+          "usage_rank": 10,
+          "usage_share": 1.27,
           "arena_rank": null,
           "expert_default": null,
           "families": 1
@@ -19697,10 +19697,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 13,
-            "share": 1.39,
+            "rank": 15,
+            "share": 1.27,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -19722,8 +19722,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 41,
-              "n_models": 309,
+              "rank": 42,
+              "n_models": 310,
               "score": 0.9091,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -19732,8 +19732,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 54,
-              "n_models": 100,
+              "rank": 55,
+              "n_models": 101,
               "score": 0.41,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -19742,8 +19742,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 34,
-              "n_models": 117,
+              "rank": 35,
+              "n_models": 118,
               "score": 0.6877,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -19752,8 +19752,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 39,
-              "n_models": 74,
+              "rank": 40,
+              "n_models": 75,
               "score": 0.2927,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -19772,8 +19772,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 73,
-              "n_models": 285,
+              "rank": 74,
+              "n_models": 286,
               "score": 0.9111,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -19947,9 +19947,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.1,
-          "rank": 65,
-          "as_of": "2026-11-16",
+          "share": 0.09,
+          "rank": 66,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -20086,10 +20086,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 82,
-            "share": 0.13,
+            "rank": 81,
+            "share": 0.12,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -20111,8 +20111,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 32,
-              "n_models": 309,
+              "rank": 33,
+              "n_models": 310,
               "score": 0.9268,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -20121,8 +20121,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 43,
-              "n_models": 100,
+              "rank": 44,
+              "n_models": 101,
               "score": 0.458,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -20131,8 +20131,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 26,
-              "n_models": 117,
+              "rank": 27,
+              "n_models": 118,
               "score": 0.7474,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -20141,8 +20141,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 29,
-              "n_models": 74,
+              "rank": 30,
+              "n_models": 75,
               "score": 0.4634,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -20161,8 +20161,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 22,
-              "n_models": 285,
+              "rank": 23,
+              "n_models": 286,
               "score": 0.9944,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -20367,9 +20367,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.63,
-          "rank": 29,
-          "as_of": "2026-11-16",
+          "share": 0.54,
+          "rank": 30,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -20462,10 +20462,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 20,
-            "share": 0.92,
+            "rank": 21,
+            "share": 0.85,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -20639,9 +20639,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.07,
-          "rank": 76,
-          "as_of": "2026-11-16",
+          "share": 0.05,
+          "rank": 86,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -20740,10 +20740,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 123,
+            "rank": 128,
             "share": 0.04,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -20908,8 +20908,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 399,
-          "as_of": "2026-11-16",
+          "rank": 402,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -21002,10 +21002,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 324,
+            "rank": 317,
             "share": 0,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -21226,8 +21226,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 230,
-          "as_of": "2026-11-16",
+          "rank": 226,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -21326,10 +21326,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 226,
+            "rank": 204,
             "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -21574,9 +21574,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.39,
-          "rank": 16,
-          "as_of": "2026-11-16",
+          "share": 1.25,
+          "rank": 18,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -21669,10 +21669,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 29,
-            "share": 0.65,
+            "rank": 32,
+            "share": 0.62,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -21890,8 +21890,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.03,
-          "rank": 104,
-          "as_of": "2026-11-16",
+          "rank": 106,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -22026,10 +22026,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 115,
-            "share": 0.05,
+            "rank": 121,
+            "share": 0.04,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -22045,8 +22045,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2 (best of 2 rows)",
-              "rank": 27,
-              "n_models": 117,
+              "rank": 28,
+              "n_models": 118,
               "score": 0.7439,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -22055,8 +22055,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2 (best of 2 rows)",
-              "rank": 28,
-              "n_models": 74,
+              "rank": 29,
+              "n_models": 75,
               "score": 0.4634,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -22075,8 +22075,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 24,
-              "n_models": 285,
+              "rank": 25,
+              "n_models": 286,
               "score": 0.9917,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -22271,9 +22271,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.77,
+          "share": 0.71,
           "rank": 26,
-          "as_of": "2026-11-16",
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -22295,8 +22295,8 @@
           "families": 2
         },
         "bulk": {
-          "usage_rank": 6,
-          "usage_share": 1.86,
+          "usage_rank": 7,
+          "usage_share": 1.81,
           "arena_rank": null,
           "expert_default": null,
           "families": 1
@@ -22450,10 +22450,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 11,
-            "share": 1.86,
+            "rank": 12,
+            "share": 1.81,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -22475,8 +22475,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 8,
-              "n_models": 309,
+              "rank": 9,
+              "n_models": 310,
               "score": 0.9539,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -22485,8 +22485,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 11,
-              "n_models": 100,
+              "rank": 12,
+              "n_models": 101,
               "score": 0.697,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -22505,8 +22505,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 35,
-              "n_models": 117,
+              "rank": 36,
+              "n_models": 118,
               "score": 0.6842,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -22515,8 +22515,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 51,
-              "n_models": 74,
+              "rank": 52,
+              "n_models": 75,
               "score": 0.2195,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -22535,8 +22535,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 28,
-              "n_models": 285,
+              "rank": 29,
+              "n_models": 286,
               "score": 0.9889,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -22752,8 +22752,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.15,
-          "rank": 58,
-          "as_of": "2026-11-16",
+          "rank": 56,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -22908,10 +22908,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 54,
-            "share": 0.3,
+            "rank": 55,
+            "share": 0.29,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -22927,8 +22927,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 5,
-              "n_models": 309,
+              "rank": 6,
+              "n_models": 310,
               "score": 0.9577,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -22938,7 +22938,7 @@
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
               "rank": 5,
-              "n_models": 100,
+              "n_models": 101,
               "score": 0.756,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -22958,7 +22958,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
               "rank": 3,
-              "n_models": 117,
+              "n_models": 118,
               "score": 0.9368,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -22968,7 +22968,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2 (best of 6 rows)",
               "rank": 4,
-              "n_models": 74,
+              "n_models": 75,
               "score": 0.976,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -22987,8 +22987,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 12,
-              "n_models": 285,
+              "rank": 13,
+              "n_models": 286,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -23222,7 +23222,7 @@
           "category": "overall",
           "share": 0.01,
           "rank": 184,
-          "as_of": "2026-11-16",
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -23318,7 +23318,7 @@
             "rank": 245,
             "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -23533,9 +23533,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.07,
-          "rank": 80,
-          "as_of": "2026-11-16",
+          "share": 0.06,
+          "rank": 81,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -23702,10 +23702,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 139,
+            "rank": 145,
             "share": 0.03,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -23727,8 +23727,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 9,
-              "n_models": 100,
+              "rank": 10,
+              "n_models": 101,
               "score": 0.708,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -23748,7 +23748,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
               "rank": 8,
-              "n_models": 117,
+              "n_models": 118,
               "score": 0.9018,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -23757,8 +23757,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 10,
-              "n_models": 74,
+              "rank": 11,
+              "n_models": 75,
               "score": 0.878,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -23777,8 +23777,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 11,
-              "n_models": 285,
+              "rank": 12,
+              "n_models": 286,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -24017,8 +24017,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.01,
-          "rank": 170,
-          "as_of": "2026-11-16",
+          "rank": 164,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -24111,10 +24111,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 200,
+            "rank": 192,
             "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -24282,9 +24282,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.03,
-          "rank": 106,
-          "as_of": "2026-11-16",
+          "share": 0.02,
+          "rank": 112,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -24377,10 +24377,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 159,
+            "rank": 154,
             "share": 0.02,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -24690,8 +24690,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 36,
-              "n_models": 309,
+              "rank": 37,
+              "n_models": 310,
               "score": 0.9167,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -24700,8 +24700,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 28,
-              "n_models": 100,
+              "rank": 29,
+              "n_models": 101,
               "score": 0.5291,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -24710,8 +24710,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 42,
-              "n_models": 117,
+              "rank": 43,
+              "n_models": 118,
               "score": 0.6456,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -24720,8 +24720,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 44,
-              "n_models": 74,
+              "rank": 45,
+              "n_models": 75,
               "score": 0.2683,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -24740,8 +24740,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 30,
-              "n_models": 285,
+              "rank": 31,
+              "n_models": 286,
               "score": 0.9861,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -25061,8 +25061,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 40,
-              "n_models": 309,
+              "rank": 41,
+              "n_models": 310,
               "score": 0.9104,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -25071,8 +25071,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 68,
-              "n_models": 100,
+              "rank": 69,
+              "n_models": 101,
               "score": 0.3363,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -25081,8 +25081,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 49,
-              "n_models": 117,
+              "rank": 50,
+              "n_models": 118,
               "score": 0.5754,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -25091,8 +25091,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 49,
-              "n_models": 74,
+              "rank": 50,
+              "n_models": 75,
               "score": 0.2439,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -25111,8 +25111,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 56,
-              "n_models": 285,
+              "rank": 57,
+              "n_models": 286,
               "score": 0.9444,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -25209,9 +25209,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 28.62,
+          "share": 26.27,
           "rank": 1,
-          "as_of": "2026-11-16",
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -25246,7 +25246,7 @@
         },
         "bulk": {
           "usage_rank": 1,
-          "usage_share": 17.83,
+          "usage_share": 17.38,
           "arena_rank": null,
           "expert_default": null,
           "families": 1
@@ -25349,9 +25349,9 @@
           "measured": [],
           "chosen": {
             "rank": 1,
-            "share": 17.83,
+            "share": 17.38,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -25367,8 +25367,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 56,
-              "n_models": 309,
+              "rank": 57,
+              "n_models": 310,
               "score": 0.8984,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -25377,8 +25377,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 49,
-              "n_models": 100,
+              "rank": 50,
+              "n_models": 101,
               "score": 0.429,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -25387,8 +25387,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 37,
-              "n_models": 117,
+              "rank": 38,
+              "n_models": 118,
               "score": 0.6737,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -25397,8 +25397,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 43,
-              "n_models": 74,
+              "rank": 44,
+              "n_models": 75,
               "score": 0.2683,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -25417,8 +25417,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 32,
-              "n_models": 285,
+              "rank": 33,
+              "n_models": 286,
               "score": 0.9833,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -25580,9 +25580,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.31,
+          "share": 0.26,
           "rank": 44,
-          "as_of": "2026-11-16",
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -25742,9 +25742,9 @@
           "measured": [],
           "chosen": {
             "rank": 59,
-            "share": 0.23,
+            "share": 0.22,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -25760,8 +25760,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 31,
-              "n_models": 309,
+              "rank": 32,
+              "n_models": 310,
               "score": 0.9274,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -25770,8 +25770,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 25,
-              "n_models": 100,
+              "rank": 26,
+              "n_models": 101,
               "score": 0.56,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -25780,8 +25780,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 56,
-              "n_models": 117,
+              "rank": 57,
+              "n_models": 118,
               "score": 0.5298,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -25790,8 +25790,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 55,
-              "n_models": 74,
+              "rank": 56,
+              "n_models": 75,
               "score": 0.1707,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -25810,8 +25810,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 36,
-              "n_models": 285,
+              "rank": 37,
+              "n_models": 286,
               "score": 0.9806,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -25974,9 +25974,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.27,
-          "rank": 46,
-          "as_of": "2026-11-16",
+          "share": 0.24,
+          "rank": 47,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -26081,10 +26081,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 56,
-            "share": 0.27,
+            "rank": 58,
+            "share": 0.26,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -26214,9 +26214,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 3.82,
-          "rank": 5,
-          "as_of": "2026-11-16",
+          "share": 3.59,
+          "rank": 6,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -26251,7 +26251,7 @@
         },
         "bulk": {
           "usage_rank": 2,
-          "usage_share": 6.19,
+          "usage_share": 6.03,
           "arena_rank": null,
           "expert_default": null,
           "families": 1
@@ -26354,9 +26354,9 @@
           "measured": [],
           "chosen": {
             "rank": 3,
-            "share": 6.19,
+            "share": 6.03,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -26372,8 +26372,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 50,
-              "n_models": 309,
+              "rank": 51,
+              "n_models": 310,
               "score": 0.9047,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -26382,8 +26382,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 52,
-              "n_models": 100,
+              "rank": 53,
+              "n_models": 101,
               "score": 0.414,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -26392,8 +26392,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 22,
-              "n_models": 117,
+              "rank": 23,
+              "n_models": 118,
               "score": 0.7895,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -26402,8 +26402,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 23,
-              "n_models": 74,
+              "rank": 24,
+              "n_models": 75,
               "score": 0.561,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -26422,8 +26422,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 27,
-              "n_models": 285,
+              "rank": 28,
+              "n_models": 286,
               "score": 0.9889,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -26576,8 +26576,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 237,
-          "as_of": "2026-11-16",
+          "rank": 248,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -26682,10 +26682,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 317,
+            "rank": 325,
             "share": 0,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -26815,9 +26815,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.12,
-          "rank": 61,
-          "as_of": "2026-11-16",
+          "share": 0.11,
+          "rank": 62,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -26964,10 +26964,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 101,
+            "rank": 100,
             "share": 0.06,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -26983,8 +26983,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 13,
-              "n_models": 309,
+              "rank": 14,
+              "n_models": 310,
               "score": 0.9432,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -26993,8 +26993,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 19,
-              "n_models": 100,
+              "rank": 20,
+              "n_models": 101,
               "score": 0.607,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -27004,7 +27004,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
               "rank": 9,
-              "n_models": 117,
+              "n_models": 118,
               "score": 0.8982,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -27014,7 +27014,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
               "rank": 9,
-              "n_models": 74,
+              "n_models": 75,
               "score": 0.9,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -27033,8 +27033,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 8,
-              "n_models": 285,
+              "rank": 9,
+              "n_models": 286,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -27196,9 +27196,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 3.45,
-          "rank": 6,
-          "as_of": "2026-11-16",
+          "share": 3.19,
+          "rank": 7,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -27234,7 +27234,7 @@
         },
         "bulk": {
           "usage_rank": 9,
-          "usage_share": 1.35,
+          "usage_share": 1.29,
           "arena_rank": null,
           "expert_default": null,
           "families": 1
@@ -27357,9 +27357,9 @@
           "measured": [],
           "chosen": {
             "rank": 14,
-            "share": 1.35,
+            "share": 1.29,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -27375,8 +27375,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 47,
-              "n_models": 309,
+              "rank": 48,
+              "n_models": 310,
               "score": 0.9059,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -27386,7 +27386,7 @@
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
               "rank": 8,
-              "n_models": 100,
+              "n_models": 101,
               "score": 0.722,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -27396,7 +27396,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
               "rank": 5,
-              "n_models": 117,
+              "n_models": 118,
               "score": 0.9123,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -27406,7 +27406,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
               "rank": 6,
-              "n_models": 74,
+              "n_models": 75,
               "score": 0.95,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -27425,8 +27425,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 9,
-              "n_models": 285,
+              "rank": 10,
+              "n_models": 286,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -27590,8 +27590,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.02,
-          "rank": 126,
-          "as_of": "2026-11-16",
+          "rank": 123,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -27696,10 +27696,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 73,
+            "rank": 71,
             "share": 0.15,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -28068,7 +28068,7 @@
           "category": "overall",
           "share": 0.01,
           "rank": 180,
-          "as_of": "2026-11-16",
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -28176,7 +28176,7 @@
             "rank": 213,
             "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -28367,9 +28367,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.25,
-          "rank": 19,
-          "as_of": "2026-11-16",
+          "share": 1.18,
+          "rank": 21,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -28527,10 +28527,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 19,
+            "rank": 20,
             "share": 0.93,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -28546,8 +28546,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 6,
-              "n_models": 309,
+              "rank": 7,
+              "n_models": 310,
               "score": 0.9558,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -28556,8 +28556,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 41,
-              "n_models": 100,
+              "rank": 42,
+              "n_models": 101,
               "score": 0.465,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -28577,7 +28577,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
               "rank": 11,
-              "n_models": 117,
+              "n_models": 118,
               "score": 0.8877,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -28586,8 +28586,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 12,
-              "n_models": 74,
+              "rank": 13,
+              "n_models": 75,
               "score": 0.8049,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -28606,8 +28606,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 7,
-              "n_models": 285,
+              "rank": 8,
+              "n_models": 286,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -28771,8 +28771,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.02,
-          "rank": 125,
-          "as_of": "2026-11-16",
+          "rank": 127,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -28877,10 +28877,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 205,
+            "rank": 199,
             "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -29022,9 +29022,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.74,
-          "rank": 10,
-          "as_of": "2026-11-16",
+          "share": 1.5,
+          "rank": 12,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -29059,11 +29059,11 @@
           "families": 0
         },
         "bulk": {
-          "usage_rank": 10,
-          "usage_share": 1.15,
+          "usage_rank": null,
+          "usage_share": null,
           "arena_rank": null,
           "expert_default": null,
-          "families": 1
+          "families": 0
         },
         "writing": {
           "usage_rank": null,
@@ -29172,10 +29172,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 16,
-            "share": 1.15,
+            "rank": 18,
+            "share": 1.08,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -29191,8 +29191,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 7,
-              "n_models": 309,
+              "rank": 8,
+              "n_models": 310,
               "score": 0.9539,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -29202,7 +29202,7 @@
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
               "rank": 6,
-              "n_models": 100,
+              "n_models": 101,
               "score": 0.739,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -29212,7 +29212,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
               "rank": 2,
-              "n_models": 117,
+              "n_models": 118,
               "score": 0.9368,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -29222,7 +29222,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
               "rank": 3,
-              "n_models": 74,
+              "n_models": 75,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -29241,8 +29241,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 6,
-              "n_models": 285,
+              "rank": 7,
+              "n_models": 286,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -29660,9 +29660,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.31,
-          "rank": 18,
-          "as_of": "2026-11-16",
+          "share": 1.19,
+          "rank": 20,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -29697,8 +29697,8 @@
           "families": 0
         },
         "bulk": {
-          "usage_rank": 5,
-          "usage_share": 3.44,
+          "usage_rank": 4,
+          "usage_share": 3.32,
           "arena_rank": null,
           "expert_default": null,
           "families": 1
@@ -29820,10 +29820,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 9,
-            "share": 3.44,
+            "rank": 8,
+            "share": 3.32,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -29839,8 +29839,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 58,
-              "n_models": 309,
+              "rank": 59,
+              "n_models": 310,
               "score": 0.8965,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -29849,8 +29849,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 82,
-              "n_models": 100,
+              "rank": 83,
+              "n_models": 101,
               "score": 0.238,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -29869,8 +29869,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 25,
-              "n_models": 117,
+              "rank": 26,
+              "n_models": 118,
               "score": 0.7509,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -29879,8 +29879,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 27,
-              "n_models": 74,
+              "rank": 28,
+              "n_models": 75,
               "score": 0.4634,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -29899,8 +29899,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025 (best of 2 rows)",
-              "rank": 26,
-              "n_models": 285,
+              "rank": 27,
+              "n_models": 286,
               "score": 0.9889,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -30058,9 +30058,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.41,
-          "rank": 37,
-          "as_of": "2026-11-16",
+          "share": 0.36,
+          "rank": 38,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -30218,10 +30218,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 39,
+            "rank": 40,
             "share": 0.48,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -30237,8 +30237,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 3,
-              "n_models": 309,
+              "rank": 4,
+              "n_models": 310,
               "score": 0.964,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -30248,7 +30248,7 @@
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
               "rank": 4,
-              "n_models": 100,
+              "n_models": 101,
               "score": 0.76,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -30257,8 +30257,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 14,
-              "n_models": 117,
+              "rank": 15,
+              "n_models": 118,
               "score": 0.8596,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -30267,8 +30267,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 13,
-              "n_models": 74,
+              "rank": 14,
+              "n_models": 75,
               "score": 0.7805,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -30287,8 +30287,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 5,
-              "n_models": 285,
+              "rank": 6,
+              "n_models": 286,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -30607,8 +30607,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 27,
-              "n_models": 309,
+              "rank": 28,
+              "n_models": 310,
               "score": 0.9318,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -30617,8 +30617,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 50,
-              "n_models": 100,
+              "rank": 51,
+              "n_models": 101,
               "score": 0.425,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -30627,8 +30627,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
-              "rank": 31,
-              "n_models": 117,
+              "rank": 32,
+              "n_models": 118,
               "score": 0.7123,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -30637,8 +30637,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
-              "rank": 26,
-              "n_models": 74,
+              "rank": 27,
+              "n_models": 75,
               "score": 0.4634,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -30647,8 +30647,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 20,
-              "n_models": 285,
+              "rank": 21,
+              "n_models": 286,
               "score": 0.9944,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -30793,8 +30793,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.04,
-          "rank": 103,
-          "as_of": "2026-11-16",
+          "rank": 97,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -30899,10 +30899,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 107,
-            "share": 0.05,
+            "rank": 99,
+            "share": 0.06,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -31097,9 +31097,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.68,
+          "share": 1.51,
           "rank": 11,
-          "as_of": "2026-11-16",
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -31133,8 +31133,8 @@
           "families": 0
         },
         "bulk": {
-          "usage_rank": 7,
-          "usage_share": 1.53,
+          "usage_rank": 8,
+          "usage_share": 1.45,
           "arena_rank": null,
           "expert_default": null,
           "families": 1
@@ -31204,10 +31204,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 12,
-            "share": 1.53,
+            "rank": 13,
+            "share": 1.45,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -31337,9 +31337,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.05,
-          "rank": 89,
-          "as_of": "2026-11-16",
+          "share": 0.04,
+          "rank": 93,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -31444,10 +31444,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 142,
+            "rank": 139,
             "share": 0.03,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -31578,8 +31578,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.03,
-          "rank": 107,
-          "as_of": "2026-11-16",
+          "rank": 108,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -31684,10 +31684,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 78,
-            "share": 0.13,
+            "rank": 83,
+            "share": 0.11,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -31818,8 +31818,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.01,
-          "rank": 166,
-          "as_of": "2026-11-16",
+          "rank": 159,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -31924,10 +31924,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 229,
+            "rank": 220,
             "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -32058,8 +32058,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 281,
-          "as_of": "2026-11-16",
+          "rank": 283,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -32164,10 +32164,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 264,
+            "rank": 266,
             "share": 0,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -32298,8 +32298,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 263,
-          "as_of": "2026-11-16",
+          "rank": 264,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -32404,10 +32404,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 263,
+            "rank": 264,
             "share": 0,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -32537,9 +32537,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.65,
-          "rank": 28,
-          "as_of": "2026-11-16",
+          "share": 0.6,
+          "rank": 29,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -32647,7 +32647,7 @@
             "rank": 53,
             "share": 0.3,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -32787,8 +32787,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.06,
-          "rank": 85,
-          "as_of": "2026-11-16",
+          "rank": 82,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -32894,10 +32894,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 126,
+            "rank": 123,
             "share": 0.04,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -33037,8 +33037,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 392,
-          "as_of": "2026-11-16",
+          "rank": 396,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -33143,10 +33143,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 394,
+            "rank": 395,
             "share": 0,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -33278,8 +33278,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 331,
-          "as_of": "2026-11-16",
+          "rank": 344,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -33384,10 +33384,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 309,
+            "rank": 315,
             "share": 0,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -33518,8 +33518,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0,
-          "rank": 224,
-          "as_of": "2026-11-16",
+          "rank": 228,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -33624,10 +33624,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 247,
+            "rank": 238,
             "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -33757,9 +33757,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 1.52,
+          "share": 1.44,
           "rank": 13,
-          "as_of": "2026-11-16",
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -33896,10 +33896,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 26,
-            "share": 0.75,
+            "rank": 28,
+            "share": 0.73,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -34074,9 +34074,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.54,
-          "rank": 32,
-          "as_of": "2026-11-16",
+          "share": 0.49,
+          "rank": 33,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -34224,10 +34224,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 52,
-            "share": 0.31,
+            "rank": 54,
+            "share": 0.3,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -34243,8 +34243,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 12,
-              "n_models": 309,
+              "rank": 13,
+              "n_models": 310,
               "score": 0.9432,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -34253,8 +34253,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
-              "rank": 23,
-              "n_models": 100,
+              "rank": 24,
+              "n_models": 101,
               "score": 0.573,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -34264,7 +34264,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
               "rank": 6,
-              "n_models": 117,
+              "n_models": 118,
               "score": 0.9088,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -34274,7 +34274,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
               "rank": 7,
-              "n_models": 74,
+              "n_models": 75,
               "score": 0.9268,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -34283,8 +34283,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 4,
-              "n_models": 285,
+              "rank": 5,
+              "n_models": 286,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -34384,7 +34384,7 @@
         }
       },
       "status": "ga",
-      "adoption": "moderate",
+      "adoption": "new",
       "best_for_line": "OpenAI model · 1M ctx · $1/$5"
     },
     {
@@ -34420,8 +34420,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.01,
-          "rank": 156,
-          "as_of": "2026-11-16",
+          "rank": 160,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -34526,10 +34526,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 219,
+            "rank": 223,
             "share": 0.01,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -34660,8 +34660,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.02,
-          "rank": 119,
-          "as_of": "2026-11-16",
+          "rank": 126,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -34766,10 +34766,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 165,
+            "rank": 175,
             "share": 0.02,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -34899,9 +34899,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 7.5,
-          "rank": 2,
-          "as_of": "2026-11-16",
+          "share": 6.08,
+          "rank": 4,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -34935,8 +34935,8 @@
           "families": 0
         },
         "bulk": {
-          "usage_rank": 4,
-          "usage_share": 3.58,
+          "usage_rank": 6,
+          "usage_share": 3.09,
           "arena_rank": null,
           "expert_default": null,
           "families": 1
@@ -35006,10 +35006,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 8,
-            "share": 3.58,
+            "rank": 10,
+            "share": 3.09,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -35139,9 +35139,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.44,
-          "rank": 35,
-          "as_of": "2026-11-16",
+          "share": 0.37,
+          "rank": 37,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -35298,10 +35298,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 58,
-            "share": 0.23,
+            "rank": 62,
+            "share": 0.21,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -35317,8 +35317,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 20,
-              "n_models": 309,
+              "rank": 21,
+              "n_models": 310,
               "score": 0.9388,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -35328,7 +35328,7 @@
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
               "rank": 1,
-              "n_models": 100,
+              "n_models": 101,
               "score": 0.94,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -35338,7 +35338,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
               "rank": 1,
-              "n_models": 117,
+              "n_models": 118,
               "score": 0.9509,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -35348,7 +35348,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
               "rank": 1,
-              "n_models": 74,
+              "n_models": 75,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -35367,8 +35367,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 17,
-              "n_models": 285,
+              "rank": 18,
+              "n_models": 286,
               "score": 0.9972,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -35513,8 +35513,8 @@
         "openrouter": {
           "category": "overall",
           "share": 0.32,
-          "rank": 42,
-          "as_of": "2026-11-16",
+          "rank": 41,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -35620,9 +35620,9 @@
           "measured": [],
           "chosen": {
             "rank": 50,
-            "share": 0.32,
+            "share": 0.34,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -35752,9 +35752,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.48,
-          "rank": 33,
-          "as_of": "2026-11-16",
+          "share": 0.62,
+          "rank": 27,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -35911,10 +35911,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 32,
-            "share": 0.6,
+            "rank": 24,
+            "share": 0.77,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -35930,8 +35930,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
-              "rank": 2,
-              "n_models": 309,
+              "rank": 3,
+              "n_models": 310,
               "score": 0.9653,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -35941,7 +35941,7 @@
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
               "rank": 3,
-              "n_models": 100,
+              "n_models": 101,
               "score": 0.777,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -35951,7 +35951,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
               "rank": 7,
-              "n_models": 117,
+              "n_models": 118,
               "score": 0.9053,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -35961,7 +35961,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
               "rank": 5,
-              "n_models": 74,
+              "n_models": 75,
               "score": 0.9512,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -35970,8 +35970,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 2,
-              "n_models": 285,
+              "rank": 3,
+              "n_models": 286,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -36091,7 +36091,7 @@
         }
       },
       "status": "ga",
-      "adoption": "new",
+      "adoption": "moderate",
       "best_for_line": "Priciest Google model · 1M ctx · $2/$10"
     },
     {
@@ -36126,9 +36126,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.11,
-          "rank": 64,
-          "as_of": "2026-11-16",
+          "share": 0.13,
+          "rank": 59,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -36275,10 +36275,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 68,
-            "share": 0.17,
+            "rank": 64,
+            "share": 0.21,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -36290,7 +36290,58 @@
           "preferred": null
         },
         "research": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GPQA Diamond",
+              "rank": 2,
+              "n_models": 310,
+              "score": 0.9678,
+              "as_of": "2026-11-18",
+              "url": "https://epoch.ai/benchmarks/gpqa-diamond",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "SimpleQA Verified",
+              "rank": 9,
+              "n_models": 101,
+              "score": 0.709,
+              "as_of": "2026-11-18",
+              "url": "https://epoch.ai/benchmarks/simpleqa-verified",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tiers 1-3 v2",
+              "rank": 12,
+              "n_models": 118,
+              "score": 0.8807,
+              "as_of": "2026-11-18",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "FrontierMath Tier 4 v2",
+              "rank": 10,
+              "n_models": 75,
+              "score": 0.878,
+              "as_of": "2026-11-18",
+              "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "OTIS Mock AIME 2024-2025",
+              "rank": 1,
+              "n_models": 286,
+              "score": 1,
+              "as_of": "2026-11-18",
+              "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": null,
           "preferred": null
         },
@@ -36408,9 +36459,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.7,
-          "rank": 27,
-          "as_of": "2026-11-16",
+          "share": 0.74,
+          "rank": 25,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -36537,10 +36588,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 60,
-            "share": 0.23,
+            "rank": 56,
+            "share": 0.29,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -36692,9 +36743,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.88,
-          "rank": 23,
-          "as_of": "2026-11-16",
+          "share": 9.67,
+          "rank": 2,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -36706,7 +36757,7 @@
         "aws_bedrock": null,
         "google_vertex": null,
         "azure": null,
-        "open_weights": null,
+        "open_weights": true,
         "eu_hosting": null,
         "sources": [
           "https://openrouter.ai/api/v1/models"
@@ -36728,11 +36779,11 @@
           "families": 0
         },
         "bulk": {
-          "usage_rank": null,
-          "usage_share": null,
+          "usage_rank": 5,
+          "usage_share": 3.25,
           "arena_rank": null,
           "expert_default": null,
-          "families": 0
+          "families": 1
         },
         "writing": {
           "usage_rank": null,
@@ -36799,10 +36850,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 57,
-            "share": 0.26,
+            "rank": 9,
+            "share": 3.25,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -36897,7 +36948,7 @@
         }
       },
       "status": "ga",
-      "adoption": "moderate",
+      "adoption": "broad",
       "best_for_line": "Cheapest Tencent model · 1M ctx · $0.04/$0.18"
     },
     {
@@ -36932,9 +36983,9 @@
       "usage": {
         "openrouter": {
           "category": "overall",
-          "share": 0.04,
-          "rank": 94,
-          "as_of": "2026-11-16",
+          "share": 0.07,
+          "rank": 74,
+          "as_of": "2026-11-17",
           "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
         }
       },
@@ -37039,10 +37090,10 @@
         "bulk": {
           "measured": [],
           "chosen": {
-            "rank": 131,
-            "share": 0.03,
+            "rank": 106,
+            "share": 0.06,
             "tags": [],
-            "n_models": 615,
+            "n_models": 627,
             "as_of": "2026-11-11",
             "url": "https://openrouter.ai/rankings"
           },
@@ -37170,7 +37221,13 @@
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
-        "openrouter": null
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 348,
+          "as_of": "2026-11-17",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
       },
       "auto_added": "2026-11-18",
       "availability": {
@@ -37272,7 +37329,14 @@
         },
         "bulk": {
           "measured": [],
-          "chosen": null,
+          "chosen": {
+            "rank": 366,
+            "share": 0,
+            "tags": [],
+            "n_models": 627,
+            "as_of": "2026-11-11",
+            "url": "https://openrouter.ai/rankings"
+          },
           "preferred": null
         },
         "writing": {
@@ -37397,7 +37461,13 @@
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
-        "openrouter": null
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 217,
+          "as_of": "2026-11-17",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
       },
       "auto_added": "2026-11-18",
       "availability": {
@@ -37499,7 +37569,14 @@
         },
         "bulk": {
           "measured": [],
-          "chosen": null,
+          "chosen": {
+            "rank": 261,
+            "share": 0,
+            "tags": [],
+            "n_models": 627,
+            "as_of": "2026-11-11",
+            "url": "https://openrouter.ai/rankings"
+          },
           "preferred": null
         },
         "writing": {
@@ -37513,7 +37590,7 @@
               "tester": "epoch-ai",
               "benchmark": "GPQA Diamond",
               "rank": 1,
-              "n_models": 309,
+              "n_models": 310,
               "score": 0.9684,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/gpqa-diamond",
@@ -37523,7 +37600,7 @@
               "tester": "epoch-ai",
               "benchmark": "SimpleQA Verified",
               "rank": 2,
-              "n_models": 100,
+              "n_models": 101,
               "score": 0.785,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/simpleqa-verified",
@@ -37533,7 +37610,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tiers 1-3 v2",
               "rank": 4,
-              "n_models": 117,
+              "n_models": 118,
               "score": 0.9263,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tiers-1-3-v2",
@@ -37543,7 +37620,7 @@
               "tester": "epoch-ai",
               "benchmark": "FrontierMath Tier 4 v2",
               "rank": 2,
-              "n_models": 74,
+              "n_models": 75,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/frontiermath-tier-4-v2",
@@ -37552,8 +37629,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "OTIS Mock AIME 2024-2025",
-              "rank": 3,
-              "n_models": 285,
+              "rank": 4,
+              "n_models": 286,
               "score": 1,
               "as_of": "2026-11-18",
               "url": "https://epoch.ai/benchmarks/otis-mock-aime-2024-2025",
@@ -37685,7 +37762,13 @@
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
-        "openrouter": null
+        "openrouter": {
+          "category": "overall",
+          "share": 0,
+          "rank": 350,
+          "as_of": "2026-11-17",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
       },
       "auto_added": "2026-11-18",
       "availability": {
@@ -37787,7 +37870,14 @@
         },
         "bulk": {
           "measured": [],
-          "chosen": null,
+          "chosen": {
+            "rank": 349,
+            "share": 0,
+            "tags": [],
+            "n_models": 627,
+            "as_of": "2026-11-11",
+            "url": "https://openrouter.ai/rankings"
+          },
           "preferred": null
         },
         "writing": {
@@ -37912,7 +38002,13 @@
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
-        "openrouter": null
+        "openrouter": {
+          "category": "overall",
+          "share": 0.01,
+          "rank": 167,
+          "as_of": "2026-11-17",
+          "source_url": "https://openrouter.ai/api/frontend/v1/rankings/models"
+        }
       },
       "auto_added": "2026-11-18",
       "availability": {
@@ -38014,7 +38110,14 @@
         },
         "bulk": {
           "measured": [],
-          "chosen": null,
+          "chosen": {
+            "rank": 230,
+            "share": 0.01,
+            "tags": [],
+            "n_models": 627,
+            "as_of": "2026-11-11",
+            "url": "https://openrouter.ai/rankings"
+          },
           "preferred": null
         },
         "writing": {
@@ -38119,6 +38222,233 @@
       "status": "ga",
       "adoption": "new",
       "best_for_line": "OpenAI model · 1M ctx · $2/$10"
+    },
+    {
+      "id": "gemini-4-neon",
+      "name": "Gemini 4 Neon",
+      "vendor": "Google",
+      "released": "2026-11-18",
+      "context_window": 1048576,
+      "price_input": 3,
+      "price_output": 15,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/google/gemini-4-neon"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "task_fit_judged": null,
+      "usage": {
+        "openrouter": null
+      },
+      "auto_added": "2026-11-18",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "openrouter_id": "google/gemini-4-neon",
+        "aws_bedrock": null,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models"
+        ]
+      },
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      },
+      "standings": {
+        "as_of": "2026-11-18",
+        "coding": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "agents": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "bulk": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "writing": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "research": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "extraction": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "chat": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "vision": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "frontend": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "exec-summaries": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "status": "ga",
+      "adoption": "new",
+      "best_for_line": "Priciest Google model · 1M ctx · $3/$15"
     }
   ],
   "releases": [
@@ -39030,6 +39360,15 @@
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/openai/gpt-6.2-sol",
       "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "model",
+      "date": "2026-11-18",
+      "vendor": "Google",
+      "title": "Google releases Gemini 4 Neon",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/google/gemini-4-neon",
+      "why": "Priced and available now; treat capability as unproven until scores land."
     }
   ],
   "benchmarks_legend": {
@@ -39070,7 +39409,7 @@
           "model_id": "claude-opus-5-5",
           "label": "Claude Opus 5.5",
           "source_key": "claude-opus-5-5",
-          "usage_rank": 6,
+          "usage_rank": 7,
           "points": [
             {
               "effort": "low",
@@ -39103,7 +39442,7 @@
           "model_id": "glm-5-3",
           "label": "GLM-5.3",
           "source_key": "glm-5.3",
-          "usage_rank": 9,
+          "usage_rank": 10,
           "points": [
             {
               "effort": "low",
@@ -39126,7 +39465,7 @@
           "model_id": "claude-haiku-5-5",
           "label": "Claude Haiku 5.5",
           "source_key": "claude-haiku-5-5",
-          "usage_rank": 18,
+          "usage_rank": 20,
           "points": [
             {
               "effort": "low",
@@ -39159,7 +39498,7 @@
           "model_id": "claude-sonnet-5-5",
           "label": "Claude Sonnet 5.5",
           "source_key": "claude-sonnet-5-5",
-          "usage_rank": 19,
+          "usage_rank": 21,
           "points": [
             {
               "effort": "low",
@@ -39225,7 +39564,7 @@
           "model_id": "gemini-4-carbon",
           "label": "Gemini 4 Carbon",
           "source_key": "gemini-4-carbon",
-          "usage_rank": 33,
+          "usage_rank": 27,
           "points": [
             {
               "effort": "low",
@@ -39248,7 +39587,7 @@
           "model_id": "claude-fable-5-2",
           "label": "Claude Fable 5.2",
           "source_key": "claude-fable-5-2",
-          "usage_rank": 35,
+          "usage_rank": 37,
           "points": [
             {
               "effort": "low",
@@ -39281,7 +39620,7 @@
           "model_id": "gemini-4-argon",
           "label": "Gemini 4 Argon",
           "source_key": "gemini-4-argon",
-          "usage_rank": 37,
+          "usage_rank": 38,
           "points": [
             {
               "effort": "minimal",
@@ -39337,7 +39676,7 @@
           "model_id": "gemini-4-hydrogen",
           "label": "Gemini 4 Hydrogen",
           "source_key": "gemini-4-hydrogen",
-          "usage_rank": 64,
+          "usage_rank": 59,
           "points": [
             {
               "effort": "low",
@@ -39365,7 +39704,7 @@
           "model_id": "gpt-5-6-sol",
           "label": "GPT-5.6 Sol",
           "source_key": "gpt-5.6-sol",
-          "usage_rank": 67,
+          "usage_rank": 70,
           "points": [
             {
               "effort": "low",
@@ -39398,7 +39737,7 @@
           "model_id": "gpt-5-6-terra",
           "label": "GPT-5.6 Terra",
           "source_key": "gpt-5.6-terra",
-          "usage_rank": 87,
+          "usage_rank": 89,
           "points": [
             {
               "effort": "low",
@@ -39431,7 +39770,7 @@
           "model_id": "muse-spark-1-3",
           "label": "Muse Spark 1.3",
           "source_key": "muse-spark-1.3",
-          "usage_rank": 104,
+          "usage_rank": 106,
           "points": [
             {
               "effort": "minimal",
