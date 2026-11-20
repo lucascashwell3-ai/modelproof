@@ -491,19 +491,6 @@ appears in any model's `standings`. A future run re-checks all of these; add an 
 - `step-5-preview_high`
 - `trinity-large-thinking`
 
-## epoch-ai / cursorbench_external.csv (10)
-
-- `Composer 2.5`
-- `glm-5.3-flash_high`
-- `glm-5.3-flash_low`
-- `glm-5.3-flash_max`
-- `muse-wonder-1.0_high`
-- `muse-wonder-1.0_low`
-- `muse-wonder-1.0_max`
-- `muse-wonder-1.0_medium`
-- `muse-wonder-1.0_minimal`
-- `muse-wonder-1.0_xhigh`
-
 ## epoch-ai / swe_bench_verified.csv (29)
 
 - `claude-3-7-sonnet-20250219`

@@ -248,16 +248,6 @@
           "measured": [
             {
               "tester": "epoch-ai",
-              "benchmark": "CursorBench (best rung: Max)",
-              "rank": 12,
-              "n_models": 29,
-              "score": 0.466,
-              "as_of": "2026-11-20",
-              "url": "https://epoch.ai/benchmarks/cursorbench-external",
-              "licence": "display-ok"
-            },
-            {
-              "tester": "epoch-ai",
               "benchmark": "SciCode (Epoch mirror) (best of 5 rows)",
               "rank": 27,
               "n_models": 143,
@@ -311,8 +301,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 7,
-              "n_models": 69,
+              "rank": 8,
+              "n_models": 70,
               "score": 11181.8733,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -321,8 +311,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 13,
-              "n_models": 62,
+              "rank": 16,
+              "n_models": 65,
               "score": 0.658,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -801,8 +791,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 34,
-              "n_models": 69,
+              "rank": 35,
+              "n_models": 70,
               "score": 5165.035,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -811,8 +801,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 38,
-              "n_models": 62,
+              "rank": 41,
+              "n_models": 65,
               "score": 0.478,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -942,8 +932,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 16,
-              "n_models": 19,
+              "rank": 21,
+              "n_models": 24,
               "score": 0.398,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -1396,8 +1386,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror) (best of 5 rows)",
-              "rank": 29,
-              "n_models": 69,
+              "rank": 30,
+              "n_models": 70,
               "score": 5680.258,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -1406,8 +1396,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 19,
-              "n_models": 62,
+              "rank": 22,
+              "n_models": 65,
               "score": 0.636,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -1930,8 +1920,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror) (best of 2 rows)",
-              "rank": 28,
-              "n_models": 69,
+              "rank": 29,
+              "n_models": 70,
               "score": 5787.428,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -1940,8 +1930,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 36,
-              "n_models": 62,
+              "rank": 39,
+              "n_models": 65,
               "score": 0.489,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -2387,16 +2377,6 @@
           "measured": [
             {
               "tester": "epoch-ai",
-              "benchmark": "CursorBench (best rung: Max)",
-              "rank": 26,
-              "n_models": 29,
-              "score": 0.341,
-              "as_of": "2026-11-20",
-              "url": "https://epoch.ai/benchmarks/cursorbench-external",
-              "licence": "display-ok"
-            },
-            {
-              "tester": "epoch-ai",
               "benchmark": "SciCode (Epoch mirror) (best of 6 rows)",
               "rank": 37,
               "n_models": 143,
@@ -2450,8 +2430,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 24,
-              "n_models": 69,
+              "rank": 25,
+              "n_models": 70,
               "score": 6377.7017,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -2460,8 +2440,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 28,
-              "n_models": 62,
+              "rank": 31,
+              "n_models": 65,
               "score": 0.545,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -2919,8 +2899,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 20,
-              "n_models": 69,
+              "rank": 21,
+              "n_models": 70,
               "score": 7523.844,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -2929,8 +2909,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 27,
-              "n_models": 62,
+              "rank": 30,
+              "n_models": 65,
               "score": 0.551,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -3418,8 +3398,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 56,
-              "n_models": 69,
+              "rank": 57,
+              "n_models": 70,
               "score": 911.214,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -3438,8 +3418,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 53,
-              "n_models": 62,
+              "rank": 56,
+              "n_models": 65,
               "score": 0.351,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -3935,8 +3915,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 49,
-              "n_models": 69,
+              "rank": 50,
+              "n_models": 70,
               "score": 3284.52,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -4410,8 +4390,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 25,
-              "n_models": 69,
+              "rank": 26,
+              "n_models": 70,
               "score": 6204.57,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -5698,8 +5678,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 60,
-              "n_models": 69,
+              "rank": 61,
+              "n_models": 70,
               "score": 458.886,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -6074,9 +6054,9 @@
             {
               "tester": "epoch-ai",
               "benchmark": "CursorBench (best rung: Max)",
-              "rank": 17,
-              "n_models": 29,
-              "score": 0.417,
+              "rank": 12,
+              "n_models": 12,
+              "score": 0.409,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/cursorbench-external",
               "licence": "display-ok"
@@ -6136,8 +6116,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 12,
-              "n_models": 69,
+              "rank": 13,
+              "n_models": 70,
               "score": 9619.368,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -6146,8 +6126,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 34,
-              "n_models": 62,
+              "rank": 37,
+              "n_models": 65,
               "score": 0.514,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -6577,16 +6557,6 @@
           "measured": [
             {
               "tester": "epoch-ai",
-              "benchmark": "CursorBench (best rung: Max)",
-              "rank": 21,
-              "n_models": 29,
-              "score": 0.413,
-              "as_of": "2026-11-20",
-              "url": "https://epoch.ai/benchmarks/cursorbench-external",
-              "licence": "display-ok"
-            },
-            {
-              "tester": "epoch-ai",
               "benchmark": "SciCode (Epoch mirror) (best of 6 rows)",
               "rank": 33,
               "n_models": 143,
@@ -6640,8 +6610,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 21,
-              "n_models": 69,
+              "rank": 22,
+              "n_models": 70,
               "score": 7343.206,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -6650,8 +6620,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 23,
-              "n_models": 62,
+              "rank": 26,
+              "n_models": 65,
               "score": 0.582,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -7057,16 +7027,6 @@
           "measured": [
             {
               "tester": "epoch-ai",
-              "benchmark": "CursorBench (best rung: Max)",
-              "rank": 24,
-              "n_models": 29,
-              "score": 0.359,
-              "as_of": "2026-11-20",
-              "url": "https://epoch.ai/benchmarks/cursorbench-external",
-              "licence": "display-ok"
-            },
-            {
-              "tester": "epoch-ai",
               "benchmark": "SciCode (Epoch mirror) (best of 6 rows)",
               "rank": 40,
               "n_models": 143,
@@ -7120,8 +7080,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 42,
-              "n_models": 69,
+              "rank": 43,
+              "n_models": 70,
               "score": 4094.712,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -7130,8 +7090,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 48,
-              "n_models": 62,
+              "rank": 51,
+              "n_models": 65,
               "score": 0.43,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -7627,8 +7587,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 33,
-              "n_models": 69,
+              "rank": 34,
+              "n_models": 70,
               "score": 5396.4183,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -7637,8 +7597,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 58,
-              "n_models": 62,
+              "rank": 61,
+              "n_models": 65,
               "score": 0.275,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -8351,8 +8311,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 43,
-              "n_models": 69,
+              "rank": 44,
+              "n_models": 70,
               "score": 3887.426,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -8361,8 +8321,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 25,
-              "n_models": 62,
+              "rank": 28,
+              "n_models": 65,
               "score": 0.562,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -9144,8 +9104,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 63,
-              "n_models": 69,
+              "rank": 64,
+              "n_models": 70,
               "score": 71.565,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -10401,8 +10361,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 41,
-              "n_models": 62,
+              "rank": 44,
+              "n_models": 65,
               "score": 0.469,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -10842,8 +10802,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 17,
-              "n_models": 69,
+              "rank": 18,
+              "n_models": 70,
               "score": 8313.7783,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -10852,8 +10812,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 45,
-              "n_models": 62,
+              "rank": 48,
+              "n_models": 65,
               "score": 0.452,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -11264,8 +11224,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 11,
-              "n_models": 62,
+              "rank": 13,
+              "n_models": 65,
               "score": 0.678,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -11649,9 +11609,9 @@
             {
               "tester": "epoch-ai",
               "benchmark": "CursorBench (best rung: Extra High)",
-              "rank": 20,
-              "n_models": 29,
-              "score": 0.414,
+              "rank": 10,
+              "n_models": 12,
+              "score": 0.443,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/cursorbench-external",
               "licence": "display-ok"
@@ -11711,8 +11671,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 16,
-              "n_models": 69,
+              "rank": 17,
+              "n_models": 70,
               "score": 9047.0325,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -11721,8 +11681,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 15,
-              "n_models": 62,
+              "rank": 18,
+              "n_models": 65,
               "score": 0.653,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -12128,8 +12088,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 44,
-              "n_models": 62,
+              "rank": 47,
+              "n_models": 65,
               "score": 0.454,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -12537,8 +12497,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 23,
-              "n_models": 69,
+              "rank": 24,
+              "n_models": 70,
               "score": 6520.475,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -12547,8 +12507,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 56,
-              "n_models": 62,
+              "rank": 59,
+              "n_models": 65,
               "score": 0.318,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -16886,8 +16846,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 39,
-              "n_models": 62,
+              "rank": 42,
+              "n_models": 65,
               "score": 0.475,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -17920,8 +17880,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 54,
-              "n_models": 62,
+              "rank": 57,
+              "n_models": 65,
               "score": 0.338,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -19597,16 +19557,6 @@
           "measured": [
             {
               "tester": "epoch-ai",
-              "benchmark": "CursorBench (best rung: Max)",
-              "rank": 16,
-              "n_models": 29,
-              "score": 0.426,
-              "as_of": "2026-11-20",
-              "url": "https://epoch.ai/benchmarks/cursorbench-external",
-              "licence": "display-ok"
-            },
-            {
-              "tester": "epoch-ai",
               "benchmark": "SciCode (Epoch mirror) (best of 2 rows)",
               "rank": 14,
               "n_models": 143,
@@ -19660,8 +19610,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 18,
-              "n_models": 69,
+              "rank": 19,
+              "n_models": 70,
               "score": 8163.61,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -19670,8 +19620,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 24,
-              "n_models": 62,
+              "rank": 27,
+              "n_models": 65,
               "score": 0.566,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -19791,8 +19741,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 17,
-              "n_models": 19,
+              "rank": 22,
+              "n_models": 24,
               "score": 0.366,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -20059,8 +20009,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 20,
-              "n_models": 62,
+              "rank": 23,
+              "n_models": 65,
               "score": 0.633,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -20180,8 +20130,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 15,
-              "n_models": 19,
+              "rank": 20,
+              "n_models": 24,
               "score": 0.428,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -20768,8 +20718,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 18,
-              "n_models": 19,
+              "rank": 23,
+              "n_models": 24,
               "score": 0.35,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -21969,9 +21919,9 @@
             {
               "tester": "epoch-ai",
               "benchmark": "CursorBench (best rung: Max)",
-              "rank": 19,
-              "n_models": 29,
-              "score": 0.416,
+              "rank": 11,
+              "n_models": 12,
+              "score": 0.419,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/cursorbench-external",
               "licence": "display-ok"
@@ -22005,8 +21955,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror) (best of 2 rows)",
-              "rank": 22,
-              "n_models": 62,
+              "rank": 25,
+              "n_models": 65,
               "score": 0.586,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -22094,8 +22044,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 4,
-              "n_models": 19,
+              "rank": 6,
+              "n_models": 24,
               "score": 0.53,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -22350,16 +22300,6 @@
           "measured": [
             {
               "tester": "epoch-ai",
-              "benchmark": "CursorBench (best rung: High)",
-              "rank": 22,
-              "n_models": 29,
-              "score": 0.396,
-              "as_of": "2026-11-20",
-              "url": "https://epoch.ai/benchmarks/cursorbench-external",
-              "licence": "display-ok"
-            },
-            {
-              "tester": "epoch-ai",
               "benchmark": "SciCode (Epoch mirror) (best of 3 rows)",
               "rank": 24,
               "n_models": 143,
@@ -22413,8 +22353,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 36,
-              "n_models": 69,
+              "rank": 37,
+              "n_models": 70,
               "score": 5093.7933,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -22423,8 +22363,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 17,
-              "n_models": 62,
+              "rank": 20,
+              "n_models": 65,
               "score": 0.643,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -22564,8 +22504,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 13,
-              "n_models": 19,
+              "rank": 18,
+              "n_models": 24,
               "score": 0.442,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -22877,8 +22817,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 2,
-              "n_models": 69,
+              "rank": 3,
+              "n_models": 70,
               "score": 15514.7017,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -22887,8 +22827,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 16,
-              "n_models": 62,
+              "rank": 19,
+              "n_models": 65,
               "score": 0.647,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -23016,8 +22956,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 7,
-              "n_models": 19,
+              "rank": 10,
+              "n_models": 24,
               "score": 0.504,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -23612,16 +23552,6 @@
           "measured": [
             {
               "tester": "epoch-ai",
-              "benchmark": "CursorBench (best rung: Max)",
-              "rank": 7,
-              "n_models": 29,
-              "score": 0.518,
-              "as_of": "2026-11-20",
-              "url": "https://epoch.ai/benchmarks/cursorbench-external",
-              "licence": "display-ok"
-            },
-            {
-              "tester": "epoch-ai",
               "benchmark": "SciCode (Epoch mirror) (best of 5 rows)",
               "rank": 4,
               "n_models": 143,
@@ -23665,8 +23595,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 32,
-              "n_models": 69,
+              "rank": 33,
+              "n_models": 70,
               "score": 5421.5567,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -23675,8 +23605,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror) (best of 2 rows)",
-              "rank": 9,
-              "n_models": 62,
+              "rank": 11,
+              "n_models": 65,
               "score": 0.686,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -23806,8 +23736,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 8,
-              "n_models": 19,
+              "rank": 11,
+              "n_models": 24,
               "score": 0.494,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -24422,8 +24352,8 @@
       "vendor": "DeepSeek",
       "released": "2026-08-12",
       "context_window": 1048576,
-      "price_input": 0.58,
-      "price_output": 4,
+      "price_input": 1.32,
+      "price_output": 3.96,
       "speed_tps": null,
       "benchmarks": {
         "swe_bench": null,
@@ -24657,8 +24587,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 40,
-              "n_models": 62,
+              "rank": 43,
+              "n_models": 65,
               "score": 0.473,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -25327,8 +25257,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 50,
-              "n_models": 62,
+              "rank": 53,
+              "n_models": 65,
               "score": 0.395,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -25674,9 +25604,9 @@
             {
               "tester": "epoch-ai",
               "benchmark": "CursorBench (best rung: Extra High)",
-              "rank": 13,
-              "n_models": 29,
-              "score": 0.463,
+              "rank": 8,
+              "n_models": 12,
+              "score": 0.486,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/cursorbench-external",
               "licence": "display-ok"
@@ -25710,8 +25640,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 10,
-              "n_models": 69,
+              "rank": 11,
+              "n_models": 70,
               "score": 10536.8317,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -25720,8 +25650,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 7,
-              "n_models": 62,
+              "rank": 9,
+              "n_models": 65,
               "score": 0.7,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -25839,8 +25769,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 11,
-              "n_models": 19,
+              "rank": 15,
+              "n_models": 24,
               "score": 0.488,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -26332,8 +26262,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 46,
-              "n_models": 62,
+              "rank": 49,
+              "n_models": 65,
               "score": 0.443,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -26933,8 +26863,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 4,
-              "n_models": 69,
+              "rank": 5,
+              "n_models": 70,
               "score": 14427.8483,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -26943,8 +26873,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 30,
-              "n_models": 62,
+              "rank": 33,
+              "n_models": 65,
               "score": 0.543,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -27289,9 +27219,9 @@
             {
               "tester": "epoch-ai",
               "benchmark": "CursorBench (best rung: Max)",
-              "rank": 3,
-              "n_models": 29,
-              "score": 0.578,
+              "rank": 5,
+              "n_models": 12,
+              "score": 0.581,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/cursorbench-external",
               "licence": "display-ok"
@@ -27325,8 +27255,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 14,
-              "n_models": 69,
+              "rank": 15,
+              "n_models": 70,
               "score": 9235.2483,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -27335,8 +27265,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror) (best of 2 rows)",
-              "rank": 6,
-              "n_models": 62,
+              "rank": 7,
+              "n_models": 65,
               "score": 0.735,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -27454,8 +27384,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 10,
-              "n_models": 19,
+              "rank": 14,
+              "n_models": 24,
               "score": 0.488,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -28460,9 +28390,9 @@
             {
               "tester": "epoch-ai",
               "benchmark": "CursorBench (best rung: Max)",
-              "rank": 5,
-              "n_models": 29,
-              "score": 0.555,
+              "rank": 7,
+              "n_models": 12,
+              "score": 0.544,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/cursorbench-external",
               "licence": "display-ok"
@@ -28496,8 +28426,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 8,
-              "n_models": 69,
+              "rank": 9,
+              "n_models": 70,
               "score": 11165.2783,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -28506,8 +28436,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror) (best of 2 rows)",
-              "rank": 5,
-              "n_models": 62,
+              "rank": 6,
+              "n_models": 65,
               "score": 0.755,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -28635,8 +28565,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 6,
-              "n_models": 19,
+              "rank": 9,
+              "n_models": 24,
               "score": 0.512,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -29141,8 +29071,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 6,
-              "n_models": 69,
+              "rank": 7,
+              "n_models": 70,
               "score": 12860.6117,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -29151,8 +29081,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 21,
-              "n_models": 62,
+              "rank": 24,
+              "n_models": 65,
               "score": 0.6,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -29270,8 +29200,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 5,
-              "n_models": 19,
+              "rank": 8,
+              "n_models": 24,
               "score": 0.516,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -29754,7 +29684,7 @@
               "tester": "epoch-ai",
               "benchmark": "CursorBench (best rung: Max)",
               "rank": 9,
-              "n_models": 29,
+              "n_models": 12,
               "score": 0.484,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/cursorbench-external",
@@ -29789,8 +29719,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 47,
-              "n_models": 69,
+              "rank": 48,
+              "n_models": 70,
               "score": 3602.4633,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -29799,8 +29729,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 26,
-              "n_models": 62,
+              "rank": 29,
+              "n_models": 65,
               "score": 0.561,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -30152,8 +30082,8 @@
               "tester": "epoch-ai",
               "benchmark": "CursorBench (best rung: High)",
               "rank": 6,
-              "n_models": 29,
-              "score": 0.529,
+              "n_models": 12,
+              "score": 0.565,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/cursorbench-external",
               "licence": "display-ok"
@@ -30187,8 +30117,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 5,
-              "n_models": 69,
+              "rank": 6,
+              "n_models": 70,
               "score": 13718.1583,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -30197,8 +30127,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 2,
-              "n_models": 62,
+              "rank": 3,
+              "n_models": 65,
               "score": 0.824,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -30316,8 +30246,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 3,
-              "n_models": 19,
+              "rank": 4,
+              "n_models": 24,
               "score": 0.536,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -30537,16 +30467,6 @@
           "measured": [
             {
               "tester": "epoch-ai",
-              "benchmark": "CursorBench (best rung: Max)",
-              "rank": 11,
-              "n_models": 29,
-              "score": 0.477,
-              "as_of": "2026-11-20",
-              "url": "https://epoch.ai/benchmarks/cursorbench-external",
-              "licence": "display-ok"
-            },
-            {
-              "tester": "epoch-ai",
               "benchmark": "SciCode (Epoch mirror) (best of 2 rows)",
               "rank": 29,
               "n_models": 143,
@@ -30574,8 +30494,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 8,
-              "n_models": 62,
+              "rank": 10,
+              "n_models": 65,
               "score": 0.698,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -33875,8 +33795,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 14,
-              "n_models": 62,
+              "rank": 17,
+              "n_models": 65,
               "score": 0.655,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -33934,8 +33854,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 12,
-              "n_models": 19,
+              "rank": 17,
+              "n_models": 24,
               "score": 0.466,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -34193,8 +34113,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 15,
-              "n_models": 69,
+              "rank": 16,
+              "n_models": 70,
               "score": 9107.4583,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -34203,8 +34123,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 10,
-              "n_models": 62,
+              "rank": 12,
+              "n_models": 65,
               "score": 0.683,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -35231,9 +35151,9 @@
             {
               "tester": "epoch-ai",
               "benchmark": "CursorBench (best rung: Max)",
-              "rank": 2,
-              "n_models": 29,
-              "score": 0.6,
+              "rank": 4,
+              "n_models": 12,
+              "score": 0.613,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/cursorbench-external",
               "licence": "display-ok"
@@ -35267,8 +35187,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 11,
-              "n_models": 69,
+              "rank": 12,
+              "n_models": 70,
               "score": 9628.48,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -35277,8 +35197,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 3,
-              "n_models": 62,
+              "rank": 4,
+              "n_models": 65,
               "score": 0.801,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -35392,7 +35312,18 @@
           "preferred": null
         },
         "extraction": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 7,
+              "n_models": 24,
+              "score": 0.518,
+              "as_of": "2026-11-20",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": null,
           "preferred": null
         },
@@ -35844,9 +35775,9 @@
             {
               "tester": "epoch-ai",
               "benchmark": "CursorBench (best rung: High)",
-              "rank": 1,
-              "n_models": 29,
-              "score": 0.604,
+              "rank": 2,
+              "n_models": 12,
+              "score": 0.615,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/cursorbench-external",
               "licence": "display-ok"
@@ -35880,8 +35811,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 1,
-              "n_models": 69,
+              "rank": 2,
+              "n_models": 70,
               "score": 16484.2067,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -35891,7 +35822,7 @@
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
               "rank": 1,
-              "n_models": 62,
+              "n_models": 65,
               "score": 0.842,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -36000,7 +35931,7 @@
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
               "rank": 1,
-              "n_models": 19,
+              "n_models": 24,
               "score": 0.564,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -36218,9 +36149,9 @@
             {
               "tester": "epoch-ai",
               "benchmark": "CursorBench (best rung: Extra High)",
-              "rank": 4,
-              "n_models": 29,
-              "score": 0.578,
+              "rank": 3,
+              "n_models": 12,
+              "score": 0.614,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/cursorbench-external",
               "licence": "display-ok"
@@ -36244,8 +36175,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "Vending-Bench 2 (Epoch mirror)",
-              "rank": 3,
-              "n_models": 69,
+              "rank": 4,
+              "n_models": 70,
               "score": 14549.49,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
@@ -36254,8 +36185,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 4,
-              "n_models": 62,
+              "rank": 5,
+              "n_models": 65,
               "score": 0.78,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -36339,7 +36270,18 @@
           "preferred": null
         },
         "extraction": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 3,
+              "n_models": 24,
+              "score": 0.542,
+              "as_of": "2026-11-20",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": null,
           "preferred": null
         },
@@ -36567,8 +36509,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "APEX-Agents (Epoch mirror)",
-              "rank": 42,
-              "n_models": 62,
+              "rank": 45,
+              "n_models": 65,
               "score": 0.468,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/apex-agents-external",
@@ -36616,8 +36558,8 @@
             {
               "tester": "epoch-ai",
               "benchmark": "GDP.pdf (Epoch mirror)",
-              "rank": 14,
-              "n_models": 19,
+              "rank": 19,
+              "n_models": 24,
               "score": 0.436,
               "as_of": "2026-11-20",
               "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
@@ -37556,7 +37498,18 @@
           "preferred": null
         },
         "agents": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "APEX-Agents (Epoch mirror)",
+              "rank": 8,
+              "n_models": 65,
+              "score": 0.722,
+              "as_of": "2026-11-20",
+              "url": "https://epoch.ai/benchmarks/apex-agents-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": null,
           "preferred": null
         },
@@ -37644,7 +37597,18 @@
           "preferred": null
         },
         "extraction": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 13,
+              "n_models": 24,
+              "score": 0.492,
+              "as_of": "2026-11-20",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": null,
           "preferred": null
         },
@@ -38097,7 +38061,18 @@
           "preferred": null
         },
         "agents": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "APEX-Agents (Epoch mirror)",
+              "rank": 14,
+              "n_models": 65,
+              "score": 0.666,
+              "as_of": "2026-11-20",
+              "url": "https://epoch.ai/benchmarks/apex-agents-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": null,
           "preferred": null
         },
@@ -38135,7 +38110,18 @@
           "preferred": null
         },
         "extraction": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 16,
+              "n_models": 24,
+              "score": 0.488,
+              "as_of": "2026-11-20",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": null,
           "preferred": null
         },
@@ -38343,12 +38329,44 @@
       "standings": {
         "as_of": "2026-11-20",
         "coding": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "CursorBench (best rung: Extra High)",
+              "rank": 1,
+              "n_models": 12,
+              "score": 0.654,
+              "as_of": "2026-11-20",
+              "url": "https://epoch.ai/benchmarks/cursorbench-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": null,
           "preferred": null
         },
         "agents": {
-          "measured": [],
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "Vending-Bench 2 (Epoch mirror)",
+              "rank": 1,
+              "n_models": 70,
+              "score": 16843.41,
+              "as_of": "2026-11-20",
+              "url": "https://epoch.ai/benchmarks/vending-bench-2-external",
+              "licence": "display-ok"
+            },
+            {
+              "tester": "epoch-ai",
+              "benchmark": "APEX-Agents (Epoch mirror) (best of 2 rows)",
+              "rank": 2,
+              "n_models": 65,
+              "score": 0.829,
+              "as_of": "2026-11-20",
+              "url": "https://epoch.ai/benchmarks/apex-agents-external",
+              "licence": "display-ok"
+            }
+          ],
           "chosen": null,
           "preferred": null
         },
@@ -38362,6 +38380,245 @@
             "as_of": "2026-11-15",
             "url": "https://openrouter.ai/rankings"
           },
+          "preferred": null
+        },
+        "writing": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "research": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "extraction": {
+          "measured": [
+            {
+              "tester": "epoch-ai",
+              "benchmark": "GDP.pdf (Epoch mirror)",
+              "rank": 5,
+              "n_models": 24,
+              "score": 0.534,
+              "as_of": "2026-11-20",
+              "url": "https://epoch.ai/benchmarks/gdp-pdf-external",
+              "licence": "display-ok"
+            }
+          ],
+          "chosen": null,
+          "preferred": null
+        },
+        "chat": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "vision": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "frontend": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "exec-summaries": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        }
+      },
+      "task_fit": {
+        "coding": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "agents": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model (agentic fit needs a coding baseline)"
+        },
+        "bulk": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "writing": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "research": {
+          "score": null,
+          "basis": [],
+          "reason": "no GPQA score sourced for this model"
+        },
+        "extraction": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "chat": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        },
+        "vision": {
+          "score": null,
+          "basis": [],
+          "reason": "no \"vision\" tag on this model — no multimodal signal in the data"
+        },
+        "frontend": {
+          "score": null,
+          "basis": [],
+          "reason": "no coding_score sourced for this model"
+        },
+        "exec-summaries": {
+          "score": null,
+          "basis": [],
+          "reason": "no general-capability benchmark (gpqa/mmlu_pro) sourced for this model"
+        }
+      },
+      "status": "ga",
+      "adoption": "new",
+      "best_for_line": "Priciest Google model · 1M ctx · $3/$15"
+    },
+    {
+      "id": "pixtral-large-2502",
+      "name": "Pixtral Large 2502",
+      "vendor": "Mistral AI",
+      "released": "2026-11-20",
+      "context_window": 128000,
+      "price_input": 2,
+      "price_output": 6,
+      "speed_tps": null,
+      "benchmarks": {
+        "swe_bench": null,
+        "gpqa": null,
+        "aime": null,
+        "mmlu_pro": null
+      },
+      "best_for": [],
+      "strengths": [],
+      "weaknesses": [],
+      "verdict": null,
+      "confidence": "low",
+      "sources": [
+        "https://openrouter.ai/mistralai/pixtral-large-2502"
+      ],
+      "coding_score": null,
+      "coding_basis": null,
+      "coding_confidence": "low",
+      "use_well": [],
+      "task_copy": {},
+      "task_fit_judged": null,
+      "usage": {
+        "openrouter": null
+      },
+      "auto_added": "2026-11-20",
+      "availability": {
+        "direct_api": null,
+        "openrouter": true,
+        "openrouter_id": "mistralai/pixtral-large-2502",
+        "aws_bedrock": true,
+        "google_vertex": null,
+        "azure": null,
+        "open_weights": null,
+        "eu_hosting": null,
+        "sources": [
+          "https://openrouter.ai/api/v1/models",
+          "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
+        ]
+      },
+      "signals": {
+        "coding": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "agents": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "bulk": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "writing": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "research": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "extraction": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "chat": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "vision": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "frontend": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        },
+        "exec-summaries": {
+          "usage_rank": null,
+          "usage_share": null,
+          "arena_rank": null,
+          "expert_default": null,
+          "families": 0
+        }
+      },
+      "standings": {
+        "as_of": "2026-11-20",
+        "coding": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "agents": {
+          "measured": [],
+          "chosen": null,
+          "preferred": null
+        },
+        "bulk": {
+          "measured": [],
+          "chosen": null,
           "preferred": null
         },
         "writing": {
@@ -38454,7 +38711,7 @@
       },
       "status": "ga",
       "adoption": "new",
-      "best_for_line": "Priciest Google model · 1M ctx · $3/$15"
+      "best_for_line": "Priciest Mistral AI model · 128K ctx · $2/$6"
     }
   ],
   "releases": [
@@ -39375,6 +39632,24 @@
       "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
       "source": "https://openrouter.ai/google/gemini-4-neon",
       "why": "Priced and available now; treat capability as unproven until scores land."
+    },
+    {
+      "kind": "price",
+      "date": "2026-11-20",
+      "vendor": "DeepSeek",
+      "title": "DeepSeek V4 Pro 0813 input price rise — $0.58 → $1.32 per 1M (+128%)",
+      "summary": "DeepSeek now lists DeepSeek V4 Pro 0813 at $1.32 per 1M input tokens, from $0.58. Confirmed by two independent price feeds.",
+      "source": "https://openrouter.ai/api/v1/models",
+      "why": "Budgets built on the old DeepSeek V4 Pro 0813 price are now 128% short. Check whether a cheaper tier covers the job."
+    },
+    {
+      "kind": "model",
+      "date": "2026-11-20",
+      "vendor": "Mistral AI",
+      "title": "Mistral AI releases Pixtral Large 2502",
+      "summary": "Listed with sourced pricing and context window; benchmark scores are pending publication.",
+      "source": "https://openrouter.ai/mistralai/pixtral-large-2502",
+      "why": "Priced and available now; treat capability as unproven until scores land."
     }
   ],
   "benchmarks_legend": {
@@ -39393,7 +39668,7 @@
       "task": "Agentic coding",
       "x_label": "Cost per task (USD, log scale)",
       "y_label": "Score (%)",
-      "as_of": "2026-11-18",
+      "as_of": "2026-11-20",
       "publisher": "Epoch AI (mirroring Cursor's CursorBench)",
       "source_kind": "third-party",
       "source": "https://epoch.ai/benchmarks/use-this-data",
@@ -39419,51 +39694,28 @@
           "points": [
             {
               "effort": "low",
-              "cost": 1.17,
-              "score": 43.7
+              "cost": 1.43,
+              "score": 42.7
             },
             {
               "effort": "medium",
-              "cost": 2.91,
-              "score": 52.5
+              "cost": 2.85,
+              "score": 50
             },
             {
               "effort": "high",
-              "cost": 3.97,
-              "score": 56
+              "cost": 3.87,
+              "score": 54.5
             },
             {
               "effort": "xhigh",
-              "cost": 6.98,
-              "score": 56
+              "cost": 6.54,
+              "score": 56.7
             },
             {
               "effort": "max",
-              "cost": 13.43,
-              "score": 57.8
-            }
-          ]
-        },
-        {
-          "model_id": "glm-5-3",
-          "label": "GLM-5.3",
-          "source_key": "glm-5.3",
-          "usage_rank": 15,
-          "points": [
-            {
-              "effort": "low",
-              "cost": 2.04,
-              "score": 33.3
-            },
-            {
-              "effort": "high",
-              "cost": 3.24,
-              "score": 38
-            },
-            {
-              "effort": "max",
-              "cost": 5.05,
-              "score": 42.6
+              "cost": 11.88,
+              "score": 58.1
             }
           ]
         },
@@ -39475,28 +39727,28 @@
           "points": [
             {
               "effort": "low",
-              "cost": 0.37,
-              "score": 35.8
+              "cost": 0.44,
+              "score": 31.8
             },
             {
               "effort": "medium",
-              "cost": 0.52,
-              "score": 39.2
+              "cost": 0.63,
+              "score": 34.3
             },
             {
               "effort": "high",
-              "cost": 1.2,
-              "score": 47.8
+              "cost": 1.41,
+              "score": 43.8
             },
             {
               "effort": "xhigh",
-              "cost": 2.81,
-              "score": 53.1
+              "cost": 3.13,
+              "score": 49.9
             },
             {
               "effort": "max",
-              "cost": 7.05,
-              "score": 55.5
+              "cost": 8.63,
+              "score": 54.4
             }
           ]
         },
@@ -39509,60 +39761,27 @@
             {
               "effort": "low",
               "cost": 0.08,
-              "score": 30.9
+              "score": 27.8
             },
             {
               "effort": "medium",
               "cost": 0.17,
-              "score": 36.9
+              "score": 34.2
             },
             {
               "effort": "high",
-              "cost": 0.32,
-              "score": 42.3
+              "cost": 0.31,
+              "score": 37.5
             },
             {
               "effort": "xhigh",
               "cost": 0.56,
-              "score": 44.3
+              "score": 45.2
             },
             {
               "effort": "max",
-              "cost": 1.12,
+              "cost": 1.14,
               "score": 48.4
-            }
-          ]
-        },
-        {
-          "model_id": "gpt-5-6-luna",
-          "label": "GPT-5.6 Luna",
-          "source_key": "gpt-5.6-luna",
-          "usage_rank": 25,
-          "points": [
-            {
-              "effort": "low",
-              "cost": 0.03,
-              "score": 16
-            },
-            {
-              "effort": "medium",
-              "cost": 0.08,
-              "score": 22.2
-            },
-            {
-              "effort": "high",
-              "cost": 0.25,
-              "score": 29.4
-            },
-            {
-              "effort": "xhigh",
-              "cost": 0.44,
-              "score": 33
-            },
-            {
-              "effort": "max",
-              "cost": 1.03,
-              "score": 35.9
             }
           ]
         },
@@ -39574,18 +39793,18 @@
           "points": [
             {
               "effort": "low",
-              "cost": 11.89,
-              "score": 58.6
+              "cost": 8.64,
+              "score": 55
             },
             {
               "effort": "medium",
-              "cost": 8.49,
-              "score": 60.1
+              "cost": 7.22,
+              "score": 60.4
             },
             {
               "effort": "high",
-              "cost": 9.22,
-              "score": 60.4
+              "cost": 8.52,
+              "score": 61.5
             }
           ]
         },
@@ -39597,28 +39816,28 @@
           "points": [
             {
               "effort": "low",
-              "cost": 3.94,
-              "score": 53.2
+              "cost": 4.26,
+              "score": 53.4
             },
             {
               "effort": "medium",
-              "cost": 4.66,
-              "score": 54.8
+              "cost": 5.01,
+              "score": 54.2
             },
             {
               "effort": "high",
-              "cost": 9.7,
-              "score": 56.9
+              "cost": 10.51,
+              "score": 56.5
             },
             {
               "effort": "xhigh",
-              "cost": 15.48,
-              "score": 56.3
+              "cost": 17.84,
+              "score": 58.8
             },
             {
               "effort": "max",
-              "cost": 32.79,
-              "score": 60
+              "cost": 48.11,
+              "score": 61.3
             }
           ]
         },
@@ -39629,24 +39848,19 @@
           "usage_rank": 41,
           "points": [
             {
-              "effort": "minimal",
-              "cost": 3.54,
-              "score": 48.8
-            },
-            {
               "effort": "low",
-              "cost": 4.09,
-              "score": 50.6
+              "cost": 7.96,
+              "score": 47.9
             },
             {
               "effort": "medium",
-              "cost": 4.39,
-              "score": 52.8
+              "cost": 7.64,
+              "score": 55.8
             },
             {
               "effort": "high",
-              "cost": 4.57,
-              "score": 52.9
+              "cost": 9.14,
+              "score": 56.5
             }
           ]
         },
@@ -39658,23 +39872,23 @@
           "points": [
             {
               "effort": "low",
-              "cost": 1.58,
-              "score": 33.1
+              "cost": 2.73,
+              "score": 31.5
             },
             {
               "effort": "medium",
-              "cost": 3.49,
-              "score": 41.6
+              "cost": 5.52,
+              "score": 42.5
             },
             {
               "effort": "high",
-              "cost": 4.69,
-              "score": 43.9
+              "cost": 6.88,
+              "score": 46
             },
             {
               "effort": "xhigh",
-              "cost": 6.01,
-              "score": 46.3
+              "cost": 10.19,
+              "score": 48.6
             }
           ]
         },
@@ -39687,22 +39901,50 @@
             {
               "effort": "low",
               "cost": 0.28,
-              "score": 27.9
+              "score": 23.9
             },
             {
               "effort": "medium",
-              "cost": 1.76,
-              "score": 46.7
+              "cost": 1.28,
+              "score": 46.4
             },
             {
               "effort": "high",
-              "cost": 5.59,
-              "score": 54.3
+              "cost": 4.57,
+              "score": 57.3
             },
             {
               "effort": "xhigh",
-              "cost": 5.86,
-              "score": 57.8
+              "cost": 8.09,
+              "score": 61.4
+            }
+          ]
+        },
+        {
+          "model_id": "gemini-4-neon",
+          "label": "Gemini 4 Neon",
+          "source_key": "gemini-4-neon",
+          "usage_rank": 80,
+          "points": [
+            {
+              "effort": "low",
+              "cost": 1.26,
+              "score": 45.5
+            },
+            {
+              "effort": "medium",
+              "cost": 3.07,
+              "score": 57.7
+            },
+            {
+              "effort": "high",
+              "cost": 6.54,
+              "score": 63.7
+            },
+            {
+              "effort": "xhigh",
+              "cost": 10.67,
+              "score": 65.4
             }
           ]
         },
@@ -39714,61 +39956,28 @@
           "points": [
             {
               "effort": "low",
-              "cost": 0.87,
-              "score": 24.6
+              "cost": 0.98,
+              "score": 23
             },
             {
               "effort": "medium",
-              "cost": 1.77,
-              "score": 31.1
+              "cost": 1.97,
+              "score": 28.7
             },
             {
               "effort": "high",
-              "cost": 2.85,
-              "score": 35.7
+              "cost": 3,
+              "score": 33.2
             },
             {
               "effort": "xhigh",
-              "cost": 4.4,
-              "score": 37.7
+              "cost": 4.32,
+              "score": 37.4
             },
             {
               "effort": "max",
-              "cost": 8.23,
-              "score": 41.7
-            }
-          ]
-        },
-        {
-          "model_id": "gpt-5-6-terra",
-          "label": "GPT-5.6 Terra",
-          "source_key": "gpt-5.6-terra",
-          "usage_rank": 88,
-          "points": [
-            {
-              "effort": "low",
-              "cost": 0.52,
-              "score": 25.2
-            },
-            {
-              "effort": "medium",
-              "cost": 0.64,
-              "score": 27.6
-            },
-            {
-              "effort": "high",
-              "cost": 1.11,
-              "score": 30.7
-            },
-            {
-              "effort": "xhigh",
-              "cost": 1.81,
-              "score": 33.6
-            },
-            {
-              "effort": "max",
-              "cost": 5.14,
-              "score": 41.3
+              "cost": 7.6,
+              "score": 40.9
             }
           ]
         },
@@ -39780,61 +39989,33 @@
           "points": [
             {
               "effort": "minimal",
-              "cost": 0.56,
-              "score": 24.3
+              "cost": 0.69,
+              "score": 21.3
             },
             {
               "effort": "low",
-              "cost": 0.93,
-              "score": 29.3
+              "cost": 1.13,
+              "score": 27.5
             },
             {
               "effort": "medium",
-              "cost": 1.49,
-              "score": 32.6
+              "cost": 1.75,
+              "score": 31.3
             },
             {
               "effort": "high",
-              "cost": 1.66,
-              "score": 33.4
+              "cost": 1.97,
+              "score": 32.1
             },
             {
               "effort": "xhigh",
-              "cost": 2.1,
-              "score": 37.5
+              "cost": 2.33,
+              "score": 34.6
             },
             {
               "effort": "max",
-              "cost": 2.64,
-              "score": 41.6
-            }
-          ]
-        },
-        {
-          "model_id": "deepseek-v4-1-flash-1017",
-          "label": "DeepSeek V4.1 Flash 1017",
-          "source_key": "deepseek-v4.1-flash-1017",
-          "usage_rank": null,
-          "points": [
-            {
-              "effort": "low",
-              "cost": 0.6,
-              "score": 44.9
-            },
-            {
-              "effort": "medium",
-              "cost": 0.8,
-              "score": 46.3
-            },
-            {
-              "effort": "high",
-              "cost": 0.77,
-              "score": 45.6
-            },
-            {
-              "effort": "max",
-              "cost": 0.98,
-              "score": 47.7
+              "cost": 2.89,
+              "score": 41.9
             }
           ]
         }
