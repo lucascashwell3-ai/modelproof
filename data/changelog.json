@@ -5163,5 +5163,26 @@
     "sources": [
       "https://epoch.ai/data/benchmark_data.zip"
     ]
+  },
+  {
+    "date": "2026-11-21",
+    "model": "Hy4",
+    "field": "price_input",
+    "old": 0.42,
+    "new": 0.42,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-11-21",
+    "model": "Inkling 2 Mini",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/thinkingmachines/inkling-2-mini"
+    ]
   }
 ]
