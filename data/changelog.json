@@ -5184,5 +5184,49 @@
     "sources": [
       "https://openrouter.ai/thinkingmachines/inkling-2-mini"
     ]
+  },
+  {
+    "date": "2026-11-22",
+    "model": "Qwen3.8 27B",
+    "field": "price_output",
+    "old": 3,
+    "new": 1.5,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-11-22",
+    "model": "Hy3",
+    "field": "price_input",
+    "old": 0.15,
+    "new": 0.14,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-11-22",
+    "model": "Hy3",
+    "field": "price_output",
+    "old": 0.59,
+    "new": 0.58,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-11-22",
+    "model": "Hy4",
+    "field": "price_input",
+    "old": 0.42,
+    "new": 0.42,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
   }
 ]
