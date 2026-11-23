@@ -5228,5 +5228,16 @@
       "openrouter",
       "litellm"
     ]
+  },
+  {
+    "date": "2026-11-23",
+    "model": "Hy4",
+    "field": "price_input",
+    "old": 0.42,
+    "new": 0.42,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
   }
 ]
