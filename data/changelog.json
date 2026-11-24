@@ -5239,5 +5239,15 @@
       "openrouter",
       "litellm"
     ]
+  },
+  {
+    "date": "2026-11-24",
+    "model": "GPT-6 Sol",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://developers.openai.com/docs/models/gpt-6-sol"
+    ]
   }
 ]

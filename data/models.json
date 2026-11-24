@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-23",
+  "as_of": "2026-11-24",
   "models": [
     {
       "id": "claude-opus-5",
@@ -26721,18 +26721,27 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "coding",
+        "agentic"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/openai/gpt-6-sol"
+        "https://openrouter.ai/openai/gpt-6-sol",
+        "https://developers.openai.com/docs/models/gpt-6-sol"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Use the Responses API rather than Chat Completions to get the built-in tools and general function calling — Chat Completions only supports function calling when reasoning.effort is set to none.",
+        "Keep requests under the 272,000-input-token threshold where possible: OpenAI's pricing page shows prompts above it cost 2x the input/cache rate and 1.5x the output rate for the whole request.",
+        "Route non-urgent, high-volume coding or agentic jobs through Batch or Flex instead of Standard — OpenAI prices both at half the Standard rate.",
+        "OpenAI's own docs point readers to GPT-6.1 Sol as the newer Sol model, so check that model first before committing new coding/agentic work to GPT-6 Sol."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
