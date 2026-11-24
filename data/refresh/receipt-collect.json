@@ -1,13 +1,13 @@
 {
   "job": "collect",
-  "ran_at": "2026-11-23T17:14:21.153Z",
+  "ran_at": "2026-11-24T16:54:32.131Z",
   "applied": 1,
-  "held": 84,
-  "confirmed": 152,
+  "held": 86,
+  "confirmed": 148,
   "new_models": 0,
-  "dropped": 477,
+  "dropped": 470,
   "worklist_items": 15,
-  "availability_changed": 0,
+  "availability_changed": 2,
   "usage_changed": 101,
   "ok": true
 }
