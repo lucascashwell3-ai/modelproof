@@ -5260,5 +5260,58 @@
       "openrouter",
       "litellm"
     ]
+  },
+  {
+    "date": "2026-11-25",
+    "model": "DeepSeek V4.1 Flash 1017",
+    "field": "price_input",
+    "old": 0.15,
+    "new": 0.3,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-11-25",
+    "model": "DeepSeek V4.1 Flash 1017",
+    "field": "price_output",
+    "old": 0.6,
+    "new": 1.2,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-11-25",
+    "model": "Hy4",
+    "field": "price_input",
+    "old": 0.42,
+    "new": 0.42,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-11-25",
+    "model": "Solar Mini 4.5 (Preview)",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/upstage/solar-mini-4-5"
+    ]
+  },
+  {
+    "date": "2026-11-25",
+    "model": "Solar Pro 4 Contributor",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/upstage/solar-pro-4-contributor"
+    ]
   }
 ]
