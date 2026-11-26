@@ -5313,5 +5313,16 @@
     "sources": [
       "https://openrouter.ai/upstage/solar-pro-4-contributor"
     ]
+  },
+  {
+    "date": "2026-11-26",
+    "model": "Hy4",
+    "field": "price_input",
+    "old": 0.42,
+    "new": 0.42,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
   }
 ]
