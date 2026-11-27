@@ -5378,5 +5378,26 @@
       "https://www.edenai.co/models/muse-wonder-1-0",
       "https://www.llmreference.com/model/muse-wonder/vercel-ai-gateway"
     ]
+  },
+  {
+    "date": "2026-11-27",
+    "model": "Hy4",
+    "field": "price_input",
+    "old": 0.42,
+    "new": 0.42,
+    "sources": [
+      "openrouter",
+      "litellm"
+    ]
+  },
+  {
+    "date": "2026-11-27",
+    "model": "Ling 3.2 Flash",
+    "field": "added",
+    "old": null,
+    "new": "new model",
+    "sources": [
+      "https://openrouter.ai/inclusionai/ling-3.2-flash"
+    ]
   }
 ]
