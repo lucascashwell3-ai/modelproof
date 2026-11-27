@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-26",
+  "as_of": "2026-11-27",
   "models": [
     {
       "id": "claude-opus-5",
@@ -30691,18 +30691,28 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "coding",
+        "agentic",
+        "long-context"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/meta/muse-spark-open"
+        "https://openrouter.ai/meta/muse-spark-open",
+        "https://vercel.com/ai-gateway/models/meta/muse-spark-open.md",
+        "https://vercel.com/changelog/muse-spark-open-now-available-on-ai-gateway"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Use Muse Spark Open's open weights when you need to self-host for data control, run it on your own infrastructure, or fine-tune it, since several providers (Fireworks, Baseten, Together AI, Modal, Nebius) already host it.",
+        "It is built for multi-file refactoring and debugging, so prefer it for codebase-wide changes over single-file completions.",
+        "Its roughly 1M-token context window can hold a multi-file diff or several related source files in one request without manual chunking."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
@@ -31236,18 +31246,29 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "reasoning",
+        "agentic",
+        "vision",
+        "long-context"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/meta/muse-wonder"
+        "https://openrouter.ai/meta/muse-wonder",
+        "https://www.edenai.co/models/muse-wonder-1-0",
+        "https://www.llmreference.com/model/muse-wonder/vercel-ai-gateway"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "At $4.00/$20.00 per million tokens, reserve Muse Wonder for tasks that actually need its frontier reasoning — a cheaper Muse Spark or Muse Ember tier is enough for routine coding or chat.",
+        "It takes text, image, video, audio and PDF input in a single request, so multimodal tasks don't need a separate pipeline per modality.",
+        "The larger Muse Wonder Full variant is only reachable through a Muse Code subscription, not the standard API — plan access accordingly if you need that tier."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {
@@ -35422,18 +35443,29 @@
         "aime": null,
         "mmlu_pro": null
       },
-      "best_for": [],
+      "best_for": [
+        "agentic",
+        "coding",
+        "cheap-bulk",
+        "long-context"
+      ],
       "strengths": [],
       "weaknesses": [],
       "verdict": null,
       "confidence": "low",
       "sources": [
-        "https://openrouter.ai/meta/muse-ember"
+        "https://openrouter.ai/meta/muse-ember",
+        "https://vercel.com/changelog/muse-ember-now-available-on-ai-gateway",
+        "https://vercel.com/ai-gateway/models/muse-ember.md"
       ],
       "coding_score": null,
       "coding_basis": null,
       "coding_confidence": "low",
-      "use_well": [],
+      "use_well": [
+        "Route the high-volume, low-stakes steps of an agent run to Muse Ember — tool calls, coding sub-tasks, document analysis — rather than paying for a frontier model on every step.",
+        "At $0.10 per million input / $0.50 per million output tokens it is cheap enough to use for bulk, repetitive document or code processing instead of batching only your biggest model.",
+        "Its roughly 1M-token context window can take a large document or codebase in one call, avoiding manual chunking."
+      ],
       "task_copy": {},
       "task_fit_judged": null,
       "usage": {

@@ -5345,5 +5345,38 @@
     "sources": [
       "https://openrouter.ai/inclusionai/lingsante-3.1-air-vl"
     ]
+  },
+  {
+    "date": "2026-11-27",
+    "model": "Muse Ember",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://vercel.com/changelog/muse-ember-now-available-on-ai-gateway",
+      "https://vercel.com/ai-gateway/models/muse-ember.md"
+    ]
+  },
+  {
+    "date": "2026-11-27",
+    "model": "Muse Spark Open",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://vercel.com/ai-gateway/models/meta/muse-spark-open.md",
+      "https://vercel.com/changelog/muse-spark-open-now-available-on-ai-gateway"
+    ]
+  },
+  {
+    "date": "2026-11-27",
+    "model": "Muse Wonder",
+    "field": "best_for+use_well",
+    "old": null,
+    "new": "usage guidance",
+    "sources": [
+      "https://www.edenai.co/models/muse-wonder-1-0",
+      "https://www.llmreference.com/model/muse-wonder/vercel-ai-gateway"
+    ]
   }
 ]
