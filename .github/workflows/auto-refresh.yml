@@ -92,6 +92,11 @@ jobs:
         # the fact.
         run: node scripts/validate-data.mjs && node scripts/check-live-data.mjs --group feed
 
+      - name: Rebuild sitemap.xml
+        # Lists every root-level page with the refreshed as_of as lastmod. Same bytes when as_of is
+        # unchanged, so it only shows up in a commit when the data date moves.
+        run: node scripts/build-sitemap.mjs
+
       - name: Dry-run summary (no push, no live verify)
         if: env.DRY_RUN == 'true'
         run: |
@@ -118,11 +123,11 @@ jobs:
         run: |
           git config user.name "modelproof-auto-refresh"
           git config user.email "actions@users.noreply.github.com"
-          if git diff --quiet data/models.json data/changelog.json data/_auto_refresh_state.json data/refresh/worklist.json data/refresh/receipt-collect.json docs/standings-unmapped.md 2>/dev/null; then
+          if git diff --quiet data/models.json data/changelog.json data/_auto_refresh_state.json data/refresh/worklist.json data/refresh/receipt-collect.json docs/standings-unmapped.md sitemap.xml 2>/dev/null; then
             echo "no changes — nothing to publish"
             exit 0
           fi
-          git add data/models.json data/changelog.json data/_auto_refresh_state.json data/refresh/worklist.json data/refresh/receipt-collect.json docs/standings-unmapped.md 2>/dev/null || true
+          git add data/models.json data/changelog.json data/_auto_refresh_state.json data/refresh/worklist.json data/refresh/receipt-collect.json docs/standings-unmapped.md sitemap.xml 2>/dev/null || true
           git commit -m "modelproof collect $(date -u +%Y-%m-%d)"
           echo "PUBLISHED=1" >> "$GITHUB_ENV"
           ok=0
